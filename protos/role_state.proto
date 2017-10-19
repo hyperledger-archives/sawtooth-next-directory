@@ -1,0 +1,50 @@
+// Copyright 2017 Intel Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+
+// This container is only needed for hash collisions.
+message RoleAttributesContainer {
+
+    repeated RoleAttributes role_attributes = 1;
+
+}
+
+
+message RoleAttributes {
+
+    string role_id = 1;
+
+    string name = 2;
+
+    bytes metadata = 3;
+
+}
+
+message RoleRelationshipContainer {
+
+    repeated RoleRelationship relationships = 1;
+
+}
+
+// This represents a Role's ( Tasks | Owners | Members | Admins ) depending
+// what the address in state is.
+message RoleRelationship {
+
+    string role_id = 1;
+
+    repeated string identifiers = 2;
+}

@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Protobuf
+**/protobuf/
+
+# Jetbrains IDEs
+.idea/
+
 # C extensions
 *.so
 

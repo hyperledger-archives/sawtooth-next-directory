@@ -1,0 +1,74 @@
+// Copyright 2017 Intel Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+
+
+
+message RBACPayload {
+
+    enum MessageType {
+        PROPOSE_ADD_ROLE_TASKS = 0;
+        PROPOSE_ADD_ROLE_MEMBERS = 1;
+        PROPOSE_ADD_ROLE_OWNERS = 2;
+        PROPOSE_ADD_ROLE_ADMINS = 3;
+        PROPOSE_REMOVE_ROLE_TASKS = 4;
+        PROPOSE_REMOVE_ROLE_MEMBERS = 5;
+        PROPOSE_REMOVE_ROLE_OWNERS = 6;
+        PROPOSE_REMOVE_ROLE_ADMINS = 7;
+        CONFIRM_ADD_ROLE_TASKS = 8;
+        CONFIRM_ADD_ROLE_MEMBERS = 9;
+        CONFIRM_ADD_ROLE_OWNERS = 10;
+        CONFIRM_ADD_ROLE_ADMINS = 11;
+        CONFIRM_REMOVE_ROLE_TASKS = 12;
+        CONFIRM_REMOVE_ROLE_MEMBERS = 13;
+        CONFIRM_REMOVE_ROLE_OWNERS = 14;
+        CONFIRM_REMOVE_ROLE_ADMINS = 15;
+        REJECT_ADD_ROLE_TASKS = 16;
+        REJECT_ADD_ROLE_MEMBERS = 17;
+        REJECT_ADD_ROLE_OWNERS = 18;
+        REJECT_ADD_ROLE_ADMINS = 19;
+        REJECT_REMOVE_ROLE_TASKS = 20;
+        REJECT_REMOVE_ROLE_MEMBERS = 21;
+        REJECT_REMOVE_ROLE_OWNERS = 22;
+        REJECT_REMOVE_ROLE_ADMINS = 23;
+        PROPOSE_ADD_TASK_OWNERS = 24;
+        PROPOSE_ADD_TASK_ADMINS = 25;
+        PROPOSE_REMOVE_TASK_OWNERS = 26;
+        PROPOSE_REMOVE_TASK_ADMINS = 27;
+        CONFIRM_ADD_TASK_OWNERS = 28;
+        CONFIRM_ADD_TASK_ADMINS = 29;
+        CONFIRM_REMOVE_TASK_OWNERS = 30;
+        CONFIRM_REMOVE_TASK_ADMINS = 31;
+        REJECT_ADD_TASK_OWNERS = 32;
+        REJECT_ADD_TASK_ADMINS = 33;
+        REJECT_REMOVE_TASK_OWNERS = 34;
+        REJECT_REMOVE_TASK_ADMINS = 35;
+        PROPOSE_UPDATE_USER_MANAGERS = 36;
+        CONFIRM_UPDATE_USER_MANAGERS = 37;
+        REJECT_UPDATE_USER_MANAGERS = 38;
+
+        CREATE_ROLE = 39;
+        CREATE_USER = 40;
+        CREATE_TASK = 41;
+    }
+
+
+    MessageType message_type = 1;
+
+    bytes content = 2;
+
+}
