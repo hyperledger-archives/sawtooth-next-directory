@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+
+TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
+
+
+run_tests() {
+
+    python3 -m unittest $@
+
+}
+
+
+export PYTHONPATH=$PYTHONPATH:$TOP_DIR/addressing
+run_tests addressing/tests/test_addresser.py
