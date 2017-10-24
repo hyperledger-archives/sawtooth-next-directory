@@ -28,3 +28,38 @@ message ProposeUpdateUserManager {
     string metadata = 4;
 
 }
+
+
+message ConfirmUpdateUserManager {
+
+    string proposal_id = 1;
+
+    string justificaton = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectUpdateUserManager {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message CreateUser {
+
+    string name = 1;
+
+    string user_id = 2;
+
+    string manager_id = 3;
+
+    string metadata = 4;
+
+}

@@ -119,3 +119,146 @@ message ProposeRemoveRoleTask {
     string metadata = 4;
 
 }
+
+
+message ConfirmAddRoleMember {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmRemoveRoleMember {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmAddRoleOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmRemoveRoleOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmAddRoleAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmRemoveRoleAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectAddRoleMember {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectRemoveRoleMember {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectAddRoleOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectRemoveRoleOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectAddRoleAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectRemoveRoleAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message CreateRole {
+
+    string name = 1;
+
+    repeated string admins = 2;
+
+    string metadata = 3;
+
+}

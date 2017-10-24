@@ -36,6 +36,6 @@ message User {
     // Unordered group of subordinates who have this User in their 'managers'.
     repeated string subordinates = 4;
 
-    bytes metadata = 5;
+    string metadata = 5;
 
 }

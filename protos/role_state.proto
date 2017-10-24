@@ -30,7 +30,7 @@ message RoleAttributes {
 
     string name = 2;
 
-    bytes metadata = 3;
+    string metadata = 3;
 
 }
 

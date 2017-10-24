@@ -67,3 +67,102 @@ message ProposeRemoveTaskAdmin {
     string metadata = 4;
 
 }
+
+
+message ConfirmAddTaskOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmRemoveTaskOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmAddTaskAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message ConfirmRemoveTaskAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectAddTaskOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectRemoveTaskOwner {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectAddTaskAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message RejectRemoveTaskAdmin {
+
+    string proposal_id = 1;
+
+    string justification = 2;
+
+    string metadata = 3;
+
+}
+
+
+message CreateTask {
+
+    string name = 1;
+
+    repeated string admins = 2;
+
+    string metadata = 3;
+
+}
