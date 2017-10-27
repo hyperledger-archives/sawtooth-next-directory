@@ -36,7 +36,7 @@ class TestAddresser(unittest.TestCase):
                address type.
         """
 
-        sysadmin_address = addresser.make_sysadmin_attributes_address()
+        sysadmin_address = addresser.make_sysadmin_attr_address()
 
         self.assertEqual(len(sysadmin_address), 70,
                          "The address is a well-formed address.")

@@ -16,32 +16,33 @@
 import enum
 from hashlib import sha512
 
-class SysAdminNamespace(object):
+
+class SysAdminNamespace(enum.IntEnum):
     SYS_ADMIN_START = 0
     SYS_ADMIN_STOP = 1
 
 
-class RoleNamespace(object):
+class RoleNamespace(enum.IntEnum):
     ROLE_START = 1
     ROLE_STOP = 24
 
 
-class TaskNamespace(object):
+class TaskNamespace(enum.IntEnum):
     TASK_START = 24
     TASK_STOP = 49
 
 
-class UserNamespace(object):
+class UserNamespace(enum.IntEnum):
     USER_START = 49
     USER_STOP = 149
 
 
-class ProposalNamespace(object):
+class ProposalNamespace(enum.IntEnum):
     PROPOSAL_START = 149
     PROPOSAL_STOP = 255
 
 
-class SysAdminRelationshipNS(object):
+class SysAdminRelationshipNS(enum.IntEnum):
     SYSADMIN_MEMBERS_START = 1
     SYSADMIN_MEMBERS_STOP = 200
     SYSADMIN_OWNERS_START = 200
@@ -50,7 +51,7 @@ class SysAdminRelationshipNS(object):
     SYSADMIN_ADMINS_STOP = 255
 
 
-class RoleRelationshipNamespace(object):
+class RoleRelationshipNamespace(enum.IntEnum):
     ROLE_ATTRIBUTES_START = 0
     ROLE_ATTRIBUTES_STOP = 1
     ROLE_MEMBER_START = 1
@@ -63,7 +64,7 @@ class RoleRelationshipNamespace(object):
     ROLE_ADMIN_STOP = 255
 
 
-class TaskRelationshipNamespace(object):
+class TaskRelationshipNamespace(enum.IntEnum):
     TASK_ATTRIBUTES_START = 0
     TASK_ATTRIBUTES_STOP = 1
     TASK_OWNER_START = 1
@@ -74,6 +75,7 @@ class TaskRelationshipNamespace(object):
 
 FAMILY_NAME = 'rbac'
 NS = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
+
 
 @enum.unique
 class AddressSpace(enum.Enum):
@@ -113,18 +115,18 @@ def address_is(address):
         raise ValueError("Address %s isn't part of the %s namespace",
                          address, FAMILY_NAME)
 
-    r1 = int(address[len(NS):len(NS) + 2], base=16)
+    addr1 = int(address[len(NS):len(NS) + 2], base=16)
 
-    if _contains(r1, SysAdminNamespace.SYS_ADMIN_START,
+    if _contains(addr1, SysAdminNamespace.SYS_ADMIN_START,
                  SysAdminNamespace.SYS_ADMIN_STOP):
         return _sysadmin_address_is(address)
-    elif _contains(r1, RoleNamespace.ROLE_START, RoleNamespace.ROLE_STOP):
+    elif _contains(addr1, RoleNamespace.ROLE_START, RoleNamespace.ROLE_STOP):
         return _role_address_is(address)
-    elif _contains(r1, TaskNamespace.TASK_START, TaskNamespace.TASK_STOP):
+    elif _contains(addr1, TaskNamespace.TASK_START, TaskNamespace.TASK_STOP):
         return _task_address_is(address)
-    elif _contains(r1, UserNamespace.USER_START, UserNamespace.USER_STOP):
+    elif _contains(addr1, UserNamespace.USER_START, UserNamespace.USER_STOP):
         return AddressSpace.USER
-    elif _contains(r1, ProposalNamespace.PROPOSAL_START,
+    elif _contains(addr1, ProposalNamespace.PROPOSAL_START,
                    ProposalNamespace.PROPOSAL_STOP):
         return AddressSpace.PROPOSALS
     else:
@@ -139,7 +141,7 @@ def _sysadmin_address_is(address):
     if _contains(num, 0, 1):
         return AddressSpace.SYSADMIN_ATTRIBUTES
     elif _contains(num, SysAdminRelationshipNS.SYSADMIN_MEMBERS_START,
-                 SysAdminRelationshipNS.SYSADMIN_MEMBERS_STOP):
+                   SysAdminRelationshipNS.SYSADMIN_MEMBERS_STOP):
         return AddressSpace.SYSADMIN_MEMBERS
     elif _contains(num, SysAdminRelationshipNS.SYSADMIN_OWNERS_START,
                    SysAdminRelationshipNS.SYSADMIN_OWNERS_STOP):
@@ -158,8 +160,8 @@ def _role_address_is(address):
         return AddressSpace.ROLES_ATTRIBUTES
 
     elif _contains(num,
-                 RoleRelationshipNamespace.ROLE_MEMBER_START,
-                 RoleRelationshipNamespace.ROLE_MEMBER_STOP):
+                   RoleRelationshipNamespace.ROLE_MEMBER_START,
+                   RoleRelationshipNamespace.ROLE_MEMBER_STOP):
         return AddressSpace.ROLES_MEMBERS
     elif _contains(num,
                    RoleRelationshipNamespace.ROLE_OWNER_START,
@@ -187,8 +189,8 @@ def _task_address_is(address):
                  TaskRelationshipNamespace.TASK_ATTRIBUTES_STOP):
         return AddressSpace.TASKS_ATTRIBUTES
     elif _contains(num,
-                 TaskRelationshipNamespace.TASK_OWNER_START,
-                 TaskRelationshipNamespace.TASK_OWNER_STOP):
+                   TaskRelationshipNamespace.TASK_OWNER_START,
+                   TaskRelationshipNamespace.TASK_OWNER_STOP):
         return AddressSpace.TASKS_OWNERS
     elif _contains(num,
                    TaskRelationshipNamespace.TASK_ADMIN_START,
@@ -243,7 +245,7 @@ def _make_sysadmin_address():
     return NS + '0' * 62
 
 
-def make_sysadmin_attributes_address():
+def make_sysadmin_attr_address():
     return _make_sysadmin_address() + '00'
 
 
