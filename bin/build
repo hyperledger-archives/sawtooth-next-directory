@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+# Copyright 2017 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+set -e
+
+TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
+
+usage() {
+
+    cat << EOM
+        Usage:
+            $0 [-d] [-p] [-t] [-l] [-a]
+
+        Options:
+            -h           print help text
+            -d           build the docker images
+            -p           build protobuf modules using docker containers
+            -l           lint source code
+            -t           run unit and integration tests
+            -a           docker, protogen, lint, tests in order
+EOM
+
+}
+
+
+info() {
+    echo -e "\033[0;36m\n[--- $1 ---]\n\033[0m"
+}
+
+
+while getopts hdplta opt;
+do
+    case $opt in
+        h)
+            usage
+            exit 0
+            ;;
+        d)
+            info "Building docker images"
+            $TOP_DIR/bin/build_docker
+            ;;
+        p)
+            info "Building Protobuf modules"
+            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/protogen
+            ;;
+        t)
+            info "Running tests"
+            $TOP_DIR/bin/run_tests_ubuntu
+            ;;
+        l)
+            info "Running lint"
+            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/run_lint
+            ;;
+        a)
+            info "Building docker images"
+            $TOP_DIR/bin/build_docker
+            info "Building Protobuf modules"
+            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/protogen
+            info "Running lint"
+            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/run_lint
+            info "Running tests"
+            $TOP_DIR/bin/run_tests_ubuntu
+            ;;
+        \?)
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+if [ $OPTIND -eq 1 ]; then
+    usage
+    exit 1
+fi
