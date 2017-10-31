@@ -42,7 +42,7 @@ info() {
 }
 
 
-while getopts hdplta opt;
+while getopts hdpltia opt;
 do
     case $opt in
         h)
@@ -65,6 +65,10 @@ do
             info "Running lint"
             docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/run_lint
             ;;
+        i)
+            info "Running integration tests"
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain_integration_test.yaml
+            ;;
         a)
             info "Building docker images"
             $TOP_DIR/bin/build_docker
@@ -74,6 +78,8 @@ do
             docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/run_lint
             info "Running tests"
             $TOP_DIR/bin/run_tests_ubuntu
+            info "Running integration tests"
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain_integration_test.yaml
             ;;
         \?)
             usage

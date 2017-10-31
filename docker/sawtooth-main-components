@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2017 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,26 +13,16 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-set -e
 
-TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
+FROM ubuntu:16.04
 
 
-lint() {
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD && \
+    echo 'deb http://repo.sawtooth.me/ubuntu/0.8/stable xenial universe' >> /etc/apt/sources.list && \
+    apt-get update
 
-    files="`find $1 -name \*.py | grep -v protobuf`"
-    echo "$1"
-    pycodestyle $files || error=1
-    python3 -m pylint --rcfile .pylintrc $files || error=1
-    return $error
+RUN apt-get install -yq sawtooth
 
-}
+RUN mkdir -p /project/tmobile-rbac
 
-ret_val=0
-
-lint addressing/rbac_addressing || ret_val=1
-
-export PYTHONPATH=$TOP_DIR/addressing
-lint processor || ret_val=1
-
-exit $ret_val
+WORKDIR /project/tmobile-rbac

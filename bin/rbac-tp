@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
 # Copyright 2017 Intel Corporation
 #
@@ -15,26 +15,20 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-set -e
+import os
+import sys
 
-TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
+TOP_DIR = os.path.dirname(os.path.dirname(__file__))
+
+ADDRESSING_PATH = os.path.join(TOP_DIR, 'addressing')
+
+PROCESSOR_PATH = os.path.join(TOP_DIR, 'processor')
+
+sys.path.insert(0, ADDRESSING_PATH)
+sys.path.insert(0, PROCESSOR_PATH)
+
+from rbac_processor.main import main
 
 
-lint() {
-
-    files="`find $1 -name \*.py | grep -v protobuf`"
-    echo "$1"
-    pycodestyle $files || error=1
-    python3 -m pylint --rcfile .pylintrc $files || error=1
-    return $error
-
-}
-
-ret_val=0
-
-lint addressing/rbac_addressing || ret_val=1
-
-export PYTHONPATH=$TOP_DIR/addressing
-lint processor || ret_val=1
-
-exit $ret_val
+if __name__ == '__main__':
+    main()
