@@ -34,9 +34,7 @@ message ConfirmUpdateUserManager {
 
     string proposal_id = 1;
 
-    string justificaton = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -45,9 +43,7 @@ message RejectUpdateUserManager {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -61,5 +57,18 @@ message CreateUser {
     string manager_id = 3;
 
     string metadata = 4;
+
+}
+
+
+message UpdateUser {
+
+    string user_id = 1;
+
+    string new_name = 2;
+
+    string old_metadata_sha512 = 3;
+
+    string new_metadata = 4;
 
 }

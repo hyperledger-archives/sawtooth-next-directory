@@ -73,9 +73,7 @@ message ConfirmAddTaskOwner {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -84,9 +82,7 @@ message ConfirmRemoveTaskOwner {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -95,9 +91,7 @@ message ConfirmAddTaskAdmin {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -106,9 +100,7 @@ message ConfirmRemoveTaskAdmin {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -117,9 +109,7 @@ message RejectAddTaskOwner {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -128,9 +118,7 @@ message RejectRemoveTaskOwner {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -139,9 +127,7 @@ message RejectAddTaskAdmin {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -150,9 +136,7 @@ message RejectRemoveTaskAdmin {
 
     string proposal_id = 1;
 
-    string justification = 2;
-
-    string metadata = 3;
+    string reason = 2;
 
 }
 
@@ -164,5 +148,18 @@ message CreateTask {
     repeated string admins = 2;
 
     string metadata = 3;
+
+}
+
+
+message UpdateTask {
+
+    string task_id = 1;
+
+    string new_name = 2;
+
+    string old_metadata_sha512 = 3;
+
+    string new_metadata = 4;
 
 }

@@ -54,18 +54,18 @@ message Proposal {
     ProposalType proposal_type = 2;
 
 
-    // The id of the Role, Task, User that the 'related_id is being added or
+    // The id of the Role, Task, User that the 'target_id' is being added or
     // removed from. For example, for an ADD_ROLE_MEMBERS Proposal, the
     // object_id is the Role id.
     string object_id = 3;
 
     // The id of the Task, or User that is being added or removed from the
     // 'object_id'. For example, for an ADD_TASK_OWNERS Proposal, the
-    // related_id is the User id of the proposed new Owner.
-    string related_id = 4;
+    // target_id is the User id of the proposed new Owner.
+    string target_id = 4;
 
     // The public key of the user that caused the Proposal to be created.
-    string initiator = 5;
+    string opener = 5;
 
     // The public key of the user that caused the Proposal to be REJECTED or
     // CONFIRMED.
@@ -74,11 +74,11 @@ message Proposal {
     Status status = 7;
 
     // A user supplied message to explain why the Proposal was made.
-    string reason = 8;
+    string open_reason = 8;
 
     // A user supplied (upon closing the Proposal) for why the Proposal was
     // closed in the way it was.
-    string justification = 9;
+    string close_reason = 9;
 
     // Client supplied metadata that is not indexed or parsed by the TP.
     string metadata = 10;

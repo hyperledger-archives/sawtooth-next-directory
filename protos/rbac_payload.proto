@@ -64,6 +64,11 @@ message RBACPayload {
         CREATE_ROLE = 39;
         CREATE_USER = 40;
         CREATE_TASK = 41;
+
+        UPDATE_ROLE = 42;
+        UPDATE_PROPOSAL = 43;
+        UPDATE_TASK = 44;
+        UPDATE_USER = 45;
     }
 
 
