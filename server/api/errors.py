@@ -19,15 +19,6 @@ from sanic.exceptions import SanicException
 
 errors_bp = Blueprint('errors')
 
-@errors_bp.exception(SanicException)
-def json_error(request, exception):
-    return json(
-        {
-            'code': exception.status_code,
-            'message': exception.message
-        }, status=exception.status_code
-    )
-
 default_messages = {
     400: 'Bad Request',
     401: 'Unauthorized',
@@ -49,9 +40,7 @@ def add_status_code(code):
 class ApiException(SanicException):
     def __init__(self, message=None, status_code=None):
         super().__init__(message)
-        if status_code is None:
-            self.status_code = 503
-        else:
+        if status_code is not None:
             self.status_code = status_code
         if message is None:
             self.message = default_messages[self.status_code]
@@ -81,3 +70,12 @@ class NotImplemented(ApiException):
 @add_status_code(503)
 class InternalError(ApiException):
     pass
+
+@errors_bp.exception(ApiException)
+def json_error(request, exception):
+    return json(
+        {
+            'code': exception.status_code,
+            'message': exception.message
+        }, status=exception.status_code
+    )
