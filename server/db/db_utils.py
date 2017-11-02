@@ -16,20 +16,18 @@
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError, RqlDriverError
 
-from config import *
 
-
-async def setup_db():
+async def setup_db(host, port, name):
     r.set_loop_type('asyncio')
-    connection = await r.connect(host=DB_HOST, port=DB_PORT)
+    connection = await r.connect(host=host, port=port)
     try:
-        await r.db_create(DB_NAME).run(connection)
+        await r.db_create(name).run(connection)
         await r.expr([
             'roles', 'role_tasks', 'role_members',
             'role_owners', 'role_admins',
             'tasks', 'task_owners', 'task_admins',
             'proposals', 'auth', 'users', 'blocks'
-        ]).for_each(r.db(DB_NAME).table_create(r.row)).run(connection)
+        ]).for_each(r.db(name).table_create(r.row)).run(connection)
     except RqlRuntimeError:
         print ('Database already exists.')
     finally:
