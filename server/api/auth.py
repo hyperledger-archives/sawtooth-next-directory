@@ -14,10 +14,13 @@
 # ------------------------------------------------------------------------------
 
 from functools import wraps
+
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import BadSignature
 from sanic import Blueprint
 from sanic.response import json
 
-from api.errors import NotImplemented
+from api.errors import BadRequest, Unauthorized
 
 
 auth_bp = Blueprint('auth')
@@ -26,19 +29,42 @@ def authorized():
     def decorator(f):
         @wraps(f)
         async def decorated_function(request, *args, **kwargs):
-            is_authorized = check_apikey_token(request)
+            if request.token == None:
+                raise Unauthorized("Unauthorized: No bearer token provided")
+            is_authorized = await validate_apikey(
+                request.token, request.app.config.SECRET_KEY)
             if is_authorized:
                 response = await f(request, *args, **kwargs)
                 return response
             else:
-                return errors.unauthorized()
+                raise Unauthorized("Unauthorized: Invalid bearer token")
         return decorated_function
     return decorator
 
-async def check_apikey_token():
-    # TODO: auth logic
-    return true
+async def generate_apikey(user_id, secret_key):
+    s = Serializer(secret_key)
+    return s.dumps({'id': user_id})
+
+async def validate_apikey(token, secret_key):
+    s = Serializer(secret_key)
+    try:
+        s.loads(token)
+    except BadSignature:
+        return False
+    return True
 
 @auth_bp.post('api/authorization')
-async def authorize(request):
-    raise NotImplemented()
+async def get_apikey(request):
+    # TODO: check that the id/pw are in the db
+    try:
+        user_id = request.json.get('id')
+    except Exception as e:
+        raise BadRequest("Bad Request: Improper JSON format")
+    token = await generate_apikey(user_id, request.app.config.SECRET_KEY)
+    return json(
+        {
+            'data': {
+                'auth_token': token.decode('ascii')
+            }
+        }
+    )

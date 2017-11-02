@@ -40,14 +40,19 @@ def parse_args(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('-B', '--bind',
                         help='The host and port for the api to run on.',
-                        action='append')
+                        action='append', required=True)
     parser.add_argument('--rethinkdb-bind',
-                        help='The host and port for RethinkDB database')
+                        help='The host and port for RethinkDB database',
+                        required=True)
     parser.add_argument('--rethinkdb-db',
-                        help='The name of the database')
+                        help='The name of the database',
+                        required=True)
     parser.add_argument('--debug',
                         help='Option to run Sanic in debug mode',
                         default=True)
+    parser.add_argument('--key-file',
+                        help='Path to the pyfile containing the API secret key',
+                        required=True)
 
     return parser.parse_args(args)
 
@@ -81,6 +86,9 @@ if __name__ == "__main__":
             print("Unable to parse DB binding {}: Must be in the format"
                   " host:port".format(opts.rethinkdb_bind))
             sys.exit(1)
+
+        # Load API secret key
+        app.config.from_pyfile(opts.key_file)
 
         app.config.DB_NAME = opts.rethinkdb_db
         app.config.DEBUG = opts.debug
