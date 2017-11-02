@@ -11,11 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-# config_file
+FROM ubuntu:16.04
 
-DEBUG = True
-DB_HOST = 'localhost'
-DB_PORT = 28015
-DB_NAME = 'rbac_db'
+RUN apt-get update && \
+    apt-get install -yq python3-pip
+
+RUN pip3 install rethinkdb sanic itsdangerous
+
+RUN mkdir -p /project/tmobile-rbac
+
+WORKDIR /project/tmobile-rbac

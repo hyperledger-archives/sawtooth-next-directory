@@ -15,6 +15,8 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import argparse
+import logging
 import os
 import sys
 from sanic import Sanic
@@ -32,6 +34,24 @@ from api.proposals import proposals_bp
 from api.errors import errors_bp
 
 
+def parse_args(args):
+    """Parse command line flags added to `rest_api` command.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-B', '--bind',
+                        help='The host and port for the api to run on.',
+                        action='append')
+    parser.add_argument('--rethinkdb-bind',
+                        help='The host and port for RethinkDB database')
+    parser.add_argument('--rethinkdb-db',
+                        help='The name of the database')
+    parser.add_argument('--debug',
+                        help='Option to run Sanic in debug mode',
+                        default=True)
+
+    return parser.parse_args(args)
+
+LOGGER = logging.getLogger(__name__)
 app = Sanic(__name__)
 
 app.blueprint(errors_bp)
@@ -43,7 +63,30 @@ app.blueprint(proposals_bp)
 
 @app.listener('before_server_start')
 async def db_setup(app, loop):
-    app.db = await db_utils.setup_db()
+    app.db = await db_utils.setup_db(
+        app.config.DB_HOST, app.config.DB_PORT, app.config.DB_NAME)
 
 if __name__ == "__main__":
-    app.run()
+    try:
+        opts = parse_args(sys.argv[1:])
+        try:
+            app.config.HOST, app.config.PORT = opts.bind[0].split(':')
+        except ValueError as e:
+            print("Unable to parse API binding {}: Must be in the format"
+                  " host:port".format(opts.bind))
+            sys.exit(1)
+        try:
+            app.config.DB_HOST, app.config.DB_PORT = opts.rethinkdb_bind.split(':')
+        except ValueError as e:
+            print("Unable to parse DB binding {}: Must be in the format"
+                  " host:port".format(opts.rethinkdb_bind))
+            sys.exit(1)
+
+        app.config.DB_NAME = opts.rethinkdb_db
+        app.config.DEBUG = opts.debug
+        app.config.KEEP_ALIVE = False
+
+        app.run(host=app.config.HOST, port=app.config.PORT, debug=app.config.DEBUG)
+    except Exception as e:
+        LOGGER.exception(e)
+        sys.exit(1)
