@@ -26,12 +26,13 @@ sys.path.insert(0, os.path.join(
     'server'))
 
 from db import db_utils
+from api.auth import auth_bp
+from api.blocks import blocks_bp
+from api.errors import errors_bp
+from api.proposals import proposals_bp
 from api.roles import roles_bp
 from api.tasks import tasks_bp
 from api.users import users_bp
-from api.auth import auth_bp
-from api.proposals import proposals_bp
-from api.errors import errors_bp
 
 
 def parse_args(args):
@@ -59,12 +60,13 @@ def parse_args(args):
 LOGGER = logging.getLogger(__name__)
 app = Sanic(__name__)
 
+app.blueprint(auth_bp)
+app.blueprint(blocks_bp)
 app.blueprint(errors_bp)
+app.blueprint(proposals_bp)
 app.blueprint(roles_bp)
 app.blueprint(tasks_bp)
 app.blueprint(users_bp)
-app.blueprint(auth_bp)
-app.blueprint(proposals_bp)
 
 @app.listener('before_server_start')
 async def db_setup(app, loop):

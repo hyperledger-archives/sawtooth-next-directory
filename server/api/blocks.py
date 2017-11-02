@@ -19,19 +19,19 @@ from api.errors import NotImplemented
 from api.auth import authorized
 
 
-proposals_bp = Blueprint('proposals')
+blocks_bp = Blueprint('blocks')
 
-@proposals_bp.get('api/proposals')
+@blocks_bp.get('api/blocks')
 @authorized()
-async def fetch_all_proposals(request):
+async def get_all_blocks(request):
     raise NotImplemented()
 
-@proposals_bp.get('api/proposals/<id>')
+@blocks_bp.get('api/blocks/latest')
 @authorized()
-async def fetch_proposal(request, id):
+async def get_latest_block(request):
     raise NotImplemented()
 
-@proposals_bp.patch('api/proposals/<id>')
+@blocks_bp.get('api/blocks/<id>')
 @authorized()
-async def update_proposal(request, id):
+async def get_block(request, id):
     raise NotImplemented()

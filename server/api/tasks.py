@@ -14,33 +14,49 @@
 # ------------------------------------------------------------------------------
 
 from sanic import Blueprint
-from sanic.response import json
 
 from api.errors import NotImplemented
+from api.auth import authorized
 
 
 tasks_bp = Blueprint('tasks')
 
+@tasks_bp.get('api/tasks')
+@authorized()
+async def fetch_all_tasks(request):
+    raise NotImplemented()
+
 @tasks_bp.post('api/tasks')
+@authorized()
 async def create_new_task(request):
     raise NotImplemented()
 
 @tasks_bp.get('api/tasks/<id>')
+@authorized()
 async def fetch_task(request, id):
     raise NotImplemented()
 
-@tasks_bp.post('api/tasks/<id>/owners')
-async def add_task_owner(request, id):
-    raise NotImplemented()
-
-@tasks_bp.delete('api/tasks/<id>/owners')
-async def remove_task_owner(request, id):
+@tasks_bp.patch('api/tasks/<id>')
+@authorized()
+async def update_task(request, id):
     raise NotImplemented()
 
 @tasks_bp.post('api/tasks/<id>/admins')
+@authorized()
 async def add_task_admin(request, id):
     raise NotImplemented()
 
 @tasks_bp.delete('api/tasks/<id>/admins')
+@authorized()
 async def remove_task_admin(request, id):
+    raise NotImplemented()
+
+@tasks_bp.post('api/tasks/<id>/owners')
+@authorized()
+async def add_task_owner(request, id):
+    raise NotImplemented()
+
+@tasks_bp.delete('api/tasks/<id>/owners')
+@authorized()
+async def remove_task_owner(request, id):
     raise NotImplemented()

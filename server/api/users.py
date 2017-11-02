@@ -14,25 +14,38 @@
 # ------------------------------------------------------------------------------
 
 from sanic import Blueprint
-from sanic.response import json
 
 from api.errors import NotImplemented
+from api.auth import authorized
 
 
 users_bp = Blueprint('users')
+
+@users_bp.get('api/users')
+@authorized()
+async def get_all_users(request):
+    raise NotImplemented()
 
 @users_bp.post('api/users')
 async def create_new_user(request):
     raise NotImplemented()
 
 @users_bp.get('api/users/<id>')
+@authorized()
 async def fetch_user(request, id):
     raise NotImplemented()
 
-@users_bp.put('api/users/<id>/update-manager')
+@users_bp.patch('api/users/<id>')
+@authorized()
+async def update_user(request, id):
+    raise NotImplemented()
+
+@users_bp.put('api/users/<id>/manager')
+@authorized()
 async def update_manager(request, id):
     raise NotImplemented()
 
 @users_bp.get('api/users/<id>/proposals/open')
+@authorized()
 async def fetch_open_proposals(request, id):
     raise NotImplemented()
