@@ -1,0 +1,4 @@
+# config_file
+HOST = "server"
+DB_HOST = "rethink"
+SECRET_KEY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"

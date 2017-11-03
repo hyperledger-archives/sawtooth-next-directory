@@ -64,6 +64,9 @@ local_settings.py
 instance/
 .webassets-cache
 
+# Sanic stuff:
+config.py
+
 # Scrapy stuff:
 .scrapy
 
