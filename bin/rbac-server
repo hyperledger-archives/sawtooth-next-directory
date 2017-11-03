@@ -26,12 +26,13 @@ sys.path.insert(0, os.path.join(
     'server'))
 
 from db import db_utils
+from api.auth import auth_bp
+from api.blocks import blocks_bp
+from api.errors import errors_bp
+from api.proposals import proposals_bp
 from api.roles import roles_bp
 from api.tasks import tasks_bp
 from api.users import users_bp
-from api.auth import auth_bp
-from api.proposals import proposals_bp
-from api.errors import errors_bp
 
 
 def parse_args(args):
@@ -40,26 +41,32 @@ def parse_args(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('-B', '--bind',
                         help='The host and port for the api to run on.',
-                        action='append')
+                        action='append', required=True)
     parser.add_argument('--rethinkdb-bind',
-                        help='The host and port for RethinkDB database')
+                        help='The host and port for RethinkDB database',
+                        required=True)
     parser.add_argument('--rethinkdb-db',
-                        help='The name of the database')
+                        help='The name of the database',
+                        required=True)
     parser.add_argument('--debug',
                         help='Option to run Sanic in debug mode',
                         default=True)
+    parser.add_argument('--key-file',
+                        help='Path to the pyfile containing the API secret key',
+                        required=True)
 
     return parser.parse_args(args)
 
 LOGGER = logging.getLogger(__name__)
 app = Sanic(__name__)
 
+app.blueprint(auth_bp)
+app.blueprint(blocks_bp)
 app.blueprint(errors_bp)
+app.blueprint(proposals_bp)
 app.blueprint(roles_bp)
 app.blueprint(tasks_bp)
 app.blueprint(users_bp)
-app.blueprint(auth_bp)
-app.blueprint(proposals_bp)
 
 @app.listener('before_server_start')
 async def db_setup(app, loop):
@@ -81,6 +88,9 @@ if __name__ == "__main__":
             print("Unable to parse DB binding {}: Must be in the format"
                   " host:port".format(opts.rethinkdb_bind))
             sys.exit(1)
+
+        # Load API secret key
+        app.config.from_pyfile(opts.key_file)
 
         app.config.DB_NAME = opts.rethinkdb_db
         app.config.DEBUG = opts.debug
