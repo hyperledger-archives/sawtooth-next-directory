@@ -15,88 +15,14 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import argparse
-import logging
 import os
 import sys
-from sanic import Sanic
-
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-    'server'))
-
-from db import db_utils
-from api.auth import auth_bp
-from api.blocks import blocks_bp
-from api.errors import errors_bp
-from api.proposals import proposals_bp
-from api.roles import roles_bp
-from api.tasks import tasks_bp
-from api.users import users_bp
 
 
-def parse_args(args):
-    """Parse command line flags added to `rest_api` command.
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-B', '--bind',
-                        help='The host and port for the api to run on.',
-                        action='append', required=True)
-    parser.add_argument('--rethinkdb-bind',
-                        help='The host and port for RethinkDB database',
-                        required=True)
-    parser.add_argument('--rethinkdb-db',
-                        help='The name of the database',
-                        required=True)
-    parser.add_argument('--debug',
-                        help='Option to run Sanic in debug mode',
-                        default=True)
-    parser.add_argument('--key-file',
-                        help='Path to the pyfile containing the API secret key',
-                        required=True)
+TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, os.path.join(TOP_DIR, 'server'))
 
-    return parser.parse_args(args)
-
-LOGGER = logging.getLogger(__name__)
-app = Sanic(__name__)
-
-app.blueprint(auth_bp)
-app.blueprint(blocks_bp)
-app.blueprint(errors_bp)
-app.blueprint(proposals_bp)
-app.blueprint(roles_bp)
-app.blueprint(tasks_bp)
-app.blueprint(users_bp)
-
-@app.listener('before_server_start')
-async def db_setup(app, loop):
-    app.db = await db_utils.setup_db(
-        app.config.DB_HOST, app.config.DB_PORT, app.config.DB_NAME)
+from api.main import main
 
 if __name__ == "__main__":
-    try:
-        opts = parse_args(sys.argv[1:])
-        try:
-            app.config.HOST, app.config.PORT = opts.bind[0].split(':')
-        except ValueError as e:
-            print("Unable to parse API binding {}: Must be in the format"
-                  " host:port".format(opts.bind))
-            sys.exit(1)
-        try:
-            app.config.DB_HOST, app.config.DB_PORT = opts.rethinkdb_bind.split(':')
-        except ValueError as e:
-            print("Unable to parse DB binding {}: Must be in the format"
-                  " host:port".format(opts.rethinkdb_bind))
-            sys.exit(1)
-
-        # Load API secret key
-        app.config.from_pyfile(opts.key_file)
-
-        app.config.DB_NAME = opts.rethinkdb_db
-        app.config.DEBUG = opts.debug
-        app.config.KEEP_ALIVE = False
-
-        app.run(host=app.config.HOST, port=app.config.PORT, debug=app.config.DEBUG)
-    except Exception as e:
-        LOGGER.exception(e)
-        sys.exit(1)
+    main()

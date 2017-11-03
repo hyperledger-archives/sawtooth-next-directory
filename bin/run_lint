@@ -35,6 +35,10 @@ ret_val=0
 lint addressing/rbac_addressing || ret_val=1
 
 export PYTHONPATH=$TOP_DIR/addressing
-lint processor || ret_val=1
+lint processor/rbac_processor || ret_val=1
+lint server/db || ret_val=1
+
+export PYTHONPATH=$TOP_DIR/server
+lint server/api || ret_val=1
 
 exit $ret_val

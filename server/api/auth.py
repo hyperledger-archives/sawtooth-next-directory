@@ -20,46 +20,49 @@ from itsdangerous import BadSignature
 from sanic import Blueprint
 from sanic.response import json
 
-from api.errors import BadRequest, Unauthorized
+from api.errors import ApiBadRequest, ApiUnauthorized
 
 
-auth_bp = Blueprint('auth')
+AUTH_BP = Blueprint('auth')
+
 
 def authorized():
-    def decorator(f):
-        @wraps(f)
+    def decorator(func):
+        @wraps(func)
         async def decorated_function(request, *args, **kwargs):
-            if request.token == None:
-                raise Unauthorized("Unauthorized: No bearer token provided")
+            if request.token is None:
+                raise ApiUnauthorized("Unauthorized: No bearer token provided")
             is_authorized = await validate_apikey(
                 request.token, request.app.config.SECRET_KEY)
             if is_authorized:
-                response = await f(request, *args, **kwargs)
+                response = await func(request, *args, **kwargs)
                 return response
             else:
-                raise Unauthorized("Unauthorized: Invalid bearer token")
+                raise ApiUnauthorized("Unauthorized: Invalid bearer token")
         return decorated_function
     return decorator
 
+
 async def generate_apikey(user_id, secret_key):
-    s = Serializer(secret_key)
-    return s.dumps({'id': user_id})
+    serializer = Serializer(secret_key)
+    return serializer.dumps({'id': user_id})
+
 
 async def validate_apikey(token, secret_key):
-    s = Serializer(secret_key)
+    serializer = Serializer(secret_key)
     try:
-        s.loads(token)
+        serializer.loads(token)
     except BadSignature:
         return False
     return True
 
-@auth_bp.post('api/authorization')
+
+@AUTH_BP.post('api/authorization')
 async def get_apikey(request):
-    # TODO: check that the id/pw are in the db
     try:
         user_id = request.json.get('id')
-    except Exception as e:
-        raise BadRequest("Bad Request: Improper JSON format")
+    except Exception:
+        raise ApiBadRequest("Bad Request: Improper JSON format")
     token = await generate_apikey(user_id, request.app.config.SECRET_KEY)
     return json(
         {

@@ -15,23 +15,26 @@
 
 from sanic import Blueprint
 
-from api.errors import NotImplemented
+from api.errors import ApiNotImplemented
 from api.auth import authorized
 
 
-blocks_bp = Blueprint('blocks')
+BLOCKS_BP = Blueprint('blocks')
 
-@blocks_bp.get('api/blocks')
+
+@BLOCKS_BP.get('api/blocks')
 @authorized()
 async def get_all_blocks(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@blocks_bp.get('api/blocks/latest')
+
+@BLOCKS_BP.get('api/blocks/latest')
 @authorized()
 async def get_latest_block(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@blocks_bp.get('api/blocks/<id>')
+
+@BLOCKS_BP.get('api/blocks/<block_id>')
 @authorized()
-async def get_block(request, id):
-    raise NotImplemented()
+async def get_block(request, block_id):
+    raise ApiNotImplemented()

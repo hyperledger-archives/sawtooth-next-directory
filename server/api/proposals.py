@@ -15,23 +15,26 @@
 
 from sanic import Blueprint
 
-from api.errors import NotImplemented
+from api.errors import ApiNotImplemented
 from api.auth import authorized
 
 
-proposals_bp = Blueprint('proposals')
+PROPOSALS_BP = Blueprint('proposals')
 
-@proposals_bp.get('api/proposals')
+
+@PROPOSALS_BP.get('api/proposals')
 @authorized()
 async def fetch_all_proposals(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@proposals_bp.get('api/proposals/<id>')
-@authorized()
-async def fetch_proposal(request, id):
-    raise NotImplemented()
 
-@proposals_bp.patch('api/proposals/<id>')
+@PROPOSALS_BP.get('api/proposals/<proposal_id>')
 @authorized()
-async def update_proposal(request, id):
-    raise NotImplemented()
+async def fetch_proposal(request, proposal_id):
+    raise ApiNotImplemented()
+
+
+@PROPOSALS_BP.patch('api/proposals/<proposal_id>')
+@authorized()
+async def update_proposal(request, proposal_id):
+    raise ApiNotImplemented()

@@ -15,37 +15,43 @@
 
 from sanic import Blueprint
 
-from api.errors import NotImplemented
+from api.errors import ApiNotImplemented
 from api.auth import authorized
 
 
-users_bp = Blueprint('users')
+USERS_BP = Blueprint('users')
 
-@users_bp.get('api/users')
+
+@USERS_BP.get('api/users')
 @authorized()
 async def get_all_users(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@users_bp.post('api/users')
+
+@USERS_BP.post('api/users')
 async def create_new_user(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@users_bp.get('api/users/<id>')
-@authorized()
-async def fetch_user(request, id):
-    raise NotImplemented()
 
-@users_bp.patch('api/users/<id>')
+@USERS_BP.get('api/users/<user_id>')
 @authorized()
-async def update_user(request, id):
-    raise NotImplemented()
+async def fetch_user(request, user_id):
+    raise ApiNotImplemented()
 
-@users_bp.put('api/users/<id>/manager')
-@authorized()
-async def update_manager(request, id):
-    raise NotImplemented()
 
-@users_bp.get('api/users/<id>/proposals/open')
+@USERS_BP.patch('api/users/<user_id>')
 @authorized()
-async def fetch_open_proposals(request, id):
-    raise NotImplemented()
+async def update_user(request, user_id):
+    raise ApiNotImplemented()
+
+
+@USERS_BP.put('api/users/<user_id>/manager')
+@authorized()
+async def update_manager(request, user_id):
+    raise ApiNotImplemented()
+
+
+@USERS_BP.get('api/users/<user_id>/proposals/open')
+@authorized()
+async def fetch_open_proposals(request, user_id):
+    raise ApiNotImplemented()
