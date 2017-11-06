@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+# Copyright 2017 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+import sys
+import argparse
+
+import rethinkdb as r
+from rethinkdb.errors import RqlRuntimeError
+
+
+def parse_args(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--host',
+                        help='The host for the database',
+                        default='localhost')
+    parser.add_argument('--port',
+                        help='The port for the database',
+                        default='28015')
+    parser.add_argument('--name',
+                        help='The name of the database',
+                        default='rbac')
+    return parser.parse_args(args)
+
+
+def setup_db(host, port, name):
+    conn = r.connect(host=host, port=port)
+    print('Connection opened')
+    try:
+        print('Creating database:', name)
+        r.db_create(name).run(conn)
+
+        print('Creating table: auth')
+        r.db(name).table_create('auth', primary_key='user_id').run(conn)
+
+        print('Creating table: blocks')
+        r.db(name).table_create('blocks', primary_key='block_num').run(conn)
+        r.db(name).table('blocks').index_create('block_id').run(conn)
+
+        print('Creating table: users')
+        r.db(name).table_create('users').run(conn)
+        r.db(name).table('users').index_create('user_id').run(conn)
+
+        print('Creating table: proposals')
+        r.db(name).table_create('proposals').run(conn)
+        r.db(name).table('proposals').index_create('proposal_id').run(conn)
+        r.db(name).table('proposals').index_create('target_id').run(conn)
+
+        print('Creating table and sub-tables: tasks')
+        task_tables = r.expr(['tasks', 'task_admins', 'task_owners'])
+        task_tables.for_each(r.db(name).table_create(r.row)).run(conn)
+        task_tables.for_each(r.db(name).table(r.row).index_create('task_id')).run(conn)
+
+        print('Creating table and sub-tables: roles')
+        role_tables = r.expr(['roles', 'role_admins', 'role_members', 'role_owners', 'role_tasks'])
+        role_tables.for_each(r.db(name).table_create(r.row)).run(conn)
+        role_tables.for_each(r.db(name).table(r.row).index_create('role_id')).run(conn)
+
+    except RqlRuntimeError:
+        print('Database already exists:', name)
+
+    finally:
+        conn.close()
+        print('Connection closed')
+
+
+if __name__ == '__main__':
+    opts = parse_args(sys.argv[1:])
+    setup_db(opts.host, opts.port, opts.name)

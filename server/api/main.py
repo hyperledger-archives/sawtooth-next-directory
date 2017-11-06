@@ -38,7 +38,7 @@ DEFAULT_CONFIG = {
     'PORT': 8000,
     'DB_HOST': 'localhost',
     'DB_PORT': 28015,
-    'DB_NAME': 'rbac_db',
+    'DB_NAME': 'rbac',
     'DEBUG': True,
     'KEEP_ALIVE': False,
     'SECRET_KEY': None
