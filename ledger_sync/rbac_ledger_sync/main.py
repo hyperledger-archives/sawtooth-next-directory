@@ -17,6 +17,8 @@ import sys
 import argparse
 import logging
 
+from rbac_ledger_sync.subscriber import Subscriber
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +29,9 @@ def parse_args(args):
                         action='count',
                         default=0,
                         help='Increase level of output sent to stderr')
+    parser.add_argument('--validator',
+                        help='The url of the validator to sync with',
+                        default='tcp://localhost:4004')
     return parser.parse_args(args)
 
 
@@ -48,9 +53,20 @@ def main():
 
         LOGGER.info('Starting Ledger Sync...')
 
+        subscriber = Subscriber(opts.validator)
+        subscriber.start()
+
     except KeyboardInterrupt:
         sys.exit(0)
 
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(err)
         sys.exit(1)
+
+    finally:
+        try:
+            subscriber.stop()
+        except UnboundLocalError:
+            pass
+
+        LOGGER.info('Ledger Sync shut down successfully')
