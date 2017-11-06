@@ -15,68 +15,80 @@
 
 from sanic import Blueprint
 
-from api.errors import NotImplemented
+from api.errors import ApiNotImplemented
 from api.auth import authorized
 
 
-roles_bp = Blueprint('roles')
+ROLES_BP = Blueprint('roles')
 
-@roles_bp.get('api/roles')
+
+@ROLES_BP.get('api/roles')
 @authorized()
 async def fetch_all_roles(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@roles_bp.post('api/roles')
+
+@ROLES_BP.post('api/roles')
 @authorized()
 async def create_new_role(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@roles_bp.get('api/roles/<id>')
-@authorized()
-async def fetch_role(request, id):
-    raise NotImplemented()
 
-@roles_bp.patch('api/roles/<id>')
+@ROLES_BP.get('api/roles/<role_id>')
 @authorized()
-async def update_role(request, id):
-    raise NotImplemented()
+async def fetch_role(request, role_id):
+    raise ApiNotImplemented()
 
-@roles_bp.post('api/roles/<id>/admins')
-@authorized()
-async def add_role_admin(request, id):
-    raise NotImplemented()
 
-@roles_bp.delete('api/role/<id>/admins')
+@ROLES_BP.patch('api/roles/<role_id>')
 @authorized()
-async def delete_role_admin(request, id):
-    raise NotImplemented()
+async def update_role(request, role_id):
+    raise ApiNotImplemented()
 
-@roles_bp.post('api/roles/<id>/members')
-@authorized()
-async def add_role_member(request, id):
-    raise NotImplemented()
 
-@roles_bp.delete('api/role/<id>/members')
+@ROLES_BP.post('api/roles/<role_id>/admins')
 @authorized()
-async def delete_role_member(request, id):
-    raise NotImplemented()
+async def add_role_admin(request, role_id):
+    raise ApiNotImplemented()
 
-@roles_bp.post('api/roles/<id>/owners')
-@authorized()
-async def add_role_owner(request, id):
-    raise NotImplemented()
 
-@roles_bp.delete('api/role/<id>/owners')
+@ROLES_BP.delete('api/role/<role_id>/admins')
 @authorized()
-async def delete_role_owner(request, id):
-    raise NotImplemented()
+async def delete_role_admin(request, role_id):
+    raise ApiNotImplemented()
 
-@roles_bp.post('api/roles/<id>/tasks')
-@authorized()
-async def add_role_task(request, id):
-    raise NotImplemented()
 
-@roles_bp.delete('api/roles/<id>/tasks')
+@ROLES_BP.post('api/roles/<role_id>/members')
 @authorized()
-async def delete_role_task(request, id):
-    raise NotImplemented()
+async def add_role_member(request, role_id):
+    raise ApiNotImplemented()
+
+
+@ROLES_BP.delete('api/role/<role_id>/members')
+@authorized()
+async def delete_role_member(request, role_id):
+    raise ApiNotImplemented()
+
+
+@ROLES_BP.post('api/roles/<role_id>/owners')
+@authorized()
+async def add_role_owner(request, role_id):
+    raise ApiNotImplemented()
+
+
+@ROLES_BP.delete('api/role/<role_id>/owners')
+@authorized()
+async def delete_role_owner(request, role_id):
+    raise ApiNotImplemented()
+
+
+@ROLES_BP.post('api/roles/<role_id>/tasks')
+@authorized()
+async def add_role_task(request, role_id):
+    raise ApiNotImplemented()
+
+
+@ROLES_BP.delete('api/roles/<role_id>/tasks')
+@authorized()
+async def delete_role_task(request, role_id):
+    raise ApiNotImplemented()

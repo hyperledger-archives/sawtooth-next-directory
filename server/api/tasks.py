@@ -15,48 +15,56 @@
 
 from sanic import Blueprint
 
-from api.errors import NotImplemented
+from api.errors import ApiNotImplemented
 from api.auth import authorized
 
 
-tasks_bp = Blueprint('tasks')
+TASKS_BP = Blueprint('tasks')
 
-@tasks_bp.get('api/tasks')
+
+@TASKS_BP.get('api/tasks')
 @authorized()
 async def fetch_all_tasks(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@tasks_bp.post('api/tasks')
+
+@TASKS_BP.post('api/tasks')
 @authorized()
 async def create_new_task(request):
-    raise NotImplemented()
+    raise ApiNotImplemented()
 
-@tasks_bp.get('api/tasks/<id>')
-@authorized()
-async def fetch_task(request, id):
-    raise NotImplemented()
 
-@tasks_bp.patch('api/tasks/<id>')
+@TASKS_BP.get('api/tasks/<task_id>')
 @authorized()
-async def update_task(request, id):
-    raise NotImplemented()
+async def fetch_task(request, task_id):
+    raise ApiNotImplemented()
 
-@tasks_bp.post('api/tasks/<id>/admins')
-@authorized()
-async def add_task_admin(request, id):
-    raise NotImplemented()
 
-@tasks_bp.delete('api/tasks/<id>/admins')
+@TASKS_BP.patch('api/tasks/<task_id>')
 @authorized()
-async def remove_task_admin(request, id):
-    raise NotImplemented()
+async def update_task(request, task_id):
+    raise ApiNotImplemented()
 
-@tasks_bp.post('api/tasks/<id>/owners')
-@authorized()
-async def add_task_owner(request, id):
-    raise NotImplemented()
 
-@tasks_bp.delete('api/tasks/<id>/owners')
+@TASKS_BP.post('api/tasks/<task_id>/admins')
 @authorized()
-async def remove_task_owner(request, id):
-    raise NotImplemented()
+async def add_task_admin(request, task_id):
+    raise ApiNotImplemented()
+
+
+@TASKS_BP.delete('api/tasks/<task_id>/admins')
+@authorized()
+async def remove_task_admin(request, task_id):
+    raise ApiNotImplemented()
+
+
+@TASKS_BP.post('api/tasks/<task_id>/owners')
+@authorized()
+async def add_task_owner(request, task_id):
+    raise ApiNotImplemented()
+
+
+@TASKS_BP.delete('api/tasks/<task_id>/owners')
+@authorized()
+async def remove_task_owner(request, task_id):
+    raise ApiNotImplemented()

@@ -14,7 +14,7 @@
 # ------------------------------------------------------------------------------
 
 import rethinkdb as r
-from rethinkdb.errors import RqlRuntimeError, RqlDriverError
+from rethinkdb.errors import RqlRuntimeError
 
 
 async def setup_db(host, port, name):
@@ -29,6 +29,6 @@ async def setup_db(host, port, name):
             'proposals', 'auth', 'users', 'blocks'
         ]).for_each(r.db(name).table_create(r.row)).run(connection)
     except RqlRuntimeError:
-        print ('Database already exists.')
+        print('Database already exists.')
     finally:
         await connection.close()

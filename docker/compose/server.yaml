@@ -24,14 +24,7 @@ services:
       - "8005:8000"
     depends_on:
       - rethink
-    command: "bash -c \"\
-      sleep 1 && \
-      ./bin/rbac-server \
-        --bind server:8000 \
-        --rethinkdb-bind rethink:28015
-        --rethinkdb-db 'rbac_db' \
-        --key-file '/project/tmobile-rbac/config.py' \
-    \""
+    command: bash -c "sleep 1 && ./bin/rbac-server"
 
   rethink:
     image: rethinkdb:latest

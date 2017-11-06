@@ -26,7 +26,7 @@ RUN echo "deb http://repo.sawtooth.me/ubuntu/ci xenial universe" >> /etc/apt/sou
         python3-pip \
         python3-sawtooth-sdk
 
-RUN pip3 install pylint pycodestyle
+RUN pip3 install pylint pycodestyle sanic itsdangerous rethinkdb
 
 RUN mkdir -p /project/tmobile-rbac
 
