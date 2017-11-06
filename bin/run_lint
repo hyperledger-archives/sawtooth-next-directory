@@ -40,6 +40,7 @@ lint transaction_creation || ret_val=1
 export PYTHONPATH=$TOP_DIR/addressing
 lint processor/rbac_processor || ret_val=1
 lint server/db || ret_val=1
+lint ledger_sync/rbac_ledger_sync || ret_val=1
 
 export PYTHONPATH=$TOP_DIR/server:$TOP_DIR/transaction_creation
 lint server/api || ret_val=1
