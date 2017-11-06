@@ -14,7 +14,6 @@
 # -----------------------------------------------------------------------------
 
 from base64 import b64decode
-import hashlib
 import logging
 import time
 import unittest
@@ -24,15 +23,13 @@ from urllib.error import HTTPError
 from urllib.error import URLError
 
 from sawtooth_cli.rest_client import RestClient
-from sawtooth_cli.protobuf import batch_pb2
-from sawtooth_cli.protobuf import transaction_pb2
 
 import sawtooth_signing as signing
 
 from rbac_addressing import addresser
-from rbac_processor.protobuf import rbac_payload_pb2
-from rbac_processor.protobuf import user_state_pb2
-from rbac_processor.protobuf import user_transaction_pb2
+from rbac_transaction_creation.protobuf import user_state_pb2
+from rbac_transaction_creation.common import Key
+from rbac_transaction_creation.user_transaction_creation import create_user
 
 
 LOGGER = logging.getLogger(__name__)
@@ -40,6 +37,9 @@ LOGGER = logging.getLogger(__name__)
 
 BATCHER_PRIVATE_KEY = signing.generate_privkey()
 BATCHER_PUBLIC_KEY = signing.generate_pubkey(BATCHER_PRIVATE_KEY)
+
+BATCHER_KEY = Key(public_key=BATCHER_PUBLIC_KEY,
+                  private_key=BATCHER_PRIVATE_KEY)
 
 
 def wait_until_status(url, status_code=200, tries=5):
@@ -230,8 +230,10 @@ class RBACClient(object):
 
     def create_user(self, key, user_name, user_id, manager_ids=None):
         batch_list, signature = create_user(key,
+                                            BATCHER_KEY,
                                             user_name,
                                             user_id,
+                                            uuid4().hex,
                                             manager_ids)
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
@@ -243,85 +245,3 @@ def make_key_and_user_name():
 
     key = Key(public_key=pubkey, private_key=private_key)
     return key, uuid4().hex
-
-
-class Key(object):
-
-    def __init__(self, public_key, private_key):
-        self._public_key = public_key
-        self._private_key = private_key
-
-    @property
-    def public_key(self):
-        return self._public_key
-
-    @property
-    def private_key(self):
-        return self._private_key
-
-
-def create_user(key, user_name, user_id, manager_ids=None):
-    create_user_payload = user_transaction_pb2.CreateUser(
-        name=user_name,
-        user_id=user_id)
-    inputs = [addresser.make_user_address(user_id=user_id)]
-    outputs = [addresser.make_user_address(user_id=user_id)]
-    if manager_ids:
-        create_user_payload.manager_id = manager_ids[0]
-        inputs.extend(
-            [addresser.make_user_address(user_id=manager_id)
-             for manager_id in manager_ids])
-        outputs.extend(
-            [addresser.make_user_address(user_id=manager_id)
-             for manager_id in manager_ids])
-
-    rbac_payload = rbac_payload_pb2.RBACPayload(
-        content=create_user_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CREATE_USER)
-
-    header = make_header(
-        inputs=inputs,
-        outputs=outputs,
-        payload_sha512=hashlib.sha512(rbac_payload.SerializeToString()).hexdigest(),
-        signer_pubkey=key.public_key)
-
-    return wrap_payload_in_txn_batch(
-        key=key,
-        payload=rbac_payload.SerializeToString(),
-        header=header.SerializeToString())
-
-
-def wrap_payload_in_txn_batch(key, payload, header):
-
-    transaction = transaction_pb2.Transaction(
-        payload=payload,
-        header=header,
-        header_signature=signing.sign(header, key.private_key))
-
-    batch_header = batch_pb2.BatchHeader(
-        signer_pubkey=BATCHER_PUBLIC_KEY,
-        transaction_ids=[transaction.header_signature]).SerializeToString()
-
-    batch = batch_pb2.Batch(
-        header=batch_header,
-        header_signature=signing.sign(batch_header, BATCHER_PRIVATE_KEY),
-        transactions=[transaction])
-
-    batch_list = batch_pb2.BatchList(
-        batches=[batch])
-    return batch_list, batch.header_signature
-
-
-def make_header(inputs, outputs, payload_sha512, signer_pubkey):
-    header = transaction_pb2.TransactionHeader(
-        inputs=inputs,
-        outputs=outputs,
-        batcher_pubkey=BATCHER_PUBLIC_KEY,
-        dependencies=[],
-        family_name='rbac',
-        family_version='1.0',
-        nonce=uuid4().hex,
-        payload_encoding='application/protobuf',
-        signer_pubkey=signer_pubkey,
-        payload_sha512=payload_sha512)
-    return header

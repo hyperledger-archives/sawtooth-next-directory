@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2017 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,34 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-set -e
-
-TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
-
-
-lint() {
-
-    files="`find $1 -name \*.py | grep -v protobuf`"
-    echo "$1"
-    pycodestyle $files || error=1
-    python3 -m pylint --rcfile .pylintrc $files || error=1
-    return $error
-
-}
-
-ret_val=0
-
-lint addressing/rbac_addressing || ret_val=1
-
-export PYTHONPATH=$TOP_DIR/addressing
-lint transaction_creation || ret_val=1
-
-export PYTHONPATH=$TOP_DIR/addressing
-lint processor/rbac_processor || ret_val=1
-lint server/db || ret_val=1
-
-export PYTHONPATH=$TOP_DIR/server
-lint server/api || ret_val=1
-
-exit $ret_val

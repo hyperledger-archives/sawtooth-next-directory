@@ -28,7 +28,7 @@ def make_protobuf(path, pkg_name):
     OUT_DIR = os.path.join(TOP_DIR, path, pkg_name)
     os.makedirs(OUT_DIR, exist_ok=True)
 
-    init_py = os.path.join(OUT_DIR, '__inif__.py')
+    init_py = os.path.join(OUT_DIR, '__init__.py')
 
     if not os.path.exists(init_py):
         with open(init_py, mode='w'):
@@ -43,5 +43,6 @@ def make_protobuf(path, pkg_name):
 if __name__ == '__main__':
 
     make_protobuf('processor/rbac_processor', 'protobuf')
+    make_protobuf('transaction_creation/rbac_transaction_creation', 'protobuf')
     make_protobuf('server/api', 'protobuf')
     make_protobuf('server/db', 'protobuf')

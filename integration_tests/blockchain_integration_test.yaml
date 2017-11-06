@@ -57,5 +57,5 @@ services:
       - '../:/project/tmobile-rbac'
     command: python3 -m unittest integration_tests/tests/blockchain_integration_test.py
     environment:
-      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/processor
+      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
 
