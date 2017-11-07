@@ -17,7 +17,9 @@ import sys
 import argparse
 import logging
 
+from rbac_ledger_sync.database import Database
 from rbac_ledger_sync.subscriber import Subscriber
+from rbac_ledger_sync.deltas.handlers import get_delta_handler
 
 
 LOGGER = logging.getLogger(__name__)
@@ -32,6 +34,15 @@ def parse_args(args):
     parser.add_argument('--validator',
                         help='The url of the validator to sync with',
                         default='tcp://localhost:4004')
+    parser.add_argument('--db-host',
+                        help='The host of the database to connect to',
+                        default='localhost')
+    parser.add_argument('--db-port',
+                        help='The port of the database to connect to',
+                        default='28015')
+    parser.add_argument('--db-name',
+                        help='The name of the database to use',
+                        default='rbac')
     return parser.parse_args(args)
 
 
@@ -53,7 +64,11 @@ def main():
 
         LOGGER.info('Starting Ledger Sync...')
 
+        database = Database(opts.db_host, opts.db_port, opts.db_name)
+        database.connect()
+
         subscriber = Subscriber(opts.validator)
+        subscriber.add_handler(get_delta_handler(database))
         subscriber.start()
 
     except KeyboardInterrupt:
@@ -66,6 +81,11 @@ def main():
     finally:
         try:
             subscriber.stop()
+        except UnboundLocalError:
+            pass
+
+        try:
+            database.disconnect()
         except UnboundLocalError:
             pass
 
