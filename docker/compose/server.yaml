@@ -24,7 +24,7 @@ services:
       - "8005:8000"
     depends_on:
       - rethink
-    command: bash -c "sleep 1 && ./bin/rbac-server"
+    command: bash -c "sleep 1 && ./bin/rbac-server --db-host rethink"
 
   rethink:
     image: rethinkdb:latest
