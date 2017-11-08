@@ -18,6 +18,7 @@ from sawtooth_sdk.protobuf.transaction_pb2 import TransactionHeader
 from rbac_addressing import addresser
 
 from rbac_processor.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac_processor.role.role_apply import apply_create_role
 from rbac_processor.user.user_apply import apply_create_user
 
 
@@ -107,3 +108,6 @@ class RBACTransactionHandler(object):
 def apply_create(header, payload, state):
     if payload.message_type == RBACPayload.CREATE_USER:
         apply_create_user(header, payload, state)
+
+    elif payload.message_type == RBACPayload.CREATE_ROLE:
+        apply_create_role(header, payload, state)
