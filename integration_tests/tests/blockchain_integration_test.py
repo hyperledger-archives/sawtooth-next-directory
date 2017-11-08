@@ -30,6 +30,7 @@ from rbac_addressing import addresser
 from rbac_transaction_creation.protobuf import user_state_pb2
 from rbac_transaction_creation.common import Key
 from rbac_transaction_creation.user_transaction_creation import create_user
+from rbac_transaction_creation.role_transaction_creation import create_role
 
 
 LOGGER = logging.getLogger(__name__)
@@ -95,7 +96,19 @@ def wait_for_rest_apis(endpoints, tries=5):
 
 class TestBlockchain(unittest.TestCase):
 
-    def test_blockchain(self):
+    @classmethod
+    def setUpClass(cls):
+        cls.client = RBACClient('http://rest-api:8080')
+        cls.key1, cls.user1 = make_key_and_name()
+        cls.key2a, cls.user2a = make_key_and_name()
+        cls.key3a, cls.user3a = make_key_and_name()
+        cls.key2b, cls.user2b = make_key_and_name()
+        cls.key_invalid, cls.user_invalid = make_key_and_name()
+        cls.key3b, cls.user3b = make_key_and_name()
+
+        cls.role_id1 = uuid4().hex
+
+    def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
         are applied correctly.
 
@@ -121,97 +134,143 @@ class TestBlockchain(unittest.TestCase):
 
         wait_for_rest_apis(['rest-api:8080'])
 
-        key1, user1 = make_key_and_user_name()
-
-        client = RBACClient('http://rest-api:8080')
         self.assertEqual(
-            client.create_user(
-                key=key1,
-                user_name=user1,
-                user_id=key1.public_key)[0]['status'],
+            self.client.create_user(
+                key=self.key1,
+                user_name=self.user1,
+                user_id=self.key1.public_key)[0]['status'],
             'COMMITTED')
 
-        key2a, user2a = make_key_and_user_name()
-
         self.assertEqual(
-            client.create_user(
-                key=key1,
-                user_name=user2a,
-                user_id=key2a.public_key,
-                manager_ids=[key1.public_key])[0]['status'],
+            self.client.create_user(
+                key=self.key1,
+                user_name=self.user2a,
+                user_id=self.key2a.public_key,
+                manager_ids=[self.key1.public_key])[0]['status'],
             'COMMITTED')
 
-        key3a, user3a = make_key_and_user_name()
-
-        key2b, user2b = make_key_and_user_name()
-
         self.assertEqual(
-            client.create_user(
-                key=key3a,
-                user_name=user2b,
-                user_id=key2b.public_key,
-                manager_ids=[key3a.public_key])[0]['status'],
+            self.client.create_user(
+                key=self.key3a,
+                user_name=self.user2b,
+                user_id=self.key2b.public_key,
+                manager_ids=[self.key3a.public_key])[0]['status'],
             'INVALID',
             "The transaction is invalid because the public key given for "
             "the manager does not exist in state.")
 
         self.assertEqual(
-            client.create_user(
-                key=key2a,
-                user_name=user1,
-                user_id=key1.public_key,
-                manager_ids=[key2a.public_key, key1.public_key])[0]['status'],
+            self.client.create_user(
+                key=self.key2a,
+                user_name=self.user1,
+                user_id=self.key2a.public_key,
+                manager_ids=[self.key1.public_key])[0]['status'],
             'INVALID',
             "The transaction is invalid because the User already exists.")
 
         self.assertEqual(
-            client.create_user(
-                key=key2a,
-                user_name=user2b,
-                user_id=key2b.public_key,
-                manager_ids=[key3a.public_key])[0]['status'],
+            self.client.create_user(
+                key=self.key2a,
+                user_name=self.user2b,
+                user_id=self.key2b.public_key,
+                manager_ids=[self.key1.public_key])[0]['status'],
             'INVALID',
             "The signing key does not belong to the user or manager.")
 
-        key_invalid, user_invalid = make_key_and_user_name()
-
         self.assertEqual(
-            client.create_user(
-                key=key_invalid,
-                user_name=user_invalid[:4],
-                user_id=key_invalid.public_key,
+            self.client.create_user(
+                key=self.key_invalid,
+                user_name=self.user_invalid[:4],
+                user_id=self.key_invalid.public_key,
                 manager_ids=None)[0]['status'],
             'INVALID',
             "The User's name must be at least 5 characters long.")
 
         self.assertEqual(
-            client.create_user(
-                key=key2a,
-                user_name=user3a,
-                user_id=key3a.public_key,
-                manager_ids=[key2a.public_key, key1.public_key])[0]['status'],
+            self.client.create_user(
+                key=self.key2a,
+                user_name=self.user3a,
+                user_id=self.key3a.public_key,
+                manager_ids=[self.key2a.public_key, self.key1.public_key])[0]['status'],
             'COMMITTED')
 
         self.assertEqual(
-            client.create_user(
-                key=key1,
-                user_name=user2b,
-                user_id=key2b.public_key,
-                manager_ids=[key1.public_key])[0]['status'],
+            self.client.create_user(
+                key=self.key1,
+                user_name=self.user2b,
+                user_id=self.key2b.public_key,
+                manager_ids=[self.key1.public_key])[0]['status'],
             'COMMITTED')
-
-        key3b, user3b = make_key_and_user_name()
 
         self.assertEqual(
-            client.create_user(
-                key=key3b,
-                user_name=user3b,
-                user_id=key3b.public_key,
-                manager_ids=[key2b.public_key, key1.public_key])[0]['status'],
+            self.client.create_user(
+                key=self.key3b,
+                user_name=self.user3b,
+                user_id=self.key3b.public_key,
+                manager_ids=[self.key2b.public_key, self.key1.public_key])[0]['status'],
             'COMMITTED')
 
-        state_items = client.return_state()
+        state_items = self.client.return_state()
         self.assertEqual(len(state_items), 5, "There are 5 users in state.")
+
+    def test_01_create_roles(self):
+        """Tests that the CreateRole validation rules are correct.
+
+        Notes:
+            Role:
+                CreateRole Validation rules
+                    - There isn't already a Role with the same id
+                    - The Admins listed are Users.
+
+                Role1
+                    - Admins
+                        - user1
+                        - user2a
+                    - Owners
+                        - user2b
+                    - Members
+                        - user3a
+                        - user3b
+
+        """
+
+        _, role1 = make_key_and_name()
+        metadata = uuid4().hex
+
+        self.assertEqual(
+            self.client.create_role(
+                key=self.key1,
+                role_name=role1,
+                role_id=self.role_id1,
+                metadata=metadata,
+                admins=[self.key1.public_key, self.key2a.public_key])[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.create_role(
+                key=self.key1,
+                role_name=role1,
+                role_id=self.role_id1,
+                metadata=metadata,
+                admins=[self.key2a.public_key])[0]['status'],
+            "INVALID",
+            "The Role Id must not already exist.")
+
+        _, role2 = make_key_and_name()
+        role_id2 = uuid4().hex
+
+        self.assertEqual(
+            self.client.create_role(
+                key=self.key1,
+                role_name=role2,
+                role_id=role_id2,
+                metadata=metadata,
+                admins=[self.key_invalid.public_key, self.key2b.public_key])[0]['status'],
+            "INVALID",
+            "All Admins listed must be Users")
+
+
+
 
 
 class RBACClient(object):
@@ -238,8 +297,18 @@ class RBACClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
+    def create_role(self, key, role_name, role_id, metadata, admins):
+        batch_list, signature = create_role(txn_key=key,
+                                            batch_key=BATCHER_KEY,
+                                            role_name=role_name,
+                                            role_id=role_id,
+                                            metadata=metadata,
+                                            admins=admins)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
 
-def make_key_and_user_name():
+
+def make_key_and_name():
     private_key = signing.generate_privkey()
     pubkey = signing.generate_pubkey(private_key)
 
