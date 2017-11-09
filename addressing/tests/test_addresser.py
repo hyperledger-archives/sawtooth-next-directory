@@ -226,7 +226,6 @@ class TestAddresser(unittest.TestCase):
         """
 
         proposal_address = addresser.make_proposal_address(
-            proposal_id=uuid4().hex,
             object_id=uuid4().hex,
             related_id=uuid4().hex)
 

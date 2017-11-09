@@ -232,9 +232,9 @@ def make_user_address(user_id):
            sha512(user_id.encode()).hexdigest()[:62]
 
 
-def make_proposal_address(proposal_id, object_id, related_id):
+def make_proposal_address(object_id, related_id):
     return NS + _compress(
-        proposal_id,
+        object_id,
         ProposalNamespace.PROPOSAL_START,
         ProposalNamespace.PROPOSAL_STOP - ProposalNamespace.PROPOSAL_START) + \
            sha512(object_id.encode()).hexdigest()[:31] + \
