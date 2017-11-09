@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import hashlib
 from uuid import uuid4
 
 from sawtooth_rest_api.protobuf import batch_pb2
@@ -54,6 +55,23 @@ def wrap_payload_in_txn_batch(txn_key, payload, header, batch_key):
     batch_list = batch_pb2.BatchList(
         batches=[batch])
     return batch_list, batch.header_signature
+
+
+def make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key):
+
+    header = make_header(
+        inputs=inputs,
+        outputs=outputs,
+        payload_sha512=hashlib.sha512(
+            rbac_payload.SerializeToString()).hexdigest(),
+        signer_pubkey=txn_key.public_key,
+        batcher_pubkey=batch_key.public_key)
+
+    return wrap_payload_in_txn_batch(
+        txn_key=txn_key,
+        payload=rbac_payload.SerializeToString(),
+        header=header.SerializeToString(),
+        batch_key=batch_key)
 
 
 def make_header(inputs,

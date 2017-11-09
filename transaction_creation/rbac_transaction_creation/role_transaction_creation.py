@@ -13,12 +13,9 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import hashlib
-
 from rbac_addressing import addresser
 
-from rbac_transaction_creation.common import make_header
-from rbac_transaction_creation.common import wrap_payload_in_txn_batch
+from rbac_transaction_creation.common import make_header_and_batch
 
 from rbac_transaction_creation.protobuf import rbac_payload_pb2
 from rbac_transaction_creation.protobuf import role_transaction_pb2
@@ -63,16 +60,9 @@ def create_role(txn_key, batch_key, role_name, role_id, metadata, admins):
         content=create_role_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CREATE_ROLE)
 
-    header = make_header(
-        inputs=inputs,
-        outputs=outputs,
-        payload_sha512=hashlib.sha512(
-            rbac_payload.SerializeToString()).hexdigest(),
-        signer_pubkey=txn_key.public_key,
-        batcher_pubkey=batch_key.public_key)
-
-    return wrap_payload_in_txn_batch(
-        txn_key=txn_key,
-        payload=rbac_payload.SerializeToString(),
-        header=header.SerializeToString(),
-        batch_key=batch_key)
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
