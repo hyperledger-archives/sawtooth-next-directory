@@ -13,10 +13,27 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import logging
+
+from api.errors import ApiNotFound
+
 import rethinkdb as r
+from rethinkdb.errors import ReqlCursorEmpty
 
 
-async def create_connection(host, port, name):
-    r.set_loop_type('asyncio')
-    connection = await r.connect(host=host, port=port, db=name)
-    return connection
+LOGGER = logging.getLogger(__name__)
+
+
+async def fetch_user_info_by_id(conn, user_id, head_block_num):
+    cursor = await r.table('users').filter(
+        (head_block_num >= r.row['start_block_num'])
+        & (head_block_num <= r.row['end_block_num'])
+        & (r.row['user_id'] == user_id)
+    ).run(conn, read_mode='single')
+    try:
+        result = await cursor.next()
+    except ReqlCursorEmpty:
+        raise ApiNotFound(
+            "Not Found: No user with the id '{}' exists".format(user_id)
+        )
+    return result

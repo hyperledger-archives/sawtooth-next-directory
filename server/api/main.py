@@ -14,12 +14,22 @@
 # ------------------------------------------------------------------------------
 
 import argparse
+import asyncio
 import logging
 import os
+from signal import signal, SIGINT
 import sys
 
 from sanic import Sanic
 from sanic import Blueprint
+
+from sawtooth_rest_api.messaging import Connection
+
+import sawtooth_signing as signing
+
+from rbac_transaction_creation.common import Key
+
+from zmq.asyncio import ZMQEventLoop
 
 from db import db_utils
 from api.auth import AUTH_BP
@@ -32,26 +42,49 @@ from api.users import USERS_BP
 
 
 LOGGER = logging.getLogger(__name__)
-SETUP_BP = Blueprint('utils')
+APP_BP = Blueprint('utils')
 DEFAULT_CONFIG = {
     'HOST': 'localhost',
     'PORT': 8000,
+    'VALIDATOR_HOST': 'localhost',
+    'VALIDATOR_PORT': 4004,
+    'TIMEOUT': 500,
     'DB_HOST': 'localhost',
     'DB_PORT': 28015,
     'DB_NAME': 'rbac',
     'DEBUG': True,
     'KEEP_ALIVE': False,
-    'SECRET_KEY': None
+    'SECRET_KEY': None,
+    'AES_KEY': None,
+    'BATCHER_PRIVATE_KEY': None
 }
 
 
-@SETUP_BP.listener('before_server_start')
-async def db_setup(app, loop):
-    app.db = await db_utils.setup_db(
+async def open_connections(app):
+    LOGGER.warning('opening database connection')
+    app.config.DB_CONN = await db_utils.create_connection(
         app.config.DB_HOST,
         app.config.DB_PORT,
         app.config.DB_NAME
     )
+
+    validator_url = "{}:{}".format(
+        app.config.VALIDATOR_HOST, app.config.VALIDATOR_PORT
+    )
+    if "tcp://" not in app.config.VALIDATOR_HOST:
+        validator_url = "tcp://" + validator_url
+    app.config.VAL_CONN = Connection(validator_url)
+
+    LOGGER.warning('opening validator connection')
+    app.config.VAL_CONN.open()
+
+
+def close_connections(app):
+    LOGGER.warning('closing database connection')
+    app.config.DB_CONN.close()
+
+    LOGGER.warning('closing validator connection')
+    app.config.VAL_CON.close()
 
 
 def parse_args(args):
@@ -60,6 +93,12 @@ def parse_args(args):
                         help='The host for the api to run on.')
     parser.add_argument('--port',
                         help='The port for the api to run on.')
+    parser.add_argument('--validator-host',
+                        help='The host to connect to a running validator')
+    parser.add_argument('--validator-port',
+                        help='The port to connect to a running validator')
+    parser.add_argument('--timeout',
+                        help='Seconds to wait for a validator response')
     parser.add_argument('--db-host',
                         help='The host for the state database')
     parser.add_argument('--db-port',
@@ -70,23 +109,15 @@ def parse_args(args):
                         help='Option to run Sanic in debug mode')
     parser.add_argument('--secret_key',
                         help='The API secret key')
+    parser.add_argument('--aes-key',
+                        help='The AES key used for private key encryption')
+    parser.add_argument('--batcher-private-key',
+                        help='The sawtooth key used for transaction signing')
     return parser.parse_args(args)
 
 
-def main():
-    app = Sanic(__name__)
-
-    app.blueprint(AUTH_BP)
-    app.blueprint(BLOCKS_BP)
-    app.blueprint(ERRORS_BP)
-    app.blueprint(PROPOSALS_BP)
-    app.blueprint(ROLES_BP)
-    app.blueprint(TASKS_BP)
-    app.blueprint(USERS_BP)
-    app.blueprint(SETUP_BP)
-
+def load_config(app):  # pylint: disable=too-many-branches
     app.config.update(DEFAULT_CONFIG)
-
     config_file_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
         'config.py'
@@ -103,8 +134,13 @@ def main():
         app.config.HOST = opts.host
     if opts.port is not None:
         app.config.PORT = opts.port
-    if opts.debug is not None:
-        app.config.DEBUG = opts.debug
+
+    if opts.validator_host is not None:
+        app.config.VALIDATOR_HOST = opts.validator_host
+    if opts.validator_port is not None:
+        app.config.VALIDATOR_PORT = opts.validator_port
+    if opts.timeout is not None:
+        app.config.TIMEOUT = opts.timeout
 
     if opts.db_host is not None:
         app.config.DB_HOST = opts.db_host
@@ -113,10 +149,59 @@ def main():
     if opts.db_name is not None:
         app.config.DB_NAME = opts.db_name
 
+    if opts.debug is not None:
+        app.config.DEBUG = opts.debug
+
     if opts.secret_key is not None:
         app.config.SECRET_KEY = opts.secret_key
     if app.config.SECRET_KEY is None:
         LOGGER.exception("API secret key was not provided")
         sys.exit(1)
 
-    app.run(host=app.config.HOST, port=app.config.PORT, debug=app.config.DEBUG)
+    if opts.aes_key is not None:
+        app.config.AES_KEY = opts.aes_key
+    if app.config.AES_KEY is None:
+        LOGGER.exception("AES key was not provided")
+        sys.exit(1)
+
+    if opts.batcher_private_key is not None:
+        app.config.BATCHER_PRIVATE_KEY = opts.batcher_private_key
+    if app.config.BATCHER_PRIVATE_KEY is None:
+        LOGGER.exception("Batcher private key was not provided")
+        sys.exit(1)
+    batcher_public_key = signing.generate_pubkey(
+        app.config.BATCHER_PRIVATE_KEY, privkey_format='hex'
+    )
+    app.config.BATCHER_KEY_PAIR = Key(
+        batcher_public_key, app.config.BATCHER_PRIVATE_KEY
+    )
+
+
+def main():
+    app = Sanic(__name__)
+
+    app.blueprint(AUTH_BP)
+    app.blueprint(BLOCKS_BP)
+    app.blueprint(ERRORS_BP)
+    app.blueprint(PROPOSALS_BP)
+    app.blueprint(ROLES_BP)
+    app.blueprint(TASKS_BP)
+    app.blueprint(USERS_BP)
+    app.blueprint(APP_BP)
+
+    load_config(app)
+
+    zmq = ZMQEventLoop()
+    asyncio.set_event_loop(zmq)
+    server = app.create_server(
+        host=app.config.HOST, port=app.config.PORT, debug=app.config.DEBUG
+    )
+    loop = asyncio.get_event_loop()
+    asyncio.ensure_future(server)
+    asyncio.ensure_future(open_connections(app))
+    signal(SIGINT, lambda s, f: loop.close())
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        close_connections(app)
+        loop.stop()

@@ -13,10 +13,18 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import logging
+
 import rethinkdb as r
+from rethinkdb import ReqlNonExistenceError
 
 
-async def create_connection(host, port, name):
-    r.set_loop_type('asyncio')
-    connection = await r.connect(host=host, port=port, db=name)
-    return connection
+LOGGER = logging.getLogger(__name__)
+
+
+async def get_latest_block(conn):
+    try:
+        result = await r.table('blocks')['block_num'].max().run(conn)
+    except ReqlNonExistenceError:
+        result = None
+    return result
