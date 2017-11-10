@@ -19,13 +19,15 @@ syntax = "proto3";
 
 message ProposeUpdateUserManager {
 
-    string user_id = 1;
+    string proposal_id = 1;
 
-    string new_manager_id = 2;
+    string user_id = 2;
 
-    string reason = 3;
+    string new_manager_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
