@@ -19,6 +19,7 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from rbac_addressing import addresser
 from rbac_processor.common import get_state_entry
 from rbac_processor.common import is_in_user_container
+from rbac_processor.common import return_user_container
 from rbac_processor.protobuf import user_state_pb2
 from rbac_processor.protobuf import user_transaction_pb2
 from rbac_processor.state import get_state
@@ -65,7 +66,7 @@ def validate_user_state(header, create_user, state):
     if user_entries:
         # this is necessary for state collisions.
         try:
-            user_container = _return_container(user_entries[0])
+            user_container = return_user_container(user_entries[0])
             _index_of_user_in_container(user_container, create_user.user_id)
             raise InvalidTransaction(
                 "User with user_id {} already exists.".format(
@@ -89,7 +90,7 @@ def validate_manager_state(header, create_user, state):
     state_entry = get_state_entry(
         manager_entries,
         addresser.make_user_address(user_id=create_user.manager_id))
-    manager_container = _return_container(state_entry)
+    manager_container = return_user_container(state_entry)
     if not is_in_user_container(manager_container, create_user.manager_id):
         raise InvalidTransaction(
             "user id {} listed as manager is not within the User container "
@@ -112,14 +113,6 @@ def handle_user_state_set(header, create_user, state, manager_id=None):
         [StateEntry(
             address=addresser.make_user_address(create_user.user_id),
             data=user_container.SerializeToString())])
-
-
-def _return_container(entry):
-
-    manager_container = user_state_pb2.UserContainer()
-    manager_container.ParseFromString(entry.data)
-
-    return manager_container
 
 
 def _index_of_user_in_container(container, user_id):

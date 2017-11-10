@@ -13,6 +13,8 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+from rbac_processor.protobuf import user_state_pb2
+
 
 def get_state_entry(state_entries, address):
     """Get a StateEntry by address or raise KeyError if it is not in
@@ -33,6 +35,14 @@ def get_state_entry(state_entries, address):
         if entry.address == address:
             return entry
     raise KeyError("Address {} is not in the state entries".format(address))
+
+
+def return_user_container(entry):
+
+    user_container = user_state_pb2.UserContainer()
+    user_container.ParseFromString(entry.data)
+
+    return user_container
 
 
 def is_in_user_container(container, identifier):
