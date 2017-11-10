@@ -30,12 +30,8 @@ message User {
 
     string name = 2;
 
-    // In order list of manager, manager's manager, etc.
-    repeated string managers = 3;
+    string manager_id = 3;
 
-    // Unordered group of subordinates who have this User in their 'managers'.
-    repeated string subordinates = 4;
-
-    string metadata = 5;
+    string metadata = 4;
 
 }

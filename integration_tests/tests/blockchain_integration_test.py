@@ -146,7 +146,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 user_name=self.user2a,
                 user_id=self.key2a.public_key,
-                manager_ids=[self.key1.public_key])[0]['status'],
+                manager_id=self.key1.public_key)[0]['status'],
             'COMMITTED')
 
         self.assertEqual(
@@ -154,7 +154,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key3a,
                 user_name=self.user2b,
                 user_id=self.key2b.public_key,
-                manager_ids=[self.key3a.public_key])[0]['status'],
+                manager_id=self.key3a.public_key)[0]['status'],
             'INVALID',
             "The transaction is invalid because the public key given for "
             "the manager does not exist in state.")
@@ -164,7 +164,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key2a,
                 user_name=self.user1,
                 user_id=self.key2a.public_key,
-                manager_ids=[self.key1.public_key])[0]['status'],
+                manager_id=self.key1.public_key)[0]['status'],
             'INVALID',
             "The transaction is invalid because the User already exists.")
 
@@ -173,7 +173,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key2a,
                 user_name=self.user2b,
                 user_id=self.key2b.public_key,
-                manager_ids=[self.key1.public_key])[0]['status'],
+                manager_id=self.key1.public_key)[0]['status'],
             'INVALID',
             "The signing key does not belong to the user or manager.")
 
@@ -182,7 +182,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key_invalid,
                 user_name=self.user_invalid[:4],
                 user_id=self.key_invalid.public_key,
-                manager_ids=None)[0]['status'],
+                manager_id=None)[0]['status'],
             'INVALID',
             "The User's name must be at least 5 characters long.")
 
@@ -191,7 +191,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key2a,
                 user_name=self.user3a,
                 user_id=self.key3a.public_key,
-                manager_ids=[self.key2a.public_key, self.key1.public_key])[0]['status'],
+                manager_id=self.key2a.public_key)[0]['status'],
             'COMMITTED')
 
         self.assertEqual(
@@ -199,7 +199,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 user_name=self.user2b,
                 user_id=self.key2b.public_key,
-                manager_ids=[self.key1.public_key])[0]['status'],
+                manager_id=self.key1.public_key)[0]['status'],
             'COMMITTED')
 
         self.assertEqual(
@@ -207,7 +207,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key3b,
                 user_name=self.user3b,
                 user_id=self.key3b.public_key,
-                manager_ids=[self.key2b.public_key, self.key1.public_key])[0]['status'],
+                manager_id=self.key2b.public_key)[0]['status'],
             'COMMITTED')
 
         state_items = self.client.return_state()
@@ -270,9 +270,6 @@ class TestBlockchain(unittest.TestCase):
             "All Admins listed must be Users")
 
 
-
-
-
 class RBACClient(object):
 
     def __init__(self, url):
@@ -287,13 +284,13 @@ class RBACClient(object):
                 items.append((user_container, addresser.AddressSpace.USER))
         return items
 
-    def create_user(self, key, user_name, user_id, manager_ids=None):
+    def create_user(self, key, user_name, user_id, manager_id=None):
         batch_list, signature = create_user(key,
                                             BATCHER_KEY,
                                             user_name,
                                             user_id,
                                             uuid4().hex,
-                                            manager_ids)
+                                            manager_id)
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 

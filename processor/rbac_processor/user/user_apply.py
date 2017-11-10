@@ -15,9 +15,10 @@
 
 from sawtooth_sdk.processor.context import StateEntry
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
-from sawtooth_sdk.processor.exceptions import InternalError
 
 from rbac_addressing import addresser
+from rbac_processor.common import get_state_entry
+from rbac_processor.common import is_in_user_container
 from rbac_processor.protobuf import user_state_pb2
 from rbac_processor.protobuf import user_transaction_pb2
 from rbac_processor.state import get_state
@@ -43,14 +44,12 @@ def apply_create_user(header, payload, state):
             handle_user_state_set(header, create_user, state)
 
         else:
-            manager_entries = validate_manager_state(
+            validate_manager_state(header, create_user, state)
+            handle_user_state_set(
                 header,
                 create_user,
-                state)
-            manager_ids = _get_manager_ids(
-                manager_entries,
+                state,
                 create_user.manager_id)
-            handle_user_state_set(header, create_user, state, manager_ids)
 
     else:
         raise InvalidTransaction(
@@ -86,17 +85,25 @@ def validate_manager_state(header, create_user, state):
         raise InvalidTransaction(
             "User id {} listed as manager is not "
             "in state.".format(create_user.manager_id))
-    return manager_entries
+
+    state_entry = get_state_entry(
+        manager_entries,
+        addresser.make_user_address(user_id=create_user.manager_id))
+    manager_container = _return_container(state_entry)
+    if not is_in_user_container(manager_container, create_user.manager_id):
+        raise InvalidTransaction(
+            "user id {} listed as manager is not within the User container "
+            "in state".format(create_user.manager_id))
 
 
-def handle_user_state_set(header, create_user, state, manager_ids=None):
+def handle_user_state_set(header, create_user, state, manager_id=None):
     user_container = user_state_pb2.UserContainer()
     user = user_state_pb2.User(
         user_id=create_user.user_id,
         name=create_user.name,
         metadata=create_user.metadata)
-    if manager_ids:
-        user.managers.extend(manager_ids)
+    if manager_id:
+        user.manager_id = manager_id
 
     user_container.users.extend([user])
 
@@ -121,15 +128,3 @@ def _index_of_user_in_container(container, user_id):
             return idx
     raise KeyError(
         "User id {} not found in container.".format(user_id))
-
-
-def _get_manager_ids(user_entries, user_id):
-    user_container = _return_container(user_entries[0])
-    try:
-        manager_idx = _index_of_user_in_container(
-            user_container,
-            user_id=user_id)
-    except KeyError as kerror:
-        return InternalError("User state is corrupted: {}".format(kerror))
-
-    return list(user_container.users[manager_idx].managers)

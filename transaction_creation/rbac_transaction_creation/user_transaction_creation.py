@@ -25,7 +25,7 @@ def create_user(txn_key,
                 user_name,
                 user_id,
                 metadata,
-                manager_ids=None):
+                manager_id=None):
     """Create a BatchList with a CreateUser RBAC transaction.
 
     Args:
@@ -34,7 +34,7 @@ def create_user(txn_key,
         user_name (str): The user name of the User.
         user_id (str): The User's public key.
         metadata (str): Client supplied metadata.
-        manager_ids (list): In order list of manager ids.
+        manager_id (str): The optional id of the manager of this User.
 
     Returns:
         tuple
@@ -49,14 +49,10 @@ def create_user(txn_key,
         metadata=metadata)
     inputs = [addresser.make_user_address(user_id=user_id)]
     outputs = [addresser.make_user_address(user_id=user_id)]
-    if manager_ids:
-        create_user_payload.manager_id = manager_ids[0]
-        inputs.extend(
-            [addresser.make_user_address(user_id=manager_id)
-             for manager_id in manager_ids])
-        outputs.extend(
-            [addresser.make_user_address(user_id=manager_id)
-             for manager_id in manager_ids])
+    if manager_id:
+        create_user_payload.manager_id = manager_id
+        inputs.append(addresser.make_user_address(user_id=manager_id))
+        outputs.append(addresser.make_user_address(user_id=manager_id))
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_user_payload.SerializeToString(),
