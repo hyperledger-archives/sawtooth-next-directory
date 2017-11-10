@@ -41,6 +41,12 @@ class Database(object):
         LOGGER.debug('Disconnecting from database')
         self._conn.close()
 
+    def fetch(self, table_name, primary_id):
+        """Fetches a single resource by its primary id
+        """
+        return r.db(self._name).table(table_name)\
+            .get(primary_id).run(self._conn)
+
     def insert(self, table_name, docs):
         """Inserts a document or a list of documents into the specified table
         in the database
@@ -56,6 +62,28 @@ class Database(object):
             .run(self._conn)
 
         return list(cursor)[-count:]
+
+    def drop_fork(self, block_num):
+        """Deletes all resources from a particular block_num
+        """
+        block_results = r.db(self._name).table('blocks')\
+            .filter(lambda rsc: rsc['block_num'].ge(block_num))\
+            .delete()\
+            .run(self._conn)
+
+        resource_results = r.db(self._name).table_list()\
+            .for_each(
+                lambda table_name: r.branch(
+                    r.eq(table_name, 'blocks'),
+                    [],
+                    r.eq(table_name, 'auth'),
+                    [],
+                    r.db(self._name).table(table_name)
+                    .filter(lambda rsc: rsc['start_block_num'].ge(block_num))
+                    .delete()))\
+            .run(self._conn)
+
+        return {k: v + resource_results[k] for k, v in block_results.items()}
 
     def get_table(self, table_name):
         """Returns a rethink table query, which can be added to, and

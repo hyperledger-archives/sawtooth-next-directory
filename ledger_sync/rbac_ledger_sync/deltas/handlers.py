@@ -30,6 +30,18 @@ def get_delta_handler(database):
 
 
 def _handle_delta(database, delta):
+    # Check for and resolve forks
+    old_block = database.fetch('blocks', delta.block_num)
+    if old_block is not None:
+        if old_block['block_id'] != delta.block_id:
+            drop_results = database.drop_fork(delta.block_num)
+            if drop_results['deleted'] == 0:
+                LOGGER.warning(
+                    'Failed to drop forked resources since block: %s',
+                    delta.block_num)
+        else:
+            return
+
     # Parse changes and update database
     update = get_updater(database, delta.block_num)
     for change in delta.state_changes:
