@@ -49,19 +49,24 @@ class Subscriber(object):
         """
         self._delta_handlers = []
 
-    def start(self):
+    def start(self, known_ids=None):
         """Subscribes to state delta events, and then waits to receive deltas.
         Sends any events received to delta handlers.
         """
         self._stream.wait_for_ready()
 
         LOGGER.debug('Subscribing to state delta events')
-        request = StateDeltaSubscribeRequest()
+        request = StateDeltaSubscribeRequest(last_known_block_ids=known_ids)
         response_future = self._stream.send(
             Message.STATE_DELTA_SUBSCRIBE_REQUEST,
             request.SerializeToString())
         response = StateDeltaSubscribeResponse()
         response.ParseFromString(response_future.result().content)
+
+        # Forked all the way back to genesis, restart with no known_ids
+        if (known_ids and
+                response.status == StateDeltaSubscribeResponse.UNKNOWN_BLOCK):
+            return self.start()
 
         if response.status != StateDeltaSubscribeResponse.OK:
             raise RuntimeError(

@@ -46,3 +46,13 @@ class Database(object):
         in the database
         """
         return r.db(self._name).table(table_name).insert(docs).run(self._conn)
+
+    def last_known_blocks(self, count):
+        """Fetches the ids of the specified number of most recent blocks
+        """
+        cursor = r.db(self._name).table('blocks')\
+            .order_by('block_num')\
+            .get_field('block_id')\
+            .run(self._conn)
+
+        return list(cursor)[-count:]

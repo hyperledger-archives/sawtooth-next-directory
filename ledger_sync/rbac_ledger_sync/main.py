@@ -24,6 +24,10 @@ from rbac_ledger_sync.deltas.handlers import get_delta_handler
 
 LOGGER = logging.getLogger(__name__)
 
+# State Delta catches up based on the first valid ID it finds, which is
+# likely genesis, defeating the purpose. Rewind just 15 blocks to handle forks.
+KNOWN_COUNT = 15
+
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
@@ -69,7 +73,8 @@ def main():
 
         subscriber = Subscriber(opts.validator)
         subscriber.add_handler(get_delta_handler(database))
-        subscriber.start()
+        known_blocks = database.last_known_blocks(KNOWN_COUNT)
+        subscriber.start(known_blocks)
 
     except KeyboardInterrupt:
         sys.exit(0)
