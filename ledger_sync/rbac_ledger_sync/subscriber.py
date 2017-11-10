@@ -23,6 +23,8 @@ from sawtooth_sdk.protobuf.state_delta_pb2 import StateDeltaUnsubscribeRequest
 from sawtooth_sdk.protobuf.state_delta_pb2 import StateDeltaUnsubscribeResponse
 from sawtooth_sdk.protobuf.validator_pb2 import Message
 
+from rbac_addressing.addresser import NS as NAMESPACE
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -56,7 +58,9 @@ class Subscriber(object):
         self._stream.wait_for_ready()
 
         LOGGER.debug('Subscribing to state delta events')
-        request = StateDeltaSubscribeRequest(last_known_block_ids=known_ids)
+        request = StateDeltaSubscribeRequest(
+            last_known_block_ids=known_ids,
+            address_prefixes=[NAMESPACE])
         response_future = self._stream.send(
             Message.STATE_DELTA_SUBSCRIBE_REQUEST,
             request.SerializeToString())

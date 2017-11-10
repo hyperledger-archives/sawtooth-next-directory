@@ -15,6 +15,9 @@
 
 import logging
 
+from rbac_ledger_sync.deltas.decoding import data_to_dicts
+from rbac_ledger_sync.deltas.updating import get_updater
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +30,18 @@ def get_delta_handler(database):
 
 
 def _handle_delta(database, delta):
+    # Parse changes and update database
+    update = get_updater(database, delta.block_num)
+    for change in delta.state_changes:
+        resources = data_to_dicts(change.address, change.value)
+        for resource in resources:
+            update_results = update(change.address, resource)
+            if update_results['inserted'] == 0:
+                LOGGER.warning(
+                    'Failed to insert resource from address: %s',
+                    change.address)
+
+    # Add new block to database
     new_block = {'block_num': delta.block_num, 'block_id': delta.block_id}
     block_results = database.insert('blocks', new_block)
     if block_results['inserted'] == 0:

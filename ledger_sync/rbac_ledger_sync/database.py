@@ -56,3 +56,14 @@ class Database(object):
             .run(self._conn)
 
         return list(cursor)[-count:]
+
+    def get_table(self, table_name):
+        """Returns a rethink table query, which can be added to, and
+        eventually run with run_query
+        """
+        return r.db(self._name).table(table_name)
+
+    def run_query(self, query):
+        """Takes a query based on get_table, and runs it.
+        """
+        return query.run(self._conn)
