@@ -36,7 +36,11 @@ message ConfirmUpdateUserManager {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string user_id = 2;
+
+    string manager_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -45,7 +49,11 @@ message RejectUpdateUserManager {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string user_id = 2;
+
+    string manager_id = 3;
+
+    string reason = 4;
 
 }
 
