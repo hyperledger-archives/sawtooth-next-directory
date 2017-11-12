@@ -29,6 +29,7 @@ import sawtooth_signing as signing
 from rbac_addressing import addresser
 from rbac_transaction_creation.protobuf import user_state_pb2
 from rbac_transaction_creation.common import Key
+from rbac_transaction_creation import manager_transaction_creation
 from rbac_transaction_creation.user_transaction_creation import create_user
 from rbac_transaction_creation.role_transaction_creation import create_role
 
@@ -107,6 +108,7 @@ class TestBlockchain(unittest.TestCase):
         cls.key3b, cls.user3b = make_key_and_name()
 
         cls.role_id1 = uuid4().hex
+        cls.update_manager_proposal_id = uuid4().hex
 
     def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
@@ -269,6 +271,174 @@ class TestBlockchain(unittest.TestCase):
             "INVALID",
             "All Admins listed must be Users")
 
+    def test_02_propose_update_user_manager(self):
+        """Tests that the ProposeUpdateUserManager validation rules are
+        correct.
+
+        Notes:
+            ProposeUpdateUserManager Validation rules
+                - The user exists.
+                - The manager exists as a user.
+                - The transaction header signer's public key is the User's
+                  current manager.
+                - No open proposal for the same change exists.
+        """
+
+        self.assertEqual(
+            self.client.propose_update_manager(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                user_id=self.key_invalid.public_key,
+                new_manager_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The User must exist")
+
+        self.assertEqual(
+            self.client.propose_update_manager(
+                key=self.key_invalid,
+                proposal_id=uuid4().hex,
+                user_id=self.key1.public_key,
+                new_manager_id=self.key_invalid.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The manager must exist")
+
+        self.assertEqual(
+            self.client.propose_update_manager(
+                key=self.key3b,
+                proposal_id=uuid4().hex,
+                user_id=self.key2a.public_key,
+                new_manager_id=self.key2b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The current manager must sign the txn.")
+
+        self.assertEqual(
+            self.client.propose_update_manager(
+                key=self.key1,
+                proposal_id=self.update_manager_proposal_id,
+                user_id=self.key2a.public_key,
+                new_manager_id=self.key2b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.propose_update_manager(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                user_id=self.key2a.public_key,
+                new_manager_id=self.key2b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "There is already a proposal to make user2a have user2b "
+            "as a manager.")
+
+    def test_03_confirm_update_manager_proposal(self):
+        """Tests the ConfirmUpdateUserManager validation rules.
+
+        Notes:
+            ConfirmUpdateUserManager validation rules
+                - The txn signer is the new manager
+                - The Proposal exists and is OPEN.
+        """
+
+        self.assertEqual(
+            self.client.confirm_update_manager(
+                key=self.key1,
+                proposal_id=self.update_manager_proposal_id,
+                reason=uuid4().hex,
+                user_id=self.key2a.public_key,
+                manager_id=self.key2b.public_key
+            )[0]['status'],
+            "INVALID",
+            "The txn signer must be the new manager listed on the proposal")
+
+        self.assertEqual(
+            self.client.confirm_update_manager(
+                key=self.key2b,
+                proposal_id=uuid4().hex,
+                reason=uuid4().hex,
+                user_id=uuid4().hex,
+                manager_id=self.key2b.public_key)[0]['status'],
+            "INVALID",
+            "The proposal must exist")
+
+        self.assertEqual(
+            self.client.confirm_update_manager(
+                key=self.key2b,
+                proposal_id=self.update_manager_proposal_id,
+                reason=uuid4().hex,
+                user_id=self.key2a.public_key,
+                manager_id=self.key2b.public_key)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.confirm_update_manager(
+                key=self.key2b,
+                proposal_id=self.update_manager_proposal_id,
+                reason=uuid4().hex,
+                user_id=self.key2a.public_key,
+                manager_id=self.key2b.public_key)[0]['status'],
+            "INVALID",
+            "The proposal must be open")
+
+    def test_04_reject_update_manager_proposal(self):
+        """Tests the RejectUpdateUserManager validation rules.
+
+        Notes:
+            RejectUpdateUserManager validation rules
+                - The proposal is open and exists.
+                - The manager's id is the header signer pubkey.
+
+        """
+
+        proposal_id = uuid4().hex
+
+        self.assertEqual(
+            self.client.propose_update_manager(
+                key=self.key2b,
+                proposal_id=proposal_id,
+                reason=uuid4().hex,
+                user_id=self.key2a.public_key,
+                new_manager_id=self.key3b.public_key,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_update_manager(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                reason=uuid4().hex,
+                user_id=self.key1.public_key,
+                manager_id=self.key3b.public_key)[0]['status'],
+            "INVALID",
+            "The proposal does not exist")
+
+        self.assertEqual(
+            self.client.reject_update_manager(
+                key=self.key3b,
+                proposal_id=proposal_id,
+                reason=uuid4().hex,
+                user_id=self.key2a.public_key,
+                manager_id=self.key3b.public_key)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_update_manager(
+                key=self.key3b,
+                proposal_id=proposal_id,
+                reason=uuid4().hex,
+                user_id=self.key2a.public_key,
+                manager_id=self.key3b.public_key)[0]['status'],
+            "INVALID",
+            "The proposal is not open")
+
 
 class RBACClient(object):
 
@@ -301,6 +471,57 @@ class RBACClient(object):
                                             role_id=role_id,
                                             metadata=metadata,
                                             admins=admins)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def propose_update_manager(self,
+                               key,
+                               proposal_id,
+                               user_id,
+                               new_manager_id,
+                               reason,
+                               metadata):
+
+        batch_list, signature = manager_transaction_creation.propose_manager(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            user_id=user_id,
+            new_manager_id=new_manager_id,
+            reason=reason,
+            metadata=metadata)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def confirm_update_manager(self,
+                               key,
+                               proposal_id,
+                               reason,
+                               user_id,
+                               manager_id):
+        batch_list, signature = manager_transaction_creation.confirm_manager(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            reason=reason,
+            user_id=user_id,
+            manager_id=manager_id)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def reject_update_manager(self,
+                              key,
+                              proposal_id,
+                              reason,
+                              user_id,
+                              manager_id):
+        batch_list, signature = manager_transaction_creation.reject_manager(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            reason=reason,
+            user_id=user_id,
+            manager_id=manager_id)
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
