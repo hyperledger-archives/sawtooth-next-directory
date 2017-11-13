@@ -13,9 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-
 FROM ubuntu:16.04
-
 
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD && \
     echo 'deb http://repo.sawtooth.me/ubuntu/0.8/stable xenial universe' >> /etc/apt/sources.list && \
@@ -23,6 +21,6 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F10
 
 RUN apt-get install -y -q python3-sawtooth-sdk
 
-RUN mkdir -p /project/tmobile-rbac
-
 WORKDIR /project/tmobile-rbac
+
+CMD ["./bin/rbac-tp"]

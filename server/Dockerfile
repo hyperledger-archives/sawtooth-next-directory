@@ -24,11 +24,24 @@ RUN echo "deb apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 
         python3-sawtooth-rest-api
 
 RUN pip3 install \
-	itsdangerous \
-	pycryptodome \
-	rethinkdb \
-	sanic
-
-RUN mkdir -p /project/tmobile-rbac
+    itsdangerous \
+    rethinkdb \
+    sanic \
+    pycrypto
 
 WORKDIR /project/tmobile-rbac
+
+# Build will fail if config file for secret keys has not been created
+# This check and the config should be removed if publishing this image
+RUN echo "Checking that server/config.py has been created..."
+COPY server/config.py server/config.py
+
+# Note that the context must be set to the project's root directory
+COPY bin/protogen bin/protogen
+COPY protos/ protos/
+RUN bin/protogen
+COPY . .
+
+EXPOSE 8000/tcp
+
+CMD ["./bin/rbac-server"]

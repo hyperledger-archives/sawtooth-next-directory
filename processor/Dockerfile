@@ -13,9 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-
 FROM ubuntu:16.04
-
 
 RUN echo "deb http://repo.sawtooth.me/ubuntu/ci xenial universe" >> /etc/apt/sources.list && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8AA7AF1F1091A5FD && \
@@ -27,14 +25,12 @@ RUN echo "deb http://repo.sawtooth.me/ubuntu/ci xenial universe" >> /etc/apt/sou
         python3-sawtooth-sdk \
         python3-sawtooth-rest-api
 
-RUN pip3 install \
-	itsdangerous \
-	pycryptodome \
-	pycodestyle \
-	pylint \
-	rethinkdb \
-	sanic
-
-RUN mkdir -p /project/tmobile-rbac
-
 WORKDIR /project/tmobile-rbac
+
+# Note that the context must be set to the project's root directory
+COPY bin/protogen bin/protogen
+COPY protos/ protos/
+RUN bin/protogen
+COPY . .
+
+CMD ["./bin/rbac-tp"]
