@@ -26,12 +26,12 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - ledger-sync
       - rethink
       - validator
     command: |
       bash -c "
         sleep 1 &&
-        ./bin/setup_db --host rethink &&
         ./bin/rbac-server --host server --db-host rethink --validator-host validator
       "
 
@@ -51,6 +51,23 @@ services:
     volumes:
       - '.:/project/tmobile-rbac'
     command: bin/rbac-tp -vv tcp://validator:4004
+
+  ledger-sync:
+    build:
+      context: .
+      dockerfile: ./ledger_sync/Dockerfile-dev
+    image: rbac-ledger-sync-dev
+    volumes:
+      - .:/project/tmobile-rbac
+    depends_on:
+      - rethink
+      - validator
+    command: |
+      bash -c "
+        sleep 1 &&
+        bin/setup_db --host rethink &&
+        bin/rbac-ledger-sync -vv --db-host rethink --validator tcp://validator:4004
+      "
 
   rest-api:
     image: hyperledger/sawtooth-rest_api:0.8

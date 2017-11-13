@@ -24,12 +24,12 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - ledger-sync
       - rethink
       - validator
     command: |
       bash -c "
         sleep 1 &&
-        ./bin/setup_db --host rethink &&
         ./bin/rbac-server --host server --db-host rethink --validator-host validator
       "
 
@@ -44,6 +44,21 @@ services:
       dockerfile: ./processor/Dockerfile
     image: rbac-tp-production
     command: bin/rbac-tp -v tcp://validator:4004
+
+  ledger-sync:
+    build:
+      context: .
+      dockerfile: ./ledger_sync/Dockerfile
+    image: rbac-ledger-sync-production
+    depends_on:
+      - rethink
+      - validator
+    command: |
+      bash -c "
+        sleep 1 &&
+        bin/setup_db --host rethink &&
+        bin/rbac-ledger-sync -v --db-host rethink --validator tcp://validator:4004
+      "
 
   settings-tp:
     image: hyperledger/sawtooth-tp_settings:0.8
