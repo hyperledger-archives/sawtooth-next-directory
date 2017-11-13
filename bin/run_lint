@@ -41,7 +41,7 @@ export PYTHONPATH=$TOP_DIR/addressing
 lint processor/rbac_processor || ret_val=1
 lint server/db || ret_val=1
 
-export PYTHONPATH=$TOP_DIR/server
+export PYTHONPATH=$TOP_DIR/server:$TOP_DIR/transaction_creation
 lint server/api || ret_val=1
 
 exit $ret_val

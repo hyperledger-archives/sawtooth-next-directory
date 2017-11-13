@@ -24,11 +24,12 @@ services:
       - "8005:8000"
     depends_on:
       - rethink
+      - validator
     command: |
       bash -c "
       sleep 1 &&
       ./bin/setup_db --host rethink &&
-      ./bin/rbac-server --db-host rethink
+      ./bin/rbac-server --db-host rethink --validator-host validator
       "
 
   rethink:
@@ -37,3 +38,33 @@ services:
       - "9090:8080"
     expose:
       - 28015
+
+  rbac-tp:
+    image: tmobile-rbac-dev:latest
+    volumes:
+      - '../..:/project/tmobile-rbac'
+    expose:
+      - 4004
+    command: bin/rbac-tp -vv tcp://validator:4004
+
+  settings-tp:
+    image: sawtooth-main-components:latest
+    expose:
+      - 4004
+    command: settings-tp -v tcp://validator:4004
+
+  validator:
+    image: sawtooth-main-components:latest
+    expose:
+      - 4004
+    command: "bash -c \"\
+        sawtooth admin keygen && \
+        sawtooth keygen my_key && \
+        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv && \
+        sawtooth admin genesis config-genesis.batch && \
+        sawtooth-validator -vv \
+          --endpoint tcp://validator:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800 \
+          --scheduler parallel \
+        \""

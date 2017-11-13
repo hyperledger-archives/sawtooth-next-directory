@@ -16,7 +16,5 @@
 import rethinkdb as r
 
 
-async def create_connection(host, port, name):
-    r.set_loop_type('asyncio')
-    connection = await r.connect(host=host, port=port, db=name)
-    return connection
+async def create_auth_entry(conn, auth_entry):
+    return await r.table('auth').insert(auth_entry).run(conn)
