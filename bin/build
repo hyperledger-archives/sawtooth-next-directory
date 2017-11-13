@@ -23,15 +23,14 @@ usage() {
 
     cat << EOM
         Usage:
-            $0 [-d] [-p] [-t] [-l] [-a]
+            $0 [-p] [-t] [-l] [-a]
 
         Options:
             -h           print help text
-            -d           build the docker images
             -p           build protobuf modules using docker containers
             -l           lint source code
             -t           run unit and integration tests
-            -a           docker, protogen, lint, tests in order
+            -a           protogen, lint, tests in order
 EOM
 
 }
@@ -48,10 +47,6 @@ do
         h)
             usage
             exit 0
-            ;;
-        d)
-            info "Building docker images"
-            $TOP_DIR/bin/build_docker
             ;;
         p)
             info "Building Protobuf modules"
@@ -70,8 +65,6 @@ do
             $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain_integration_test.yaml
             ;;
         a)
-            info "Building docker images"
-            $TOP_DIR/bin/build_docker
             info "Building Protobuf modules"
             docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/protogen
             info "Running lint"

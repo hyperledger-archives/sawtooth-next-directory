@@ -17,9 +17,10 @@ version: "2.1"
 
 services:
   server:
-    image: tmobile-rbac-server:latest
-    volumes:
-      - .:/project/tmobile-rbac
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
+    image: rbac-server-production
     ports:
       - "8000:8000"
     depends_on:
@@ -41,9 +42,10 @@ services:
       - 28015
 
   rbac-tp:
-    image: tmobile-rbac-dev:latest
-    volumes:
-      - '.:/project/tmobile-rbac'
+    build:
+      context: .
+      dockerfile: ./processor/Dockerfile
+    image: rbac-tp-production
     command: bin/rbac-tp -v tcp://validator:4004
 
   settings-tp:

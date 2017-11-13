@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2017 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+FROM hyperledger/sawtooth-all:0.8
 
-tag=":latest"
+RUN apt-get update && \
+    apt-get install -y --allow-unauthenticated -q python3-grpcio-tools=1.1.3-1 \
+        python3-pip \
+        python3-sawtooth-sdk \
+        python3-sawtooth-rest-api
 
-docker_build() {
-
-    docker build -f $2 -t $1 $3
-
-}
-
-
-for filename in `find docker -maxdepth 1 -type f -iregex '.*'`; do
-    image_name=$(basename $filename)
-    docker_build $image_name$tag $filename 'docker'
-done;
+WORKDIR /project/tmobile-rbac
