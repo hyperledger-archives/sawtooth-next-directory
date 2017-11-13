@@ -30,8 +30,7 @@ docker-compose up
 
 This will build all components, start them in individual Docker containers,
 and download and run the necessary Sawtooth components. Once complete, the
-REST API will be available at **http://localhost:8000**, and the rethinkdb
-database can be viewed at **http://localhost:9090**.
+REST API will be available at **http://localhost:8000**.
 
 Later, if the repo is updated, the local components will need to be rebuilt,
 which can be accomplished using the `--build` flag:
@@ -50,6 +49,7 @@ containers work compared to the defaults:
 - they do not need to be rebuilt when local files change
 - most dependencies will have to be installed locally
 - _Sawtooth REST API_ and _Sawtooth shell_ containers are included for testing
+- Rethink's database admin panel is available at **http://localhost:9090**
 
 To start the dev containers, from the root project directory run:
 

@@ -35,10 +35,7 @@ services:
 
   rethink:
     image: rethinkdb:2.3
-    ports:
-      - "9090:8080"
     expose:
-      - 8080
       - 28015
 
   rbac-tp:
