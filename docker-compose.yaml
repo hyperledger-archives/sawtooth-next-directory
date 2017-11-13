@@ -19,9 +19,9 @@ services:
   server:
     image: tmobile-rbac-server:latest
     volumes:
-      - ../..:/project/tmobile-rbac
+      - .:/project/tmobile-rbac
     ports:
-      - "8005:8000"
+      - "8000:8000"
     depends_on:
       - rethink
       - validator
@@ -29,7 +29,7 @@ services:
       bash -c "
       sleep 1 &&
       ./bin/setup_db --host rethink &&
-      ./bin/rbac-server --db-host rethink --validator-host validator
+      ./bin/rbac-server --host server --db-host rethink --validator-host validator
       "
 
   rethink:
@@ -42,7 +42,7 @@ services:
   rbac-tp:
     image: tmobile-rbac-dev:latest
     volumes:
-      - '../..:/project/tmobile-rbac'
+      - '.:/project/tmobile-rbac'
     expose:
       - 4004
     command: bin/rbac-tp -vv tcp://validator:4004
