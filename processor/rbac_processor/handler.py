@@ -18,6 +18,7 @@ from sawtooth_sdk.protobuf.transaction_pb2 import TransactionHeader
 from rbac_addressing import addresser
 
 from rbac_processor.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac_processor.role import role_admins
 from rbac_processor.role.role_apply import apply_create_role
 from rbac_processor.user.user_create import apply_create_user
 from rbac_processor.user.user_manager_proposal import apply_user_confirm
@@ -116,6 +117,15 @@ class RBACTransactionHandler(object):
         elif payload.message_type in USER_REJECT:
             apply_user_reject(header, payload, state)
 
+        elif payload.message_type in ROLE_PROPOSE:
+            apply_role_propose(header, payload, state)
+
+        elif payload.message_type in ROLE_CONFIRM:
+            apply_role_confirm(header, payload, state)
+
+        elif payload.message_type in ROLE_REJECT:
+            apply_role_reject(header, payload, state)
+
 
 def apply_create(header, payload, state):
     if payload.message_type == RBACPayload.CREATE_USER:
@@ -123,3 +133,18 @@ def apply_create(header, payload, state):
 
     elif payload.message_type == RBACPayload.CREATE_ROLE:
         apply_create_role(header, payload, state)
+
+
+def apply_role_propose(header, payload, state):
+    if payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_ADMINS:
+        role_admins.apply_propose(header, payload, state)
+
+
+def apply_role_confirm(header, payload, state):
+    if payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_ADMINS:
+        role_admins.apply_confirm(header, payload, state)
+
+
+def apply_role_reject(header, payload, state):
+    if payload.message_type == RBACPayload.REJECT_ADD_ROLE_ADMINS:
+        role_admins.apply_reject(header, payload, state)

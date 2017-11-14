@@ -1,0 +1,217 @@
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+from sawtooth_sdk.processor.context import StateEntry
+from sawtooth_sdk.processor.exceptions import InvalidTransaction
+
+from rbac_addressing import addresser
+
+from rbac_processor.common import get_state_entry
+from rbac_processor.common import get_prop_from_container
+from rbac_processor.common import get_role_rel
+from rbac_processor.common import get_user_from_container
+from rbac_processor.common import is_in_role_rel_container
+from rbac_processor.common import proposal_exists_and_open
+from rbac_processor.common import return_prop_container
+from rbac_processor.common import return_role_rel_container
+from rbac_processor.common import return_user_container
+from rbac_processor.common import validate_identifier_is_role
+from rbac_processor.common import validate_identifier_is_user
+
+from rbac_processor.protobuf import role_state_pb2
+from rbac_processor.protobuf import proposal_state_pb2
+
+from rbac_processor.state import get_state
+from rbac_processor.state import set_state
+
+
+def validate_role_rel_proposal(header, propose, rel_address, state):
+    """Validates that the User exists, the Role exists, and the User is not
+    in the Role's relationship specified by rel_address.
+
+    Args:
+        header (TransactionHeader): The transaction header.
+        propose (ProposeAddRole_____): The role relationship proposal.
+        rel_address (str): The Role relationship address produced by the Role
+            and the User.
+        state (sawtooth_sdk.Context): The way to communicate to the validator
+            the state gets and sets.
+
+    Returns:
+        (list of StateEntry)
+    """
+
+    user_address = addresser.make_user_address(propose.user_id)
+    role_address = addresser.make_role_attributes_address(propose.role_id)
+    proposal_address = addresser.make_proposal_address(
+        object_id=propose.role_id,
+        related_id=propose.user_id)
+
+    state_entries = get_state(state, [user_address,
+                                      role_address,
+                                      proposal_address,
+                                      rel_address])
+    validate_identifier_is_user(state_entries,
+                                identifier=propose.user_id,
+                                address=user_address)
+    user_entry = get_state_entry(state_entries, user_address)
+    user = get_user_from_container(
+        return_user_container(user_entry),
+        propose.user_id)
+
+    if header.signer_pubkey not in [user.user_id, user.manager_id]:
+        raise InvalidTransaction(
+            "Txn signer {} is not the user or the user's "
+            "manager {}".format(header.signer_pubkey,
+                                [user.user_id[:6], user.manager_id[:6]]))
+
+    validate_identifier_is_role(state_entries,
+                                identifier=propose.role_id,
+                                address=role_address)
+
+    try:
+        role_admins_entry = get_state_entry(state_entries, rel_address)
+        role_rel_container = return_role_rel_container(role_admins_entry)
+        if is_in_role_rel_container(
+                role_rel_container,
+                propose.role_id,
+                propose.user_id):
+            raise InvalidTransaction(
+                "User {} is already in the Role {} "
+                "relationship".format(propose.user_id,
+                                      propose.role_id))
+    except KeyError:
+        # The role rel container doesn't exist so no role relationship exists
+        pass
+
+    return state_entries
+
+
+def validate_role_admin_or_owner(header,
+                                 confirm,
+                                 state):
+    """Validate a [ Confirm | Reject }_____Role[ Admin | Owner } transaction.
+
+    Args:
+        header (TransactionHeader): The transaction header protobuf class.:
+        confirm: ConfirmAddRoleAdmin, RejectAddRoleAdmin, ...
+        state (Context): The class responsible for gets and sets of state.
+
+    Returns:
+        (list of StateEntry)
+    """
+
+    txn_signer_role_admins_address = addresser.make_role_admins_address(
+        role_id=confirm.role_id,
+        user_id=header.signer_pubkey)
+
+    proposal_address = addresser.make_proposal_address(
+        object_id=confirm.role_id,
+        related_id=confirm.user_id)
+
+    state_entries = get_state(
+        state,
+        [txn_signer_role_admins_address,
+         proposal_address])
+
+    if not proposal_exists_and_open(
+            state_entries,
+            proposal_address,
+            confirm.proposal_id):
+        raise InvalidTransaction("The proposal {} does not exist or "
+                                 "is not open".format(confirm.proposal_id))
+    try:
+        entry = get_state_entry(state_entries, txn_signer_role_admins_address)
+        role_rel_container = return_role_rel_container(entry)
+    except KeyError:
+        raise InvalidTransaction(
+            "Signer {} is not a role admin".format(header.signer_pubkey[:8]))
+    if not is_in_role_rel_container(
+            role_rel_container,
+            role_id=confirm.role_id,
+            identifier=header.signer_pubkey):
+        raise InvalidTransaction("Signer {} is not an "
+                                 "admin".format(header.signer_pubkey))
+
+    return state_entries
+
+
+def handle_confirm_add(state_entries,
+                       header,
+                       confirm,
+                       role_rel_address,
+                       state):
+    proposal_address = addresser.make_proposal_address(
+        object_id=confirm.role_id,
+        related_id=confirm.user_id)
+
+    proposal_entry = get_state_entry(state_entries, proposal_address)
+    proposal_container = return_prop_container(proposal_entry)
+    proposal = get_prop_from_container(
+        proposal_container,
+        proposal_id=confirm.proposal_id)
+
+    proposal.status = proposal_state_pb2.Proposal.CONFIRMED
+    proposal.closer = header.signer_pubkey
+    proposal.close_reason = confirm.reason
+
+    address_values = [StateEntry(
+        address=proposal_address,
+        data=proposal_container.SerializeToString())]
+
+    try:
+        role_rel_entry = get_state_entry(state_entries, role_rel_address)
+        role_rel_container = return_role_rel_container(role_rel_entry)
+    except KeyError:
+        role_rel_container = role_state_pb2.RoleRelationshipContainer()
+
+    try:
+        role_rel = get_role_rel(role_rel_container, confirm.role_id)
+
+    except KeyError:
+        role_rel = role_rel_container.relationships.add()
+        role_rel.role_id = confirm.role_id
+
+    role_rel.identifiers.append(confirm.user_id)
+
+    address_values.append(StateEntry(
+        address=role_rel_address,
+        data=role_rel_container.SerializeToString()))
+
+    set_state(state, address_values)
+
+
+def handle_reject(state_entries,
+                  header,
+                  reject,
+                  role_rel_address,
+                  state):
+    proposal_address = addresser.make_proposal_address(
+        object_id=reject.role_id,
+        related_id=reject.user_id)
+
+    proposal_entry = get_state_entry(state_entries, proposal_address)
+    proposal_container = return_prop_container(proposal_entry)
+    proposal = get_prop_from_container(
+        proposal_container,
+        proposal_id=reject.proposal_id)
+
+    proposal.status = proposal_state_pb2.Proposal.REJECTED
+    proposal.closer = header.signer_pubkey
+    proposal.close_reason = reject.reason
+
+    address_values = [StateEntry(
+        address=proposal_address,
+        data=proposal_container.SerializeToString())]
+
+    set_state(
+        state,
+        address_values)
