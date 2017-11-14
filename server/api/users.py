@@ -19,6 +19,7 @@ import logging
 from Crypto.Cipher import AES
 
 from sanic import Blueprint
+from sanic.response import json
 
 import sawtooth_signing as signing
 
@@ -138,11 +139,15 @@ async def fetch_open_proposals(request, user_id):
     raise ApiNotImplemented()
 
 
-async def create_user_response(request, public_key):
+def create_user_response(request, public_key):
     token = get_apikey(request)
     user_resource = {
-        'user_id': public_key,
-        'name': request.json.get('name')
+        'id': public_key,
+        'name': request.json.get('name'),
+        'ownerOf': [],
+        'administratorOf': [],
+        'memberOf': [],
+        'proposals': []
     }
     if request.json.get('manager'):
         user_resource['manager'] = request.json.get('manager')
@@ -150,7 +155,7 @@ async def create_user_response(request, public_key):
         user_resource['metadata'] = request.json.get('metadata')
     return json({
         'data': {
-            'auth_token': token,
+            'authorization': token,
             'user': user_resource
         }
     })

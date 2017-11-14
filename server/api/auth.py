@@ -69,16 +69,15 @@ async def authorize(request):
     )
     if auth_info is None or auth_info.get('hashed_password') != hashed_pwd:
         raise ApiUnauthorized('Unauthorized: Incorrect user id or password')
-    return await get_apikey(request)
+    token = get_apikey(request)
+    return json({
+        'data': {
+            'authorization': token
+        }
+    })
 
 
-async def get_apikey(request):
+def get_apikey(request):
     serializer = Serializer(request.app.config.SECRET_KEY)
     token = serializer.dumps({'id': request.json.get('id')})
-    return json(
-        {
-            'data': {
-                'auth_token': token.decode('ascii')
-            }
-        }
-    )
+    return token.decode('ascii')
