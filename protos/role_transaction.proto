@@ -19,104 +19,120 @@ syntax = "proto3";
 
 message ProposeAddRoleMember {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeRemoveRoleMember {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeAddRoleOwner {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeRemoveRoleOwner {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeAddRoleAdmin {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeRemoveRoleAdmin {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeAddRoleTask {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeRemoveRoleTask {
 
-    string role_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string role_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
@@ -125,7 +141,11 @@ message ConfirmAddRoleMember {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -134,7 +154,11 @@ message ConfirmRemoveRoleMember {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -143,7 +167,11 @@ message ConfirmAddRoleOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -152,7 +180,11 @@ message ConfirmRemoveRoleOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -161,7 +193,11 @@ message ConfirmAddRoleAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -170,7 +206,11 @@ message ConfirmRemoveRoleAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -179,7 +219,11 @@ message RejectAddRoleMember {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -188,7 +232,11 @@ message RejectRemoveRoleMember {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -197,7 +245,11 @@ message RejectAddRoleOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -206,7 +258,11 @@ message RejectRemoveRoleOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -215,7 +271,11 @@ message RejectAddRoleAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -224,7 +284,11 @@ message RejectRemoveRoleAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
