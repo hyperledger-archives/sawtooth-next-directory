@@ -40,6 +40,19 @@ async def fetch_user_by_id(conn, user_id, head_block_num):
     return result
 
 
+async def fetch_all_user_info(conn, head_block_num):
+    cursor = await r.table('users').filter(
+        (head_block_num >= r.row['start_block_num'])
+        & (head_block_num <= r.row['end_block_num'])
+    ).run(conn)
+
+    user_info_list = []
+    while await cursor.fetch_next():
+        user_info_list.append(await cursor.next())
+
+    return user_info_list
+
+
 async def fetch_users_by_manager_id(conn, manager_id, head_block_num):
     cursor = await r.table('users').filter(
         (head_block_num >= r.row['start_block_num'])

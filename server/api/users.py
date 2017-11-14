@@ -44,8 +44,24 @@ USERS_BP = Blueprint('users')
 
 @USERS_BP.get('api/users')
 @authorized()
-async def get_all_users(request):
-    raise ApiNotImplemented()
+async def fetch_all_users(request):
+    head_block_num = await utils.get_request_block_num(request)
+    user_info_list = await users_query.fetch_all_user_info(
+        request.app.config.DB_CONN, head_block_num
+    )
+    user_resources = []
+    for user_info in user_info_list:
+        user_resources.append(await compile_user_resource(
+            request.app.config.DB_CONN,
+            user_info,
+            head_block_num
+        ))
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        user_resources,
+        head_block_num
+    )
 
 
 @USERS_BP.post('api/users')
