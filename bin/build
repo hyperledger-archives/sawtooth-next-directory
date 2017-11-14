@@ -50,7 +50,8 @@ do
             ;;
         p)
             info "Building Protobuf modules"
-            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/protogen
+            docker build . -f integration_tests/Dockerfile -t rbac-test-env
+            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             ;;
         t)
             info "Running tests"
@@ -58,17 +59,19 @@ do
             ;;
         l)
             info "Running lint"
-            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/run_lint
+            docker build . -f integration_tests/Dockerfile -t rbac-test-env
+            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
             ;;
         i)
             info "Running integration tests"
             $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain_integration_test.yaml
             ;;
         a)
+            docker build . -f integration_tests/Dockerfile -t rbac-test-env
             info "Building Protobuf modules"
-            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/protogen
+            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             info "Running lint"
-            docker run --rm -v $(pwd):/project/tmobile-rbac tmobile-rbac-build:latest bin/run_lint
+            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
             info "Running tests"
             $TOP_DIR/bin/run_tests_ubuntu
             info "Running integration tests"

@@ -21,4 +21,12 @@ RUN apt-get update && \
         python3-sawtooth-sdk \
         python3-sawtooth-rest-api
 
+RUN pip3 install \
+    pycodestyle \
+    pylint \
+    itsdangerous \
+    rethinkdb \
+    sanic \
+    pycrypto
+
 WORKDIR /project/tmobile-rbac
