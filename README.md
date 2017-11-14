@@ -10,7 +10,7 @@ repo include:
 - a **ledger sync** which writes blockchain state changes to a local database
 
 
-##Usage
+## Usage
 
 The easiest way to run these components is with
 [Docker](https://www.docker.com/what-docker). To start these components,
@@ -40,16 +40,18 @@ docker-compose up --build
 ```
 
 
-##Development
+## Development
 
 Docker containers are also available for developers, and are marked with a
 `-dev` tag in their filename. There are a few differences between how these
 containers work compared to the defaults:
 
 - they do not need to be rebuilt when local files change
-- most dependencies will have to be installed locally
-- _Sawtooth REST API_ and _Sawtooth shell_ containers are included for testing
-- Rethink's database admin panel is available at **http://localhost:9090**
+- Protobuf files will need to be built locally
+- some dependencies may need to be installed locally\*
+- a _Sawtooth shell_ container is included for testing
+- Sawtooth's blockchain REST API will be available at **http://localhost:8080**
+- Rethink's database admin panel will be available at **http://localhost:9090**
 
 To start the dev containers, from the root project directory run:
 
@@ -58,12 +60,11 @@ bin/build -p
 docker-compose -f docker-compose-dev.yaml up
 ```
 
-In addition to locally installing Sawtooth dependencies like the
-`sawtooth_sdk`, it is likely some `pip3` dependencies will need to be
-installed to run this command.
+\* _Dependencies that may need to be locally installed include Sawtooth
+dependencies like the`sawtooth_sdk`, as well as some `pip3` modules._
 
 
-##Testing
+## Testing
 
 Tests can be run using the `run_docker_test` script, with the desired
 docker-compose file as an argument. For example:
