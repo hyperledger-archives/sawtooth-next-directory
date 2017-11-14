@@ -114,6 +114,7 @@ async def fetch_user(request, user_id):
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
+        request.url,
         user_resource,
         head_block_num
     )

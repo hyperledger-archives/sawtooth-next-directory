@@ -36,15 +36,16 @@ def validate_fields(required_fields, body):
             )
 
 
-async def create_response(conn, data, head_block_num):
+async def create_response(conn, url, data, head_block_num):
     head_block = await blocks_query.fetch_block_by_num(conn, head_block_num)
-    link = ''
+    head_block_id = head_block.get('block_id')
+    if '?head=' not in url:
+        url += '?head={}'.format(head_block_id)
     response = {
         'data': data,
-        'head': head_block.get('block_id'),
-        'link': link
+        'head': head_block_id,
+        'link': url
     }
-
     return json(response)
 
 
