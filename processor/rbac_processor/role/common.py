@@ -144,6 +144,38 @@ def validate_role_admin_or_owner(header,
     return state_entries
 
 
+def handle_propose_state_set(state_entries,
+                             header,
+                             payload,
+                             address,
+                             proposal_type,
+                             state):
+
+    try:
+
+        entry = get_state_entry(state_entries, address=address)
+        proposal_container = return_prop_container(entry)
+    except KeyError:
+        proposal_container = proposal_state_pb2.ProposalsContainer()
+
+    proposal = proposal_container.proposals.add()
+
+    proposal.proposal_id = payload.proposal_id
+    proposal.object_id = payload.role_id
+    proposal.target_id = payload.user_id
+    proposal.proposal_type = proposal_type
+    proposal.status = proposal_state_pb2.Proposal.OPEN
+    proposal.opener = header.signer_pubkey
+    proposal.open_reason = payload.reason
+    proposal.metadata = payload.metadata
+
+    set_state(
+        state,
+        [StateEntry(
+            address=address,
+            data=proposal_container.SerializeToString())])
+
+
 def handle_confirm_add(state_entries,
                        header,
                        confirm,
@@ -192,7 +224,6 @@ def handle_confirm_add(state_entries,
 def handle_reject(state_entries,
                   header,
                   reject,
-                  role_rel_address,
                   state):
     proposal_address = addresser.make_proposal_address(
         object_id=reject.role_id,
