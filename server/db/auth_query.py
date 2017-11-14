@@ -18,3 +18,7 @@ import rethinkdb as r
 
 async def create_auth_entry(conn, auth_entry):
     return await r.table('auth').insert(auth_entry).run(conn)
+
+
+async def fetch_info_by_user_id(conn, user_id):
+    return await r.table('auth').get(user_id).run(conn)

@@ -15,12 +15,15 @@
 
 from functools import wraps
 
+import hashlib
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature
 from sanic import Blueprint
 from sanic.response import json
 
 from api.errors import ApiBadRequest, ApiUnauthorized
+
+from db import auth_query
 
 
 AUTH_BP = Blueprint('auth')
@@ -43,11 +46,6 @@ def authorized():
     return decorator
 
 
-async def generate_apikey(user_id, secret_key):
-    serializer = Serializer(secret_key)
-    return serializer.dumps({'id': user_id})
-
-
 async def validate_apikey(token, secret_key):
     serializer = Serializer(secret_key)
     try:
@@ -58,12 +56,25 @@ async def validate_apikey(token, secret_key):
 
 
 @AUTH_BP.post('api/authorization')
-async def get_apikey(request):
+async def authorize(request):
     try:
         user_id = request.json.get('id')
+        password = request.json.get('password')
     except Exception:
         raise ApiBadRequest("Bad Request: Improper JSON format")
-    token = await generate_apikey(user_id, request.app.config.SECRET_KEY)
+
+    hashed_pwd = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    auth_info = await auth_query.fetch_info_by_user_id(
+        request.app.config.DB_CONN, user_id
+    )
+    if auth_info is None or auth_info.get('hashed_password') != hashed_pwd:
+        raise ApiUnauthorized('Unauthorized: Incorrect user id or password')
+    return await get_apikey(request)
+
+
+async def get_apikey(request):
+    serializer = Serializer(request.app.config.SECRET_KEY)
+    token = serializer.dumps({'id': request.json.get('id')})
     return json(
         {
             'data': {
