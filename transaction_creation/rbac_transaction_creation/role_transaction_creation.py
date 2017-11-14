@@ -66,3 +66,130 @@ def create_role(txn_key, batch_key, role_name, role_id, metadata, admins):
         outputs,
         txn_key,
         batch_key)
+
+
+def propose_add_role_admins(txn_key,
+                            batch_key,
+                            proposal_id,
+                            role_id,
+                            user_id,
+                            reason,
+                            metadata):
+    """Create a BatchList with a ProposeAddRoleAdmins transaction in it.
+
+    Args:
+        txn_key (Key): The txn signer key pair.
+        batch_key (Key): The batch signer key pair.
+        role_id (str): The role's id.
+        user_id (str): The user that is being proposed to be an admin.
+        reason (str): The client supplied reason for the proposal.
+        metadata (str): The client supplied metadata.
+
+    Returns:
+        tuple
+            BatchList, batch header_signature tuple
+    """
+
+    propose_add_payload = role_transaction_pb2.ProposeAddRoleAdmin(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_user_address(user_id=user_id),
+              addresser.make_proposal_address(role_id, user_id),
+              addresser.make_role_admins_address(role_id, user_id),
+              addresser.make_role_attributes_address(role_id=role_id)]
+
+    outputs = [addresser.make_proposal_address(role_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose_add_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
+def confirm_add_role_admins(txn_key,
+                            batch_key,
+                            proposal_id,
+                            role_id,
+                            user_id,
+                            reason):
+    """Creates a BatchList with a ConfirmAddRoleAdmin transaction in it.
+
+    Args:
+        txn_key (Key): The txn signer key pair.
+        batch_key (Key): The batch signer key pair.
+        proposal_id (str): The proposal's identifier.
+        role_id (str): The role's identifier.
+        user_id (str): The user's signer public key.
+        reason (str): The client supplied reason to confirm.
+
+    Returns:
+        tuple
+            BatchList, batch header_signature tuple
+    """
+
+    confirm_add_payload = role_transaction_pb2.ConfirmAddRoleAdmin(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=reason)
+
+    inputs = [addresser.make_role_admins_address(
+        role_id=role_id,
+        user_id=txn_key.public_key)]
+    inputs.append(addresser.make_proposal_address(role_id, user_id))
+
+    outputs = [addresser.make_proposal_address(role_id, user_id),
+               addresser.make_role_admins_address(role_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=confirm_add_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
+def reject_add_role_admins(txn_key,
+                           batch_key,
+                           proposal_id,
+                           role_id,
+                           user_id,
+                           reason):
+
+    reject_add_payload = role_transaction_pb2.RejectAddRoleAdmin(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=reason)
+
+    inputs = [addresser.make_role_admins_address(
+        role_id=role_id,
+        user_id=txn_key.public_key)]
+    inputs.append(addresser.make_proposal_address(role_id, user_id))
+
+    outputs = [addresser.make_proposal_address(role_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=reject_add_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
