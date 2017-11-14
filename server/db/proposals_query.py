@@ -15,39 +15,21 @@
 
 import logging
 
-from api.errors import ApiNotFound
-
 import rethinkdb as r
-from rethinkdb.errors import ReqlCursorEmpty
 
 
 LOGGER = logging.getLogger(__name__)
 
 
-async def fetch_user_by_id(conn, user_id, head_block_num):
-    cursor = await r.table('users').get_all(
-        user_id, index='user_id'
+async def fetch_proposals_by_target_id(conn, target_id, head_block_num):
+    cursor = await r.table('proposals').get_all(
+        target_id, index='target_id'
     ).filter(
         (head_block_num >= r.row['start_block_num'])
-        & (head_block_num <= r.row['end_block_num'])
+        & (head_block_num < r.row['end_block_num'])
     ).run(conn)
-    try:
-        result = await cursor.next()
-    except ReqlCursorEmpty:
-        raise ApiNotFound(
-            "Not Found: No user with the id '{}' exists".format(user_id)
-        )
-    return result
-
-
-async def fetch_users_by_manager_id(conn, manager_id, head_block_num):
-    cursor = await r.table('users').filter(
-        (head_block_num >= r.row['start_block_num'])
-        & (head_block_num <= r.row['end_block_num'])
-        & (r.row['manager_id'] == manager_id)
-    ).run(conn)
-
-    managers = []
+    proposals = []
     while await cursor.fetch_next():
-        managers.append(await cursor.next())
-    return managers
+        proposals.append(await cursor.next())
+
+    return proposals
