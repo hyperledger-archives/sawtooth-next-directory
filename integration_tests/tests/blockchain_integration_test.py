@@ -31,7 +31,7 @@ from rbac_transaction_creation.protobuf import user_state_pb2
 from rbac_transaction_creation.common import Key
 from rbac_transaction_creation import manager_transaction_creation
 from rbac_transaction_creation.user_transaction_creation import create_user
-from rbac_transaction_creation.role_transaction_creation import create_role
+from rbac_transaction_creation import role_transaction_creation
 
 
 LOGGER = logging.getLogger(__name__)
@@ -109,6 +109,7 @@ class TestBlockchain(unittest.TestCase):
 
         cls.role_id1 = uuid4().hex
         cls.update_manager_proposal_id = uuid4().hex
+        cls.add_role_admins_proposal_id = uuid4().hex
 
     def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
@@ -439,6 +440,204 @@ class TestBlockchain(unittest.TestCase):
             "INVALID",
             "The proposal is not open")
 
+    def test_05_propose_add_role_admins(self):
+        """Tests the ProposeAddRoleAdmins validation rules.
+
+        Notes:
+            ProposeAddRoleAdmins validation rules
+                - No proposal exists for the same change.
+                - The user is not already an admin.
+                - The txn is signed by either the User or their manager.
+                - The User exists.
+                - The Role exists.
+
+            At this point:
+                user1                            role1
+                    \                                \
+                     user2b                          admins
+                     /   \                             - user1
+                    /   user2a                         - user2a
+                  user3b    \
+                            user3a
+        """
+
+        invalid_role_id = uuid4().hex
+        invalid_user_id = uuid4().hex
+
+        self.assertEqual(
+            self.client.propose_add_role_admins(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                role_id=invalid_role_id,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The role must exist")
+
+        self.assertEqual(
+            self.client.propose_add_role_admins(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                role_id=self.role_id1,
+                user_id=invalid_user_id,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The user must exist")
+
+        self.assertEqual(
+            self.client.propose_add_role_admins(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                role_id=self.role_id1,
+                user_id=self.key3a.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The txn must be signed by either the user or their manager")
+
+        self.assertEqual(
+            self.client.propose_add_role_admins(
+                key=self.key2a,
+                proposal_id=uuid4().hex,
+                role_id=self.role_id1,
+                user_id=self.key2a.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The user must not already be an admin")
+
+        self.assertEqual(
+            self.client.propose_add_role_admins(
+                key=self.key2a,
+                proposal_id=self.add_role_admins_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3a.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.propose_add_role_admins(
+                key=self.key2a,
+                proposal_id=uuid4().hex,
+                role_id=self.role_id1,
+                user_id=self.key3a.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "There must not be an open proposal for the same change.")
+
+    def test_06_confirm_add_role_admins(self):
+        """Tests the ConfirmAddRoleAdmins validation rules.
+
+        Notes:
+            ConfirmAddRoleAdmins validation rules
+                - The txn signer is a Role Admin for the role.
+                - The proposal exists and is open.
+        """
+
+        self.assertEqual(
+            self.client.confirm_add_role_admins(
+                key=self.key3b,
+                proposal_id=self.add_role_admins_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3a.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The txn signer for ConfirmAddRoleAdmin must be an admin "
+            "of the role.")
+
+        self.assertEqual(
+            self.client.confirm_add_role_admins(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                role_id=uuid4().hex,
+                user_id=uuid4().hex,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must exist.")
+
+        self.assertEqual(
+            self.client.confirm_add_role_admins(
+                key=self.key1,
+                proposal_id=self.add_role_admins_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3a.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.confirm_add_role_admins(
+                key=self.key1,
+                proposal_id=self.add_role_admins_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3a.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must be open.")
+
+    def test_07_reject_add_role_admins(self):
+        """Tests the RejectAddRoleAdmins validation rules.
+
+        Notes:
+            RejectAddRoleAdmins validation rules
+                - The txn signer is a role admin.
+                - The proposal exists and is open.
+        """
+
+        proposal_id = uuid4().hex
+
+        self.assertEqual(
+            self.client.propose_add_role_admins(
+                key=self.key2b,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_add_role_admins(
+                key=self.key3b,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The user is not a Role Admin.")
+
+        self.assertEqual(
+            self.client.reject_add_role_admins(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                role_id=uuid4().hex,
+                user_id=uuid4().hex,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must exist.")
+
+        self.assertEqual(
+            self.client.reject_add_role_admins(
+                key=self.key1,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_add_role_admins(
+                key=self.key1,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must be open.")
+
 
 class RBACClient(object):
 
@@ -465,12 +664,13 @@ class RBACClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def create_role(self, key, role_name, role_id, metadata, admins):
-        batch_list, signature = create_role(txn_key=key,
-                                            batch_key=BATCHER_KEY,
-                                            role_name=role_name,
-                                            role_id=role_id,
-                                            metadata=metadata,
-                                            admins=admins)
+        batch_list, signature = role_transaction_creation.create_role(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            role_name=role_name,
+            role_id=role_id,
+            metadata=metadata,
+            admins=admins)
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
@@ -522,6 +722,58 @@ class RBACClient(object):
             reason=reason,
             user_id=user_id,
             manager_id=manager_id)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def propose_add_role_admins(self,
+                                key,
+                                proposal_id,
+                                role_id,
+                                user_id,
+                                reason,
+                                metadata):
+        batch_list, signature = role_transaction_creation.propose_add_role_admins(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            role_id=role_id,
+            user_id=user_id,
+            reason=reason,
+            metadata=metadata)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def confirm_add_role_admins(self,
+                                key,
+                                proposal_id,
+                                role_id,
+                                user_id,
+                                reason):
+        batch_list, signature = role_transaction_creation.confirm_add_role_admins(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            role_id=role_id,
+            user_id=user_id,
+            reason=reason)
+
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def reject_add_role_admins(self,
+                               key,
+                               proposal_id,
+                               role_id,
+                               user_id,
+                               reason):
+
+        batch_list, signature = role_transaction_creation.reject_add_role_admins(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            role_id=role_id,
+            user_id=user_id,
+            reason=reason)
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
