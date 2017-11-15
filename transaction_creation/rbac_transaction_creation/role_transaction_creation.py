@@ -390,3 +390,98 @@ def reject_add_role_members(txn_key,
         outputs,
         txn_key,
         batch_key)
+
+
+def propose_add_role_tasks(txn_key,
+                           batch_key,
+                           proposal_id,
+                           role_id,
+                           task_id,
+                           reason,
+                           metadata):
+    propose_payload = role_transaction_pb2.ProposeAddRoleTask(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_proposal_address(role_id, task_id),
+              addresser.make_role_tasks_address(role_id, task_id),
+              addresser.make_role_owners_address(role_id, txn_key.public_key),
+              addresser.make_role_attributes_address(role_id),
+              addresser.make_task_attributes_address(task_id)]
+
+    outputs = [addresser.make_proposal_address(role_id, task_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_TASKS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
+def confirm_add_role_tasks(txn_key,
+                           batch_key,
+                           proposal_id,
+                           role_id,
+                           task_id,
+                           reason):
+
+    confirm_payload = role_transaction_pb2.ConfirmAddRoleTask(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=reason)
+
+    inputs = [addresser.make_proposal_address(role_id, task_id),
+              addresser.make_task_owners_address(task_id, txn_key.public_key)]
+
+    outputs = [addresser.make_proposal_address(role_id, task_id),
+               addresser.make_role_tasks_address(role_id, task_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=confirm_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_TASKS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
+def reject_add_role_tasks(txn_key,
+                          batch_key,
+                          proposal_id,
+                          role_id,
+                          task_id,
+                          reason):
+
+    reject_payload = role_transaction_pb2.RejectAddRoleTask(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=reason)
+
+    inputs = [addresser.make_proposal_address(role_id, task_id),
+              addresser.make_task_owners_address(task_id, txn_key.public_key)]
+
+    outputs = [addresser.make_proposal_address(role_id, task_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=reject_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_TASKS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)

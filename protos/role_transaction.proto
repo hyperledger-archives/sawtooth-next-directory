@@ -113,12 +113,37 @@ message ProposeAddRoleTask {
 
     string role_id = 2;
 
-    string user_id = 3;
+    string task_id = 3;
 
     string reason = 4;
 
     string metadata = 5;
 
+}
+
+
+message ConfirmAddRoleTask {
+
+    string proposal_id = 1;
+
+    string role_id = 2;
+
+    string task_id = 3;
+
+    string reason = 4;
+
+}
+
+
+message RejectAddRoleTask {
+
+    string proposal_id = 1;
+
+    string role_id = 2;
+
+    string task_id = 3;
+
+    string reason = 4;
 }
 
 
@@ -128,12 +153,36 @@ message ProposeRemoveRoleTask {
 
     string role_id = 2;
 
-    string user_id = 3;
+    string task_id = 3;
 
     string reason = 4;
 
     string metadata = 5;
 
+}
+
+
+message ConfirmRemoveRoleTask {
+    string proposal_id = 1;
+
+    string role_id = 2;
+
+    string task_id = 3;
+
+    string reason = 4;
+
+}
+
+
+message RejectRemoveRoleTask {
+
+    string proposal_id = 1;
+
+    string role_id = 2;
+
+    string task_id = 3;
+
+    string reason = 4;
 }
 
 
