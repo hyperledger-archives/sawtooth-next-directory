@@ -81,10 +81,24 @@ class ApiInternalError(ApiException):
 
 
 @ERRORS_BP.exception(ApiException)
-def json_error(request, exception):
+def api_json_error(request, exception):
     return json(
         {
             'code': exception.status_code,
             'message': exception.message
         }, status=exception.status_code
+    )
+
+
+@ERRORS_BP.exception(Exception)
+def json_error(request, exception):
+    try:
+        code = exception.status_code
+    except AttributeError:
+        code = 503
+    return json(
+        {
+            'code': code,
+            'message': exception.args[0]
+        }, status=code
     )
