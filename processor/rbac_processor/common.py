@@ -20,6 +20,7 @@ from rbac_addressing import addresser
 from rbac_processor.protobuf import user_state_pb2
 from rbac_processor.protobuf import proposal_state_pb2
 from rbac_processor.protobuf import role_state_pb2
+from rbac_processor.protobuf import task_state_pb2
 
 
 def get_state_entry(state_entries, address):
@@ -156,6 +157,27 @@ def is_in_prop_container(container, identifier):
         if prop.proposal_id == identifier:
             return True
     return False
+
+
+def return_task_container(entry):
+
+    task_container = task_state_pb2.TaskAttributesContainer()
+    task_container.ParseFromString(entry.data)
+
+    return task_container
+
+
+def is_in_task_container(container, identifier):
+    for task in container.task_attributes:
+        if task.task_id == identifier:
+            return True
+    return False
+
+
+def add_task_rel_to_container(container, task_id, pubkeys):
+    for task_rel in container.relationships:
+        if task_rel.task_id == task_id:
+            task_rel.identifiers.extend(pubkeys)
 
 
 def validate_identifier_is_user(state_entries, identifier, address):

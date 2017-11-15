@@ -22,6 +22,7 @@ from rbac_processor.role import role_admins
 from rbac_processor.role import role_members
 from rbac_processor.role import role_owners
 from rbac_processor.role.role_apply import apply_create_role
+from rbac_processor.task.task_create import apply_create_task
 from rbac_processor.user.user_create import apply_create_user
 from rbac_processor.user.user_manager_proposal import apply_user_confirm
 from rbac_processor.user.user_manager_proposal import apply_user_propose
@@ -135,6 +136,9 @@ def apply_create(header, payload, state):
 
     elif payload.message_type == RBACPayload.CREATE_ROLE:
         apply_create_role(header, payload, state)
+
+    elif payload.message_type == RBACPayload.CREATE_TASK:
+        apply_create_task(header, payload, state)
 
 
 def apply_role_propose(header, payload, state):
