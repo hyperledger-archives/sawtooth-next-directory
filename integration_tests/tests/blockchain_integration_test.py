@@ -32,6 +32,7 @@ from rbac_transaction_creation.common import Key
 from rbac_transaction_creation import manager_transaction_creation
 from rbac_transaction_creation.user_transaction_creation import create_user
 from rbac_transaction_creation import role_transaction_creation
+from rbac_transaction_creation import task_transaction_creation
 
 
 LOGGER = logging.getLogger(__name__)
@@ -108,6 +109,7 @@ class TestBlockchain(unittest.TestCase):
         cls.key3b, cls.user3b = make_key_and_name()
 
         cls.role_id1 = uuid4().hex
+        cls.task_id1 = uuid4().hex
         cls.update_manager_proposal_id = uuid4().hex
         cls.add_role_admins_proposal_id = uuid4().hex
         cls.add_role_owners_proposal_id = uuid4().hex
@@ -1022,6 +1024,60 @@ class TestBlockchain(unittest.TestCase):
             "INVALID",
             "The proposal must be open.")
 
+    def test_14_create_task(self):
+        """Tests the CreateTask validation rules.
+
+        Notes:
+            CreateTask validation rules
+                - The admins listed are users.
+                - The task_id is not used already.
+
+        """
+
+        self.assertEqual(
+            self.client.create_task(
+                key=self.key1,
+                task_id=uuid4().hex,
+                task_name=uuid4().hex,
+                admins=[uuid4().hex],
+                owners=[self.key1.public_key],
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "All admins must be users.")
+
+        self.assertEqual(
+            self.client.create_task(
+                key=self.key1,
+                task_id=uuid4().hex,
+                task_name=uuid4().hex,
+                admins=[self.key1.public_key],
+                owners=[uuid4().hex],
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "All owners must be users")
+
+        self.assertEqual(
+            self.client.create_task(
+                key=self.key1,
+                task_id=self.task_id1,
+                task_name=uuid4().hex,
+                admins=[self.key1.public_key],
+                owners=[self.key2a.public_key],
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.create_task(
+                key=self.key1,
+                task_id=self.task_id1,
+                task_name=uuid4().hex,
+                admins=[self.key1.public_key],
+                owners=[self.key1.public_key],
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The task_id must not belong to another task.")
+
+
 
 class RBACClient(object):
 
@@ -1261,6 +1317,26 @@ class RBACClient(object):
             reason=reason)
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
+
+    def create_task(self,
+                    key,
+                    task_id,
+                    task_name,
+                    admins,
+                    owners,
+                    metadata):
+
+        batch_list, signature = task_transaction_creation.create_task(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            task_id=task_id,
+            task_name=task_name,
+            admins=admins,
+            owners=owners,
+            metadata=metadata)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
 
 def make_key_and_name():
     private_key = signing.generate_privkey()
