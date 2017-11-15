@@ -149,7 +149,9 @@ message CreateTask {
 
     repeated string admins = 3;
 
-    string metadata = 4;
+    repeated string owners = 4;
+
+    string metadata = 5;
 
 }
 
