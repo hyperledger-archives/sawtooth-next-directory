@@ -26,7 +26,10 @@ from sawtooth_rest_api.protobuf import validator_pb2
 
 from api.errors import ApiBadRequest, ApiInternalError
 
+from db import auth_query
 from db import blocks_query
+
+from rbac_transaction_creation.common import Key
 
 
 LOGGER = logging.getLogger(__name__)
@@ -68,6 +71,25 @@ async def get_request_block_num(request):
             request.app.config.DB_CONN
         )
     return head_block.get('block_num')
+
+
+async def get_transactor_key(request):
+    id_dict = deserialize_apikey(
+        request.app.config.SECRET_KEY,
+        request.token
+    )
+    user_id = id_dict.get('id')
+
+    auth_data = await auth_query.fetch_info_by_user_id(
+        request.app.config.DB_CONN, user_id
+    )
+    encrypted_private_key = auth_data.get('encrypted_private_key')
+    private_key = decrypt_private_key(
+        request.app.config.AES_KEY,
+        user_id,
+        encrypted_private_key
+    )
+    return Key(user_id, private_key)
 
 
 def generate_apikey(secret_key, user_id):

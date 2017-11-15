@@ -13,10 +13,17 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+from uuid import uuid4
+
 from sanic import Blueprint
+from sanic.response import json
 
 from api.errors import ApiNotImplemented
 from api.auth import authorized
+from api import utils
+
+from rbac_transaction_creation.role_transaction_creation \
+    import create_role
 
 
 ROLES_BP = Blueprint('roles')
@@ -31,7 +38,24 @@ async def fetch_all_roles(request):
 @ROLES_BP.post('api/roles')
 @authorized()
 async def create_new_role(request):
-    raise ApiNotImplemented()
+    required_fields = ['name', 'administrators']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    role_id = uuid4().hex
+    batch_list = create_role(
+        txn_key,
+        request.app.config.BATCHER_KEY_PAIR,
+        request.json.get('name'),
+        role_id,
+        request.json.get('metadata'),
+        request.json.get('administrators')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN,
+        batch_list[0], request.app.config.TIMEOUT
+    )
+    return create_role_response(request, role_id)
 
 
 @ROLES_BP.get('api/roles/<role_id>')
@@ -92,3 +116,22 @@ async def add_role_task(request, role_id):
 @authorized()
 async def delete_role_task(request, role_id):
     raise ApiNotImplemented()
+
+
+def create_role_response(request, role_id):
+    role_resource = {
+        'id': role_id,
+        'name': request.json.get('name'),
+        'owners': request.json.get('owners'),
+        'administrators': request.json.get('administrators'),
+        'members': [],
+        'tasks': [],
+        'proposals': []
+    }
+
+    if request.json.get('metadata'):
+        role_resource['metadata'] = request.json.get('metadata')
+
+    return json({
+        'data': role_resource
+    })
