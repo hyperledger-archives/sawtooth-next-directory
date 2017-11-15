@@ -19,6 +19,7 @@ from rbac_addressing import addresser
 
 from rbac_processor.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac_processor.role import role_admins
+from rbac_processor.role import role_members
 from rbac_processor.role import role_owners
 from rbac_processor.role.role_apply import apply_create_role
 from rbac_processor.user.user_create import apply_create_user
@@ -142,6 +143,9 @@ def apply_role_propose(header, payload, state):
     elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_OWNERS:
         role_owners.apply_propose(header, payload, state)
 
+    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_MEMBERS:
+        role_members.apply_propose(header, payload, state)
+
 
 def apply_role_confirm(header, payload, state):
     if payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_ADMINS:
@@ -150,6 +154,9 @@ def apply_role_confirm(header, payload, state):
     elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_OWNERS:
         role_owners.apply_confirm(header, payload, state)
 
+    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_MEMBERS:
+        role_members.apply_reject(header, payload, state)
+
 
 def apply_role_reject(header, payload, state):
     if payload.message_type == RBACPayload.REJECT_ADD_ROLE_ADMINS:
@@ -157,3 +164,6 @@ def apply_role_reject(header, payload, state):
 
     elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_OWNERS:
         role_owners.apply_reject(header, payload, state)
+
+    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_MEMBERS:
+        role_members.apply_reject(header, payload, state)

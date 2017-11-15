@@ -1,3 +1,7 @@
+# Copyright 2017 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
@@ -28,7 +32,7 @@ def apply_propose(header, payload, state):
     proposal_payload = role_transaction_pb2.ProposeAddRoleMember()
     proposal_payload.ParseFromString(payload.content)
 
-    role_owners_address = addresser.make_role_owners_address(
+    role_members_address = addresser.make_role_members_address(
         role_id=proposal_payload.role_id,
         user_id=proposal_payload.user_id)
 
@@ -39,7 +43,7 @@ def apply_propose(header, payload, state):
     state_entries = validate_role_rel_proposal(
         header,
         proposal_payload,
-        role_owners_address,
+        role_members_address,
         state)
 
     if not no_open_proposal(
@@ -47,9 +51,9 @@ def apply_propose(header, payload, state):
             object_id=proposal_payload.role_id,
             related_id=proposal_payload.user_id,
             proposal_address=proposal_address,
-            proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_OWNERS):
+            proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBERS):
         raise InvalidTransaction(
-            "There is already an open proposal for ADD_ROLE_OWNERS "
+            "There is already an open proposal for ADD_ROLE_MEMBERS "
             "with role id {} and user id {}".format(
                 proposal_payload.role_id[:10],
                 proposal_payload.user_id[:10]))
@@ -59,7 +63,7 @@ def apply_propose(header, payload, state):
         header=header,
         payload=proposal_payload,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_OWNERS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBERS,
         state=state)
 
 
@@ -67,40 +71,40 @@ def apply_confirm(header, payload, state):
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm_payload.ParseFromString(payload.content)
 
-    role_owner_address = addresser.make_role_owners_address(
+    role_members_address = addresser.make_role_members_address(
         role_id=confirm_payload.role_id,
         user_id=confirm_payload.user_id)
 
-    txn_signer_admin_address = addresser.make_role_admins_address(
+    txn_signer_owners_address = addresser.make_role_owners_address(
         role_id=confirm_payload.role_id,
         user_id=header.signer_pubkey)
 
     state_entries = validate_role_admin_or_owner(
         header=header,
         confirm=confirm_payload,
-        txn_signer_rel_address=txn_signer_admin_address,
+        txn_signer_rel_address=txn_signer_owners_address,
         state=state)
 
     handle_confirm_add(
         state_entries=state_entries,
         header=header,
         confirm=confirm_payload,
-        role_rel_address=role_owner_address,
+        role_rel_address=role_members_address,
         state=state)
 
 
 def apply_reject(header, payload, state):
-    reject_payload = role_transaction_pb2.RejectAddRoleOwner()
+    reject_payload = role_transaction_pb2.RejectAddRoleAdmin()
     reject_payload.ParseFromString(payload.content)
 
-    txn_signer_admins_address = addresser.make_role_admins_address(
-        role_id=reject_payload.role_id,
-        user_id=header.signer_pubkey)
+    txn_signer_owners_address = addresser.make_role_owners_address(
+        reject_payload.role_id,
+        header.signer_pubkey)
 
     state_entries = validate_role_admin_or_owner(
         header=header,
         confirm=reject_payload,
-        txn_signer_rel_address=txn_signer_admins_address,
+        txn_signer_rel_address=txn_signer_owners_address,
         state=state)
 
     handle_reject(

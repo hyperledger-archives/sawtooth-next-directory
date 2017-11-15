@@ -97,6 +97,7 @@ def validate_role_rel_proposal(header, propose, rel_address, state):
 
 def validate_role_admin_or_owner(header,
                                  confirm,
+                                 txn_signer_rel_address,
                                  state):
     """Validate a [ Confirm | Reject }_____Role[ Admin | Owner } transaction.
 
@@ -109,17 +110,13 @@ def validate_role_admin_or_owner(header,
         (list of StateEntry)
     """
 
-    txn_signer_role_admins_address = addresser.make_role_admins_address(
-        role_id=confirm.role_id,
-        user_id=header.signer_pubkey)
-
     proposal_address = addresser.make_proposal_address(
         object_id=confirm.role_id,
         related_id=confirm.user_id)
 
     state_entries = get_state(
         state,
-        [txn_signer_role_admins_address,
+        [txn_signer_rel_address,
          proposal_address])
 
     if not proposal_exists_and_open(
@@ -129,17 +126,19 @@ def validate_role_admin_or_owner(header,
         raise InvalidTransaction("The proposal {} does not exist or "
                                  "is not open".format(confirm.proposal_id))
     try:
-        entry = get_state_entry(state_entries, txn_signer_role_admins_address)
+        entry = get_state_entry(state_entries, txn_signer_rel_address)
         role_rel_container = return_role_rel_container(entry)
     except KeyError:
         raise InvalidTransaction(
-            "Signer {} is not a role admin".format(header.signer_pubkey[:8]))
+            "Signer {} does not have the Role permissions "
+            "to close the proposal".format(header.signer_pubkey[:8]))
     if not is_in_role_rel_container(
             role_rel_container,
             role_id=confirm.role_id,
             identifier=header.signer_pubkey):
-        raise InvalidTransaction("Signer {} is not an "
-                                 "admin".format(header.signer_pubkey))
+        raise InvalidTransaction("Signer {} does not have the Role "
+                                 "permissions to close the "
+                                 "proposal".format(header.signer_pubkey))
 
     return state_entries
 

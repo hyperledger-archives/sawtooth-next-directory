@@ -75,9 +75,14 @@ def apply_confirm(header, payload, state):
         role_id=confirm_payload.role_id,
         user_id=confirm_payload.user_id)
 
+    txn_signer_admin_address = addresser.make_role_admins_address(
+        role_id=confirm_payload.role_id,
+        user_id=header.signer_pubkey)
+
     state_entries = validate_role_admin_or_owner(
         header=header,
         confirm=confirm_payload,
+        txn_signer_rel_address=txn_signer_admin_address,
         state=state)
 
     handle_confirm_add(
@@ -92,9 +97,14 @@ def apply_reject(header, payload, state):
     reject_payload = role_transaction_pb2.RejectAddRoleAdmin()
     reject_payload.ParseFromString(payload.content)
 
+    txn_signer_admin_address = addresser.make_role_admins_address(
+        role_id=reject_payload.role_id,
+        user_id=header.signer_pubkey)
+
     state_entries = validate_role_admin_or_owner(
         header=header,
         confirm=reject_payload,
+        txn_signer_rel_address=txn_signer_admin_address,
         state=state)
 
     handle_reject(
