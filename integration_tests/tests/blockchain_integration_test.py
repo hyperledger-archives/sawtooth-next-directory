@@ -111,6 +111,7 @@ class TestBlockchain(unittest.TestCase):
         cls.update_manager_proposal_id = uuid4().hex
         cls.add_role_admins_proposal_id = uuid4().hex
         cls.add_role_owners_proposal_id = uuid4().hex
+        cls.add_role_members_proposal_id = uuid4().hex
 
     def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
@@ -823,6 +824,190 @@ class TestBlockchain(unittest.TestCase):
             "INVALID",
             "The proposal must be open.")
 
+    def test_11_propose_add_role_members(self):
+        """Tests the ProposeAddRoleMembers validation rules.
+
+        Notes:
+            ProposeAddRoleMembers validation rules
+                - The Role exists.
+                - The User exists.
+                - The txn signer is either the User or the User's manager.
+                - No open proposal exists for the same change.
+                - The User is not already a Member of the Role.
+
+            At this point:
+                user1                            role1
+                    \                            /    \
+                     user2b                  owners   admins
+                     /   \                    - user3b - user1
+                    /   user2a                         - user2a
+                  user3b    \                          - user3a
+                            user3a
+        """
+
+        self.assertEqual(
+            self.client.propose_add_role_members(
+                key=self.key2b,
+                proposal_id=uuid4().hex,
+                role_id=uuid4().hex,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The role must exist.")
+
+        self.assertEqual(
+            self.client.propose_add_role_members(
+                key=self.key2b,
+                proposal_id=uuid4().hex,
+                role_id=self.role_id1,
+                user_id=uuid4().hex,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The user must exist")
+
+        self.assertEqual(
+            self.client.propose_add_role_members(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                role_id=self.role_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The txn signer must be the user or user's manager.")
+
+        self.assertEqual(
+            self.client.propose_add_role_members(
+                key=self.key1,
+                proposal_id=self.add_role_members_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.propose_add_role_members(
+                key=self.key1,
+                proposal_id=uuid4().hex,
+                role_id=self.role_id1,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "No open proposal can exist for the same state change.")
+
+    def test_12_confirm_add_role_members(self):
+        """Tests the ConfirmAddRoleMembers validation rules.
+
+        Notes:
+            ConfirmAddRoleMembers validation rules
+                - The proposal exists and is open.
+                - The txn signer is a Role owner.
+        """
+
+        self.assertEqual(
+            self.client.confirm_add_role_members(
+                key=self.key1,
+                proposal_id=self.add_role_members_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The txn signer for ConfirmAddRoleMember must be an owner "
+            "of the role.")
+
+        self.assertEqual(
+            self.client.confirm_add_role_members(
+                key=self.key3b,
+                proposal_id=uuid4().hex,
+                role_id=uuid4().hex,
+                user_id=uuid4().hex,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must exist.")
+
+        self.assertEqual(
+            self.client.confirm_add_role_members(
+                key=self.key3b,
+                proposal_id=self.add_role_members_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.confirm_add_role_members(
+                key=self.key3b,
+                proposal_id=self.add_role_members_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must be open.")
+
+    def test_13_reject_add_role_members(self):
+        """Tests the RejectAddRoleMembers validation rules.
+
+        Notes:
+            RejectAddRoleMembers validation rules
+                - The txn signer is an owner of the Role
+                - The proposal exists and is open.
+        """
+
+        proposal_id = uuid4().hex
+
+        self.assertEqual(
+            self.client.propose_add_role_members(
+                key=self.key1,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_add_role_members(
+                key=self.key2a,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The txn signer is not a Role Owner.")
+
+        self.assertEqual(
+            self.client.reject_add_role_members(
+                key=self.key3b,
+                proposal_id=uuid4().hex,
+                role_id=uuid4().hex,
+                user_id=uuid4().hex,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must exist.")
+
+        self.assertEqual(
+            self.client.reject_add_role_members(
+                key=self.key3b,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_add_role_members(
+                key=self.key3b,
+                proposal_id=proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must be open.")
+
 
 class RBACClient(object):
 
@@ -1003,6 +1188,56 @@ class RBACClient(object):
                                user_id,
                                reason):
         batch_list, signature = role_transaction_creation.reject_add_role_owners(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            role_id=role_id,
+            user_id=user_id,
+            reason=reason)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def propose_add_role_members(self,
+                                 key,
+                                 proposal_id,
+                                 role_id,
+                                 user_id,
+                                 reason,
+                                 metadata):
+        batch_list, signature = role_transaction_creation.propose_add_role_members(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            role_id=role_id,
+            user_id=user_id,
+            reason=reason,
+            metadata=metadata)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def confirm_add_role_members(self,
+                                 key,
+                                 proposal_id,
+                                 role_id,
+                                 user_id,
+                                 reason):
+        batch_list, signature = role_transaction_creation.confirm_add_role_members(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            role_id=role_id,
+            user_id=user_id,
+            reason=reason)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def reject_add_role_members(self,
+                                key,
+                                proposal_id,
+                                role_id,
+                                user_id,
+                                reason):
+        batch_list, signature = role_transaction_creation.reject_add_role_members(
             txn_key=key,
             batch_key=BATCHER_KEY,
             proposal_id=proposal_id,
