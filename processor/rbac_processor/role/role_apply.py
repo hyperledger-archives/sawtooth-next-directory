@@ -20,11 +20,10 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
 from rbac_processor.common import get_state_entry
-from rbac_processor.common import is_in_user_container
 from rbac_processor.common import is_in_role_attributes_container
+from rbac_processor.common import validate_list_of_user_are_users
 from rbac_processor.protobuf import role_state_pb2
 from rbac_processor.protobuf import role_transaction_pb2
-from rbac_processor.protobuf import user_state_pb2
 from rbac_processor.state import get_state
 from rbac_processor.state import set_state
 
@@ -65,7 +64,7 @@ def _validate_create_role_state(create_role, state):
         state,
         [addresser.make_user_address(u) for u in users])
 
-    _validate_users_exist(user_state_return, users)
+    validate_list_of_user_are_users(user_state_return, users)
 
 
 def _handle_role_state_set(create_role, state):
@@ -148,20 +147,3 @@ def _role_already_exists(state_return, role_id):
     return is_in_role_attributes_container(
         container=role_attr_container,
         identifier=role_id)
-
-
-def _validate_users_exist(state_return, users):
-    for address, user_id in [(addresser.make_user_address(u), u)
-                             for u in users]:
-        try:
-            state_entry = get_state_entry(state_return, address)
-            user_container = user_state_pb2.UserContainer()
-            user_container.ParseFromString(state_entry.data)
-            if not is_in_user_container(user_container, user_id):
-                raise InvalidTransaction(
-                    "Public key {} listed as an admin or owner is "
-                    "not a User.".format(user_id))
-        except KeyError:
-            raise InvalidTransaction(
-                "Public key {} listed as an admin or owner is "
-                " not in User state".format(user_id))

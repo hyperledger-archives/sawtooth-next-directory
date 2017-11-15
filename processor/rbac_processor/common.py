@@ -15,6 +15,8 @@
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
+from rbac_addressing import addresser
+
 from rbac_processor.protobuf import user_state_pb2
 from rbac_processor.protobuf import proposal_state_pb2
 from rbac_processor.protobuf import role_state_pb2
@@ -181,6 +183,15 @@ def validate_identifier_is_user(state_entries, identifier, address):
     except KeyError:
         raise InvalidTransaction("{} is not a user".format(
             identifier))
+
+
+def validate_list_of_user_are_users(state_return, admins):
+    for address, user_id in [(addresser.make_user_address(a), a)
+                             for a in admins]:
+        validate_identifier_is_user(
+            state_entries=state_return,
+            identifier=user_id,
+            address=address)
 
 
 def validate_identifier_is_role(state_entries, identifier, address):
