@@ -16,15 +16,13 @@
 import hashlib
 import logging
 
-from Crypto.Cipher import AES
-
 from sanic import Blueprint
 from sanic.response import json
 
 import sawtooth_signing as signing
 
 from api.errors import ApiNotImplemented
-from api.auth import authorized, get_apikey
+from api.auth import authorized
 from api import utils
 
 from db import auth_query
@@ -75,12 +73,9 @@ async def create_new_user(request):
         private_key, privkey_format='bytes'
     )
     txn_key = Key(public_key, private_key)
-
-    # Encrypt private key
-    aes_key = bytes.fromhex(request.app.config.AES_KEY)
-    init_vector = bytes.fromhex(public_key[:32])
-    cipher = AES.new(aes_key, AES.MODE_CBC, init_vector)
-    encrypted_private_key = cipher.encrypt(private_key)
+    encrypted_private_key = utils.encrypt_private_key(
+        request.app.config.AES_KEY, public_key, private_key
+    )
 
     # Build create user transaction
     batch_list = create_user(
@@ -156,7 +151,9 @@ async def fetch_open_proposals(request, user_id):
 
 
 def create_user_response(request, public_key):
-    token = get_apikey(request)
+    token = utils.generate_apikey(
+        request.app.config.SECRET_KEY, public_key
+    )
     user_resource = {
         'id': public_key,
         'name': request.json.get('name'),

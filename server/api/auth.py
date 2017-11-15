@@ -14,18 +14,21 @@
 # ------------------------------------------------------------------------------
 
 from functools import wraps
-
 import hashlib
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+import logging
+
 from itsdangerous import BadSignature
+
 from sanic import Blueprint
 from sanic.response import json
 
-from api.errors import ApiBadRequest, ApiUnauthorized
+from api.errors import ApiNotFound, ApiUnauthorized
+from api import utils
 
 from db import auth_query
 
 
+LOGGER = logging.getLogger(__name__)
 AUTH_BP = Blueprint('auth')
 
 
@@ -35,49 +38,40 @@ def authorized():
         async def decorated_function(request, *args, **kwargs):
             if request.token is None:
                 raise ApiUnauthorized("Unauthorized: No bearer token provided")
-            is_authorized = await validate_apikey(
-                request.token, request.app.config.SECRET_KEY)
-            if is_authorized:
-                response = await func(request, *args, **kwargs)
-                return response
-            else:
+            try:
+                id_dict = utils.deserialize_apikey(
+                    request.app.config.SECRET_KEY, request.token
+                )
+                await auth_query.fetch_info_by_user_id(
+                    request.app.config.DB_CONN,
+                    id_dict.get('id')
+                )
+            except (ApiNotFound, BadSignature):
                 raise ApiUnauthorized("Unauthorized: Invalid bearer token")
+            response = await func(request, *args, **kwargs)
+            return response
         return decorated_function
     return decorator
 
 
-async def validate_apikey(token, secret_key):
-    serializer = Serializer(secret_key)
-    try:
-        serializer.loads(token)
-    except BadSignature:
-        return False
-    return True
-
-
 @AUTH_BP.post('api/authorization')
 async def authorize(request):
-    try:
-        user_id = request.json.get('id')
-        password = request.json.get('password')
-    except Exception:
-        raise ApiBadRequest("Bad Request: Improper JSON format")
+    required_fields = ['id', 'password']
+    utils.validate_fields(required_fields, request.json)
 
+    password = request.json.get('password')
     hashed_pwd = hashlib.sha256(password.encode('utf-8')).hexdigest()
     auth_info = await auth_query.fetch_info_by_user_id(
-        request.app.config.DB_CONN, user_id
+        request.app.config.DB_CONN, request.json.get('id')
     )
     if auth_info is None or auth_info.get('hashed_password') != hashed_pwd:
-        raise ApiUnauthorized('Unauthorized: Incorrect user id or password')
-    token = get_apikey(request)
+        raise ApiUnauthorized("Unauthorized: Incorrect user id or password")
+    token = utils.generate_apikey(
+        request.app.config.SECRET_KEY,
+        request.json.get('id')
+    )
     return json({
         'data': {
             'authorization': token
         }
     })
-
-
-def get_apikey(request):
-    serializer = Serializer(request.app.config.SECRET_KEY)
-    token = serializer.dumps({'id': request.json.get('id')})
-    return token.decode('ascii')

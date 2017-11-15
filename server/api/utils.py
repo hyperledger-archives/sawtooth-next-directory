@@ -15,12 +15,16 @@
 
 import logging
 
-from api.errors import ApiBadRequest, ApiInternalError
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
+from Crypto.Cipher import AES
 
 from sanic.response import json
 
 from sawtooth_rest_api.protobuf import client_pb2
 from sawtooth_rest_api.protobuf import validator_pb2
+
+from api.errors import ApiBadRequest, ApiInternalError
 
 from db import blocks_query
 
@@ -64,6 +68,29 @@ async def get_request_block_num(request):
             request.app.config.DB_CONN
         )
     return head_block.get('block_num')
+
+
+def generate_apikey(secret_key, user_id):
+    serializer = Serializer(secret_key)
+    token = serializer.dumps({'id': user_id})
+    return token.decode('ascii')
+
+
+def deserialize_apikey(secret_key, token):
+    serializer = Serializer(secret_key)
+    return serializer.loads(token)
+
+
+def decrypt_private_key(aes_key, user_id, encrypted_private_key):
+    init_vector = bytes.fromhex(user_id[:32])
+    cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
+    return cipher.decrypt(encrypted_private_key)
+
+
+def encrypt_private_key(aes_key, user_id, private_key):
+    init_vector = bytes.fromhex(user_id[:32])
+    cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
+    return cipher.encrypt(private_key)
 
 
 async def send(conn, batch_list, timeout):
