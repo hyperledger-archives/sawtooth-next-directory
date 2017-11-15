@@ -38,7 +38,7 @@ async def fetch_all_roles(request):
 @ROLES_BP.post('api/roles')
 @authorized()
 async def create_new_role(request):
-    required_fields = ['name', 'administrators']
+    required_fields = ['name', 'administrators', 'owners']
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -49,7 +49,8 @@ async def create_new_role(request):
         request.json.get('name'),
         role_id,
         request.json.get('metadata'),
-        request.json.get('administrators')
+        request.json.get('administrators'),
+        request.json.get('owners')
     )
     await utils.send(
         request.app.config.VAL_CONN,

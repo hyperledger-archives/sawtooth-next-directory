@@ -248,7 +248,8 @@ class TestBlockchain(unittest.TestCase):
                 role_name=role1,
                 role_id=self.role_id1,
                 metadata=metadata,
-                admins=[self.key1.public_key, self.key2a.public_key])[0]['status'],
+                admins=[self.key1.public_key, self.key2a.public_key],
+                owners=[self.key2b.public_key])[0]['status'],
             "COMMITTED")
 
         self.assertEqual(
@@ -257,7 +258,8 @@ class TestBlockchain(unittest.TestCase):
                 role_name=role1,
                 role_id=self.role_id1,
                 metadata=metadata,
-                admins=[self.key2a.public_key])[0]['status'],
+                admins=[self.key2a.public_key],
+                owners=[self.key2b.public_key])[0]['status'],
             "INVALID",
             "The Role Id must not already exist.")
 
@@ -270,9 +272,21 @@ class TestBlockchain(unittest.TestCase):
                 role_name=role2,
                 role_id=role_id2,
                 metadata=metadata,
-                admins=[self.key_invalid.public_key, self.key2b.public_key])[0]['status'],
+                admins=[self.key_invalid.public_key, self.key2a.public_key],
+                owners=[self.key2b.public_key])[0]['status'],
             "INVALID",
             "All Admins listed must be Users")
+
+        self.assertEqual(
+            self.client.create_role(
+                key=self.key1,
+                role_name=role2,
+                role_id=role_id2,
+                metadata=metadata,
+                admins=[self.key2a.public_key],
+                owners=[self.key_invalid.public_key, self.key2b.public_key])[0]['status'],
+            "INVALID",
+            "All Owners listed must be Users")
 
     def test_02_propose_update_user_manager(self):
         """Tests that the ProposeUpdateUserManager validation rules are
@@ -1033,14 +1047,15 @@ class RBACClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
-    def create_role(self, key, role_name, role_id, metadata, admins):
+    def create_role(self, key, role_name, role_id, metadata, admins, owners):
         batch_list, signature = role_transaction_creation.create_role(
             txn_key=key,
             batch_key=BATCHER_KEY,
             role_name=role_name,
             role_id=role_id,
             metadata=metadata,
-            admins=admins)
+            admins=admins,
+            owners=owners)
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
