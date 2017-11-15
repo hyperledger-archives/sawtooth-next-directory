@@ -61,7 +61,7 @@ services:
       "
 
   settings-tp:
-    image: hyperledger/sawtooth-tp_settings:0.8
+    image: hyperledger/sawtooth-settings-tp:0.8
     depends_on:
       - validator
     command: settings-tp -v tcp://validator:4004

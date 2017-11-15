@@ -70,7 +70,7 @@ services:
       "
 
   rest-api:
-    image: hyperledger/sawtooth-rest_api:0.8
+    image: hyperledger/sawtooth-rest-api:0.8
     container_name: sawtooth-rest-api
     expose:
       - 8008
@@ -81,7 +81,7 @@ services:
     entrypoint: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
 
   shell:
-    image: hyperledger/sawtooth-all:0.8
+    image: hyperledger/sawtooth-shell:0.8
     volumes:
       - '.:/project/tmobile-rbac'
     working_dir: /project/tmobile-rbac
@@ -94,7 +94,7 @@ services:
         tail -f /dev/null
       "
   settings-tp:
-    image: hyperledger/sawtooth-tp_settings:0.8
+    image: hyperledger/sawtooth-settings-tp:0.8
     depends_on:
       - validator
     command: settings-tp -vv tcp://validator:4004

@@ -29,7 +29,7 @@ services:
     command: bin/rbac-tp -vv tcp://validator:4004
 
   settings-tp:
-    image: hyperledger/sawtooth-tp_settings:0.8
+    image: hyperledger/sawtooth-settings-tp:0.8
     expose:
       - 4004
     command: settings-tp -v tcp://validator:4004
@@ -51,7 +51,7 @@ services:
         \""
 
   rest-api:
-    image: hyperledger/sawtooth-rest_api:0.8
+    image: hyperledger/sawtooth-rest-api:0.8
     entrypoint: sawtooth-rest-api -v --connect tcp://validator:4004 --bind rest-api:8080
 
   blockchain-integration-test:
