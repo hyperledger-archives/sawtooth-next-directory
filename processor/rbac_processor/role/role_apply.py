@@ -45,6 +45,10 @@ def _validate_create_role_data(create_role):
     if not len(create_role.name) > 4:
         raise InvalidTransaction("Role name {} must be greater than 4 "
                                  "characters.".format(create_role.name))
+    if not create_role.admins:
+        raise InvalidTransaction("Role must have at least one admin")
+    if not create_role.owners:
+        raise InvalidTransaction("Role must have at least one owner")
 
 
 def _validate_create_role_state(create_role, state):
@@ -56,11 +60,12 @@ def _validate_create_role_state(create_role, state):
         raise InvalidTransaction("Role id {} is already in state".format(
             create_role.role_id))
 
+    users = list(create_role.admins) + list(create_role.owners)
     user_state_return = get_state(
         state,
-        [addresser.make_user_address(u) for u in create_role.admins])
+        [addresser.make_user_address(u) for u in users])
 
-    _validate_admins_are_users(user_state_return, create_role.admins)
+    _validate_users_exist(user_state_return, users)
 
 
 def _handle_role_state_set(create_role, state):
@@ -133,17 +138,18 @@ def _role_already_exists(state_return, role_id):
         identifier=role_id)
 
 
-def _validate_admins_are_users(state_return, admins):
-    for address, user_id in [(addresser.make_user_address(a), a)
-                             for a in admins]:
+def _validate_users_exist(state_return, users):
+    for address, user_id in [(addresser.make_user_address(u), u)
+                             for u in users]:
         try:
             state_entry = get_state_entry(state_return, address)
             user_container = user_state_pb2.UserContainer()
             user_container.ParseFromString(state_entry.data)
             if not is_in_user_container(user_container, user_id):
                 raise InvalidTransaction(
-                    "Public key {} listed as an admin is "
+                    "Public key {} listed as an admin or owner is "
                     "not a User.".format(user_id))
         except KeyError:
-            raise InvalidTransaction("Public key {} listed as an admin is "
-                                     "not in User state".format(user_id))
+            raise InvalidTransaction(
+                "Public key {} listed as an admin or owner is "
+                " not in User state".format(user_id))

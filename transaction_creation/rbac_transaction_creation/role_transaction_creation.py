@@ -21,7 +21,8 @@ from rbac_transaction_creation.protobuf import rbac_payload_pb2
 from rbac_transaction_creation.protobuf import role_transaction_pb2
 
 
-def create_role(txn_key, batch_key, role_name, role_id, metadata, admins):
+def create_role(txn_key, batch_key, role_name,
+                role_id, metadata, admins, owners):
     """Create a BatchList with a CreateRole transaction in it.
 
     Args:
@@ -31,6 +32,8 @@ def create_role(txn_key, batch_key, role_name, role_id, metadata, admins):
         role_id (str): A uuid that identifies this Role.
         metadata (str): Client supplied information that is not parsed.
         admins (list): A list of User ids of the Users who are admins of this
+            Role.
+        owners (list): A list of User ids of the Users who are owners of this
             Role.
 
     Returns:
@@ -42,19 +45,27 @@ def create_role(txn_key, batch_key, role_name, role_id, metadata, admins):
         role_id=role_id,
         name=role_name,
         metadata=metadata,
-        admins=admins)
+        admins=admins,
+        owners=owners)
 
     inputs = [addresser.make_sysadmin_members_address(txn_key.public_key),
               addresser.make_role_attributes_address(role_id)]
     inputs.extend([addresser.make_user_address(u) for u in admins])
+    inputs.extend([addresser.make_user_address(u) for u in owners])
     inputs.extend([addresser.make_role_admins_address(
         role_id=role_id,
         user_id=a) for a in admins])
+    inputs.extend([addresser.make_role_owners_address(
+        role_id=role_id,
+        user_id=o) for o in owners])
 
     outputs = [addresser.make_role_attributes_address(role_id)]
     outputs.extend([addresser.make_role_admins_address(
         role_id=role_id,
         user_id=a) for a in admins])
+    outputs.extend([addresser.make_role_owners_address(
+        role_id=role_id,
+        user_id=o) for o in owners])
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_role_payload.SerializeToString(),
