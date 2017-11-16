@@ -17,6 +17,8 @@ import logging
 
 from api.errors import ApiBadRequest, ApiInternalError
 
+from sanic.response import json
+
 from sawtooth_rest_api.protobuf import client_pb2
 from sawtooth_rest_api.protobuf import validator_pb2
 
@@ -37,16 +39,31 @@ def validate_fields(required_fields, body):
         raise ApiBadRequest("Bad Request: Improper JSON format")
 
 
-async def get_request_block_num(request):
-    head_id = request.args['head'][0]
+async def create_response(conn, url, data, head_block_num):
+    head_block = await blocks_query.fetch_block_by_num(conn, head_block_num)
+    head_block_id = head_block.get('block_id')
+    if '?head=' not in url:
+        url += '?head={}'.format(head_block_id)
+    response = {
+        'data': data,
+        'head': head_block_id,
+        'link': url
+    }
+    return json(response)
 
-    head_data = await blocks_query.get_block_by_id(
-        request.app.config.DB_CONN,
-        head_id
-    )
-    data = await head_data.next()
-    LOGGER.warning(data)
-    return data
+
+async def get_request_block_num(request):
+    try:
+        head_block_id = request.args['head'][0]
+        head_block = await blocks_query.fetch_block_by_id(
+            request.app.config.DB_CONN,
+            head_block_id
+        )
+    except KeyError:
+        head_block = await blocks_query.fetch_latest_block(
+            request.app.config.DB_CONN
+        )
+    return head_block.get('block_num')
 
 
 async def send(conn, batch_list, timeout):

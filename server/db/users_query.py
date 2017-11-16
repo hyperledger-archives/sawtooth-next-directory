@@ -24,12 +24,13 @@ from rethinkdb.errors import ReqlCursorEmpty
 LOGGER = logging.getLogger(__name__)
 
 
-async def fetch_user_info_by_id(conn, user_id, head_block_num):
-    cursor = await r.table('users').filter(
+async def fetch_user_by_id(conn, user_id, head_block_num):
+    cursor = await r.table('users').get_all(
+        user_id, index='user_id'
+    ).filter(
         (head_block_num >= r.row['start_block_num'])
         & (head_block_num <= r.row['end_block_num'])
-        & (r.row['user_id'] == user_id)
-    ).run(conn, read_mode='single')
+    ).run(conn)
     try:
         result = await cursor.next()
     except ReqlCursorEmpty:
@@ -37,3 +38,29 @@ async def fetch_user_info_by_id(conn, user_id, head_block_num):
             "Not Found: No user with the id '{}' exists".format(user_id)
         )
     return result
+
+
+async def fetch_all_user_info(conn, head_block_num):
+    cursor = await r.table('users').filter(
+        (head_block_num >= r.row['start_block_num'])
+        & (head_block_num <= r.row['end_block_num'])
+    ).run(conn)
+
+    user_info_list = []
+    while await cursor.fetch_next():
+        user_info_list.append(await cursor.next())
+
+    return user_info_list
+
+
+async def fetch_users_by_manager_id(conn, manager_id, head_block_num):
+    cursor = await r.table('users').filter(
+        (head_block_num >= r.row['start_block_num'])
+        & (head_block_num <= r.row['end_block_num'])
+        & (r.row['manager_id'] == manager_id)
+    ).run(conn)
+
+    managers = []
+    while await cursor.fetch_next():
+        managers.append(await cursor.next())
+    return managers

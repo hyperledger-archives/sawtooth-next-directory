@@ -34,7 +34,9 @@ paths:
           schema:
             properties:
               data:
-                $ref: '#/definitions/authToken'
+                properties:
+                  authorization:
+                    $ref: '#/definitions/authToken'
         '400':
           description: Response for a bad request
           schema:
@@ -1120,7 +1122,11 @@ paths:
           schema:
             properties:
               data:
-                $ref: '#/definitions/authToken'
+                properties:
+                  authorization:
+                    $ref: '#/definitions/authToken'
+                  user:
+                    $ref: '#/definitions/user'
         '400':
           description: Response for a bad request
           schema:
@@ -1812,11 +1818,7 @@ definitions:
         description: Password of user attempting to authenticate
   authToken:
     description: An token used to authorize later requests
-    type: object
-    properties:
-      authToken:
-        description: The bearer authorization token
-        type: string
+    type: string
   400Error:
     description: Error definition for bad request
     type: object
