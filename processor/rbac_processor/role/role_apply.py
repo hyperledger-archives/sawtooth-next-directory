@@ -75,31 +75,43 @@ def _handle_role_state_set(create_role, state):
     role.name = create_role.name
     role.metadata = create_role.metadata
 
-    set_state(state, [
-        StateEntry(
-            address=addresser.make_role_attributes_address(
-                create_role.role_id),
-            data=role_container.SerializeToString())])
+    entries_to_set = [StateEntry(
+        address=addresser.make_role_attributes_address(
+            create_role.role_id),
+        data=role_container.SerializeToString())]
 
-    admin_pubkeys_by_address = {}
+    pubkeys_by_address = {}
 
     for admin in list(create_role.admins):
         admin_address = addresser.make_role_admins_address(
             role_id=create_role.role_id,
             user_id=admin)
 
-        if admin_address in admin_pubkeys_by_address:
-            admin_pubkeys_by_address[admin_address].append(admin)
+        if admin_address in pubkeys_by_address:
+            pubkeys_by_address[admin_address].append(admin)
         else:
-            admin_pubkeys_by_address[admin_address] = [admin]
+            pubkeys_by_address[admin_address] = [admin]
+
+    for owner in list(create_role.owners):
+        owner_address = addresser.make_role_owners_address(
+            role_id=create_role.role_id,
+            user_id=owner)
+
+        if owner_address in pubkeys_by_address:
+            pubkeys_by_address[owner_address].append(owner)
+        else:
+            pubkeys_by_address[owner_address] = [owner]
 
     state_returns = get_state(
-        state, [addresser.make_role_admins_address(
+        state,
+        [addresser.make_role_admins_address(
             role_id=create_role.role_id,
-            user_id=a) for a in create_role.admins])
+            user_id=a) for a in create_role.admins] +
+        [addresser.make_role_owners_address(
+            role_id=create_role.role_id,
+            user_id=o) for o in create_role.owners])
 
-    entries_to_set = []
-    for addr, pubkeys in admin_pubkeys_by_address.items():
+    for addr, pubkeys in pubkeys_by_address.items():
         try:
             state_entry = get_state_entry(state_returns, addr)
             container = role_state_pb2.RoleRelationshipContainer()
