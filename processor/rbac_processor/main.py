@@ -29,6 +29,7 @@ def parse_args(args):
     parser.add_argument(
         '-v',
         '--verbosity',
+        action='count',
         help="The logging level.")
 
     parser.add_argument(
