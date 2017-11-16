@@ -1389,6 +1389,7 @@ paths:
         description: Id of the block being fetched
         required: true
         type: string
+        x-example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
     get:
       security:
         - Bearer: []
@@ -1413,6 +1414,7 @@ parameters:
     type: string
     default: latest
     description: The id of the block to use as the chain head
+    x-example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
   start:
     name: start
     in: query
@@ -1431,24 +1433,28 @@ parameters:
     description: Id of a particular proposal in state
     required: true
     type: string
+    x-example: 63467642-6067-4c82-a096-1a1972d776b3
   roleId:
     name: id
     in: path
     description: Id of a particular role in state
     required: true
     type: string
+    x-example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
   taskId:
     name: id
     in: path
     description: Id of a particular task in state
     required: true
     type: string
+    x-example: 7ea843aa-1650-4530-94b1-a445d2a8193a
   userId:
     name: id
     in: path
     description: Id of a particular user in state
     required: true
     type: string
+    x-example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
 definitions:
   head:
     type: string
@@ -1490,37 +1496,45 @@ definitions:
       id:
         type: string
         description: Id of the role
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       name:
         type: string
         description: Name of the role
+        example: Payroll Administrator
       owners:
         type: array
         description: List of role owner ids
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       administrators:
         type: array
         description: List of role administrator ids
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       members:
         type: array
         description: List of users ids authorized by this role
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       tasks:
         type: array
         description: List of ids for tasks grouped by this role
         items:
           type: string
+          example: 7ea843aa-1650-4530-94b1-a445d2a8193a
       proposals:
         type: array
         description: List of ids for open proposals for this role
         items:
           type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
       metadata:
         type: string
         description: Any client supplied metadata
+        example: for internal use only
   newRole:
     type: object
     description: Details provided to create a new role
@@ -1532,19 +1546,23 @@ definitions:
       name:
         type: string
         description: Name of the role
+        example: Payroll Administrator
       owners:
         type: array
         description: List of owner ids
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       administrators:
         type: array
         description: List of administrator ids
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       metadata:
         type: string
         description: Any client supplied metadata
+        example: for internal use only
   roleUpdate:
     description: Details provided to update an existing role
     type: object
@@ -1552,9 +1570,11 @@ definitions:
       name:
         type: string
         description: A new name for the role
+        example: Payroll Administrator - 2.0
       metadata:
         type: string
         description: Any new client supplied metadata
+        example: updated for external use
   task:
     type: object
     description: A specific permission in the system
@@ -1566,50 +1586,67 @@ definitions:
       id:
         type: string
         description: Id of the task
+        example: 7ea843aa-1650-4530-94b1-a445d2a8193a
       name:
         type: string
         description: Name of the task
+        example: issue-paycheck
       owners:
         type: array
         description: List of owner ids
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       administrators:
         type: array
         description: List of administrator ids
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       roles:
         type: array
         description: List of ids for roles which include this task
         items:
           type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       proposals:
         type: array
         description: List of ids for open proposals for this task
         items:
           type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
       metadata:
         type: string
         description: Any client supplied metadata
+        example: ISPCA Compliant
   newTask:
     description: Details provided to create a new task
     type: object
     required:
       - name
+      - owners
       - administrators
     properties:
       name:
         type: string
         description: Name of the task
+        example: issue-paycheck
+      owners:
+        type: array
+        description: List of owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       administrators:
         type: array
         description: List of administrator ids
         items:
           type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       metadata:
         type: string
         description: Any client supplied metadata
+        example: ISPCA compliant
   taskUpdate:
     description: Details provided to update an existing task
     type: object
@@ -1617,9 +1654,11 @@ definitions:
       name:
         type: string
         description: A new name for the task
+        example: issue-paycheck-depreciated
       metadata:
         type: string
         description: Any new client supplied metadata
+        example: ISPCA approval revoked
   user:
     description: An actor in the system who can take various authorizations
     type: object
@@ -1631,43 +1670,52 @@ definitions:
       id:
         type: string
         description: Id of the user
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       name:
         type: string
         description: Name of the user
+        example: Susan Susanson
       managers:
         type: array
         description: Ordered list of manager, manager's manager, etc
         items:
           type: string
+          example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
       subordinates:
         type: array
         description: Unordered list of subordinates
         items:
           type: string
+          example: 03d260a46457a064733153e09840c322bee1dff34445d7d49e19e60abd18fd0758
       ownerOf:
         type: array
         description: List of ids for roles and tasks this user is an owner of
         items:
           type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       administratorOf:
         type: array
         description: >-
           List of ids for roles and tasks this user is an administrator of
         items:
           type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       memberOf:
         type: array
         description: List of ids for roles this user is a member of
         items:
           type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       proposals:
         type: array
         description: List of ids for open proposals for this user
         items:
           type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
       metadata:
         type: string
         description: Any client supplied metadata
+        example: 'hire-date:2009-07-17'
   newUser:
     description: Details provided to create a new user
     type: object
@@ -1679,18 +1727,23 @@ definitions:
       name:
         type: string
         description: Name of the user
+        example: Susan Susanson
       manager:
         type: string
         description: Id of the user's manager
+        example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
       password:
         type: string
         description: Password to associate with the user's account
+        example: '12345'
       email:
         type: string
         description: Email address to associate with the user's account
+        example: 'susan@biz.co'
       metadata:
         type: string
         description: Any client supplied metadata
+        example: 'hire-date:2009-07-17'
   userUpdate:
     description: Details provided to update an existing user
     type: object
@@ -1698,15 +1751,19 @@ definitions:
       name:
         type: string
         description: A new name for the user
+        example: Susan Mlynarczyk
       password:
         type: string
         description: A new password to associate with the user's account
+        example: '67890'
       email:
         type: string
         description: A new email address to associate with the user's account
+        example: 'mlynnie@biz.co'
       metadata:
         type: string
         description: Any new client supplied metadata
+        example: 'name-changed:2016-08-31'
   proposal:
     description: >-
       A request to change the state of a role, task, or user, which requires
@@ -1723,6 +1780,7 @@ definitions:
       id:
         type: string
         description: Id of the proposal
+        example: 63467642-6067-4c82-a096-1a1972d776b3
       proposal_type:
         type: string
         description: The type of the proposal
@@ -1745,11 +1803,13 @@ definitions:
         description: >-
           Id of the role, task, or user that the target resource is being
           added or removed from
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       target:
         type: string
         description: >-
           Id of the role, task, or user that is being added or removed from
           the object resource
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       status:
         type: string
         description: Status of the proposal
@@ -1760,22 +1820,39 @@ definitions:
       opener:
         type: string
         description: Id of the user who created the proposal
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       closer:
         type: string
+        description: Id of the user who accepted or rejected the proposal
+        example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
       openReason:
         type: string
         description: >-
           A user supplied message explaining why the proposal was created
+        example: Please add me as a Payroll Administator
       closeReason:
         type: string
         description: >-
           A user supplied (upon accepting or rejecting proposal) message
           explaining why the proposal was closed
+        example: Added new HR hire
       approvers:
         type: array
         description: List of user ids that can approve this proposal
         items:
           type: string
+          example: 02aand 06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
+  proposalStatus:
+    description: The open/close status of a proposal
+    type: object
+    properties:
+      status:
+        type: string
+        description: Status of the proposal
+        enum:
+          - OPEN
+          - APPROVED
+          - REJECTED
   proposalUpdate:
     description: Details provided to update a proposal
     type: object
@@ -1791,6 +1868,7 @@ definitions:
         type: string
         description: >-
           A user supplied message explaining why the proposal was updated
+        example: Added new HR hire
       metadata:
         type: string
         description: Any new client metadata
@@ -1816,12 +1894,15 @@ definitions:
       id:
         description: Id of user attempting to authenticate
         type: string
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       password:
         type: string
         description: Password of user attempting to authenticate
+        example: '12345'
   authToken:
     description: An token used to authorize later requests
     type: string
+    example: eyJpYXQiOjE1MTA4NjM5NzksImV4cCI6MTUxMDg2NzU3OSwiYWxnIjoiSFMyNTYifQ.eyJpZCI6IjAyYTA2ZjM0NGM2MDc0ZTRiZDBjYThhMmFiZTQ1ZWU2ZWM5MmJmOWNkZDdiN2E2N2M4MDQzNTBiZmZmNGQ0YThjMCJ9.mM_uwZ1wrdag5PoCNThn_0gzZpsIhC_xSsa8xIFxggs
   400Error:
     description: Error definition for bad request
     type: object
