@@ -27,11 +27,14 @@ LOGGER = logging.getLogger(__name__)
 
 
 def validate_fields(required_fields, body):
-    for field in required_fields:
-        if body.get(field) is None:
-            raise ApiBadRequest(
-                "Bad Request: {} field is required".format(field)
-            )
+    try:
+        for field in required_fields:
+            if body.get(field) is None:
+                raise ApiBadRequest(
+                    "Bad Request: {} field is required".format(field)
+                )
+    except ValueError:
+        raise ApiBadRequest("Bad Request: Improper JSON format")
 
 
 async def get_request_block_num(request):
