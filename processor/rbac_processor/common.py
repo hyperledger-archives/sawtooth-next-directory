@@ -22,6 +22,8 @@ from rbac_processor.protobuf import proposal_state_pb2
 from rbac_processor.protobuf import role_state_pb2
 from rbac_processor.protobuf import task_state_pb2
 
+from rbac_processor.state import get_state
+
 
 def get_state_entry(state_entries, address):
     """Get a StateEntry by address or raise KeyError if it is not in
@@ -167,6 +169,13 @@ def return_task_container(entry):
     return task_container
 
 
+def return_task_rel_container(entry):
+    task_rel_container = task_state_pb2.TaskRelationshipContainer()
+    task_rel_container.ParseFromString(entry.data)
+
+    return task_rel_container
+
+
 def is_in_task_container(container, identifier):
     for task in container.task_attributes:
         if task.task_id == identifier:
@@ -174,10 +183,29 @@ def is_in_task_container(container, identifier):
     return False
 
 
-def add_task_rel_to_container(container, task_id, pubkeys):
+def is_in_task_rel_container(container, task_id, identifier):
     for task_rel in container.relationships:
-        if task_rel.task_id == task_id:
-            task_rel.identifiers.extend(pubkeys)
+        if task_rel.task_id == task_id and identifier in task_rel.identifiers:
+            return True
+    return False
+
+
+def get_task_rel_from_container(container, task_id, identifier):
+    for task_rel in container.relationships:
+        if task_rel.task_id == task_id and identifier in task_rel.identifiers:
+            return task_rel
+    return False
+
+
+def validate_identifier_is_task(state_entries, identifier, address):
+    try:
+        container = return_task_container(
+            get_state_entry(state_entries, address))
+
+        if not is_in_task_container(container, identifier):
+            raise InvalidTransaction("{} is not a task.".format(identifier))
+    except KeyError:
+        raise InvalidTransaction("{} is not a task".format(identifier))
 
 
 def validate_identifier_is_user(state_entries, identifier, address):
@@ -239,3 +267,94 @@ def validate_identifier_is_role(state_entries, identifier, address):
 
     except KeyError:
         raise InvalidTransaction("{} is not a role".format(identifier))
+
+
+def validate_role_task_proposal(header, propose, state):
+    """Applies state validation rules for ADDRoleTaskProposal.
+        - The Role exists.
+        - The Task exists.
+        - The Transaction was signed by a Role Owner.
+        - There is no open Proposal for the same change.
+        - The task is not already part of the Role.
+
+    Args:
+        header (TransactionHeader): The propobuf transaction header.
+        propose (ProposeAddRoleTask): The protobuf transaction.
+        state (Context): A connection to the validator to ask about state.
+
+    Returns:
+        (list of StateEntry)
+
+    """
+
+    role_address = addresser.make_role_attributes_address(propose.role_id)
+
+    task_address = addresser.make_task_attributes_address(propose.task_id)
+
+    proposal_address = addresser.make_proposal_address(
+        propose.role_id,
+        propose.task_id)
+
+    txn_signer_role_owner_address = addresser.make_role_owners_address(
+        role_id=propose.role_id,
+        user_id=header.signer_pubkey)
+
+    role_tasks_address = addresser.make_role_tasks_address(propose.role_id,
+                                                           propose.task_id)
+
+    state_entries = get_state(
+        state=state,
+        addresses=[role_address,
+                   task_address,
+                   proposal_address,
+                   role_tasks_address,
+                   txn_signer_role_owner_address])
+
+    validate_identifier_is_role(
+        state_entries=state_entries,
+        address=role_address,
+        identifier=propose.role_id)
+
+    validate_identifier_is_task(
+        state_entries=state_entries,
+        identifier=propose.task_id,
+        address=task_address)
+    try:
+        role_task_entry = get_state_entry(state_entries, role_tasks_address)
+        role_task_container = return_role_rel_container(role_task_entry)
+        if is_in_role_rel_container(role_task_container,
+                                    role_id=propose.role_id,
+                                    identifier=propose.task_id):
+            raise InvalidTransaction("Role {} already contains task {}".format(
+                propose.role_id[:10],
+                propose.task_id[:10]))
+    except KeyError:
+        # The Task is not in the RoleTask state
+        pass
+
+    try:
+        role_owner_entry = get_state_entry(
+            state_entries,
+            txn_signer_role_owner_address)
+        role_owner_container = return_role_rel_container(role_owner_entry)
+
+        if not is_in_role_rel_container(role_owner_container,
+                                        role_id=propose.role_id,
+                                        identifier=header.signer_pubkey):
+            raise InvalidTransaction(
+                "Txn signer {} is not a role owner".format(
+                    header.signer_pubkey[:10]))
+    except KeyError:
+        raise InvalidTransaction(
+            "Txn signer {} is not a role owner.".format(header.signer_pubkey))
+
+    if not no_open_proposal(
+            state_entries=state_entries,
+            object_id=propose.role_id,
+            related_id=propose.task_id,
+            proposal_address=proposal_address,
+            proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_TASKS):
+        raise InvalidTransaction(
+            "There is already an open proposal to add task {} to "
+            "role {}".format(propose.task_id[:10], propose.role_id[:10]))
+    return state_entries

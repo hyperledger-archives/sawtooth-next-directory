@@ -19,9 +19,11 @@ from rbac_processor.common import get_prop_from_container
 from rbac_processor.common import get_role_rel
 from rbac_processor.common import get_user_from_container
 from rbac_processor.common import is_in_role_rel_container
+from rbac_processor.common import is_in_task_rel_container
 from rbac_processor.common import proposal_exists_and_open
 from rbac_processor.common import return_prop_container
 from rbac_processor.common import return_role_rel_container
+from rbac_processor.common import return_task_rel_container
 from rbac_processor.common import return_user_container
 from rbac_processor.common import validate_identifier_is_role
 from rbac_processor.common import validate_identifier_is_user
@@ -143,12 +145,53 @@ def validate_role_admin_or_owner(header,
     return state_entries
 
 
+def validate_role_task(header,
+                       confirm,
+                       txn_signer_rel_address,
+                       state):
+
+    proposal_address = addresser.make_proposal_address(
+        object_id=confirm.role_id,
+        related_id=confirm.task_id)
+
+    state_entries = get_state(
+        state,
+        [txn_signer_rel_address,
+         proposal_address])
+
+    if not proposal_exists_and_open(
+            state_entries,
+            proposal_address,
+            confirm.proposal_id):
+        raise InvalidTransaction("The proposal {} does not exist or "
+                                 "is not open".format(confirm.proposal_id))
+    try:
+        entry = get_state_entry(state_entries, txn_signer_rel_address)
+        task_owners_container = return_task_rel_container(entry)
+    except KeyError:
+        raise InvalidTransaction(
+            "Signer {} is not a task owner for task {}".format(
+                header.signer_pubkey[:10],
+                confirm.task_id[:10]))
+
+    if not is_in_task_rel_container(task_owners_container,
+                                    confirm.task_id,
+                                    header.signer_pubkey):
+        raise InvalidTransaction(
+            "Signer {} is not a task owner for task {} no bytes in "
+            "state".format(
+                header.signer_pubkey[:10],
+                confirm.task_id[:10]))
+    return state_entries
+
+
 def handle_propose_state_set(state_entries,
                              header,
                              payload,
                              address,
                              proposal_type,
-                             state):
+                             state,
+                             related_type='user_id'):
 
     try:
 
@@ -161,7 +204,7 @@ def handle_propose_state_set(state_entries,
 
     proposal.proposal_id = payload.proposal_id
     proposal.object_id = payload.role_id
-    proposal.target_id = payload.user_id
+    proposal.target_id = getattr(payload, related_type)
     proposal.proposal_type = proposal_type
     proposal.status = proposal_state_pb2.Proposal.OPEN
     proposal.opener = header.signer_pubkey
@@ -179,10 +222,11 @@ def handle_confirm_add(state_entries,
                        header,
                        confirm,
                        role_rel_address,
-                       state):
+                       state,
+                       rel_type='user_id'):
     proposal_address = addresser.make_proposal_address(
         object_id=confirm.role_id,
-        related_id=confirm.user_id)
+        related_id=getattr(confirm, rel_type))
 
     proposal_entry = get_state_entry(state_entries, proposal_address)
     proposal_container = return_prop_container(proposal_entry)
@@ -211,7 +255,7 @@ def handle_confirm_add(state_entries,
         role_rel = role_rel_container.relationships.add()
         role_rel.role_id = confirm.role_id
 
-    role_rel.identifiers.append(confirm.user_id)
+    role_rel.identifiers.append(getattr(confirm, rel_type))
 
     address_values.append(StateEntry(
         address=role_rel_address,
@@ -223,10 +267,11 @@ def handle_confirm_add(state_entries,
 def handle_reject(state_entries,
                   header,
                   reject,
-                  state):
+                  state,
+                  rel_type='user_id'):
     proposal_address = addresser.make_proposal_address(
         object_id=reject.role_id,
-        related_id=reject.user_id)
+        related_id=getattr(reject, rel_type))
 
     proposal_entry = get_state_entry(state_entries, proposal_address)
     proposal_container = return_prop_container(proposal_entry)

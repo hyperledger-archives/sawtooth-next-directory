@@ -108,39 +108,38 @@ def handle_create_task(state_entries, payload, state):
     task.metadata = payload.metadata
 
     address_values = []
-    if payload.admins:
-        pubkeys_by_address = {}
-        for pubkey in payload.admins:
-            address = addresser.make_task_admins_address(
-                task_id=payload.task_id,
-                user_id=pubkey)
-            if address in pubkeys_by_address:
-                pubkeys_by_address[address].append(pubkey)
-            else:
-                pubkeys_by_address[address] = [pubkey]
 
-        address_values += _handle_task_rel_container(
-            state_entries=state_entries,
-            create_task=payload,
-            pubkeys_by_address=pubkeys_by_address,
-            state=state)
+    pubkeys_by_address = {}
+    for pubkey in payload.admins:
+        address = addresser.make_task_admins_address(
+            task_id=payload.task_id,
+            user_id=pubkey)
+        if address in pubkeys_by_address:
+            pubkeys_by_address[address].append(pubkey)
+        else:
+            pubkeys_by_address[address] = [pubkey]
 
-    if payload.owners:
-        pubkeys_by_address = {}
-        for pubkey in payload.owners:
-            address = addresser.make_task_owners_address(
-                task_id=payload.task_id,
-                user_id=pubkey)
-            if address in pubkeys_by_address:
-                pubkeys_by_address[address].append(pubkey)
-            else:
-                pubkeys_by_address[address] = [pubkey]
+    address_values += _handle_task_rel_container(
+        state_entries=state_entries,
+        create_task=payload,
+        pubkeys_by_address=pubkeys_by_address,
+        state=state)
 
-        address_values += _handle_task_rel_container(
-            state_entries=state_entries,
-            create_task=payload,
-            pubkeys_by_address=pubkeys_by_address,
-            state=state)
+    pubkeys_by_address = {}
+    for pubkey in payload.owners:
+        address = addresser.make_task_owners_address(
+            task_id=payload.task_id,
+            user_id=pubkey)
+        if address in pubkeys_by_address:
+            pubkeys_by_address[address].append(pubkey)
+        else:
+            pubkeys_by_address[address] = [pubkey]
+
+    address_values += _handle_task_rel_container(
+        state_entries=state_entries,
+        create_task=payload,
+        pubkeys_by_address=pubkeys_by_address,
+        state=state)
 
     address_values += [StateEntry(
         address=addresser.make_task_attributes_address(payload.task_id),
