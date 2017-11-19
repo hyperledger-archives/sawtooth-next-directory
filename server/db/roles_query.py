@@ -26,6 +26,32 @@ import rethinkdb as r
 LOGGER = logging.getLogger(__name__)
 
 
+async def fetch_all_role_resources(conn, head_block_num):
+    resources = await r.table('roles')\
+        .filter((head_block_num >= r.row['start_block_num'])
+                & (head_block_num < r.row['end_block_num']))\
+        .map(lambda role: role.merge({
+            'id': role['role_id'],
+            'owners': fetch_relationships(
+                'role_owners', 'role_id', role['role_id'], head_block_num
+            ),
+            'administrators': fetch_relationships(
+                'role_admins', 'role_id', role['role_id'], head_block_num
+            ),
+            'members': fetch_relationships(
+                'role_members', 'role_id', role['role_id'], head_block_num
+            ),
+            'tasks': fetch_relationships(
+                'role_tasks', 'role_id', role['role_id'], head_block_num
+            ),
+            'proposals': fetch_proposal_ids_by_target(
+                role['role_id'], head_block_num
+            )
+        }))\
+        .without('role_id').coerce_to('array').run(conn)
+    return resources
+
+
 async def fetch_role_resource(conn, role_id, head_block_num):
     resource = await r.table('roles')\
         .get_all(role_id, index='role_id')\

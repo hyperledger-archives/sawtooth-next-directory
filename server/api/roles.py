@@ -34,7 +34,16 @@ ROLES_BP = Blueprint('roles')
 @ROLES_BP.get('api/roles')
 @authorized()
 async def fetch_all_roles(request):
-    raise ApiNotImplemented()
+    head_block_num = await utils.get_request_block_num(request)
+    role_resources = await roles_query.fetch_all_role_resources(
+        request.app.config.DB_CONN, head_block_num
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        role_resources,
+        head_block_num
+    )
 
 
 @ROLES_BP.post('api/roles')
