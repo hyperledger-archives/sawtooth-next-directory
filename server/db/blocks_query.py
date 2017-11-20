@@ -24,6 +24,17 @@ from api.errors import ApiNotFound, ApiInternalError
 LOGGER = logging.getLogger(__name__)
 
 
+async def fetch_all_blocks(conn, head_block_num):
+    return await r.table('blocks')\
+        .between(r.minval, head_block_num, right_bound='closed')\
+        .merge({
+            'id': r.row['block_id'],
+            'num': r.row['block_num']
+        })\
+        .without('block_id', 'block_num')\
+        .coerce_to('array').run(conn)
+
+
 async def fetch_latest_block(conn):
     try:
         return await r.table('blocks')\

@@ -16,8 +16,9 @@
 from sanic import Blueprint
 from sanic.response import json
 
-from api.errors import ApiNotImplemented, ApiBadRequest
+from api.errors import ApiBadRequest
 from api.auth import authorized
+from api import utils
 
 from db import blocks_query
 
@@ -28,7 +29,16 @@ BLOCKS_BP = Blueprint('blocks')
 @BLOCKS_BP.get('api/blocks')
 @authorized()
 async def get_all_blocks(request):
-    raise ApiNotImplemented()
+    head_block_num = await utils.get_request_block_num(request)
+    block_resources = await blocks_query.fetch_all_blocks(
+        request.app.config.DB_CONN, head_block_num
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        block_resources,
+        head_block_num
+    )
 
 
 @BLOCKS_BP.get('api/blocks/latest')
