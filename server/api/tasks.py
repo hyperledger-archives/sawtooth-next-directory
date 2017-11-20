@@ -22,6 +22,8 @@ from api.errors import ApiNotImplemented
 from api.auth import authorized
 from api import utils
 
+from db import tasks_query
+
 from rbac_transaction_creation.task_transaction_creation \
     import create_task
 
@@ -62,7 +64,18 @@ async def create_new_task(request):
 @TASKS_BP.get('api/tasks/<task_id>')
 @authorized()
 async def fetch_task(request, task_id):
-    raise ApiNotImplemented()
+    head_block_num = await utils.get_request_block_num(request)
+    task_resource = await tasks_query.fetch_task_resource(
+        request.app.config.DB_CONN,
+        task_id,
+        head_block_num
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        task_resource,
+        head_block_num
+    )
 
 
 @TASKS_BP.patch('api/tasks/<task_id>')

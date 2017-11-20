@@ -46,3 +46,14 @@ def fetch_relationships(table, index, identifier, head_block_num):
         .get_field('identifiers')\
         .coerce_to('array')\
         .concat_map(lambda identifiers: identifiers)
+
+
+def fetch_relationships_by_id(table, identifier, key, head_block_num):
+    return r.table(table)\
+        .filter(lambda doc:
+                doc['identifiers'].contains(identifier)
+                & (head_block_num >= doc['start_block_num'])
+                & (head_block_num < doc['end_block_num']))\
+        .get_field(key)\
+        .distinct()\
+        .coerce_to('array')
