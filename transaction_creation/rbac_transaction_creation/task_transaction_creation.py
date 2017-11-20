@@ -66,3 +66,98 @@ def create_task(txn_key,
         outputs,
         txn_key,
         batch_key)
+
+
+def propose_add_task_admins(txn_key,
+                            batch_key,
+                            proposal_id,
+                            task_id,
+                            user_id,
+                            reason,
+                            metadata):
+    propose_payload = task_transaction_pb2.ProposeAddTaskAdmin(
+        proposal_id=proposal_id,
+        task_id=task_id,
+        user_id=user_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_user_address(user_id),
+              addresser.make_task_admins_address(
+                  task_id=task_id,
+                  user_id=user_id),
+              addresser.make_proposal_address(task_id, user_id),
+              addresser.make_task_attributes_address(task_id)]
+
+    outputs = [addresser.make_proposal_address(task_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
+def confirm_add_task_admins(txn_key,
+                            batch_key,
+                            proposal_id,
+                            task_id,
+                            user_id,
+                            reason):
+    confirm_payload = task_transaction_pb2.ConfirmAddTaskAdmin(
+        proposal_id=proposal_id,
+        task_id=task_id,
+        user_id=user_id,
+        reason=reason)
+
+    inputs = [
+        addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.make_proposal_address(task_id, user_id)]
+
+    outputs = [addresser.make_proposal_address(task_id, user_id),
+               addresser.make_task_admins_address(task_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=confirm_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_TASK_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
+def reject_add_task_admins(txn_key,
+                           batch_key,
+                           proposal_id,
+                           task_id,
+                           user_id,
+                           reason):
+    reject_payload = task_transaction_pb2.RejectAddTaskAdmin(
+        proposal_id=proposal_id,
+        task_id=task_id,
+        user_id=user_id,
+        reason=reason)
+
+    inputs = [addresser.make_task_admins_address(task_id, txn_key.public_key),
+              addresser.make_proposal_address(task_id, user_id)]
+
+    outputs = [addresser.make_proposal_address(task_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=reject_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_TASK_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
