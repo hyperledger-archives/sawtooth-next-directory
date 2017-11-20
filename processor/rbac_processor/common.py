@@ -194,7 +194,7 @@ def get_task_rel_from_container(container, task_id, identifier):
     for task_rel in container.relationships:
         if task_rel.task_id == task_id and identifier in task_rel.identifiers:
             return task_rel
-    return False
+    raise KeyError("Task Relationship not found")
 
 
 def validate_identifier_is_task(state_entries, identifier, address):

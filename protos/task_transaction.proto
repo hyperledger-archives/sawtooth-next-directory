@@ -19,52 +19,60 @@ syntax = "proto3";
 
 message ProposeAddTaskOwner {
 
-    string task_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string task_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeRemoveTaskOwner {
 
-    string task_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string task_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeAddTaskAdmin {
 
-    string task_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string task_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
 
 message ProposeRemoveTaskAdmin {
 
-    string task_id = 1;
+    string proposal_id = 1;
 
-    string user_id = 2;
+    string task_id = 2;
 
-    string reason = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string reason = 4;
+
+    string metadata = 5;
 
 }
 
@@ -73,7 +81,11 @@ message ConfirmAddTaskOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -82,7 +94,11 @@ message ConfirmRemoveTaskOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -91,7 +107,11 @@ message ConfirmAddTaskAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -100,7 +120,11 @@ message ConfirmRemoveTaskAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -109,7 +133,11 @@ message RejectAddTaskOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -118,7 +146,11 @@ message RejectRemoveTaskOwner {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -127,7 +159,11 @@ message RejectAddTaskAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
@@ -136,7 +172,11 @@ message RejectRemoveTaskAdmin {
 
     string proposal_id = 1;
 
-    string reason = 2;
+    string task_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
 }
 
