@@ -780,9 +780,13 @@ paths:
             $ref: '#/definitions/newTask'
       responses:
         '200':
-          description: Generic success response
+          description: Success response with task resource
           schema:
-            $ref: '#/definitions/success'
+            properties:
+              data:
+                properties:
+                  task:
+                    $ref: '#/definitions/task'
         '400':
           description: Response for a bad request
           schema:
