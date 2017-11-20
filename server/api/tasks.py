@@ -34,7 +34,16 @@ TASKS_BP = Blueprint('tasks')
 @TASKS_BP.get('api/tasks')
 @authorized()
 async def fetch_all_tasks(request):
-    raise ApiNotImplemented()
+    head_block_num = await utils.get_request_block_num(request)
+    task_resources = await tasks_query.fetch_all_task_resources(
+        request.app.config.DB_CONN, head_block_num
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        task_resources,
+        head_block_num
+    )
 
 
 @TASKS_BP.post('api/tasks')
