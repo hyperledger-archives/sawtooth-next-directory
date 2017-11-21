@@ -22,6 +22,8 @@ from api.errors import ApiNotImplemented
 from api.auth import authorized
 from api import utils
 
+from db import roles_query
+
 from rbac_transaction_creation.role_transaction_creation \
     import create_role
 
@@ -32,7 +34,16 @@ ROLES_BP = Blueprint('roles')
 @ROLES_BP.get('api/roles')
 @authorized()
 async def fetch_all_roles(request):
-    raise ApiNotImplemented()
+    head_block_num = await utils.get_request_block_num(request)
+    role_resources = await roles_query.fetch_all_role_resources(
+        request.app.config.DB_CONN, head_block_num
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        role_resources,
+        head_block_num
+    )
 
 
 @ROLES_BP.post('api/roles')
@@ -62,7 +73,18 @@ async def create_new_role(request):
 @ROLES_BP.get('api/roles/<role_id>')
 @authorized()
 async def fetch_role(request, role_id):
-    raise ApiNotImplemented()
+    head_block_num = await utils.get_request_block_num(request)
+    role_resource = await roles_query.fetch_role_resource(
+        request.app.config.DB_CONN,
+        role_id,
+        head_block_num
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        role_resource,
+        head_block_num
+    )
 
 
 @ROLES_BP.patch('api/roles/<role_id>')

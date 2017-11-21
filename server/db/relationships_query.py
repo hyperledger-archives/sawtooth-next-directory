@@ -35,3 +35,14 @@ async def fetch_by_identifier(conn, table, identifier,
         relationship_ids.append(relationship.get(relationship_key))
 
     return relationship_ids
+
+
+def fetch_relationships(table, index, identifier, head_block_num):
+    return r.table(table)\
+        .get_all(identifier, index=index)\
+        .filter(lambda doc:
+                (head_block_num >= doc['start_block_num'])
+                & (head_block_num < doc['end_block_num']))\
+        .get_field('identifiers')\
+        .coerce_to('array')\
+        .concat_map(lambda identifiers: identifiers)

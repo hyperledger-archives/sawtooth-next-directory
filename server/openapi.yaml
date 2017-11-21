@@ -242,9 +242,13 @@ paths:
             $ref: '#/definitions/newRole'
       responses:
         '200':
-          description: Generic success response
+          description: Success response with role resource
           schema:
-            $ref: '#/definitions/success'
+            properties:
+              data:
+                properties:
+                  role:
+                    $ref: '#/definitions/role'
         '400':
           description: Response for a bad request
           schema:

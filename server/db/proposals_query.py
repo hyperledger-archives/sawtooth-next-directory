@@ -33,3 +33,13 @@ async def fetch_proposals_by_target_id(conn, target_id, head_block_num):
         proposals.append(await cursor.next())
 
     return proposals
+
+
+def fetch_proposal_ids_by_target(target, head_block_num):
+    return r.table('proposals')\
+        .get_all(target, index='target_id')\
+        .filter(lambda doc:
+                (head_block_num >= doc['start_block_num'])
+                & (head_block_num < doc['end_block_num']))\
+        .get_field('proposal_id')\
+        .coerce_to('array')
