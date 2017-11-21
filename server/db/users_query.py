@@ -76,10 +76,12 @@ async def fetch_user_resource(conn, user_id, head_block_num):
         )
 
 
-async def fetch_all_user_resources(conn, head_block_num):
+async def fetch_all_user_resources(conn, head_block_num, start, limit):
     return await r.table('users')\
+        .order_by(index='user_id')\
         .filter((head_block_num >= r.row['start_block_num'])
                 & (head_block_num < r.row['end_block_num']))\
+        .slice(start, start+limit)\
         .map(lambda user: user.merge({
             'id': user['user_id'],
             'subordinates': fetch_user_ids_by_manager(

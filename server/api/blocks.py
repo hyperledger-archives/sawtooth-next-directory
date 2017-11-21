@@ -29,15 +29,18 @@ BLOCKS_BP = Blueprint('blocks')
 @BLOCKS_BP.get('api/blocks')
 @authorized()
 async def get_all_blocks(request):
-    head_block_num = await utils.get_request_block_num(request)
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
     block_resources = await blocks_query.fetch_all_blocks(
-        request.app.config.DB_CONN, head_block_num
+        request.app.config.DB_CONN, head_block.get('num'), start, limit
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
         block_resources,
-        head_block_num
+        head_block,
+        start=start,
+        limit=limit
     )
 
 

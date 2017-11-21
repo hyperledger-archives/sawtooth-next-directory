@@ -33,16 +33,19 @@ TASKS_BP = Blueprint('tasks')
 
 @TASKS_BP.get('api/tasks')
 @authorized()
-async def fetch_all_tasks(request):
-    head_block_num = await utils.get_request_block_num(request)
+async def get_all_tasks(request):
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
     task_resources = await tasks_query.fetch_all_task_resources(
-        request.app.config.DB_CONN, head_block_num
+        request.app.config.DB_CONN, head_block.get('num'), start, limit
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
         task_resources,
-        head_block_num
+        head_block,
+        start=start,
+        limit=limit
     )
 
 
@@ -72,18 +75,18 @@ async def create_new_task(request):
 
 @TASKS_BP.get('api/tasks/<task_id>')
 @authorized()
-async def fetch_task(request, task_id):
-    head_block_num = await utils.get_request_block_num(request)
+async def get_task(request, task_id):
+    head_block = await utils.get_request_block(request)
     task_resource = await tasks_query.fetch_task_resource(
         request.app.config.DB_CONN,
         task_id,
-        head_block_num
+        head_block.get('num')
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
         task_resource,
-        head_block_num
+        head_block
     )
 
 

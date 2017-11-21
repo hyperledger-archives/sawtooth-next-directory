@@ -27,10 +27,12 @@ import rethinkdb as r
 LOGGER = logging.getLogger(__name__)
 
 
-async def fetch_all_task_resources(conn, head_block_num):
+async def fetch_all_task_resources(conn, head_block_num, start, limit):
     resources = await r.table('tasks')\
+        .order_by(index='task_id')\
         .filter((head_block_num >= r.row['start_block_num'])
                 & (head_block_num < r.row['end_block_num']))\
+        .slice(start, start+limit)\
         .map(lambda task: task.merge({
             'id': task['task_id'],
             'owners': fetch_relationships(

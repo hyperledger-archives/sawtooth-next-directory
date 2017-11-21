@@ -41,15 +41,18 @@ USERS_BP = Blueprint('users')
 @USERS_BP.get('api/users')
 @authorized()
 async def fetch_all_users(request):
-    head_block_num = await utils.get_request_block_num(request)
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
     user_resources = await users_query.fetch_all_user_resources(
-        request.app.config.DB_CONN, head_block_num
+        request.app.config.DB_CONN, head_block.get('num'), start, limit
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
         user_resources,
-        head_block_num
+        head_block,
+        start=start,
+        limit=limit
     )
 
 
@@ -103,18 +106,18 @@ async def create_new_user(request):
 
 @USERS_BP.get('api/users/<user_id>')
 @authorized()
-async def fetch_user(request, user_id):
-    head_block_num = await utils.get_request_block_num(request)
+async def get_user(request, user_id):
+    head_block = await utils.get_request_block(request)
     user_resource = await users_query.fetch_user_resource(
         request.app.config.DB_CONN,
         user_id,
-        head_block_num
+        head_block.get('num')
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
         user_resource,
-        head_block_num
+        head_block
     )
 
 

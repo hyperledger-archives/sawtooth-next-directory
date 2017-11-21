@@ -26,10 +26,12 @@ import rethinkdb as r
 LOGGER = logging.getLogger(__name__)
 
 
-async def fetch_all_role_resources(conn, head_block_num):
+async def fetch_all_role_resources(conn, head_block_num, start, limit):
     resources = await r.table('roles')\
+        .order_by(index='role_id')\
         .filter((head_block_num >= r.row['start_block_num'])
                 & (head_block_num < r.row['end_block_num']))\
+        .slice(start, start+limit)\
         .map(lambda role: role.merge({
             'id': role['role_id'],
             'owners': fetch_relationships(
