@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.protobuf.transaction_pb2 import TransactionHeader
 
 from rbac_addressing import addresser
@@ -23,6 +24,7 @@ from rbac_processor.role import role_members
 from rbac_processor.role import role_owners
 from rbac_processor.role import role_tasks
 from rbac_processor.task import task_admins
+from rbac_processor.task import task_owners
 from rbac_processor.role.role_apply import apply_create_role
 from rbac_processor.task.task_create import apply_create_task
 from rbac_processor.user.user_create import apply_create_user
@@ -140,6 +142,9 @@ class RBACTransactionHandler(object):
         elif payload.message_type in TASK_REJECT:
             apply_task_reject(header, payload, state)
 
+        else:
+            raise InvalidTransaction("Message type unknown.")
+
 
 def apply_create(header, payload, state):
     if payload.message_type == RBACPayload.CREATE_USER:
@@ -150,6 +155,9 @@ def apply_create(header, payload, state):
 
     elif payload.message_type == RBACPayload.CREATE_TASK:
         apply_create_task(header, payload, state)
+
+    else:
+        raise InvalidTransaction("Message type unknown.")
 
 
 def apply_role_propose(header, payload, state):
@@ -163,6 +171,8 @@ def apply_role_propose(header, payload, state):
 
     elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_TASKS:
         role_tasks.apply_propose(header, payload, state)
+    else:
+        raise InvalidTransaction("Message type unknown.")
 
 
 def apply_role_confirm(header, payload, state):
@@ -177,6 +187,8 @@ def apply_role_confirm(header, payload, state):
 
     elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_TASKS:
         role_tasks.apply_confirm(header, payload, state)
+    else:
+        raise InvalidTransaction("Message type unknown.")
 
 
 def apply_role_reject(header, payload, state):
@@ -191,18 +203,36 @@ def apply_role_reject(header, payload, state):
 
     elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_TASKS:
         role_tasks.apply_reject(header, payload, state)
+    else:
+        raise InvalidTransaction("Message type unknown.")
 
 
 def apply_task_propose(header, payload, state):
     if payload.message_type == RBACPayload.PROPOSE_ADD_TASK_ADMINS:
         task_admins.apply_propose(header, payload, state)
 
+    elif payload.message_type == RBACPayload.PROPOSE_ADD_TASK_OWNERS:
+        task_owners.apply_propose(header, payload, state)
+    else:
+        raise InvalidTransaction("Message type unknown.")
+
 
 def apply_task_confirm(header, payload, state):
     if payload.message_type == RBACPayload.CONFIRM_ADD_TASK_ADMINS:
         task_admins.apply_confirm(header, payload, state)
 
+    elif payload.message_type == RBACPayload.CONFIRM_ADD_TASK_OWNERS:
+        task_owners.apply_confirm(header, payload, state)
+    else:
+        raise InvalidTransaction("Message type unknown.")
+
 
 def apply_task_reject(header, payload, state):
     if payload.message_type == RBACPayload.REJECT_ADD_TASK_ADMINS:
         task_admins.apply_reject(header, payload, state)
+
+    elif payload.message_type == RBACPayload.REJECT_ADD_TASK_OWNERS:
+        task_owners.apply_reject(header, payload, state)
+
+    else:
+        raise InvalidTransaction("Message type unknown.")
