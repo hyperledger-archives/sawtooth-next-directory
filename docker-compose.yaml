@@ -20,6 +20,10 @@ services:
     build:
       context: .
       dockerfile: ./server/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: rbac-server-production
     ports:
       - "8000:8000"
@@ -42,6 +46,10 @@ services:
     build:
       context: .
       dockerfile: ./processor/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: rbac-tp-production
     command: bin/rbac-tp -v tcp://validator:4004
 
@@ -49,6 +57,10 @@ services:
     build:
       context: .
       dockerfile: ./ledger_sync/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: rbac-ledger-sync-production
     depends_on:
       - rethink
