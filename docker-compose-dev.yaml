@@ -20,6 +20,10 @@ services:
     build:
       context: .
       dockerfile: ./server/Dockerfile-dev
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: rbac-server-dev
     volumes:
       - .:/project/tmobile-rbac
@@ -47,6 +51,10 @@ services:
     build:
       context: .
       dockerfile: ./processor/Dockerfile-dev
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: rbac-tp-dev
     volumes:
       - '.:/project/tmobile-rbac'
@@ -56,6 +64,10 @@ services:
     build:
       context: .
       dockerfile: ./ledger_sync/Dockerfile-dev
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: rbac-ledger-sync-dev
     volumes:
       - .:/project/tmobile-rbac
