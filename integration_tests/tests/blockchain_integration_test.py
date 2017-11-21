@@ -108,14 +108,15 @@ class TestBlockchain(unittest.TestCase):
         cls.key_invalid, cls.user_invalid = make_key_and_name()
         cls.key3b, cls.user3b = make_key_and_name()
 
-        cls.role_id1 = uuid4().hex
-        cls.task_id1 = uuid4().hex
-        cls.update_manager_proposal_id = uuid4().hex
-        cls.add_role_admins_proposal_id = uuid4().hex
-        cls.add_role_owners_proposal_id = uuid4().hex
-        cls.add_role_members_proposal_id = uuid4().hex
-        cls.add_role_tasks_proposal_id = uuid4().hex
+        cls.role_id1 = str(uuid4())
+        cls.task_id1 = str(uuid4())
+        cls.update_manager_proposal_id = str(uuid4())
+        cls.add_role_admins_proposal_id = str(uuid4())
+        cls.add_role_owners_proposal_id = str(uuid4())
+        cls.add_role_members_proposal_id = str(uuid4())
+        cls.add_role_tasks_proposal_id = str(uuid4())
         cls.add_task_admins_proposal_id = str(uuid4())
+        cls.add_task_owners_proposal_id = str(uuid4())
 
     def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
@@ -1421,6 +1422,171 @@ class TestBlockchain(unittest.TestCase):
             "INVALID",
             "The proposal must be open.")
 
+    def test_21_propose_add_task_owners(self):
+        """Tests the ProposeAddTaskOwners validation rules
+
+        Notes:
+            ProposeAddTaskOwners
+                - The Task exists
+                - The User exists
+                - No open proposal exists for the same change.
+                - The txn signer is the user or the Users manager.
+                - The User is not already an Owner of the Task.
+        """
+
+        self.assertEqual(
+            self.client.propose_add_task_owners(
+                key=self.key1,
+                proposal_id=str(uuid4()),
+                task_id=str(uuid4()),
+                user_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The Task must exist.")
+
+        self.assertEqual(
+            self.client.propose_add_task_owners(
+                key=self.key2a,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=str(uuid4()),
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The User must exist.")
+
+        self.assertEqual(
+            self.client.propose_add_task_owners(
+                key=self.key2a,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=self.key2a.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The User must not already be an Owner of the Task")
+
+        self.assertEqual(
+            self.client.propose_add_task_owners(
+                key=self.key3a,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The txn signer must be the User or the Users manager.")
+
+        self.assertEqual(
+            self.client.propose_add_task_owners(
+                key=self.key1,
+                proposal_id=self.add_task_owners_proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.propose_add_task_owners(
+                key=self.key1,
+                proposal_id=self.add_task_owners_proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "There must not be an OPEN proposal for the same change.")
+
+    def test_22_confirm_add_task_owners(self):
+        """Tests the ConfirmAddTaskOwners validation rules
+
+        Notes
+            ConfirmAddTaskOwners validation rules
+                - The proposal exists and is open.
+                - The txn signer is a Task Admin.
+        """
+
+        self.assertEqual(
+            self.client.confirm_add_task_admins(
+                key=self.key1,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must exist.")
+
+        self.assertEqual(
+            self.client.confirm_add_task_owners(
+                key=self.key1,
+                proposal_id=self.add_task_owners_proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.confirm_add_task_owners(
+                key=self.key1,
+                proposal_id=self.add_task_owners_proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must be open.")
+
+    def test_23_reject_add_task_owners(self):
+        """Tests the RejectAddTaskOwners validation rules
+
+        Notes:
+            RejectAddTaskOwners validation rules
+                - The proposal exists and is open
+                - The txn signer is a Task admin
+        """
+
+        proposal_id = str(uuid4())
+
+        self.assertEqual(
+            self.client.propose_add_task_owners(
+                key=self.key2b,
+                proposal_id=proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_add_task_owners(
+                key=self.key1,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=self.key2b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must exist.")
+
+        self.assertEqual(
+            self.client.reject_add_task_owners(
+                key=self.key1,
+                proposal_id=proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "COMMITTED")
+
+        self.assertEqual(
+            self.client.reject_add_task_owners(
+                key=self.key1,
+                proposal_id=proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The proposal must be open.")
+
 
 class RBACClient(object):
 
@@ -1774,6 +1940,56 @@ class RBACClient(object):
                                user_id,
                                reason):
         batch_list, signature = task_transaction_creation.reject_add_task_admins(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            task_id=task_id,
+            user_id=user_id,
+            reason=reason)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def propose_add_task_owners(self,
+                                key,
+                                proposal_id,
+                                task_id,
+                                user_id,
+                                reason,
+                                metadata):
+        batch_list, signature = task_transaction_creation.propose_add_task_owner(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            task_id=task_id,
+            user_id=user_id,
+            reason=reason,
+            metadata=metadata)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def confirm_add_task_owners(self,
+                                key,
+                                proposal_id,
+                                task_id,
+                                user_id,
+                                reason):
+        batch_list, signature = task_transaction_creation.confirm_add_task_owners(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            task_id=task_id,
+            user_id=user_id,
+            reason=reason)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def reject_add_task_owners(self,
+                               key,
+                               proposal_id,
+                               task_id,
+                               user_id,
+                               reason):
+        batch_list, signature = task_transaction_creation.reject_add_task_owners(
             txn_key=key,
             batch_key=BATCHER_KEY,
             proposal_id=proposal_id,
