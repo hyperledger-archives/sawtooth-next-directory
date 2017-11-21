@@ -55,7 +55,7 @@ def main():
 
     # Search for compose file passed
     compose_file = _get_compose_file(args.compose_file)
-    test_service = _get_test_service(compose_file)
+    test_service = 'test-runner'
 
     # Load isolation id if it is set and validate
     isolation_id = _get_isolation_id()
@@ -260,7 +260,7 @@ def _get_test_service(compose_file):
 def _validate_compose_dict(compose_dict, test_service, compose_file):
     if test_service not in compose_dict['services']:
         raise RunDockerTestError(
-            "Test service '{}' does not exist in compose file: '{}'".format(
+            "Test service '{}' must be defined in compose file: '{}'".format(
                 test_service, compose_file))
 
 

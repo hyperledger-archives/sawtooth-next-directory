@@ -19,11 +19,11 @@ services:
 
   rbac-tp:
     build:
-      context: ../
+      context: ../../
       dockerfile: ./processor/Dockerfile-dev
     image: rbac-tp-dev
     volumes:
-      - '../:/project/tmobile-rbac'
+      - '../../:/project/tmobile-rbac'
     expose:
       - 4004
     command: bin/rbac-tp -vv tcp://validator:4004
@@ -54,14 +54,13 @@ services:
     image: hyperledger/sawtooth-rest-api:0.8
     entrypoint: sawtooth-rest-api -v --connect tcp://validator:4004 --bind rest-api:8080
 
-  blockchain-integration-test:
+  test-runner:
     build:
-      context: ../
-      dockerfile: ./integration_tests/Dockerfile
-    image: rbac-test-env
+      context: ../../
+      dockerfile: ./integration_tests/blockchain/Dockerfile
+    image: blockchain-test-env
     volumes:
-      - '../:/project/tmobile-rbac'
-    command: python3 -m unittest integration_tests/tests/blockchain_integration_test.py
+      - '../../:/project/tmobile-rbac'
+    command: python3 -m unittest integration_tests/blockchain/blockchain_integration_test.py
     environment:
       PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
-

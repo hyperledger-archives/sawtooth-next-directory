@@ -70,5 +70,5 @@ Tests can be run using the `run_docker_test` script, with the desired
 docker-compose file as an argument. For example:
 
 ```bash
-bin/run_docker_test integration_tests/blockchain_integration_tests.yaml
+bin/run_docker_test integration_tests/blockchain/docker-compose.yaml
 ```
