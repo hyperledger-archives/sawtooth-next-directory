@@ -65,8 +65,8 @@ def apply_propose(header, payload, state):
             proposal_type=proposal_state_pb2.Proposal.ADD_TASK_ADMINS):
         raise InvalidTransaction(
             "There is already an open proposal for ADD_TASK_ADMINS "
-            "with task id {} and user id {}".format(propose.task_id[:10],
-                                                    propose.user_id[:10]))
+            "with task id {} and user id {}".format(propose.task_id,
+                                                    propose.user_id))
 
     handle_propose_state_set(
         state_entries=state_entries,

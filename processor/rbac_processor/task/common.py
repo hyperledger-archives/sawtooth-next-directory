@@ -71,7 +71,7 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
         raise InvalidTransaction(
             "Txn signer {} is not the user or the user's "
             "manager {}".format(header.signer_pubkey,
-                                [user.user_id[:6], user.manager_id[:6]]))
+                                [user.user_id, user.manager_id]))
 
     validate_identifier_is_task(state_entries,
                                 identifier=propose.task_id,
@@ -131,7 +131,7 @@ def validate_task_admin_or_owner(header,
     except KeyError:
         raise InvalidTransaction(
             "Signer {} does not have the Task permissions "
-            "to close the proposal".format(header.signer_pubkey[:8]))
+            "to close the proposal".format(header.signer_pubkey))
     if not is_in_task_rel_container(
             task_rel_container,
             task_id=confirm.task_id,

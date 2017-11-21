@@ -73,7 +73,7 @@ def validate_role_rel_proposal(header, propose, rel_address, state):
         raise InvalidTransaction(
             "Txn signer {} is not the user or the user's "
             "manager {}".format(header.signer_pubkey,
-                                [user.user_id[:6], user.manager_id[:6]]))
+                                [user.user_id, user.manager_id]))
 
     validate_identifier_is_role(state_entries,
                                 identifier=propose.role_id,
@@ -133,7 +133,7 @@ def validate_role_admin_or_owner(header,
     except KeyError:
         raise InvalidTransaction(
             "Signer {} does not have the Role permissions "
-            "to close the proposal".format(header.signer_pubkey[:8]))
+            "to close the proposal".format(header.signer_pubkey))
     if not is_in_role_rel_container(
             role_rel_container,
             role_id=confirm.role_id,
@@ -171,8 +171,8 @@ def validate_role_task(header,
     except KeyError:
         raise InvalidTransaction(
             "Signer {} is not a task owner for task {}".format(
-                header.signer_pubkey[:10],
-                confirm.task_id[:10]))
+                header.signer_pubkey,
+                confirm.task_id))
 
     if not is_in_task_rel_container(task_owners_container,
                                     confirm.task_id,
@@ -180,8 +180,8 @@ def validate_role_task(header,
         raise InvalidTransaction(
             "Signer {} is not a task owner for task {} no bytes in "
             "state".format(
-                header.signer_pubkey[:10],
-                confirm.task_id[:10]))
+                header.signer_pubkey,
+                confirm.task_id))
     return state_entries
 
 

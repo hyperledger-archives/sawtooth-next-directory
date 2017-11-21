@@ -326,8 +326,8 @@ def validate_role_task_proposal(header, propose, state):
                                     role_id=propose.role_id,
                                     identifier=propose.task_id):
             raise InvalidTransaction("Role {} already contains task {}".format(
-                propose.role_id[:10],
-                propose.task_id[:10]))
+                propose.role_id,
+                propose.task_id))
     except KeyError:
         # The Task is not in the RoleTask state
         pass
@@ -343,7 +343,7 @@ def validate_role_task_proposal(header, propose, state):
                                         identifier=header.signer_pubkey):
             raise InvalidTransaction(
                 "Txn signer {} is not a role owner".format(
-                    header.signer_pubkey[:10]))
+                    header.signer_pubkey))
     except KeyError:
         raise InvalidTransaction(
             "Txn signer {} is not a role owner.".format(header.signer_pubkey))
@@ -356,5 +356,5 @@ def validate_role_task_proposal(header, propose, state):
             proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_TASKS):
         raise InvalidTransaction(
             "There is already an open proposal to add task {} to "
-            "role {}".format(propose.task_id[:10], propose.role_id[:10]))
+            "role {}".format(propose.task_id, propose.role_id))
     return state_entries

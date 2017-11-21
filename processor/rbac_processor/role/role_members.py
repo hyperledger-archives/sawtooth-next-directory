@@ -55,8 +55,8 @@ def apply_propose(header, payload, state):
         raise InvalidTransaction(
             "There is already an open proposal for ADD_ROLE_MEMBERS "
             "with role id {} and user id {}".format(
-                proposal_payload.role_id[:10],
-                proposal_payload.user_id[:10]))
+                proposal_payload.role_id,
+                proposal_payload.user_id))
 
     handle_propose_state_set(
         state_entries=state_entries,
