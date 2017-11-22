@@ -48,7 +48,7 @@ def validate_fields(required_fields, body):
 
 async def create_response(conn, url, data, head_block_num):
     head_block = await blocks_query.fetch_block_by_num(conn, head_block_num)
-    head_block_id = head_block.get('block_id')
+    head_block_id = head_block.get('id')
     if '?head=' not in url:
         url += '?head={}'.format(head_block_id)
     response = {
@@ -70,7 +70,7 @@ async def get_request_block_num(request):
         head_block = await blocks_query.fetch_latest_block(
             request.app.config.DB_CONN
         )
-    return head_block.get('block_num')
+    return head_block.get('num')
 
 
 async def get_transactor_key(request):

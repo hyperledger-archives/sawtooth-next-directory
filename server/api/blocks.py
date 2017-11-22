@@ -14,9 +14,13 @@
 # ------------------------------------------------------------------------------
 
 from sanic import Blueprint
+from sanic.response import json
 
-from api.errors import ApiNotImplemented
+from api.errors import ApiBadRequest
 from api.auth import authorized
+from api import utils
+
+from db import blocks_query
 
 
 BLOCKS_BP = Blueprint('blocks')
@@ -25,16 +29,46 @@ BLOCKS_BP = Blueprint('blocks')
 @BLOCKS_BP.get('api/blocks')
 @authorized()
 async def get_all_blocks(request):
-    raise ApiNotImplemented()
+    head_block_num = await utils.get_request_block_num(request)
+    block_resources = await blocks_query.fetch_all_blocks(
+        request.app.config.DB_CONN, head_block_num
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        block_resources,
+        head_block_num
+    )
 
 
 @BLOCKS_BP.get('api/blocks/latest')
 @authorized()
 async def get_latest_block(request):
-    raise ApiNotImplemented()
+    if '?head=' in request.url:
+        raise ApiBadRequest(
+            "Bad Request: 'head' parameter should not be specified"
+        )
+    block_resource = await blocks_query.fetch_latest_block(
+        request.app.config.DB_CONN
+    )
+    url = request.url.replace('latest', block_resource.get('id'))
+    return json({
+        'data': block_resource,
+        'link': url
+    })
 
 
 @BLOCKS_BP.get('api/blocks/<block_id>')
 @authorized()
 async def get_block(request, block_id):
-    raise ApiNotImplemented()
+    if '?head=' in request.url:
+        raise ApiBadRequest(
+            "Bad Request: 'head' parameter should not be specified"
+        )
+    block_resource = await blocks_query.fetch_block_by_id(
+        request.app.config.DB_CONN, block_id
+    )
+    return json({
+        'data': block_resource,
+        'link': request.url
+    })
