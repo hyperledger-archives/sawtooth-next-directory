@@ -13,12 +13,15 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import logging
+
 from sanic.response import json
 from sanic import Blueprint
 from sanic.exceptions import SanicException
 
-ERRORS_BP = Blueprint('errors')
 
+ERRORS_BP = Blueprint('errors')
+LOGGER = logging.getLogger(__name__)
 DEFAULT_MSGS = {
     400: 'Bad Request',
     401: 'Unauthorized',
@@ -82,6 +85,7 @@ class ApiInternalError(ApiException):
 
 @ERRORS_BP.exception(ApiException)
 def api_json_error(request, exception):
+    LOGGER.exception(exception)
     return json(
         {
             'code': exception.status_code,
@@ -96,6 +100,7 @@ def json_error(request, exception):
         code = exception.status_code
     except AttributeError:
         code = 503
+    LOGGER.exception(exception)
     return json(
         {
             'code': code,
