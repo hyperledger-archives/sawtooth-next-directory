@@ -13,6 +13,8 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+from uuid import uuid4
+
 import hashlib
 import logging
 
@@ -32,6 +34,8 @@ from db import users_query
 from rbac_transaction_creation.common import Key
 from rbac_transaction_creation.user_transaction_creation \
     import create_user
+from rbac_transaction_creation.manager_transaction_creation \
+    import propose_manager
 
 
 LOGGER = logging.getLogger(__name__)
@@ -130,7 +134,24 @@ async def update_user(request, user_id):
 @USERS_BP.put('api/users/<user_id>/manager')
 @authorized()
 async def update_manager(request, user_id):
-    raise ApiNotImplemented()
+    required_fields = ['id']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    proposal_id = str(uuid4())
+    batch_list, _ = propose_manager(
+        txn_key=txn_key,
+        batch_key=request.app.config.BATCHER_KEY_PAIR,
+        proposal_id=proposal_id,
+        user_id=user_id,
+        new_manager_id=request.json.get('id'),
+        reason=request.json.get('reason'),
+        metadata=request.json.get('metadata')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({'proposal_id': proposal_id})
 
 
 @USERS_BP.get('api/users/<user_id>/proposals/open')
