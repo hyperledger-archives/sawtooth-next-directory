@@ -26,8 +26,6 @@ from api.auth import authorized
 from api import utils
 
 from db import auth_query
-from db import proposals_query
-from db import relationships_query
 from db import users_query
 
 
@@ -44,16 +42,9 @@ USERS_BP = Blueprint('users')
 @authorized()
 async def fetch_all_users(request):
     head_block_num = await utils.get_request_block_num(request)
-    user_info_list = await users_query.fetch_all_user_info(
+    user_resources = await users_query.fetch_all_user_resources(
         request.app.config.DB_CONN, head_block_num
     )
-    user_resources = []
-    for user_info in user_info_list:
-        user_resources.append(await compile_user_resource(
-            request.app.config.DB_CONN,
-            user_info,
-            head_block_num
-        ))
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
@@ -114,14 +105,9 @@ async def create_new_user(request):
 @authorized()
 async def fetch_user(request, user_id):
     head_block_num = await utils.get_request_block_num(request)
-    user_info = await users_query.fetch_user_by_id(
+    user_resource = await users_query.fetch_user_resource(
         request.app.config.DB_CONN,
         user_id,
-        head_block_num
-    )
-    user_resource = await compile_user_resource(
-        request.app.config.DB_CONN,
-        user_info,
         head_block_num
     )
     return await utils.create_response(
@@ -172,63 +158,3 @@ def create_user_response(request, public_key):
             'user': user_resource
         }
     })
-
-
-async def compile_user_resource(conn, user_info, head_block_num):
-    user = {
-        'id': user_info.get('user_id'),
-        'name': user_info.get('name'),
-        'subordinates': [],
-        'ownerOf': [],
-        'administratorOf': [],
-        'memberOf': [],
-        'proposals': [],
-    }
-
-    if user_info.get('manager'):
-        user['manager'] = user_info.get('manager')
-    if user_info.get('metadata'):
-        user['metadata'] = user_info.get('metadata')
-
-    # Populate subordinates list
-    subordinates = await users_query.fetch_users_by_manager_id(
-        conn, user.get('id'), head_block_num
-    )
-    user['subordinates'].extend(
-        [subordinate.get('user_id') for subordinate in subordinates]
-    )
-
-    # Populate proposals list
-    proposals = await proposals_query.fetch_proposals_by_target_id(
-        conn, user['id'], head_block_num
-    )
-    user['proposals'].extend(
-        [proposal.get('user_id') for proposal in proposals]
-    )
-
-    # Populate ownerOf list
-    user['ownerOf'].extend(await relationships_query.fetch_by_identifier(
-        conn, 'task_owners', user['id'], 'task_id', head_block_num,
-    ))
-    user['ownerOf'].extend(await relationships_query.fetch_by_identifier(
-        conn, 'role_owners', user['id'], 'role_id', head_block_num
-    ))
-
-    # Populate administratorOf list
-    user['administratorOf'].extend(
-        await relationships_query.fetch_by_identifier(
-            conn, 'task_admins', user['id'], 'task_id', head_block_num
-        )
-    )
-    user['administratorOf'].extend(
-        await relationships_query.fetch_by_identifier(
-            conn, 'role_admins', user['id'], 'role_id', head_block_num
-        )
-    )
-
-    # Populate memberOf list
-    user['memberOf'].extend(await relationships_query.fetch_by_identifier(
-        conn, 'role_members', user['id'], 'role_id', head_block_num
-    ))
-
-    return user

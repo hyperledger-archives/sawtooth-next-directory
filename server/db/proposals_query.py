@@ -21,20 +21,6 @@ import rethinkdb as r
 LOGGER = logging.getLogger(__name__)
 
 
-async def fetch_proposals_by_target_id(conn, target_id, head_block_num):
-    cursor = await r.table('proposals').get_all(
-        target_id, index='target_id'
-    ).filter(
-        (head_block_num >= r.row['start_block_num'])
-        & (head_block_num < r.row['end_block_num'])
-    ).run(conn)
-    proposals = []
-    while await cursor.fetch_next():
-        proposals.append(await cursor.next())
-
-    return proposals
-
-
 def fetch_proposal_ids_by_target(target, head_block_num):
     return r.table('proposals')\
         .get_all(target, index='target_id')\
