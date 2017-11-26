@@ -911,9 +911,9 @@ paths:
                 description: Id of the user to add as an administrator
       responses:
         '200':
-          description: Generic success response
+          description: Success response with proposal id
           schema:
-            $ref: '#/definitions/success'
+            $ref: '#/definitions/proposalId'
         '400':
           description: Response for a bad request
           schema:
@@ -1002,9 +1002,9 @@ paths:
                 description: Id of the user to be add as an owner
       responses:
         '200':
-          description: Generic success response
+          description: Success response with proposal id
           schema:
-            $ref: '#/definitions/success'
+            $ref: '#/definitions/proposalId'
         '400':
           description: Response for a bad request
           schema:
