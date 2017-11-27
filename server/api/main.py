@@ -22,6 +22,7 @@ import sys
 
 from sanic import Sanic
 from sanic import Blueprint
+from sanic.response import text
 
 from sawtooth_rest_api.messaging import Connection
 
@@ -188,6 +189,16 @@ def main():
     app.blueprint(TASKS_BP)
     app.blueprint(USERS_BP)
     app.blueprint(APP_BP)
+
+    @app.middleware('request')
+    async def handle_options(request):
+        if request.method == 'OPTIONS':
+            return text('ok',
+                        headers={'Access-Control-Allow-Origin': '*'})
+
+    @app.middleware('response')
+    def allow_cors(request, response):
+        response.headers['Access-Control-Allow-Origin'] = '*'
 
     load_config(app)
 
