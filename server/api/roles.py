@@ -33,16 +33,19 @@ ROLES_BP = Blueprint('roles')
 
 @ROLES_BP.get('api/roles')
 @authorized()
-async def fetch_all_roles(request):
-    head_block_num = await utils.get_request_block_num(request)
+async def get_all_roles(request):
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
     role_resources = await roles_query.fetch_all_role_resources(
-        request.app.config.DB_CONN, head_block_num
+        request.app.config.DB_CONN, head_block.get('num'), start, limit
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
         role_resources,
-        head_block_num
+        head_block,
+        start=start,
+        limit=limit
     )
 
 
@@ -72,18 +75,18 @@ async def create_new_role(request):
 
 @ROLES_BP.get('api/roles/<role_id>')
 @authorized()
-async def fetch_role(request, role_id):
-    head_block_num = await utils.get_request_block_num(request)
+async def get_role(request, role_id):
+    head_block = await utils.get_request_block(request)
     role_resource = await roles_query.fetch_role_resource(
         request.app.config.DB_CONN,
         role_id,
-        head_block_num
+        head_block.get('num')
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
         request.url,
         role_resource,
-        head_block_num
+        head_block
     )
 
 

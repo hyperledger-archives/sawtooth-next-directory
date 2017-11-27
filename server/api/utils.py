@@ -19,6 +19,8 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from Crypto.Cipher import AES
 
+import rethinkdb as r
+
 from sanic.response import json
 
 from sawtooth_rest_api.protobuf import client_pb2
@@ -46,20 +48,73 @@ def validate_fields(required_fields, body):
         raise ApiBadRequest("Bad Request: Improper JSON format")
 
 
-async def create_response(conn, url, data, head_block_num):
-    head_block = await blocks_query.fetch_block_by_num(conn, head_block_num)
-    head_block_id = head_block.get('id')
-    if '?head=' not in url:
-        url += '?head={}'.format(head_block_id)
+async def create_response(conn, request_url, data,
+                          head_block, start=None, limit=None):
+    LOGGER.warning(request_url)
+    base_url = request_url.split("?")[0]
+    table = base_url.split("/")[4]
+    url = "{}?head={}".format(base_url, head_block.get('id'))
     response = {
         'data': data,
-        'head': head_block_id,
-        'link': url
+        'head': head_block.get('id'),
+        'link': "{}&start={}&limit={}".format(url, start, limit),
     }
+    if start is not None and limit is not None:
+        response['paging'] = await get_response_paging_info(
+            conn, table, url, start, limit, head_block.get('num')
+        )
     return json(response)
 
 
-async def get_request_block_num(request):
+async def get_response_paging_info(conn, table, url,
+                                   start, limit, head_block_num):
+    total = await get_table_count(conn, table, head_block_num)
+
+    prev_start = start - limit
+    if prev_start < 0:
+        prev_start = 0
+    last_start = ((total - 1) // limit) * limit
+    next_start = start + limit
+    if next_start > last_start:
+        next_start = last_start
+
+    return {
+        'start': start,
+        'limit': limit,
+        'total': total,
+        'first': "{}&start=0&limit={}".format(url, limit),
+        'prev': "{}&start={}&limit={}".format(url, prev_start, limit),
+        'next': "{}&start={}&limit={}".format(url, next_start, limit),
+        'last': "{}&start={}&limit={}".format(url, last_start, limit)
+    }
+
+
+async def get_table_count(conn, table, head_block_num):
+    if table == 'blocks':
+        return await r.table(table)\
+            .between(r.minval, head_block_num, right_bound='closed')\
+            .count().run(conn)
+    return await r.table(table)\
+        .filter((head_block_num >= r.row['start_block_num'])
+                & (head_block_num <= r.row['end_block_num']))\
+        .count().run(conn)
+
+
+def get_request_paging_info(request):
+    try:
+        start = int(request.args['start'][0])
+    except KeyError:
+        start = 0
+    try:
+        limit = int(request.args['limit'][0])
+        if limit > 1000:
+            limit = 1000
+    except KeyError:
+        limit = 100
+    return start, limit
+
+
+async def get_request_block(request):
     try:
         head_block_id = request.args['head'][0]
         head_block = await blocks_query.fetch_block_by_id(
@@ -70,7 +125,7 @@ async def get_request_block_num(request):
         head_block = await blocks_query.fetch_latest_block(
             request.app.config.DB_CONN
         )
-    return head_block.get('num')
+    return head_block
 
 
 async def get_transactor_key(request):
