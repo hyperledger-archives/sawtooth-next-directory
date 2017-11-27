@@ -14,8 +14,9 @@
 # ------------------------------------------------------------------------------
 
 from sanic import Blueprint
+from sanic.response import json
 
-from api.errors import ApiNotImplemented
+from api.errors import ApiBadRequest
 from api.auth import authorized
 from api import utils
 
@@ -23,8 +24,14 @@ from db import proposals_query
 from db.relationships_query import fetch_relationships
 from db.users_query import fetch_user_resource
 
+from rbac_transaction_creation import manager_transaction_creation
+from rbac_transaction_creation import task_transaction_creation
+from rbac_transaction_creation import role_transaction_creation
+
 
 PROPOSALS_BP = Blueprint('proposals')
+
+
 TABLES = {
     'ADD_ROLE_TASKS': 'task_owners',
     'ADD_ROLE_MEMBERS': 'role_owners',
@@ -39,6 +46,57 @@ TABLES = {
     'REMOVE_TASK_OWNERS': 'task_admins',
     'REMOVE_TASK_ADMINS': 'task_admins',
     'UPDATE_USER_MANAGER': 'users'
+}
+
+
+class Status(object):  # pylint: disable=too-few-public-methods
+    REJECTED = "REJECTED"
+    APPROVED = "APPROVED"
+
+
+class ProposalType(object):  # pylint: disable=too-few-public-methods
+    ADD_ROLE_TASKS = "ADD_ROLE_TASKS"
+    ADD_ROLE_MEMBERS = "ADD_ROLE_MEMBERS"
+    ADD_ROLE_OWNERS = "ADD_ROLE_OWNERS"
+    ADD_ROLE_ADMINS = "ADD_ROLE_ADMINS"
+
+    REMOVE_ROLE_TASKS = "REMOVE_ROLE_TASKS"
+    REMOVE_ROLE_MEMBERS = "REMOVE_ROLE_MEMBERS"
+    REMOVE_ROLE_OWNERS = "REMOVE_ROLE_OWNERS"
+    REMOVE_ROLE_ADMINS = "REMOVE_ROLE_ADMINS"
+
+    ADD_TASK_OWNERS = "ADD_TASK_OWNERS"
+    ADD_TASK_ADMINS = "ADD_TASK_ADMINS"
+
+    REMOVE_TASK_OWNERS = "REMOVE_TASK_OWNERS"
+    REMOVE_TASK_ADMINS = "REMOVE_TASK_ADMINS"
+
+    UPDATE_USER_MANAGER = "UPDATE_USER_MANAGER"
+
+
+PROPOSAL_TRANSACTION = {
+
+    ProposalType.ADD_ROLE_TASKS: {
+        Status.REJECTED: role_transaction_creation.reject_add_role_tasks,
+        Status.APPROVED: role_transaction_creation.confirm_add_role_tasks},
+    ProposalType.ADD_ROLE_MEMBERS: {
+        Status.REJECTED: role_transaction_creation.reject_add_role_members,
+        Status.APPROVED: role_transaction_creation.confirm_add_role_members},
+    ProposalType.ADD_ROLE_OWNERS: {
+        Status.REJECTED: role_transaction_creation.reject_add_role_owners,
+        Status.APPROVED: role_transaction_creation.confirm_add_role_owners},
+    ProposalType.ADD_ROLE_ADMINS: {
+        Status.REJECTED: role_transaction_creation.reject_add_role_admins,
+        Status.APPROVED: role_transaction_creation.confirm_add_role_admins},
+    ProposalType.ADD_TASK_OWNERS: {
+        Status.REJECTED: task_transaction_creation.reject_add_task_owners,
+        Status.APPROVED: task_transaction_creation.confirm_add_task_owners},
+    ProposalType.ADD_TASK_ADMINS: {
+        Status.REJECTED: task_transaction_creation.reject_add_task_admins,
+        Status.APPROVED: task_transaction_creation.confirm_add_task_admins},
+    ProposalType.UPDATE_USER_MANAGER: {
+        Status.REJECTED: manager_transaction_creation.reject_manager,
+        Status.APPROVED: manager_transaction_creation.confirm_manager},
 }
 
 
@@ -91,7 +149,33 @@ async def get_proposal(request, proposal_id):
 @PROPOSALS_BP.patch('api/proposals/<proposal_id>')
 @authorized()
 async def update_proposal(request, proposal_id):
-    raise ApiNotImplemented()
+    required_fields = ['reason', 'status']
+    utils.validate_fields(required_fields, request.json)
+    if request.json['status'] not in [Status.REJECTED, Status.APPROVED]:
+        raise ApiBadRequest(
+            "Bad Request: status must be either 'REJECTED' or 'APPROVED'")
+    txn_key = await utils.get_transactor_key(request=request)
+    block = await utils.get_request_block(request)
+    proposal_resource = await proposals_query.fetch_proposal_resource(
+        request.app.config.DB_CONN,
+        proposal_id=proposal_id,
+        head_block_num=block.get('num'))
+
+    batch_list, _ = PROPOSAL_TRANSACTION[
+        proposal_resource.get('proposal_type')][
+            request.json['status']](
+                txn_key,
+                request.app.config.BATCHER_KEY_PAIR,
+                proposal_id,
+                proposal_resource.get('object'),
+                proposal_resource.get('target'),
+                request.json.get('reason'))
+
+    await utils.send(
+        request.app.config.VAL_CONN,
+        batch_list,
+        request.app.config.TIMEOUT)
+    return json(body='')
 
 
 async def compile_proposal_resource(conn, proposal_resource, head_block_num):
