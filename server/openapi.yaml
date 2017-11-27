@@ -1723,8 +1723,23 @@ definitions:
       id:
         type: string
         description: Id of the proposal
-      type:
-        $ref: '#/definitions/proposalType'
+      proposal_type:
+        type: string
+        description: The type of the proposal
+        enum:
+          - ADD_ROLE_TASKS
+          - ADD_ROLE_MEMBERS
+          - ADD_ROLE_OWNERS
+          - ADD_ROLE_ADMINS
+          - REMOVE_ROLE_TASKS
+          - REMOVE_ROLE_MEMBERS
+          - REMOVE_ROLE_OWNERS
+          - REMOVE_ROLE_ADMINS
+          - ADD_TASK_OWNERS
+          - ADD_TASK_ADMINS
+          - REMOVE_TASK_OWNERS
+          - REMOVE_TASK_ADMINS
+          - UPDATE_USER_MANAGER'
       object:
         type: string
         description: >-
@@ -1736,7 +1751,12 @@ definitions:
           Id of the role, task, or user that is being added or removed from
           the object resource
       status:
-        $ref: '#/definitions/proposalStatus'
+        type: string
+        description: Status of the proposal
+        enum:
+          - OPEN
+          - APPROVED
+          - REJECTED
       opener:
         type: string
         description: Id of the user who created the proposal
@@ -1756,17 +1776,6 @@ definitions:
         description: List of user ids that can approve this proposal
         items:
           type: string
-  proposalStatus:
-    description: The open/close status of a proposal
-    type: object
-    properties:
-      status:
-        type: string
-        description: Status of the proposal
-        enum:
-          - OPEN
-          - APPROVED
-          - REJECTED
   proposalUpdate:
     description: Details provided to update a proposal
     type: object
@@ -1785,27 +1794,6 @@ definitions:
       metadata:
         type: string
         description: Any new client metadata
-  proposalType:
-    description: What sort of state change a proposal is requesting
-    type: object
-    properties:
-      proposal_type:
-        type: string
-        description: The type of the proposal
-        enum:
-          - ADD_ROLE_TASKS
-          - ADD_ROLE_MEMBERS
-          - ADD_ROLE_OWNERS
-          - ADD_ROLE_ADMINS
-          - REMOVE_ROLE_TASKS
-          - REMOVE_ROLE_MEMBERS
-          - REMOVE_ROLE_OWNERS
-          - REMOVE_ROLE_ADMINS
-          - ADD_TASK_OWNERS
-          - ADD_TASK_ADMINS
-          - REMOVE_TASK_OWNERS
-          - REMOVE_TASK_ADMINS
-          - UPDATE_USER_MANAGER
   proposalId:
     description: Id of the proposal created from a request
     type: object

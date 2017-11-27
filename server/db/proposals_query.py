@@ -31,10 +31,8 @@ async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
         .slice(start, start+limit)\
         .map(lambda proposal: proposal.merge({
             'id': proposal['proposal_id'],
-            'type': proposal['proposal_type'],
             'object': proposal['object_id'],
             'target': proposal['target_id'],
-            'status': proposal['status'],
         }))\
         .map(lambda proposal: (proposal['metadata'] == "").branch(
             proposal.without('metadata'), proposal
@@ -56,10 +54,8 @@ async def fetch_proposal_resource(conn, proposal_id, head_block_num):
                 & (head_block_num < r.row['end_block_num']))\
         .map(lambda proposal: proposal.merge({
             'id': proposal['proposal_id'],
-            'type': proposal['proposal_type'],
             'object': proposal['object_id'],
             'target': proposal['target_id'],
-            'status': proposal['status'],
         }))\
         .map(lambda proposal: (proposal['metadata'] == "").branch(
             proposal.without('metadata'), proposal

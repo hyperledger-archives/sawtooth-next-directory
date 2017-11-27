@@ -62,7 +62,9 @@ async def get_all_proposals(request):
         request.app.config.DB_CONN,
         request.url,
         proposal_resources,
-        head_block
+        head_block,
+        start=start,
+        limit=limit
     )
 
 
@@ -93,7 +95,7 @@ async def update_proposal(request, proposal_id):
 
 
 async def compile_proposal_resource(conn, proposal_resource, head_block_num):
-    table = TABLES[proposal_resource['type']]
+    table = TABLES[proposal_resource['proposal_type']]
     if 'role' in table:
         proposal_resource['approvers'] = await fetch_relationships(
             table,

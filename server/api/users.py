@@ -26,8 +26,10 @@ import sawtooth_signing as signing
 from api.errors import ApiNotImplemented
 from api.auth import authorized
 from api import utils
+from api.proposals import compile_proposal_resource
 
 from db import auth_query
+from db import proposals_query
 from db import users_query
 
 
@@ -157,7 +159,34 @@ async def update_manager(request, user_id):
 @USERS_BP.get('api/users/<user_id>/proposals/open')
 @authorized()
 async def fetch_open_proposals(request, user_id):
-    raise ApiNotImplemented()
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
+    proposals = await proposals_query.fetch_all_proposal_resources(
+        request.app.config.DB_CONN, head_block.get('num'), start, limit
+    )
+    proposal_resources = []
+    for proposal in proposals:
+        proposal_resource = await compile_proposal_resource(
+            request.app.config.DB_CONN,
+            proposal,
+            head_block.get('num')
+        )
+        proposal_resources.append(proposal_resource)
+
+    open_proposals = []
+    for proposal_resource in proposal_resources:
+        if proposal_resource['status'] == "OPEN" and \
+           user_id in proposal_resource['approvers']:
+            open_proposals.append(proposal_resource)
+
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        open_proposals,
+        head_block,
+        start=start,
+        limit=limit
+    )
 
 
 def create_user_response(request, public_key):
