@@ -101,6 +101,6 @@ services:
       - rbac-tp
     volumes:
       - '../../:/project/tmobile-rbac'
-    command: dredd ./server/openapi.yaml http://localhost:8000 --language=python --hookfiles ./integration_tests/api*.py
+    command: dredd ./server/openapi.yaml http://server:8000 --language=python --hookfiles ./integration_tests/api/*.py
     environment:
       PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
