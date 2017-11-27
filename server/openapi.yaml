@@ -1259,9 +1259,9 @@ paths:
                 description: Id of the new manager for this user
       responses:
         '200':
-          description: Generic success response
+          description: Success response with proposal id
           schema:
-            $ref: '#/definitions/success'
+            $ref: '#/definitions/proposalId'
         '400':
           description: Response for a bad request
           schema:
@@ -1806,6 +1806,13 @@ definitions:
           - REMOVE_TASK_OWNERS
           - REMOVE_TASK_ADMINS
           - UPDATE_USER_MANAGER
+  proposalId:
+    description: Id of the proposal created from a request
+    type: object
+    properties:
+      proposal_id:
+        type: string
+        description: Id of the proposal that was created
   block:
     properties:
       num:
