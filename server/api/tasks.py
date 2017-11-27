@@ -24,8 +24,7 @@ from api import utils
 
 from db import tasks_query
 
-from rbac_transaction_creation.task_transaction_creation \
-    import create_task
+from rbac_transaction_creation import task_transaction_creation
 
 
 TASKS_BP = Blueprint('tasks')
@@ -57,7 +56,7 @@ async def create_new_task(request):
 
     txn_key = await utils.get_transactor_key(request)
     task_id = str(uuid4())
-    batch_list, _ = create_task(
+    batch_list, _ = task_transaction_creation.create_task(
         txn_key,
         request.app.config.BATCHER_KEY_PAIR,
         task_id,
@@ -99,7 +98,24 @@ async def update_task(request, task_id):
 @TASKS_BP.post('api/tasks/<task_id>/admins')
 @authorized()
 async def add_task_admin(request, task_id):
-    raise ApiNotImplemented()
+    required_fields = ['id']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    proposal_id = str(uuid4())
+    batch_list, _ = task_transaction_creation.propose_add_task_admins(
+        txn_key=txn_key,
+        batch_key=request.app.config.BATCHER_KEY_PAIR,
+        proposal_id=proposal_id,
+        task_id=task_id,
+        user_id=request.json.get('id'),
+        reason=request.json.get('reason'),
+        metadata=request.json.get('metadata')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({'proposal_id': proposal_id})
 
 
 @TASKS_BP.delete('api/tasks/<task_id>/admins')
@@ -111,7 +127,24 @@ async def remove_task_admin(request, task_id):
 @TASKS_BP.post('api/tasks/<task_id>/owners')
 @authorized()
 async def add_task_owner(request, task_id):
-    raise ApiNotImplemented()
+    required_fields = ['id']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    proposal_id = str(uuid4())
+    batch_list, _ = task_transaction_creation.propose_add_task_owner(
+        txn_key=txn_key,
+        batch_key=request.app.config.BATCHER_KEY_PAIR,
+        proposal_id=proposal_id,
+        task_id=task_id,
+        user_id=request.json.get('id'),
+        reason=request.json.get('reason'),
+        metadata=request.json.get('metadata')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({'proposal_id': proposal_id})
 
 
 @TASKS_BP.delete('api/tasks/<task_id>/owners')
