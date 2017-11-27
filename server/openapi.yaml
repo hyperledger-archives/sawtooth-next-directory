@@ -378,9 +378,9 @@ paths:
                   Id of the user to add as an administrator to this role
       responses:
         '200':
-          description: Generic success response
+          description: Success response with proposal id
           schema:
-            $ref: '#/definitions/success'
+            $ref: '#/definitions/proposalId'
         '400':
           description: Response for a bad request
           schema:
@@ -470,9 +470,9 @@ paths:
                 description: Id of the user to be add as member to this role
       responses:
         '200':
-          description: Generic success response
+          description: Success response with proposal id
           schema:
-            $ref: '#/definitions/success'
+            $ref: '#/definitions/proposalId'
         '400':
           description: Response for a bad request
           schema:
@@ -561,9 +561,9 @@ paths:
                 description: Id of the user to be add as an owner to this role
       responses:
         '200':
-          description: Generic success response
+          description: Success response with proposal id
           schema:
-            $ref: '#/definitions/success'
+            $ref: '#/definitions/proposalId'
         '400':
           description: Response for a bad request
           schema:
@@ -652,9 +652,9 @@ paths:
                 description: Id of the task to add to this role
       responses:
         '200':
-          description: Generic success response
+          description: Success response with proposal id
           schema:
-            $ref: '#/definitions/success'
+            $ref: '#/definitions/proposalId'
         '400':
           description: Response for a bad request
           schema:
