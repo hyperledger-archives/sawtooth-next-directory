@@ -18,45 +18,13 @@ import dredd_hooks as hooks
 
 
 @hooks.before("/api/proposals/{id} > PATCH > 200 > application/json")
-def skip_proposal_update(txn):
-    txn['skip'] = True
-
-
 @hooks.before("/api/roles/{id} > PATCH > 200 > application/json")
-def skip_roles_update(txn):
-    txn['skip'] = True
-
-
-@hooks.before("/api/roles/{id}/admins > DELETE > 200 > application/json")
-def skip_del_role_admin(txn):
-    txn['skip'] = True
-
-
-@hooks.before("/api/roles/{id}/members > DELETE > 200 > application/json")
-def skip_del_role_member(txn):
-    txn['skip'] = True
-
-
-@hooks.before("/api/roles/{id}/owners > DELETE > 200 > application/json")
-def skip_del_role_owners(txn):
-    txn['skip'] = True
-
-
-@hooks.before("/api/roles/{id}/tasks > DELETE > 200 > application/json")
-def skip_del_role_tasks(txn):
-    txn['skip'] = True
-
-
 @hooks.before("/api/tasks/{id} > PATCH > 200 > application/json")
-def skip_task_update(txn):
-    txn['skip'] = True
-
-
+@hooks.before("/api/roles/{id}/admins > DELETE > 200 > application/json")
+@hooks.before("/api/roles/{id}/members > DELETE > 200 > application/json")
+@hooks.before("/api/roles/{id}/owners > DELETE > 200 > application/json")
+@hooks.before("/api/roles/{id}/tasks > DELETE > 200 > application/json")
 @hooks.before("/api/tasks/{id}/admins > DELETE > 200 > application/json")
-def skip_del_task_admin(txn):
-    txn['skip'] = True
-
-
 @hooks.before("/api/tasks/{id}/owners > DELETE > 200 > application/json")
-def skip_del_task_owners(txn):
+def skip_test(txn):
     txn['skip'] = True

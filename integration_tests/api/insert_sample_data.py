@@ -13,76 +13,83 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+
 import json
-from uuid import uuid4
-import logging
-LOGGER = logging.getLogger(__name__)
 import dredd_hooks as hooks
 import requests
 
-API_URL = "http://server:8000"
 
-USER1_NAME = 'user1'
-USER1_PASSWORD = 'baz'
+API_URL = 'http://server:8000/api/'
 
-USER2_NAME = 'user2'
-USER2_PASSWORD = 'bar'
+USER = {
+    'name': 'Bob Bobson',
+    'password': '12345'
+}
+
+ROLE = {
+    'name': 'Test Administrator',
+    'owners': [],  # USER will be appended
+    'administrators': []  # USER will be appended
+}
 
 
-response_stash = {}
+seeded_data = {}
+
+
+def submit(path, resource):
+    url = API_URL + path
+    auth = seeded_data.get('auth', None)
+    headers = {'Authorization': auth} if auth else None
+    response = requests.post(url, json=resource, headers=headers)
+    response.raise_for_status()
+    return response.json()['data']
+
+
+def patch_body(txn, update):
+    old_body = json.loads(txn['request']['body'])
+
+    new_body = {}
+    for key, value in old_body.items():
+        new_body[key] = value
+    for key, value in update.items():
+        new_body[key] = value
+
+    txn['request']['body'] = json.dumps(new_body)
+
 
 @hooks.before_all
-def create_first_objects(txns):
-    response = requests.post(
-        url="{}/api/users".format(API_URL),
-        data=json.dumps({'name': USER1_NAME,
-                         'password': USER1_PASSWORD}))
-    # For now, add this user's auth token to the header for
-    # each txn. The GETs will use this token. The POSTS/PUTS will
-    # be overwritten and use an appropriate token.
-    auth = response.json()['data']['authorization']
+def initialize_sample_resources(txns):
+    # Create USER
+    user_response = submit('users', USER)
+    seeded_data['auth'] = user_response['authorization']
+    seeded_data['user'] = user_response['user']
+
+    # Create ROLE
+    ROLE['owners'].append(seeded_data['user']['id'])
+    ROLE['administrators'].append(seeded_data['user']['id'])
+    seeded_data['role'] = submit('roles', ROLE)
+
+    # Add USER's auth token to all transactions
     for txn in txns:
-        txn['request']['headers']['Authorization'] = "Bearer {}".format(auth)
-
-    response_stash['user1'] = response.json()['data']['user']['id']
-    response_stash['user1_auth'] = response.json()['data']['authorization']
-
-    response2 = requests.post(url="{}/api/users".format(API_URL),
-                              data=json.dumps({'name': USER2_NAME,
-                                               'password': USER2_PASSWORD,
-                                               'manager': response_stash['user1']}))
-
-    response_stash['user2'] = response2.json()['data']['user']['id']
-    response_stash['user2_auth'] = response2.json()['data']['authorization']
-
-    response_role = requests.post(
-        "{}/api/roles".format(API_URL),
-        data=json.dumps({'name': 'foobar',
-                         'administrators': [response_stash['user2']],
-                         'owners': [response_stash['user1']]}),
-        headers={'Authorization': "Bearer {}".format(response_stash['user1_auth'])})
-
-    response_stash['role1'] = response_role.json()['data']['id']
+        txn['request']['headers']['Authorization'] = seeded_data['auth']
 
 
 @hooks.before('/api/authorization > POST > 200 > application/json')
-def test_auth(txn):
-    txn['request']['body'] = json.dumps({'id': response_stash['user1'],
-                                         'password': USER1_PASSWORD})
+def add_credentials(txn):
+    patch_body(txn, {
+        'id': seeded_data['user']['id'],
+        'password': USER['password']
+    })
 
 
 @hooks.before('/api/roles > POST > 200 > application/json')
-def test_create_role(txn):
-    txn['request']['body'] = json.dumps({
-        'name': "foobar",
-        'administrators': [response_stash['user1']],
-        'owners': [response_stash['user2']]})
-
-
-@hooks.before("/api/roles/{id}/admins > POST > 200 > application/json")
-def test_create_admins(txn):
-    txn['request']['body'] = json.dumps({
-        'id': response_stash['user1'],
-        'reason': uuid4().hex,
-        'metdata': uuid4().hex
+def add_owners_and_admins(txn):
+    patch_body(txn, {
+        'administrators': [seeded_data['user']['id']],
+        'owners': [seeded_data['user']['id']]
     })
+
+
+@hooks.before('/api/roles/{id}/admins > POST > 200 > application/json')
+def add_user_id(txn):
+    patch_body(txn, {'id': seeded_data['user']['id']})
