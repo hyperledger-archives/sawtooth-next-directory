@@ -193,12 +193,20 @@ def main():
     @app.middleware('request')
     async def handle_options(request):
         if request.method == 'OPTIONS':
-            return text('ok',
-                        headers={'Access-Control-Allow-Origin': '*'})
+            return text('ok', headers={
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods':\
+                    'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            })
 
     @app.middleware('response')
     def allow_cors(request, response):
         response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] =\
+            'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] =\
+            'Content-Type, Authorization'
 
     load_config(app)
 
