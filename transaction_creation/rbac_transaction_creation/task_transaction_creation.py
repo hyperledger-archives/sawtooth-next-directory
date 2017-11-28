@@ -163,6 +163,41 @@ def reject_add_task_admins(txn_key,
         batch_key)
 
 
+def propose_remove_task_admins(txn_key,
+                               batch_key,
+                               proposal_id,
+                               task_id,
+                               user_id,
+                               reason,
+                               metadata):
+    propose = task_transaction_pb2.ProposeRemoveTaskAdmin(
+        proposal_id=proposal_id,
+        task_id=task_id,
+        user_id=user_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_user_address(user_id),
+              addresser.make_task_admins_address(
+                  task_id=task_id,
+                  user_id=user_id),
+              addresser.make_proposal_address(task_id, user_id),
+              addresser.make_task_attributes_address(task_id)]
+
+    outputs = [addresser.make_proposal_address(task_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
 def propose_add_task_owner(txn_key,
                            batch_key,
                            proposal_id,
