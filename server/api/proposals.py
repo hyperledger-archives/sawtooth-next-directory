@@ -162,7 +162,7 @@ async def update_proposal(request, proposal_id):
         head_block_num=block.get('num'))
 
     batch_list, _ = PROPOSAL_TRANSACTION[
-        proposal_resource.get('proposal_type')][
+        proposal_resource.get('type')][
             request.json['status']](
                 txn_key,
                 request.app.config.BATCHER_KEY_PAIR,
@@ -179,7 +179,7 @@ async def update_proposal(request, proposal_id):
 
 
 async def compile_proposal_resource(conn, proposal_resource, head_block_num):
-    table = TABLES[proposal_resource['proposal_type']]
+    table = TABLES[proposal_resource['type']]
     if 'role' in table:
         proposal_resource['approvers'] = await fetch_relationships(
             table,

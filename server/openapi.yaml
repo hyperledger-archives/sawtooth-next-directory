@@ -1781,7 +1781,7 @@ definitions:
         type: string
         description: Id of the proposal
         example: 63467642-6067-4c82-a096-1a1972d776b3
-      proposal_type:
+      type:
         type: string
         description: The type of the proposal
         enum:
@@ -1842,17 +1842,6 @@ definitions:
         items:
           type: string
           example: 02aand 06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
-  proposalStatus:
-    description: The open/close status of a proposal
-    type: object
-    properties:
-      status:
-        type: string
-        description: Status of the proposal
-        enum:
-          - OPEN
-          - APPROVED
-          - REJECTED
   proposalUpdate:
     description: Details provided to update a proposal
     type: object
