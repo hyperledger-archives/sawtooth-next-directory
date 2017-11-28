@@ -1715,7 +1715,7 @@ definitions:
       metadata:
         type: string
         description: Any client supplied metadata
-        example: 'hire-date:2009-07-17'
+        example: hire-date:2009-07-17
   newUser:
     description: Details provided to create a new user
     type: object
@@ -1739,11 +1739,11 @@ definitions:
       email:
         type: string
         description: Email address to associate with the user's account
-        example: 'susan@biz.co'
+        example: susan@biz.co
       metadata:
         type: string
         description: Any client supplied metadata
-        example: 'hire-date:2009-07-17'
+        example: hire-date:2009-07-17
   userUpdate:
     description: Details provided to update an existing user
     type: object
@@ -1759,11 +1759,11 @@ definitions:
       email:
         type: string
         description: A new email address to associate with the user's account
-        example: 'mlynnie@biz.co'
+        example: mlynnie@biz.co
       metadata:
         type: string
         description: Any new client supplied metadata
-        example: 'name-changed:2016-08-31'
+        example: name-changed:2016-08-31
   proposal:
     description: >-
       A request to change the state of a role, task, or user, which requires
@@ -1797,7 +1797,7 @@ definitions:
           - ADD_TASK_ADMINS
           - REMOVE_TASK_OWNERS
           - REMOVE_TASK_ADMINS
-          - UPDATE_USER_MANAGER'
+          - UPDATE_USER_MANAGER
       object:
         type: string
         description: >-
@@ -1841,7 +1841,7 @@ definitions:
         description: List of user ids that can approve this proposal
         items:
           type: string
-          example: 02aand 06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
+          example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
   proposalUpdate:
     description: Details provided to update a proposal
     type: object
@@ -1861,6 +1861,7 @@ definitions:
       metadata:
         type: string
         description: Any new client metadata
+        example: She starts on Tuesday
   proposalId:
     description: Id of the proposal created from a request
     type: object
