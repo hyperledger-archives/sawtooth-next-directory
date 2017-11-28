@@ -118,10 +118,27 @@ async def add_role_admin(request, role_id):
     return json({'proposal_id': proposal_id})
 
 
-@ROLES_BP.delete('api/role/<role_id>/admins')
+@ROLES_BP.delete('api/roles/<role_id>/admins')
 @authorized()
 async def delete_role_admin(request, role_id):
-    raise ApiNotImplemented()
+    required_fields = ['id']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    proposal_id = str(uuid4())
+    batch_list, _ = role_transaction_creation.propose_remove_role_admins(
+        txn_key=txn_key,
+        batch_key=request.app.config.BATCHER_KEY_PAIR,
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=request.json.get('id'),
+        reason=request.json.get('reason'),
+        metadata=request.json.get('metadata')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({'proposal_id': proposal_id})
 
 
 @ROLES_BP.post('api/roles/<role_id>/members')
@@ -147,10 +164,27 @@ async def add_role_member(request, role_id):
     return json({'proposal_id': proposal_id})
 
 
-@ROLES_BP.delete('api/role/<role_id>/members')
+@ROLES_BP.delete('api/roles/<role_id>/members')
 @authorized()
 async def delete_role_member(request, role_id):
-    raise ApiNotImplemented()
+    required_fields = ['id']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    proposal_id = str(uuid4())
+    batch_list, _ = role_transaction_creation.propose_remove_role_members(
+        txn_key=txn_key,
+        batch_key=request.app.config.BATCHER_KEY_PAIR,
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=request.json.get('id'),
+        reason=request.json.get('reason'),
+        metadata=request.json.get('metadata')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({'proposal_id': proposal_id})
 
 
 @ROLES_BP.post('api/roles/<role_id>/owners')
@@ -176,10 +210,27 @@ async def add_role_owner(request, role_id):
     return json({'proposal_id': proposal_id})
 
 
-@ROLES_BP.delete('api/role/<role_id>/owners')
+@ROLES_BP.delete('api/roles/<role_id>/owners')
 @authorized()
 async def delete_role_owner(request, role_id):
-    raise ApiNotImplemented()
+    required_fields = ['id']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    proposal_id = str(uuid4())
+    batch_list, _ = role_transaction_creation.propose_remove_role_owners(
+        txn_key=txn_key,
+        batch_key=request.app.config.BATCHER_KEY_PAIR,
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=request.json.get('id'),
+        reason=request.json.get('reason'),
+        metadata=request.json.get('metadata')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({'proposal_id': proposal_id})
 
 
 @ROLES_BP.post('api/roles/<role_id>/tasks')
@@ -208,7 +259,24 @@ async def add_role_task(request, role_id):
 @ROLES_BP.delete('api/roles/<role_id>/tasks')
 @authorized()
 async def delete_role_task(request, role_id):
-    raise ApiNotImplemented()
+    required_fields = ['id']
+    utils.validate_fields(required_fields, request.json)
+
+    txn_key = await utils.get_transactor_key(request)
+    proposal_id = str(uuid4())
+    batch_list, _ = role_transaction_creation.propose_remove_role_tasks(
+        txn_key=txn_key,
+        batch_key=request.app.config.BATCHER_KEY_PAIR,
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=request.json.get('id'),
+        reason=request.json.get('reason'),
+        metadata=request.json.get('metadata')
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({'proposal_id': proposal_id})
 
 
 def create_role_response(request, role_id):

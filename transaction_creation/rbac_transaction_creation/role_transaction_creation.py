@@ -206,6 +206,39 @@ def reject_add_role_admins(txn_key,
         batch_key)
 
 
+def propose_remove_role_admins(txn_key,
+                               batch_key,
+                               proposal_id,
+                               role_id,
+                               user_id,
+                               reason,
+                               metadata):
+    propose = role_transaction_pb2.ProposeRemoveRoleAdmin(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_user_address(user_id=user_id),
+              addresser.make_proposal_address(role_id, user_id),
+              addresser.make_role_admins_address(role_id, user_id),
+              addresser.make_role_attributes_address(role_id=role_id)]
+
+    outputs = [addresser.make_proposal_address(role_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_ADMINS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
 def propose_add_role_owners(txn_key,
                             batch_key,
                             proposal_id,
@@ -290,6 +323,39 @@ def reject_add_role_owners(txn_key,
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_OWNERS)
+
+    return make_header_and_batch(
+        rbac_payload,
+        inputs,
+        outputs,
+        txn_key,
+        batch_key)
+
+
+def propose_remove_role_owners(txn_key,
+                               batch_key,
+                               proposal_id,
+                               role_id,
+                               user_id,
+                               reason,
+                               metadata):
+    propose = role_transaction_pb2.ProposeRemoveRoleOwner(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_role_owners_address(role_id, user_id),
+              addresser.make_role_attributes_address(role_id=role_id),
+              addresser.make_user_address(user_id=user_id),
+              addresser.make_proposal_address(role_id, user_id)]
+
+    outputs = [addresser.make_proposal_address(role_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_OWNERS)
 
     return make_header_and_batch(
         rbac_payload,
@@ -392,6 +458,32 @@ def reject_add_role_members(txn_key,
         batch_key)
 
 
+def propose_remove_role_members(txn_key,
+                                batch_key,
+                                proposal_id,
+                                role_id,
+                                user_id,
+                                reason,
+                                metadata):
+    propose = role_transaction_pb2.ProposeRemoveRoleMember(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_role_members_address(role_id, user_id),
+              addresser.make_role_attributes_address(role_id=role_id),
+              addresser.make_user_address(user_id=user_id),
+              addresser.make_proposal_address(role_id, user_id)]
+
+    outputs = [addresser.make_proposal_address(role_id, user_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_MEMBERS)
+
+
 def propose_add_role_tasks(txn_key,
                            batch_key,
                            proposal_id,
@@ -485,3 +577,29 @@ def reject_add_role_tasks(txn_key,
         outputs,
         txn_key,
         batch_key)
+
+
+def propose_remove_role_tasks(txn_key,
+                                batch_key,
+                                proposal_id,
+                                role_id,
+                                task_id,
+                                reason,
+                                metadata):
+    propose = role_transaction_pb2.ProposeRemoveRoleTask(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=reason,
+        metadata=metadata)
+
+    inputs = [addresser.make_proposal_address(role_id, task_id),
+              addresser.make_role_tasks_address(role_id, task_id),
+              addresser.make_role_attributes_address(role_id),
+              addresser.make_task_attributes_address(task_id)]
+
+    outputs = [addresser.make_proposal_address(role_id, task_id)]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=propose.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_TASKS)
