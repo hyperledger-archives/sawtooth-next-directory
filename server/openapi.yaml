@@ -148,7 +148,7 @@ paths:
     patch:
       security:
         - Bearer: []
-      description: Updates the status or metadata of a proposal
+      description: Updates the status of a proposal
       parameters:
         - name: update
           in: body
@@ -293,46 +293,6 @@ paths:
                 $ref: '#/definitions/head'
               link:
                 $ref: '#/definitions/link'
-        '400':
-          description: Response for a bad request
-          schema:
-            $ref: '#/definitions/400Error'
-        '401':
-          description: Response for an unauthorized request
-          schema:
-            $ref: '#/definitions/401Error'
-        '403':
-          description: Response for a forbidden request
-          schema:
-            $ref: '#/definitions/403Error'
-        '404':
-          description: Response for object not found
-          schema:
-            $ref: '#/definitions/404Error'
-        '503':
-          description: Response for an internal unknown error
-          schema:
-            $ref: '#/definitions/503Error'
-        default:
-          description: Response for an unexpected error
-          schema:
-            $ref: '#/definitions/error'
-    patch:
-      security:
-        - Bearer: []
-      description: Update one or more attributes on a particular role
-      parameters:
-        - name: roleUpdate
-          in: body
-          description: Update information for the role
-          required: true
-          schema:
-            $ref: '#/definitions/roleUpdate'
-      responses:
-        '200':
-          description: Generic success response
-          schema:
-            $ref: '#/definitions/success'
         '400':
           description: Response for a bad request
           schema:
@@ -851,46 +811,6 @@ paths:
           description: Response for an unexpected error
           schema:
             $ref: '#/definitions/error'
-    patch:
-      security:
-        - Bearer: []
-      description: Update one or more attributes on a particular task
-      parameters:
-        - name: taskUpdate
-          in: body
-          description: The task attributes to update
-          required: true
-          schema:
-            $ref: '#/definitions/taskUpdate'
-      responses:
-        '200':
-          description: Generic success response
-          schema:
-            $ref: '#/definitions/success'
-        '400':
-          description: Response for a bad request
-          schema:
-            $ref: '#/definitions/400Error'
-        '401':
-          description: Response for an unauthorized request
-          schema:
-            $ref: '#/definitions/401Error'
-        '403':
-          description: Response for a forbidden request
-          schema:
-            $ref: '#/definitions/403Error'
-        '404':
-          description: Response for object not found
-          schema:
-            $ref: '#/definitions/404Error'
-        '503':
-          description: Response for an internal unknown error
-          schema:
-            $ref: '#/definitions/503Error'
-        default:
-          description: Response for an unexpected error
-          schema:
-            $ref: '#/definitions/error'
   '/tasks/{id}/admins':
     parameters:
       - $ref: '#/parameters/taskId'
@@ -1175,46 +1095,6 @@ paths:
                 $ref: '#/definitions/head'
               link:
                 $ref: '#/definitions/link'
-        '400':
-          description: Response for a bad request
-          schema:
-            $ref: '#/definitions/400Error'
-        '401':
-          description: Response for an unauthorized request
-          schema:
-            $ref: '#/definitions/401Error'
-        '403':
-          description: Response for a forbidden request
-          schema:
-            $ref: '#/definitions/403Error'
-        '404':
-          description: Response for object not found
-          schema:
-            $ref: '#/definitions/404Error'
-        '503':
-          description: Response for an internal unknown error
-          schema:
-            $ref: '#/definitions/503Error'
-        default:
-          description: Response for an unexpected error
-          schema:
-            $ref: '#/definitions/error'
-    patch:
-      security:
-        - Bearer: []
-      description: Update one or more attributes on a particular user
-      parameters:
-        - name: userUpdate
-          in: body
-          description: User attributes to update
-          required: true
-          schema:
-            $ref: '#/definitions/userUpdate'
-      responses:
-        '200':
-          description: Generic success response
-          schema:
-            $ref: '#/definitions/success'
         '400':
           description: Response for a bad request
           schema:
@@ -1563,18 +1443,6 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: for internal use only
-  roleUpdate:
-    description: Details provided to update an existing role
-    type: object
-    properties:
-      name:
-        type: string
-        description: A new name for the role
-        example: Payroll Administrator - 2.0
-      metadata:
-        type: string
-        description: Any new client supplied metadata
-        example: updated for external use
   task:
     type: object
     description: A specific permission in the system
@@ -1647,18 +1515,6 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: ISPCA compliant
-  taskUpdate:
-    description: Details provided to update an existing task
-    type: object
-    properties:
-      name:
-        type: string
-        description: A new name for the task
-        example: issue-paycheck-depreciated
-      metadata:
-        type: string
-        description: Any new client supplied metadata
-        example: ISPCA approval revoked
   user:
     description: An actor in the system who can take various authorizations
     type: object
@@ -1744,26 +1600,6 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: hire-date:2009-07-17
-  userUpdate:
-    description: Details provided to update an existing user
-    type: object
-    properties:
-      name:
-        type: string
-        description: A new name for the user
-        example: Susan Mlynarczyk
-      password:
-        type: string
-        description: A new password to associate with the user's account
-        example: '67890'
-      email:
-        type: string
-        description: A new email address to associate with the user's account
-        example: mlynnie@biz.co
-      metadata:
-        type: string
-        description: Any new client supplied metadata
-        example: name-changed:2016-08-31
   proposal:
     description: >-
       A request to change the state of a role, task, or user, which requires
@@ -1858,10 +1694,6 @@ definitions:
         description: >-
           A user supplied message explaining why the proposal was updated
         example: Added new HR hire
-      metadata:
-        type: string
-        description: Any new client metadata
-        example: She starts on Tuesday
   proposalId:
     description: Id of the proposal created from a request
     type: object
