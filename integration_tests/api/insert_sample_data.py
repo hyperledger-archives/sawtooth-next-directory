@@ -177,5 +177,11 @@ def add_manager(txn):
 
 
 @hooks.before('/api/roles/{id}/admins > POST > 200 > application/json')
-def add_user_id(txn):
-    patch_body(txn, {'id': seeded_data['user']['id']})
+@hooks.before('/api/roles/{id}/members > POST > 200 > application/json')
+@hooks.before('/api/roles/{id}/owners > POST > 200 > application/json')
+@hooks.before('/api/tasks/{id}/admins > POST > 200 > application/json')
+@hooks.before('/api/tasks/{id}/owners > POST > 200 > application/json')
+@hooks.before('/api/users/{id}/manager > PUT > 200 > application/json')
+def add_manager_id(txn):
+    txn['request']['headers']['Authorization'] = seeded_data['manager_auth']
+    patch_body(txn, {'id': seeded_data['manager']['id']})
