@@ -78,25 +78,56 @@ PROPOSAL_TRANSACTION = {
 
     ProposalType.ADD_ROLE_TASKS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_tasks,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_tasks},
+        Status.APPROVED: role_transaction_creation.confirm_add_role_tasks
+    },
     ProposalType.ADD_ROLE_MEMBERS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_members,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_members},
+        Status.APPROVED: role_transaction_creation.confirm_add_role_members
+    },
     ProposalType.ADD_ROLE_OWNERS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_owners,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_owners},
+        Status.APPROVED: role_transaction_creation.confirm_add_role_owners
+    },
     ProposalType.ADD_ROLE_ADMINS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_admins,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_admins},
+        Status.APPROVED: role_transaction_creation.confirm_add_role_admins
+    },
+    ProposalType.REMOVE_ROLE_TASKS: {
+        Status.REJECTED: role_transaction_creation.reject_remove_role_tasks,
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_tasks
+    },
+    ProposalType.REMOVE_ROLE_MEMBERS: {
+        Status.REJECTED: role_transaction_creation.reject_remove_role_members,
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_members
+    },
+    ProposalType.REMOVE_ROLE_OWNERS: {
+        Status.REJECTED: role_transaction_creation.reject_remove_role_owners,
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_owners
+    },
+    ProposalType.REMOVE_ROLE_ADMINS: {
+        Status.REJECTED: role_transaction_creation.reject_remove_role_admins,
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_admins
+    },
     ProposalType.ADD_TASK_OWNERS: {
         Status.REJECTED: task_transaction_creation.reject_add_task_owners,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_owners},
+        Status.APPROVED: task_transaction_creation.confirm_add_task_owners
+    },
     ProposalType.ADD_TASK_ADMINS: {
         Status.REJECTED: task_transaction_creation.reject_add_task_admins,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_admins},
+        Status.APPROVED: task_transaction_creation.confirm_add_task_admins
+    },
+    ProposalType.REMOVE_TASK_OWNERS: {
+        Status.REJECTED: task_transaction_creation.reject_remove_task_owners,
+        Status.APPROVED: task_transaction_creation.confirm_remove_task_owners
+    },
+    ProposalType.REMOVE_TASK_ADMINS: {
+        Status.REJECTED: task_transaction_creation.reject_remove_task_admins,
+        Status.APPROVED: task_transaction_creation.confirm_remove_task_admins
+    },
     ProposalType.UPDATE_USER_MANAGER: {
         Status.REJECTED: manager_transaction_creation.reject_manager,
-        Status.APPROVED: manager_transaction_creation.confirm_manager},
+        Status.APPROVED: manager_transaction_creation.confirm_manager
+    },
 }
 
 
