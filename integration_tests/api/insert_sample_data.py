@@ -22,6 +22,8 @@ from requests import request
 
 API_PATH = 'api'
 
+MIN_NAME_LENGTH = 5
+
 INVALID_SPEC_IDS = {
     'proposal': '63467642-6067-4c82-a096-1a1972d776b3',
     'role': '1f68397b-5b38-4aec-9913-4541c7e1d4c4',
@@ -144,6 +146,13 @@ def initialize_sample_resources(txns):
 
         for name, spec_id in INVALID_SPEC_IDS.items():
             sub_nested_strings(txn, spec_id, seeded_data[name]['id'])
+
+
+@hooks.before('/api/users > POST > 200 > application/json')
+def lengthen_user_name(txn):
+    current_name = json.loads(txn['request']['body'])['name']
+    if len(current_name) < MIN_NAME_LENGTH:
+        patch_body(txn, {'name': current_name * MIN_NAME_LENGTH})
 
 
 @hooks.before('/api/authorization > POST > 200 > application/json')
