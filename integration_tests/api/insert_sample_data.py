@@ -16,10 +16,10 @@
 
 import json
 import dredd_hooks as hooks
-import requests
+from requests import request
 
 
-API_URL = 'http://server:8000/api/'
+API_PATH = 'api'
 
 USER = {
     'name': 'Bob Bobson',
@@ -36,13 +36,26 @@ ROLE = {
 seeded_data = {}
 
 
-def submit(path, resource):
-    url = API_URL + path
+def get_base_api_url(txn):
+    protocol = txn.get('protocol', 'http:')
+    host = txn.get('host', 'localhost')
+    port = txn.get('port', '8000')
+    return '{}//{}:{}/{}/'.format(protocol, host, port, API_PATH)
+
+
+def api_request(method, base_url, path, body=None, auth=None):
+    url = base_url + path
+
     auth = seeded_data.get('auth', None)
     headers = {'Authorization': auth} if auth else None
-    response = requests.post(url, json=resource, headers=headers)
+
+    response = request(method, url, json=body, headers=headers)
     response.raise_for_status()
     return response.json()['data']
+
+
+def api_submit(base_url, path, resource, auth=None):
+    return api_request('POST', base_url, path, body=resource, auth=auth)
 
 
 def patch_body(txn, update):
@@ -59,6 +72,9 @@ def patch_body(txn, update):
 
 @hooks.before_all
 def initialize_sample_resources(txns):
+    base_url = get_base_api_url(txns[0])
+    submit = lambda p, r, a=None: api_submit(base_url, p, r, a)
+
     # Create USER
     user_response = submit('users', USER)
     seeded_data['auth'] = user_response['authorization']
