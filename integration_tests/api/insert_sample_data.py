@@ -14,6 +14,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import re
 import json
 import dredd_hooks as hooks
 from requests import request
@@ -82,6 +83,14 @@ def patch_body(txn, update):
     txn['request']['body'] = json.dumps(new_body)
 
 
+def sub_nested_strings(dct, pattern, replacement):
+    for key in dct.keys():
+        if isinstance(dct[key], dict):
+            sub_nested_strings(dct[key], pattern, replacement)
+        elif isinstance(dct[key], str):
+            dct[key] = re.sub(pattern, replacement, dct[key])
+
+
 @hooks.before_all
 def initialize_sample_resources(txns):
     base_url = get_base_api_url(txns[0])
@@ -115,9 +124,13 @@ def initialize_sample_resources(txns):
     proposal_response = submit(proposal_path, proposal_body, proposal_auth)
     seeded_data['proposal'] = {'id': proposal_response['proposal_id']}
 
-    # Add USER's auth token to all transactions
+    # Get head block id
+    head_id = api_request('GET', base_url, 'blocks/latest')['id']
+
+    # Add USER's auth token and current head to all transactions
     for txn in txns:
         txn['request']['headers']['Authorization'] = seeded_data['auth']
+        sub_nested_strings(txn, '[0-9a-f]{128}', head_id)
 
 
 @hooks.before('/api/authorization > POST > 200 > application/json')
