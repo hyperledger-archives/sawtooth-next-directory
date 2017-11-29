@@ -164,6 +164,7 @@ def add_credentials(txn):
 
 
 @hooks.before('/api/roles > POST > 200 > application/json')
+@hooks.before('/api/tasks > POST > 200 > application/json')
 def add_owners_and_admins(txn):
     patch_body(txn, {
         'administrators': [seeded_data['user']['id']],
