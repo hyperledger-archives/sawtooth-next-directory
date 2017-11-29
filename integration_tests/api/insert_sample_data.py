@@ -22,12 +22,22 @@ from requests import request
 
 API_PATH = 'api'
 
+INVALID_SPEC_IDS = {
+    'proposal': '63467642-6067-4c82-a096-1a1972d776b3',
+    'role': '1f68397b-5b38-4aec-9913-4541c7e1d4c4',
+    'task': '7ea843aa-1650-4530-94b1-a445d2a8193a',
+    'user':
+        '02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a',
+    'manager':
+       ' 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0'
+}
+
 USER = {
     'name': 'Bob Bobson',
     'password': '12345'
 }
 
-EXTRA_USER = {
+MANAGER = {
     'name': 'Suzie Suzerson',
     'password': '67890'
 }
@@ -111,15 +121,15 @@ def initialize_sample_resources(txns):
     TASK['administrators'].append(seeded_data['user']['id'])
     seeded_data['task'] = submit('tasks', TASK)
 
-    # Create EXTRA_USER
-    extra_response = submit('users', USER)
-    seeded_data['extra_auth'] = extra_response['authorization']
-    seeded_data['extra_user'] = extra_response['user']
+    # Create MANAGER
+    manager_response = submit('users', USER)
+    seeded_data['manager_auth'] = manager_response['authorization']
+    seeded_data['manager'] = manager_response['user']
 
     # Create a proposal
     proposal_path = 'roles/{}/owners'.format(seeded_data['role']['id'])
-    proposal_body = {'id': seeded_data['extra_user']['id']}
-    proposal_auth = seeded_data['extra_auth']
+    proposal_body = {'id': seeded_data['manager']['id']}
+    proposal_auth = seeded_data['manager_auth']
 
     proposal_response = submit(proposal_path, proposal_body, proposal_auth)
     seeded_data['proposal'] = {'id': proposal_response['proposal_id']}
@@ -127,10 +137,13 @@ def initialize_sample_resources(txns):
     # Get head block id
     head_id = api_request('GET', base_url, 'blocks/latest')['id']
 
-    # Add USER's auth token and current head to all transactions
+    # Replace example identifiers with ones from seeded data
     for txn in txns:
         txn['request']['headers']['Authorization'] = seeded_data['auth']
         sub_nested_strings(txn, '[0-9a-f]{128}', head_id)
+
+        for name, spec_id in INVALID_SPEC_IDS.items():
+            sub_nested_strings(txn, spec_id, seeded_data[name]['id'])
 
 
 @hooks.before('/api/authorization > POST > 200 > application/json')
