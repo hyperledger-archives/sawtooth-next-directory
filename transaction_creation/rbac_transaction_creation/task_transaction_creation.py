@@ -375,7 +375,7 @@ def propose_remove_task_owners(txn_key,
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_ADMINS)
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_OWNERS)
 
     return make_header_and_batch(
         rbac_payload,
