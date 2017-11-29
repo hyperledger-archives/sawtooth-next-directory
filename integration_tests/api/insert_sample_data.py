@@ -171,6 +171,11 @@ def add_owners_and_admins(txn):
     })
 
 
+@hooks.before('/api/roles/{id}/tasks > POST > 200 > application/json')
+def add_task_id(txn):
+    patch_body(txn, {'id': seeded_data['task']['id']})
+
+
 @hooks.before('/api/users > POST > 200 > application/json')
 def add_manager(txn):
     patch_body(txn, {'manager': seeded_data['manager']['id']})
