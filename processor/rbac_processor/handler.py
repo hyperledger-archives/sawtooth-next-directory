@@ -225,6 +225,9 @@ def apply_task_propose(header, payload, state):
     elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_ADMINS:
         task_admins.apply_propose_remove(header, payload, state)
 
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_OWNERS:
+        task_owners.apply_propose_remove(header, payload, state)
+
     else:
         raise InvalidTransaction("Message type unknown.")
 

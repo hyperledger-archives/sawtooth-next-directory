@@ -119,6 +119,7 @@ class TestBlockchain(unittest.TestCase):
         cls.add_task_owners_proposal_id = str(uuid4())
 
         cls.remove_task_admins_proposal_id = str(uuid4())
+        cls.remove_task_owners_proposal_id = str(uuid4())
 
     def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
@@ -1655,6 +1656,71 @@ class TestBlockchain(unittest.TestCase):
                 metadata=uuid4().hex)[0]['status'],
             "COMMITTED")
 
+    def test_25_propose_remove_task_owners(self):
+        """Tests the ProposeRemoveTaskOwners txn validation rules.
+
+        Notes:
+            ProposeRemoveTaskAdmins validation rules
+                - No open proposal for the same change exists.
+                - The user is an Owner of the task.
+                - The Task exists.
+                - The User exists.
+                - The txn signer is the user or the user's manager.
+        """
+
+        self.assertEqual(
+            self.client.propose_delete_task_owners(
+                key=self.key1,
+                proposal_id=str(uuid4()),
+                task_id=str(uuid4()),
+                user_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The Task must exist.")
+
+        self.assertEqual(
+            self.client.propose_delete_task_owners(
+                key=self.key1,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=str(uuid4()),
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The User must exist.")
+
+        self.assertEqual(
+            self.client.propose_delete_task_owners(
+                key=self.key3b,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=self.key3b.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The User must be an Owner of the Task.")
+
+        self.assertEqual(
+            self.client.propose_delete_task_owners(
+                key=self.key2b,
+                proposal_id=str(uuid4()),
+                task_id=self.task_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "INVALID",
+            "The txn signer must be the User or the User's Manager.")
+
+        self.assertEqual(
+            self.client.propose_delete_task_owners(
+                key=self.key1,
+                proposal_id=self.remove_task_owners_proposal_id,
+                task_id=self.task_id1,
+                user_id=self.key1.public_key,
+                reason=uuid4().hex,
+                metadata=uuid4().hex)[0]['status'],
+            "COMMITTED")
 
 
 class RBACClient(object):
@@ -2076,6 +2142,25 @@ class RBACClient(object):
                                    reason,
                                    metadata):
         batch_list, signature = task_transaction_creation.propose_remove_task_admins(
+            txn_key=key,
+            batch_key=BATCHER_KEY,
+            proposal_id=proposal_id,
+            task_id=task_id,
+            user_id=user_id,
+            reason=reason,
+            metadata=metadata)
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def propose_delete_task_owners(self,
+                                   key,
+                                   proposal_id,
+                                   task_id,
+                                   user_id,
+                                   reason,
+                                   metadata):
+
+        batch_list, signature = task_transaction_creation.propose_remove_task_owners(
             txn_key=key,
             batch_key=BATCHER_KEY,
             proposal_id=proposal_id,

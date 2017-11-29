@@ -22,6 +22,7 @@ from rbac_processor.task.common import handle_confirm_add
 from rbac_processor.task.common import handle_propose_state_set
 from rbac_processor.task.common import handle_reject
 from rbac_processor.task.common import validate_task_rel_proposal
+from rbac_processor.task.common import validate_task_rel_del_proposal
 from rbac_processor.task.common import validate_task_admin_or_owner
 from rbac_processor.protobuf import proposal_state_pb2
 from rbac_processor.protobuf import task_transaction_pb2
@@ -62,6 +63,44 @@ def apply_propose(header, payload, state):
         payload=propose,
         address=proposal_address,
         proposal_type=proposal_state_pb2.Proposal.ADD_TASK_OWNERS,
+        state=state)
+
+
+def apply_propose_remove(header, payload, state):
+    propose = task_transaction_pb2.ProposeRemoveTaskOwner()
+    propose.ParseFromString(payload.content)
+
+    task_owners_address = addresser.make_task_owners_address(
+        task_id=propose.task_id,
+        user_id=propose.user_id)
+
+    proposal_address = addresser.make_proposal_address(
+        object_id=propose.task_id,
+        related_id=propose.user_id)
+
+    state_entries = validate_task_rel_del_proposal(
+        header=header,
+        propose=propose,
+        rel_address=task_owners_address,
+        state=state)
+
+    if not no_open_proposal(
+            state_entries=state_entries,
+            object_id=propose.task_id,
+            related_id=propose.user_id,
+            proposal_address=proposal_address,
+            proposal_type=proposal_state_pb2.Proposal.REMOVE_TASK_OWNERS):
+        raise InvalidTransaction(
+            "There is already an open proposal for REMOVE_TASK_OWNERS "
+            "with task id {} and user id {}".format(propose.task_id,
+                                                    propose.user_id))
+
+    handle_propose_state_set(
+        state_entries=state_entries,
+        header=header,
+        payload=propose,
+        address=proposal_address,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_TASK_OWNERS,
         state=state)
 
 
