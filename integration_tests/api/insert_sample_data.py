@@ -26,10 +26,21 @@ USER = {
     'password': '12345'
 }
 
+EXTRA_USER = {
+    'name': 'Suzie Suzerson',
+    'password': '67890'
+}
+
 ROLE = {
     'name': 'Test Administrator',
     'owners': [],  # USER will be appended
     'administrators': []  # USER will be appended
+}
+
+TASK = {
+    'name': 'test-user-permissions',
+    'owners': [],
+    'administrators': []
 }
 
 
@@ -42,16 +53,17 @@ def get_base_api_url(txn):
     port = txn.get('port', '8000')
     return '{}//{}:{}/{}/'.format(protocol, host, port, API_PATH)
 
-
 def api_request(method, base_url, path, body=None, auth=None):
     url = base_url + path
 
-    auth = seeded_data.get('auth', None)
+    auth = auth or seeded_data.get('auth', None)
     headers = {'Authorization': auth} if auth else None
 
     response = request(method, url, json=body, headers=headers)
     response.raise_for_status()
-    return response.json()['data']
+
+    parsed = response.json()
+    return parsed.get('data', parsed)
 
 
 def api_submit(base_url, path, resource, auth=None):
@@ -84,6 +96,24 @@ def initialize_sample_resources(txns):
     ROLE['owners'].append(seeded_data['user']['id'])
     ROLE['administrators'].append(seeded_data['user']['id'])
     seeded_data['role'] = submit('roles', ROLE)
+
+    # Create TASK
+    TASK['owners'].append(seeded_data['user']['id'])
+    TASK['administrators'].append(seeded_data['user']['id'])
+    seeded_data['task'] = submit('tasks', TASK)
+
+    # Create EXTRA_USER
+    extra_response = submit('users', USER)
+    seeded_data['extra_auth'] = extra_response['authorization']
+    seeded_data['extra_user'] = extra_response['user']
+
+    # Create a proposal
+    proposal_path = 'roles/{}/owners'.format(seeded_data['role']['id'])
+    proposal_body = {'id': seeded_data['extra_user']['id']}
+    proposal_auth = seeded_data['extra_auth']
+
+    proposal_response = submit(proposal_path, proposal_body, proposal_auth)
+    seeded_data['proposal'] = {'id': proposal_response['proposal_id']}
 
     # Add USER's auth token to all transactions
     for txn in txns:
