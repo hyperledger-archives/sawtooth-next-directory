@@ -95,6 +95,76 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
     return state_entries
 
 
+def validate_task_rel_del_proposal(header, propose, rel_address, state):
+    """Validates that the User exists, the Task exists, and the User is in
+    the Tasks's relationship specified by the rel_address.
+
+    Args:
+        header (TransactionHeader): The transaction header.
+        propose (ProposeRemoveTask____): The Task Remove relationship proposal
+        rel_address (str): The task relationship address.
+        state (Context:: The way to communicate to the validator State gets
+            and sets.
+
+    Returns:
+        (list of StateEntry)
+    """
+
+    user_address = addresser.make_user_address(propose.user_id)
+    task_address = addresser.make_task_attributes_address(propose.task_id)
+
+    proposal_address = addresser.make_proposal_address(
+        object_id=propose.task_id,
+        related_id=propose.user_id)
+
+    state_entries = get_state(state,
+                              [user_address,
+                               task_address,
+                               proposal_address,
+                               rel_address])
+
+    validate_identifier_is_user(
+        state_entries,
+        identifier=propose.user_id,
+        address=user_address)
+
+    user_entry = get_state_entry(state_entries, user_address)
+
+    user = get_user_from_container(
+        return_user_container(user_entry),
+        propose.user_id)
+
+    if header.signer_pubkey not in [user.user_id, user.manager_id]:
+        raise InvalidTransaction(
+            "Txn signer {} is not the user {} or the user's manager {}".format(
+                header.signer_pubkey,
+                user.user_id,
+                user.manager_id))
+
+    validate_identifier_is_task(state_entries,
+                                identifier=propose.task_id,
+                                address=task_address)
+
+    try:
+        task_rel_entry = get_state_entry(state_entries, rel_address)
+        task_rel_container = return_task_rel_container(task_rel_entry)
+        if not is_in_task_rel_container(
+                task_rel_container,
+                propose.task_id,
+                propose.user_id):
+            raise InvalidTransaction("User {} isn't in the Task {} "
+                                     "relationship".format(propose.user_id,
+                                                           propose.task_id))
+    except KeyError:
+        raise InvalidTransaction(
+            "User {} isn't in the Task {} relationship, "
+            "since there isn't a container at the address".format(
+                propose.user_id,
+                propose.task_id))
+
+    return state_entries
+
+
 def validate_task_admin_or_owner(header,
                                  confirm,
                                  txn_signer_rel_address,

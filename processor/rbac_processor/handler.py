@@ -46,13 +46,21 @@ ROLE_PROPOSE = [RBACPayload.PROPOSE_ADD_ROLE_TASKS,
 ROLE_CONFIRM = [RBACPayload.CONFIRM_ADD_ROLE_TASKS,
                 RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
                 RBACPayload.CONFIRM_ADD_ROLE_OWNERS,
-                RBACPayload.CONFIRM_ADD_ROLE_ADMINS]
+                RBACPayload.CONFIRM_ADD_ROLE_ADMINS,
+                RBACPayload.CONFIRM_REMOVE_ROLE_TASKS,
+                RBACPayload.CONFIRM_REMOVE_ROLE_MEMBERS,
+                RBACPayload.CONFIRM_REMOVE_ROLE_OWNERS,
+                RBACPayload.CONFIRM_REMOVE_ROLE_ADMINS]
 
 
 ROLE_REJECT = [RBACPayload.REJECT_ADD_ROLE_TASKS,
                RBACPayload.REJECT_ADD_ROLE_MEMBERS,
                RBACPayload.REJECT_ADD_ROLE_OWNERS,
-               RBACPayload.REJECT_ADD_ROLE_ADMINS]
+               RBACPayload.REJECT_ADD_ROLE_ADMINS,
+               RBACPayload.REJECT_REMOVE_ROLE_TASKS,
+               RBACPayload.REJECT_REMOVE_ROLE_MEMBERS,
+               RBACPayload.REJECT_REMOVE_ROLE_OWNERS,
+               RBACPayload.REJECT_REMOVE_ROLE_ADMINS]
 
 
 TASK_PROPOSE = [RBACPayload.PROPOSE_ADD_TASK_ADMINS,
@@ -213,6 +221,10 @@ def apply_task_propose(header, payload, state):
 
     elif payload.message_type == RBACPayload.PROPOSE_ADD_TASK_OWNERS:
         task_owners.apply_propose(header, payload, state)
+
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_ADMINS:
+        task_admins.apply_propose_remove(header, payload, state)
+
     else:
         raise InvalidTransaction("Message type unknown.")
 
