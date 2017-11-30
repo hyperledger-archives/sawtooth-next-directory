@@ -1,9 +1,8 @@
-# T-Mobile RBAC Blockchain Components
+# Hyperledger Sawtooth Hyper Directory
 
 This repo contains multiple components which together with a
 _Hyperledger Sawtooth_ validator, will comprise the "blockchain" components
-of the T-Mobile _Role Based Access Control_ project. The components in this
-repo include:
+of the Hyper Directory project. The components include:
 
 - a **server** which provides a REST API for querying blockchain data
 - a **transaction processor** which handles RBAC-specific transaction logic
@@ -71,4 +70,9 @@ docker-compose file as an argument. For example:
 
 ```bash
 bin/run_docker_test integration_tests/blockchain/docker-compose.yaml
+bin/run_docker_test integration_tests/api/docker-compose.yaml
 ```
+
+# License
+
+Hyperledger Sawtooth Hyper Directory software is licensed under the [Apache License Version 2.0](LICENSE) software license.
