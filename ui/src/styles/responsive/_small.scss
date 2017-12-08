@@ -1,0 +1,49 @@
+/*=========================================================================
+Copyright © 2017 T-Mobile USA, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=========================================================================*/
+@media #{$media-on-small} {
+  .hd-on-desktop {
+    display: none;
+  }
+  .hd-panel-menu {
+    width: 30vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 2;
+    @include transition(all, .5s, ease, 0s);
+    &.hidden {
+      transform: translateX(-30vw);
+    }
+  }
+  .hd-panel-content {
+    width: 100%;
+    padding: 0 5px;
+  }
+  .hd-table {
+    th,td {
+      &:first-child {
+        padding-left: 2px;
+      }
+      &:last-child {
+        padding-right: 2px;
+      }
+    }
+    .table-cell-options {
+      width: 2em;
+    }
+  }
+}
+

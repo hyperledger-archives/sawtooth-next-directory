@@ -1,0 +1,63 @@
+/*=========================================================================
+Copyright © 2017 T-Mobile USA, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=========================================================================*/
+.hd-panel {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  background-color: #fbfbfb;
+  @include border-radius($border-radius);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  z-index: 0;
+}
+
+.hd-panel-menu {
+  width: 12%;
+}
+.hd-panel-content {
+  width: 88%;
+  background-color: $color-panel-background;
+  padding: 0 1.5rem;
+  position: relative;
+}
+.hd-panel-header {
+  display: flex ;
+  justify-content: space-between;
+  padding: 1.3rem 10px;
+  background-color: transparent;
+  color: $color-black;
+  border-bottom: 1px solid $color-gray-border;
+
+  i {
+    margin: 0 .2rem;
+  }
+}
+
+.hd-panel-footer {
+  border-top: 1px solid $color-gray-border;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 2.5rem;
+}
+
+.hd-panel-footer-options {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  @include gutter-horizontal($gutter-small);
+}
+
+

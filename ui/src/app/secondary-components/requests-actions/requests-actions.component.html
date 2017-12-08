@@ -1,0 +1,29 @@
+<!--=========================================================================
+Copyright © 2017 T-Mobile USA, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=========================================================================-->
+<div class="hd-on-desktop hd-actions">
+    <i (click)="approve()" class="fa fa-check hd-actions-icons hd-clickable"></i>
+    <i (click)="deny()" class="fa fa-close hd-actions-icons hd-clickable"></i>
+</div>
+
+<div class="hd-on-mobile">
+    <i class="icon-icon-more hd-clickable"
+       (click)="toggleDialog($event)"></i>
+    <app-popup [(show)]="showDialog"
+               [optionsList]="optionsList"></app-popup>
+</div>
+
+<app-confirm-modal [(show)]="showConfirmModal"
+                   [confirmMessage]="confirmModalConfig.confirmMessage"
+                   (onConfirm)="confirmModalConfig.onConfirm()"></app-confirm-modal>
