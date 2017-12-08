@@ -1,0 +1,50 @@
+/*=========================================================================
+Copyright © 2017 T-Mobile USA, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=========================================================================*/
+.hd-form-input {
+  margin-top: 2rem;
+  text-align: left;
+  position: relative;
+  z-index: 1;
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+    color: black;
+    font-size: 1.2em;
+    font-weight: 500;
+    display: block;
+    padding: 1px 0 5px 0;
+  }
+  label {
+    margin-top: 1em;
+    display: block;
+    color: $color-text-subtle;
+    font-size: 1.2em;
+    line-height: 1.33;
+    position: absolute;
+    top: -1em;
+    z-index: -1;
+  }
+  p {
+    font-size: 1.2em;
+    margin-top: 1em;
+    display: block;
+    line-height: 1.33;
+    position: relative;
+    top: -5px;
+    z-index: -1;
+  }
+}
