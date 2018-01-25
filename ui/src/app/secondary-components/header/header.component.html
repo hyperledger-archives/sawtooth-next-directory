@@ -1,0 +1,32 @@
+<!--=========================================================================
+Copyright © 2017 T-Mobile USA, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=========================================================================-->
+<div class="hd-layout-header header-primary">
+    <div class="hd-header-item hd-on-mobile"
+         (click)="toggleSidemenu()">
+        <h4><i class="fa fa-bars"></i></h4>
+    </div>
+    <img (click)="homeLink()"
+            class="hd-header-item hd-header-image hd-on-desktop hd-clickable" src="../../../assets/images/HD_Logo_Light.png" alt="">
+    <div class="hd-header-item">
+        <h4 *ngIf="context.user">{{context.user.name}}</h4>
+        <div *ngIf="context.user" class="hd-header-profile hd-clickable"
+             (click)="toggleLogoutPopup($event)">
+            
+            <i class="fa fa-user-circle"></i>
+            <app-popup class="hd-header-popup" [(show)]="showPopup"
+                       [optionsList]="logoutPopup"></app-popup>
+        </div>
+    </div>
+</div>

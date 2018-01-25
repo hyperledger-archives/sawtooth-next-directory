@@ -1,0 +1,46 @@
+/*=========================================================================
+Copyright © 2017 T-Mobile USA, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=========================================================================*/
+$color-white: #FFF;
+$color-black: #000;
+$color-depress: rgba(0,0,0,.32);
+$color-gray: #555555;
+$color-blue: rgb(66, 71,90);
+$color-faded-gray: rgb(126, 126, 126);
+$color-background-gray: #f3f3f3;
+$color-background-gray-darken: darken($color-background-gray, 10%);
+$color-blue-border: #414858;
+$color-super-faded-gray: rgb(248, 248, 248);
+
+
+
+$color-pink: #E20074;
+$color-pink-hover: #C20064;
+$color-salmon: #F2425F;
+
+$gutter-small: .75rem;
+$gutter-large: 1.5rem;
+
+$border-radius: 5px;
+
+$header-height: 6vh;
+$content-height: 94vh;
+
+$color-modal-title: #343948;
+$color-text-subtle: #b6bfce;
+$color-text-secondary: #646464;
+$color-panel-background: #fbfbfb;
+$color-gray-border: #cacece;
+$media-on-small: "only screen and (max-width: 47rem)";
+$media-on-large: "only screen and (min-width: 47rem)";

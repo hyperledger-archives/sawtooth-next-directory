@@ -1,0 +1,193 @@
+/*=========================================================================
+Copyright © 2017 T-Mobile USA, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=========================================================================*/
+.hd-clickable {
+  &:hover {
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .32);
+  }
+  &:active {
+    text-shadow: 0 2px 6px rgba(0, 0, 0, .32);
+  }
+}
+
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
+.hd-center {
+  margin: auto;
+}
+
+.text-pink {
+  color: $color-pink !important;
+}
+
+
+.pointer {
+  cursor: pointer;
+}
+
+.nowrap-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-around {
+  justify-content: space-around;
+}
+
+.flex-between {
+  justify-content: space-between;
+}
+
+.flex-start {
+  justify-content: flex-start;
+}
+
+.flex-end {
+  justify-content: flex-end;
+}
+
+.flex-center {
+  justify-content: center;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-align-start {
+  align-items: flex-start;
+}
+
+.flex-align-end {
+  align-items: flex-end;
+}
+
+.flex-align-baseline {
+  align-items: baseline;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.v-mid {
+  vertical-align: middle;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+
+
+.relative {
+  position: relative;
+}
+
+.ilb {
+  display: inline-block;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.abs-left {
+  left: 0;
+}
+
+.abs-right {
+  right: 0;
+}
+
+.relative {
+  position: relative;
+}
+
+:focus {
+  outline: none;
+}
+
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+.center {
+  text-align: center;
+}
+
+.hd-container {
+  display: flex;
+  justify-content: space-around;
+  background: transparent;
+}
+
+.hd-fill {
+  width: 100%;
+  height: 100%;
+}
+
+.inline {
+  display: inline;
+}
+
+.full-width {
+  width: 100%;
+}

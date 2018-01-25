@@ -1,0 +1,6 @@
+service : hyper-directory
+domain : ccoe
+
+owner: puneet@moonraft.com
+slack_channel: NA
+create_cloudfront_url: true
