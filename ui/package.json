@@ -1,11 +1,7 @@
 {
   "name": "hyper-directory",
   "version": "0.0.0",
-<<<<<<< HEAD
   "license": "Apache 2.0",
-=======
-  "license": "MIT",
->>>>>>> c79405e014d8a5489f9b7c561e2af9ce0fc2ac2b
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
