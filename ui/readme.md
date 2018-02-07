@@ -6,9 +6,15 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `npm install` to get all the latest packages. This project was build with Node v6.11.3 and npm v3.10.10.
 
+Replace the API endpoint base URL in the variable 'base' at the top of src/environment/environment.prod.js with your own.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+Unless running in production mode, api calls will be eumulated and will not use the API endpoint set in the environment config file.
+
+Run `npm start -- --env=prod --host=0.0.0.0` to run in production mode and accept connections from other hosts.
 
 ## Code scaffolding
 
