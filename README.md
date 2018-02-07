@@ -38,6 +38,8 @@ which can be accomplished using the `--build` flag:
 docker-compose up --build
 ```
 
+Once all the docker containers are running without error, see ui/readme.md
+for configuring / running the UI server.
 
 ## Development
 
