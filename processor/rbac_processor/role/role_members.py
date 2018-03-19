@@ -77,7 +77,7 @@ def apply_confirm(header, payload, state):
 
     txn_signer_owners_address = addresser.make_role_owners_address(
         role_id=confirm_payload.role_id,
-        user_id=header.signer_pubkey)
+        user_id=header.signer_public_key)
 
     state_entries = validate_role_admin_or_owner(
         header=header,
@@ -99,7 +99,7 @@ def apply_reject(header, payload, state):
 
     txn_signer_owners_address = addresser.make_role_owners_address(
         reject_payload.role_id,
-        header.signer_pubkey)
+        header.signer_public_key)
 
     state_entries = validate_role_admin_or_owner(
         header=header,

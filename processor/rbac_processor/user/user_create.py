@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.processor.context import StateEntry
+from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -36,8 +36,8 @@ def apply_create_user(header, payload, state):
             "must have names longer than 4 characters.".format(
                 create_user.name))
 
-    if create_user.user_id == header.signer_pubkey or \
-            header.signer_pubkey == create_user.manager_id:
+    if create_user.user_id == header.signer_public_key or \
+            header.signer_public_key == create_user.manager_id:
 
         validate_user_state(header, create_user, state)
 
@@ -56,7 +56,7 @@ def apply_create_user(header, payload, state):
         raise InvalidTransaction(
             "The public key {} that signed this CreateUser txn "
             "does not belong to the user or their manager.".format(
-                header.signer_pubkey))
+                header.signer_public_key))
 
 
 def validate_user_state(header, create_user, state):
@@ -108,11 +108,10 @@ def handle_user_state_set(header, create_user, state, manager_id=None):
 
     user_container.users.extend([user])
 
-    set_state(
-        state,
-        [StateEntry(
-            address=addresser.make_user_address(create_user.user_id),
-            data=user_container.SerializeToString())])
+    set_state(state, {
+        addresser.make_user_address(create_user.user_id):
+            user_container.SerializeToString()
+    })
 
 
 def _index_of_user_in_container(container, user_id):

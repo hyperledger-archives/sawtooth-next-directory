@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.processor.context import StateEntry
+from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -122,12 +122,12 @@ def _validate_unique_proposal(header, user_proposal, state):
 
 def _validate_manager_is_signer(header, user_container, user_id):
     user = get_user_from_container(user_container, user_id)
-    if not user.manager_id == header.signer_pubkey:
+    if not user.manager_id == header.signer_public_key:
         raise InvalidTransaction(
             "Update user for {} was signed by {} not "
             "the manager, {}.".format(
                 user_id,
-                header.signer_pubkey,
+                header.signer_public_key,
                 user.manager_id))
 
 
@@ -151,16 +151,14 @@ def handle_state_set(proposal_state_entries,
     proposal.proposal_type = proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
     proposal.object_id = user_proposal.user_id
     proposal.target_id = user_proposal.new_manager_id
-    proposal.opener = header.signer_pubkey
+    proposal.opener = header.signer_public_key
     proposal.status = proposal_state_pb2.Proposal.OPEN
     proposal.open_reason = user_proposal.reason
     proposal.metadata = user_proposal.metadata
 
-    set_state(
-        state,
-        [StateEntry(
-            address=proposal_address,
-            data=proposal_container.SerializeToString())])
+    set_state(state, {
+        proposal_address: proposal_container.SerializeToString()
+    })
 
 
 def apply_user_confirm(header, payload, state):
@@ -187,17 +185,17 @@ def apply_user_confirm(header, payload, state):
         container=proposal_container,
         proposal_id=confirm_payload.proposal_id)
 
-    if not proposal.target_id == header.signer_pubkey:
+    if not proposal.target_id == header.signer_public_key:
         raise InvalidTransaction(
             "Confirm update manager txn signed by {} while "
             "proposal expecting {}".format(
-                header.signer_pubkey,
+                header.signer_public_key,
                 proposal.target_id))
 
     handle_confirm_state_set(
         container=proposal_container,
         proposal=proposal,
-        closer=header.signer_pubkey,
+        closer=header.signer_public_key,
         reason=confirm_payload.reason,
         address=proposal_address,
         user_id=confirm_payload.user_id,
@@ -217,11 +215,10 @@ def handle_confirm_state_set(container,
     proposal.closer = closer
     proposal.close_reason = reason
 
-    set_state(
-        state,
-        [StateEntry(
-            address=address,
-            data=container.SerializeToString())])
+    set_state(state, {
+        address: container.SerializeToString()
+    })
+
     user_address = addresser.make_user_address(user_id)
     state_entries = get_state(state, [user_address])
     state_entry = get_state_entry(
@@ -231,11 +228,9 @@ def handle_confirm_state_set(container,
     user = get_user_from_container(user_container, user_id)
     user.manager_id = new_manager_id
 
-    set_state(
-        state,
-        [StateEntry(
-            address=user_address,
-            data=user_container.SerializeToString())])
+    set_state(state, {
+        user_address: user_container.SerializeToString()
+    })
 
 
 def apply_user_reject(header, payload, state):
@@ -259,12 +254,12 @@ def apply_user_reject(header, payload, state):
 
     proposal_container = return_prop_container(entry)
 
-    if not reject_payload.manager_id == header.signer_pubkey:
+    if not reject_payload.manager_id == header.signer_public_key:
         raise InvalidTransaction(
             "Proposal expected closer to be {} while txn "
             "signer was {}".format(
                 reject_payload.manager_id,
-                header.signer_pubkey))
+                header.signer_public_key))
 
     proposal = get_prop_from_container(proposal_container,
                                        reject_payload.proposal_id)
@@ -272,7 +267,7 @@ def apply_user_reject(header, payload, state):
     handle_reject_state_set(
         container=proposal_container,
         proposal=proposal,
-        closer=header.signer_pubkey,
+        closer=header.signer_public_key,
         reason=reject_payload.reason,
         address=proposal_address,
         state=state)
@@ -289,6 +284,6 @@ def handle_reject_state_set(container,
     proposal.closer = closer
     proposal.close_reason = reason
 
-    set_state(state, [StateEntry(
-        address=address,
-        data=container.SerializeToString())])
+    set_state(state, {
+        address: container.SerializeToString()
+    })

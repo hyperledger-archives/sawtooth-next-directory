@@ -297,7 +297,7 @@ def validate_role_task_proposal(header, propose, state):
 
     txn_signer_role_owner_address = addresser.make_role_owners_address(
         role_id=propose.role_id,
-        user_id=header.signer_pubkey)
+        user_id=header.signer_public_key)
 
     role_tasks_address = addresser.make_role_tasks_address(propose.role_id,
                                                            propose.task_id)
@@ -340,13 +340,13 @@ def validate_role_task_proposal(header, propose, state):
 
         if not is_in_role_rel_container(role_owner_container,
                                         role_id=propose.role_id,
-                                        identifier=header.signer_pubkey):
+                                        identifier=header.signer_public_key):
             raise InvalidTransaction(
                 "Txn signer {} is not a role owner".format(
-                    header.signer_pubkey))
+                    header.signer_public_key))
     except KeyError:
         raise InvalidTransaction(
-            "Txn signer {} is not a role owner.".format(header.signer_pubkey))
+            "Txn signer {} is not a role owner.".format(header.signer_public_key))
 
     if not no_open_proposal(
             state_entries=state_entries,

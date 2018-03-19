@@ -16,7 +16,7 @@
 FROM ubuntu:16.04
 
 RUN echo "deb apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD" && \
-    echo 'deb http://repo.sawtooth.me/ubuntu/0.8/stable xenial universe' >> /etc/apt/sources.list && \
+    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y --allow-unauthenticated -q python3-grpcio-tools=1.1.3-1 \
         python3-pip \

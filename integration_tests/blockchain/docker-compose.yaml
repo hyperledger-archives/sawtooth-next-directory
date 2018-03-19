@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-version: "2.1"
+version: "2"
 
 services:
 
@@ -23,35 +23,30 @@ services:
       dockerfile: ./processor/Dockerfile-dev
     image: rbac-tp-dev
     volumes:
-      - '../../:/project/tmobile-rbac'
-    expose:
-      - 4004
+      - "../../:/project/tmobile-rbac"
     command: bin/rbac-tp -vv tcp://validator:4004
 
   settings-tp:
-    image: hyperledger/sawtooth-settings-tp:0.8
-    expose:
-      - 4004
-    command: settings-tp -v tcp://validator:4004
+    image: hyperledger/sawtooth-settings-tp:1.0
+    command: settings-tp -v --connect tcp://validator:4004
 
   validator:
-    image: hyperledger/sawtooth-validator:0.8
-    expose:
-      - 4004
-    command: "bash -c \"\
-        sawtooth admin keygen && \
-        sawtooth keygen my_key && \
-        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv && \
-        sawtooth admin genesis config-genesis.batch && \
+    image: hyperledger/sawtooth-validator:1.0
+    command: |
+      bash -c "
+        sawadm keygen --force &&
+        sawtooth keygen my_key --force &&
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+        sawadm genesis config-genesis.batch &&
         sawtooth-validator -vv \
           --endpoint tcp://validator:8800 \
-          --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800 \
-          --scheduler parallel \
-        \""
+          --bind component:tcp://*:4004 \
+          --bind network:tcp://*:8800 \
+          --scheduler parallel
+      "
 
   rest-api:
-    image: hyperledger/sawtooth-rest-api:0.8
+    image: hyperledger/sawtooth-rest-api:1.0
     entrypoint: sawtooth-rest-api -v --connect tcp://validator:4004 --bind rest-api:8080
 
   test-runner:
@@ -60,7 +55,7 @@ services:
       dockerfile: ./integration_tests/blockchain/Dockerfile
     image: blockchain-test-env
     volumes:
-      - '../../:/project/tmobile-rbac'
+      - "../../:/project/tmobile-rbac"
     command: python3 -m unittest integration_tests/blockchain/blockchain_integration_test.py
     environment:
       PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation

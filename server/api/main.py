@@ -26,7 +26,9 @@ from sanic.response import text
 
 from sawtooth_rest_api.messaging import Connection
 
-import sawtooth_signing as signing
+import sawtooth_signing
+
+from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
 from rbac_transaction_creation.common import Key
 
@@ -170,11 +172,12 @@ def load_config(app):  # pylint: disable=too-many-branches
     if app.config.BATCHER_PRIVATE_KEY is None:
         LOGGER.exception("Batcher private key was not provided")
         sys.exit(1)
-    batcher_public_key = signing.generate_pubkey(
-        app.config.BATCHER_PRIVATE_KEY, privkey_format='hex'
+
+    batcher_public_key = sawtooth_signing.create_context('secp256k1').get_public_key(
+        Secp256k1PrivateKey.from_hex(app.config.BATCHER_PRIVATE_KEY)
     )
     app.config.BATCHER_KEY_PAIR = Key(
-        batcher_public_key, app.config.BATCHER_PRIVATE_KEY
+        batcher_public_key.as_hex(), app.config.BATCHER_PRIVATE_KEY
     )
 
 
@@ -197,7 +200,7 @@ def main():
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods':
                     'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-XSRF-TOKEN'
             })
 
     @app.middleware('response')
@@ -206,7 +209,7 @@ def main():
         response.headers['Access-Control-Allow-Methods'] =\
             'GET, POST, PUT, PATCH, DELETE, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] =\
-            'Content-Type, Authorization'
+            'Content-Type, Authorization, X-XSRF-TOKEN'
 
     load_config(app)
 

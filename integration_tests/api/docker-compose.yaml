@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-version: "2.1"
+version: "2"
 
 services:
 
@@ -22,10 +22,8 @@ services:
       context: ../../
       dockerfile: ./server/Dockerfile-dev
     image: rbac-server-dev
-    expose:
-      - 8000
     volumes:
-      - ../../:/project/tmobile-rbac
+      - "../../:/project/tmobile-rbac"
     depends_on:
       - ledger-sync
       - rethink
@@ -38,8 +36,6 @@ services:
 
   rethink:
     image: rethinkdb:2.3
-    expose:
-      - 28015
 
   rbac-tp:
     build:
@@ -47,7 +43,7 @@ services:
       dockerfile: ./processor/Dockerfile-dev
     image: rbac-tp-dev
     volumes:
-      - '../../:/project/tmobile-rbac'
+      - "../../:/project/tmobile-rbac"
     command: bin/rbac-tp -vv tcp://validator:4004
 
   ledger-sync:
@@ -56,7 +52,7 @@ services:
       dockerfile: ./ledger_sync/Dockerfile-dev
     image: rbac-ledger-sync-dev
     volumes:
-      - ../../:/project/tmobile-rbac
+      - "../../:/project/tmobile-rbac"
     depends_on:
       - rethink
       - validator
@@ -68,25 +64,23 @@ services:
       "
 
   settings-tp:
-    image: hyperledger/sawtooth-settings-tp:0.8
+    image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
       - validator
-    command: settings-tp -vv tcp://validator:4004
+    command: settings-tp -vv --connect tcp://validator:4004
 
   validator:
-    image: hyperledger/sawtooth-validator:0.8
-    expose:
-      - 4004
+    image: hyperledger/sawtooth-validator:1.0
     command: |
       bash -c "
-        sawtooth admin keygen &&
-        sawtooth keygen my_key &&
-        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv &&
-        sawtooth admin genesis config-genesis.batch &&
+        sawadm keygen --force &&
+        sawtooth keygen my_key --force &&
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+        sawadm genesis config-genesis.batch &&
         sawtooth-validator -vv \
           --endpoint tcp://validator:8800 \
-          --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800 \
+          --bind component:tcp://*:4004 \
+          --bind network:tcp://*:8800 \
           --scheduler parallel
       "
 

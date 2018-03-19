@@ -13,7 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-version: "2.1"
+version: "2"
 
 services:
   server:
@@ -39,8 +39,8 @@ services:
 
   rethink:
     image: rethinkdb:2.3
-    expose:
-      - 28015
+    ports:
+      - "9090:8080"
 
   rbac-tp:
     build:
@@ -72,25 +72,32 @@ services:
         bin/rbac-ledger-sync -v --db-host rethink --validator tcp://validator:4004
       "
 
-  settings-tp:
-    image: hyperledger/sawtooth-settings-tp:0.8
+  rest-api:
+    image: hyperledger/sawtooth-rest-api:1.0
+    container_name: sawtooth-rest-api
+    ports:
+      - "8008:8008"
     depends_on:
       - validator
-    command: settings-tp -v tcp://validator:4004
+    command: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
+
+  settings-tp:
+    image: hyperledger/sawtooth-settings-tp:1.0
+    depends_on:
+      - validator
+    command: settings-tp -v --connect tcp://validator:4004
 
   validator:
-    image: hyperledger/sawtooth-validator:0.8
-    expose:
-      - 4004
+    image: hyperledger/sawtooth-validator:1.0
     command: |
       bash -c "
-        sawtooth admin keygen &&
-        sawtooth keygen my_key &&
-        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv &&
-        sawtooth admin genesis config-genesis.batch &&
-        sawtooth-validator -v \
+        sawadm keygen --force &&
+        sawtooth keygen my_key --force &&
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+        sawadm genesis config-genesis.batch &&
+        sawtooth-validator -vv \
           --endpoint tcp://validator:8800 \
-          --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800 \
+          --bind component:tcp://*:4004 \
+          --bind network:tcp://*:8800 \
           --scheduler parallel
       "
