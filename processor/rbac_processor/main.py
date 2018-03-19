@@ -17,7 +17,8 @@ import argparse
 import sys
 
 from sawtooth_sdk.processor.core import TransactionProcessor
-from sawtooth_sdk.client.log import init_console_logging
+from sawtooth_sdk.processor.log import init_console_logging
+
 
 from rbac_processor.handler import RBACTransactionHandler
 

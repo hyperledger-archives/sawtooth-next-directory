@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.processor.context import StateEntry
+from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -107,7 +107,7 @@ def handle_create_task(state_entries, payload, state):
     task.name = payload.name
     task.metadata = payload.metadata
 
-    address_values = []
+    address_values = {}
 
     pubkeys_by_address = {}
     for pubkey in payload.admins:
@@ -119,11 +119,11 @@ def handle_create_task(state_entries, payload, state):
         else:
             pubkeys_by_address[address] = [pubkey]
 
-    address_values += _handle_task_rel_container(
+    address_values.update(_handle_task_rel_container(
         state_entries=state_entries,
         create_task=payload,
         pubkeys_by_address=pubkeys_by_address,
-        state=state)
+        state=state))
 
     pubkeys_by_address = {}
     for pubkey in payload.owners:
@@ -135,27 +135,23 @@ def handle_create_task(state_entries, payload, state):
         else:
             pubkeys_by_address[address] = [pubkey]
 
-    address_values += _handle_task_rel_container(
+    address_values.update(_handle_task_rel_container(
         state_entries=state_entries,
         create_task=payload,
         pubkeys_by_address=pubkeys_by_address,
-        state=state)
+        state=state))
 
-    address_values += [StateEntry(
-        address=addresser.make_task_attributes_address(payload.task_id),
-        data=container.SerializeToString())]
+    address_values[addresser.make_task_attributes_address(payload.task_id)] = container.SerializeToString()
 
-    set_state(
-        state,
-        address_values)
+    set_state(state, address_values)
 
 
 def _handle_task_rel_container(state_entries,
                                create_task,
                                pubkeys_by_address,
                                state):
+    entries_to_set = {}
 
-    entries_to_set = []
     for addr, pubkeys in pubkeys_by_address.items():
         try:
             state_entry = get_state_entry(state_entries, addr)
@@ -166,10 +162,7 @@ def _handle_task_rel_container(state_entries,
 
         _add_task_rel_to_container(container, create_task.task_id, pubkeys)
 
-        entries_to_set.append(
-            StateEntry(
-                address=addr,
-                data=container.SerializeToString()))
+        entries_to_set[addr] = container.SerializeToString()
 
     return entries_to_set
 

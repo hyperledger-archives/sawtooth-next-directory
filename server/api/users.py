@@ -21,7 +21,8 @@ import logging
 from sanic import Blueprint
 from sanic.response import json
 
-import sawtooth_signing as signing
+import sawtooth_signing
+from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
 from api.errors import ApiNotImplemented
 from api.auth import authorized
@@ -31,7 +32,6 @@ from api.proposals import compile_proposal_resource
 from db import auth_query
 from db import proposals_query
 from db import users_query
-
 
 from rbac_transaction_creation.common import Key
 from rbac_transaction_creation.user_transaction_creation \
@@ -68,13 +68,11 @@ async def create_new_user(request):
     utils.validate_fields(required_fields, request.json)
 
     # Generate keys
-    private_key = signing.generate_privkey(privkey_format='bytes')
-    public_key = signing.generate_pubkey(
-        private_key, privkey_format='bytes'
-    )
-    txn_key = Key(public_key, private_key)
+    private_key = Secp256k1PrivateKey.new_random()
+    public_key = sawtooth_signing.create_context('secp256k1').get_public_key(private_key).as_hex()
+    txn_key = Key(public_key, private_key.as_hex())
     encrypted_private_key = utils.encrypt_private_key(
-        request.app.config.AES_KEY, public_key, private_key
+        request.app.config.AES_KEY, public_key, private_key.as_bytes()
     )
 
     # Build create user transaction

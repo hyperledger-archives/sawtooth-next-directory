@@ -114,7 +114,7 @@ def apply_confirm(header, payload, state):
 
     txn_signer_admin_address = addresser.make_task_admins_address(
         task_id=confirm_payload.task_id,
-        user_id=header.signer_pubkey)
+        user_id=header.signer_public_key)
 
     state_entries = validate_task_admin_or_owner(
         header,
@@ -136,7 +136,7 @@ def apply_reject(header, payload, state):
 
     txn_signer_admin_address = addresser.make_task_admins_address(
         task_id=reject_payload.task_id,
-        user_id=header.signer_pubkey)
+        user_id=header.signer_public_key)
 
     state_entries = validate_task_admin_or_owner(
         header,

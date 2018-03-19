@@ -15,7 +15,7 @@ limitations under the License.
 
 // let base = 'http://cso-aws-reinvent-2084431983.us-west-2.elb.amazonaws.com/api';
 // let base = 'https://ra87657c48.execute-api.us-west-2.amazonaws.com/api';
-let base = 'http://cso-reinvent-283321983.us-west-2.elb.amazonaws.com/api';
+let base = 'http://localhost:8000/api';
 // let base = 'https://ra87657c48.execute-api.us-west-2.amazonaws.com/api';
 export const environment = {
     production: true,

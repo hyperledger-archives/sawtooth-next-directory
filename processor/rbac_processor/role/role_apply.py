@@ -15,7 +15,7 @@
 
 import logging
 
-from sawtooth_sdk.processor.context import StateEntry
+from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -74,10 +74,10 @@ def _handle_role_state_set(create_role, state):
     role.name = create_role.name
     role.metadata = create_role.metadata
 
-    entries_to_set = [StateEntry(
-        address=addresser.make_role_attributes_address(
-            create_role.role_id),
-        data=role_container.SerializeToString())]
+    entries_to_set = {
+        addresser.make_role_attributes_address(create_role.role_id):
+            role_container.SerializeToString()
+    }
 
     pubkeys_by_address = {}
 
@@ -123,10 +123,8 @@ def _handle_role_state_set(create_role, state):
             create_role.role_id,
             pubkeys)
 
-        entries_to_set.append(
-            StateEntry(
-                address=addr,
-                data=container.SerializeToString()))
+        entries_to_set[addr] = container.SerializeToString()
+
     set_state(state, entries_to_set)
 
 

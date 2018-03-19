@@ -13,7 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-version: "2.1"
+version: "2"
 
 services:
   server:
@@ -26,7 +26,7 @@ services:
         - no_proxy
     image: rbac-server-dev
     volumes:
-      - .:/project/tmobile-rbac
+      - ".:/project/tmobile-rbac"
     ports:
       - "8000:8000"
     depends_on:
@@ -43,9 +43,6 @@ services:
     image: rethinkdb:2.3
     ports:
       - "9090:8080"
-    expose:
-      - 8080
-      - 28015
 
   rbac-tp:
     build:
@@ -57,7 +54,7 @@ services:
         - no_proxy
     image: rbac-tp-dev
     volumes:
-      - '.:/project/tmobile-rbac'
+      - ".:/project/tmobile-rbac"
     command: bin/rbac-tp -vv tcp://validator:4004
 
   ledger-sync:
@@ -70,7 +67,7 @@ services:
         - no_proxy
     image: rbac-ledger-sync-dev
     volumes:
-      - .:/project/tmobile-rbac
+      - ".:/project/tmobile-rbac"
     depends_on:
       - rethink
       - validator
@@ -82,48 +79,31 @@ services:
       "
 
   rest-api:
-    image: hyperledger/sawtooth-rest-api:0.8
+    image: hyperledger/sawtooth-rest-api:1.0
     container_name: sawtooth-rest-api
-    expose:
-      - 8008
     ports:
       - "8008:8008"
     depends_on:
       - validator
-    entrypoint: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
+    command: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
 
-  shell:
-    image: hyperledger/sawtooth-shell:0.8
-    volumes:
-      - '.:/project/tmobile-rbac'
-    working_dir: /project/tmobile-rbac
-    container_name: sawtooth-shell
-    depends_on:
-      - rest-api
-    entrypoint: |
-      bash -c "
-        sawtooth keygen &&
-        tail -f /dev/null
-      "
   settings-tp:
-    image: hyperledger/sawtooth-settings-tp:0.8
+    image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
       - validator
-    command: settings-tp -vv tcp://validator:4004
+    command: settings-tp -vv --connect tcp://validator:4004
 
   validator:
-    image: hyperledger/sawtooth-validator:0.8
-    expose:
-      - 4004
+    image: hyperledger/sawtooth-validator:1.0
     command: |
       bash -c "
-        sawtooth admin keygen &&
-        sawtooth keygen my_key &&
-        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv &&
-        sawtooth admin genesis config-genesis.batch &&
-        sawtooth-validator -vv \
+        sawadm keygen --force &&
+        sawtooth keygen my_key --force &&
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+        sawadm genesis config-genesis.batch &&
+        sawtooth-validator -v \
           --endpoint tcp://validator:8800 \
-          --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800 \
+          --bind component:tcp://*:4004 \
+          --bind network:tcp://*:8800 \
           --scheduler parallel
       "

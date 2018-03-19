@@ -24,7 +24,8 @@ from urllib.error import URLError
 
 from sawtooth_cli.rest_client import RestClient
 
-import sawtooth_signing as signing
+import sawtooth_signing
+from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
 from rbac_addressing import addresser
 from rbac_transaction_creation.protobuf import user_state_pb2
@@ -38,9 +39,10 @@ from rbac_transaction_creation import task_transaction_creation
 LOGGER = logging.getLogger(__name__)
 
 
-BATCHER_PRIVATE_KEY = signing.generate_privkey()
-BATCHER_PUBLIC_KEY = signing.generate_pubkey(BATCHER_PRIVATE_KEY)
+private_key = Secp256k1PrivateKey.new_random()
 
+BATCHER_PRIVATE_KEY = private_key.as_hex()
+BATCHER_PUBLIC_KEY = sawtooth_signing.create_context('secp256k1').get_public_key(private_key).as_hex()
 BATCHER_KEY = Key(public_key=BATCHER_PUBLIC_KEY,
                   private_key=BATCHER_PRIVATE_KEY)
 

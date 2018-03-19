@@ -9,7 +9,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.processor.context import StateEntry
+from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -46,7 +46,7 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
             the state gets and sets.
 
     Returns:
-        (list of StateEntry)
+        (dict of addresses)
     """
 
     user_address = addresser.make_user_address(propose.user_id)
@@ -67,10 +67,10 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
         return_user_container(user_entry),
         propose.user_id)
 
-    if header.signer_pubkey not in [user.user_id, user.manager_id]:
+    if header.signer_public_key not in [user.user_id, user.manager_id]:
         raise InvalidTransaction(
             "Txn signer {} is not the user or the user's "
-            "manager {}".format(header.signer_pubkey,
+            "manager {}".format(header.signer_public_key,
                                 [user.user_id, user.manager_id]))
 
     validate_identifier_is_task(state_entries,
@@ -107,7 +107,7 @@ def validate_task_rel_del_proposal(header, propose, rel_address, state):
             and sets.
 
     Returns:
-        (list of StateEntry)
+        (dict of addresses)
     """
 
     user_address = addresser.make_user_address(propose.user_id)
@@ -134,10 +134,10 @@ def validate_task_rel_del_proposal(header, propose, rel_address, state):
         return_user_container(user_entry),
         propose.user_id)
 
-    if header.signer_pubkey not in [user.user_id, user.manager_id]:
+    if header.signer_public_key not in [user.user_id, user.manager_id]:
         raise InvalidTransaction(
             "Txn signer {} is not the user {} or the user's manager {}".format(
-                header.signer_pubkey,
+                header.signer_public_key,
                 user.user_id,
                 user.manager_id))
 
@@ -177,7 +177,7 @@ def validate_task_admin_or_owner(header,
         state (Context): The class responsible for gets and sets of state.
 
     Returns:
-        (list of StateEntry)
+        (dict of addresses)
     """
 
     proposal_address = addresser.make_proposal_address(
@@ -186,8 +186,7 @@ def validate_task_admin_or_owner(header,
 
     state_entries = get_state(
         state,
-        [txn_signer_rel_address,
-         proposal_address])
+        [txn_signer_rel_address, proposal_address])
 
     if not proposal_exists_and_open(
             state_entries,
@@ -201,14 +200,14 @@ def validate_task_admin_or_owner(header,
     except KeyError:
         raise InvalidTransaction(
             "Signer {} does not have the Task permissions "
-            "to close the proposal".format(header.signer_pubkey))
+            "to close the proposal".format(header.signer_public_key))
     if not is_in_task_rel_container(
             task_rel_container,
             task_id=confirm.task_id,
-            identifier=header.signer_pubkey):
+            identifier=header.signer_public_key):
         raise InvalidTransaction("Signer {} does not have the Task "
                                  "permissions to close the "
-                                 "proposal".format(header.signer_pubkey))
+                                 "proposal".format(header.signer_public_key))
 
     return state_entries
 
@@ -235,15 +234,13 @@ def handle_propose_state_set(state_entries,
     proposal.target_id = getattr(payload, related_type)
     proposal.proposal_type = proposal_type
     proposal.status = proposal_state_pb2.Proposal.OPEN
-    proposal.opener = header.signer_pubkey
+    proposal.opener = header.signer_public_key
     proposal.open_reason = payload.reason
     proposal.metadata = payload.metadata
 
-    set_state(
-        state,
-        [StateEntry(
-            address=address,
-            data=proposal_container.SerializeToString())])
+    set_state(state, {
+        address: proposal_container.SerializeToString()
+    })
 
 
 def handle_confirm_add(state_entries,
@@ -262,12 +259,12 @@ def handle_confirm_add(state_entries,
         proposal_id=confirm.proposal_id)
 
     proposal.status = proposal_state_pb2.Proposal.CONFIRMED
-    proposal.closer = header.signer_pubkey
+    proposal.closer = header.signer_public_key
     proposal.close_reason = confirm.reason
 
-    address_values = [StateEntry(
-        address=proposal_address,
-        data=proposal_container.SerializeToString())]
+    address_values = {
+        proposal_address: proposal_container.SerializeToString()
+    }
 
     try:
         task_rel_entry = get_state_entry(state_entries, task_rel_address)
@@ -286,9 +283,7 @@ def handle_confirm_add(state_entries,
 
     task_rel.identifiers.append(confirm.user_id)
 
-    address_values.append(StateEntry(
-        address=task_rel_address,
-        data=task_rel_container.SerializeToString()))
+    address_values[task_rel_address] = task_rel_container.SerializeToString()
 
     set_state(state, address_values)
 
@@ -308,13 +303,9 @@ def handle_reject(state_entries,
         proposal_id=reject.proposal_id)
 
     proposal.status = proposal_state_pb2.Proposal.REJECTED
-    proposal.closer = header.signer_pubkey
+    proposal.closer = header.signer_public_key
     proposal.close_reason = reject.reason
 
-    address_values = [StateEntry(
-        address=proposal_address,
-        data=proposal_container.SerializeToString())]
+    address_values = { proposal_address: proposal_container.SerializeToString() }
 
-    set_state(
-        state,
-        address_values)
+    set_state(state, address_values)

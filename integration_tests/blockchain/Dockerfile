@@ -13,13 +13,18 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM hyperledger/sawtooth-all:0.8
+FROM hyperledger/sawtooth-validator:1.0
 
 RUN apt-get update && \
-    apt-get install -y --allow-unauthenticated -q python3-grpcio-tools=1.1.3-1 \
+    apt-get install -y --allow-unauthenticated -q \
+        locales \
+        python3-grpcio-tools=1.1.3-1 \
         python3-pip \
         python3-sawtooth-sdk \
         python3-sawtooth-rest-api
+
+RUN locale-gen en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 RUN pip3 install \
     pycodestyle \

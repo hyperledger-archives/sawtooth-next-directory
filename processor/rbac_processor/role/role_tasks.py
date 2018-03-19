@@ -48,7 +48,7 @@ def apply_confirm(header, payload, state):
 
     txn_signer_task_owner_address = addresser.make_task_owners_address(
         confirm.task_id,
-        header.signer_pubkey)
+        header.signer_public_key)
 
     role_rel_address = addresser.make_role_tasks_address(
         role_id=confirm.role_id,
@@ -75,7 +75,7 @@ def apply_reject(header, payload, state):
 
     txn_signer_task_owner_address = addresser.make_task_owners_address(
         reject.task_id,
-        header.signer_pubkey)
+        header.signer_public_key)
 
     state_entries = validate_role_task(
         header,

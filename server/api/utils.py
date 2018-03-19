@@ -23,7 +23,7 @@ import rethinkdb as r
 
 from sanic.response import json
 
-from sawtooth_rest_api.protobuf import client_pb2
+from sawtooth_rest_api.protobuf import client_batch_submit_pb2
 from sawtooth_rest_api.protobuf import validator_pb2
 
 from api.errors import ApiBadRequest, ApiInternalError
@@ -171,30 +171,53 @@ def encrypt_private_key(aes_key, user_id, private_key):
 
 
 async def send(conn, batch_list, timeout):
-    batch_request = client_pb2.ClientBatchSubmitRequest()
+    batch_request = client_batch_submit_pb2.ClientBatchSubmitRequest()
     batch_request.batches.extend(list(batch_list.batches))
-    batch_request.wait_for_commit = True
 
     validator_response = await conn.send(
         validator_pb2.Message.CLIENT_BATCH_SUBMIT_REQUEST,
         batch_request.SerializeToString(), timeout
     )
 
-    client_response = client_pb2.ClientBatchSubmitResponse()
+    client_response = client_batch_submit_pb2.ClientBatchSubmitResponse()
     client_response.ParseFromString(validator_response.content)
-    resp = client_response.batch_statuses[0]
 
-    if resp.status == client_pb2.BatchStatus.COMMITTED:
+    if client_response.status == client_batch_submit_pb2.ClientBatchSubmitResponse.INTERNAL_ERROR:
+        raise ApiInternalError('Internal Error')
+    elif client_response.status == client_batch_submit_pb2.ClientBatchSubmitResponse.INVALID_BATCH:
+        raise ApiBadRequest('Invalid Batch')
+    elif client_response.status == client_batch_submit_pb2.ClientBatchSubmitResponse.QUEUE_FULL:
+        raise ApiInternalError('Queue Full')
+
+    status_request = client_batch_submit_pb2.ClientBatchStatusRequest()
+    status_request.batch_ids.extend(list(b.header_signature for b in batch_list.batches))
+    status_request.wait = True
+    status_request.timeout = timeout
+
+    validator_response = await conn.send(
+        validator_pb2.Message.CLIENT_BATCH_STATUS_REQUEST,
+        status_request.SerializeToString(), timeout
+    )
+
+    status_response = client_batch_submit_pb2.ClientBatchStatusResponse()
+    status_response.ParseFromString(validator_response.content)
+
+    if status_response.status != client_batch_submit_pb2.ClientBatchStatusResponse.OK:
+        raise ApiInternalError('Internal Error')
+
+    resp = status_response.batch_statuses[0]
+
+    if resp.status == client_batch_submit_pb2.ClientBatchStatus.COMMITTED:
         return resp
-    elif resp.status == client_pb2.BatchStatus.INVALID:
-        raise ApiBadRequest('Bad Request: {}'.format(
-            resp.invalid_transactions[0].message
-        ))
-    elif resp.status == client_pb2.BatchStatus.PENDING:
+    elif resp.status == client_batch_submit_pb2.ClientBatchStatus.INVALID:
+        raise ApiBadRequest(
+            'Bad Request: {}'.format(resp.invalid_transactions[0].message)
+        )
+    elif resp.status == client_batch_submit_pb2.ClientBatchStatus.PENDING:
         raise ApiInternalError(
             'Internal Error: Transaction submitted but timed out.'
         )
-    elif resp.status == client_pb2.BatchStatus.UNKNOWN:
+    elif resp.status == client_batch_submit_pb2.ClientBatchStatus.UNKNOWN:
         raise ApiInternalError(
             'Internal Error: Something went wrong. Try again later.'
         )
