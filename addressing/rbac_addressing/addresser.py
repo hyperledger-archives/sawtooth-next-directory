@@ -102,6 +102,10 @@ def _contains(num, start, stop):
     return start <= num < stop
 
 
+def namespace_ok(address):
+    return address[:len(NS)] == NS
+
+
 def address_is(address):
     """Determines the type of object stored at the address.
 
@@ -111,7 +115,7 @@ def address_is(address):
     Returns: AddressSpace enum identifying the part of state.
 
     """
-    if address[:len(NS)] != NS:
+    if not namespace_ok(address):
         raise ValueError("Address %s isn't part of the %s namespace",
                          address, FAMILY_NAME)
 

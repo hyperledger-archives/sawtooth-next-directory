@@ -15,6 +15,7 @@
 
 import logging
 
+from rbac_addressing.addresser import namespace_ok
 from rbac_ledger_sync.deltas.decoding import data_to_dicts
 from rbac_ledger_sync.deltas.updating import get_updater
 
@@ -45,13 +46,14 @@ def _handle_delta(database, delta):
     # Parse changes and update database
     update = get_updater(database, delta.block_num)
     for change in delta.state_changes:
-        resources = data_to_dicts(change.address, change.value)
-        for resource in resources:
-            update_results = update(change.address, resource)
-            if update_results['inserted'] == 0:
-                LOGGER.warning(
-                    'Failed to insert resource from address: %s',
-                    change.address)
+        if namespace_ok(change.address):
+            resources = data_to_dicts(change.address, change.value)
+            for resource in resources:
+                update_results = update(change.address, resource)
+                if update_results['inserted'] == 0:
+                    LOGGER.warning(
+                        'Failed to insert resource from address: %s',
+                        change.address)
 
     # Add new block to database
     new_block = {'block_num': delta.block_num, 'block_id': delta.block_id}
