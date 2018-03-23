@@ -15,14 +15,19 @@
 
 FROM ubuntu:16.04
 
-RUN echo "deb http://repo.sawtooth.me/ubuntu/ci xenial universe" >> /etc/apt/sources.list && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD && \
-    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y -q python3-grpcio-tools=1.1.3-1 \
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
+ && echo "deb http://repo.sawtooth.me/ubuntu/ci xenial universe" >> /etc/apt/sources.list \
+ && echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
+ && apt-get update \
+ && apt-get install -y --allow-unauthenticated -q \
+        python3 \
         python3-pip \
         python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
+        python3-sawtooth-rest-api \
+ && pip3 install \
+        grpcio-tools \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /project/tmobile-rbac
 
@@ -30,6 +35,7 @@ WORKDIR /project/tmobile-rbac
 COPY bin/protogen bin/protogen
 COPY protos/ protos/
 RUN bin/protogen
+
 COPY . .
 
 CMD ["./bin/rbac-tp"]

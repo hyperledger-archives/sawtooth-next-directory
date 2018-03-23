@@ -15,14 +15,18 @@
 
 FROM ubuntu:16.04
 
-RUN echo "deb apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD" && \
-    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y --allow-unauthenticated -q python3-grpcio-tools=1.1.3-1 \
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
+ && echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
+ && apt-get update \
+ && apt-get install -y --allow-unauthenticated -q \
+        python3 \
         python3-pip \
-        python3-sawtooth-sdk
-
-RUN pip3 install rethinkdb
+        python3-sawtooth-sdk \
+ && pip3 install \
+        rethinkdb \
+        grpcio-tools \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /project/tmobile-rbac
 
@@ -30,6 +34,7 @@ WORKDIR /project/tmobile-rbac
 COPY bin/protogen bin/protogen
 COPY protos/ protos/
 RUN bin/protogen
+
 COPY . .
 
 CMD ["./bin/rbac-ledger-sync"]
