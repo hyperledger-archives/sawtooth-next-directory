@@ -33,11 +33,7 @@ services:
       - ledger-sync
       - rethink
       - validator
-    command: |
-      bash -c "
-        sleep 1 &&
-        ./bin/rbac-server --host server --db-host rethink --validator-host validator
-      "
+    command: ./bin/rbac-server --host server --db-host rethink --validator-host validator
 
   rethink:
     image: rethinkdb:2.3
@@ -55,7 +51,7 @@ services:
     image: rbac-tp-dev
     volumes:
       - ".:/project/tmobile-rbac"
-    command: bin/rbac-tp -vv tcp://validator:4004
+    command: ./bin/rbac-tp -vv tcp://validator:4004
 
   ledger-sync:
     build:
@@ -73,9 +69,8 @@ services:
       - validator
     command: |
       bash -c "
-        sleep 1 &&
-        bin/setup_db --host rethink &&
-        bin/rbac-ledger-sync -vv --db-host rethink --validator tcp://validator:4004
+        ./bin/setup_db --host rethink &&
+        ./bin/rbac-ledger-sync -vv --db-host rethink --validator tcp://validator:4004
       "
 
   rest-api:

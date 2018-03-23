@@ -15,36 +15,35 @@
 
 FROM ubuntu:16.04
 
-RUN echo "deb apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD" && \
-    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y --allow-unauthenticated -q \
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
+ && echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
+ && apt-get update \
+ && apt-get install -y --allow-unauthenticated -q \
         locales \
-        python3-grpcio-tools=1.1.3-1 \
+        python3 \
         python3-pip \
         python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
+        python3-sawtooth-rest-api \
+ && pip3 install \
+        grpcio-tools \
+        itsdangerous \
+        rethinkdb \
+        sanic \
+        pycrypto \
+ && locale-gen en_US.UTF-8 \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN locale-gen en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-
-RUN pip3 install \
-    itsdangerous \
-    rethinkdb \
-    sanic \
-    pycrypto
-
+ENV LC_ALL=en_US.UTF-8
 WORKDIR /project/tmobile-rbac
 
-# Build will fail if config file for secret keys has not been created
-# This check and the config should be removed if publishing this image
-RUN echo "Checking that server/config.py has been created..."
 COPY server/config.py server/config.py
 
 # Note that the context must be set to the project's root directory
 COPY bin/protogen bin/protogen
 COPY protos/ protos/
 RUN bin/protogen
+
 COPY . .
 
 EXPOSE 8000/tcp
