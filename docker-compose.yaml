@@ -16,7 +16,7 @@
 version: "2"
 
 services:
-  server:
+  rbac-server:
     build:
       context: .
       dockerfile: ./server/Dockerfile
@@ -66,6 +66,22 @@ services:
         ./bin/setup_db --host rethink &&
         ./bin/rbac-ledger-sync -v --db-host rethink --validator tcp://validator:4004
       "
+
+  rbac-ui:
+    build:
+      context: .
+      dockerfile: ./ui/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: rbac-ui-production
+    ports:
+      - "4200:4200"
+    depends_on:
+      - rbac-server
+    environment:
+      - RBAC_SERVER=rbac-server
 
   rest-api:
     image: hyperledger/sawtooth-rest-api:1.0
