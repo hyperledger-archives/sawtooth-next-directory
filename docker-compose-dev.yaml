@@ -16,7 +16,7 @@
 version: "2"
 
 services:
-  server:
+  rbac-server:
     build:
       context: .
       dockerfile: ./server/Dockerfile-dev
