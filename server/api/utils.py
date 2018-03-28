@@ -122,8 +122,8 @@ async def get_request_block(request):
             head_block_id
         )
     except KeyError:
-        head_block = await blocks_query.fetch_latest_block(
-            request.app.config.DB_CONN
+        head_block = await blocks_query.fetch_latest_block_with_retry(
+            request.app.config.DB_CONN, 5
         )
     return head_block
 

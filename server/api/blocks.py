@@ -51,7 +51,7 @@ async def get_latest_block(request):
         raise ApiBadRequest(
             "Bad Request: 'head' parameter should not be specified"
         )
-    block_resource = await blocks_query.fetch_latest_block(
+    block_resource = await blocks_query.fetch_latest_block_with_retry(
         request.app.config.DB_CONN
     )
     url = request.url.replace('latest', block_resource.get('id'))

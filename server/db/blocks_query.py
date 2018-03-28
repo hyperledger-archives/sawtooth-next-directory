@@ -14,9 +14,10 @@
 # ------------------------------------------------------------------------------
 
 import logging
+import time
 
 import rethinkdb as r
-from rethinkdb import ReqlNonExistenceError, ReqlRuntimeError
+from rethinkdb import ReqlNonExistenceError, ReqlQueryLogicError, ReqlRuntimeError
 
 from api.errors import ApiNotFound, ApiInternalError
 
@@ -48,6 +49,23 @@ async def fetch_latest_block(conn):
             .without('block_id', 'block_num').run(conn)
     except ReqlNonExistenceError:
         raise ApiInternalError('Internal Error: No block data found in state')
+
+
+async def fetch_latest_block_with_retry(conn, tries=5):
+    attempts = tries
+    while attempts > 0:
+        try:
+            return await fetch_latest_block(conn)
+        except ReqlQueryLogicError as err:
+            LOGGER.debug('Query attempt failed')
+
+        sleep_time = (tries - attempts + 1) * 2
+        LOGGER.debug('Retrying in %s secs', sleep_time)
+        time.sleep(sleep_time)
+
+        attempts -= 1
+
+    raise ApiInternalError('Internal Error: No block data found in state')
 
 
 async def fetch_block_by_id(conn, block_id):
