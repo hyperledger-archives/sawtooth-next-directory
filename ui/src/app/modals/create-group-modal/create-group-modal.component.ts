@@ -18,6 +18,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Group} from "../../models/group.model";
 import {ContextService} from "../../services/context.service";
 import {GroupService} from "../../services/groups/group.service";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-create-group-modal',
@@ -27,6 +28,7 @@ import {GroupService} from "../../services/groups/group.service";
 export class CreateGroupModalComponent {
 
     constructor(private router: Router,
+                private pageLoader: PageLoaderService,
                 private groupService: GroupService,
                 private context: ContextService,
                 private route: ActivatedRoute) {
@@ -49,11 +51,13 @@ export class CreateGroupModalComponent {
     }
 
     onCreateInner($event) {
+        this.pageLoader.startLoading();
         this.groupService.createNewGroup(this.groupName)
             .then((response) => {
                 let group = new Group(this.groupName, [this.user.id], []);
                 group.id = response.id;
                 this.context.getAllGroups().push(group);
+                this.pageLoader.stopLoading();
                 this.onCreate.emit(group);
                 this.close();
             });

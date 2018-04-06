@@ -39,7 +39,10 @@ limitations under the License.
 .hd-header-item {
   display: flex;
   align-items: center;
-
+}
+.hd-header-list-item {
+  display: flex;
+  align-items: center;
   @include gutter-horizontal($gutter-small)
 }
 
@@ -49,21 +52,17 @@ limitations under the License.
 
 .hd-layout-content {
   height: $content-height;
+
 }
 
 .hd-header-profile {
   position: relative;
-  
+  margin-left: 10px;
   i {
+    z-index: 0;
     font-size: 2rem;
+    &:hover {
+      cursor: pointer;
+    }
   }
-}
-
-.hd-header-popup {
-  margin: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 5px);
 }

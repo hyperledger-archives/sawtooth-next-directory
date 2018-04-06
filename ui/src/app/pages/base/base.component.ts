@@ -14,6 +14,7 @@ limitations under the License.
 =========================================================================*/
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-base',
@@ -22,22 +23,11 @@ import {Router} from "@angular/router";
 })
 export class BaseComponent implements OnInit {
 
-    constructor(private router: Router) {
+    constructor(private router: Router,
+                public pageLoader: PageLoaderService) {
     }
 
     ngOnInit() {
-    }
-
-    test() {
-        
-        //     {
-        //         outlets: {
-        //             'modal': 'request-access-modal',
-        //             'main': 'home/all-groups'
-        //         }
-        //     }]);
-
-        this.router.navigate(['/base/start/login']);
     }
 
 

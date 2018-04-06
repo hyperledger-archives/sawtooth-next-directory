@@ -14,9 +14,9 @@ limitations under the License.
 =========================================================================-->
 <div class="hd-actions hd-on-desktop"
      [ngClass]="{'hd-single-action': row.status === 'Owner'}">
-    <i *ngIf="row.status !== 'Owner'"
+    <i *ngIf="row.status !== 'Owner' && currentIsUserOwner"
             (click)="makeOwner()" class="hd-actions-icons fa fa-star-o hd-clickable"></i>
-    <i *ngIf="currentUserOwner"
+    <i *ngIf="currentIsUserOwner && row.id !== user.id"
             (click)="removeFromGroup()" class="hd-actions-icons fa fa-user-times hd-clickable"></i>
 </div>
 

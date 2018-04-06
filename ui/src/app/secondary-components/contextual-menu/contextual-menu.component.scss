@@ -13,11 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================*/
 @import "~styles/variables";
+@import "~styles/init/_mixins";
 
 .contextual-menu-wrapper {
   width: 100%;
   height: 100%;
-  border-radius: 5px;
+  @include border-radius-left($border-radius);
   background-color: #5a616b;
   font-size: 1em;
   color: #ffffff;

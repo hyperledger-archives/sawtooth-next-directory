@@ -49,7 +49,7 @@ export class GroupService {
     }
 
     leaveGroup(userId, groupId) {
-        return this.utils.setTimeoutPromise(0)
+        return this.utils.setTimeoutPromise(1000)
             .then(() => {
                 return true;
             })
@@ -57,7 +57,7 @@ export class GroupService {
     }
 
     promoteToOwner(userId, groupId) {
-        return this.utils.setTimeoutPromise(0)
+        return this.utils.setTimeoutPromise(500)
             .then(() => {
                 return true;
             })
@@ -65,7 +65,7 @@ export class GroupService {
     }
 
     promoteAllToOwner(selection) {
-        return this.utils.setTimeoutPromise(0)
+        return this.utils.setTimeoutPromise(500)
             .then(() => {
                 return true;
             })
@@ -73,7 +73,7 @@ export class GroupService {
     }
 
     removeFromGroup(userId, groupId) {
-        return this.utils.setTimeoutPromise(0)
+        return this.utils.setTimeoutPromise(500)
             .then(() => {
                 return true;
             })
@@ -81,7 +81,7 @@ export class GroupService {
     }
 
     removeAllFromGroup(selection) {
-        return this.utils.setTimeoutPromise(0)
+        return this.utils.setTimeoutPromise(500)
             .then(() => {
                 return true;
             })

@@ -18,6 +18,8 @@ import {UsersService} from "../../services/users/users.service";
 import {GroupService} from "../../services/groups/group.service";
 import {ContextService} from "../../services/context.service";
 import {UtilsService} from "../../services/utils.service";
+import {UsersUtilsService} from "../../services/users/users-utils.service";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-add-member-modal',
@@ -26,7 +28,7 @@ import {UtilsService} from "../../services/utils.service";
 })
 export class AddMemberModalComponent {
     private _show;
-    public users;
+    public addOptions;
     public addMemberForm = new FormControl();
     @Input() group;
 
@@ -44,10 +46,12 @@ export class AddMemberModalComponent {
     }
 
     constructor(private usersService: UsersService,
+                private usersUtils: UsersUtilsService,
                 private utils: UtilsService,
                 private context: ContextService,
+                private pageLoader: PageLoaderService,
                 private groupService: GroupService) {
-        this.users = context.getAllUsers();
+        this.addOptions = this.usersUtils.getUserList(this.context.getUser().subordinates);
     }
 
     close() {
@@ -55,9 +59,11 @@ export class AddMemberModalComponent {
     }
 
     addMember() {
+        this.pageLoader.startLoading();
         this.groupService.addMemberToGroup(this.group.id, this.addMemberForm.value)
             .then((response) => {
                 this.onAdd.emit(this.addMemberForm.value);
+                this.pageLoader.startLoading();
                 this.close();
                 this.utils.defaultSnackBar('Request Sent');
             });

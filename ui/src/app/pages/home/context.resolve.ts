@@ -30,7 +30,7 @@ export class ContextResolve implements Resolve<any> {
     }
 
     resolve(route: ActivatedRouteSnapshot) {
-        if (this.context.loggedIn()) {
+        if (this.context.authenticated()) {
 
             return this.usersService.getUsers()
                 .then((users) => {
@@ -42,11 +42,12 @@ export class ContextResolve implements Resolve<any> {
                     let user = this.usersUtils.getSelf();
                     this.context.setUser(user);
                     if(this.context.getUser()) {
-                        console.log('Logging in as ' + this.context.getUser().name + ' with local storage');
+                        console.log('Retrieving data for ' + this.context.getUser().name + ' with local storage');
                     } else {
                         console.log(this.context.getUser());
                     }
                 })
+
         } else {
 
             this.router.navigate(['base/start/login']);

@@ -41,16 +41,8 @@ export class RequestsService {
     }
 
     approveRequest(requestId, reason = '') {
-        console.log('Approved Request ' + requestId);
         let request = environment.patch_proposal(requestId, 'APPROVED', reason, '');
 
-        // return this.utils.stubHttp({
-        //     json: () => {
-        //         return {
-        //             data: { message: 'success', code: 200}
-        //         }
-        //     }
-        // });
         return this.http[request.method](request.url, request.body, this.context.httpOptions())
             .toPromise()
             .then((response) => {
@@ -61,21 +53,11 @@ export class RequestsService {
     }
 
     denyRequest(requestId, reason = '') {
-        console.log('Denied Request ' + requestId);
         let request = environment.patch_proposal(requestId, 'REJECTED', reason, '');
-
-        // return this.utils.stubHttp({
-        //     json: () => {
-        //         return {
-        //             data: {message: 'success', code: 200}
-        //         }
-        //     }
-        // });
 
         return this.http[request.method](request.url, request.body, this.context.httpOptions())
             .toPromise()
             .then((response) => {
-                // return response.json();
                 console.log('Denied Request ' + response.status);
                 return response.status;
             })

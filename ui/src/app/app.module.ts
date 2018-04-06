@@ -85,6 +85,7 @@ import {UsersUtilsService} from "./services/users/users-utils.service";
 import {GroupsUtilsService} from "./services/groups/groups-utils.service";
 import {RequestsUtilsService} from "./services/requests/requests-utils.service";
 import {MembersResolve} from "./pages/members/members.resolve";
+import {PageLoaderService} from "./services/page-loader.service";
 
 @NgModule({
     declarations: [
@@ -152,6 +153,7 @@ import {MembersResolve} from "./pages/members/members.resolve";
         UsersService,
         UsersUtilsService,
         ResponsiveNavigationService,
+        PageLoaderService,
         MembersResolve,
         AllGroupsResolve,
         MyGroupsResolve,

@@ -18,15 +18,17 @@ limitations under the License.
         <h4><i class="fa fa-bars"></i></h4>
     </div>
     <img (click)="homeLink()"
-            class="hd-header-item hd-header-image hd-on-desktop hd-clickable" src="../../../assets/images/HD_Logo_Light.png" alt="">
+         class="hd-header-item hd-header-image hd-on-desktop hd-clickable"
+         src="../../../assets/images/NextDirectory_White_X.png" alt="">
     <div class="hd-header-item">
         <h4 *ngIf="context.user">{{context.user.name}}</h4>
-        <div *ngIf="context.user" class="hd-header-profile hd-clickable"
+        <div *ngIf="context.user" class="hd-header-profile"
              (click)="toggleLogoutPopup($event)">
-            
-            <i class="fa fa-user-circle"></i>
-            <app-popup class="hd-header-popup" [(show)]="showPopup"
-                       [optionsList]="logoutPopup"></app-popup>
+
+                <i class="fa fa-user-circle"></i>
+
+                <app-popup [(show)]="showPopup"
+                           [optionsList]="logoutPopup"></app-popup>
         </div>
     </div>
 </div>

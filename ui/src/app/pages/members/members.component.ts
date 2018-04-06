@@ -22,6 +22,7 @@ import {TableHeader} from "../../models/table-header.model";
 import {ContextService} from "../../services/context.service";
 import {GroupsUtilsService} from "../../services/groups/groups-utils.service";
 import {User} from "../../models/user.model";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-members',
@@ -44,6 +45,7 @@ export class MembersComponent {
                 private router: Router,
                 private groupUtils: GroupsUtilsService,
                 private context: ContextService,
+                private pageLoader: PageLoaderService,
                 private groupService: GroupService,
                 private chRef: ChangeDetectorRef) {
         this.user = this.context.getUser();
@@ -52,36 +54,41 @@ export class MembersComponent {
         this.isOwner = this.groupUtils.userIsOwner(this.user.id, this.group);
 
         this.tableConfig = {
-            selectable: true,
+            selectable: this.isOwner,
             selection: [],
             headers:
                 [
-                    new TableHeader('Name', 'name', 'string'),
+                    new TableHeader('Name', 'name', 'function', (element) => {
+                        return element.id === this.user.id ? 'You' : element.name;
+                    }),
                     new TableHeader('ID', 'id', 'string'),
                     new TableHeader('Status', 'status', 'string')
                 ],
-            actionsComponent: MembersActionsComponent
+            actionsComponent: this.isOwner ? MembersActionsComponent : null
         };
         this.processUsers();
     }
 
     leaveGroup() {
         this.confirmModalConfig = {
-            confirmMessage: 'Are you sure you want to leave this group?',
+            confirmMessage: 'Are you sure you want to leave?',
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.groupService.leaveGroup(0, 0)
                     .then((response) => {
+                        this.pageLoader.stopLoading();
                         this.groupsLink();
                     });
             }
         };
-        this.confirmModal();
+        this.openConfirmModal();
     }
 
     promoteAllToOwner() {
         this.confirmModalConfig = {
-            confirmMessage: 'Promote (' + this.tableConfig.selection.length + ') user(s) to owner of ' + this.group.name + '?',
+            confirmMessage: 'Promote (' + this.tableConfig.selection.length + ') user(s) to owner?',
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.groupService.promoteAllToOwner(this.tableConfig.selection)
                     .then((responses) => {
                         _(this.members)
@@ -92,17 +99,19 @@ export class MembersComponent {
                                 member.status = 'Owner';
                                 return member;
                             }).value();
+                        this.pageLoader.stopLoading();
                         this.tableConfig.selection = [];
                     });
             }
         };
-        this.confirmModal();
+        this.openConfirmModal();
     }
 
     removeAllFromGroup() {
         this.confirmModalConfig = {
-            confirmMessage: 'Remove (' + this.tableConfig.selection.length + ') user(s) from ' + this.group.name + '?',
+            confirmMessage: 'Remove (' + this.tableConfig.selection.length + ') user(s)?',
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.groupService.removeAllFromGroup(this.tableConfig.selection)
                     .then((responses) => {
                         _.remove(this.members, (member: any, index, array) => {
@@ -111,18 +120,19 @@ export class MembersComponent {
                             });
 
                         });
+                        this.pageLoader.stopLoading();
                         this.tableConfig.selection = [];
                     });
             }
         };
-        this.confirmModal();
+        this.openConfirmModal();
     }
 
     groupsLink() {
         this.router.navigate([this.returnLink], {relativeTo: this.activatedRoute});
     }
 
-    confirmModal() {
+    openConfirmModal() {
         this.modal = 'confirm';
         this.showModal = true;
     }
