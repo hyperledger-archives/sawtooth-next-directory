@@ -100,10 +100,13 @@ class Subscriber(object):
                 event_list.ParseFromString(msg.content)
                 events = list(event_list.events)
                 event = StateDeltaEvent(events)
-                LOGGER.debug('Received deltas for block: %s', event.block_id)
 
-                for handler in self._delta_handlers:
-                    handler(event)
+                delta_count = len(event.state_changes)
+                if delta_count > 0:
+                    LOGGER.debug('Received %d deltas for block: %s', delta_count, event.block_id)
+
+                    for handler in self._delta_handlers:
+                        handler(event)
 
     def stop(self):
         """Stops the Subscriber, unsubscribing from state delta events and
@@ -141,10 +144,13 @@ class StateDeltaEvent:
         self.block_num = self._get_attr(block_commit, "block_num")
         self.previous_block_id = self._get_attr(block_commit, "previous_block_id")
 
-        state_delta = self._get_event("sawtooth/state-delta", event_list)
-        state_change_list = transaction_receipt_pb2.StateChangeList()
-        state_change_list.ParseFromString(state_delta.data)
-        self.state_changes = state_change_list.state_changes
+        try:
+            state_delta = self._get_event("sawtooth/state-delta", event_list)
+            state_change_list = transaction_receipt_pb2.StateChangeList()
+            state_change_list.ParseFromString(state_delta.data)
+            self.state_changes = state_change_list.state_changes
+        except KeyError:
+            self.state_changes = []
 
     @staticmethod
     def _get_attr(event, key):
