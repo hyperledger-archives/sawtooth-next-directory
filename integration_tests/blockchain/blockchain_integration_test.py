@@ -38,13 +38,9 @@ from rbac_transaction_creation import task_transaction_creation
 
 LOGGER = logging.getLogger(__name__)
 
-
-private_key = Secp256k1PrivateKey.new_random()
-
-BATCHER_PRIVATE_KEY = private_key.as_hex()
-BATCHER_PUBLIC_KEY = sawtooth_signing.create_context('secp256k1').get_public_key(private_key).as_hex()
-BATCHER_KEY = Key(public_key=BATCHER_PUBLIC_KEY,
-                  private_key=BATCHER_PRIVATE_KEY)
+BATCHER_PRIVATE_KEY = Secp256k1PrivateKey.new_random().as_hex()
+BATCHER_KEY = Key(BATCHER_PRIVATE_KEY)
+BATCHER_PUBLIC_KEY = BATCHER_KEY.public_key
 
 
 def wait_until_status(url, status_code=200, tries=5):
@@ -2175,8 +2171,9 @@ class RBACClient(object):
 
 
 def make_key_and_name():
-    private_key = signing.generate_privkey()
-    pubkey = signing.generate_pubkey(private_key)
+    context = sawtooth_signing.create_context('secp256k1')
+    private_key = context.new_random_private_key()
+    pubkey = context.get_public_key(private_key)
 
-    key = Key(public_key=pubkey, private_key=private_key)
+    key = Key(public_key=pubkey.as_hex(), private_key=private_key.as_hex())
     return key, uuid4().hex
