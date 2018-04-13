@@ -69,10 +69,9 @@ async def create_new_user(request):
 
     # Generate keys
     private_key = Secp256k1PrivateKey.new_random()
-    public_key = sawtooth_signing.create_context('secp256k1').get_public_key(private_key).as_hex()
-    txn_key = Key(public_key, private_key.as_hex())
+    txn_key = Key(private_key.as_hex())
     encrypted_private_key = utils.encrypt_private_key(
-        request.app.config.AES_KEY, public_key, private_key.as_bytes()
+        request.app.config.AES_KEY, txn_key.public_key, private_key.as_bytes()
     )
 
     # Build create user transaction
@@ -80,7 +79,7 @@ async def create_new_user(request):
         txn_key,
         request.app.config.BATCHER_KEY_PAIR,
         request.json.get('name'),
-        public_key,
+        txn_key.public_key,
         request.json.get('metadata'),
         request.json.get('manager')
     )
@@ -97,7 +96,7 @@ async def create_new_user(request):
     ).hexdigest()
 
     auth_entry = {
-        'user_id': public_key,
+        'user_id': txn_key.public_key,
         'hashed_password': hashed_password,
         'encrypted_private_key': encrypted_private_key,
         'email': request.json.get('email')
@@ -105,7 +104,7 @@ async def create_new_user(request):
     await auth_query.create_auth_entry(request.app.config.DB_CONN, auth_entry)
 
     # Send back success response
-    return create_user_response(request, public_key)
+    return create_user_response(request, txn_key.public_key)
 
 
 @USERS_BP.get('api/users/<user_id>')

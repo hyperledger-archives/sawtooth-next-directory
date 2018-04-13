@@ -15,6 +15,8 @@
 
 import logging
 
+import binascii
+
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from Crypto.Cipher import AES
@@ -144,7 +146,8 @@ async def get_transactor_key(request):
         user_id,
         encrypted_private_key
     )
-    return Key(user_id, private_key)
+    hex_private_key = binascii.hexlify(private_key)
+    return Key(hex_private_key)
 
 
 def generate_apikey(secret_key, user_id):

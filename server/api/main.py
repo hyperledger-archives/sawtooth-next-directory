@@ -26,10 +26,6 @@ from sanic.response import text
 
 from sawtooth_rest_api.messaging import Connection
 
-import sawtooth_signing
-
-from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
-
 from rbac_transaction_creation.common import Key
 
 from zmq.asyncio import ZMQEventLoop
@@ -172,13 +168,7 @@ def load_config(app):  # pylint: disable=too-many-branches
     if app.config.BATCHER_PRIVATE_KEY is None:
         LOGGER.exception("Batcher private key was not provided")
         sys.exit(1)
-
-    batcher_public_key = sawtooth_signing.create_context('secp256k1').get_public_key(
-        Secp256k1PrivateKey.from_hex(app.config.BATCHER_PRIVATE_KEY)
-    )
-    app.config.BATCHER_KEY_PAIR = Key(
-        batcher_public_key.as_hex(), app.config.BATCHER_PRIVATE_KEY
-    )
+    app.config.BATCHER_KEY_PAIR = Key(app.config.BATCHER_PRIVATE_KEY)
 
 
 def main():

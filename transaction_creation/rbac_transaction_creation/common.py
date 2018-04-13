@@ -99,9 +99,12 @@ def make_header(inputs,
 
 class Key(object):
 
-    def __init__(self, public_key, private_key):
-        self._public_key = public_key
+    def __init__(self, private_key, public_key = None):
         self._private_key = private_key
+        if public_key == None:
+            self._public_key = sawtooth_signing.create_context('secp256k1').get_public_key(Secp256k1PrivateKey.from_hex(private_key)).as_hex()
+        else:
+            self._public_key = public_key
 
     @property
     def public_key(self):
