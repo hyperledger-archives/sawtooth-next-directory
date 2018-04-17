@@ -206,7 +206,7 @@ async def update_proposal(request, proposal_id):
         request.app.config.VAL_CONN,
         batch_list,
         request.app.config.TIMEOUT)
-    return json(body='')
+    return json({'proposal_id': proposal_id})
 
 
 async def compile_proposal_resource(conn, proposal_resource, head_block_num):
