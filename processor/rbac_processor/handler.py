@@ -31,7 +31,6 @@ from rbac_processor.user.user_manager_proposal import apply_user_confirm
 from rbac_processor.user.user_manager_proposal import apply_user_propose
 from rbac_processor.user.user_manager_proposal import apply_user_reject
 
-
 ROLE_PROPOSE = [RBACPayload.PROPOSE_ADD_ROLE_TASKS,
                 RBACPayload.PROPOSE_ADD_ROLE_MEMBERS,
                 RBACPayload.PROPOSE_ADD_ROLE_OWNERS,
@@ -177,6 +176,18 @@ def apply_role_propose(header, payload, state):
     elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_TASKS:
         role_tasks.apply_propose(header, payload, state)
 
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_ADMINS:
+        role_admins.apply_propose_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_OWNERS:
+        role_owners.apply_propose_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_MEMBERS:
+        role_members.apply_propose_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_TASKS:
+        role_tasks.apply_propose_remove(header, payload, state)
+
     else:
         raise InvalidTransaction("Message type unknown.")
 
@@ -194,6 +205,19 @@ def apply_role_confirm(header, payload, state):
     elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_TASKS:
         role_tasks.apply_confirm(header, payload, state)
 
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_ADMINS:
+        role_admins.apply_confirm_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_OWNERS:
+        role_owners.apply_confirm_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_MEMBERS:
+        role_members.apply_confirm_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_TASKS:
+        role_tasks.apply_confirm_remove(header, payload, state)
+
+
     else:
         raise InvalidTransaction("Message type unknown.")
 
@@ -210,6 +234,18 @@ def apply_role_reject(header, payload, state):
 
     elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_TASKS:
         role_tasks.apply_reject(header, payload, state)
+
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_ADMINS:
+        role_admins.apply_reject_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_OWNERS:
+        role_owners.apply_reject_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_MEMBERS:
+        role_members.apply_reject_remove(header, payload, state)
+
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_TASKS:
+        role_tasks.apply_reject_remove(header, payload, state)
 
     else:
         raise InvalidTransaction("Message type unknown.")

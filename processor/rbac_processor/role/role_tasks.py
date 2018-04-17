@@ -42,6 +42,26 @@ def apply_propose(header, payload, state):
         related_type='task_id')
 
 
+def apply_propose_remove(header, payload, state):
+    propose = role_transaction_pb2.ProposeRemoveRoleTask()
+    propose.ParseFromString(payload.content)
+
+    state_entries = validate_role_task_proposal(header, propose, state)
+
+    proposal_address = addresser.make_proposal_address(
+        propose.role_id,
+        propose.task_id)
+
+    handle_propose_state_set(
+        state_entries=state_entries,
+        header=header,
+        payload=propose,
+        address=proposal_address,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_TASKS,
+        state=state,
+        related_type='task_id')
+
+
 def apply_confirm(header, payload, state):
     confirm = role_transaction_pb2.ConfirmAddRoleTask()
     confirm.ParseFromString(payload.content)

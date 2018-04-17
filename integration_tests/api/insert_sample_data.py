@@ -182,6 +182,9 @@ def add_manager(txn):
     patch_body(txn, {'manager': seeded_data['manager']['id']})
 
 
+@hooks.before('/api/roles/{id}/admins > DELETE > 200 > application/json')
+@hooks.before('/api/roles/{id}/members > DELETE > 200 > application/json')
+@hooks.before('/api/roles/{id}/owners > DELETE > 200 > application/json')
 @hooks.before('/api/roles/{id}/admins > POST > 200 > application/json')
 @hooks.before('/api/roles/{id}/members > POST > 200 > application/json')
 @hooks.before('/api/roles/{id}/owners > POST > 200 > application/json')
