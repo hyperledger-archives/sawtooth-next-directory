@@ -67,6 +67,45 @@ def apply_propose(header, payload, state):
         state=state)
 
 
+def apply_propose_remove(header, payload, state):
+    role_admins_payload = role_transaction_pb2.ProposeRemoveRoleAdmin()
+    role_admins_payload.ParseFromString(payload.content)
+
+    role_admins_address = addresser.make_role_admins_address(
+        role_id=role_admins_payload.role_id,
+        user_id=role_admins_payload.user_id)
+
+    proposal_address = addresser.make_proposal_address(
+        object_id=role_admins_payload.role_id,
+        related_id=role_admins_payload.user_id)
+
+    state_entries = validate_role_rel_proposal(
+        header,
+        role_admins_payload,
+        role_admins_address,
+        state)
+
+    if not no_open_proposal(
+            state_entries=state_entries,
+            object_id=role_admins_payload.role_id,
+            related_id=role_admins_payload.user_id,
+            proposal_address=proposal_address,
+            proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_ADMINS):
+        raise InvalidTransaction(
+            "There is already an open proposal for REMOVE_ROLE_ADMINS "
+            "with role id {} and user id {}".format(
+                role_admins_payload.role_id,
+                role_admins_payload.user_id))
+
+    handle_propose_state_set(
+        state_entries=state_entries,
+        header=header,
+        payload=role_admins_payload,
+        address=proposal_address,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_ADMINS,
+        state=state)
+
+
 def apply_confirm(header, payload, state):
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm_payload.ParseFromString(payload.content)
@@ -91,7 +130,6 @@ def apply_confirm(header, payload, state):
         confirm=confirm_payload,
         role_rel_address=role_admin_address,
         state=state)
-
 
 def apply_reject(header, payload, state):
     reject_payload = role_transaction_pb2.RejectAddRoleAdmin()
