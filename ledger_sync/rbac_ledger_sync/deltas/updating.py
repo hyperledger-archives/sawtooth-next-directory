@@ -77,7 +77,7 @@ def _update(database, block_num, address, resource):
     data_type = address_is(address)
 
     resource['start_block_num'] = block_num
-    resource['end_block_num'] = sys.maxsize
+    resource['end_block_num'] = str(sys.maxsize)
     if ADD_SUFFIX.get(data_type, False):
         resource['suffix'] = int(address[-2:], 16)
 
@@ -87,7 +87,7 @@ def _update(database, block_num, address, resource):
     except KeyError:
         raise TypeError('Unknown data type: {}'.format(data_type))
 
-    update_filter['end_block_num'] = sys.maxsize
+    update_filter['end_block_num'] = str(sys.maxsize)
 
     query = table_query.filter(update_filter)\
         .update({'end_block_num': block_num})\
