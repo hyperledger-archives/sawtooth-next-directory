@@ -14,6 +14,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import time
 import re
 import json
 import dredd_hooks as hooks
@@ -26,12 +27,10 @@ MIN_NAME_LENGTH = 5
 
 INVALID_SPEC_IDS = {
     'proposal': '63467642-6067-4c82-a096-1a1972d776b3',
-    'role': '1f68397b-5b38-4aec-9913-4541c7e1d4c4',
-    'task': '7ea843aa-1650-4530-94b1-a445d2a8193a',
-    'user':
-        '02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a',
-    'manager':
-       ' 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0'
+    'role':     '1f68397b-5b38-4aec-9913-4541c7e1d4c4',
+    'task':     '7ea843aa-1650-4530-94b1-a445d2a8193a',
+    'user':     '02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a',
+    'manager':  '02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0'
 }
 
 USER = {
@@ -108,7 +107,13 @@ def initialize_sample_resources(txns):
     base_url = get_base_api_url(txns[0])
     submit = lambda p, r, a=None: api_submit(base_url, p, r, a)
 
+    # Create MANAGER
+    manager_response = submit('users', MANAGER)
+    seeded_data['manager_auth'] = manager_response['authorization']
+    seeded_data['manager'] = manager_response['user']
+
     # Create USER
+    USER['manager'] = seeded_data['manager']['id']
     user_response = submit('users', USER)
     seeded_data['auth'] = user_response['authorization']
     seeded_data['user'] = user_response['user']
@@ -123,11 +128,6 @@ def initialize_sample_resources(txns):
     TASK['administrators'].append(seeded_data['user']['id'])
     seeded_data['task'] = submit('tasks', TASK)
 
-    # Create MANAGER
-    manager_response = submit('users', USER)
-    seeded_data['manager_auth'] = manager_response['authorization']
-    seeded_data['manager'] = manager_response['user']
-
     # Create a proposal
     proposal_path = 'roles/{}/owners'.format(seeded_data['role']['id'])
     proposal_body = {'id': seeded_data['manager']['id']}
@@ -137,6 +137,7 @@ def initialize_sample_resources(txns):
     seeded_data['proposal'] = {'id': proposal_response['proposal_id']}
 
     # Get head block id
+    time.sleep(2)
     head_id = api_request('GET', base_url, 'blocks/latest')['id']
 
     # Replace example identifiers with ones from seeded data
@@ -149,6 +150,7 @@ def initialize_sample_resources(txns):
 
 
 @hooks.before('/api/users > POST > 200 > application/json')
+@hooks.before('/api/roles > POST > 200 > application/json')
 def lengthen_user_name(txn):
     current_name = json.loads(txn['request']['body'])['name']
     if len(current_name) < MIN_NAME_LENGTH:
@@ -173,6 +175,7 @@ def add_owners_and_admins(txn):
 
 
 @hooks.before('/api/roles/{id}/tasks > POST > 200 > application/json')
+@hooks.before('/api/roles/{id}/tasks > DELETE > 200 > application/json')
 def add_task_id(txn):
     patch_body(txn, {'id': seeded_data['task']['id']})
 
@@ -185,12 +188,15 @@ def add_manager(txn):
 @hooks.before('/api/roles/{id}/admins > DELETE > 200 > application/json')
 @hooks.before('/api/roles/{id}/members > DELETE > 200 > application/json')
 @hooks.before('/api/roles/{id}/owners > DELETE > 200 > application/json')
+@hooks.before('/api/tasks/{id}/admins > DELETE > 200 > application/json')
+@hooks.before('/api/tasks/{id}/owners > DELETE > 200 > application/json')
 @hooks.before('/api/roles/{id}/admins > POST > 200 > application/json')
 @hooks.before('/api/roles/{id}/members > POST > 200 > application/json')
 @hooks.before('/api/roles/{id}/owners > POST > 200 > application/json')
 @hooks.before('/api/tasks/{id}/admins > POST > 200 > application/json')
 @hooks.before('/api/tasks/{id}/owners > POST > 200 > application/json')
 @hooks.before('/api/users/{id}/manager > PUT > 200 > application/json')
+@hooks.before('/api/users/{id}/manager > DELETE > 200 > application/json')
 def add_manager_id(txn):
     txn['request']['headers']['Authorization'] = seeded_data['manager_auth']
     patch_body(txn, {'id': seeded_data['manager']['id']})
