@@ -863,7 +863,7 @@ paths:
         - Bearer: []
       description: Remove an administrator from a particular task
       parameters:
-        - name: member
+        - name: administrator
           in: body
           description: User to be removed from the task's administrator list
           required: true
@@ -954,7 +954,7 @@ paths:
         - Bearer: []
       description: Remove an owner from a particular task
       parameters:
-        - name: member
+        - name: owner
           in: body
           description: User to be removed from the role's owner list
           required: true
@@ -1651,6 +1651,7 @@ definitions:
           - OPEN
           - APPROVED
           - REJECTED
+          - CONFIRMED
       opener:
         type: string
         description: Id of the user who created the proposal
