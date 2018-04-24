@@ -12,9 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================-->
-<div class="modal modal-tall">
+<div class="modal modal-tall" (keyup.enter)="login()">
     <img class="modal-header"
-         src="../../../assets/gif/hd-landing.gif" alt="">
+         src="../../../assets/gif/next_directory_animation.gif" alt="">
     <div class="modal-content">
         <app-form-input [label]="'User ID'"
                         [(throwError)]="throwError"
@@ -33,7 +33,7 @@ limitations under the License.
     <ul class="modal-options-vertical">
         <li>
             <app-button class="button-primary"
-                        (onClickInner)="login(email, password)">Login
+                        (onClickInner)="login()">Login
             </app-button>
         </li>
         <li>

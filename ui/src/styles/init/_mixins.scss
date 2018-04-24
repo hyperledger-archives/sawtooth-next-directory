@@ -18,6 +18,18 @@ limitations under the License.
   background-clip: padding-box;  
 }
 
+@mixin border-radius-left($radius) {
+  border-radius: $radius 0 0 $radius;
+  -webkit-border-radius: $radius 0 0 $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-radius-right($radius) {
+  -webkit-border-radius: 0 $radius $radius 0;
+  border-radius: 0 $radius $radius 0;
+  background-clip: padding-box;
+}
+
 @mixin box-sizing($box-model) {
   -webkit-box-sizing: $box-model; // Safari <= 5
   -moz-box-sizing: $box-model; // Firefox <= 19
@@ -29,6 +41,7 @@ limitations under the License.
     margin-left: $distance;
   }
 }
+
 
 @mixin gutter-vertical($distance) {
   * + * {

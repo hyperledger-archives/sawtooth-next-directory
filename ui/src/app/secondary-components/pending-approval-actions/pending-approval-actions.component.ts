@@ -15,6 +15,7 @@ limitations under the License.
 import {Component, OnInit, Input, Injector} from '@angular/core';
 import {RequestsService} from "../../services/requests/requests.service";
 import {PopupItem} from "../../models/popup-item.model";
+import {UtilsService} from "../../services/utils.service";
 
 @Component({
     selector: 'app-pending-approval-actions',
@@ -35,8 +36,10 @@ export class PendingApprovalActionsComponent implements OnInit {
     ];
 
     constructor(private injector: Injector,
+                private utils: UtilsService,
                 private requestsService: RequestsService) {
         this.row = injector.get('row');
+
     }
 
     ngOnInit() {
@@ -47,14 +50,16 @@ export class PendingApprovalActionsComponent implements OnInit {
         this.requestsService.emailRequestOwner(0, 0)
             .then((response) => {
                 console.log('emailed!', this.row);
-            })
+                this.utils.defaultSnackBar('Email Sent');
+            });
     }
 
     resend() {
         this.requestsService.resendRequest(0, 0)
             .then((response) => {
                 console.log('resend', this.row);
-            })
+                this.utils.defaultSnackBar('Request Resent');
+            });
     }
 
     toggleDialog($event) {

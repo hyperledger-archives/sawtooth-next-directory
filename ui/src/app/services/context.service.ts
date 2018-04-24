@@ -42,7 +42,7 @@ export class ContextService {
     }
 
     setLoginCredentials(userId, authorization) {
-        localStorage['hyper-directory'] = JSON.stringify({
+        localStorage['next-directory'] = JSON.stringify({
             userId: userId,
             authorization: authorization
         });
@@ -53,11 +53,11 @@ export class ContextService {
         this.user = null;
         this.allUsers = null;
         this.allGroups = null;
-        localStorage.removeItem('hyper-directory');
+        localStorage.removeItem('next-directory');
     }
 
-    loggedIn() {
-        return !!localStorage['hyper-directory'];
+    authenticated() {
+        return !!localStorage['next-directory'];
     }
 
     setUser(user) {
@@ -84,12 +84,12 @@ export class ContextService {
     }
 
     getUserId() {
-        return JSON.parse(localStorage['hyper-directory']).userId;
+        return JSON.parse(localStorage['next-directory']).userId;
     }
 
     getAuthKey() {
-        if(localStorage['hyper-directory']) {
-            return JSON.parse(localStorage['hyper-directory']).authorization;
+        if(localStorage['next-directory']) {
+            return JSON.parse(localStorage['next-directory']).authorization;
         }
     }
 

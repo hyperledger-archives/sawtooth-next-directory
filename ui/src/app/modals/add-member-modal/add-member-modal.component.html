@@ -22,28 +22,36 @@ limitations under the License.
             <div class="modal-close" (click)="close()">
                 <i class="icon-icon-close hd-clickable"></i>
             </div>
-            <div class="modal-content">
+            <div class="modal-content" *ngIf="addOptions.length">
                 <mat-form-field class="hd-form-input full-width">
                     <p>User Name</p>
                     <input type="text" matInput [formControl]="addMemberForm" [matAutocomplete]="auto">
                 </mat-form-field>
 
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="display.bind(this)">
-                    <mat-option *ngFor="let user of users" [value]="user">
+                <mat-autocomplete
+                        #auto="matAutocomplete" [displayWith]="display.bind(this)">
+                    <mat-option *ngFor="let user of addOptions" [value]="user">
                         {{ user.name }}
                     </mat-option>
                 </mat-autocomplete>
 
-                
+
                 <div class="modal-message"></div>
+            </div>
+            <div class="modal-content" *ngIf="!addOptions.length">
+                <div class="modal-message text-pink">
+                    You have no subordinates to add.
+                </div>
             </div>
             <ul class="modal-options-horizontal">
                 <li>
                     <app-link class="link-bold" (onClickInner)="close()">Cancel</app-link>
                 </li>
                 <li>
-                    <app-button (onClickInner)="addMember()"
-                                class="button-primary">Add
+                    <app-button class="button-primary"
+                                [disabled]="!addOptions.length"
+                                (onClickInner)="addMember()">
+                        Add
                     </app-button>
                 </li>
             </ul>

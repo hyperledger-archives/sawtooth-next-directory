@@ -16,16 +16,14 @@ limitations under the License.
     <div class="hd-popup-content">
         <div class="hd-popup-list">
             <ul>
-                <li *ngFor="let listItem of optionsList"
-                    (click)="selectListItem(listItem)">
-                    <div class="hd-popup-item"
-                         *ngIf="listItem.show()">
-                        <app-link class="link-primary">
+                <li class="hd-popup-item hd-clickable"
+                    (click)="listItem.action()"
+                        *ngFor="let listItem of optionsList">
+                        <div *ngIf="listItem.show()">
                             <i *ngIf="listItem.icon"
                                [ngClass]="listItem.icon"></i>
                             {{listItem.label}}
-                        </app-link>
-                    </div>
+                        </div>
                 </li>
             </ul>
         </div>

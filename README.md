@@ -1,8 +1,10 @@
-# Hyperledger Sawtooth Hyper Directory
+![logo](logo.png)
+
+# Hyperledger Sawtooth NEXT Identity Platform
 
 This repo contains multiple components which together with a
 _Hyperledger Sawtooth_ validator, will comprise the "blockchain" components
-of the Hyper Directory project. The components include:
+of the NEXT Identity Platform project. The components include:
 
 - a **server** which provides a REST API for querying blockchain data
 - a **transaction processor** which handles RBAC-specific transaction logic
@@ -77,4 +79,4 @@ bin/run_docker_test integration_tests/api/docker-compose.yaml
 
 # License
 
-Hyperledger Sawtooth Hyper Directory software is licensed under the [Apache License Version 2.0](LICENSE) software license.
+Hyperledger Sawtooth NEXT Identity Platform software is licensed under the [Apache License Version 2.0](LICENSE) software license.

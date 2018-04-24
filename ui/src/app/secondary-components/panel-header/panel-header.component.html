@@ -13,13 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================-->
 <div class="hd-panel-header">
-  <div class="hd-header-item">
+  <div class="hd-header-list-item">
       <app-link class="link-icon"
                 *ngIf="returnLink"
                 (onClickInner)="goBack()"><span class="icon-icon-back"></span></app-link>
       <h1 class="hd-on-desktop">{{header}}</h1>
   </div>
-  <div class="hd-header-item">
+  <div class="hd-header-list-item">
     <ng-content></ng-content>
   </div>
 </div>

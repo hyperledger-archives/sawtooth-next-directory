@@ -44,7 +44,8 @@ export class InMemoryDataService implements InMemoryDbService {
             })},
             PATCH_PROPOSAL: [{id: 0}],
             ADD_MEMBER: [{id: 0}],
-            PROPOSALS: REQUESTS
+            PROPOSALS: REQUESTS,
+            CREATE_ROLE: [{id: 0}]
         }
     }
 }

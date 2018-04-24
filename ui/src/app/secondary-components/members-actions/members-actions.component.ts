@@ -19,6 +19,7 @@ import {PopupItem} from "../../models/popup-item.model";
 import {UsersUtilsService} from "../../services/users/users-utils.service";
 import {ContextService} from "../../services/context.service";
 import {GroupsUtilsService} from "../../services/groups/groups-utils.service";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-members-actions',
@@ -29,6 +30,7 @@ export class MembersActionsComponent {
     public row;
     public list;
     public group;
+    public user;
     public showDialog = false;
     public showConfirmModal = false;
     public confirmModalConfig: any = {};
@@ -42,17 +44,19 @@ export class MembersActionsComponent {
             this.removeFromGroup()
         })
     ];
-    currentUserOwner = false;
+    currentIsUserOwner = false;
 
     constructor(private injector: Injector,
                 private usersUtils: UsersUtilsService,
                 private context: ContextService,
                 private groupUtils: GroupsUtilsService,
+                private pageLoader: PageLoaderService,
                 private groupService: GroupService) {
         this.row = injector.get('row');
         this.list = injector.get('list');
         this.group = injector.get('parentData').group;
-        this.currentUserOwner = this.groupUtils.userIsOwner(this.context.getUser().id, this.group);
+        this.currentIsUserOwner = this.groupUtils.userIsOwner(this.context.getUser().id, this.group);
+        this.user = this.context.getUser();
     }
 
     toggleDialog($event) {
@@ -65,10 +69,12 @@ export class MembersActionsComponent {
         this.confirmModalConfig = {
             confirmMessage: 'Promote ' + this.row.name + ' to owner?',
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.groupService.promoteToOwner(0,0)
                     .then((response) => {
                         let user = _.find(this.list, {id: this.row.id});
                         user.status = 'Owner';
+                        this.pageLoader.stopLoading();
                         this.showConfirmModal = false;
                     })
             }
@@ -80,10 +86,12 @@ export class MembersActionsComponent {
         this.confirmModalConfig = {
             confirmMessage: 'Remove ' + this.row.name + ' from this group?',
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.groupService.removeFromGroup(0,0)
                     .then((response) => {
                         _.remove(this.list, {id: this.row.id});
                         this.showConfirmModal = false;
+                        this.pageLoader.stopLoading();
                     })
             }
         }

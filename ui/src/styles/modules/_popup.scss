@@ -21,10 +21,11 @@ limitations under the License.
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   z-index: 1;
   background-color: $color-white;
+  color: $color-pink;
 }
 
 .hd-popup-content {
-  margin: 10px;
+  padding: 10px;
   text-align: left;
   z-index: 1;
 
@@ -42,20 +43,12 @@ limitations under the License.
 
 .hd-popup-list {
   ul li {
-    margin-top: 8px;
-    &:first-child {
-      margin-top: 0;
-    }
+    font-size: 1.25rem;
   }
 }
 
 .hd-popup-item {
   display: block;
-  
-  //justify-content: flex-start;
-  &:hover {
-    cursor: pointer;
-  }
 }
 .hd-popup-icon {
   font-size: 1rem;

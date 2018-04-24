@@ -84,6 +84,7 @@ export const AppRoutes: Routes = [
             {
                 path: 'home',
                 component: HomeComponent,
+                // runGuardsAndResolvers: 'always',
                 resolve: {
                     context: ContextResolve,
                 },

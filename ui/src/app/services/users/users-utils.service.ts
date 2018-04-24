@@ -48,13 +48,22 @@ export class UsersUtilsService {
         return found;
     }
 
+    getUserList(userIdList) {
+        let list = [];
+        _.each(userIdList, (userId) => {
+            let user = this.getUser(userId);
+            list.push(user);
+        });
+        return list;
+    }
+
     displayOwners(element, user, collectionName = 'owners') {
         if (element[collectionName].length > 1) {
             let count = element[collectionName].length;
             if (!!_.find(element[collectionName], (el) => {
                     return el.id == user.id;
                 })) {
-                return 'You and ' + ( count - 1) + ' others';
+                return 'You and ' + (count - 1) + ' others';
             } else {
                 return count + ' Owners'
             }

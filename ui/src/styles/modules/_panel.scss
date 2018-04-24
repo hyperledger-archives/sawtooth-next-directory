@@ -24,8 +24,10 @@ limitations under the License.
 
 .hd-panel-menu {
   width: 12%;
+  @include border-radius-left($border-radius);
 }
 .hd-panel-content {
+  @include border-radius-right($border-radius);
   width: 88%;
   background-color: $color-panel-background;
   padding: 0 1.5rem;

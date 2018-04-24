@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================-->
 <button class="app-button"
-        [ngClass]="disabled"
+        [ngClass]="disabled ? 'disabled' : ''"
         (click)="onButtonClick()">
   <ng-content></ng-content>
 </button>

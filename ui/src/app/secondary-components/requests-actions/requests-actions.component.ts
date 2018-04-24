@@ -19,6 +19,7 @@ import {PopupItem} from "../../models/popup-item.model";
 import {MatSnackBar} from "@angular/material";
 import {UtilsService} from "../../services/utils.service";
 import {UsersUtilsService} from "../../services/users/users-utils.service";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-requests-actions',
@@ -44,6 +45,7 @@ export class RequestsActionsComponent {
     constructor(private injector: Injector,
                 private utils: UtilsService,
                 private usersUtils: UsersUtilsService,
+                private pageLoader: PageLoaderService,
                 private requestsService: RequestsService) {
         this.row = injector.get('row');
         this.list = injector.get('list');
@@ -54,10 +56,12 @@ export class RequestsActionsComponent {
         this.confirmModalConfig = {
             confirmMessage: 'Approve request from ' + this.usersUtils.getUser(this.row.opener).name,
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.requestsService.approveRequest(this.row.id)
                     .then((response) => {
                         _.remove(this.list, {id: this.row.id});
                         this.utils.defaultSnackBar('Request Accepted');
+                        this.pageLoader.stopLoading();
                     })
             }
         }
@@ -68,10 +72,12 @@ export class RequestsActionsComponent {
         this.confirmModalConfig = {
             confirmMessage: 'Deny request from ' + this.usersUtils.getUser(this.row.opener).name,
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.requestsService.denyRequest(this.row.id)
                     .then((response) => {
                         _.remove(this.list, {id: this.row.id});
                         this.utils.defaultSnackBar('Request Denied');
+                        this.pageLoader.stopLoading();
                     });
             }
         }

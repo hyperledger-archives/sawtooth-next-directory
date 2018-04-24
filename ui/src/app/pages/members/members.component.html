@@ -16,7 +16,7 @@ limitations under the License.
                   [header]="group.name">
     <app-link *ngIf="isOwner"
               (onClickInner)="addMemberModal()"
-              class="link-bold-disabled">
+              class="link-bold">
         <i class="fa fa-plus"></i>Add Member
     </app-link>
     <app-link *ngIf="!isOwner && !alreadyRequested()"

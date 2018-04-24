@@ -20,6 +20,7 @@ import {ResponsiveNavigationService} from "../../services/responsive-navigation.
 import {AccountService} from "../../services/account.service";
 import {ContextService} from "../../services/context.service";
 import {GroupService} from "../../services/groups/group.service";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-home',
@@ -30,12 +31,12 @@ export class HomeComponent {
 
     public notifications;
     public menu: ContextualMenu[];
-    public midTransition = false;
     public user;
 
     constructor(private router: Router,
                 private context: ContextService,
                 public responsiveNavigationService: ResponsiveNavigationService,
+                public pageLoader: PageLoaderService,
                 private activatedRoute: ActivatedRoute) {
 
         this.user = this.context.user;
@@ -49,10 +50,10 @@ export class HomeComponent {
 
         this.router.events.subscribe((val) => {
             if (val instanceof NavigationStart) {
-                this.midTransition = true;
+                this.pageLoader.startLoading();
                 this.responsiveNavigationService.setSidemenu(false);
             } else if (val instanceof NavigationEnd) {
-                this.midTransition = false;
+                this.pageLoader.stopLoading();
             }
         })
 

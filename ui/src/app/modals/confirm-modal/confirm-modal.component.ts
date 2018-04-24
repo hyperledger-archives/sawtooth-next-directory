@@ -14,6 +14,7 @@ limitations under the License.
 =========================================================================*/
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {Router} from "@angular/router";
+import {UtilsService} from "../../services/utils.service";
 
 @Component({
     selector: 'app-confirm-modal',
@@ -22,7 +23,8 @@ import {Router} from "@angular/router";
 })
 export class ConfirmModalComponent implements OnInit {
 
-    constructor(private router: Router) {
+    constructor(private router: Router,
+                private utils: UtilsService) {
     }
 
     private _show;
@@ -46,6 +48,7 @@ export class ConfirmModalComponent implements OnInit {
     onConfirmInner($event) {
         this.onConfirm.emit();
         this.close();
+
     }
 
     ngOnInit() {

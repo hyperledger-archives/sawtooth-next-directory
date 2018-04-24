@@ -23,6 +23,7 @@ import {TableHeader} from "../../models/table-header.model";
 import {GroupsUtilsService} from "../../services/groups/groups-utils.service";
 import {UsersUtilsService} from "../../services/users/users-utils.service";
 import {RequestsUtilsService} from "../../services/requests/requests-utils.service";
+import {PageLoaderService} from "../../services/page-loader.service";
 
 @Component({
     selector: 'app-requests',
@@ -41,6 +42,7 @@ export class RequestsComponent {
                 private usersUtils: UsersUtilsService,
                 private requestUtils: RequestsUtilsService,
                 private requestsService: RequestsService,
+                private pageLoader: PageLoaderService,
                 private utils: UtilsService) {
         this.requestsReceived = this.activatedRoute.snapshot.data['requestsReceived'];
         this.tableConfig = {
@@ -64,13 +66,15 @@ export class RequestsComponent {
         this.confirmModalConfig = {
             confirmMessage: 'Approve ' + this.tableConfig.selection.length + ' request(s)?',
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.requestUtils.approveAllRequests(this.tableConfig.selection)
                     .then((response) => {
                         _.remove(this.requestsReceived, (request: any) => {
                             return _.find(this.tableConfig.selection, (selectionElement: any) => {
                                 return request.id === selectionElement.id;
-                            })
+                            });
                         });
+                        this.pageLoader.stopLoading();
                         this.tableConfig.selection = [];
                     })
             }
@@ -84,6 +88,7 @@ export class RequestsComponent {
         this.confirmModalConfig = {
             confirmMessage: 'Deny ' + this.tableConfig.selection.length + ' request(s)?',
             onConfirm: () => {
+                this.pageLoader.startLoading();
                 this.requestUtils.denyAllRequests(this.tableConfig.selection)
                     .then((response) => {
                         _.remove(this.requestsReceived, (request: any) => {
@@ -91,6 +96,7 @@ export class RequestsComponent {
                                 return request.id === selectionElement.id;
                             })
                         });
+                        this.pageLoader.stopLoading();
                         this.tableConfig.selection = [];
                     })
             }
