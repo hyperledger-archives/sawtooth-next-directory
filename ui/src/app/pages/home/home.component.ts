@@ -41,8 +41,9 @@ export class HomeComponent {
 
         this.user = this.context.user;
 
-        
+
         this.menu = [
+            new ContextualMenu('All Users', '/base/home/all-users-section'),
             new ContextualMenu('All Groups', '/base/home/all-groups-section'),
             new ContextualMenu('My Groups', '/base/home/my-groups-section'),
             new ContextualMenu('Requests', '/base/home/requests'),

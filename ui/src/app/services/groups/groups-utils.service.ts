@@ -24,11 +24,16 @@ export class GroupsUtilsService {
 
     getMyGroups() {
         let user = this.context.getUser();
-        let allGroups = this.context.getAllGroups();
 
-        return _.filter(allGroups, (group) => {
-            return this.userIsMemOwnAdminOfGroup(user.id, group);
-        });
+        return this.getUserGroups(user.id);
+    }
+
+    getUserGroups(userId) {
+      let allGroups = this.context.getAllGroups();
+
+      return _.filter(allGroups, (group) => {
+          return this.userIsMemOwnAdminOfGroup(userId, group);
+      });
     }
 
     getGroupMembers(group) {

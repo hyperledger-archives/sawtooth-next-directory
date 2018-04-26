@@ -59,7 +59,7 @@ export class MembersComponent {
             headers:
                 [
                     new TableHeader('Name', 'name', 'function', (element) => {
-                        return element.id === this.user.id ? 'You' : element.name;
+                        return element.id === this.user.id ? element.name + ' (You)' : element.name;
                     }),
                     new TableHeader('ID', 'id', 'string'),
                     new TableHeader('Status', 'status', 'string')
