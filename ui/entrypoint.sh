@@ -18,5 +18,4 @@ if [ "${RBAC_SERVER}" ] ; then
     sed -i "s/localhost/${RBAC_SERVER}/g" src/environments/environment.prod.ts
 fi
 
-npm build --prod
 npm start -- --env=prod --host=0.0.0.0 --port=4200
