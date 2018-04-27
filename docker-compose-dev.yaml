@@ -33,7 +33,7 @@ services:
       - ledger-sync
       - rethink
       - validator
-    command: ./bin/rbac-server --host server --db-host rethink --validator-host validator
+    command: ./bin/rbac-server --host 0.0.0.0 --db-host rethink --validator-host validator
 
   rethink:
     image: rethinkdb:2.3
