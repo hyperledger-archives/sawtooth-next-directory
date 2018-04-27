@@ -31,7 +31,7 @@ services:
       - ledger-sync
       - rethink
       - validator
-    command: ./bin/rbac-server --host server --db-host rethink --validator-host validator
+    command: ./bin/rbac-server --host 0.0.0.0 --db-host rethink --validator-host validator
 
   rethink:
     image: rethinkdb:2.3
@@ -81,7 +81,7 @@ services:
     depends_on:
       - rbac-server
     environment:
-      - RBAC_SERVER=rbac-server
+      - RBAC_SERVER=localhost
 
   rest-api:
     image: hyperledger/sawtooth-rest-api:1.0
