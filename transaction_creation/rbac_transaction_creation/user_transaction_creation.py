@@ -22,6 +22,7 @@ from rbac_transaction_creation.protobuf import user_transaction_pb2
 
 def create_user(txn_key,
                 batch_key,
+                name,
                 user_name,
                 user_id,
                 metadata,
@@ -44,7 +45,8 @@ def create_user(txn_key,
     """
 
     create_user_payload = user_transaction_pb2.CreateUser(
-        name=user_name,
+        name=name,
+        user_name=user_name,
         user_id=user_id,
         metadata=metadata)
     inputs = [addresser.make_user_address(user_id=user_id)]

@@ -62,11 +62,13 @@ message CreateUser {
 
     string name = 1;
 
-    string user_id = 2;
+    string user_name = 2;
 
-    string manager_id = 3;
+    string user_id = 3;
 
-    string metadata = 4;
+    string manager_id = 4;
+
+    string metadata = 5;
 
 }
 

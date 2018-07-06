@@ -51,11 +51,12 @@ export const environment = {
         }
     },
     users: base + '/users',
-    create_user: (name, password, email, manager, metadata) => {
+    create_user: (name, username, password, email, manager, metadata) => {
         return {
             url: base + '/users',
             body: {
                 name: name,
+                username: username,
                 password: password,
                 email: email,
                 manager: manager,

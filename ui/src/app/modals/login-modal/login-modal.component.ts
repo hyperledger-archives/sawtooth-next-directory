@@ -42,7 +42,7 @@ export class LoginModalComponent {
             .then((response) => {
                 if (response) {
                     console.log(this.userId, response);
-                    this.context.setLoginCredentials(this.userId, response);
+                    this.context.setLoginCredentials(response.user_id, response.authorization);
                     this.router.navigate(['/base/home/my-groups-section']);
                 } else {
                     this.throwError = true;
