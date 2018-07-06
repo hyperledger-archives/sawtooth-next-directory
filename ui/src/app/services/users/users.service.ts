@@ -54,15 +54,15 @@ export class UsersService {
         return this.http.post(environment.login, body)
             .toPromise()
             .then((response) => {
-                let data = response.json().data.authorization;
-                console.log('Authorize', data);
+                let data = response.json().data;
+                console.log('Authorize', data.authorization);
                 return data;
             })
             .catch(this.utils.catchError);
     }
 
-    createUser(name, password, email, manager = '', metadata = '') {
-        let request = environment.create_user(name, password, email, manager, metadata);
+    createUser(name, username, password, email, manager = '', metadata = '') {
+        let request = environment.create_user(name, username, password, email, manager, metadata);
 
         let headers = new Headers();
         // headers.append('Content-Type', 'application/json');

@@ -190,7 +190,7 @@ def main():
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods':
                     'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-XSRF-TOKEN'
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
             })
 
     @app.middleware('response')
@@ -199,7 +199,7 @@ def main():
         response.headers['Access-Control-Allow-Methods'] =\
             'GET, POST, PUT, PATCH, DELETE, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] =\
-            'Content-Type, Authorization, X-XSRF-TOKEN'
+            'Content-Type, Authorization'
 
     load_config(app)
 
