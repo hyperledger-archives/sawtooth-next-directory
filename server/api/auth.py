@@ -69,7 +69,6 @@ async def authorize(request):
     token = utils.generate_apikey(
         request.app.config.SECRET_KEY,
         auth_info.get('user_id')
-        # request.json.get('id')
     )
     return json({
         'data': {
