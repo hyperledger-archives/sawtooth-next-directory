@@ -28,6 +28,11 @@ limitations under the License.
                 <div class="modal-message"></div>
             </div>
             <div class="modal-content">
+                <app-form-input [(value)]="username"
+                                [label]="'User Name'"></app-form-input>
+                <div class="modal-message"></div>
+            </div>
+            <div class="modal-content">
                 <app-form-input [(value)]="password"
                                 [config]="{type: 'password'}"
                                 [label]="'Password'"></app-form-input>
