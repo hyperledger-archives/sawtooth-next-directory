@@ -16,6 +16,7 @@ import {Routes} from '@angular/router';
 import {BaseComponent} from './pages/base/base.component';
 import {StartComponent} from './pages/start/start.component';
 import {HomeComponent} from './pages/home/home.component';
+import {AllUsersComponent} from './pages/all-users/all-users.component';
 import {AllGroupsComponent} from './pages/all-groups/all-groups.component';
 import {MyGroupsComponent} from './pages/my-groups/my-groups.component';
 import {RequestsComponent} from './pages/requests/requests.component';
@@ -23,13 +24,18 @@ import {PendingApprovalComponent} from './pages/pending-approval/pending-approva
 import {LoginModalComponent} from './modals/login-modal/login-modal.component';
 import {ForgotPasswordModalComponent} from './modals/forgot-password-modal/forgot-password-modal.component';
 import {CreateAccountModalComponent} from './modals/create-account-modal/create-account-modal.component';
+import {CreateUserModalComponent} from './modals/create-user-modal/create-user-modal.component';
 import {MembersComponent} from "./pages/members/members.component";
+import {UsersComponent} from "./pages/users/users.component";
+import {AllUsersSectionComponent} from "./pages/all-users-section/all-users-section.component";
 import {AllGroupsSectionComponent} from "./pages/all-groups-section/all-groups-section.component";
 import {MyGroupsSectionComponent} from "./pages/my-groups-section/my-groups-section.component";
 import {TestingComponent} from "./pages/testing/testing.component";
 import {ContextResolve} from "./pages/home/context.resolve";
 import {HomeResolve} from "./pages/home/home.resolve";
 import {MembersResolve} from "./pages/members/members.resolve";
+import {UsersResolve} from "./pages/users/users.resolve";
+import {AllUsersResolve} from "./pages/all-users/all-users.resolve";
 import {AllGroupsResolve} from "./pages/all-groups/all-groups.resolve";
 import {MyGroupsResolve} from "./pages/my-groups/my-groups.resolve";
 import {RequestsResolve} from "./pages/requests/requests.resolve";
@@ -40,6 +46,11 @@ export const AppRoutes: Routes = [
     {
         path: '',
         redirectTo: '/base/start/login',
+        pathMatch: 'full'
+    },
+    {
+        path: 'base/home/all-users-section',
+        redirectTo: 'base/home/all-users-section/all-users',
         pathMatch: 'full'
     },
     {
@@ -89,6 +100,26 @@ export const AppRoutes: Routes = [
                     context: ContextResolve,
                 },
                 children: [
+                      {
+                        path: 'all-users-section',
+                        component: AllUsersSectionComponent,
+                        children: [
+                            {
+                                path: 'all-users',
+                                component: AllUsersComponent,
+                                resolve: {
+                                    users: AllUsersResolve
+                                }
+                            },
+                            {
+                                path: 'users/:id',
+                                component: UsersComponent,
+                                resolve: {
+                                    usersResolve: UsersResolve
+                                }
+                            },
+                        ],
+                    },
                     {
                         path: 'all-groups-section',
                         component: AllGroupsSectionComponent,

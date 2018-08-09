@@ -35,6 +35,7 @@ import {ButtonIconComponent} from './primary-components/button-icon/button-icon.
 import {StartComponent} from './pages/start/start.component';
 import {HomeComponent} from './pages/home/home.component';
 import {PendingApprovalComponent} from './pages/pending-approval/pending-approval.component';
+import {AllUsersComponent} from './pages/all-users/all-users.component';
 import {AllGroupsComponent} from './pages/all-groups/all-groups.component';
 import {MyGroupsComponent} from './pages/my-groups/my-groups.component';
 import {RequestsComponent} from './pages/requests/requests.component';
@@ -44,10 +45,13 @@ import {ContextualMenuComponent} from './secondary-components/contextual-menu/co
 import {LoginModalComponent} from './modals/login-modal/login-modal.component';
 import {ForgotPasswordModalComponent} from './modals/forgot-password-modal/forgot-password-modal.component';
 import {CreateAccountModalComponent} from './modals/create-account-modal/create-account-modal.component';
+import {CreateUserModalComponent} from './modals/create-user-modal/create-user-modal.component';
 
 import {RequestAccessModalComponent} from './modals/request-access-modal/request-access-modal.component';
 import {MembersComponent} from './pages/members/members.component';
 import {CreateGroupModalComponent} from './modals/create-group-modal/create-group-modal.component';
+
+import {UsersComponent} from './pages/users/users.component';
 
 import {DataTableComponent} from './primary-components/data-table/data-table.component';
 import {PendingApprovalActionsComponent} from './secondary-components/pending-approval-actions/pending-approval-actions.component';
@@ -58,6 +62,7 @@ import {PanelHeaderComponent} from './secondary-components/panel-header/panel-he
 import {PanelFooterComponent} from './secondary-components/panel-footer/panel-footer.component';
 import {ConfirmModalComponent} from './modals/confirm-modal/confirm-modal.component';
 import {AddMemberModalComponent} from './modals/add-member-modal/add-member-modal.component';
+import {AllUsersSectionComponent} from './pages/all-users-section/all-users-section.component';
 import {AllGroupsSectionComponent} from './pages/all-groups-section/all-groups-section.component';
 import {MyGroupsSectionComponent} from './pages/my-groups-section/my-groups-section.component';
 import {CenteredComponent} from './secondary-components/centered/centered.component';
@@ -77,6 +82,7 @@ import {ContextResolve} from "./pages/home/context.resolve";
 import {HomeResolve} from "./pages/home/home.resolve";
 import {RequestsResolve} from "./pages/requests/requests.resolve";
 import {MyGroupsResolve} from "./pages/my-groups/my-groups.resolve";
+import {AllUsersResolve} from "./pages/all-users/all-users.resolve";
 import {AllGroupsResolve} from "./pages/all-groups/all-groups.resolve";
 import {RequestsService} from "./services/requests/requests.service";
 import {UsersService} from "./services/users/users.service";
@@ -84,6 +90,7 @@ import {GroupService} from "./services/groups/group.service";
 import {UsersUtilsService} from "./services/users/users-utils.service";
 import {GroupsUtilsService} from "./services/groups/groups-utils.service";
 import {RequestsUtilsService} from "./services/requests/requests-utils.service";
+import {UsersResolve} from './pages/users/users.resolve';
 import {MembersResolve} from "./pages/members/members.resolve";
 import {PageLoaderService} from "./services/page-loader.service";
 
@@ -98,6 +105,7 @@ import {PageLoaderService} from "./services/page-loader.service";
         StartComponent,
         HomeComponent,
         PendingApprovalComponent,
+        AllUsersComponent,
         AllGroupsComponent,
         MyGroupsComponent,
         RequestsComponent,
@@ -107,7 +115,9 @@ import {PageLoaderService} from "./services/page-loader.service";
         ForgotPasswordModalComponent,
         CreateAccountModalComponent,
         RequestAccessModalComponent,
+        UsersComponent,
         MembersComponent,
+        CreateUserModalComponent,
         CreateGroupModalComponent,
         DataTableComponent,
         PendingApprovalActionsComponent,
@@ -118,6 +128,7 @@ import {PageLoaderService} from "./services/page-loader.service";
         PanelFooterComponent,
         ConfirmModalComponent,
         AddMemberModalComponent,
+        AllUsersSectionComponent,
         AllGroupsSectionComponent,
         MyGroupsSectionComponent,
         CenteredComponent,
@@ -154,7 +165,9 @@ import {PageLoaderService} from "./services/page-loader.service";
         UsersUtilsService,
         ResponsiveNavigationService,
         PageLoaderService,
+        UsersResolve,
         MembersResolve,
+        AllUsersResolve,
         AllGroupsResolve,
         MyGroupsResolve,
         RequestsResolve,
