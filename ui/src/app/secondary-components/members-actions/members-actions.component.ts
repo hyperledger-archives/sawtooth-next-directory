@@ -70,7 +70,7 @@ export class MembersActionsComponent {
             confirmMessage: 'Promote ' + this.row.name + ' to owner?',
             onConfirm: () => {
                 this.pageLoader.startLoading();
-                this.groupService.promoteToOwner(0,0)
+                this.groupService.promoteToOwner(this.row.id, this.group.id)
                     .then((response) => {
                         let user = _.find(this.list, {id: this.row.id});
                         user.status = 'Owner';
@@ -87,7 +87,7 @@ export class MembersActionsComponent {
             confirmMessage: 'Remove ' + this.row.name + ' from this group?',
             onConfirm: () => {
                 this.pageLoader.startLoading();
-                this.groupService.removeFromGroup(0,0)
+                this.groupService.removeFromGroup(this.row.id, this.group.id)
                     .then((response) => {
                         _.remove(this.list, {id: this.row.id});
                         this.showConfirmModal = false;

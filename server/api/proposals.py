@@ -225,6 +225,9 @@ async def compile_proposal_resource(conn, proposal_resource, head_block_num):
             proposal_resource.get('object'),
             head_block_num
         ).run(conn)
+    elif 'users' in table:
+        # approvers needs to be new manager in update manager scenario
+        proposal_resource['approvers'] = [proposal_resource.get('target')]
     else:
         user_resource = await fetch_user_resource(
             conn,

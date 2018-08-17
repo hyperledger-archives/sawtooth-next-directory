@@ -40,7 +40,8 @@ import {AllGroupsResolve} from "./pages/all-groups/all-groups.resolve";
 import {MyGroupsResolve} from "./pages/my-groups/my-groups.resolve";
 import {RequestsResolve} from "./pages/requests/requests.resolve";
 import {PendingApprovalResolve} from "./pages/pending-approval/pending-approval.resolve";
-
+import { EmployeesComponent } from './pages/employees/employees.component';
+import { EmployeesResolve } from './pages/employees/employees.resolve';
 
 export const AppRoutes: Routes = [
     {
@@ -172,6 +173,13 @@ export const AppRoutes: Routes = [
                         component: PendingApprovalComponent,
                         resolve: {
                             requestsSent: PendingApprovalResolve
+                        }
+                    },
+                    {
+                        path: 'employees',
+                        component: EmployeesComponent,
+                        resolve: {
+                            requestsSent: EmployeesResolve
                         }
                     }
                 ]

@@ -122,7 +122,7 @@ def _validate_unique_proposal(header, user_proposal, state):
 
 def _validate_manager_is_signer(header, user_container, user_id):
     user = get_user_from_container(user_container, user_id)
-    if not user.manager_id == header.signer_public_key:
+    if not user.manager_id == header.signer_public_key and not user.manager_id == "":
         raise InvalidTransaction(
             "Update user for {} was signed by {} not "
             "the manager, {}.".format(

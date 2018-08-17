@@ -19,6 +19,7 @@ import {
 import {PendingApprovalActionsComponent} from "../pending-approval-actions/pending-approval-actions.component";
 import {RequestsActionsComponent} from "../requests-actions/requests-actions.component";
 import {MembersActionsComponent} from "../members-actions/members-actions.component";
+import { UpdateManagerActionsComponent } from '../update-manager-actions/update-manager-actions.component';
 
 @Component({
     selector: 'app-dynamic-component-loader',
@@ -27,6 +28,7 @@ import {MembersActionsComponent} from "../members-actions/members-actions.compon
     entryComponents: [
         PendingApprovalActionsComponent,
         RequestsActionsComponent,
+        UpdateManagerActionsComponent,
         MembersActionsComponent]
 })
 export class DynamicComponentLoaderComponent implements OnInit {

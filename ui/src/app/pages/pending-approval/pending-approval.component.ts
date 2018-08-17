@@ -29,9 +29,14 @@ import * as _ from "lodash";
 })
 export class PendingApprovalComponent implements OnInit {
     public requestsSent;
+    public joinGroupRequestsSent;
+    public updateManagerRequestsSent;
     public tableConfig;
+    public updateManagerTableConfig;
     public user;
     public allGroups;
+    public hasJoinGroupRequests = false;
+    public hasRequestManagerRequests = false;
 
     constructor(private activatedRoute: ActivatedRoute,
                 private groupService: GroupService,
@@ -39,8 +44,13 @@ export class PendingApprovalComponent implements OnInit {
                 private usersUtils: UsersUtilsService,
                 private utils: UtilsService) {
         this.requestsSent = this.activatedRoute.snapshot.data['requestsSent'];
+        this.joinGroupRequestsSent = _.filter(this.requestsSent, {type : 'ADD_ROLE_MEMBERS'});
+        this.updateManagerRequestsSent = _.filter(this.requestsSent, {type : 'UPDATE_USER_MANAGER'});
         this.user = this.context.getUser();
         this.allGroups = this.context.getAllGroups();
+        
+        this.sortRequests();
+
         this.tableConfig = {
             selectable: false,
             headers: [
@@ -55,10 +65,47 @@ export class PendingApprovalComponent implements OnInit {
             ],
             actionsComponent: PendingApprovalActionsComponent
         };
+
+        this.updateManagerTableConfig = {
+            selectable: true,
+            selection: [],
+            headers: [
+                new TableHeader('Employee Name', '', 'function', (element) => {
+                    console.log(`Getting the name for: ${element.target}`);
+                    const name = this.usersUtils.getUser(element.object).name;
+                    console.log(`Got name: ${name}`);
+                    return name;
+                }),
+                new TableHeader('Current Manager Name', '', 'function', (element) => {
+                    console.log(`Getting the name for: ${element.opener}`);
+                    const name = this.usersUtils.getUser(element.opener).name;
+                    console.log(`Got name: ${name}`);
+                    return name;
+                }),
+                new TableHeader('New Manager Name', '', 'function', (element) => {
+                    console.log(`Getting the name for: ${element.target}`);
+                    const name = this.usersUtils.getUser(element.target).name;
+                    console.log(`Got name: ${name}`);
+                    return name;
+                }),
+                new TableHeader('Reason', 'openReason', 'string')
+            ],
+            actionsComponent: PendingApprovalActionsComponent
+        };
     }
 
 
     ngOnInit() {
 
+    }
+
+    sortRequests() {
+        if (this.updateManagerRequestsSent.length > 0) {
+            this.hasRequestManagerRequests = true;
+        }
+
+        if (this.joinGroupRequestsSent.length > 0) {
+            this.hasJoinGroupRequests = true;
+        }
     }
 }

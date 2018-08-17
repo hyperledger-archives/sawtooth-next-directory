@@ -33,8 +33,13 @@ import {PageLoaderService} from "../../services/page-loader.service";
 export class RequestsComponent {
     public requestsReceived;
     public tableConfig;
+    public updateManagerTableConfig;
     public showConfirmModal = false;
     public confirmModalConfig: any = {};
+    public receivedJoinGroupRequests = false;
+    public receivedUpdateManagerRequests = false;
+    public joinGroupRequestsReceived;
+    public updateManagerRequestsReceived;
 
     constructor(private activatedRoute: ActivatedRoute,
                 private groupService: GroupService,
@@ -45,6 +50,10 @@ export class RequestsComponent {
                 private pageLoader: PageLoaderService,
                 private utils: UtilsService) {
         this.requestsReceived = this.activatedRoute.snapshot.data['requestsReceived'];
+        this.joinGroupRequestsReceived = _.filter(this.requestsReceived, {type : 'ADD_ROLE_MEMBERS'});
+        this.updateManagerRequestsReceived = _.filter(this.requestsReceived, {type : 'UPDATE_USER_MANAGER'});
+        this.sortRequests();
+
         this.tableConfig = {
             selectable: true,
             selection: [],
@@ -54,6 +63,33 @@ export class RequestsComponent {
                 }),
                 new TableHeader('Group Requested', '', 'function', (element) => {
                     return this.groupUtils.getGroup(element.object).name;
+                }),
+                new TableHeader('Reason', 'openReason', 'string')
+            ],
+            actionsComponent: RequestsActionsComponent
+        };
+
+        this.updateManagerTableConfig = {
+            selectable: true,
+            selection: [],
+            headers: [
+                new TableHeader('Employee Name', '', 'function', (element) => {
+                    console.log(`Getting the name for: ${element.target}`);
+                    const name = this.usersUtils.getUser(element.object).name;
+                    console.log(`Got name: ${name}`);
+                    return name;
+                }),
+                new TableHeader('Current Manager Name', '', 'function', (element) => {
+                    console.log(`Getting the name for: ${element.opener}`);
+                    const name = this.usersUtils.getUser(element.opener).name;
+                    console.log(`Got name: ${name}`);
+                    return name;
+                }),
+                new TableHeader('New Manager Name', '', 'function', (element) => {
+                    console.log(`Getting the name for: ${element.target}`);
+                    const name = this.usersUtils.getUser(element.target).name;
+                    console.log(`Got name: ${name}`);
+                    return name;
                 }),
                 new TableHeader('Reason', 'openReason', 'string')
             ],
@@ -103,5 +139,15 @@ export class RequestsComponent {
 
         }
     }
+
+    sortRequests() {
+        if (this.updateManagerRequestsReceived.length > 0) {
+            this.receivedUpdateManagerRequests = true;
+        }
+
+        if (this.joinGroupRequestsReceived.length > 0) {
+            this.receivedJoinGroupRequests = true;
+        }
+    }   
 
 }

@@ -74,6 +74,17 @@ export class UsersService {
             .catch(this.utils.catchError);
     }
 
+
+    updateManager(userId, managerId) {
+        let request = environment.update_manager(userId, managerId);
+        return this.http.put(request.url, request.body, this.context.httpOptions())
+            .toPromise()
+            .then((response) => {
+                return response.json();
+            })
+            .catch(this.utils.catchError);
+    }
+
     getUsers() {
         return this.http.get(environment.users, {
             headers: this.context.httpHeaders()
@@ -87,12 +98,6 @@ export class UsersService {
     }
 
     getUserRequests() {
-        // this.getUsers()
-        //     .then((users) => {
-        //         let proposals = _.reduce(users, (accumulator, user) => {
-        //             return accumulator.concat(user.proposals)
-        //         }, [])
-        //     })
         let url = environment.user_proposals(this.context.getUser().id);
         return this.http.get(url, {
             headers: this.context.httpHeaders()
