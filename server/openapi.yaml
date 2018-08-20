@@ -248,9 +248,7 @@ paths:
           schema:
             properties:
               data:
-                properties:
-                  role:
-                    $ref: '#/definitions/role'
+                $ref: '#/definitions/newRoleResponse'
         '400':
           description: Response for a bad request
           schema:
@@ -335,9 +333,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: >-
-                  Id of the user to add as an administrator to this role
+                $ref: '#/definitions/userId'
       responses:
         '200':
           description: Success response with proposal id
@@ -380,9 +376,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: >-
-                  Id of the user to remove as administrator from this role
+                $ref: '#/definitions/userId'
       responses:
         '200':
           description: Success response with proposal id
@@ -428,8 +422,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: Id of the user to be add as member to this role
+                $ref: '#/definitions/userId'
       responses:
         '200':
           description: Success response with proposal id
@@ -610,8 +603,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: Id of the task to add to this role
+                $ref: '#/definitions/taskId'
       responses:
         '200':
           description: Success response with proposal id
@@ -746,9 +738,7 @@ paths:
           schema:
             properties:
               data:
-                properties:
-                  task:
-                    $ref: '#/definitions/task'
+                $ref: '#/definitions/newTaskResponse'
         '400':
           description: Response for a bad request
           schema:
@@ -1058,7 +1048,7 @@ paths:
                   authorization:
                     $ref: '#/definitions/authToken'
                   user:
-                    $ref: '#/definitions/user'
+                    $ref: '#/definitions/newUserResponse'
         '400':
           description: Response for a bad request
           schema:
@@ -1344,6 +1334,8 @@ definitions:
   head:
     type: string
     example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+  # Link is only specifying for proposals at the moment, will need to
+  #   add links for each endpoint. 
   link:
     type: string
     example: https://api.hyper-directory.t-mobile.com/proposals?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=0&limit=100
@@ -1386,10 +1378,10 @@ definitions:
           example: 7ea843aa-1650-4530-94b1-a445d2a8193a
       start_block_num:
         type: integer
-        description: Description for start_block_num value
+        description: The first block in which the role object was valid
         example: 3
       end_block_num:
-        description: Description for end_block_num
+        description: The block at which the role object was replaced
         example: 9223372036854775807
       proposals:
         type: array
@@ -1455,9 +1447,59 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: for internal use only
-  task:
+  newRoleResponse:
+    description: Response containing role object after role has been created
     type: object
+    required:
+      - id
+      - name
+      - owners
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this role
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: for internal use only
+      id:
+        type: string
+        description: Id of the role
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      tasks:
+        type: array
+        description: List of ids for tasks grouped by this role
+        items:
+          type: string
+          example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+      name:
+        type: string
+        description: Name of the role
+        example: Payroll Administrator
+      members:
+        type: array
+        description: List of users ids authorized by this role
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      administrators:
+        type: array
+        description: List of role administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of role owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+  task:
     description: A specific permission in the system
+    type: object
     required:
       - id
       - name
@@ -1465,6 +1507,7 @@ definitions:
       - owners
     properties:
       start_block_num:
+        description: The first block in which the task object was valid
         type: integer
         example: 25
       proposals:
@@ -1487,6 +1530,7 @@ definitions:
         example: ISPCA compliant
       end_block_num:
         type: integer
+        description: The block at which the task object was replaced
         example: 9223372036854775807
       administrators:
         type: array
@@ -1538,12 +1582,58 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: ISPCA compliant
+  newTaskResponse:
+    type: object
+    description: Response after new task has been created
+    required:
+      - id
+      - name
+      - administrators
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this task
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      id:
+        type: string
+        description: Id of the task
+        example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: ISPCA Compliant
+      name:
+        type: string
+        description: Name of the task
+        example: issue-paycheck
+      administrators:
+        type: array
+        description: List of administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      roles:
+        type: array
+        description: List of ids for roles which include this task
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
   user:
     description: An actor in the system who can take various authorizations
     type: object
     required:
       - id
       - name
+    # User object properties is missing manager currently as users cannot be
+    #   assigned a manager at the moment.
     properties:
       subordinates:
         type: array
@@ -1584,6 +1674,10 @@ definitions:
         items:
           type: string
           example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: hire-date:2009-07-17
   newUser:
     description: Details provided to create a new user
     type: object
@@ -1591,7 +1685,6 @@ definitions:
       - name
       - username
       - password
-      - email
     properties:
       name:
         type: string
@@ -1613,6 +1706,54 @@ definitions:
         type: string
         description: Email address to associate with the user's account
         example: susan@biz.co
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: hire-date:2009-07-17
+  newUserResponse:
+    description: Response after new user has been created
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this user
+        items:
+          type: string
+          example: 
+      ownerOf:
+        type: array
+        description: List of ids for roles and tasks this user is an owner of
+        items:
+          type: string
+          example: 
+      id:
+        type: string
+        description: Id of the user
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      name:
+        type: string
+        description: Name of the user
+        example: Susan Susanson
+      username:
+        type: string
+        description: Username of the user
+        example: susan20
+      memberOf:
+        type: array
+        description: List of ids for roles this user is a member of
+        items:
+          type: string
+          example: 
+      administratorOf:
+        type: array
+        description: >-
+          List of ids for roles and tasks this user is an administrator of
+        items:
+          type: string
+          example: 
       metadata:
         type: string
         description: Any client supplied metadata
@@ -1703,8 +1844,6 @@ definitions:
   proposalUpdate:
     description: Details provided to update a proposal
     type: object
-    required:
-      - status
     properties:
       status:
         type: string
