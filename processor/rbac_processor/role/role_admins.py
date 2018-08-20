@@ -83,7 +83,7 @@ def apply_propose_remove(header, payload, state):
         header,
         role_admins_payload,
         role_admins_address,
-        state)
+        state, True)
 
     if not no_open_proposal(
             state_entries=state_entries,

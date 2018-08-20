@@ -14,9 +14,9 @@ limitations under the License.
 =========================================================================-->
 <app-panel-header [header]="'Requests'"></app-panel-header>
 
-<div *ngIf="receivedJoinGroupRequests">
+<div *ngIf="receivedGroupRequests">
     <app-data-table 
-        [data]="joinGroupRequestsReceived"
+        [data]="groupRequestsReceived"
         [config]="tableConfig">
     </app-data-table>
 </div>

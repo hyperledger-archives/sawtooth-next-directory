@@ -33,14 +33,17 @@ import {PageLoaderService} from "../../services/page-loader.service";
 export class RequestsComponent {
     public requestsReceived;
     public tableConfig;
+    public removeFromGroupTableConfig
     public updateManagerTableConfig;
     public showConfirmModal = false;
     public confirmModalConfig: any = {};
-    public receivedJoinGroupRequests = false;
+    public receivedGroupRequests = false;
+    public receivedRemoveGroupRequests = false;
     public receivedUpdateManagerRequests = false;
-    public joinGroupRequestsReceived;
+    public groupRequestsReceived;
+    public removeGroupRequestsReceived;
     public updateManagerRequestsReceived;
-
+    
     constructor(private activatedRoute: ActivatedRoute,
                 private groupService: GroupService,
                 private groupUtils: GroupsUtilsService,
@@ -50,7 +53,9 @@ export class RequestsComponent {
                 private pageLoader: PageLoaderService,
                 private utils: UtilsService) {
         this.requestsReceived = this.activatedRoute.snapshot.data['requestsReceived'];
-        this.joinGroupRequestsReceived = _.filter(this.requestsReceived, {type : 'ADD_ROLE_MEMBERS'});
+        var role_actions = ['ADD_ROLE_MEMBERS', 'REMOVE_ROLE_MEMBERS', 'ADD_ROLE_OWNERS', 'REMOVE_ROLE_OWNERS', 'ADD_ROLE_ADMINS', 'REMOVE_ROLE_ADMINS']
+
+        this.groupRequestsReceived = _.filter(this.requestsReceived, function(request) {return role_actions.indexOf(request.type) > -1 });
         this.updateManagerRequestsReceived = _.filter(this.requestsReceived, {type : 'UPDATE_USER_MANAGER'});
         this.sortRequests();
 
@@ -63,6 +68,21 @@ export class RequestsComponent {
                 }),
                 new TableHeader('Group Requested', '', 'function', (element) => {
                     return this.groupUtils.getGroup(element.object).name;
+                }),
+                new TableHeader('Join / Remove', '', 'function', (element) => {
+                    if (element.type == 'ADD_ROLE_MEMBERS') {
+                        return "Join as member";
+                    } else if (element.type == 'REMOVE_ROLE_MEMBERS') {
+                        return "Remove member";
+                    } else if (element.type == 'ADD_ROLE_OWNERS') {
+                        return "Join as owner";
+                    } else if (element.type == 'REMOVE_ROLE_OWNERS') {
+                        return "Remove owner";
+                    } else if (element.type == 'ADD_ROLE_ADMINS') {
+                        return "Join as admin";
+                    } else if (element.type == 'REMOVE_ROLE_ADMINS') {
+                        return "Remove admin";
+                    }
                 }),
                 new TableHeader('Reason', 'openReason', 'string')
             ],
@@ -145,8 +165,8 @@ export class RequestsComponent {
             this.receivedUpdateManagerRequests = true;
         }
 
-        if (this.joinGroupRequestsReceived.length > 0) {
-            this.receivedJoinGroupRequests = true;
+        if (this.groupRequestsReceived.length > 0) {
+            this.receivedGroupRequests = true;
         }
     }   
 

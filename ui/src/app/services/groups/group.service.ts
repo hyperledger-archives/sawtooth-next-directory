@@ -53,7 +53,7 @@ export class GroupService {
         return this.http.post(request.url, request.body, this.context.httpOptions())
             .toPromise()
             .then((response) => {
-                console.log('Add Member: ',response.json());
+                console.log('Add Owner: ',response.json());
                 return response.json();
             })
             .catch(this.utils.catchError);
@@ -64,7 +64,7 @@ export class GroupService {
         return this.http.post(request.url, request.body, this.context.httpOptions())
             .toPromise()
             .then((response) => {
-                console.log('Add Member: ',response.json());
+                console.log('Add Admin: ',response.json());
                 return response.json();
             })
             .catch(this.utils.catchError);

@@ -14,9 +14,9 @@ limitations under the License.
 =========================================================================-->
 <app-panel-header [header]="'Pending Approval'"></app-panel-header>
 
-<div *ngIf="hasJoinGroupRequests">
+<div *ngIf="hasGroupRequests">
     <app-data-table
-        [data]="joinGroupRequestsSent"
+        [data]="groupRequestsSent"
         [config]="tableConfig">
     </app-data-table>
 </div>

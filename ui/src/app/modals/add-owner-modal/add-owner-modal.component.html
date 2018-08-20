@@ -3,7 +3,7 @@
     <app-centered>
         <div class="modal">
             <div class="modal-header modal-header-left">
-                <h1>Add Admin</h1>
+                <h1>Add Owner</h1>
             </div>
             <div class="modal-close" (click)="close()">
                 <i class="icon-icon-close hd-clickable"></i>
@@ -11,7 +11,7 @@
             <div class="modal-content">
                 <mat-form-field class="hd-form-input full-width">
                     <p>User Name</p>
-                    <input type="text" matInput [formControl]="addAdminForm" [matAutocomplete]="auto">
+                    <input type="text" matInput [formControl]="addOwnerForm" [matAutocomplete]="auto">
                 </mat-form-field>
 
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="display.bind(this)">
@@ -28,7 +28,7 @@
                     <app-link class="link-bold" (onClickInner)="close()">Cancel</app-link>
                 </li>
                 <li>
-                    <app-button (onClickInner)="addAdmin()"
+                    <app-button (onClickInner)="addOwner()"
                                 class="button-primary">Add
                     </app-button>
                 </li>

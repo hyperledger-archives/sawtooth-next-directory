@@ -99,6 +99,7 @@ import { UpdateManagerModalComponent } from './modals/update-manager-modal/updat
 import { RequestManagerModalComponent } from './modals/request-manager-modal/request-manager-modal.component';
 import { UpdateManagerActionsComponent } from './secondary-components/update-manager-actions/update-manager-actions.component';
 import { AddAdminModalComponent } from './modals/add-admin-modal/add-admin-modal.component';
+import { AddOwnerModalComponent } from './modals/add-owner-modal/add-owner-modal.component';
 
 @NgModule({
     declarations: [
@@ -146,7 +147,8 @@ import { AddAdminModalComponent } from './modals/add-admin-modal/add-admin-modal
         UpdateManagerModalComponent,
         RequestManagerModalComponent,
         UpdateManagerActionsComponent,
-        AddAdminModalComponent
+        AddAdminModalComponent,
+        AddOwnerModalComponent
     ],
     imports: [
         BrowserModule,

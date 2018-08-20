@@ -29,22 +29,24 @@ import * as _ from "lodash";
 })
 export class PendingApprovalComponent implements OnInit {
     public requestsSent;
-    public joinGroupRequestsSent;
+    public groupRequestsSent;
     public updateManagerRequestsSent;
     public tableConfig;
     public updateManagerTableConfig;
     public user;
     public allGroups;
-    public hasJoinGroupRequests = false;
+    public hasGroupRequests = false;
     public hasRequestManagerRequests = false;
-
+    
     constructor(private activatedRoute: ActivatedRoute,
                 private groupService: GroupService,
                 private context: ContextService,
                 private usersUtils: UsersUtilsService,
                 private utils: UtilsService) {
         this.requestsSent = this.activatedRoute.snapshot.data['requestsSent'];
-        this.joinGroupRequestsSent = _.filter(this.requestsSent, {type : 'ADD_ROLE_MEMBERS'});
+        var role_actions = ['ADD_ROLE_MEMBERS', 'REMOVE_ROLE_MEMBERS', 'ADD_ROLE_OWNERS', 'REMOVE_ROLE_OWNERS', 'ADD_ROLE_ADMINS', 'REMOVE_ROLE_ADMINS']
+        this.groupRequestsSent = _.filter(this.requestsSent, function(request) {return role_actions.indexOf(request.type) > -1 });
+    
         this.updateManagerRequestsSent = _.filter(this.requestsSent, {type : 'UPDATE_USER_MANAGER'});
         this.user = this.context.getUser();
         this.allGroups = this.context.getAllGroups();
@@ -56,6 +58,21 @@ export class PendingApprovalComponent implements OnInit {
             headers: [
                 new TableHeader('Group Name', '', 'function', (element) => {
                     return _.find(this.allGroups, {id: element.object}).name;
+                }),
+                new TableHeader('Join / Remove', '', 'function', (element) => {
+                    if (element.type == 'ADD_ROLE_MEMBERS') {
+                        return "Join as member";
+                    } else if (element.type == 'REMOVE_ROLE_MEMBERS') {
+                        return "Remove member";
+                    } else if (element.type == 'ADD_ROLE_OWNERS') {
+                        return "Join as owner";
+                    } else if (element.type == 'REMOVE_ROLE_OWNERS') {
+                        return "Remove owner";
+                    } else if (element.type == 'ADD_ROLE_ADMINS') {
+                        return "Join as admin";
+                    } else if (element.type == 'REMOVE_ROLE_ADMINS') {
+                        return "Remove admin";
+                    }
                 }),
                 new TableHeader('Reason', 'openReason', 'string'),
                 new TableHeader('Owner', '', 'function', (element) => {
@@ -104,8 +121,8 @@ export class PendingApprovalComponent implements OnInit {
             this.hasRequestManagerRequests = true;
         }
 
-        if (this.joinGroupRequestsSent.length > 0) {
-            this.hasJoinGroupRequests = true;
+        if (this.groupRequestsSent.length > 0) {
+            this.hasGroupRequests = true;
         }
     }
 }

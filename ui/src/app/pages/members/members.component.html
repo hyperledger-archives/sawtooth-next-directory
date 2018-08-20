@@ -21,12 +21,12 @@ limitations under the License.
     </app-link>
     <app-link *ngIf="isOwner"
     (onClickInner)="addOwnerModal()"
-    class="link-bold-disabled">
+    class="link-bold">
     <i class="fa fa-plus"></i>Add Owner
     </app-link>
     <app-link *ngIf="isOwner"
         (onClickInner)="addAdminModal()"
-        class="link-bold-disabled">
+        class="link-bold">
     <i class="fa fa-plus"></i>Add Admin
     </app-link>
     <app-link *ngIf="!isOwner && !isMember && !alreadyRequested()"
@@ -63,6 +63,16 @@ limitations under the License.
                           (onAdd)="addToGroup($event)"
                           [(show)]="showModal">
     </app-add-member-modal>
+    <app-add-owner-modal *ngSwitchCase="'add-owner'"
+                          [group]="group"
+                          (onAdd)="addToGroup($event)"
+                          [(show)]="showModal">
+    </app-add-owner-modal>
+    <app-add-admin-modal *ngSwitchCase="'add-admin'"
+                          [group]="group"
+                          (onAdd)="addToGroup($event)"
+                          [(show)]="showModal">
+    </app-add-admin-modal>
     <app-request-access-modal *ngSwitchCase="'request-access'"
                               [group]="group"
                               [(show)]="showModal">

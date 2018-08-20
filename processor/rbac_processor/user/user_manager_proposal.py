@@ -160,7 +160,6 @@ def handle_state_set(proposal_state_entries,
         proposal_address: proposal_container.SerializeToString()
     })
 
-
 def apply_user_confirm(header, payload, state):
     confirm_payload = user_transaction_pb2.ConfirmUpdateUserManager()
     confirm_payload.ParseFromString(payload.content)
