@@ -24,7 +24,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: rbac-server-dev
+    image: rbac-server-dev:${ISOLATION_ID}
     volumes:
       - ".:/project/tmobile-rbac"
     ports:
@@ -48,7 +48,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: rbac-tp-dev
+    image: rbac-tp-dev:${ISOLATION_ID}
     volumes:
       - ".:/project/tmobile-rbac"
     command: ./bin/rbac-tp -vv tcp://validator:4004
@@ -61,7 +61,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: rbac-ledger-sync-dev
+    image: rbac-ledger-sync-dev:${ISOLATION_ID}
     volumes:
       - ".:/project/tmobile-rbac"
     depends_on:
