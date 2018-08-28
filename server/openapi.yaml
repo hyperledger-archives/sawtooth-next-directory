@@ -74,7 +74,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getAllProposalsLink'
               paging:
                 $ref: '#/definitions/paging'
               head:
@@ -118,7 +118,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getProposalLink'
               head:
                 $ref: '#/definitions/head'
               data:
@@ -202,7 +202,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getAllRolesLink'
               paging:
                 $ref: '#/definitions/paging'
               head:
@@ -288,7 +288,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getRoleLink'
               head:
                 $ref: '#/definitions/head'
               data:
@@ -692,7 +692,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getAllTasksLink'
               paging:
                 $ref: '#/definitions/paging'
               head:
@@ -774,7 +774,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getTaskLink'
               head:
                 $ref: '#/definitions/head'
               data:
@@ -1000,7 +1000,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getAllUsersLink'
               paging:
                 $ref: '#/definitions/paging'
               head:
@@ -1084,7 +1084,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getUserLink'
               head:
                 $ref: '#/definitions/head'
               data:
@@ -1178,7 +1178,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getOpenProposalsLink'
               paging:
                 $ref: '#/definitions/paging'
               head:
@@ -1226,7 +1226,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getAllBlocksLink'
               paging:
                 $ref: '#/definitions/paging'
               head:
@@ -1250,7 +1250,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getBlockLink'
               data:
                 $ref: '#/definitions/block'
         default:
@@ -1275,7 +1275,7 @@ paths:
           schema:
             properties:
               link:
-                $ref: '#/definitions/link'
+                $ref: '#/definitions/getBlockLink'
               data:
                 $ref: '#/definitions/block'
         default:
@@ -1322,7 +1322,7 @@ parameters:
     description: Id of a particular task in state
     required: true
     type: string
-    x-example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+    x-example: 7303e601-a596-4561-94f2-84ad716c4089
   userId:
     name: id
     in: path
@@ -1334,11 +1334,39 @@ definitions:
   head:
     type: string
     example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
-  # Link is only specifying for proposals at the moment, will need to
-  #   add links for each endpoint. 
-  link:
+  getAllProposalsLink:
     type: string
-    example: https://api.hyper-directory.t-mobile.com/proposals?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=0&limit=100
+    example: https://api.hyper-directory.t-mobile.com/api/proposals?head=8d322d1d64fe9cd031bd67168333f4a89b3c8d8d9579c720dea0b2b53a6c073e265dcb2f427a3b83e377e204a6a65b5389529acf17ab4f52b069fd75429a3d78&start=0&limit=100
+  getProposalLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/proposals/63467642-6067-4c82-a096-1a1972d776b3?head=8d322d1d64fe9cd031bd67168333f4a89b3c8d8d9579c720dea0b2b53a6c073e265dcb2f427a3b83e377e204a6a65b5389529acf17ab4f52b069fd75429a3d78&start=None&limit=None
+  getAllRolesLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/roles?head=0b3de8da47809b9e788e5a4e8769fa1c66866e1182656c66f22ff974bc7bee3c37037cb3f8ccf3d0900dfbfa7449cbe79bc8896571ea13be61bb32d988a145e4&start=0&limit=100
+  getRoleLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/roles/1f68397b-5b38-4aec-9913-4541c7e1d4c4?head=0b3de8da47809b9e788e5a4e8769fa1c66866e1182656c66f22ff974bc7bee3c37037cb3f8ccf3d0900dfbfa7449cbe79bc8896571ea13be61bb32d988a145e4&start=None&limit=None
+  getAllTasksLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/tasks?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=0&limit=100
+  getTaskLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/tasks/7303e601-a596-4561-94f2-84ad716c4089?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=None&limit=None
+  getAllUsersLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/users?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=0&limit=100
+  getUserLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=None&limit=None
+  getOpenProposalsLink:
+    type: string
+    example: http://localhost:8000/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a/proposals/open?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=0&limit=100
+  getAllBlocksLink:
+    type: string
+    example: http://localhost:8000/api/blocks?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=0&limit=100
+  getBlockLink:
+    type: string
+    example: http://localhost:8000/api/blocks/65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
   paging:
     properties:
       limit:
