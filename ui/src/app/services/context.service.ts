@@ -71,7 +71,6 @@ export class ContextService {
     }
 
     setAllManagers(userList) {
-        // let managers = _.filter(userList, 'manager');
         this.allManagers = userList;
     }
 

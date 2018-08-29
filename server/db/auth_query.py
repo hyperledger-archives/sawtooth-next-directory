@@ -36,7 +36,7 @@ async def fetch_info_by_user_id(conn, user_id):
     return auth_info
 
 async def fetch_info_by_user_name(conn, user_name):
-    auth_info = await r.table('auth').filter(r.row["user_name"] == user_name).coerce_to('array').run(conn) #filter( {user_name: 'manager_a'}).run(conn)
+    auth_info = await r.table('auth').filter(r.row["user_name"] == user_name).coerce_to('array').run(conn)
 
     if not auth_info:
         raise ApiNotFound(

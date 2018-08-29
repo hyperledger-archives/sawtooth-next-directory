@@ -56,7 +56,6 @@ export class RequestManagerModalComponent {
     requestManager() {
         this.usersService.updateManager(this.self.id, this.requestManagerForm.value.id)
             .then((response) => {
-                console.log(response);
                 let user = this.context.getUser();
                 user.proposals.push(response.proposal_id);
                 this.onManagerRequested.emit(this.requestManagerForm.value);

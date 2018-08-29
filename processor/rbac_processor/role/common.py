@@ -35,7 +35,7 @@ from rbac_processor.state import get_state
 from rbac_processor.state import set_state
 
 
-def validate_role_rel_proposal(header, propose, rel_address, state, isRemove = False):
+def validate_role_rel_proposal(header, propose, rel_address, state, is_remove = False):
     """Validates that the User exists, the Role exists, and the User is not
     in the Role's relationship specified by rel_address.
 
@@ -87,7 +87,7 @@ def validate_role_rel_proposal(header, propose, rel_address, state, isRemove = F
                 "manager {} nor the group owner / admin".format(header.signer_public_key,
                                     [user.user_id, user.manager_id]))
 
-        if (not isRemove) and is_in_role_rel_container(
+        if (not is_remove) and is_in_role_rel_container(
                 role_rel_container,
                 propose.role_id,
                 propose.user_id):

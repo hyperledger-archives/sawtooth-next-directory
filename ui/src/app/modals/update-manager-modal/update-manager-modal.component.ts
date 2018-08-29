@@ -50,7 +50,6 @@ export class UpdateManagerModalComponent {
     updateManager() {
         this.usersService.updateManager(this.row.id, this.updateManagerForm.value.id)
             .then((response) => {
-                console.log(response);
                 this.onUpdateManager.emit(this.updateManagerForm.value);
                 this.close();
                 this.utils.defaultSnackBar('Request to update manager was sent');
