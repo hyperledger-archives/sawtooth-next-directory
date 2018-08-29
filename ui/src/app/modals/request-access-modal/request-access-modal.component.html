@@ -23,11 +23,15 @@ limitations under the License.
                 <i class="icon-icon-close hd-clickable"></i>
             </div>
             <div class="modal-content">
-                <div class="modal-textarea">
-                    What's the reason for your request (Max 60 characters).
-                    <textarea placeholder="Enter reason..." maxlength="60" rows="6" value=""></textarea>
+                <p>What's the reason for your request (Max 60 characters).</p>
+                <app-form-input [label]="'Enter reasoning...'"
+                                [(throwError)]="throwError"
+                                [(value)]="reason">
+                </app-form-input>
+                <div class="modal-message">
+                    <p *ngIf="throwError" class="text-pink">
+                        Your reason can only be 60 characters max.</p>
                 </div>
-                <div class="modal-message"></div>
             </div>
 
             <ul class="modal-options-horizontal">

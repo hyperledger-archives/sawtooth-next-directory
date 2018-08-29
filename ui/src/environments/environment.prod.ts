@@ -24,10 +24,11 @@ export const environment = {
 
     //ROLES API
     roles: base + '/roles',
-    add_member: (roleId, member) => {
+    add_member: (roleId, member, reason) => {
         return {
             body: {
-                id: member.id
+                id: member.id,
+                reason: reason
             },
             url: base + '/roles/' + roleId + '/members'
         }

@@ -36,6 +36,8 @@ export class RequestAccessModalComponent {
     }
 
     private _show;
+    public reason;
+    public throwError = false;
     @Output() showChange = new EventEmitter();
     @Input() group;
 
@@ -54,7 +56,11 @@ export class RequestAccessModalComponent {
     }
 
     requestAccess() {
-        this.groupService.addMemberToGroup(this.group.id, this.context.getUser())
+        if(this.reason.length > 60) {
+            this.throwError = true;
+        } else {
+            this.throwError = false;
+            this.groupService.addMemberToGroup(this.group.id, this.context.getUser(), this.reason)
             .then((response) => {
 
                 console.log('Request Access Response: ', response);
@@ -63,6 +69,7 @@ export class RequestAccessModalComponent {
                 this.close();
                 this.utils.defaultSnackBar('Request Sent')
             });
+        }
     }
 
 }

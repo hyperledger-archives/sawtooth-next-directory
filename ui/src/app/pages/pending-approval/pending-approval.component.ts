@@ -47,7 +47,7 @@ export class PendingApprovalComponent implements OnInit {
                 new TableHeader('Group Name', '', 'function', (element) => {
                     return _.find(this.allGroups, {id: element.object}).name;
                 }),
-                new TableHeader('Reason', 'openReason', 'string'),
+                new TableHeader('Reason', 'open_reason', 'string'),
                 new TableHeader('Owner', '', 'function', (element) => {
                     let group = _.find(this.allGroups, {id: element.object});
                     return this.usersUtils.displayOwners(group, this.user);

@@ -55,7 +55,7 @@ export class RequestsComponent {
                 new TableHeader('Group Requested', '', 'function', (element) => {
                     return this.groupUtils.getGroup(element.object).name;
                 }),
-                new TableHeader('Reason', 'openReason', 'string')
+                new TableHeader('Reason', 'open_reason', 'string')
             ],
             actionsComponent: RequestsActionsComponent
         };
