@@ -35,6 +35,8 @@ paths:
             properties:
               data:
                 properties:
+                  user_id:
+                    $ref: '#/definitions/userId'
                   authorization:
                     $ref: '#/definitions/authToken'
         '400':
@@ -71,16 +73,16 @@ paths:
           description: Response with a list of proposals
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getAllProposalsLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
               data:
                 type: array
                 items:
                   $ref: '#/definitions/proposal'
-              head:
-                $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
-              paging:
-                $ref: '#/definitions/paging'
         '400':
           description: Response for a bad request
           schema:
@@ -115,12 +117,12 @@ paths:
           description: Response with the fetched proposal
           schema:
             properties:
-              data:
-                $ref: '#/definitions/proposal'
+              link:
+                $ref: '#/definitions/getProposalLink'
               head:
                 $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
+              data:
+                $ref: '#/definitions/proposal'
         '400':
           description: Response for a bad request
           schema:
@@ -199,16 +201,16 @@ paths:
           description: Response with a list of roles
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getAllRolesLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
               data:
                 type: array
                 items:
                   $ref: '#/definitions/role'
-              head:
-                $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
-              paging:
-                $ref: '#/definitions/paging'
         '400':
           description: Response for a bad request
           schema:
@@ -246,9 +248,7 @@ paths:
           schema:
             properties:
               data:
-                properties:
-                  role:
-                    $ref: '#/definitions/role'
+                $ref: '#/definitions/newRoleResponse'
         '400':
           description: Response for a bad request
           schema:
@@ -287,12 +287,12 @@ paths:
           description: Response with the fetched role
           schema:
             properties:
-              data:
-                $ref: '#/definitions/role'
+              link:
+                $ref: '#/definitions/getRoleLink'
               head:
                 $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
+              data:
+                $ref: '#/definitions/role'
         '400':
           description: Response for a bad request
           schema:
@@ -333,9 +333,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: >-
-                  Id of the user to add as an administrator to this role
+                $ref: '#/definitions/userId'
       responses:
         '200':
           description: Success response with proposal id
@@ -378,9 +376,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: >-
-                  Id of the user to remove as administrator from this role
+                $ref: '#/definitions/userId'
       responses:
         '200':
           description: Success response with proposal id
@@ -426,8 +422,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: Id of the user to be add as member to this role
+                $ref: '#/definitions/userId'
       responses:
         '200':
           description: Success response with proposal id
@@ -608,8 +603,7 @@ paths:
             type: object
             properties:
               id:
-                type: string
-                description: Id of the task to add to this role
+                $ref: '#/definitions/taskId'
       responses:
         '200':
           description: Success response with proposal id
@@ -697,16 +691,16 @@ paths:
           description: Response with a list of tasks
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getAllTasksLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
               data:
                 type: array
                 items:
                   $ref: '#/definitions/task'
-              head:
-                $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
-              paging:
-                $ref: '#/definitions/paging'
         '400':
           description: Response for a bad request
           schema:
@@ -744,9 +738,7 @@ paths:
           schema:
             properties:
               data:
-                properties:
-                  task:
-                    $ref: '#/definitions/task'
+                $ref: '#/definitions/newTaskResponse'
         '400':
           description: Response for a bad request
           schema:
@@ -781,12 +773,12 @@ paths:
           description: Response with the fetched task
           schema:
             properties:
-              data:
-                $ref: '#/definitions/task'
+              link:
+                $ref: '#/definitions/getTaskLink'
               head:
                 $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
+              data:
+                $ref: '#/definitions/task'
         '400':
           description: Response for a bad request
           schema:
@@ -1007,16 +999,16 @@ paths:
           description: Response with a list of users
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getAllUsersLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
               data:
                 type: array
                 items:
                   $ref: '#/definitions/user'
-              head:
-                $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
-              paging:
-                $ref: '#/definitions/paging'
         '400':
           description: Response for a bad request
           schema:
@@ -1056,7 +1048,7 @@ paths:
                   authorization:
                     $ref: '#/definitions/authToken'
                   user:
-                    $ref: '#/definitions/user'
+                    $ref: '#/definitions/newUserResponse'
         '400':
           description: Response for a bad request
           schema:
@@ -1091,12 +1083,12 @@ paths:
           description: Response with the fetched user
           schema:
             properties:
-              data:
-                $ref: '#/definitions/user'
+              link:
+                $ref: '#/definitions/getUserLink'
               head:
                 $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
+              data:
+                $ref: '#/definitions/user'
         '400':
           description: Response for a bad request
           schema:
@@ -1139,6 +1131,7 @@ paths:
               id:
                 type: string
                 description: Id of the new manager for this user
+                example: 021606ba6e296954239187c2fa78797bf6ea1f1c6371859bef2377bd33f0d0ba85
       responses:
         '200':
           description: Success response with proposal id
@@ -1184,16 +1177,16 @@ paths:
           description: Response with a list of open proposals
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getOpenProposalsLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
               data:
                 type: array
                 items:
                   $ref: '#/definitions/proposal'
-              head:
-                $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
-              paging:
-                $ref: '#/definitions/paging'
         '400':
           description: Response for a bad request
           schema:
@@ -1232,16 +1225,16 @@ paths:
           description: Response with a list of block info
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getAllBlocksLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
               data:
                 type: array
                 items:
                   $ref: '#/definitions/block'
-              head:
-                $ref: '#/definitions/head'
-              link:
-                $ref: '#/definitions/link'
-              paging:
-                $ref: '#/definitions/paging'
         default:
           description: Response for an unexpected error
           schema:
@@ -1256,10 +1249,10 @@ paths:
           description: Response with the latest block info
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getBlockLink'
               data:
                 $ref: '#/definitions/block'
-              link:
-                $ref: '#/definitions/link'
         default:
           description: Response for an unexpected error
           schema:
@@ -1281,10 +1274,10 @@ paths:
           description: Response with the fetched block info
           schema:
             properties:
+              link:
+                $ref: '#/definitions/getBlockLink'
               data:
                 $ref: '#/definitions/block'
-              link:
-                $ref: '#/definitions/link'
         default:
           description: Response for an unexpected error
           schema:
@@ -1329,7 +1322,7 @@ parameters:
     description: Id of a particular task in state
     required: true
     type: string
-    x-example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+    x-example: 7303e601-a596-4561-94f2-84ad716c4089
   userId:
     name: id
     in: path
@@ -1341,32 +1334,62 @@ definitions:
   head:
     type: string
     example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
-  link:
+  getAllProposalsLink:
     type: string
-    example: https://api.hyper-directory.t-mobile.com/proposals?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+    example: https://api.hyper-directory.t-mobile.com/api/proposals?head=8d322d1d64fe9cd031bd67168333f4a89b3c8d8d9579c720dea0b2b53a6c073e265dcb2f427a3b83e377e204a6a65b5389529acf17ab4f52b069fd75429a3d78&start=0&limit=100
+  getProposalLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/proposals/63467642-6067-4c82-a096-1a1972d776b3?head=8d322d1d64fe9cd031bd67168333f4a89b3c8d8d9579c720dea0b2b53a6c073e265dcb2f427a3b83e377e204a6a65b5389529acf17ab4f52b069fd75429a3d78&start=None&limit=None
+  getAllRolesLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/roles?head=0b3de8da47809b9e788e5a4e8769fa1c66866e1182656c66f22ff974bc7bee3c37037cb3f8ccf3d0900dfbfa7449cbe79bc8896571ea13be61bb32d988a145e4&start=0&limit=100
+  getRoleLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/roles/1f68397b-5b38-4aec-9913-4541c7e1d4c4?head=0b3de8da47809b9e788e5a4e8769fa1c66866e1182656c66f22ff974bc7bee3c37037cb3f8ccf3d0900dfbfa7449cbe79bc8896571ea13be61bb32d988a145e4&start=None&limit=None
+  getAllTasksLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/tasks?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=0&limit=100
+  getTaskLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/tasks/7303e601-a596-4561-94f2-84ad716c4089?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=None&limit=None
+  getAllUsersLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/users?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=0&limit=100
+  getUserLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=None&limit=None
+  getOpenProposalsLink:
+    type: string
+    example: http://localhost:8000/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a/proposals/open?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=0&limit=100
+  getAllBlocksLink:
+    type: string
+    example: http://localhost:8000/api/blocks?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=0&limit=100
+  getBlockLink:
+    type: string
+    example: http://localhost:8000/api/blocks/65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
   paging:
     properties:
-      start:
-        type: integer
-        example: 200
       limit:
         type: integer
         example: 100
-      total:
-        type: integer
-        example: 54321
       first:
         type: string
         example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=0&limit=100
-      prev:
-        type: string
-        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=100&limit=100
-      next:
-        type: string
-        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=300&count=100
       last:
         type: string
         example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=54300&limit=100
+      next:
+        type: string
+        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=300&count=100
+      start:
+        type: integer
+        example: 200
+      prev:
+        type: string
+        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=100&limit=100
+      total:
+        type: integer
+        example: 54321
   role:
     description: A collection of tasks and members authorized for those tasks
     type: object
@@ -1375,6 +1398,25 @@ definitions:
       - name
       - owners
     properties:
+      tasks:
+        type: array
+        description: List of ids for tasks grouped by this role
+        items:
+          type: string
+          example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+      start_block_num:
+        type: integer
+        description: The first block in which the role object was valid
+        example: 3
+      end_block_num:
+        description: The block at which the role object was replaced
+        example: 9223372036854775807
+      proposals:
+        type: array
+        description: List of ids for open proposals for this role
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
       id:
         type: string
         description: Id of the role
@@ -1383,9 +1425,13 @@ definitions:
         type: string
         description: Name of the role
         example: Payroll Administrator
-      owners:
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: for internal use only
+      members:
         type: array
-        description: List of role owner ids
+        description: List of users ids authorized by this role
         items:
           type: string
           example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
@@ -1395,28 +1441,12 @@ definitions:
         items:
           type: string
           example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
-      members:
+      owners:
         type: array
-        description: List of users ids authorized by this role
+        description: List of role owner ids
         items:
           type: string
           example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
-      tasks:
-        type: array
-        description: List of ids for tasks grouped by this role
-        items:
-          type: string
-          example: 7ea843aa-1650-4530-94b1-a445d2a8193a
-      proposals:
-        type: array
-        description: List of ids for open proposals for this role
-        items:
-          type: string
-          example: 63467642-6067-4c82-a096-1a1972d776b3
-      metadata:
-        type: string
-        description: Any client supplied metadata
-        example: for internal use only
   newRole:
     type: object
     description: Details provided to create a new role
@@ -1445,31 +1475,100 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: for internal use only
-  task:
+  newRoleResponse:
+    description: Response containing role object after role has been created
     type: object
-    description: A specific permission in the system
     required:
       - id
       - name
-      - administrators
+      - owners
     properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this role
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: for internal use only
       id:
         type: string
-        description: Id of the task
-        example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+        description: Id of the role
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      tasks:
+        type: array
+        description: List of ids for tasks grouped by this role
+        items:
+          type: string
+          example: 7ea843aa-1650-4530-94b1-a445d2a8193a
       name:
         type: string
-        description: Name of the task
-        example: issue-paycheck
-      owners:
+        description: Name of the role
+        example: Payroll Administrator
+      members:
         type: array
-        description: List of owner ids
+        description: List of users ids authorized by this role
         items:
           type: string
           example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
       administrators:
         type: array
+        description: List of role administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of role owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+  task:
+    description: A specific permission in the system
+    type: object
+    required:
+      - id
+      - name
+      - administrators
+      - owners
+    properties:
+      start_block_num:
+        description: The first block in which the task object was valid
+        type: integer
+        example: 25
+      proposals:
+        type: array
+        description: List of ids for open proposals for this task
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      id:
+        type: string
+        description: Id of the task
+        example: 7303e601-a596-4561-94f2-84ad716c4089
+      name:
+        type: string
+        description: Name of the task
+        example: issue-paycheck
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: ISPCA compliant
+      end_block_num:
+        type: integer
+        description: The block at which the task object was replaced
+        example: 9223372036854775807
+      administrators:
+        type: array
         description: List of administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of owner ids
         items:
           type: string
           example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
@@ -1479,16 +1578,10 @@ definitions:
         items:
           type: string
           example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
-      proposals:
-        type: array
-        description: List of ids for open proposals for this task
-        items:
-          type: string
-          example: 63467642-6067-4c82-a096-1a1972d776b3
-      metadata:
-        type: string
-        description: Any client supplied metadata
-        example: ISPCA Compliant
+  taskId:
+    description: Id of a task
+    type: string
+    example: 7303e601-a596-4561-94f2-84ad716c4089
   newTask:
     description: Details provided to create a new task
     type: object
@@ -1517,13 +1610,71 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: ISPCA compliant
+  newTaskResponse:
+    type: object
+    description: Response after new task has been created
+    required:
+      - id
+      - name
+      - administrators
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this task
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      id:
+        type: string
+        description: Id of the task
+        example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: ISPCA Compliant
+      name:
+        type: string
+        description: Name of the task
+        example: issue-paycheck
+      administrators:
+        type: array
+        description: List of administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      roles:
+        type: array
+        description: List of ids for roles which include this task
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
   user:
     description: An actor in the system who can take various authorizations
     type: object
     required:
       - id
       - name
+    # User object properties is missing manager currently as users cannot be
+    #   assigned a manager at the moment.
     properties:
+      subordinates:
+        type: array
+        description: List of users reporting directly to this user
+        items:
+          type: string
+          example: 0368acfa552f9e1c7cd5c4cc85b6a5e3714d6421c562a08a1efb122424680dd8b0
+      ownerOf:
+        type: array
+        description: List of ids for roles and tasks this user is an owner of
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       id:
         type: string
         description: Id of the user
@@ -1532,19 +1683,15 @@ definitions:
         type: string
         description: Name of the user
         example: Susan Susanson
-      manager:
-        type: string
-        description: Id of the manager
-        example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
-      subordinates:
+      proposals:
         type: array
-        description: Unordered list of subordinates
+        description: List of ids for open proposals for this user
         items:
           type: string
-          example: 03d260a46457a064733153e09840c322bee1dff34445d7d49e19e60abd18fd0758
-      ownerOf:
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      memberOf:
         type: array
-        description: List of ids for roles and tasks this user is an owner of
+        description: List of ids for roles this user is a member of
         items:
           type: string
           example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
@@ -1555,18 +1702,6 @@ definitions:
         items:
           type: string
           example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
-      memberOf:
-        type: array
-        description: List of ids for roles this user is a member of
-        items:
-          type: string
-          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
-      proposals:
-        type: array
-        description: List of ids for open proposals for this user
-        items:
-          type: string
-          example: 63467642-6067-4c82-a096-1a1972d776b3
       metadata:
         type: string
         description: Any client supplied metadata
@@ -1576,12 +1711,17 @@ definitions:
     type: object
     required:
       - name
+      - username
       - password
     properties:
       name:
         type: string
         description: Name of the user
         example: Susan Susanson
+      username:
+        type: string
+        description: Username of the new user
+        example: susan20
       manager:
         type: string
         description: Id of the user's manager
@@ -1598,6 +1738,58 @@ definitions:
         type: string
         description: Any client supplied metadata
         example: hire-date:2009-07-17
+  newUserResponse:
+    description: Response after new user has been created
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this user
+        items:
+          type: string
+          example: 
+      ownerOf:
+        type: array
+        description: List of ids for roles and tasks this user is an owner of
+        items:
+          type: string
+          example: 
+      id:
+        type: string
+        description: Id of the user
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      name:
+        type: string
+        description: Name of the user
+        example: Susan Susanson
+      username:
+        type: string
+        description: Username of the user
+        example: susan20
+      memberOf:
+        type: array
+        description: List of ids for roles this user is a member of
+        items:
+          type: string
+          example: 
+      administratorOf:
+        type: array
+        description: >-
+          List of ids for roles and tasks this user is an administrator of
+        items:
+          type: string
+          example: 
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: hire-date:2009-07-17
+  userId:
+    description: Id of the user created from a request
+    type: string
+    example: 0250de681732ca6618b0c84677e06a02da8a1f540e498acad10839dbe279ffc1c7
   proposal:
     description: >-
       A request to change the state of a role, task, or user, which requires
@@ -1611,10 +1803,55 @@ definitions:
       - status
       - approvers
     properties:
+      approvers:
+        type: array
+        description: List of user ids that can approve this proposal
+        items:
+          type: string
+          example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
+      open_reason:
+        type: string
+        description: >-
+          A user supplied message explaining why the proposal was created
+        example: Please add me as a Payroll Administator
+      closer:
+        type: string
+        description: Id of the user who accepted or rejected the proposal
+        example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
+      object:
+        type: string
+        description: >-
+          Id of the role, task, or user that the target resource is being
+          added or removed from
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
       id:
         type: string
         description: Id of the proposal
         example: 63467642-6067-4c82-a096-1a1972d776b3
+      target:
+        type: string
+        description: >-
+          Id of the role, task, or user that is being added or removed from
+          the object resource
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      opener:
+        type: string
+        description: Id of the user who created the proposal
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      status:
+        type: string
+        description: Status of the proposal
+        enum:
+          - OPEN
+          - APPROVED
+          - REJECTED
+          - CONFIRMED
+      close_reason:
+        type: string
+        description: >-
+          A user supplied (upon accepting or rejecting proposal) message
+          explaining why the proposal was closed
+        example: Added new HR hire
       type:
         type: string
         description: The type of the proposal
@@ -1632,51 +1869,6 @@ definitions:
           - REMOVE_TASK_OWNERS
           - REMOVE_TASK_ADMINS
           - UPDATE_USER_MANAGER
-      object:
-        type: string
-        description: >-
-          Id of the role, task, or user that the target resource is being
-          added or removed from
-        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
-      target:
-        type: string
-        description: >-
-          Id of the role, task, or user that is being added or removed from
-          the object resource
-        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
-      status:
-        type: string
-        description: Status of the proposal
-        enum:
-          - OPEN
-          - APPROVED
-          - REJECTED
-          - CONFIRMED
-      opener:
-        type: string
-        description: Id of the user who created the proposal
-        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
-      closer:
-        type: string
-        description: Id of the user who accepted or rejected the proposal
-        example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
-      openReason:
-        type: string
-        description: >-
-          A user supplied message explaining why the proposal was created
-        example: Please add me as a Payroll Administator
-      closeReason:
-        type: string
-        description: >-
-          A user supplied (upon accepting or rejecting proposal) message
-          explaining why the proposal was closed
-        example: Added new HR hire
-      approvers:
-        type: array
-        description: List of user ids that can approve this proposal
-        items:
-          type: string
-          example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
   proposalUpdate:
     description: Details provided to update a proposal
     type: object
@@ -1692,6 +1884,10 @@ definitions:
         description: >-
           A user supplied message explaining why the proposal was updated
         example: Added new HR hire
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: "approval-date:2018-08-12"
   proposalId:
     description: Id of the proposal created from a request
     type: object
@@ -1699,6 +1895,7 @@ definitions:
       proposal_id:
         type: string
         description: Id of the proposal that was created
+        example: 63467642-6067-4c82-a096-1a1972d776b3
   block:
     properties:
       num:
@@ -1712,9 +1909,9 @@ definitions:
     type: object
     properties:
       id:
-        description: Id of user attempting to authenticate
+        description: Username of user attempting to authenticate
         type: string
-        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+        example: susan20
       password:
         type: string
         description: Password of user attempting to authenticate
