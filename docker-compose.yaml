@@ -24,7 +24,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: rbac-server-production
+    image: rbac-server-production:${ISOLATION_ID}
     ports:
       - "8000:8000"
     depends_on:
@@ -46,7 +46,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: rbac-tp-production
+    image: rbac-tp-production:${ISOLATION_ID}
     command: ./bin/rbac-tp -vv tcp://validator:4004
 
   ledger-sync:
@@ -57,7 +57,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: rbac-ledger-sync-production
+    image: rbac-ledger-sync-production:${ISOLATION_ID}
     depends_on:
       - rethink
       - validator
@@ -75,7 +75,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: rbac-ui-production
+    image: rbac-ui-production:${ISOLATION_ID}
     ports:
       - "4200:4200"
     depends_on:
