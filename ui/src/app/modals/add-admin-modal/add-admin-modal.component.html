@@ -1,0 +1,38 @@
+<div class="hd-full-overlay"
+     [ngClass]="{'shown': show}">
+    <app-centered>
+        <div class="modal">
+            <div class="modal-header modal-header-left">
+                <h1>Add Admin</h1>
+            </div>
+            <div class="modal-close" (click)="close()">
+                <i class="icon-icon-close hd-clickable"></i>
+            </div>
+            <div class="modal-content">
+                <mat-form-field class="hd-form-input full-width">
+                    <p>User Name</p>
+                    <input type="text" matInput [formControl]="addAdminForm" [matAutocomplete]="auto">
+                </mat-form-field>
+
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="display.bind(this)">
+                    <mat-option *ngFor="let user of users" [value]="user">
+                        {{ user.name }}
+                    </mat-option>
+                </mat-autocomplete>
+
+                
+                <div class="modal-message"></div>
+            </div>
+            <ul class="modal-options-horizontal">
+                <li>
+                    <app-link class="link-bold" (onClickInner)="close()">Cancel</app-link>
+                </li>
+                <li>
+                    <app-button (onClickInner)="addAdmin()"
+                                class="button-primary">Add
+                    </app-button>
+                </li>
+            </ul>
+        </div>
+    </app-centered>
+</div>

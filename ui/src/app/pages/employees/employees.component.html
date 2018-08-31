@@ -1,0 +1,23 @@
+
+<app-panel-header [header]="'Employees'">
+    <app-link (onClickInner)="requestManager()"
+        class="link-bold">
+    <i class="icon-icon-add"></i>Request Manager
+    </app-link>
+</app-panel-header>
+
+<app-data-table [data]="employees"
+                [config]="tableConfig">
+</app-data-table>
+<div *ngIf="showModal"
+     [ngSwitch]="modal">
+    <app-confirm-modal *ngSwitchCase="'confirm'"
+                       [(show)]="showModal"
+                       [confirmMessage]="confirmModalConfig.confirmMessage"
+                       (onConfirm)="confirmModalConfig.onConfirm()"></app-confirm-modal>
+    <app-request-manager-modal-component *ngSwitchCase="'request-manager'"
+                       (onManagerRequested)="managerRequestSent($event)"
+                       [(show)]="showModal">
+    </app-request-manager-modal-component>
+</div>
+

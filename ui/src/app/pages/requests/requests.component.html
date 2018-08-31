@@ -13,9 +13,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================-->
 <app-panel-header [header]="'Requests'"></app-panel-header>
-<app-data-table [data]="requestsReceived"
-                [config]="tableConfig">
-</app-data-table>
+
+<div *ngIf="receivedGroupRequests">
+    <app-data-table 
+        [data]="groupRequestsReceived"
+        [config]="tableConfig">
+    </app-data-table>
+</div>
+
+<div *ngIf="receivedUpdateManagerRequests">
+    <app-data-table 
+        [data]="updateManagerRequestsReceived"
+        [config]="updateManagerTableConfig">
+    </app-data-table>
+</div>
+
 <app-panel-footer *ngIf="tableConfig.selection.length"
                   [selection]="tableConfig.selection"
                   [buttonPrimaryLabel]="'Approve'"

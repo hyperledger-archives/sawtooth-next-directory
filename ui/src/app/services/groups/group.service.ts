@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================*/
 import {Injectable, Inject} from '@angular/core';
-import {Http} from "@angular/http";
+import {Http, RequestOptions} from "@angular/http";
 import {toPromise} from "rxjs/operator/toPromise";
 import {UtilsService} from "../utils.service";
 import {environment} from "../../../environments/environment";
@@ -48,42 +48,76 @@ export class GroupService {
             .catch(this.utils.catchError);
     }
 
-    leaveGroup(userId, groupId) {
-        return this.utils.setTimeoutPromise(1000)
-            .then(() => {
-                return true;
+    addOwnerToGroup(groupId, member) {
+        let request = environment.add_owner(groupId, member);
+        return this.http.post(request.url, request.body, this.context.httpOptions())
+            .toPromise()
+            .then((response) => {
+                console.log('Add Owner: ',response.json());
+                return response.json();
             })
             .catch(this.utils.catchError);
     }
 
+    addAdminToGroup(groupId, member) {
+        let request = environment.add_admin(groupId, member);
+        return this.http.post(request.url, request.body, this.context.httpOptions())
+            .toPromise()
+            .then((response) => {
+                console.log('Add Admin: ',response.json());
+                return response.json();
+            })
+            .catch(this.utils.catchError);
+    }
+
+    leaveGroup(userId, groupId) {
+        return this.removeFromGroup(userId, groupId);
+    }
+
     promoteToOwner(userId, groupId) {
-        return this.utils.setTimeoutPromise(500)
-            .then(() => {
-                return true;
+        let request = environment.promote_member_to_role_owner(groupId, userId);
+        return this.http.patch(request.url, request.body, this.context.httpOptions())
+            .toPromise()
+            .then((response) => {
+                console.log('Promote member to owner: ',response.json());
+                return response.json();
             })
             .catch(this.utils.catchError);
     }
 
     promoteAllToOwner(selection) {
-        return this.utils.setTimeoutPromise(500)
-            .then(() => {
-                return true;
+        const groupId = selection[0].memberOf[0];
+        const member = selection[0].id;
+        let request = environment.promote_member_to_role_owner(groupId, member);
+        return this.http.patch(request.url, request.body, this.context.httpOptions())
+            .toPromise()
+            .then((response) => {
+                console.log('Promote member to owner: ',response.json());
+                return response.json();
             })
             .catch(this.utils.catchError);
     }
 
     removeFromGroup(userId, groupId) {
-        return this.utils.setTimeoutPromise(500)
-            .then(() => {
-                return true;
+        const request = environment.remove_member(groupId, userId);
+        return this.http.delete(request.url, new RequestOptions({headers: this.context.httpHeaders(), body: request.body }))
+            .toPromise()
+            .then((response) => {
+                console.log(`Remove Member:${response.json()}`);
+                return response.json();
             })
             .catch(this.utils.catchError);
     }
 
     removeAllFromGroup(selection) {
-        return this.utils.setTimeoutPromise(500)
-            .then(() => {
-                return true;
+        const groupId = selection[0].memberOf[0];
+        const member = selection[0].id;
+        const request = environment.remove_member(groupId, member);
+        return this.http.delete(request.url, new RequestOptions({headers: this.context.httpHeaders(), body: request.body }))
+            .toPromise()
+            .then((response) => {
+                console.log(`Remove Member:${response.json()}`);
+                return response.json();
             })
             .catch(this.utils.catchError);
     }

@@ -51,7 +51,6 @@ export class AllUsersComponent implements OnInit {
                 }),
                 new TableHeader('ID', 'id', 'string')
             ]
-
         };
     }
 

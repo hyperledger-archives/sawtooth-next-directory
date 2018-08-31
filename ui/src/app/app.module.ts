@@ -39,6 +39,7 @@ import {AllUsersComponent} from './pages/all-users/all-users.component';
 import {AllGroupsComponent} from './pages/all-groups/all-groups.component';
 import {MyGroupsComponent} from './pages/my-groups/my-groups.component';
 import {RequestsComponent} from './pages/requests/requests.component';
+import {EmployeesComponent} from './pages/employees/employees.component';
 import {BaseComponent} from './pages/base/base.component';
 import {HeaderComponent} from './secondary-components/header/header.component';
 import {ContextualMenuComponent} from './secondary-components/contextual-menu/contextual-menu.component';
@@ -78,6 +79,7 @@ import {TestingComponent} from './pages/testing/testing.component';
 
 
 import {PendingApprovalResolve} from "./pages/pending-approval/pending-approval.resolve";
+import {EmployeesResolve} from './pages/employees/employees.resolve';
 import {ContextResolve} from "./pages/home/context.resolve";
 import {HomeResolve} from "./pages/home/home.resolve";
 import {RequestsResolve} from "./pages/requests/requests.resolve";
@@ -93,6 +95,11 @@ import {RequestsUtilsService} from "./services/requests/requests-utils.service";
 import {UsersResolve} from './pages/users/users.resolve';
 import {MembersResolve} from "./pages/members/members.resolve";
 import {PageLoaderService} from "./services/page-loader.service";
+import { UpdateManagerModalComponent } from './modals/update-manager-modal/update-manager-modal.component';
+import { RequestManagerModalComponent } from './modals/request-manager-modal/request-manager-modal.component';
+import { UpdateManagerActionsComponent } from './secondary-components/update-manager-actions/update-manager-actions.component';
+import { AddAdminModalComponent } from './modals/add-admin-modal/add-admin-modal.component';
+import { AddOwnerModalComponent } from './modals/add-owner-modal/add-owner-modal.component';
 
 @NgModule({
     declarations: [
@@ -109,6 +116,7 @@ import {PageLoaderService} from "./services/page-loader.service";
         AllGroupsComponent,
         MyGroupsComponent,
         RequestsComponent,
+        EmployeesComponent,
         BaseComponent,
         HeaderComponent,
         LoginModalComponent,
@@ -135,7 +143,12 @@ import {PageLoaderService} from "./services/page-loader.service";
         PopupComponent,
         LoaderComponent,
         ModalWrapperComponent,
-        TestingComponent
+        TestingComponent,
+        UpdateManagerModalComponent,
+        RequestManagerModalComponent,
+        UpdateManagerActionsComponent,
+        AddAdminModalComponent,
+        AddOwnerModalComponent
     ],
     imports: [
         BrowserModule,
@@ -173,6 +186,7 @@ import {PageLoaderService} from "./services/page-loader.service";
         RequestsResolve,
         HomeResolve,
         ContextResolve,
+        EmployeesResolve,
         PendingApprovalResolve
     ],
     bootstrap: [AppComponent]

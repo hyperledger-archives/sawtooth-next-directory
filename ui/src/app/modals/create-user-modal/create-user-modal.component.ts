@@ -58,14 +58,13 @@ export class CreateUserModalComponent {
       this._show = true;
       this.pageLoader.startLoading();
       this.usersService.createUser(this.name, this.username, this.password, this.email)
+        .then((response) => {
+            let user = response.user;
+            this.pageLoader.stopLoading();
+            this.onCreate.emit(user);
+            this.close();
+        });
 
-          .then((response) => {
-              let user = new User(this.name);
-              user.id = response.id;
-              this.pageLoader.stopLoading();
-              this.onCreate.emit(user);
-              this.close();
-          });
     }
 
     close() {

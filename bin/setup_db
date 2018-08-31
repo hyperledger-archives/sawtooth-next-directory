@@ -57,7 +57,7 @@ def setup_db(host, port, name):
         print('Creating table: proposals')
         r.db(name).table_create('proposals').run(conn)
         r.db(name).table('proposals').index_create('proposal_id').run(conn)
-        r.db(name).table('proposals').index_create('target_id').run(conn)
+        r.db(name).table('proposals').index_create('opener').run(conn)
 
         print('Creating table and sub-tables: tasks')
         task_tables = r.expr(['tasks', 'task_admins', 'task_owners'])
