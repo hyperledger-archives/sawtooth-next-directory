@@ -64,6 +64,7 @@ export class CreateUserModalComponent {
             this.onCreate.emit(user);
             this.close();
         });
+
     }
 
     close() {

@@ -91,6 +91,7 @@ export const environment = {
             url: '/api/GET_USER'
         }
     },
+
     update_manager: (userId, managerId) => {
         return {
             url: '/api/UPDATE_MANAGER',
@@ -104,6 +105,7 @@ export const environment = {
             }
         }
     },
+
     create_user: (name, username, password, email, manager, metadata) => {
         return {
             url: '/api/CREATE_USER',
