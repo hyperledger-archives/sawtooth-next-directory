@@ -56,7 +56,7 @@ export const environment = {
             url: '/api/GET_USER'
         }
     },
-    create_user: (name, password, email, manager, metadata) => {
+    create_user: (name, username, password, email, manager, metadata) => {
         return {
             url: '/api/CREATE_USER',
             body: {

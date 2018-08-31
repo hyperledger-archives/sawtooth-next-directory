@@ -61,17 +61,18 @@ async def authorize(request):
 
     password = request.json.get('password')
     hashed_pwd = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    auth_info = await auth_query.fetch_info_by_user_id(
+    auth_info = await auth_query.fetch_info_by_user_name(
         request.app.config.DB_CONN, request.json.get('id')
     )
     if auth_info is None or auth_info.get('hashed_password') != hashed_pwd:
         raise ApiUnauthorized("Unauthorized: Incorrect user id or password")
     token = utils.generate_apikey(
         request.app.config.SECRET_KEY,
-        request.json.get('id')
+        auth_info.get('user_id')
     )
     return json({
         'data': {
-            'authorization': token
+            'authorization': token,
+            'user_id': auth_info.get('user_id')
         }
     })
