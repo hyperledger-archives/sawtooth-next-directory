@@ -37,8 +37,6 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F10
 ENV LC_ALL=en_US.UTF-8
 WORKDIR /project/tmobile-rbac
 
-COPY server/config.py server/config.py
-
 # Note that the context must be set to the project's root directory
 COPY bin/protogen bin/protogen
 COPY protos/ protos/
