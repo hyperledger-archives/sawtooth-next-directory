@@ -40,6 +40,14 @@ export class UsersUtilsService {
         });
     }
 
+    getEmployees() {
+        let userId = this.context.getUserId();
+        let allUsers = this.context.getAllUsers();
+        let employees = _.filter(allUsers, {'manager' : userId});
+        console.log(employees);
+        return employees;
+    }
+
     getUser(userId) {
         let allUsers = this.context.getAllUsers();
         let found = _.find(allUsers, (user) => {

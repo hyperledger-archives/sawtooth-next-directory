@@ -26,7 +26,6 @@ from db import roles_query
 
 from rbac_transaction_creation import role_transaction_creation
 
-
 ROLES_BP = Blueprint('roles')
 
 
@@ -146,7 +145,6 @@ async def delete_role_admin(request, role_id):
 async def add_role_member(request, role_id):
     required_fields = ['id']
     utils.validate_fields(required_fields, request.json)
-
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list, _ = role_transaction_creation.propose_add_role_members(

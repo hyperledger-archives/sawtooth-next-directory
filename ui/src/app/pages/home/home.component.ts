@@ -47,7 +47,8 @@ export class HomeComponent {
             new ContextualMenu('All Groups', '/base/home/all-groups-section'),
             new ContextualMenu('My Groups', '/base/home/my-groups-section'),
             new ContextualMenu('Requests', '/base/home/requests'),
-            new ContextualMenu('Pending Approvals', '/base/home/pending-approval')];
+            new ContextualMenu('Pending Approvals', '/base/home/pending-approval'),
+            new ContextualMenu('Employees', '/base/home/employees')];
 
         this.router.events.subscribe((val) => {
             if (val instanceof NavigationStart) {

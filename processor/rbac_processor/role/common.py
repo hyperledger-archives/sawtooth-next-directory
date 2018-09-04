@@ -35,7 +35,7 @@ from rbac_processor.state import get_state
 from rbac_processor.state import set_state
 
 
-def validate_role_rel_proposal(header, propose, rel_address, state):
+def validate_role_rel_proposal(header, propose, rel_address, state, is_remove = False):
     """Validates that the User exists, the Role exists, and the User is not
     in the Role's relationship specified by rel_address.
 
@@ -69,12 +69,6 @@ def validate_role_rel_proposal(header, propose, rel_address, state):
         return_user_container(user_entry),
         propose.user_id)
 
-    if header.signer_public_key not in [user.user_id, user.manager_id]:
-        raise InvalidTransaction(
-            "Txn signer {} is not the user or the user's "
-            "manager {}".format(header.signer_public_key,
-                                [user.user_id, user.manager_id]))
-
     validate_identifier_is_role(state_entries,
                                 identifier=propose.role_id,
                                 address=role_address)
@@ -82,7 +76,18 @@ def validate_role_rel_proposal(header, propose, rel_address, state):
     try:
         role_admins_entry = get_state_entry(state_entries, rel_address)
         role_rel_container = return_role_rel_container(role_admins_entry)
-        if is_in_role_rel_container(
+        
+
+        if (header.signer_public_key not in [user.user_id, user.manager_id]) and (not is_in_role_rel_container(
+                role_rel_container,
+                propose.role_id,
+                propose.user_id)):
+            raise InvalidTransaction(
+                "Txn signer {} is not the user or the user's "
+                "manager {} nor the group owner / admin".format(header.signer_public_key,
+                                    [user.user_id, user.manager_id]))
+
+        if (not is_remove) and is_in_role_rel_container(
                 role_rel_container,
                 propose.role_id,
                 propose.user_id):

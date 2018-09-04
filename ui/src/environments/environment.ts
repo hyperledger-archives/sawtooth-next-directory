@@ -33,6 +33,41 @@ export const environment = {
             url: '/api/ADD_MEMBER'
         }
     },
+    add_owner: (roleId, member) => {
+        return {
+            body: {
+                code: 200,
+                message: 'success'
+            },
+            url: '/api/ADD_OWNER'
+        }
+    },
+    add_admin: (roleId, member) => {
+        return {
+            body: {
+                code: 200,
+                message: 'success'
+            },
+            url: '/api/ADD_ADMIN'
+        }
+    },
+    promote_member_to_role_owner: (roleId, member) => {
+        return {
+            body: {
+                code: 200,
+                message: 'success'
+            },
+            url: '/api/PROMOTE_MEMBER_TO_OWNER'
+        }
+    },
+    remove_member: (roleId, member) => {
+        return {
+            body: {
+                id: member
+            },
+            url: '/api/REMOVE_MEMBER'
+        }
+    },
     create_role: (userId, groupName) => {
         return {
             url: 'api/CREATE_ROLE',
@@ -56,7 +91,22 @@ export const environment = {
             url: '/api/GET_USER'
         }
     },
-    create_user: (name, password, email, manager, metadata) => {
+
+    update_manager: (userId, managerId) => {
+        return {
+            url: '/api/UPDATE_MANAGER',
+            body: {
+               data: {
+                   authorization: 'authorization',
+                   user: {
+                       id: 1
+                   }
+               }
+            }
+        }
+    },
+
+    create_user: (name, username, password, email, manager, metadata) => {
         return {
             url: '/api/CREATE_USER',
             body: {

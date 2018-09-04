@@ -19,12 +19,22 @@ limitations under the License.
               class="link-bold">
         <i class="fa fa-plus"></i>Add Member
     </app-link>
-    <app-link *ngIf="!isOwner && !alreadyRequested()"
+    <app-link *ngIf="isOwner"
+    (onClickInner)="addOwnerModal()"
+    class="link-bold">
+    <i class="fa fa-plus"></i>Add Owner
+    </app-link>
+    <app-link *ngIf="isOwner"
+        (onClickInner)="addAdminModal()"
+        class="link-bold">
+    <i class="fa fa-plus"></i>Add Admin
+    </app-link>
+    <app-link *ngIf="!isOwner && !isMember && !alreadyRequested()"
               class="link-bold" (onClickInner)="requestAccessModal()">
         <i class="fa fa-check-circle-o"></i>
         Request Access
     </app-link>
-    <app-link *ngIf="isOwner"
+    <app-link *ngIf="isOwner || isMember"
               (onClickInner)="leaveGroup()"
               class="link-bold">
         <i class="icon-icon-leavegroup"></i>Leave Group
@@ -33,7 +43,8 @@ limitations under the License.
 <app-data-table
         [data]="members"
         [parentData]="{group: group}"
-        [config]="tableConfig"></app-data-table>
+        [config]="tableConfig">
+</app-data-table>
 <app-panel-footer *ngIf="tableConfig.selection.length"
                   [selection]="tableConfig.selection"
                   [buttonPrimaryLabel]="'Promote'"
@@ -52,6 +63,16 @@ limitations under the License.
                           (onAdd)="addToGroup($event)"
                           [(show)]="showModal">
     </app-add-member-modal>
+    <app-add-owner-modal *ngSwitchCase="'add-owner'"
+                          [group]="group"
+                          (onAdd)="addToGroup($event)"
+                          [(show)]="showModal">
+    </app-add-owner-modal>
+    <app-add-admin-modal *ngSwitchCase="'add-admin'"
+                          [group]="group"
+                          (onAdd)="addToGroup($event)"
+                          [(show)]="showModal">
+    </app-add-admin-modal>
     <app-request-access-modal *ngSwitchCase="'request-access'"
                               [group]="group"
                               [(show)]="showModal">

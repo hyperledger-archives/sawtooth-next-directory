@@ -13,6 +13,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================-->
 <app-panel-header [header]="'Pending Approval'"></app-panel-header>
-<app-data-table [data]="requestsSent"
-                [config]="tableConfig">
-</app-data-table>
+
+<div *ngIf="hasGroupRequests">
+    <app-data-table
+        [data]="groupRequestsSent"
+        [config]="tableConfig">
+    </app-data-table>
+</div>
+
+<div *ngIf = "hasRequestManagerRequests">
+    <app-data-table 
+        [data]="updateManagerRequestsSent"
+        [config]="updateManagerTableConfig">
+    </app-data-table>
+</div>

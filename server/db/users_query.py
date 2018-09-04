@@ -19,7 +19,7 @@ from api.errors import ApiNotFound
 
 from db.relationships_query import \
     fetch_relationships_by_id
-from db.proposals_query import fetch_proposal_ids_by_target
+from db.proposals_query import fetch_proposal_ids_by_opener
 
 import rethinkdb as r
 
@@ -56,7 +56,7 @@ async def fetch_user_resource(conn, user_id, head_block_num):
             'memberOf': fetch_relationships_by_id(
                 'role_members', user_id, 'role_id', head_block_num
             ),
-            'proposals': fetch_proposal_ids_by_target(
+            'proposals': fetch_proposal_ids_by_opener(
                 user_id, head_block_num
             )
         })\
@@ -106,7 +106,7 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
             'memberOf': fetch_relationships_by_id(
                 'role_members', user['user_id'], 'role_id', head_block_num
             ),
-            'proposals': fetch_proposal_ids_by_target(
+            'proposals': fetch_proposal_ids_by_opener(
                 user['user_id'], head_block_num
             )
         }))\

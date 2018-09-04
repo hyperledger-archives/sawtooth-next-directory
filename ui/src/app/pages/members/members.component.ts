@@ -35,6 +35,7 @@ export class MembersComponent {
     public tableConfig;
     public user;
     public isOwner;
+    public isMember;
     public confirmModalConfig: any = {};
     public returnLink = '../../';
     public modal = '';
@@ -52,6 +53,7 @@ export class MembersComponent {
         this.group = this.activatedRoute.snapshot.data['membersResolve'].group;
         this.members = this.activatedRoute.snapshot.data['membersResolve'].members;
         this.isOwner = this.groupUtils.userIsOwner(this.user.id, this.group);
+        this.isMember = this.groupUtils.userIsMember(this.user.id, this.group);
 
         this.tableConfig = {
             selectable: this.isOwner,
@@ -74,7 +76,7 @@ export class MembersComponent {
             confirmMessage: 'Are you sure you want to leave?',
             onConfirm: () => {
                 this.pageLoader.startLoading();
-                this.groupService.leaveGroup(0, 0)
+                this.groupService.leaveGroup(this.user.id, this.group.id)
                     .then((response) => {
                         this.pageLoader.stopLoading();
                         this.groupsLink();
@@ -139,6 +141,16 @@ export class MembersComponent {
 
     addMemberModal() {
         this.modal = 'add-member';
+        this.showModal = true;
+    }
+
+    addOwnerModal() {
+        this.modal = 'add-owner';
+        this.showModal = true;
+    }
+
+    addAdminModal() {
+        this.modal = 'add-admin';
         this.showModal = true;
     }
 

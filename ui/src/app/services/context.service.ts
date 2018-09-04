@@ -20,6 +20,7 @@ import {Headers, RequestOptions} from "@angular/http";
 export class ContextService {
 
     public user;
+    public allManagers;
     public allUsers;
     public allGroups;
 
@@ -52,6 +53,7 @@ export class ContextService {
     purge() {
         this.user = null;
         this.allUsers = null;
+        this.allManagers = null;
         this.allGroups = null;
         localStorage.removeItem('next-directory');
     }
@@ -68,6 +70,10 @@ export class ContextService {
         this.allUsers = userList;
     }
 
+    setAllManagers(userList) {
+        this.allManagers = userList;
+    }
+
     setAllGroups(allGroups) {
         this.allGroups  = allGroups;
     }
@@ -79,6 +85,11 @@ export class ContextService {
     getAllUsers()  {
         return this.allUsers;
     }
+
+    getAllManagers() {
+        return this.allManagers;
+    }
+
     getAllGroups() {
         return this.allGroups;
     }

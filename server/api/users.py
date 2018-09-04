@@ -64,7 +64,7 @@ async def fetch_all_users(request):
 
 @USERS_BP.post('api/users')
 async def create_new_user(request):
-    required_fields = ['name', 'password']
+    required_fields = ['name', 'username', 'password']
     utils.validate_fields(required_fields, request.json)
 
     # Generate keys
@@ -79,6 +79,7 @@ async def create_new_user(request):
         txn_key,
         request.app.config.BATCHER_KEY_PAIR,
         request.json.get('name'),
+        request.json.get('username'),
         txn_key.public_key,
         request.json.get('metadata'),
         request.json.get('manager')
@@ -99,6 +100,7 @@ async def create_new_user(request):
         'user_id': txn_key.public_key,
         'hashed_password': hashed_password,
         'encrypted_private_key': encrypted_private_key,
+        'user_name': request.json.get('username'),
         'email': request.json.get('email')
     }
     await auth_query.create_auth_entry(request.app.config.DB_CONN, auth_entry)
@@ -193,6 +195,7 @@ def create_user_response(request, public_key):
     user_resource = {
         'id': public_key,
         'name': request.json.get('name'),
+        'username': request.json.get('username'),
         'ownerOf': [],
         'administratorOf': [],
         'memberOf': [],

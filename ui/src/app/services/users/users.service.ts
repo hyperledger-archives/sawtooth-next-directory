@@ -54,15 +54,15 @@ export class UsersService {
         return this.http.post(environment.login, body)
             .toPromise()
             .then((response) => {
-                let data = response.json().data.authorization;
-                console.log('Authorize', data);
+                let data = response.json().data;
+                console.log('Authorize', data.authorization);
                 return data;
             })
             .catch(this.utils.catchError);
     }
 
-    createUser(name, password, email, manager = '', metadata = '') {
-        let request = environment.create_user(name, password, email, manager, metadata);
+    createUser(name, username, password, email, manager = '', metadata = '') {
+        let request = environment.create_user(name, username, password, email, manager, metadata);
 
         let headers = new Headers();
         // headers.append('Content-Type', 'application/json');
@@ -70,6 +70,17 @@ export class UsersService {
             .toPromise()
             .then((response) => {
                 return response.json().data;
+            })
+            .catch(this.utils.catchError);
+    }
+
+
+    updateManager(userId, managerId) {
+        let request = environment.update_manager(userId, managerId);
+        return this.http.put(request.url, request.body, this.context.httpOptions())
+            .toPromise()
+            .then((response) => {
+                return response.json();
             })
             .catch(this.utils.catchError);
     }
@@ -87,12 +98,6 @@ export class UsersService {
     }
 
     getUserRequests() {
-        // this.getUsers()
-        //     .then((users) => {
-        //         let proposals = _.reduce(users, (accumulator, user) => {
-        //             return accumulator.concat(user.proposals)
-        //         }, [])
-        //     })
         let url = environment.user_proposals(this.context.getUser().id);
         return this.http.get(url, {
             headers: this.context.httpHeaders()

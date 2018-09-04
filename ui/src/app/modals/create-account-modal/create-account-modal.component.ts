@@ -28,6 +28,7 @@ export class CreateAccountModalComponent implements OnInit {
     throwError = false;
     showErrorMessage = false;
     name: string;
+    username: string;
     password: string;
     email: string;
 
@@ -45,7 +46,7 @@ export class CreateAccountModalComponent implements OnInit {
     createAccount() {
         this.showLoader = true;
 
-        this.usersService.createUser(this.name, this.password, this.email)
+        this.usersService.createUser(this.name, this.username, this.password, this.email)
             .then((createUserResponse) => {
                 if (createUserResponse) {
                     console.log(createUserResponse);
