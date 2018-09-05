@@ -45,6 +45,21 @@ for configuring / running the UI server.
 
 ## Development
 
+####System Dependencies 
+
+The server code is written in python3. Confirm your version using command:
+
+    python -V
+
+If Python is missing or an earlier version, install python3 and pip3. 
+
+PyYaml is required for running tests. Install it using pip3:
+
+    pip3 install pyyaml
+
+
+####Deploying to Localhost
+
 Docker containers are also available for developers, and are marked with a
 `-dev` tag in their filename. There are a few differences between how these
 containers work compared to the defaults:
@@ -62,9 +77,6 @@ To start the dev containers, from the root project directory run:
 bin/build -p
 docker-compose -f docker-compose-dev.yaml up
 ```
-
-\* _Dependencies that may need to be locally installed include Sawtooth
-dependencies like the`sawtooth_sdk`, as well as some `pip3` modules._
 
 
 ## Testing
