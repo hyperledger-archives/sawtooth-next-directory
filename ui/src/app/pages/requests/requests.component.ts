@@ -84,7 +84,7 @@ export class RequestsComponent {
                         return "Remove admin";
                     }
                 }),
-                new TableHeader('Reason', 'openReason', 'string')
+                new TableHeader('Reason', 'open_reason', 'string')
             ],
             actionsComponent: RequestsActionsComponent
         };
@@ -111,7 +111,7 @@ export class RequestsComponent {
                     console.log(`Got name: ${name}`);
                     return name;
                 }),
-                new TableHeader('Reason', 'openReason', 'string')
+                new TableHeader('Reason', 'open_reason', 'string')
             ],
             actionsComponent: RequestsActionsComponent
         };

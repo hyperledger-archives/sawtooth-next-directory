@@ -60,7 +60,7 @@ export class AddMemberModalComponent {
 
     addMember() {
         this.pageLoader.startLoading();
-        this.groupService.addMemberToGroup(this.group.id, this.addMemberForm.value)
+        this.groupService.addMemberToGroup(this.group.id, this.addMemberForm.value, '')
             .then((response) => {
                 this.onAdd.emit(this.addMemberForm.value);
                 this.pageLoader.startLoading();

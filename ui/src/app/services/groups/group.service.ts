@@ -37,8 +37,8 @@ export class GroupService {
             }).catch(this.utils.catchError)
     }
 
-    addMemberToGroup(groupId, member) {
-        let request = environment.add_member(groupId, member);
+    addMemberToGroup(groupId, member, reason) {
+        let request = environment.add_member(groupId, member, reason);
         return this.http.post(request.url, request.body, this.context.httpOptions())
             .toPromise()
             .then((response) => {

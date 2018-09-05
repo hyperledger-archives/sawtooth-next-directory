@@ -24,7 +24,7 @@ export const environment = {
 
     //ROLES API
     roles: '/api/GROUPS',
-    add_member: (roleId, member) => {
+    add_member: (roleId, member, reason) => {
         return {
             body: {
                 code: 200,

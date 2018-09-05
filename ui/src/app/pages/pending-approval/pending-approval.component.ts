@@ -74,7 +74,7 @@ export class PendingApprovalComponent implements OnInit {
                         return "Remove admin";
                     }
                 }),
-                new TableHeader('Reason', 'openReason', 'string'),
+                new TableHeader('Reason', 'open_reason', 'string'),
                 new TableHeader('Owner', '', 'function', (element) => {
                     let group = _.find(this.allGroups, {id: element.object});
                     return this.usersUtils.displayOwners(group, this.user);

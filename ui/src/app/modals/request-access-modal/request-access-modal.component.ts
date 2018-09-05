@@ -36,6 +36,7 @@ export class RequestAccessModalComponent {
     }
 
     private _show;
+    public reason;
     @Output() showChange = new EventEmitter();
     @Input() group;
 
@@ -54,15 +55,14 @@ export class RequestAccessModalComponent {
     }
 
     requestAccess() {
-        this.groupService.addMemberToGroup(this.group.id, this.context.getUser())
-            .then((response) => {
-
-                console.log('Request Access Response: ', response);
-                let user = this.context.getUser();
-                user.proposals.push(response.id);
-                this.close();
-                this.utils.defaultSnackBar('Request Sent')
-            });
+        this.groupService.addMemberToGroup(this.group.id, this.context.getUser(), this.reason)
+        .then((response) => {
+            console.log('Request Access Response: ', response);
+            let user = this.context.getUser();
+            user.proposals.push(response.id);
+            this.close();
+            this.utils.defaultSnackBar('Request Sent')
+        });
     }
 
 }

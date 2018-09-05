@@ -25,9 +25,9 @@ limitations under the License.
             <div class="modal-content">
                 <div class="modal-textarea">
                     What's the reason for your request (Max 60 characters).
-                    <textarea placeholder="Enter reason..." maxlength="60" rows="6" value=""></textarea>
+                    <textarea [(ngModel)]="reason" placeholder="Enter reason..." maxlength="60" rows="6" value=""></textarea>
+                    <div class="modal-message"></div>
                 </div>
-                <div class="modal-message"></div>
             </div>
 
             <ul class="modal-options-horizontal">
