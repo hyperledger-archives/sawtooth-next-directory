@@ -45,14 +45,29 @@ for configuring / running the UI server.
 
 ## Development
 
+#### System Dependencies 
+
+The server code is written in python3. Confirm your version using command:
+
+    python -V
+
+If Python is missing or an earlier version, install python3 and pip3. 
+
+PyYaml is required for running tests. Install it using pip3:
+
+    pip3 install pyyaml
+
+
+#### Deploying to Localhost
+
 Docker containers are also available for developers, and are marked with a
 `-dev` tag in their filename. There are a few differences between how these
 containers work compared to the defaults:
 
-- they do not need to be rebuilt when local files change
+- They do not need to be rebuilt when local files change
 - Protobuf files will need to be built locally
-- some dependencies may need to be installed locally\*
-- a _Sawtooth shell_ container is included for testing
+- Some dependencies may need to be installed locally\*
+- A _Sawtooth shell_ container is included for testing
 - Sawtooth's blockchain REST API will be available at **http://localhost:8080**
 - Rethink's database admin panel will be available at **http://localhost:9090**
 
@@ -62,9 +77,6 @@ To start the dev containers, from the root project directory run:
 bin/build -p
 docker-compose -f docker-compose-dev.yaml up
 ```
-
-\* _Dependencies that may need to be locally installed include Sawtooth
-dependencies like the`sawtooth_sdk`, as well as some `pip3` modules._
 
 
 ## Testing
