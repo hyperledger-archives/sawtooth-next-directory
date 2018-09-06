@@ -2,6 +2,9 @@
 
 # Hyperledger Sawtooth NEXT Identity Platform
 
+[![Build Status](https://travis-ci.org/hyperledger/sawtooth-next-directory.svg?branch=master)](https://travis-ci.org/hyperledger/sawtooth-next-directory)
+[![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://github.com/hyperledger/sawtooth-next-directory/blob/master/LICENSE)
+
 This repo contains multiple components which together with a
 _Hyperledger Sawtooth_ validator, will comprise the "blockchain" components
 of the NEXT Identity Platform project. The components include:
