@@ -175,8 +175,8 @@ def apply_user_confirm(header, payload, state):
             proposal_address=proposal_address,
             proposal_id=confirm_payload.proposal_id):
         raise InvalidTransaction(
-            "Proposal id {} does not exist or is not open.".format(
-                confirm_payload.proposal_id))
+            "Proposal id {} for user {} to update manager to {} does not exist or is not open.".format(
+                confirm_payload.proposal_id, confirm_payload.user_id, confirm_payload.manager_id))
 
     entry = get_state_entry(proposal_entries, proposal_address)
     proposal_container = return_prop_container(entry)

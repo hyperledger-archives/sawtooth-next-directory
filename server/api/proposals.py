@@ -198,9 +198,9 @@ async def update_proposal(request, proposal_id):
                 txn_key,
                 request.app.config.BATCHER_KEY_PAIR,
                 proposal_id,
+                request.json.get('reason'),
                 proposal_resource.get('object'),
-                proposal_resource.get('target'),
-                request.json.get('reason'))
+                proposal_resource.get('target'))
 
     await utils.send(
         request.app.config.VAL_CONN,
