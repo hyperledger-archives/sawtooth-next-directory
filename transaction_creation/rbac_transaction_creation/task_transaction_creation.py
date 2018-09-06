@@ -212,6 +212,7 @@ def confirm_remove_task_admins(txn_key,
 
     inputs = [
         addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.make_task_admins_address(task_id, user_id),
         addresser.make_proposal_address(task_id, user_id)]
 
     outputs = [addresser.make_proposal_address(task_id, user_id),
@@ -398,6 +399,7 @@ def confirm_remove_task_owners(txn_key,
         reason=reason)
 
     inputs = [addresser.make_proposal_address(task_id, user_id),
+              addresser.make_task_owners_address(task_id, user_id),
               addresser.make_task_admins_address(task_id, txn_key.public_key)]
 
     outputs = [addresser.make_proposal_address(task_id, user_id),

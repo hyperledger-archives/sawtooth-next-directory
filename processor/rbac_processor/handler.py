@@ -275,6 +275,12 @@ def apply_task_confirm(header, payload, state):
     elif payload.message_type == RBACPayload.CONFIRM_ADD_TASK_OWNERS:
         task_owners.apply_confirm(header, payload, state)
 
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_ADMINS:
+        task_admins.apply_confirm(header, payload, state, True)
+
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_OWNERS:
+        task_owners.apply_confirm(header, payload, state, True)
+
     else:
         raise InvalidTransaction("Message type unknown.")
 
