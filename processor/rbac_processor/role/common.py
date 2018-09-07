@@ -69,6 +69,12 @@ def validate_role_rel_proposal(header, propose, rel_address, state, is_remove = 
         return_user_container(user_entry),
         propose.user_id)
 
+    if header.signer_public_key not in [user.user_id, user.manager_id]:
+        raise InvalidTransaction(
+            "Txn signer {} is not the user or the user's "
+            "manager {}".format(header.signer_public_key,
+                                [user.user_id, user.manager_id]))
+
     validate_identifier_is_role(state_entries,
                                 identifier=propose.role_id,
                                 address=role_address)
