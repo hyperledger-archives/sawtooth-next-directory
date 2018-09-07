@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------------------
 
 from base64 import b64decode
+import sys
 import logging
 import time
 import unittest
@@ -37,6 +38,8 @@ from rbac_transaction_creation import task_transaction_creation
 
 
 LOGGER = logging.getLogger(__name__)
+LOGGER.level = logging.DEBUG
+LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 BATCHER_PRIVATE_KEY = Secp256k1PrivateKey.new_random().as_hex()
 BATCHER_KEY = Key(BATCHER_PRIVATE_KEY)
