@@ -14,23 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import subprocess
-import os
-import sys
-import argparse
-import time
-import traceback
-import logging
-import yaml
+# This file is executed by 'build' located in the same directory.
+# Running locally requires
+#   pip3 installation of the grpcio package
+#   arg specifying which docker-compose.yaml to run tests with
+# Direct execution example:
+# >   ./run_docker_test ../integration_tests/blockchain/docker-compose.yaml
 
+import argparse
+import logging
+import os
+import subprocess
+import time
+
+import yaml
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
-
 DEFAULT_TIMEOUT = 600
 COMPOSE_DOWN_RETRY_TIMEOUT = 60
-DOCKER_PS_TIMEOUT=30
+DOCKER_PS_TIMEOUT = 30
 
 
 class RunDockerTestError(BaseException):
@@ -74,8 +78,6 @@ def main():
 
     compose_down = compose + ['down', '--remove-orphans']
 
-    compose_kill = compose + ['kill']
-
     scrape = [
         'docker', 'ps', '-a',
         '--format={{.Names}},{{.Image}},{{.Label "install-type"}}',
@@ -101,7 +103,6 @@ def main():
         ]
 
     timer = Timer(args.timeout)
-
 
     # Run tests
     try:
@@ -169,7 +170,7 @@ def main():
             except BaseException:
                 LOGGER.error("Could not gather information about image used.")
 
-        else: # cleaning
+        else:  # cleaning
             exit_status = 0
 
         LOGGER.info("Shutting down with: %s", str(compose_down))
@@ -207,12 +208,11 @@ def main():
 
     except KeyboardInterrupt:
         subprocess.run(compose_down, check=True,
-            timeout=COMPOSE_DOWN_RETRY_TIMEOUT)
+                       timeout=COMPOSE_DOWN_RETRY_TIMEOUT)
         exit(1)
 
 
 def load_compose_file(compose_file):
-
     try:
         with open(compose_file) as fd:
             contents = fd.read()
@@ -277,6 +277,7 @@ def _check_for_existing_containers(compose_file, compose_dict, isolation_id):
                         container_name_to_create, compose_file
                     )
                 )
+
 
 def _check_for_existing_network(isolation_id):
     networks = _get_existing_networks()
