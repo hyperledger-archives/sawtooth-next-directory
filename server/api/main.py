@@ -19,6 +19,9 @@ import logging
 import os
 from signal import signal, SIGINT
 import sys
+import string
+import random
+import binascii
 
 from sanic import Sanic
 from sanic import Blueprint
@@ -39,9 +42,10 @@ from api.roles import ROLES_BP
 from api.tasks import TASKS_BP
 from api.users import USERS_BP
 
-
-LOGGER = logging.getLogger(__name__)
 APP_BP = Blueprint('utils')
+
+CONFIG_FILE = 'config.py'
+
 DEFAULT_CONFIG = {
     'HOST': 'localhost',
     'PORT': 8000,
@@ -57,6 +61,17 @@ DEFAULT_CONFIG = {
     'AES_KEY': None,
     'BATCHER_PRIVATE_KEY': None
 }
+
+KEY_LENGTH_BATCHER = 32
+KEY_LENGTH_AES = 32
+KEY_LENGTH_SECRET = 34
+
+LOGGER = logging.getLogger(__name__)
+warning_logger = logging.StreamHandler()
+warning_logger.setLevel(logging.WARNING)
+log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+warning_logger.setFormatter(log_formatter)
+LOGGER.addHandler(warning_logger)
 
 
 async def open_connections(app):
@@ -84,6 +99,10 @@ def close_connections(app):
 
     LOGGER.warning('closing validator connection')
     app.config.VAL_CON.close()
+
+
+def generate_random_string(length, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(length))
 
 
 def parse_args(args):
@@ -119,12 +138,12 @@ def load_config(app):  # pylint: disable=too-many-branches
     app.config.update(DEFAULT_CONFIG)
     config_file_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-        'config.py'
+        CONFIG_FILE
     )
     try:
         app.config.from_pyfile(config_file_path)
     except FileNotFoundError:
-        LOGGER.warning("No config file provided")
+        LOGGER.warning("No config.py file found. Falling back on safe defaults.")
 
     # CLI Options will override config file options
     opts = parse_args(sys.argv[1:])
@@ -154,20 +173,30 @@ def load_config(app):  # pylint: disable=too-many-branches
     if opts.secret_key is not None:
         app.config.SECRET_KEY = opts.secret_key
     if app.config.SECRET_KEY is None:
-        LOGGER.exception("API secret key was not provided")
-        sys.exit(1)
+        LOGGER.warning(""""The API secret key was not provided. 
+        It should be added to config.py before deploying the app to a production environment.
+        Generating an API secret key...
+        """)
+        app.config.SECRET_KEY = generate_random_string(KEY_LENGTH_SECRET)
 
     if opts.aes_key is not None:
         app.config.AES_KEY = opts.aes_key
     if app.config.AES_KEY is None:
-        LOGGER.exception("AES key was not provided")
-        sys.exit(1)
+        LOGGER.warning(""""The AES key was not provided. 
+        It should be added to config.py before deploying the app to a production environment.
+        Generating an AES key...
+        """)
+        app.config.AES_KEY = '%030x' % random.randrange(16 ** KEY_LENGTH_AES)
 
     if opts.batcher_private_key is not None:
         app.config.BATCHER_PRIVATE_KEY = opts.batcher_private_key
     if app.config.BATCHER_PRIVATE_KEY is None:
-        LOGGER.exception("Batcher private key was not provided")
-        sys.exit(1)
+        LOGGER.warning(""""Batcher private key was not provided. 
+        It should be added to config.py before deploying the app to a production environment.
+        Generating a Batcher private key...
+        """)
+        app.config.BATCHER_PRIVATE_KEY = binascii.b2a_hex(os.urandom(KEY_LENGTH_BATCHER))
+
     app.config.BATCHER_KEY_PAIR = Key(app.config.BATCHER_PRIVATE_KEY)
 
 
@@ -196,9 +225,9 @@ def main():
     @app.middleware('response')
     def allow_cors(request, response):  # pylint: disable=unused-variable
         response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] =\
+        response.headers['Access-Control-Allow-Methods'] = \
             'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] =\
+        response.headers['Access-Control-Allow-Headers'] = \
             'Content-Type, Authorization'
 
     load_config(app)
