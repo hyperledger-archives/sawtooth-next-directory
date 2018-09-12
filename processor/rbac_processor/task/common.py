@@ -49,26 +49,28 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
         (dict of addresses)
     """
 
-    user_address = addresser.make_user_address(propose.user_id)
-    task_address = addresser.make_task_attributes_address(propose.task_id)
+    task_id = propose.task_id
+    user_id = propose.user_id
+    user_address = addresser.make_user_address(user_id)
+    task_address = addresser.make_task_attributes_address(task_id)
     proposal_address = addresser.make_proposal_address(
-        object_id=propose.task_id,
-        related_id=propose.user_id)
+        object_id=task_id,
+        related_id=user_id)
 
     state_entries = get_state(state, [user_address,
                                       task_address,
                                       proposal_address,
                                       rel_address])
     validate_identifier_is_user(state_entries,
-                                identifier=propose.user_id,
+                                identifier=user_id,
                                 address=user_address)
     user_entry = get_state_entry(state_entries, user_address)
     user = get_user_from_container(
         return_user_container(user_entry),
-        propose.user_id)
+        user_id)
 
     validate_identifier_is_task(state_entries,
-                                identifier=propose.task_id,
+                                identifier=task_id,
                                 address=task_address)
 
     try:
@@ -76,20 +78,19 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
         task_rel_container = return_task_rel_container(task_rel_entry)
         if (header.signer_public_key not in [user.user_id, user.manager_id]) and (not is_in_task_rel_container(
                 task_rel_container,
-                propose.task_id,
-                propose.user_id)):
+                task_id,
+                user_id)):
             raise InvalidTransaction(
                 "Txn signer {} is not the user or the user's "
                 "manager {} nor the task owner / admin".format(header.signer_public_key,
                                                                [user.user_id, user.manager_id]))
         if is_in_task_rel_container(
                 task_rel_container,
-                propose.task_id,
-                propose.user_id):
+                task_id,
+                user_id):
             raise InvalidTransaction(
                 "User {} is already in the Task {} "
-                "relationship".format(propose.user.id,
-                                      propose.task_id))
+                "relationship".format(user_id, task_id))
 
     except KeyError:
         # The task rel container doesn't exist so no task relationship exists
@@ -189,6 +190,10 @@ def validate_task_admin_or_owner(header,
 
     Returns:
         (dict of addresses)
+
+    Raises:
+        InvalidTransaction
+            - The transaction is invalid.
     """
 
     proposal_address = addresser.make_proposal_address(

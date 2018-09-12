@@ -118,7 +118,11 @@ def apply_confirm(header, payload, state, is_remove=False):
             - The transaction is invalid.
     """
 
-    confirm_payload = task_transaction_pb2.ConfirmAddTaskOwner()
+    if not is_remove:
+        confirm_payload = task_transaction_pb2.ConfirmAddTaskOwner()
+    else:
+        confirm_payload = task_transaction_pb2.ConfirmRemoveTaskOwner()
+
     confirm_payload.ParseFromString(payload.content)
 
     task_owners_address = addresser.make_task_owners_address(
