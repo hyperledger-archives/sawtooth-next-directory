@@ -19,7 +19,7 @@ from rbac_addressing import addresser
 
 from rbac_processor.common import no_open_proposal
 from rbac_processor.task.common import handle_propose_state_set
-from rbac_processor.task.common import handle_confirm_add
+from rbac_processor.task.common import handle_confirm
 from rbac_processor.task.common import handle_reject
 from rbac_processor.task.common import validate_task_rel_proposal
 from rbac_processor.task.common import validate_task_rel_del_proposal
@@ -128,8 +128,25 @@ def apply_propose_remove(header, payload, state):
         state=state)
 
 
-def apply_confirm(header, payload, state):
-    confirm_payload = task_transaction_pb2.ConfirmAddTaskAdmin()
+def apply_confirm(header, payload, state, is_remove=False):
+    """Apply the (Add | Remove) TaskAdmins transaction.
+
+    Args:
+        header (TransactionHeader): The protobuf TransactionHeader.
+        payload (RBACPayload): The protobuf RBACPayload.
+        state (Context): The class that handles state gets and sets.
+        is_remove (boolean): Determines if task admin is being added or removed.
+
+    Raises:
+        InvalidTransaction:
+            - The transaction is invalid.
+    """
+
+    if not is_remove:
+        confirm_payload = task_transaction_pb2.ConfirmAddTaskAdmin()
+    else:
+        confirm_payload = task_transaction_pb2.ConfirmRemoveTaskAdmin()
+
     confirm_payload.ParseFromString(payload.content)
 
     task_admins_address = addresser.make_task_admins_address(
@@ -144,14 +161,17 @@ def apply_confirm(header, payload, state):
         header=header,
         confirm=confirm_payload,
         txn_signer_rel_address=txn_signer_admin_address,
-        state=state)
+        task_rel_address=task_admins_address,
+        state=state,
+        is_remove=is_remove)
 
-    handle_confirm_add(
+    handle_confirm(
         state_entries=state_entries,
         header=header,
         confirm=confirm_payload,
         task_rel_address=task_admins_address,
-        state=state)
+        state=state,
+        is_remove=is_remove)
 
 
 def apply_reject(header, payload, state):
@@ -163,9 +183,11 @@ def apply_reject(header, payload, state):
         user_id=header.signer_public_key)
 
     state_entries = validate_task_admin_or_owner(
-        header,
-        reject_payload,
-        txn_signer_admin_address,
-        state)
+        header=header,
+        confirm=reject_payload,
+        txn_signer_rel_address=txn_signer_admin_address,
+        task_rel_address="",
+        state=state,
+        is_remove=False)
 
     handle_reject(state_entries, header, reject_payload, state)
