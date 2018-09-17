@@ -28,7 +28,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F10
         grpcio-tools \
         itsdangerous \
         rethinkdb \
-        sanic \
+        sanic==0.7.0 \
         pycrypto \
  && locale-gen en_US.UTF-8 \
  && apt-get clean \
