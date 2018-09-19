@@ -84,6 +84,14 @@ docker-compose -f docker-compose-dev.yaml up
 
 ## Testing
 
+#### Populating Test Data
+
+To quickly populate the application with test users, roles, etc., run script 
+bin/populate_test_data.py once the application is up and running. It will spin up
+a rest client and create the objects through the application's rest api.
+
+#### Running Automated Tests
+
 Tests can be run using the `run_docker_test` script, with the desired
 docker-compose file as an argument. For example:
 
