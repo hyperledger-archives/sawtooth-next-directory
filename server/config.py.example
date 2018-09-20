@@ -1,23 +1,15 @@
-# Networking settings
-HOST = 'localhost'
-PORT = 8000
-TIMEOUT = 500
-KEEP_ALIVE = False
+# Application configuration override file
+# At startup, the application configuration loads in the following order:
+#  - cli args : Top priority. Will override everything else
+#  - config.py : Overrides the default config
+#  - main.py default config : Applied in the absence of all others
 
-# Validator settings
-VALIDATOR_HOST = 'localhost'
-VALIDATOR_PORT = 4004
-
-# Database settings
-DB_HOST = 'localhost'
-DB_PORT = 28015
-DB_NAME = 'rbac'
-
-# Runtime settings
-DEBUG = True
+# To use this file, copy and rename to 'config.py' so it will override
+# the defaults in main.py
+# DO NOT COMMIT config.py TO GIT! These values should be provided to the application by a means
+# outside the version control system(separate config, cli args, etc.)
 
 # Secret keys
-# WARNING! These defaults are insecure, and should be changed for deployment
-SECRET_KEY = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'  # any string
-AES_KEY = 'ffffffffffffffffffffffffffffffff'  # 32 character hex string
-BATCHER_PRIVATE_KEY = '1111111111111111111111111111111111111111111111111111111111111111'  #64 character hex string
+SECRET_KEY = None  # any string
+AES_KEY = None  # 32 character hex string
+BATCHER_PRIVATE_KEY = None  #64 character hex string

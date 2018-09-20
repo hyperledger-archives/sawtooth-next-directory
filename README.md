@@ -20,13 +20,8 @@ The easiest way to run these components is with
 [Docker](https://www.docker.com/what-docker). To start these components,
 first install Docker for your platform and clone this repo.
 
-Next, create a `server/config.py` file based off the example at
-`server/config.py.example`. Pay special attention to the secret keys at the
-bottom of the example file. While other settings have defaults and can be
-omitted, these keys have no defaults and _must_ be provided to run the server.
-The examples listed are insecure, and should be replaced before deployment.
 
-Once there is a config file in place, you can simply run:
+To build and deploy the app, run:
 
 ```bash
 docker-compose up
@@ -73,6 +68,7 @@ containers work compared to the defaults:
 - A _Sawtooth shell_ container is included for testing
 - Sawtooth's blockchain REST API will be available at **http://localhost:8080**
 - Rethink's database admin panel will be available at **http://localhost:9090**
+- The NEXT UI will be available at **http://localhost:4200**
 
 To start the dev containers, from the root project directory run:
 
@@ -80,6 +76,26 @@ To start the dev containers, from the root project directory run:
 bin/build -p
 docker-compose -f docker-compose-dev.yaml up
 ```
+
+## Deploying to Any Non-Localhost Server
+
+Pay special attention to the notes about secret keys in config.py.example. 
+Due to their private/sensitive nature, the values of these keys should be 
+provided to the application using 
+  - a configuration file that is not stored/managed by git 
+  - cli arguments 
+  - some other means that prevents them from being publicly available
+  
+They are the most sensitive components for the security of your application.
+Manage them wisely and responsibly.
+
+When no such keys are provided, random keys are generated on application
+bootstrap to simplify development. This avoids publication of the keys in
+git and allows the application to start up in their absence. Work is 
+underway to cause startup to fail fast and explosively when keys are missing.
+Once that work is complete, the random key generation can be removed as well.
+In other words: It must be made obvious to a user when startup fails due to 
+missing keys.
 
 
 ## Testing
@@ -94,4 +110,5 @@ bin/run_docker_test integration_tests/api/docker-compose.yaml
 
 # License
 
-Hyperledger Sawtooth NEXT Identity Platform software is licensed under the [Apache License Version 2.0](LICENSE) software license.
+Hyperledger Sawtooth NEXT Identity Platform software is licensed under the 
+[Apache License Version 2.0](LICENSE) software license.
