@@ -116,3 +116,6 @@ ENV/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Node
+node_modules

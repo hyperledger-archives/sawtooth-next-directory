@@ -1,0 +1,41 @@
+# Persistent data configuration
+#
+# Start with persistent data:
+#    bin/start -p
+#       -or-
+#    docker-compose -f docker-compose.yaml -f docker-persist.yaml up
+#
+# Start in development config with persistent data:
+#    bin/start -p -d
+#       -or-
+#    docker-compose -f docker-compose.yaml -f docker-persist.yaml -f docker-dev.yaml up
+#
+# add --build flag when appropriate
+#
+# Stop with:
+#    bin/stop
+#       -or-
+#    docker-compose down
+#
+# To clear data and start again from genesis, delete the volumes:
+#    docker volume ls
+#    docker volume rm {folder_name}_chain
+#    docker volume rm {folder_name}_keys
+#    docker volume rm {folder_name}_db
+
+version: "3"
+services:
+
+  rethink:
+    volumes:
+      - db:/data/rethinkdb_data
+
+  validator:
+    volumes:
+      - keys:/var/lib/sawtooth
+      - chain:/etc/sawtooth/keys
+
+volumes:
+  keys:
+  chain:
+  db:

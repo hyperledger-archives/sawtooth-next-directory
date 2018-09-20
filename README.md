@@ -27,6 +27,11 @@ To build and deploy the app, run:
 docker-compose up
 ```
 
+A shortcut is available via:
+```bash
+bin/start
+```
+
 This will build all components, start them in individual Docker containers,
 and download and run the necessary Sawtooth components. Once complete, the
 REST API will be available at **http://localhost:8000**.
@@ -36,6 +41,11 @@ which can be accomplished using the `--build` flag:
 
 ```bash
 docker-compose up --build
+```
+
+A shortcut is available via:
+```bash
+bin/start -b
 ```
 
 Once all the docker containers are running without error, see ui/readme.md
@@ -74,7 +84,13 @@ To start the dev containers, from the root project directory run:
 
 ```bash
 bin/build -p
-docker-compose -f docker-compose-dev.yaml up
+docker-compose -f docker-compose-dev.yaml -f docker-dev.yaml up
+```
+
+A shortcut is available via:
+```bash
+bin/build -p
+bin/start -d
 ```
 
 ## Deploying to Any Non-Localhost Server
@@ -112,8 +128,15 @@ Tests can be run using the `run_docker_test` script, with the desired
 docker-compose file as an argument. For example:
 
 ```bash
+bin/build -p
 bin/run_docker_test integration_tests/blockchain/docker-compose.yaml
 bin/run_docker_test integration_tests/api/docker-compose.yaml
+```
+
+A shortcut is available via:
+```bash
+bin/build -p
+bin/build -i
 ```
 
 # License
