@@ -26,3 +26,14 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+node_modules
+npm-debug.log
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+README.md
+LICENSE
+.vscode

@@ -1,0 +1,55 @@
+# Development configuration
+#
+# Start from genesis without persistent data:
+#    bin/start -d
+#       -or-
+#    docker-compose -f docker-compose.yaml -f docker-dev.yaml up
+#
+# Start with persistent data: 
+#    bin/start -d -p
+#       -or-
+#    docker-compose -f docker-compose.yaml -f docker-dev.yaml -f docker-persist.yaml up
+#
+# add --build flag when appropriate
+#
+# Stop with:
+#    bin/stop
+#       -or-
+#    docker-compose down
+#
+# To clear data and start again from genesis, delete the volumes:
+#    docker volume ls
+#    docker volume rm {folder_name}_chain
+#    docker volume rm {folder_name}_keys
+#    docker volume rm {folder_name}_db
+
+version: "3"
+services:
+  shell:
+    volumes:
+      - ".:/project/tmobile-rbac"
+
+  rbac-server:
+    build:
+      dockerfile: ./server/Dockerfile-dev
+    container_name: rbac-server-dev
+    image: rbac-server-dev:${ISOLATION_ID}
+    volumes:
+      - ".:/project/tmobile-rbac"
+
+  rbac-tp:
+    build:
+      dockerfile: ./processor/Dockerfile-dev
+    container_name: rbac-tp-dev
+    image: rbac-tp-dev:${ISOLATION_ID}
+    volumes:
+      - ".:/project/tmobile-rbac"
+
+  ledger-sync:
+    build:
+      dockerfile: ./ledger_sync/Dockerfile-dev
+    container_name: rbac-ledger-sync-dev
+    image: rbac-ledger-sync-dev:${ISOLATION_ID}
+    volumes:
+      - ".:/project/tmobile-rbac"
+
