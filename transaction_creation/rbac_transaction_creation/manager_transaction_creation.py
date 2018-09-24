@@ -78,9 +78,9 @@ def propose_manager(txn_key,
 def confirm_manager(txn_key,
                     batch_key,
                     proposal_id,
-                    reason,
                     user_id,
-                    manager_id):
+                    manager_id,
+                    reason):
     """Create a BatchList with a ConfirmUpdateUserManager transaction in it.
 
     Args:
