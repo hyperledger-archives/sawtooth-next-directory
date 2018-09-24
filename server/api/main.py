@@ -46,13 +46,15 @@ APP_BP = Blueprint('utils')
 
 CONFIG_FILE = 'config.py'
 
+HOST = os.environ['HOST']
+
 DEFAULT_CONFIG = {
-    'HOST': 'localhost',
+    'HOST': HOST,
     'PORT': 8000,
-    'VALIDATOR_HOST': 'localhost',
+    'VALIDATOR_HOST': HOST,
     'VALIDATOR_PORT': 4004,
     'TIMEOUT': 500,
-    'DB_HOST': 'localhost',
+    'DB_HOST': HOST,
     'DB_PORT': 28015,
     'DB_NAME': 'rbac',
     'DEBUG': True,

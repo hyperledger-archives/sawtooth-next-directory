@@ -43,6 +43,8 @@ services:
       - ledger-sync
       - rethink
       - validator
+    environment:
+      - HOST=${HOST:-localhost}
     command: ./bin/rbac-server --host 0.0.0.0 --db-host rethink --validator-host validator
 
   rethink:
@@ -61,6 +63,8 @@ services:
         - no_proxy
     container_name: rbac-tp
     image: rbac-tp-production:${ISOLATION_ID}
+    environment:
+      - HOST=${HOST:-localhost}
     command: ./bin/rbac-tp -vv tcp://validator:4004
 
   ledger-sync:
@@ -76,6 +80,8 @@ services:
     depends_on:
       - rethink
       - validator
+    environment:
+      - HOST=${HOST:-localhost}
     command: |
       bash -c "
         ./bin/setup_db --host rethink &&
@@ -97,7 +103,7 @@ services:
     depends_on:
       - rbac-server
     environment:
-      - RBAC_SERVER=localhost
+      - HOST=${HOST:-localhost}
 
   rest-api:
     container_name: sawtooth-rest-api

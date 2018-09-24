@@ -17,8 +17,8 @@
 
 # http://docs.python-requests.org/en/master/
 
-import requests
 import json
+import requests
 
 HEADERS = {"Content-Type": "application/json"}
 
@@ -29,14 +29,19 @@ def insert_test_data():
       Builds out an example user, manager, role structure by making rest calls against the NEXT api.
     """
 
-    print("Inserting test data...")
+    host = input("What is the hostname you would like to populate test "
+                 "data to? Press enter for localhost: ")
+    if host == "":
+        host = "localhost"
 
-    response_create_current_manager = create_user('currentManager')
+    print("Inserting test data...")
+    
+    response_create_current_manager = create_user('currentManager', host)
     print('Created current manager:', response_create_current_manager)
 
     id_current_manager = response_create_current_manager['data']['user']['id']
 
-    response_create_other_manager = create_user('otherManager')
+    response_create_other_manager = create_user('otherManager', host)
     id_other_manager = response_create_other_manager['data']['user']['id']
 
     print('Created other manager:', response_create_other_manager)
@@ -44,9 +49,9 @@ def insert_test_data():
     additional_managers = 5
     print('Adding an additional {} managers...'.format(additional_managers))
     for i in range(additional_managers):
-        create_user('manager' + str(i))
+        create_user('manager' + str(i), host)
 
-    response_create_staff = create_user('staff', id_current_manager)
+    response_create_staff = create_user('staff', host, id_current_manager)
     id_staff = response_create_staff['data']['user']['id']
 
     print('Created staff:', response_create_staff)
@@ -57,7 +62,8 @@ def insert_test_data():
                                               name="Sharepoint Admins",
                                               owners=[id_current_manager],
                                               admins=[id_current_manager],
-                                              members=[id_staff])
+                                              members=[id_staff],
+                                              host=host)
 
     print('Created role:', response_create_role_admins['data']['name'])
 
@@ -65,13 +71,14 @@ def insert_test_data():
                                                 name="Infosec Auditors",
                                                 owners=[id_current_manager],
                                                 admins=[id_current_manager],
-                                                members=[id_staff])
+                                                members=[id_staff],
+                                                host=host)
 
     print('Created role:', response_create_role_auditors['data']['name'])
 
     payload_propose_manager = {"id": id_other_manager}
 
-    response_propose_manager = json.loads(requests.put('http://localhost:8000/api/users/' + id_staff + '/manager/',
+    response_propose_manager = json.loads(requests.put('http://' + host + ':8000/api/users/' + id_staff + '/manager/',
                                                        data=json.dumps(payload_propose_manager),
                                                        headers={"Content-Type": "application/json",
                                                                 "Authorization": auth_current_manager}).text)
@@ -83,7 +90,7 @@ def insert_test_data():
         'otherManager'))
 
 
-def create_user(identifier, manager=''):
+def create_user(identifier, host, manager=''):
     """Creates a user in the system having the given identifier as name, password, username and *optional* manager
 
        Returns the response payload of the user creation rest call as a json object.
@@ -91,11 +98,11 @@ def create_user(identifier, manager=''):
     payload_current_manager = {'name': identifier, 'password': identifier, 'username': identifier,
                                'email': identifier + '@mail.com', 'manager': manager, 'metadata': ''}
 
-    response_create_user = requests.post('http://localhost:8000/api/users/', json=payload_current_manager)
+    response_create_user = requests.post('http://' + host + ':8000/api/users/', json=payload_current_manager)
     return json.loads(response_create_user.text)
 
 
-def create_role(auth, name, owners, admins, members):
+def create_role(auth, name, owners, admins, members, host):
     """Creates a role in the system.
 
        Args:
@@ -117,7 +124,7 @@ def create_role(auth, name, owners, admins, members):
         "metadata": ""
     }
 
-    response_create_role_envelope = requests.post('http://localhost:8000/api/roles/', json=payload_create_role,
+    response_create_role_envelope = requests.post('http://' + host + ':8000/api/roles/', json=payload_create_role,
                                                   headers={"Content-Type": "application/json",
                                                            "Authorization": auth})
 

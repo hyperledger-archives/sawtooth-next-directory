@@ -16,6 +16,7 @@
 import sys
 import argparse
 import logging
+import os
 
 from rbac_ledger_sync.database import Database
 from rbac_ledger_sync.subscriber import Subscriber
@@ -28,6 +29,7 @@ LOGGER = logging.getLogger(__name__)
 # likely genesis, defeating the purpose. Rewind just 15 blocks to handle forks.
 KNOWN_COUNT = 15
 
+HOST = os.environ['HOST']
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
@@ -37,10 +39,10 @@ def parse_args(args):
                         help='Increase level of output sent to stderr')
     parser.add_argument('--validator',
                         help='The url of the validator to sync with',
-                        default='tcp://localhost:4004')
+                        default='tcp://' + HOST + ':4004')
     parser.add_argument('--db-host',
                         help='The host of the database to connect to',
-                        default='localhost')
+                        default=HOST)
     parser.add_argument('--db-port',
                         help='The port of the database to connect to',
                         default='28015')
