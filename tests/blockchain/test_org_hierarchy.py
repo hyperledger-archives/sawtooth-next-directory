@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,101 +13,31 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from base64 import b64decode
 import sys
 import logging
-import time
 import unittest
+
 from uuid import uuid4
-from urllib.request import urlopen
-from urllib.error import HTTPError
-from urllib.error import URLError
-
-from sawtooth_cli.rest_client import RestClient
-
-import sawtooth_signing
-from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
-
-from rbac_addressing import addresser
-from rbac_transaction_creation.protobuf import user_state_pb2
-from rbac_transaction_creation.common import Key
-from rbac_transaction_creation import manager_transaction_creation
-from rbac_transaction_creation.user_transaction_creation import create_user
-from rbac_transaction_creation import role_transaction_creation
-from rbac_transaction_creation import task_transaction_creation
-
+from tests.blockchain.rbac_client import RbacClient
+from tests.blockchain.integration_test_helper import IntegrationTestHelper
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-BATCHER_PRIVATE_KEY = Secp256k1PrivateKey.new_random().as_hex()
-BATCHER_KEY = Key(BATCHER_PRIVATE_KEY)
-BATCHER_PUBLIC_KEY = BATCHER_KEY.public_key
 
-
-def wait_until_status(url, status_code=200, tries=5):
-    """Pause the program until the given url returns the required status.
-    Args:
-        url (str): The url to query.
-        status_code (int, optional): The required status code. Defaults to 200.
-        tries (int, optional): The number of attempts to request the url for
-            the given status. Defaults to 5.
-    Raises:
-        AssertionError: If the status is not received in the given number of
-            tries.
-    """
-    attempts = tries
-    while attempts > 0:
-        try:
-            response = urlopen(url)
-            if response.getcode() == status_code:
-                return
-
-        except HTTPError as err:
-            if err.code == status_code:
-                return
-
-            LOGGER.debug('failed to read url: %s', str(err))
-        except URLError as err:
-            LOGGER.debug('failed to read url: %s', str(err))
-
-        sleep_time = (tries - attempts + 1) * 2
-        LOGGER.debug('Retrying in %s secs', sleep_time)
-        time.sleep(sleep_time)
-
-        attempts -= 1
-
-    raise AssertionError(
-        "{} is not available within {} attempts".format(url, tries))
-
-
-def wait_for_rest_apis(endpoints, tries=5):
-    """Pause the program until all the given REST API endpoints are available.
-    Args:
-        endpoints (list of str): A list of host:port strings.
-        tries (int, optional): The number of attempts to request the url for
-            availability.
-    """
-
-    for endpoint in endpoints:
-        wait_until_status(
-            'http://{}/blocks'.format(endpoint),
-            status_code=200,
-            tries=tries)
-
-
-class TestBlockchain(unittest.TestCase):
+class TestOrgHierarchy(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = RBACClient('http://rest-api:8080')
-        cls.key1, cls.user1 = make_key_and_name()
-        cls.key2a, cls.user2a = make_key_and_name()
-        cls.key3a, cls.user3a = make_key_and_name()
-        cls.key2b, cls.user2b = make_key_and_name()
-        cls.key_invalid, cls.user_invalid = make_key_and_name()
-        cls.key3b, cls.user3b = make_key_and_name()
+        cls.test_helper = IntegrationTestHelper()
+        cls.client = RbacClient('http://rest-api:8080', IntegrationTestHelper.get_batcher_key())
+        cls.key1, cls.user1 = cls.test_helper.make_key_and_name()
+        cls.key2a, cls.user2a = cls.test_helper.make_key_and_name()
+        cls.key3a, cls.user3a = cls.test_helper.make_key_and_name()
+        cls.key_manager, cls.user2b = cls.test_helper.make_key_and_name()
+        cls.key_invalid, cls.user_invalid = cls.test_helper.make_key_and_name()
+        cls.key3b, cls.user3b = cls.test_helper.make_key_and_name()
 
         cls.role_id1 = str(uuid4())
         cls.task_id1 = str(uuid4())
@@ -122,6 +52,8 @@ class TestBlockchain(unittest.TestCase):
 
         cls.remove_task_admins_proposal_id = str(uuid4())
         cls.remove_task_owners_proposal_id = str(uuid4())
+
+        cls.test_helper.wait_for_containers()
 
     def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
@@ -147,8 +79,6 @@ class TestBlockchain(unittest.TestCase):
 
         """
 
-        wait_for_rest_apis(['rest-api:8080'])
-
         self.assertEqual(
             self.client.create_user(
                 key=self.key1,
@@ -171,7 +101,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key3a,
                 name=self.user2b,
                 user_name=self.user2b,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 manager_id=self.key3a.public_key)[0]['status'],
             'INVALID',
             "The transaction is invalid because the public key given for "
@@ -192,7 +122,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key2a,
                 name=self.user2b,
                 user_name=self.user2b,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 manager_id=self.key1.public_key)[0]['status'],
             'INVALID',
             "The signing key does not belong to the user or manager.")
@@ -221,7 +151,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 name=self.user2b,
                 user_name=self.user2b,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 manager_id=self.key1.public_key)[0]['status'],
             'COMMITTED')
 
@@ -231,7 +161,7 @@ class TestBlockchain(unittest.TestCase):
                 name=self.user3b,
                 user_name=self.user3b,
                 user_id=self.key3b.public_key,
-                manager_id=self.key2b.public_key)[0]['status'],
+                manager_id=self.key_manager.public_key)[0]['status'],
             'COMMITTED')
 
         state_items = self.client.return_state()
@@ -258,7 +188,7 @@ class TestBlockchain(unittest.TestCase):
 
         """
 
-        _, role1 = make_key_and_name()
+        _, role1 = self.test_helper.make_key_and_name()
         metadata = uuid4().hex
 
         self.assertEqual(
@@ -268,7 +198,7 @@ class TestBlockchain(unittest.TestCase):
                 role_id=self.role_id1,
                 metadata=metadata,
                 admins=[self.key1.public_key, self.key2a.public_key],
-                owners=[self.key2b.public_key])[0]['status'],
+                owners=[self.key_manager.public_key])[0]['status'],
             "COMMITTED")
 
         self.assertEqual(
@@ -278,11 +208,11 @@ class TestBlockchain(unittest.TestCase):
                 role_id=self.role_id1,
                 metadata=metadata,
                 admins=[self.key2a.public_key],
-                owners=[self.key2b.public_key])[0]['status'],
+                owners=[self.key_manager.public_key])[0]['status'],
             "INVALID",
             "The Role Id must not already exist.")
 
-        _, role2 = make_key_and_name()
+        _, role2 = self.test_helper.make_key_and_name()
         role_id2 = uuid4().hex
 
         self.assertEqual(
@@ -292,7 +222,7 @@ class TestBlockchain(unittest.TestCase):
                 role_id=role_id2,
                 metadata=metadata,
                 admins=[self.key_invalid.public_key, self.key2a.public_key],
-                owners=[self.key2b.public_key])[0]['status'],
+                owners=[self.key_manager.public_key])[0]['status'],
             "INVALID",
             "All Admins listed must be Users")
 
@@ -303,7 +233,7 @@ class TestBlockchain(unittest.TestCase):
                 role_id=role_id2,
                 metadata=metadata,
                 admins=[self.key2a.public_key],
-                owners=[self.key_invalid.public_key, self.key2b.public_key])[0]['status'],
+                owners=[self.key_invalid.public_key, self.key_manager.public_key])[0]['status'],
             "INVALID",
             "All Owners listed must be Users")
 
@@ -347,7 +277,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key3b,
                 proposal_id=uuid4().hex,
                 user_id=self.key2a.public_key,
-                new_manager_id=self.key2b.public_key,
+                new_manager_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "INVALID",
@@ -358,7 +288,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=self.update_manager_proposal_id,
                 user_id=self.key2a.public_key,
-                new_manager_id=self.key2b.public_key,
+                new_manager_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "COMMITTED")
@@ -368,7 +298,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=uuid4().hex,
                 user_id=self.key2a.public_key,
-                new_manager_id=self.key2b.public_key,
+                new_manager_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "INVALID",
@@ -390,37 +320,37 @@ class TestBlockchain(unittest.TestCase):
                 proposal_id=self.update_manager_proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key2b.public_key
+                manager_id=self.key_manager.public_key
             )[0]['status'],
             "INVALID",
             "The txn signer must be the new manager listed on the proposal")
 
         self.assertEqual(
             self.client.confirm_update_manager(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=uuid4().hex,
                 reason=uuid4().hex,
                 user_id=uuid4().hex,
-                manager_id=self.key2b.public_key)[0]['status'],
+                manager_id=self.key_manager.public_key)[0]['status'],
             "INVALID",
             "The proposal must exist")
 
         self.assertEqual(
             self.client.confirm_update_manager(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=self.update_manager_proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key2b.public_key)[0]['status'],
+                manager_id=self.key_manager.public_key)[0]['status'],
             "COMMITTED")
 
         self.assertEqual(
             self.client.confirm_update_manager(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=self.update_manager_proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key2b.public_key)[0]['status'],
+                manager_id=self.key_manager.public_key)[0]['status'],
             "INVALID",
             "The proposal must be open")
 
@@ -438,7 +368,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_update_manager(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
@@ -504,7 +434,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=uuid4().hex,
                 role_id=invalid_role_id,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "INVALID",
@@ -626,7 +556,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_role_admins(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
@@ -687,7 +617,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_role_owners(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=self.key3b.public_key,
@@ -698,7 +628,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_role_owners(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=uuid4().hex,
                 role_id=self.role_id1,
                 user_id=uuid4().hex,
@@ -720,7 +650,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_role_owners(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=self.add_role_owners_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
@@ -730,7 +660,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_role_owners(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=uuid4().hex,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
@@ -759,7 +689,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.confirm_add_role_owners(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=self.add_role_admins_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
@@ -880,7 +810,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_role_members(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=self.key3b.public_key,
@@ -891,7 +821,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_role_members(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=uuid4().hex,
                 role_id=self.role_id1,
                 user_id=uuid4().hex,
@@ -916,7 +846,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=self.add_role_members_proposal_id,
                 role_id=self.role_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "COMMITTED")
@@ -926,7 +856,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=uuid4().hex,
                 role_id=self.role_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "INVALID",
@@ -946,7 +876,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=self.add_role_members_proposal_id,
                 role_id=self.role_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "INVALID",
             "The txn signer for ConfirmAddRoleMember must be an owner "
@@ -967,7 +897,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key3b,
                 proposal_id=self.add_role_members_proposal_id,
                 role_id=self.role_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "COMMITTED")
 
@@ -976,7 +906,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key3b,
                 proposal_id=self.add_role_members_proposal_id,
                 role_id=self.role_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "INVALID",
             "The proposal must be open.")
@@ -1299,7 +1229,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=str(uuid4()),
                 task_id=str(uuid4()),
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=str(uuid4()),
                 metadata=str(uuid4()))[0]['status'],
             "INVALID",
@@ -1329,14 +1259,14 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_task_admins(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=self.add_task_admins_proposal_id,
                 task_id=self.task_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "COMMITTED")
-        
+
         self.assertEqual(
             self.client.propose_add_task_admins(
                 key=self.key1,
@@ -1350,10 +1280,10 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_task_admins(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "INVALID",
@@ -1373,7 +1303,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "INVALID",
             "The proposal must exist.")
@@ -1383,7 +1313,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=self.add_task_admins_proposal_id,
                 task_id=self.task_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "COMMITTED")
 
@@ -1392,7 +1322,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=self.add_task_admins_proposal_id,
                 task_id=self.task_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "INVALID",
             "The proposal must be open.")
@@ -1410,7 +1340,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_task_admins(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
@@ -1423,7 +1353,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "INVALID",
             "The proposal must exist.")
@@ -1486,7 +1416,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key3a,
                 proposal_id=str(uuid4()),
                 task_id=self.task_id2,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "INVALID",
@@ -1512,7 +1442,6 @@ class TestBlockchain(unittest.TestCase):
                 metadata=uuid4().hex)[0]['status'],
             "INVALID",
             "The User must not already be an Owner of the Task")
-
 
         self.assertEqual(
             self.client.propose_add_task_owners(
@@ -1576,7 +1505,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_add_task_owners(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
@@ -1589,7 +1518,7 @@ class TestBlockchain(unittest.TestCase):
                 key=self.key1,
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
-                user_id=self.key2b.public_key,
+                user_id=self.key_manager.public_key,
                 reason=uuid4().hex)[0]['status'],
             "INVALID",
             "The proposal must exist.")
@@ -1660,7 +1589,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_delete_task_admins(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=str(uuid4()),
                 task_id=self.task_id2,
                 user_id=self.key1.public_key,
@@ -1726,7 +1655,7 @@ class TestBlockchain(unittest.TestCase):
 
         self.assertEqual(
             self.client.propose_delete_task_owners(
-                key=self.key2b,
+                key=self.key_manager,
                 proposal_id=str(uuid4()),
                 task_id=self.task_id2,
                 user_id=self.key1.public_key,
@@ -1744,462 +1673,3 @@ class TestBlockchain(unittest.TestCase):
                 reason=uuid4().hex,
                 metadata=uuid4().hex)[0]['status'],
             "COMMITTED")
-
-
-class RBACClient(object):
-
-    def __init__(self, url):
-        self._client = RestClient(base_url=url)
-
-    def return_state(self):
-        items = []
-        for item in self._client.list_state(subtree=addresser.NS)['data']:
-            if addresser.address_is(item['address']) == addresser.AddressSpace.USER:
-                user_container = user_state_pb2.UserContainer()
-                user_container.ParseFromString(b64decode(item['data']))
-                items.append((user_container, addresser.AddressSpace.USER))
-        return items
-
-    def create_user(self, key, name, user_name, user_id, manager_id=None):
-        batch_list, signature = create_user(txn_key=key,
-                                            batch_key=BATCHER_KEY,
-                                            name=name,
-                                            user_name=user_name,
-                                            user_id=user_id,
-                                            metadata=uuid4().hex,
-                                            manager_id=manager_id)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def create_role(self, key, role_name, role_id, metadata, admins, owners):
-        batch_list, signature = role_transaction_creation.create_role(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            role_name=role_name,
-            role_id=role_id,
-            metadata=metadata,
-            admins=admins,
-            owners=owners)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_update_manager(self,
-                               key,
-                               proposal_id,
-                               user_id,
-                               new_manager_id,
-                               reason,
-                               metadata):
-
-        batch_list, signature = manager_transaction_creation.propose_manager(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            user_id=user_id,
-            new_manager_id=new_manager_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def confirm_update_manager(self,
-                               key,
-                               proposal_id,
-                               reason,
-                               user_id,
-                               manager_id):
-        batch_list, signature = manager_transaction_creation.confirm_manager(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            reason=reason,
-            user_id=user_id,
-            manager_id=manager_id)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def reject_update_manager(self,
-                              key,
-                              proposal_id,
-                              reason,
-                              user_id,
-                              manager_id):
-        batch_list, signature = manager_transaction_creation.reject_manager(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            reason=reason,
-            user_id=user_id,
-            manager_id=manager_id)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_add_role_admins(self,
-                                key,
-                                proposal_id,
-                                role_id,
-                                user_id,
-                                reason,
-                                metadata):
-        batch_list, signature = role_transaction_creation.propose_add_role_admins(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def confirm_add_role_admins(self,
-                                key,
-                                proposal_id,
-                                role_id,
-                                user_id,
-                                reason):
-        batch_list, signature = role_transaction_creation.confirm_add_role_admins(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason)
-
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def reject_add_role_admins(self,
-                               key,
-                               proposal_id,
-                               role_id,
-                               user_id,
-                               reason):
-
-        batch_list, signature = role_transaction_creation.reject_add_role_admins(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_add_role_owners(self,
-                                key,
-                                proposal_id,
-                                role_id,
-                                user_id,
-                                reason,
-                                metadata):
-        batch_list, signature = role_transaction_creation.propose_add_role_owners(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def confirm_add_role_owners(self,
-                                key,
-                                proposal_id,
-                                role_id,
-                                user_id,
-                                reason):
-        batch_list, signature = role_transaction_creation.confirm_add_role_owners(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def reject_add_role_owners(self,
-                               key,
-                               proposal_id,
-                               role_id,
-                               user_id,
-                               reason):
-        batch_list, signature = role_transaction_creation.reject_add_role_owners(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_add_role_members(self,
-                                 key,
-                                 proposal_id,
-                                 role_id,
-                                 user_id,
-                                 reason,
-                                 metadata):
-        batch_list, signature = role_transaction_creation.propose_add_role_members(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def confirm_add_role_members(self,
-                                 key,
-                                 proposal_id,
-                                 role_id,
-                                 user_id,
-                                 reason):
-        batch_list, signature = role_transaction_creation.confirm_add_role_members(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def reject_add_role_members(self,
-                                key,
-                                proposal_id,
-                                role_id,
-                                user_id,
-                                reason):
-        batch_list, signature = role_transaction_creation.reject_add_role_members(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_add_role_tasks(self,
-                              key,
-                              proposal_id,
-                              role_id,
-                              task_id,
-                              reason,
-                              metadata):
-        batch_list, signature = role_transaction_creation.propose_add_role_tasks(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            task_id=task_id,
-            reason=reason,
-            metadata=metadata)
-
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def confirm_add_role_tasks(self,
-                              key,
-                              proposal_id,
-                              role_id,
-                              task_id,
-                              reason):
-        batch_list, signature = role_transaction_creation.confirm_add_role_tasks(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            task_id=task_id,
-            reason=reason)
-
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def reject_add_role_tasks(self,
-                              key,
-                              proposal_id,
-                              role_id,
-                              task_id,
-                              reason):
-        batch_list, signature = role_transaction_creation.reject_add_role_tasks(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            role_id=role_id,
-            task_id=task_id,
-            reason=reason)
-
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def create_task(self,
-                    key,
-                    task_id,
-                    task_name,
-                    admins,
-                    owners,
-                    metadata):
-
-        batch_list, signature = task_transaction_creation.create_task(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            task_id=task_id,
-            task_name=task_name,
-            admins=admins,
-            owners=owners,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_add_task_admins(self,
-                                key,
-                                proposal_id,
-                                task_id,
-                                user_id,
-                                reason,
-                                metadata):
-        batch_list, signature = task_transaction_creation.propose_add_task_admins(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def confirm_add_task_admins(self,
-                                key,
-                                proposal_id,
-                                task_id,
-                                user_id,
-                                reason):
-        batch_list, signature = task_transaction_creation.confirm_add_task_admins(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def reject_add_task_admins(self,
-                               key,
-                               proposal_id,
-                               task_id,
-                               user_id,
-                               reason):
-        batch_list, signature = task_transaction_creation.reject_add_task_admins(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_add_task_owners(self,
-                                key,
-                                proposal_id,
-                                task_id,
-                                user_id,
-                                reason,
-                                metadata):
-        batch_list, signature = task_transaction_creation.propose_add_task_owner(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def confirm_add_task_owners(self,
-                                key,
-                                proposal_id,
-                                task_id,
-                                user_id,
-                                reason):
-        batch_list, signature = task_transaction_creation.confirm_add_task_owners(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def reject_add_task_owners(self,
-                               key,
-                               proposal_id,
-                               task_id,
-                               user_id,
-                               reason):
-        batch_list, signature = task_transaction_creation.reject_add_task_owners(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_delete_task_admins(self,
-                                   key,
-                                   proposal_id,
-                                   task_id,
-                                   user_id,
-                                   reason,
-                                   metadata):
-        batch_list, signature = task_transaction_creation.propose_remove_task_admins(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-    def propose_delete_task_owners(self,
-                                   key,
-                                   proposal_id,
-                                   task_id,
-                                   user_id,
-                                   reason,
-                                   metadata):
-
-        batch_list, signature = task_transaction_creation.propose_remove_task_owners(
-            txn_key=key,
-            batch_key=BATCHER_KEY,
-            proposal_id=proposal_id,
-            task_id=task_id,
-            user_id=user_id,
-            reason=reason,
-            metadata=metadata)
-        self._client.send_batches(batch_list)
-        return self._client.get_statuses([signature], wait=10)
-
-
-def make_key_and_name():
-    context = sawtooth_signing.create_context('secp256k1')
-    private_key = context.new_random_private_key()
-    pubkey = context.get_public_key(private_key)
-
-    key = Key(public_key=pubkey.as_hex(), private_key=private_key.as_hex())
-    return key, uuid4().hex

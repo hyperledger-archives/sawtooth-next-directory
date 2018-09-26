@@ -13,12 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =========================================================================*/
 import {Injectable} from '@angular/core';
-import * as _ from "lodash";
 import {Headers, RequestOptions} from "@angular/http";
 import {MatSnackBar} from "@angular/material";
+
 @Injectable()
 export class UtilsService {
-    constructor(private snackBar: MatSnackBar){}
+    constructor(private snackBar: MatSnackBar) {
+    }
 
     setTimeoutPromise(milliseconds) {
         const promise = new Promise((resolve: any, reject: any) => {

@@ -1,11 +1,11 @@
-jobs:  
+jobs:
   include:
     - stage: backend
       language: python
       python:
         - "3.6"
       script:
-        - pytest --ignore=integration_tests
+        - pytest --ignore=tests
 
     - stage: frontend
       language: node_js

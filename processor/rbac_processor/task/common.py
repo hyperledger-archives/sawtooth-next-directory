@@ -9,7 +9,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -76,6 +75,7 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
     try:
         task_rel_entry = get_state_entry(state_entries, rel_address)
         task_rel_container = return_task_rel_container(task_rel_entry)
+
         if (header.signer_public_key not in [user.user_id, user.manager_id]) and (not is_in_task_rel_container(
                 task_rel_container,
                 task_id,
@@ -240,7 +240,6 @@ def handle_propose_state_set(state_entries,
                              proposal_type,
                              state,
                              related_type='user_id'):
-
     try:
 
         entry = get_state_entry(state_entries, address=address)
@@ -344,6 +343,6 @@ def handle_reject(state_entries,
     proposal.closer = header.signer_public_key
     proposal.close_reason = reject.reason
 
-    address_values = { proposal_address: proposal_container.SerializeToString() }
+    address_values = {proposal_address: proposal_container.SerializeToString()}
 
     set_state(state, address_values)

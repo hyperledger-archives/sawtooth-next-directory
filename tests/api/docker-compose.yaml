@@ -19,8 +19,8 @@ services:
 
   server:
     build:
-      context: ../../
-      dockerfile: ./server/Dockerfile-dev
+      context: ../..
+      dockerfile: ../../../server/Dockerfile-dev
     image: rbac-server-dev
     volumes:
       - "../../:/project/tmobile-rbac"
@@ -39,8 +39,8 @@ services:
 
   rbac-tp:
     build:
-      context: ../../
-      dockerfile: ./processor/Dockerfile-dev
+      context: ../..
+      dockerfile: ../../../processor/Dockerfile-dev
     image: rbac-tp-dev
     volumes:
       - "../../:/project/tmobile-rbac"
@@ -48,8 +48,8 @@ services:
 
   ledger-sync:
     build:
-      context: ../../
-      dockerfile: ./ledger_sync/Dockerfile-dev
+      context: ../..
+      dockerfile: ../../../ledger_sync/Dockerfile-dev
     image: rbac-ledger-sync-dev
     volumes:
       - "../../:/project/tmobile-rbac"
@@ -86,8 +86,8 @@ services:
 
   test-runner:
     build:
-      context: ../../
-      dockerfile: ./integration_tests/api/Dockerfile
+      context: ../..
+      dockerfile: Dockerfile
     image: api-test-env
     depends_on:
       - server
@@ -100,6 +100,6 @@ services:
     command: |
       dredd ./server/openapi.yaml http://server:8000
         --language=python
-        --hookfiles=./integration_tests/api/*.py
+        --hookfiles=./tests/api/*.py
         --hooks-worker-after-connect-wait=10000
         --reporter=dot
