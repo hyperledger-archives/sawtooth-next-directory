@@ -52,10 +52,10 @@ services:
   test-runner:
     build:
       context: ../../
-      dockerfile: ./integration_tests/blockchain/Dockerfile
+      dockerfile: ./tests/blockchain/Dockerfile
     image: blockchain-test-env
     volumes:
       - "../../:/project/tmobile-rbac"
-    command: python3 -m unittest integration_tests/blockchain/blockchain_integration_test.py
+    command: python3 -m unittest discover tests/blockchain
     environment:
       PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation

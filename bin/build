@@ -50,7 +50,7 @@ do
             ;;
         p)
             info "Building Protobuf modules"
-            docker build . -f integration_tests/blockchain/Dockerfile -t rbac-test-env
+            docker build . -f tests/blockchain/Dockerfile -t rbac-test-env
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             ;;
         t)
@@ -59,15 +59,15 @@ do
             ;;
         l)
             info "Running lint"
-            docker build . -f integration_tests/blockchain/Dockerfile -t rbac-test-env
+            docker build . -f tests/blockchain/Dockerfile -t rbac-test-env
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
             ;;
         i)
             info "Running integration tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain/docker-compose.yaml
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/blockchain/docker-compose.yaml
             ;;
         a)
-            docker build . -f integration_tests/blockchain/Dockerfile -t rbac-test-env
+            docker build . -f tests/blockchain/Dockerfile -t rbac-test-env
             info "Building Protobuf modules"
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             info "Running lint"
@@ -75,7 +75,7 @@ do
             info "Running tests"
             pytest
             info "Running integration tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain/docker-compose.yaml
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/blockchain/docker-compose.yaml
             ;;
         \?)
             usage

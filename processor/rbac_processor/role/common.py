@@ -9,7 +9,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -35,7 +34,7 @@ from rbac_processor.state import get_state
 from rbac_processor.state import set_state
 
 
-def validate_role_rel_proposal(header, propose, rel_address, state, is_remove = False):
+def validate_role_rel_proposal(header, propose, rel_address, state, is_remove=False):
     """Validates that the User exists, the Role exists, and the User is not
     in the Role's relationship specified by rel_address.
 
@@ -82,7 +81,6 @@ def validate_role_rel_proposal(header, propose, rel_address, state, is_remove = 
     try:
         role_admins_entry = get_state_entry(state_entries, rel_address)
         role_rel_container = return_role_rel_container(role_admins_entry)
-        
 
         if (header.signer_public_key not in [user.user_id, user.manager_id]) and (not is_in_role_rel_container(
                 role_rel_container,
@@ -91,7 +89,7 @@ def validate_role_rel_proposal(header, propose, rel_address, state, is_remove = 
             raise InvalidTransaction(
                 "Txn signer {} is not the user or the user's "
                 "manager {} nor the group owner / admin".format(header.signer_public_key,
-                                    [user.user_id, user.manager_id]))
+                                                                [user.user_id, user.manager_id]))
 
         if (not is_remove) and is_in_role_rel_container(
                 role_rel_container,
@@ -117,6 +115,7 @@ def validate_role_admin_or_owner(header,
     Args:
         header (TransactionHeader): The transaction header protobuf class.:
         confirm: ConfirmAddRoleAdmin, RejectAddRoleAdmin, ...
+        txn_signer_rel_address: Transaction signer role relationship address
         state (Context): The class responsible for gets and sets of state.
 
     Returns:
@@ -159,7 +158,6 @@ def validate_role_task(header,
                        confirm,
                        txn_signer_rel_address,
                        state):
-
     proposal_address = addresser.make_proposal_address(
         object_id=confirm.role_id,
         related_id=confirm.task_id)
@@ -202,7 +200,6 @@ def handle_propose_state_set(state_entries,
                              proposal_type,
                              state,
                              related_type='user_id'):
-
     try:
         entry = get_state_entry(state_entries, address=address)
         proposal_container = return_prop_container(entry)
@@ -245,7 +242,7 @@ def handle_confirm_add(state_entries,
     proposal.closer = header.signer_public_key
     proposal.close_reason = confirm.reason
 
-    address_values = { proposal_address: proposal_container.SerializeToString() }
+    address_values = {proposal_address: proposal_container.SerializeToString()}
 
     try:
         role_rel_entry = get_state_entry(state_entries, role_rel_address)
@@ -286,6 +283,6 @@ def handle_reject(state_entries,
     proposal.closer = header.signer_public_key
     proposal.close_reason = reject.reason
 
-    address_values = { proposal_address: proposal_container.SerializeToString() }
+    address_values = {proposal_address: proposal_container.SerializeToString()}
 
     set_state(state, address_values)

@@ -19,7 +19,7 @@
 #   pip3 installation of the grpcio package
 #   arg specifying which docker-compose.yaml to run tests with
 # Direct execution example:
-# >   ./run_docker_test ../integration_tests/blockchain/docker-compose.yaml
+# >   ./run_docker_test ../tests/blockchain/docker-compose.yaml
 
 import argparse
 import logging
@@ -176,7 +176,7 @@ def main():
         LOGGER.info("Shutting down with: %s", str(compose_down))
         shutdown_success = False
         for i in range(2):
-            if shutdown_success == False:
+            if not shutdown_success:
 
                 # Always give compose down time to cleanup
                 timeout = max(timer.remaining(), COMPOSE_DOWN_RETRY_TIMEOUT)
