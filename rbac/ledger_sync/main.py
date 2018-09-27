@@ -69,21 +69,18 @@ def init_logger(level):
     else:
         logger.setLevel(logging.WARN)
 
-
 def get_last_known_blocks(database):
     count = 0
     while True:
         try:
             count = count + 1
             return database.last_known_blocks(KNOWN_COUNT)
-        # pylint: disable=E0602
-        except ReqlError as err:
+        except Exception as err:
             if count > 3:
-                LOGGER.error(
-                    "Tried to get last known block for more than 3 times. Reporting Error ..."
-                )
+                LOGGER.error('Tried to get last known block for more than 3 times. Reporting Error ...')
                 raise err
-            LOGGER.info("Not ready, retrying to get last known block ...")
+            LOGGER.exception(err)
+            LOGGER.info('Retrying to get last known block ...')
             time.sleep(3)
         break
 
