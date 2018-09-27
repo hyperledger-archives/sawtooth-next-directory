@@ -16,6 +16,7 @@
 import sys
 import argparse
 import logging
+import time
 
 from rbac_ledger_sync.database import Database
 from rbac_ledger_sync.subscriber import Subscriber
@@ -60,6 +61,20 @@ def init_logger(level):
     else:
         logger.setLevel(logging.WARN)
 
+def get_last_known_blocks(database):
+    count = 0
+    while True:
+        try:
+            count = count + 1
+            return database.last_known_blocks(KNOWN_COUNT)
+        except ReqlError as err:
+            if count > 3:
+                LOGGER.error('Tried to get last known block for more than 3 times. Reporting Error ...')
+                raise err
+            LOGGER.exception(err)
+            LOGGER.info('Retrying to get last known block ...')
+            time.sleep(3)
+        break
 
 def main():
     try:
@@ -73,7 +88,7 @@ def main():
 
         subscriber = Subscriber(opts.validator)
         subscriber.add_handler(get_delta_handler(database))
-        known_blocks = database.last_known_blocks(KNOWN_COUNT)
+        known_blocks = get_last_known_blocks(database)
         subscriber.start(known_blocks)
 
     except KeyboardInterrupt:
