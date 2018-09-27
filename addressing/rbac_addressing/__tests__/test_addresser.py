@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,12 +13,14 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import logging
 import unittest
 from uuid import uuid4
 
 from rbac_addressing import addresser
 from rbac_addressing.addresser import AddressSpace
 
+LOGGER = logging.getLogger(__name__)
 
 class TestAddresser(unittest.TestCase):
 

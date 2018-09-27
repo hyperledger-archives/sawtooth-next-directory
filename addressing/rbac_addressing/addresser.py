@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import re
 import enum
 from hashlib import sha512
 
@@ -75,7 +76,10 @@ class TaskRelationshipNamespace(enum.IntEnum):
 
 FAMILY_NAME = 'rbac'
 NS = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
-
+FAMILY_PREFIX = '9f4448'
+ADDRESS_LENGTH = 70
+ADDRESS_PATTERN = re.compile(r'^[0-9a-f]{70}$')
+FAMILY_PATTERN = re.compile(r'^9f4448[0-9a-f]{64}$')
 
 @enum.unique
 class AddressSpace(enum.Enum):
@@ -106,6 +110,32 @@ def namespace_ok(address):
     return address[:len(NS)] == NS
 
 
+def is_address(address):
+    """Determines the address is a valid Sawtooth address
+       (a 70 character hexadecimal string)
+
+    Args:
+        address (str): A 70 character state address.
+
+    Returns: Boolean
+
+    """
+    return bool(ADDRESS_PATTERN.match(address))
+
+
+def is_family_address(address):
+    """Determines the address is a valid Sawtooth address
+       with the correct family prefix.
+
+    Args:
+        address (str): A 70 character state address.
+
+    Returns: Boolean
+
+    """
+    return bool(FAMILY_PATTERN.match(address))
+
+
 def address_is(address):
     """Determines the type of object stored at the address.
 
@@ -115,7 +145,7 @@ def address_is(address):
     Returns: AddressSpace enum identifying the part of state.
 
     """
-    if not namespace_ok(address):
+    if not FAMILY_PATTERN.match(address):
         raise ValueError("Address %s isn't part of the %s namespace",
                          address, FAMILY_NAME)
 

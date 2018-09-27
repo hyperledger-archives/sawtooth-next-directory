@@ -55,7 +55,7 @@ do
             ;;
         t)
             info "Running tests"
-            $TOP_DIR/bin/run_tests_ubuntu
+            pytest
             ;;
         l)
             info "Running lint"
@@ -73,7 +73,7 @@ do
             info "Running lint"
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
             info "Running tests"
-            $TOP_DIR/bin/run_tests_ubuntu
+            pytest
             info "Running integration tests"
             $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain/docker-compose.yaml
             ;;
