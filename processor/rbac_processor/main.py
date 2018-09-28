@@ -15,6 +15,7 @@
 
 import argparse
 import sys
+import os
 
 from sawtooth_sdk.processor.core import TransactionProcessor
 from sawtooth_sdk.processor.log import init_console_logging
@@ -22,6 +23,7 @@ from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac_processor.handler import RBACTransactionHandler
 
+HOST = os.environ['HOST']
 
 def parse_args(args):
     parser = argparse.ArgumentParser(
@@ -36,7 +38,7 @@ def parse_args(args):
     parser.add_argument(
         "validator_endpoint",
         nargs='?',
-        default='tcp://localhost:4004',
+        default='tcp://'+ HOST + ':4004',
         help="The validator's component address.")
 
     return parser.parse_args(args)

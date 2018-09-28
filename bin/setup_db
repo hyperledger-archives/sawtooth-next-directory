@@ -17,16 +17,18 @@
 
 import sys
 import argparse
+import os
 
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError
 
+HOST = os.environ['HOST']
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('--host',
                         help='The host for the database',
-                        default='localhost')
+                        default=HOST)
     parser.add_argument('--port',
                         help='The port for the database',
                         default='28015')
