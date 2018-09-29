@@ -17,16 +17,18 @@ version: "3"
 
 services:
   shell:
+    build:
+      context: .
+      dockerfile: ./shell/Dockerfile
     image: hyperledger/sawtooth-shell:1.0
     container_name: rbac-shell
     depends_on:
       - rest-api
-    entrypoint: |
-      bash -c "
-        sawtooth keygen &&
-        tail -f /dev/null
-      \"\""
-
+    volumes:
+      - ".:/project/tmobile-rbac"
+    environment:
+      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+  
   rbac-server:
     build:
       context: .
