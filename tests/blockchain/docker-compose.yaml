@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-version: "2"
+version: "3"
 
 services:
 
@@ -25,7 +25,9 @@ services:
     volumes:
       - "../../:/project/tmobile-rbac"
     command: bin/rbac-tp -vv tcp://validator:4004
-
+    environment:
+      - HOST=${HOST:-localhost}
+      
   settings-tp:
     image: hyperledger/sawtooth-settings-tp:1.0
     command: settings-tp -v --connect tcp://validator:4004
@@ -43,7 +45,7 @@ services:
           --bind component:tcp://*:4004 \
           --bind network:tcp://*:8800 \
           --scheduler parallel
-      "
+      \"\""
 
   rest-api:
     image: hyperledger/sawtooth-rest-api:1.0
@@ -58,4 +60,5 @@ services:
       - "../../:/project/tmobile-rbac"
     command: python3 -m unittest discover tests/blockchain
     environment:
-      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+      - PYTHONPATH=/project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+      - HOST=${HOST:-localhost}

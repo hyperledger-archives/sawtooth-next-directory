@@ -23,7 +23,7 @@ from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac_processor.handler import RBACTransactionHandler
 
-HOST = os.environ['HOST']
+HOST = os.getenv('HOST', 'localhost')
 
 def parse_args(args):
     parser = argparse.ArgumentParser(
