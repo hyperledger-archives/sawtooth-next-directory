@@ -22,7 +22,7 @@ import os
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError
 
-HOST = os.environ['HOST']
+HOST = os.getenv('HOST', 'localhost')
 
 def parse_args(args):
     parser = argparse.ArgumentParser()

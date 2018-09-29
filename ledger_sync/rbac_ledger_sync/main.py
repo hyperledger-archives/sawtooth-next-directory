@@ -30,7 +30,7 @@ LOGGER = logging.getLogger(__name__)
 # likely genesis, defeating the purpose. Rewind just 15 blocks to handle forks.
 KNOWN_COUNT = 15
 
-HOST = os.environ['HOST']
+HOST = os.getenv('HOST', 'localhost')
 
 def parse_args(args):
     parser = argparse.ArgumentParser()

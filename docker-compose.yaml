@@ -34,7 +34,7 @@ services:
       context: .
       dockerfile: ./server/Dockerfile
     container_name: rbac-server
-    image: rbac-server-production:${ISOLATION_ID}
+    image: rbac-server-production:${ISOLATION_ID-latest}
     ports:
       - "8000:8000"
     depends_on:
@@ -56,7 +56,7 @@ services:
       context: .
       dockerfile: ./processor/Dockerfile
     container_name: rbac-tp
-    image: rbac-tp-production:${ISOLATION_ID}
+    image: rbac-tp-production:${ISOLATION_ID-latest}
     environment:
       - HOST=${HOST:-localhost}
     command: ./bin/rbac-tp -vv tcp://validator:4004
@@ -66,7 +66,7 @@ services:
       context: .
       dockerfile: ./ledger_sync/Dockerfile
     container_name: rbac-ledger-sync
-    image: rbac-ledger-sync-production:${ISOLATION_ID}
+    image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
     depends_on:
       - rethink
       - validator
@@ -83,7 +83,7 @@ services:
       context: .
       dockerfile: ./ui/Dockerfile
     container_name: rbac-ui
-    image: rbac-ui-production:${ISOLATION_ID}
+    image: rbac-ui-production:${ISOLATION_ID-latest}
     ports:
       - "4200:4200"
     depends_on:

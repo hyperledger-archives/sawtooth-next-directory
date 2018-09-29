@@ -46,7 +46,7 @@ APP_BP = Blueprint('utils')
 
 CONFIG_FILE = 'config.py'
 
-HOST = os.environ['HOST']
+HOST = os.getenv('HOST', 'localhost')
 
 DEFAULT_CONFIG = {
     'HOST': HOST,
