@@ -19,19 +19,14 @@ set -e
 
 TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
 
-
 lint() {
 
     files="`find $1 -name \*.py | grep -v protobuf`"
     echo "$1"
-    pycodestyle $files || error=1
-    python3 -m pylint --rcfile setup.cfg $files || error=1
+    black $files || error=1
     return $error
 
 }
-
-ret_val=0
-
 lint addressing/rbac_addressing || ret_val=1
 
 export PYTHONPATH=$TOP_DIR/addressing
@@ -44,5 +39,7 @@ lint ledger_sync/rbac_ledger_sync || ret_val=1
 
 export PYTHONPATH=$TOP_DIR/server:$TOP_DIR/transaction_creation
 lint server/api || ret_val=1
+
+ret_val=0
 
 exit $ret_val
