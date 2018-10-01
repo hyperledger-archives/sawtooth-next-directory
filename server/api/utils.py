@@ -43,33 +43,29 @@ def validate_fields(required_fields, body):
     try:
         for field in required_fields:
             if body.get(field) is None:
-                raise ApiBadRequest(
-                    "Bad Request: {} field is required".format(field)
-                )
+                raise ApiBadRequest("Bad Request: {} field is required".format(field))
     except ValueError:
         raise ApiBadRequest("Bad Request: Improper JSON format")
 
 
-async def create_response(conn, request_url, data,
-                          head_block, start=None, limit=None):
+async def create_response(conn, request_url, data, head_block, start=None, limit=None):
     LOGGER.warning(request_url)
     base_url = request_url.split("?")[0]
     table = base_url.split("/")[4]
-    url = "{}?head={}".format(base_url, head_block.get('id'))
+    url = "{}?head={}".format(base_url, head_block.get("id"))
     response = {
-        'data': data,
-        'head': head_block.get('id'),
-        'link': "{}&start={}&limit={}".format(url, start, limit),
+        "data": data,
+        "head": head_block.get("id"),
+        "link": "{}&start={}&limit={}".format(url, start, limit),
     }
     if start is not None and limit is not None:
-        response['paging'] = await get_response_paging_info(
-            conn, table, url, start, limit, head_block.get('num')
+        response["paging"] = await get_response_paging_info(
+            conn, table, url, start, limit, head_block.get("num")
         )
     return json(response)
 
 
-async def get_response_paging_info(conn, table, url,
-                                   start, limit, head_block_num):
+async def get_response_paging_info(conn, table, url, start, limit, head_block_num):
     total = await get_table_count(conn, table, head_block_num)
 
     prev_start = start - limit
@@ -81,34 +77,42 @@ async def get_response_paging_info(conn, table, url,
         next_start = last_start
 
     return {
-        'start': start,
-        'limit': limit,
-        'total': total,
-        'first': "{}&start=0&limit={}".format(url, limit),
-        'prev': "{}&start={}&limit={}".format(url, prev_start, limit),
-        'next': "{}&start={}&limit={}".format(url, next_start, limit),
-        'last': "{}&start={}&limit={}".format(url, last_start, limit)
+        "start": start,
+        "limit": limit,
+        "total": total,
+        "first": "{}&start=0&limit={}".format(url, limit),
+        "prev": "{}&start={}&limit={}".format(url, prev_start, limit),
+        "next": "{}&start={}&limit={}".format(url, next_start, limit),
+        "last": "{}&start={}&limit={}".format(url, last_start, limit),
     }
 
 
 async def get_table_count(conn, table, head_block_num):
-    if table == 'blocks':
-        return await r.table(table)\
-            .between(r.minval, head_block_num, right_bound='closed')\
-            .count().run(conn)
-    return await r.table(table)\
-        .filter((head_block_num >= r.row['start_block_num'])
-                & (head_block_num <= r.row['end_block_num']))\
-        .count().run(conn)
+    if table == "blocks":
+        return (
+            await r.table(table)
+            .between(r.minval, head_block_num, right_bound="closed")
+            .count()
+            .run(conn)
+        )
+    return (
+        await r.table(table)
+        .filter(
+            (head_block_num >= r.row["start_block_num"])
+            & (head_block_num <= r.row["end_block_num"])
+        )
+        .count()
+        .run(conn)
+    )
 
 
 def get_request_paging_info(request):
     try:
-        start = int(request.args['start'][0])
+        start = int(request.args["start"][0])
     except KeyError:
         start = 0
     try:
-        limit = int(request.args['limit'][0])
+        limit = int(request.args["limit"][0])
         if limit > 1000:
             limit = 1000
     except KeyError:
@@ -118,10 +122,9 @@ def get_request_paging_info(request):
 
 async def get_request_block(request):
     try:
-        head_block_id = request.args['head'][0]
+        head_block_id = request.args["head"][0]
         head_block = await blocks_query.fetch_block_by_id(
-            request.app.config.DB_CONN,
-            head_block_id
+            request.app.config.DB_CONN, head_block_id
         )
     except KeyError:
         head_block = await blocks_query.fetch_latest_block_with_retry(
@@ -131,20 +134,15 @@ async def get_request_block(request):
 
 
 async def get_transactor_key(request):
-    id_dict = deserialize_apikey(
-        request.app.config.SECRET_KEY,
-        request.token
-    )
-    user_id = id_dict.get('id')
+    id_dict = deserialize_apikey(request.app.config.SECRET_KEY, request.token)
+    user_id = id_dict.get("id")
 
     auth_data = await auth_query.fetch_info_by_user_id(
         request.app.config.DB_CONN, user_id
     )
-    encrypted_private_key = auth_data.get('encrypted_private_key')
+    encrypted_private_key = auth_data.get("encrypted_private_key")
     private_key = decrypt_private_key(
-        request.app.config.AES_KEY,
-        user_id,
-        encrypted_private_key
+        request.app.config.AES_KEY, user_id, encrypted_private_key
     )
     hex_private_key = binascii.hexlify(private_key)
     return Key(hex_private_key)
@@ -152,8 +150,8 @@ async def get_transactor_key(request):
 
 def generate_apikey(secret_key, user_id):
     serializer = Serializer(secret_key)
-    token = serializer.dumps({'id': user_id})
-    return token.decode('ascii')
+    token = serializer.dumps({"id": user_id})
+    return token.decode("ascii")
 
 
 def deserialize_apikey(secret_key, token):
@@ -179,34 +177,47 @@ async def send(conn, batch_list, timeout):
 
     validator_response = await conn.send(
         validator_pb2.Message.CLIENT_BATCH_SUBMIT_REQUEST,
-        batch_request.SerializeToString(), timeout
+        batch_request.SerializeToString(),
+        timeout,
     )
 
     client_response = client_batch_submit_pb2.ClientBatchSubmitResponse()
     client_response.ParseFromString(validator_response.content)
 
-    if client_response.status == client_batch_submit_pb2.ClientBatchSubmitResponse.INTERNAL_ERROR:
-        raise ApiInternalError('Internal Error')
-    elif client_response.status == client_batch_submit_pb2.ClientBatchSubmitResponse.INVALID_BATCH:
-        raise ApiBadRequest('Invalid Batch')
-    elif client_response.status == client_batch_submit_pb2.ClientBatchSubmitResponse.QUEUE_FULL:
-        raise ApiInternalError('Queue Full')
+    if (
+        client_response.status
+        == client_batch_submit_pb2.ClientBatchSubmitResponse.INTERNAL_ERROR
+    ):
+        raise ApiInternalError("Internal Error")
+    elif (
+        client_response.status
+        == client_batch_submit_pb2.ClientBatchSubmitResponse.INVALID_BATCH
+    ):
+        raise ApiBadRequest("Invalid Batch")
+    elif (
+        client_response.status
+        == client_batch_submit_pb2.ClientBatchSubmitResponse.QUEUE_FULL
+    ):
+        raise ApiInternalError("Queue Full")
 
     status_request = client_batch_submit_pb2.ClientBatchStatusRequest()
-    status_request.batch_ids.extend(list(b.header_signature for b in batch_list.batches))
+    status_request.batch_ids.extend(
+        list(b.header_signature for b in batch_list.batches)
+    )
     status_request.wait = True
     status_request.timeout = timeout
 
     validator_response = await conn.send(
         validator_pb2.Message.CLIENT_BATCH_STATUS_REQUEST,
-        status_request.SerializeToString(), timeout
+        status_request.SerializeToString(),
+        timeout,
     )
 
     status_response = client_batch_submit_pb2.ClientBatchStatusResponse()
     status_response.ParseFromString(validator_response.content)
 
     if status_response.status != client_batch_submit_pb2.ClientBatchStatusResponse.OK:
-        raise ApiInternalError('Internal Error')
+        raise ApiInternalError("Internal Error")
 
     resp = status_response.batch_statuses[0]
 
@@ -214,13 +225,9 @@ async def send(conn, batch_list, timeout):
         return resp
     elif resp.status == client_batch_submit_pb2.ClientBatchStatus.INVALID:
         raise ApiBadRequest(
-            'Bad Request: {}'.format(resp.invalid_transactions[0].message)
+            "Bad Request: {}".format(resp.invalid_transactions[0].message)
         )
     elif resp.status == client_batch_submit_pb2.ClientBatchStatus.PENDING:
-        raise ApiInternalError(
-            'Internal Error: Transaction submitted but timed out.'
-        )
+        raise ApiInternalError("Internal Error: Transaction submitted but timed out.")
     elif resp.status == client_batch_submit_pb2.ClientBatchStatus.UNKNOWN:
-        raise ApiInternalError(
-            'Internal Error: Something went wrong. Try again later.'
-        )
+        raise ApiInternalError("Internal Error: Something went wrong. Try again later.")

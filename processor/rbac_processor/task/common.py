@@ -53,44 +53,36 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
     user_address = addresser.make_user_address(user_id)
     task_address = addresser.make_task_attributes_address(task_id)
     proposal_address = addresser.make_proposal_address(
-        object_id=task_id,
-        related_id=user_id)
+        object_id=task_id, related_id=user_id
+    )
 
-    state_entries = get_state(state, [user_address,
-                                      task_address,
-                                      proposal_address,
-                                      rel_address])
-    validate_identifier_is_user(state_entries,
-                                identifier=user_id,
-                                address=user_address)
+    state_entries = get_state(
+        state, [user_address, task_address, proposal_address, rel_address]
+    )
+    validate_identifier_is_user(state_entries, identifier=user_id, address=user_address)
     user_entry = get_state_entry(state_entries, user_address)
-    user = get_user_from_container(
-        return_user_container(user_entry),
-        user_id)
+    user = get_user_from_container(return_user_container(user_entry), user_id)
 
-    validate_identifier_is_task(state_entries,
-                                identifier=task_id,
-                                address=task_address)
+    validate_identifier_is_task(state_entries, identifier=task_id, address=task_address)
 
     try:
         task_rel_entry = get_state_entry(state_entries, rel_address)
         task_rel_container = return_task_rel_container(task_rel_entry)
 
-        if (header.signer_public_key not in [user.user_id, user.manager_id]) and (not is_in_task_rel_container(
-                task_rel_container,
-                task_id,
-                user_id)):
+        if (header.signer_public_key not in [user.user_id, user.manager_id]) and (
+            not is_in_task_rel_container(task_rel_container, task_id, user_id)
+        ):
             raise InvalidTransaction(
                 "Txn signer {} is not the user or the user's "
-                "manager {} nor the task owner / admin".format(header.signer_public_key,
-                                                               [user.user_id, user.manager_id]))
-        if is_in_task_rel_container(
-                task_rel_container,
-                task_id,
-                user_id):
+                "manager {} nor the task owner / admin".format(
+                    header.signer_public_key, [user.user_id, user.manager_id]
+                )
+            )
+        if is_in_task_rel_container(task_rel_container, task_id, user_id):
             raise InvalidTransaction(
                 "User {} is already in the Task {} "
-                "relationship".format(user_id, task_id))
+                "relationship".format(user_id, task_id)
+            )
 
     except KeyError:
         # The task rel container doesn't exist so no task relationship exists
@@ -118,66 +110,62 @@ def validate_task_rel_del_proposal(header, propose, rel_address, state):
     task_address = addresser.make_task_attributes_address(propose.task_id)
 
     proposal_address = addresser.make_proposal_address(
-        object_id=propose.task_id,
-        related_id=propose.user_id)
+        object_id=propose.task_id, related_id=propose.user_id
+    )
 
-    state_entries = get_state(state,
-                              [user_address,
-                               task_address,
-                               proposal_address,
-                               rel_address])
+    state_entries = get_state(
+        state, [user_address, task_address, proposal_address, rel_address]
+    )
 
     validate_identifier_is_user(
-        state_entries,
-        identifier=propose.user_id,
-        address=user_address)
+        state_entries, identifier=propose.user_id, address=user_address
+    )
 
     user_entry = get_state_entry(state_entries, user_address)
 
-    user = get_user_from_container(
-        return_user_container(user_entry),
-        propose.user_id)
+    user = get_user_from_container(return_user_container(user_entry), propose.user_id)
 
-    validate_identifier_is_task(state_entries,
-                                identifier=propose.task_id,
-                                address=task_address)
+    validate_identifier_is_task(
+        state_entries, identifier=propose.task_id, address=task_address
+    )
 
     try:
         task_rel_entry = get_state_entry(state_entries, rel_address)
         task_rel_container = return_task_rel_container(task_rel_entry)
 
-        if (header.signer_public_key not in [user.user_id, user.manager_id]) and (not is_in_task_rel_container(
-                task_rel_container,
-                propose.task_id,
-                propose.user_id)):
+        if (header.signer_public_key not in [user.user_id, user.manager_id]) and (
+            not is_in_task_rel_container(
+                task_rel_container, propose.task_id, propose.user_id
+            )
+        ):
             raise InvalidTransaction(
                 "Txn signer {} is not the user or the user's "
-                "manager {} nor the task owner / admin".format(header.signer_public_key,
-                                                               [user.user_id, user.manager_id]))
+                "manager {} nor the task owner / admin".format(
+                    header.signer_public_key, [user.user_id, user.manager_id]
+                )
+            )
 
         if not is_in_task_rel_container(
-                task_rel_container,
-                propose.task_id,
-                propose.user_id):
-            raise InvalidTransaction("User {} isn't in the Task {} "
-                                     "relationship".format(propose.user_id,
-                                                           propose.task_id))
+            task_rel_container, propose.task_id, propose.user_id
+        ):
+            raise InvalidTransaction(
+                "User {} isn't in the Task {} "
+                "relationship".format(propose.user_id, propose.task_id)
+            )
     except KeyError:
         raise InvalidTransaction(
             "User {} isn't in the Task {} relationship, "
             "since there isn't a container at the address".format(
-                propose.user_id,
-                propose.task_id))
+                propose.user_id, propose.task_id
+            )
+        )
 
     return state_entries
 
 
-def validate_task_admin_or_owner(header,
-                                 confirm,
-                                 txn_signer_rel_address,
-                                 task_rel_address,
-                                 state,
-                                 is_remove):
+def validate_task_admin_or_owner(
+    header, confirm, txn_signer_rel_address, task_rel_address, state, is_remove
+):
     """Validate a [ Confirm | Reject }_____Task[ Admin | Owner } transaction.
 
     Args:
@@ -197,49 +185,52 @@ def validate_task_admin_or_owner(header,
     """
 
     proposal_address = addresser.make_proposal_address(
-        object_id=confirm.task_id,
-        related_id=confirm.user_id)
+        object_id=confirm.task_id, related_id=confirm.user_id
+    )
 
     if not is_remove:
-        state_entries = get_state(
-            state,
-            [txn_signer_rel_address, proposal_address])
+        state_entries = get_state(state, [txn_signer_rel_address, proposal_address])
     else:
         state_entries = get_state(
-            state,
-            [txn_signer_rel_address, task_rel_address, proposal_address])
+            state, [txn_signer_rel_address, task_rel_address, proposal_address]
+        )
 
     if not proposal_exists_and_open(
-            state_entries,
-            proposal_address,
-            confirm.proposal_id):
-        raise InvalidTransaction("The proposal {} does not exist or "
-                                 "is not open".format(confirm.proposal_id))
+        state_entries, proposal_address, confirm.proposal_id
+    ):
+        raise InvalidTransaction(
+            "The proposal {} does not exist or "
+            "is not open".format(confirm.proposal_id)
+        )
     try:
         entry = get_state_entry(state_entries, txn_signer_rel_address)
         task_rel_container = return_task_rel_container(entry)
     except KeyError:
         raise InvalidTransaction(
             "Signer {} does not have the Task permissions "
-            "to close the proposal".format(header.signer_public_key))
+            "to close the proposal".format(header.signer_public_key)
+        )
     if not is_in_task_rel_container(
-            task_rel_container,
-            task_id=confirm.task_id,
-            identifier=header.signer_public_key):
-        raise InvalidTransaction("Signer {} does not have the Task "
-                                 "permissions to close the "
-                                 "proposal".format(header.signer_public_key))
+        task_rel_container, task_id=confirm.task_id, identifier=header.signer_public_key
+    ):
+        raise InvalidTransaction(
+            "Signer {} does not have the Task "
+            "permissions to close the "
+            "proposal".format(header.signer_public_key)
+        )
 
     return state_entries
 
 
-def handle_propose_state_set(state_entries,
-                             header,
-                             payload,
-                             address,
-                             proposal_type,
-                             state,
-                             related_type='user_id'):
+def handle_propose_state_set(
+    state_entries,
+    header,
+    payload,
+    address,
+    proposal_type,
+    state,
+    related_type="user_id",
+):
     try:
 
         entry = get_state_entry(state_entries, address=address)
@@ -258,17 +249,10 @@ def handle_propose_state_set(state_entries,
     proposal.open_reason = payload.reason
     proposal.metadata = payload.metadata
 
-    set_state(state, {
-        address: proposal_container.SerializeToString()
-    })
+    set_state(state, {address: proposal_container.SerializeToString()})
 
 
-def handle_confirm(state_entries,
-                   header,
-                   confirm,
-                   task_rel_address,
-                   state,
-                   is_remove):
+def handle_confirm(state_entries, header, confirm, task_rel_address, state, is_remove):
     """ Updates proposal and task relationship objects according to the
         task admin/owner transaction.
 
@@ -283,22 +267,20 @@ def handle_confirm(state_entries,
 
     """
     proposal_address = addresser.make_proposal_address(
-        object_id=confirm.task_id,
-        related_id=confirm.user_id)
+        object_id=confirm.task_id, related_id=confirm.user_id
+    )
 
     proposal_entry = get_state_entry(state_entries, proposal_address)
     proposal_container = return_prop_container(proposal_entry)
     proposal = get_prop_from_container(
-        proposal_container,
-        proposal_id=confirm.proposal_id)
+        proposal_container, proposal_id=confirm.proposal_id
+    )
 
     proposal.status = proposal_state_pb2.Proposal.CONFIRMED
     proposal.closer = header.signer_public_key
     proposal.close_reason = confirm.reason
 
-    address_values = {
-        proposal_address: proposal_container.SerializeToString()
-    }
+    address_values = {proposal_address: proposal_container.SerializeToString()}
 
     try:
         task_rel_entry = get_state_entry(state_entries, task_rel_address)
@@ -310,7 +292,8 @@ def handle_confirm(state_entries,
         task_rel = get_task_rel_from_container(
             container=task_rel_container,
             task_id=confirm.task_id,
-            identifier=confirm.user_id)
+            identifier=confirm.user_id,
+        )
     except KeyError:
         task_rel = task_rel_container.relationships.add()
         task_rel.task_id = confirm.task_id
@@ -325,19 +308,16 @@ def handle_confirm(state_entries,
     set_state(state, address_values)
 
 
-def handle_reject(state_entries,
-                  header,
-                  reject,
-                  state):
+def handle_reject(state_entries, header, reject, state):
     proposal_address = addresser.make_proposal_address(
-        object_id=reject.task_id,
-        related_id=reject.user_id)
+        object_id=reject.task_id, related_id=reject.user_id
+    )
 
     proposal_entry = get_state_entry(state_entries, proposal_address)
     proposal_container = return_prop_container(proposal_entry)
     proposal = get_prop_from_container(
-        proposal_container,
-        proposal_id=reject.proposal_id)
+        proposal_container, proposal_id=reject.proposal_id
+    )
 
     proposal.status = proposal_state_pb2.Proposal.REJECTED
     proposal.closer = header.signer_public_key

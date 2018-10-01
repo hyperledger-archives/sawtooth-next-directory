@@ -32,14 +32,14 @@ def get_delta_handler(database):
 
 def _handle_delta(database, delta):
     # Check for and resolve forks
-    old_block = database.fetch('blocks', delta.block_num)
+    old_block = database.fetch("blocks", delta.block_num)
     if old_block is not None:
-        if old_block['block_id'] != delta.block_id:
+        if old_block["block_id"] != delta.block_id:
             drop_results = database.drop_fork(delta.block_num)
-            if drop_results['deleted'] == 0:
+            if drop_results["deleted"] == 0:
                 LOGGER.warning(
-                    'Failed to drop forked resources since block: %s',
-                    delta.block_num)
+                    "Failed to drop forked resources since block: %s", delta.block_num
+                )
         else:
             return
 
@@ -50,16 +50,15 @@ def _handle_delta(database, delta):
             resources = data_to_dicts(change.address, change.value)
             for resource in resources:
                 update_results = update(change.address, resource)
-                if update_results['inserted'] == 0:
+                if update_results["inserted"] == 0:
                     LOGGER.warning(
-                        'Failed to insert resource from address: %s',
-                        change.address)
+                        "Failed to insert resource from address: %s", change.address
+                    )
 
     # Add new block to database
-    new_block = {'block_num': delta.block_num, 'block_id': delta.block_id}
-    block_results = database.insert('blocks', new_block)
-    if block_results['inserted'] == 0:
+    new_block = {"block_num": delta.block_num, "block_id": delta.block_id}
+    block_results = database.insert("blocks", new_block)
+    if block_results["inserted"] == 0:
         LOGGER.warning(
-            'Failed to insert block #%s: %s',
-            delta.block_num,
-            delta.block_id)
+            "Failed to insert block #%s: %s", delta.block_num, delta.block_id
+        )

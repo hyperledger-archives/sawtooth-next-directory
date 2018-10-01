@@ -23,38 +23,42 @@ LOGGER = logging.getLogger(__name__)
 
 
 class TestUserAddresser(unittest.TestCase):
-
     def test_deterministic_user_address(self):
         """Tests that a specific user_id generates the expected
         user address, and thus is probably deterministic.
         """
 
-        ident = '966ab67317234df489adb4bc1f517b88'
-        expected_address = '9f444847e7570f3f6f7d2c1635f6de\
-eabc1f4d78d9d42b64b70e1819f244138c1e38d6'
+        ident = "966ab67317234df489adb4bc1f517b88"
+        expected_address = "9f444847e7570f3f6f7d2c1635f6de\
+eabc1f4d78d9d42b64b70e1819f244138c1e38d6"
         address = addresser.make_user_address(ident)
 
-        self.assertEqual(len(address), addresser.ADDRESS_LENGTH,
-                         "The address is 70 characters")
+        self.assertEqual(
+            len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
+        )
 
-        self.assertTrue(addresser.is_address(address),
-                        "The address is 70 character hexidecimal")
+        self.assertTrue(
+            addresser.is_address(address), "The address is 70 character hexidecimal"
+        )
 
-        self.assertTrue(addresser.namespace_ok(address),
-                        "The address has correct namespace prefix")
+        self.assertTrue(
+            addresser.namespace_ok(address), "The address has correct namespace prefix"
+        )
 
         self.assertTrue(
             addresser.is_family_address(address),
-            "The address is 70 character hexidecimal with family prefix")
+            "The address is 70 character hexidecimal with family prefix",
+        )
 
-        self.assertEqual(address, expected_address,
-                         "The address is the one we expected it to be")
+        self.assertEqual(
+            address, expected_address, "The address is the one we expected it to be"
+        )
 
         self.assertEqual(
             addresser.address_is(address),
             AddressSpace.USER,
-            "The User address created must be found to be a User address.")
-
+            "The User address created must be found to be a User address.",
+        )
 
     def test_generated_user_address(self):
         """Tests the Users address creation function as well as the
@@ -64,20 +68,25 @@ eabc1f4d78d9d42b64b70e1819f244138c1e38d6'
         ident = uuid4().hex
         address = addresser.make_user_address(ident)
 
-        self.assertEqual(len(address), addresser.ADDRESS_LENGTH,
-                         "The address is 70 characters")
+        self.assertEqual(
+            len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
+        )
 
-        self.assertTrue(addresser.is_address(address),
-                        "The address is 70 character hexidecimal")
+        self.assertTrue(
+            addresser.is_address(address), "The address is 70 character hexidecimal"
+        )
 
-        self.assertTrue(addresser.namespace_ok(address),
-                        "The address has correct namespace prefix")
+        self.assertTrue(
+            addresser.namespace_ok(address), "The address has correct namespace prefix"
+        )
 
         self.assertTrue(
             addresser.is_family_address(address),
-            "The address is 70 character hexidecimal with family prefix")
+            "The address is 70 character hexidecimal with family prefix",
+        )
 
         self.assertEqual(
             addresser.address_is(address),
             AddressSpace.USER,
-            "The address created must be found to be a User address.")
+            "The address created must be found to be a User address.",
+        )

@@ -28,9 +28,7 @@ def apply_propose(header, payload, state):
 
     state_entries = validate_role_task_proposal(header, propose, state)
 
-    proposal_address = addresser.make_proposal_address(
-        propose.role_id,
-        propose.task_id)
+    proposal_address = addresser.make_proposal_address(propose.role_id, propose.task_id)
 
     handle_propose_state_set(
         state_entries=state_entries,
@@ -39,7 +37,8 @@ def apply_propose(header, payload, state):
         address=proposal_address,
         proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_TASKS,
         state=state,
-        related_type='task_id')
+        related_type="task_id",
+    )
 
 
 def apply_propose_remove(header, payload, state):
@@ -48,9 +47,7 @@ def apply_propose_remove(header, payload, state):
 
     state_entries = validate_role_task_proposal(header, propose, state)
 
-    proposal_address = addresser.make_proposal_address(
-        propose.role_id,
-        propose.task_id)
+    proposal_address = addresser.make_proposal_address(propose.role_id, propose.task_id)
 
     handle_propose_state_set(
         state_entries=state_entries,
@@ -59,7 +56,8 @@ def apply_propose_remove(header, payload, state):
         address=proposal_address,
         proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_TASKS,
         state=state,
-        related_type='task_id')
+        related_type="task_id",
+    )
 
 
 def apply_confirm(header, payload, state):
@@ -67,18 +65,19 @@ def apply_confirm(header, payload, state):
     confirm.ParseFromString(payload.content)
 
     txn_signer_task_owner_address = addresser.make_task_owners_address(
-        confirm.task_id,
-        header.signer_public_key)
+        confirm.task_id, header.signer_public_key
+    )
 
     role_rel_address = addresser.make_role_tasks_address(
-        role_id=confirm.role_id,
-        task_id=confirm.task_id)
+        role_id=confirm.role_id, task_id=confirm.task_id
+    )
 
     state_entries = validate_role_task(
         header,
         confirm,
         txn_signer_rel_address=txn_signer_task_owner_address,
-        state=state)
+        state=state,
+    )
 
     handle_confirm_add(
         state_entries=state_entries,
@@ -86,7 +85,8 @@ def apply_confirm(header, payload, state):
         confirm=confirm,
         role_rel_address=role_rel_address,
         state=state,
-        rel_type='task_id')
+        rel_type="task_id",
+    )
 
 
 def apply_reject(header, payload, state):
@@ -94,18 +94,20 @@ def apply_reject(header, payload, state):
     reject.ParseFromString(payload.content)
 
     txn_signer_task_owner_address = addresser.make_task_owners_address(
-        reject.task_id,
-        header.signer_public_key)
+        reject.task_id, header.signer_public_key
+    )
 
     state_entries = validate_role_task(
         header,
         reject,
         txn_signer_rel_address=txn_signer_task_owner_address,
-        state=state)
+        state=state,
+    )
 
     handle_reject(
         state_entries=state_entries,
         header=header,
         reject=reject,
         state=state,
-        rel_type='task_id')
+        rel_type="task_id",
+    )

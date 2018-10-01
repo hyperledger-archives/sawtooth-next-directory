@@ -17,6 +17,6 @@ import rethinkdb as r
 
 
 async def create_connection(host, port, name):
-    r.set_loop_type('asyncio')
+    r.set_loop_type("asyncio")
     connection = await r.connect(host=host, port=port, db=name)
     return connection

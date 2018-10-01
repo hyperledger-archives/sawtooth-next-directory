@@ -26,29 +26,29 @@ LOGGER = logging.getLogger(__name__)
 
 
 async def fetch_all_blocks(conn, head_block_num, start, limit):
-    return await r.table('blocks')\
-        .between(r.minval, head_block_num, right_bound='closed')\
-        .order_by(index='block_num')\
-        .slice(start, start+limit)\
-        .merge({
-            'id': r.row['block_id'],
-            'num': r.row['block_num']
-        })\
-        .without('block_id', 'block_num')\
-        .coerce_to('array').run(conn)
+    return (
+        await r.table("blocks")
+        .between(r.minval, head_block_num, right_bound="closed")
+        .order_by(index="block_num")
+        .slice(start, start + limit)
+        .merge({"id": r.row["block_id"], "num": r.row["block_num"]})
+        .without("block_id", "block_num")
+        .coerce_to("array")
+        .run(conn)
+    )
 
 
 async def fetch_latest_block(conn):
     try:
-        return await r.table('blocks')\
-            .max(index='block_num')\
-            .merge({
-                'id': r.row['block_id'],
-                'num': r.row['block_num']
-            })\
-            .without('block_id', 'block_num').run(conn)
+        return (
+            await r.table("blocks")
+            .max(index="block_num")
+            .merge({"id": r.row["block_id"], "num": r.row["block_num"]})
+            .without("block_id", "block_num")
+            .run(conn)
+        )
     except ReqlNonExistenceError:
-        raise ApiInternalError('Internal Error: No block data found in state')
+        raise ApiInternalError("Internal Error: No block data found in state")
 
 
 async def fetch_latest_block_with_retry(conn, tries=5):
@@ -56,27 +56,27 @@ async def fetch_latest_block_with_retry(conn, tries=5):
     while attempts > 0:
         try:
             return await fetch_latest_block(conn)
-        except ReqlQueryLogicError as err:
-            LOGGER.debug('Query attempt failed')
+        except ReqlQueryLogicError:
+            LOGGER.debug("Query attempt failed")
 
         sleep_time = (tries - attempts + 1) * 2
-        LOGGER.debug('Retrying in %s secs', sleep_time)
+        LOGGER.debug("Retrying in %s secs", sleep_time)
         time.sleep(sleep_time)
 
         attempts -= 1
 
-    raise ApiInternalError('Internal Error: No block data found in state')
+    raise ApiInternalError("Internal Error: No block data found in state")
 
 
 async def fetch_block_by_id(conn, block_id):
-    resource = await r.table('blocks')\
-        .get_all(block_id, index='block_id')\
-        .merge({
-            'id': r.row['block_id'],
-            'num': r.row['block_num']
-        })\
-        .without('block_id', 'block_num')\
-        .coerce_to('array').run(conn)
+    resource = (
+        await r.table("blocks")
+        .get_all(block_id, index="block_id")
+        .merge({"id": r.row["block_id"], "num": r.row["block_num"]})
+        .without("block_id", "block_num")
+        .coerce_to("array")
+        .run(conn)
+    )
     try:
         return resource[0]
     except IndexError:
@@ -87,15 +87,14 @@ async def fetch_block_by_id(conn, block_id):
 
 async def fetch_block_by_num(conn, block_num):
     try:
-        return await r.table('blocks')\
-            .get(block_num)\
-            .merge({
-                'id': r.row['block_id'],
-                'num': r.row['block_num']
-            })\
-            .without('block_id', 'block_num').run(conn)
+        return (
+            await r.table("blocks")
+            .get(block_num)
+            .merge({"id": r.row["block_id"], "num": r.row["block_num"]})
+            .without("block_id", "block_num")
+            .run(conn)
+        )
     except ReqlRuntimeError:
         raise ApiNotFound(
-            "Not Found: "
-            "No block with the block num '{}' exists.".format(block_num)
+            "Not Found: " "No block with the block num '{}' exists.".format(block_num)
         )

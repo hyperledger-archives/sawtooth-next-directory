@@ -16,7 +16,6 @@
 import logging
 
 from sawtooth_sdk.messaging.stream import Stream
-from sawtooth_sdk.protobuf import client_block_pb2
 from sawtooth_sdk.protobuf import client_event_pb2
 from sawtooth_sdk.protobuf import events_pb2
 from sawtooth_sdk.protobuf import transaction_receipt_pb2
@@ -33,8 +32,9 @@ class Subscriber(object):
     Sawtooth SDK's Stream class. Handler functions can be added prior to
     subscribing, and each will be called on each delta event received.
     """
+
     def __init__(self, validator_url):
-        LOGGER.info('Connecting to validator: %s', validator_url)
+        LOGGER.info("Connecting to validator: %s", validator_url)
         self._stream = Stream(validator_url)
         self._delta_handlers = []
         self._is_active = False
@@ -56,41 +56,50 @@ class Subscriber(object):
         """
         self._stream.wait_for_ready()
 
-        LOGGER.debug('Subscribing to client state events')
+        LOGGER.debug("Subscribing to client state events")
         request = client_event_pb2.ClientEventsSubscribeRequest(
             last_known_block_ids=known_ids,
             subscriptions=[
                 events_pb2.EventSubscription(event_type="sawtooth/block-commit"),
-                events_pb2.EventSubscription(event_type="sawtooth/state-delta",
+                events_pb2.EventSubscription(
+                    event_type="sawtooth/state-delta",
                     filters=[
                         events_pb2.EventFilter(
                             key="address",
-                            match_string="^"+NAMESPACE+".*",
+                            match_string="^" + NAMESPACE + ".*",
                             filter_type=events_pb2.EventFilter.REGEX_ANY,
-			            )
-		            ]
+                        )
+                    ],
                 ),
-            ])
+            ],
+        )
 
         response_future = self._stream.send(
-            Message.CLIENT_EVENTS_SUBSCRIBE_REQUEST,
-            request.SerializeToString())
+            Message.CLIENT_EVENTS_SUBSCRIBE_REQUEST, request.SerializeToString()
+        )
         response = client_event_pb2.ClientEventsSubscribeResponse()
         response.ParseFromString(response_future.result().content)
 
         # Forked all the way back to genesis, restart with no known_ids
-        if (known_ids and
-                response.status == client_event_pb2.ClientEventsSubscribeResponse.UNKNOWN_BLOCK):
+        if (
+            known_ids
+            and response.status
+            == client_event_pb2.ClientEventsSubscribeResponse.UNKNOWN_BLOCK
+        ):
             return self.start()
 
         if response.status != client_event_pb2.ClientEventsSubscribeResponse.OK:
             raise RuntimeError(
-                'Subscription failed with status: {}'.format(
-                    client_event_pb2.ClientEventsSubscribeResponse.Status.Name(response.status)))
+                "Subscription failed with status: {}".format(
+                    client_event_pb2.ClientEventsSubscribeResponse.Status.Name(
+                        response.status
+                    )
+                )
+            )
 
         self._is_active = True
 
-        LOGGER.debug('Successfully subscribed to state delta events')
+        LOGGER.debug("Successfully subscribed to state delta events")
         while self._is_active:
             message_future = self._stream.receive()
             msg = message_future.result()
@@ -103,7 +112,9 @@ class Subscriber(object):
 
                 delta_count = len(event.state_changes)
                 if delta_count > 0:
-                    LOGGER.debug('Received %d deltas for block: %s', delta_count, event.block_id)
+                    LOGGER.debug(
+                        "Received %d deltas for block: %s", delta_count, event.block_id
+                    )
 
                     for handler in self._delta_handlers:
                         handler(event)
@@ -114,20 +125,24 @@ class Subscriber(object):
         """
         self._is_active = False
 
-        LOGGER.debug('Unsubscribing from client events')
+        LOGGER.debug("Unsubscribing from client events")
         request = client_event_pb2.ClientEventsUnsubscribeResponse()
         response_future = self._stream.send(
-            Message.CLIENT_EVENTS_UNSUBSCRIBE_REQUEST,
-            request.SerializeToString())
+            Message.CLIENT_EVENTS_UNSUBSCRIBE_REQUEST, request.SerializeToString()
+        )
         response = client_event_pb2.ClientEventsUnsubscribeResponse()
         response.ParseFromString(response_future.result().content)
 
         if response.status != client_event_pb2.ClientEventsUnsubscribeResponse.OK:
             LOGGER.warning(
-                'Failed to unsubscribe with status: %s',
-                client_event_pb2.ClientEventsUnsubscribeResponse.Status.Name(response.status))
+                "Failed to unsubscribe with status: %s",
+                client_event_pb2.ClientEventsUnsubscribeResponse.Status.Name(
+                    response.status
+                ),
+            )
 
         self._stream.close()
+
 
 class StateDeltaEvent:
     def __init__(self, event_list):
@@ -154,19 +169,14 @@ class StateDeltaEvent:
 
     @staticmethod
     def _get_attr(event, key):
-        attrs = list(filter(
-            lambda attr: attr.key == key,
-            event.attributes))
+        attrs = list(filter(lambda attr: attr.key == key, event.attributes))
         if attrs:
             return attrs[0].value
         raise KeyError("Key '%s' not found in event attributes" % key)
 
     @staticmethod
     def _get_event(event_type, event_list):
-        events = list(filter(
-            lambda event: event.event_type == event_type,
-            event_list,
-        ))
+        events = list(filter(lambda event: event.event_type == event_type, event_list))
         if events:
             return events[0]
         raise KeyError("Event type '%s' not found" % event_type)

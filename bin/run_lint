@@ -25,7 +25,7 @@ lint() {
     files="`find $1 -name \*.py | grep -v protobuf`"
     echo "$1"
     pycodestyle $files || error=1
-    python3 -m pylint --rcfile .pylintrc $files || error=1
+    python3 -m pylint --rcfile setup.cfg $files || error=1
     return $error
 
 }

@@ -30,26 +30,32 @@ LOGGER = logging.getLogger(__name__)
 # likely genesis, defeating the purpose. Rewind just 15 blocks to handle forks.
 KNOWN_COUNT = 15
 
-HOST = os.getenv('HOST', 'localhost')
+HOST = os.getenv("HOST", "localhost")
+
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--verbose',
-                        action='count',
-                        default=0,
-                        help='Increase level of output sent to stderr')
-    parser.add_argument('--validator',
-                        help='The url of the validator to sync with',
-                        default='tcp://' + HOST + ':4004')
-    parser.add_argument('--db-host',
-                        help='The host of the database to connect to',
-                        default=HOST)
-    parser.add_argument('--db-port',
-                        help='The port of the database to connect to',
-                        default='28015')
-    parser.add_argument('--db-name',
-                        help='The name of the database to use',
-                        default='rbac')
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase level of output sent to stderr",
+    )
+    parser.add_argument(
+        "--validator",
+        help="The url of the validator to sync with",
+        default="tcp://" + HOST + ":4004",
+    )
+    parser.add_argument(
+        "--db-host", help="The host of the database to connect to", default=HOST
+    )
+    parser.add_argument(
+        "--db-port", help="The port of the database to connect to", default="28015"
+    )
+    parser.add_argument(
+        "--db-name", help="The name of the database to use", default="rbac"
+    )
     return parser.parse_args(args)
 
 
@@ -63,27 +69,32 @@ def init_logger(level):
     else:
         logger.setLevel(logging.WARN)
 
+
 def get_last_known_blocks(database):
     count = 0
     while True:
         try:
             count = count + 1
             return database.last_known_blocks(KNOWN_COUNT)
+        # pylint: disable=E0602
         except ReqlError as err:
             if count > 3:
-                LOGGER.error('Tried to get last known block for more than 3 times. Reporting Error ...')
+                LOGGER.error(
+                    "Tried to get last known block for more than 3 times. Reporting Error ..."
+                )
                 raise err
             LOGGER.exception(err)
-            LOGGER.info('Retrying to get last known block ...')
+            LOGGER.info("Retrying to get last known block ...")
             time.sleep(3)
         break
+
 
 def main():
     try:
         opts = parse_args(sys.argv[1:])
         init_logger(opts.verbose)
 
-        LOGGER.info('Starting Ledger Sync...')
+        LOGGER.info("Starting Ledger Sync...")
 
         database = Database(opts.db_host, opts.db_port, opts.db_name)
         database.connect()
@@ -111,4 +122,4 @@ def main():
         except UnboundLocalError:
             pass
 
-        LOGGER.info('Ledger Sync shut down successfully')
+        LOGGER.info("Ledger Sync shut down successfully")

@@ -26,16 +26,16 @@ from db import roles_query
 
 from rbac_transaction_creation import role_transaction_creation
 
-ROLES_BP = Blueprint('roles')
+ROLES_BP = Blueprint("roles")
 
 
-@ROLES_BP.get('api/roles')
+@ROLES_BP.get("api/roles")
 @authorized()
 async def get_all_roles(request):
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     role_resources = await roles_query.fetch_all_role_resources(
-        request.app.config.DB_CONN, head_block.get('num'), start, limit
+        request.app.config.DB_CONN, head_block.get("num"), start, limit
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
@@ -43,14 +43,14 @@ async def get_all_roles(request):
         role_resources,
         head_block,
         start=start,
-        limit=limit
+        limit=limit,
     )
 
 
-@ROLES_BP.post('api/roles')
+@ROLES_BP.post("api/roles")
 @authorized()
 async def create_new_role(request):
-    required_fields = ['name', 'administrators', 'owners']
+    required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -58,46 +58,40 @@ async def create_new_role(request):
     batch_list = role_transaction_creation.create_role(
         txn_key,
         request.app.config.BATCHER_KEY_PAIR,
-        request.json.get('name'),
+        request.json.get("name"),
         role_id,
-        request.json.get('metadata'),
-        request.json.get('administrators'),
-        request.json.get('owners')
+        request.json.get("metadata"),
+        request.json.get("administrators"),
+        request.json.get("owners"),
     )
     await utils.send(
-        request.app.config.VAL_CONN,
-        batch_list[0], request.app.config.TIMEOUT
+        request.app.config.VAL_CONN, batch_list[0], request.app.config.TIMEOUT
     )
     return create_role_response(request, role_id)
 
 
-@ROLES_BP.get('api/roles/<role_id>')
+@ROLES_BP.get("api/roles/<role_id>")
 @authorized()
 async def get_role(request, role_id):
     head_block = await utils.get_request_block(request)
     role_resource = await roles_query.fetch_role_resource(
-        request.app.config.DB_CONN,
-        role_id,
-        head_block.get('num')
+        request.app.config.DB_CONN, role_id, head_block.get("num")
     )
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        role_resource,
-        head_block
+        request.app.config.DB_CONN, request.url, role_resource, head_block
     )
 
 
-@ROLES_BP.patch('api/roles/<role_id>')
+@ROLES_BP.patch("api/roles/<role_id>")
 @authorized()
 async def update_role(request, role_id):
     raise ApiNotImplemented()
 
 
-@ROLES_BP.post('api/roles/<role_id>/admins')
+@ROLES_BP.post("api/roles/<role_id>/admins")
 @authorized()
 async def add_role_admin(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -107,20 +101,20 @@ async def add_role_admin(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        user_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete('api/roles/<role_id>/admins')
+@ROLES_BP.delete("api/roles/<role_id>/admins")
 @authorized()
 async def delete_role_admin(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -130,20 +124,20 @@ async def delete_role_admin(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        user_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.post('api/roles/<role_id>/members')
+@ROLES_BP.post("api/roles/<role_id>/members")
 @authorized()
 async def add_role_member(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
@@ -152,20 +146,20 @@ async def add_role_member(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        user_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete('api/roles/<role_id>/members')
+@ROLES_BP.delete("api/roles/<role_id>/members")
 @authorized()
 async def delete_role_member(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -175,20 +169,20 @@ async def delete_role_member(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        user_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.post('api/roles/<role_id>/owners')
+@ROLES_BP.post("api/roles/<role_id>/owners")
 @authorized()
 async def add_role_owner(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -198,20 +192,20 @@ async def add_role_owner(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        user_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete('api/roles/<role_id>/owners')
+@ROLES_BP.delete("api/roles/<role_id>/owners")
 @authorized()
 async def delete_role_owner(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -221,20 +215,20 @@ async def delete_role_owner(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        user_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.post('api/roles/<role_id>/tasks')
+@ROLES_BP.post("api/roles/<role_id>/tasks")
 @authorized()
 async def add_role_task(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -244,20 +238,20 @@ async def add_role_task(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        task_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        task_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete('api/roles/<role_id>/tasks')
+@ROLES_BP.delete("api/roles/<role_id>/tasks")
 @authorized()
 async def delete_role_task(request, role_id):
-    required_fields = ['id']
+    required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key = await utils.get_transactor_key(request)
@@ -267,30 +261,28 @@ async def delete_role_task(request, role_id):
         batch_key=request.app.config.BATCHER_KEY_PAIR,
         proposal_id=proposal_id,
         role_id=role_id,
-        task_id=request.json.get('id'),
-        reason=request.json.get('reason'),
-        metadata=request.json.get('metadata')
+        task_id=request.json.get("id"),
+        reason=request.json.get("reason"),
+        metadata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-    return json({'proposal_id': proposal_id})
+    return json({"proposal_id": proposal_id})
 
 
 def create_role_response(request, role_id):
     role_resource = {
-        'id': role_id,
-        'name': request.json.get('name'),
-        'owners': request.json.get('owners'),
-        'administrators': request.json.get('administrators'),
-        'members': [],
-        'tasks': [],
-        'proposals': []
+        "id": role_id,
+        "name": request.json.get("name"),
+        "owners": request.json.get("owners"),
+        "administrators": request.json.get("administrators"),
+        "members": [],
+        "tasks": [],
+        "proposals": [],
     }
 
-    if request.json.get('metadata'):
-        role_resource['metadata'] = request.json.get('metadata')
+    if request.json.get("metadata"):
+        role_resource["metadata"] = request.json.get("metadata")
 
-    return json({
-        'data': role_resource
-    })
+    return json({"data": role_resource})

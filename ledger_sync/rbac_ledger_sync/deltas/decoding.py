@@ -28,47 +28,44 @@ from rbac_ledger_sync.protobuf.user_state_pb2 import UserContainer
 
 
 DESERIALIZERS = {
-    AddressSpace.USER:
-    lambda d: _parse_proto(UserContainer, d).users,
-
-    AddressSpace.PROPOSALS:
-    lambda d: _parse_proto(ProposalsContainer, d).proposals,
-
-    AddressSpace.SYSADMIN_ATTRIBUTES:
-    lambda d: _parse_proto(RoleAttributesContainer, d).role_attributes,
-
-    AddressSpace.SYSADMIN_MEMBERS:
-    lambda d: _parse_proto(RoleRelationshipContainer, d).relationships,
-
-    AddressSpace.SYSADMIN_OWNERS:
-    lambda d: _parse_proto(RoleRelationshipContainer, d).relationships,
-
-    AddressSpace.SYSADMIN_ADMINS:
-    lambda d: _parse_proto(RoleRelationshipContainer, d).relationships,
-
-    AddressSpace.ROLES_ATTRIBUTES:
-    lambda d: _parse_proto(RoleAttributesContainer, d).role_attributes,
-
-    AddressSpace.ROLES_MEMBERS:
-    lambda d: _parse_proto(RoleRelationshipContainer, d).relationships,
-
-    AddressSpace.ROLES_OWNERS:
-    lambda d: _parse_proto(RoleRelationshipContainer, d).relationships,
-
-    AddressSpace.ROLES_ADMINS:
-    lambda d: _parse_proto(RoleRelationshipContainer, d).relationships,
-
-    AddressSpace.ROLES_TASKS:
-    lambda d: _parse_proto(RoleRelationshipContainer, d).relationships,
-
-    AddressSpace.TASKS_ATTRIBUTES:
-    lambda d: _parse_proto(TaskAttributesContainer, d).task_attributes,
-
-    AddressSpace.TASKS_OWNERS:
-    lambda d: _parse_proto(TaskRelationshipContainer, d).relationships,
-
-    AddressSpace.TASKS_ADMINS:
-    lambda d: _parse_proto(TaskRelationshipContainer, d).relationships
+    AddressSpace.USER: lambda d: _parse_proto(UserContainer, d).users,
+    AddressSpace.PROPOSALS: lambda d: _parse_proto(ProposalsContainer, d).proposals,
+    AddressSpace.SYSADMIN_ATTRIBUTES: lambda d: _parse_proto(
+        RoleAttributesContainer, d
+    ).role_attributes,
+    AddressSpace.SYSADMIN_MEMBERS: lambda d: _parse_proto(
+        RoleRelationshipContainer, d
+    ).relationships,
+    AddressSpace.SYSADMIN_OWNERS: lambda d: _parse_proto(
+        RoleRelationshipContainer, d
+    ).relationships,
+    AddressSpace.SYSADMIN_ADMINS: lambda d: _parse_proto(
+        RoleRelationshipContainer, d
+    ).relationships,
+    AddressSpace.ROLES_ATTRIBUTES: lambda d: _parse_proto(
+        RoleAttributesContainer, d
+    ).role_attributes,
+    AddressSpace.ROLES_MEMBERS: lambda d: _parse_proto(
+        RoleRelationshipContainer, d
+    ).relationships,
+    AddressSpace.ROLES_OWNERS: lambda d: _parse_proto(
+        RoleRelationshipContainer, d
+    ).relationships,
+    AddressSpace.ROLES_ADMINS: lambda d: _parse_proto(
+        RoleRelationshipContainer, d
+    ).relationships,
+    AddressSpace.ROLES_TASKS: lambda d: _parse_proto(
+        RoleRelationshipContainer, d
+    ).relationships,
+    AddressSpace.TASKS_ATTRIBUTES: lambda d: _parse_proto(
+        TaskAttributesContainer, d
+    ).task_attributes,
+    AddressSpace.TASKS_OWNERS: lambda d: _parse_proto(
+        TaskRelationshipContainer, d
+    ).relationships,
+    AddressSpace.TASKS_ADMINS: lambda d: _parse_proto(
+        TaskRelationshipContainer, d
+    ).relationships,
 }
 
 
@@ -81,7 +78,7 @@ def data_to_dicts(address, data):
     try:
         deserializer = DESERIALIZERS[data_type]
     except KeyError:
-        raise TypeError('Unknown data type: {}'.format(data_type))
+        raise TypeError("Unknown data type: {}".format(data_type))
 
     return [_proto_to_dict(pb) for pb in deserializer(data)]
 
@@ -94,6 +91,5 @@ def _parse_proto(proto_class, data):
 
 def _proto_to_dict(proto):
     return MessageToDict(
-        proto,
-        including_default_value_fields=True,
-        preserving_proto_field_name=True)
+        proto, including_default_value_fields=True, preserving_proto_field_name=True
+    )

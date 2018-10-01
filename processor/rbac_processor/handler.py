@@ -31,52 +31,64 @@ from rbac_processor.user.user_manager_proposal import apply_user_confirm
 from rbac_processor.user.user_manager_proposal import apply_user_propose
 from rbac_processor.user.user_manager_proposal import apply_user_reject
 
-ROLE_PROPOSE = [RBACPayload.PROPOSE_ADD_ROLE_TASKS,
-                RBACPayload.PROPOSE_ADD_ROLE_MEMBERS,
-                RBACPayload.PROPOSE_ADD_ROLE_OWNERS,
-                RBACPayload.PROPOSE_ADD_ROLE_ADMINS,
-                RBACPayload.PROPOSE_REMOVE_ROLE_TASKS,
-                RBACPayload.PROPOSE_REMOVE_ROLE_MEMBERS,
-                RBACPayload.PROPOSE_REMOVE_ROLE_OWNERS,
-                RBACPayload.PROPOSE_REMOVE_ROLE_ADMINS]
+ROLE_PROPOSE = [
+    RBACPayload.PROPOSE_ADD_ROLE_TASKS,
+    RBACPayload.PROPOSE_ADD_ROLE_MEMBERS,
+    RBACPayload.PROPOSE_ADD_ROLE_OWNERS,
+    RBACPayload.PROPOSE_ADD_ROLE_ADMINS,
+    RBACPayload.PROPOSE_REMOVE_ROLE_TASKS,
+    RBACPayload.PROPOSE_REMOVE_ROLE_MEMBERS,
+    RBACPayload.PROPOSE_REMOVE_ROLE_OWNERS,
+    RBACPayload.PROPOSE_REMOVE_ROLE_ADMINS,
+]
 
 
-ROLE_CONFIRM = [RBACPayload.CONFIRM_ADD_ROLE_TASKS,
-                RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
-                RBACPayload.CONFIRM_ADD_ROLE_OWNERS,
-                RBACPayload.CONFIRM_ADD_ROLE_ADMINS,
-                RBACPayload.CONFIRM_REMOVE_ROLE_TASKS,
-                RBACPayload.CONFIRM_REMOVE_ROLE_MEMBERS,
-                RBACPayload.CONFIRM_REMOVE_ROLE_OWNERS,
-                RBACPayload.CONFIRM_REMOVE_ROLE_ADMINS]
+ROLE_CONFIRM = [
+    RBACPayload.CONFIRM_ADD_ROLE_TASKS,
+    RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
+    RBACPayload.CONFIRM_ADD_ROLE_OWNERS,
+    RBACPayload.CONFIRM_ADD_ROLE_ADMINS,
+    RBACPayload.CONFIRM_REMOVE_ROLE_TASKS,
+    RBACPayload.CONFIRM_REMOVE_ROLE_MEMBERS,
+    RBACPayload.CONFIRM_REMOVE_ROLE_OWNERS,
+    RBACPayload.CONFIRM_REMOVE_ROLE_ADMINS,
+]
 
 
-ROLE_REJECT = [RBACPayload.REJECT_ADD_ROLE_TASKS,
-               RBACPayload.REJECT_ADD_ROLE_MEMBERS,
-               RBACPayload.REJECT_ADD_ROLE_OWNERS,
-               RBACPayload.REJECT_ADD_ROLE_ADMINS,
-               RBACPayload.REJECT_REMOVE_ROLE_TASKS,
-               RBACPayload.REJECT_REMOVE_ROLE_MEMBERS,
-               RBACPayload.REJECT_REMOVE_ROLE_OWNERS,
-               RBACPayload.REJECT_REMOVE_ROLE_ADMINS]
+ROLE_REJECT = [
+    RBACPayload.REJECT_ADD_ROLE_TASKS,
+    RBACPayload.REJECT_ADD_ROLE_MEMBERS,
+    RBACPayload.REJECT_ADD_ROLE_OWNERS,
+    RBACPayload.REJECT_ADD_ROLE_ADMINS,
+    RBACPayload.REJECT_REMOVE_ROLE_TASKS,
+    RBACPayload.REJECT_REMOVE_ROLE_MEMBERS,
+    RBACPayload.REJECT_REMOVE_ROLE_OWNERS,
+    RBACPayload.REJECT_REMOVE_ROLE_ADMINS,
+]
 
 
-TASK_PROPOSE = [RBACPayload.PROPOSE_ADD_TASK_ADMINS,
-                RBACPayload.PROPOSE_ADD_TASK_OWNERS,
-                RBACPayload.PROPOSE_REMOVE_TASK_OWNERS,
-                RBACPayload.PROPOSE_REMOVE_TASK_ADMINS]
+TASK_PROPOSE = [
+    RBACPayload.PROPOSE_ADD_TASK_ADMINS,
+    RBACPayload.PROPOSE_ADD_TASK_OWNERS,
+    RBACPayload.PROPOSE_REMOVE_TASK_OWNERS,
+    RBACPayload.PROPOSE_REMOVE_TASK_ADMINS,
+]
 
 
-TASK_CONFIRM = [RBACPayload.CONFIRM_ADD_TASK_ADMINS,
-                RBACPayload.CONFIRM_ADD_TASK_OWNERS,
-                RBACPayload.CONFIRM_REMOVE_TASK_OWNERS,
-                RBACPayload.CONFIRM_REMOVE_TASK_ADMINS]
+TASK_CONFIRM = [
+    RBACPayload.CONFIRM_ADD_TASK_ADMINS,
+    RBACPayload.CONFIRM_ADD_TASK_OWNERS,
+    RBACPayload.CONFIRM_REMOVE_TASK_OWNERS,
+    RBACPayload.CONFIRM_REMOVE_TASK_ADMINS,
+]
 
 
-TASK_REJECT = [RBACPayload.REJECT_ADD_TASK_ADMINS,
-               RBACPayload.REJECT_ADD_TASK_OWNERS,
-               RBACPayload.REJECT_REMOVE_TASK_OWNERS,
-               RBACPayload.REJECT_REMOVE_TASK_ADMINS]
+TASK_REJECT = [
+    RBACPayload.REJECT_ADD_TASK_ADMINS,
+    RBACPayload.REJECT_ADD_TASK_OWNERS,
+    RBACPayload.REJECT_REMOVE_TASK_OWNERS,
+    RBACPayload.REJECT_REMOVE_TASK_ADMINS,
+]
 
 
 USER_PROPOSE = [RBACPayload.PROPOSE_UPDATE_USER_MANAGER]
@@ -88,24 +100,21 @@ USER_CONFIRM = [RBACPayload.CONFIRM_UPDATE_USER_MANAGER]
 USER_REJECT = [RBACPayload.REJECT_UPDATE_USER_MANAGER]
 
 
-CREATE = [RBACPayload.CREATE_USER,
-          RBACPayload.CREATE_ROLE,
-          RBACPayload.CREATE_TASK]
+CREATE = [RBACPayload.CREATE_USER, RBACPayload.CREATE_ROLE, RBACPayload.CREATE_TASK]
 
 
 class RBACTransactionHandler(object):
-
     @property
     def family_name(self):
         return addresser.FAMILY_NAME
 
     @property
     def family_versions(self):
-        return ['1.0']
+        return ["1.0"]
 
     @property
     def encodings(self):
-        return ['application/protobuf']
+        return ["application/protobuf"]
 
     @property
     def namespaces(self):
@@ -216,7 +225,6 @@ def apply_role_confirm(header, payload, state):
 
     elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_TASKS:
         role_tasks.apply_confirm_remove(header, payload, state)
-
 
     else:
         raise InvalidTransaction("Message type unknown.")

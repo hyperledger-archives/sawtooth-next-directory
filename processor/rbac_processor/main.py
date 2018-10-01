@@ -23,23 +23,20 @@ from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac_processor.handler import RBACTransactionHandler
 
-HOST = os.getenv('HOST', 'localhost')
+HOST = os.getenv("HOST", "localhost")
+
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument(
-        '-v',
-        '--verbosity',
-        action='count',
-        help="The logging level.")
+    parser.add_argument("-v", "--verbosity", action="count", help="The logging level.")
 
     parser.add_argument(
         "validator_endpoint",
-        nargs='?',
-        default='tcp://'+ HOST + ':4004',
-        help="The validator's component address.")
+        nargs="?",
+        default="tcp://" + HOST + ":4004",
+        help="The validator's component address.",
+    )
 
     return parser.parse_args(args)
 
