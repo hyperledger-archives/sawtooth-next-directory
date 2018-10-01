@@ -63,8 +63,11 @@ Please ensure the unit and integration tests run successfully. Refer to the
 Testing section in the [README.md](README.md) on how to run these
 tests.
 
-Please ensure that lint passes by running ‘./bin/run_lint’. The command should
-produce no output if there are no lint errors.
+Please ensure that lint passes by running `./bin/run_lint`. The command should
+produce no output if there are no lint errors. The linter requires all Python 
+dependencies be installed locally (if not it'll throw import-errors). Install
+dependencies locally by running `pip3 install -r requirements.dev.txt` from the 
+root project directory.
 
 Pull Request Guidelines
 
