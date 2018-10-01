@@ -1,0 +1,15 @@
+itsdangerous==0.24
+dredd_hooks==0.2.0
+rethinkdb==2.3.0.post6
+sawtooth_sdk==1.0.5
+sawtooth_signing==1.0.5
+sanic==0.8.3
+pycrypto==2.6.1
+protobuf==3.6.1
+pyzmq==17.1.2
+black==18.9b0
+pylint==2.1.1
+astroid==2.0.4
+clang==6.0
+pycodestyle==2.4.0
+pipreqs==0.4.9
