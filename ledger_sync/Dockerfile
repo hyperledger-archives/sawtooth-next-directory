@@ -23,7 +23,6 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F10
         python3-pip \
         python3-sawtooth-sdk \
  && pip3 install \
-        rethinkdb \
         grpcio-tools \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
@@ -36,5 +35,6 @@ COPY protos/ protos/
 RUN bin/protogen
 
 COPY . .
+RUN pip3 install -r requirements.txt
 
 CMD ["./bin/rbac-ledger-sync"]

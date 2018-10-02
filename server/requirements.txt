@@ -1,0 +1,7 @@
+sawtooth_signing==1.0.5
+rethinkdb==2.3.0.post6
+itsdangerous==0.24
+sanic==0.8.3
+pycrypto==2.6.1
+protobuf==3.6.1
+pyzmq==17.1.2

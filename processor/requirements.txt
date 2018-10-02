@@ -1,0 +1,2 @@
+sawtooth_sdk==1.0.5
+protobuf==3.6.1

@@ -37,5 +37,6 @@ COPY protos/ protos/
 RUN bin/protogen
 
 COPY . .
+RUN pip3 install -r requirements.txt
 
 CMD ["./bin/rbac-tp"]

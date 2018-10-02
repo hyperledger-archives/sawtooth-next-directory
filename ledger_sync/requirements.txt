@@ -1,0 +1,3 @@
+rethinkdb==2.3.0.post6
+sawtooth_sdk==1.0.5
+protobuf==3.6.1
