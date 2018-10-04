@@ -3,11 +3,9 @@ jobs:
     - stage: backend
       language: python
       python:
-        - "3.5.2"
+        - "3.6"
       script:
-        - pytest --ignore=tests
-      env:
-        PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+        - bin/build -p && bin/build -i
     - stage: frontend
       language: node_js
       node_js:
