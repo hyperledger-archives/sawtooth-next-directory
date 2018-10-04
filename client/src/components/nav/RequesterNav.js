@@ -19,8 +19,8 @@ import { Link } from 'react-router-dom'
 import { Button, Container, Search } from 'semantic-ui-react';
 
 
-import './styles/RequesterNav.css';
-import SidebarList from '../components/SidebarList';
+import './RequesterNav.css';
+import NavList from './NavList';
 
 
 /**
@@ -50,9 +50,9 @@ export default class RequesterNav extends Component {
           <Button fluid>Browse Packs/Roles</Button>
         </Link>
         <Search className='next-requester-nav-search' category loading={false}/>
-        <SidebarList title='Your Requests' handleClick={this.getPack}/>
-        <SidebarList title='Recommended Packs' handleClick={this.getPack}/>
-        <SidebarList title='Your Packs' handleClick={this.getPack}/>
+        <NavList title='Your Requests' handleClick={this.getPack}/>
+        <NavList title='Recommended Packs' handleClick={this.getPack}/>
+        <NavList title='Your Packs' handleClick={this.getPack}/>
         <Link to='/approval-home' id='next-switch-requester-link'>Switch to Approver</Link>
       </Container>
     );

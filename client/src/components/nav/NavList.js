@@ -18,17 +18,17 @@ import React, { Component } from 'react';
 import { Image, List } from 'semantic-ui-react';
 
 
-import './styles/SidebarList.css';
+import './NavList.css';
 
 
 /**
  * 
- * @class SidebarList
+ * @class NavList
  * Component encapsulating a reusable, selectable list suitable
  * for displaying options in navigation components
  * 
  */
-export default class SidebarList extends Component {
+export default class NavList extends Component {
 
   render() {
     const { title, handleClick } = this.props;
