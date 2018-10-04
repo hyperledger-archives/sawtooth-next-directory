@@ -1,0 +1,24 @@
+{
+  "id": "bf42a57b-6fe4-41ce-9f2a-f6f7dab54e8b",
+  "messages": [
+    {
+      "id": "388fd122-af76-4e11-97f8-a97b115c8d40",
+      "body": "Hey Sarah, please approve my access request. Let me know if you need any details from me.",
+      "created_date": "2012-04-23T18:25:43.511Z",
+      "from": {
+        "id": "519909ec-f0c8-4be9-ac62-d340161507b3",
+        "name": "Erin Rosales"
+      }
+    },
+    {
+      "id": "58356555-a99e-403a-9738-5d29b956a9a9",
+      "body": "Can you please look into this?",
+      "created_date": "2012-04-23T18:25:43.511Z",
+      "from": {
+        "id": "519909ec-f0c8-4be9-ac62-d340161507b3",
+        "name": "Erin Rosales"
+      }
+    }
+  ],
+  "prev": "lv98ks"
+}

@@ -1,0 +1,32 @@
+{
+  "requests": [
+    {
+      "id": "539d9dd3-6b4d-4136-ab67-b6ff6b307c9f",
+      "name": "Rebellion Access",
+      "slug": "rebellion-access"
+    },
+    {
+      "id": "e15a71ee-58d2-49e8-a8e4-21888144be1f",
+      "name": "Cloud Onboarding Pack",
+      "slug": "cloud-onboarding-pack"
+    },
+    {
+      "id": "d1ea7166-9c0f-428a-b684-9d73935e9211",
+      "name": "Rebellion Security",
+      "slug": "rebellion-security"
+    }
+  ],
+  "packs": [],
+  "recommended": [
+    {
+      "id": "3e542e8d-2e04-4125-b7f6-5b362dcc8a60",
+      "name": "Jazz Security Permissions",
+      "slug": "jazz-security-permissions"
+    },
+    {
+      "id": "d7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0",
+      "name": "Jazz Rev",
+      "slug": "jazz-rev"
+    }
+  ]
+}
