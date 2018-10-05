@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import pytest
 import unittest
 import logging
 from uuid import uuid4
@@ -22,16 +23,18 @@ from rbac_addressing.addresser import AddressSpace
 LOGGER = logging.getLogger(__name__)
 
 
-class TestTaskAttributesAddresser(unittest.TestCase):
-    def test_deterministic_task_address(self):
-        """Tests that a specific task_id generates the expected
-        task address, and thus is probably deterministic.
+@pytest.mark.unit
+@pytest.mark.addressing
+class TestSysAdminAdminsAddresser(unittest.TestCase):
+    def test_det_sysadmin_admin_addr(self):
+        """Tests that a specific admin_id generates the expected
+        sysadmin admin address, and thus is probably deterministic.
         """
 
-        ident = "99968acb8f1a48b3a4bc21e2cd252e67"
-        expected_address = "9f44481e326a1713a905b26359fc8d\
-a2817c1a5f67de6f464701f0c10042da345d2800"
-        address = addresser.make_task_attributes_address(ident)
+        admin_id = "966ab67317234df489adb4bc1f517b88"
+        expected_address = "9f4448000000000000000000000000\
+00000000000000000000000000000000000000f7"
+        address = addresser.make_sysadmin_admins_address(admin_id)
 
         self.assertEqual(
             len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
@@ -56,17 +59,17 @@ a2817c1a5f67de6f464701f0c10042da345d2800"
 
         self.assertEqual(
             addresser.address_is(address),
-            AddressSpace.TASKS_ATTRIBUTES,
-            "The address created must be a Task Attributes address.",
+            AddressSpace.SYSADMIN_ADMINS,
+            "The address created must be a SysAdmin Attributes address.",
         )
 
-    def test_generated_task_address(self):
-        """Tests the task address creation function as well as the
+    def test_gen_sysadmin_admin_addr(self):
+        """Tests the sysadmin admin address creation function as well as the
         address_is function.
         """
 
-        ident = uuid4().hex
-        address = addresser.make_task_attributes_address(ident)
+        admin_id = uuid4().hex
+        address = addresser.make_sysadmin_admins_address(admin_id)
 
         self.assertEqual(
             len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
@@ -87,6 +90,6 @@ a2817c1a5f67de6f464701f0c10042da345d2800"
 
         self.assertEqual(
             addresser.address_is(address),
-            AddressSpace.TASKS_ATTRIBUTES,
-            "The address created must be a Task Attributes address.",
+            AddressSpace.SYSADMIN_ADMINS,
+            "The address created must be a SysAdmin Attributes address.",
         )

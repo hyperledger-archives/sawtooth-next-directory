@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import pytest
 import unittest
 import logging
 from hashlib import sha512
@@ -21,6 +22,8 @@ from rbac_addressing import addresser
 LOGGER = logging.getLogger(__name__)
 
 
+@pytest.mark.unit
+@pytest.mark.addressing
 class TestAddresser(unittest.TestCase):
     def test_namespace(self):
         self.assertEqual(addresser.FAMILY_NAME, "rbac")
