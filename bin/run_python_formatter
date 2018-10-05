@@ -19,7 +19,7 @@ set -e
 
 TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
 
-lint() {
+format() {
 
     files="`find $1 -name \*.py | grep -v protobuf`"
     echo "$1"
@@ -27,18 +27,16 @@ lint() {
     return $error
 
 }
-lint addressing/rbac_addressing || ret_val=1
 
-export PYTHONPATH=$TOP_DIR/addressing
-lint transaction_creation || ret_val=1
+export PYTHONPATH=$TOP_DIR/addressing:$TOP_DIR/transaction_creation:$TOP_DIR/server
 
-export PYTHONPATH=$TOP_DIR/addressing
-lint processor/rbac_processor || ret_val=1
-lint server/db || ret_val=1
-lint ledger_sync/rbac_ledger_sync || ret_val=1
-
-export PYTHONPATH=$TOP_DIR/server:$TOP_DIR/transaction_creation
-lint server/api || ret_val=1
+format addressing/rbac_addressing || ret_val=1
+format transaction_creation || ret_val=1
+format processor/rbac_processor || ret_val=1
+format server/db || ret_val=1
+format ledger_sync/rbac_ledger_sync || ret_val=1
+format server/api || ret_val=1
+format tests || ret_val=1
 
 ret_val=0
 

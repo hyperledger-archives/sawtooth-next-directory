@@ -31,7 +31,7 @@ class IntegrationTestHelper:
         def __check_containers(self):
             if not self.__available:
                 LOGGER.debug("Waiting for containers to start")
-                __wait_for_rest_apis__(['rest-api:8080'])
+                __wait_for_rest_apis__(["rest-api:8008"])
                 self.__available = True
             else:
                 LOGGER.debug("Containers already started. Proceeding...")
@@ -44,7 +44,7 @@ class IntegrationTestHelper:
 
     @staticmethod
     def make_key_and_name():
-        context = sawtooth_signing.create_context('secp256k1')
+        context = sawtooth_signing.create_context("secp256k1")
         private_key = context.new_random_private_key()
         pubkey = context.get_public_key(private_key)
 
@@ -55,7 +55,9 @@ class IntegrationTestHelper:
         if IntegrationTestHelper.__instance is None:
             IntegrationTestHelper.__instance = IntegrationTestHelper.__impl()
 
-        self.__dict__['IntegrationTestHelper__instance'] = IntegrationTestHelper.__instance
+        self.__dict__[
+            "IntegrationTestHelper__instance"
+        ] = IntegrationTestHelper.__instance
 
     def __getattr__(self, attr):
         return getattr(self.__instance, attr)
@@ -74,9 +76,8 @@ def __wait_for_rest_apis__(endpoints, tries=5):
 
     for endpoint in endpoints:
         __wait_until_status__(
-            'http://{}/blocks'.format(endpoint),
-            status_code=200,
-            tries=tries)
+            "http://{}/blocks".format(endpoint), status_code=200, tries=tries
+        )
 
 
 def __wait_until_status__(url, status_code=200, tries=5):
@@ -101,15 +102,14 @@ def __wait_until_status__(url, status_code=200, tries=5):
             if err.code == status_code:
                 return
 
-            LOGGER.debug('failed to read url: %s', str(err))
+            LOGGER.debug("failed to read url: %s", str(err))
         except URLError as err:
-            LOGGER.debug('failed to read url: %s', str(err))
+            LOGGER.debug("failed to read url: %s", str(err))
 
         sleep_time = (tries - attempts + 1) * 2
-        LOGGER.debug('Retrying in %s secs', sleep_time)
+        LOGGER.debug("Retrying in %s secs", sleep_time)
         time.sleep(sleep_time)
 
         attempts -= 1
 
-    raise AssertionError(
-        "{} is not available within {} attempts".format(url, tries))
+    raise AssertionError("{} is not available within {} attempts".format(url, tries))

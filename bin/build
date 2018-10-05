@@ -50,32 +50,32 @@ do
             ;;
         p)
             info "Building Protobuf modules"
-            docker build . -f tests/blockchain/Dockerfile -t rbac-test-env
+            docker build . -f tests/Dockerfile -t rbac-test-env
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             ;;
         t)
             info "Running tests"
-            pytest
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
             ;;
         l)
             info "Running lint"
-            docker build . -f tests/blockchain/Dockerfile -t rbac-test-env
+            docker build . -f tests/Dockerfile -t rbac-test-env
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
             ;;
         i)
-            info "Running integration tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/blockchain/docker-compose.yaml
+            info "Running tests"
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
             ;;
         a)
-            docker build . -f tests/blockchain/Dockerfile -t rbac-test-env
+            docker build . -f tests/Dockerfile -t rbac-test-env
             info "Building Protobuf modules"
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             info "Running lint"
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
             info "Running tests"
             pytest
-            info "Running integration tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/blockchain/docker-compose.yaml
+            info "Running tests"
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
             ;;
         \?)
             usage

@@ -19,7 +19,7 @@
 #   pip3 installation of the grpcio package
 #   arg specifying which docker-compose.yaml to run tests with
 # Direct execution example:
-# >   ./run_docker_test ../tests/blockchain/docker-compose.yaml
+# >   ./run_docker_test ../tests/docker-compose.yaml
 
 import argparse
 import logging
