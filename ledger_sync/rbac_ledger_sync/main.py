@@ -18,6 +18,7 @@ import argparse
 import logging
 import os
 import time
+from rethinkdb import ReqlError
 
 from rbac_ledger_sync.database import Database
 from rbac_ledger_sync.subscriber import Subscriber
@@ -83,8 +84,7 @@ def get_last_known_blocks(database):
                     "Tried to get last known block for more than 3 times. Reporting Error ..."
                 )
                 raise err
-            LOGGER.exception(err)
-            LOGGER.info("Retrying to get last known block ...")
+            LOGGER.info("Not ready, retrying to get last known block ...")
             time.sleep(3)
         break
 
