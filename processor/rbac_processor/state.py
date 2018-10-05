@@ -20,20 +20,14 @@ from sawtooth_sdk.processor.exceptions import InternalError
 def get_state(state, addresses):
     timeout = 2
     try:
-        return state.get_state(
-            addresses=addresses,
-            timeout=timeout)
+        return state.get_state(addresses=addresses, timeout=timeout)
     except FutureTimeoutError:
-        raise InternalError("Timeout after %s seconds during get from state",
-                            timeout)
+        raise InternalError("Timeout after %s seconds during get from state", timeout)
 
 
 def set_state(state, entries):
     timeout = 2
     try:
-        return state.set_state(
-            entries=entries,
-            timeout=timeout)
+        return state.set_state(entries=entries, timeout=timeout)
     except FutureTimeoutError:
-        raise InternalError("Timeout after %s seconds during set from state",
-                            timeout)
+        raise InternalError("Timeout after %s seconds during set from state", timeout)

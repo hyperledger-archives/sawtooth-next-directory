@@ -23,16 +23,16 @@ from api import utils
 from db import blocks_query
 
 
-BLOCKS_BP = Blueprint('blocks')
+BLOCKS_BP = Blueprint("blocks")
 
 
-@BLOCKS_BP.get('api/blocks')
+@BLOCKS_BP.get("api/blocks")
 @authorized()
 async def get_all_blocks(request):
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     block_resources = await blocks_query.fetch_all_blocks(
-        request.app.config.DB_CONN, head_block.get('num'), start, limit
+        request.app.config.DB_CONN, head_block.get("num"), start, limit
     )
     return await utils.create_response(
         request.app.config.DB_CONN,
@@ -40,38 +40,28 @@ async def get_all_blocks(request):
         block_resources,
         head_block,
         start=start,
-        limit=limit
+        limit=limit,
     )
 
 
-@BLOCKS_BP.get('api/blocks/latest')
+@BLOCKS_BP.get("api/blocks/latest")
 @authorized()
 async def get_latest_block(request):
-    if '?head=' in request.url:
-        raise ApiBadRequest(
-            "Bad Request: 'head' parameter should not be specified"
-        )
+    if "?head=" in request.url:
+        raise ApiBadRequest("Bad Request: 'head' parameter should not be specified")
     block_resource = await blocks_query.fetch_latest_block_with_retry(
         request.app.config.DB_CONN
     )
-    url = request.url.replace('latest', block_resource.get('id'))
-    return json({
-        'data': block_resource,
-        'link': url
-    })
+    url = request.url.replace("latest", block_resource.get("id"))
+    return json({"data": block_resource, "link": url})
 
 
-@BLOCKS_BP.get('api/blocks/<block_id>')
+@BLOCKS_BP.get("api/blocks/<block_id>")
 @authorized()
 async def get_block(request, block_id):
-    if '?head=' in request.url:
-        raise ApiBadRequest(
-            "Bad Request: 'head' parameter should not be specified"
-        )
+    if "?head=" in request.url:
+        raise ApiBadRequest("Bad Request: 'head' parameter should not be specified")
     block_resource = await blocks_query.fetch_block_by_id(
         request.app.config.DB_CONN, block_id
     )
-    return json({
-        'data': block_resource,
-        'link': request.url
-    })
+    return json({"data": block_resource, "link": request.url})

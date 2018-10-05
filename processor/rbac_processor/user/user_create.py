@@ -13,7 +13,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -33,11 +32,13 @@ def apply_create_user(header, payload, state):
     if len(create_user.name) < 5:
         raise InvalidTransaction(
             "CreateUser txn with name {} is invalid. Users "
-            "must have names longer than 4 characters.".format(
-                create_user.name))
+            "must have names longer than 4 characters.".format(create_user.name)
+        )
 
-    if create_user.user_id == header.signer_public_key or \
-            header.signer_public_key == create_user.manager_id:
+    if (
+        create_user.user_id == header.signer_public_key
+        or header.signer_public_key == create_user.manager_id
+    ):
 
         validate_user_state(header, create_user, state)
 
@@ -46,31 +47,27 @@ def apply_create_user(header, payload, state):
 
         else:
             validate_manager_state(header, create_user, state)
-            handle_user_state_set(
-                header,
-                create_user,
-                state,
-                create_user.manager_id)
+            handle_user_state_set(header, create_user, state, create_user.manager_id)
 
     else:
         raise InvalidTransaction(
             "The public key {} that signed this CreateUser txn "
             "does not belong to the user or their manager.".format(
-                header.signer_public_key))
+                header.signer_public_key
+            )
+        )
 
 
 def validate_user_state(header, create_user, state):
-    user_entries = get_state(
-        state,
-        [addresser.make_user_address(create_user.user_id)])
+    user_entries = get_state(state, [addresser.make_user_address(create_user.user_id)])
     if user_entries:
         # this is necessary for state collisions.
         try:
             user_container = return_user_container(user_entries[0])
             _index_of_user_in_container(user_container, create_user.user_id)
             raise InvalidTransaction(
-                "User with user_id {} already exists.".format(
-                    create_user.user_id))
+                "User with user_id {} already exists.".format(create_user.user_id)
+            )
         except KeyError:
             # The user does not exist yet in state and so the transaction
             # is valid.
@@ -80,21 +77,23 @@ def validate_user_state(header, create_user, state):
 def validate_manager_state(header, create_user, state):
 
     manager_entries = get_state(
-        state,
-        [addresser.make_user_address(create_user.manager_id)])
+        state, [addresser.make_user_address(create_user.manager_id)]
+    )
     if not manager_entries:
         raise InvalidTransaction(
             "User id {} listed as manager is not "
-            "in state.".format(create_user.manager_id))
+            "in state.".format(create_user.manager_id)
+        )
 
     state_entry = get_state_entry(
-        manager_entries,
-        addresser.make_user_address(user_id=create_user.manager_id))
+        manager_entries, addresser.make_user_address(user_id=create_user.manager_id)
+    )
     manager_container = return_user_container(state_entry)
     if not is_in_user_container(manager_container, create_user.manager_id):
         raise InvalidTransaction(
             "user id {} listed as manager is not within the User container "
-            "in state".format(create_user.manager_id))
+            "in state".format(create_user.manager_id)
+        )
 
 
 def handle_user_state_set(header, create_user, state, manager_id=None):
@@ -102,21 +101,25 @@ def handle_user_state_set(header, create_user, state, manager_id=None):
     user = user_state_pb2.User(
         user_id=create_user.user_id,
         name=create_user.name,
-        metadata=create_user.metadata)
+        metadata=create_user.metadata,
+    )
     if manager_id:
         user.manager_id = manager_id
 
     user_container.users.extend([user])
 
-    set_state(state, {
-        addresser.make_user_address(create_user.user_id):
-            user_container.SerializeToString()
-    })
+    set_state(
+        state,
+        {
+            addresser.make_user_address(
+                create_user.user_id
+            ): user_container.SerializeToString()
+        },
+    )
 
 
 def _index_of_user_in_container(container, user_id):
     for idx, user in enumerate(container.users):
         if user.user_id == user_id:
             return idx
-    raise KeyError(
-        "User id {} not found in container.".format(user_id))
+    raise KeyError("User id {} not found in container.".format(user_id))

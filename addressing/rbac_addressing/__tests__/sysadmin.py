@@ -22,34 +22,39 @@ LOGGER = logging.getLogger(__name__)
 
 
 class TestSysAdminAttributesAddresser(unittest.TestCase):
-
     def test_determine_sysadmin_addr(self):
         """Tests that a specific sysadmin_id generates the expected
         sysadmin address, and thus is probably deterministic.
         """
 
-        expected_address = '9f4448000000000000000000000000\
-0000000000000000000000000000000000000000'
+        expected_address = "9f4448000000000000000000000000\
+0000000000000000000000000000000000000000"
 
         address = addresser.make_sysadmin_attr_address()
 
-        self.assertEqual(len(address), addresser.ADDRESS_LENGTH,
-                         "The address is 70 characters")
+        self.assertEqual(
+            len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
+        )
 
-        self.assertTrue(addresser.is_address(address),
-                        "The address is 70 character hexidecimal")
+        self.assertTrue(
+            addresser.is_address(address), "The address is 70 character hexidecimal"
+        )
 
-        self.assertTrue(addresser.namespace_ok(address),
-                        "The address has correct namespace prefix")
+        self.assertTrue(
+            addresser.namespace_ok(address), "The address has correct namespace prefix"
+        )
 
         self.assertTrue(
             addresser.is_family_address(address),
-            "The address is 70 character hexidecimal with family prefix")
+            "The address is 70 character hexidecimal with family prefix",
+        )
 
-        self.assertEqual(address, expected_address,
-                         "The address is the one we expected it to be")
+        self.assertEqual(
+            address, expected_address, "The address is the one we expected it to be"
+        )
 
         self.assertEqual(
             addresser.address_is(address),
             AddressSpace.SYSADMIN_ATTRIBUTES,
-            "The address created must be a SysAdmin Attributes address.")
+            "The address created must be a SysAdmin Attributes address.",
+        )

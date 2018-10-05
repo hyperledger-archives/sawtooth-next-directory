@@ -23,6 +23,7 @@ import sawtooth_signing
 from sawtooth_signing import CryptoFactory
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
+
 def wrap_payload_in_txn_batch(txn_key, payload, header, batch_key):
     """Takes the serialized RBACPayload and creates a batch_list, batch
     signature tuple.
@@ -39,26 +40,28 @@ def wrap_payload_in_txn_batch(txn_key, payload, header, batch_key):
             the batch header_signature.
     """
 
-    factory = CryptoFactory(sawtooth_signing.create_context('secp256k1'))
+    factory = CryptoFactory(sawtooth_signing.create_context("secp256k1"))
 
     txn_signer = factory.new_signer(Secp256k1PrivateKey.from_hex(txn_key.private_key))
     transaction = transaction_pb2.Transaction(
-        payload=payload,
-        header=header,
-        header_signature=txn_signer.sign(header))
+        payload=payload, header=header, header_signature=txn_signer.sign(header)
+    )
 
     batch_header = batch_pb2.BatchHeader(
         signer_public_key=batch_key.public_key,
-        transaction_ids=[transaction.header_signature]).SerializeToString()
+        transaction_ids=[transaction.header_signature],
+    ).SerializeToString()
 
-    batch_signer = factory.new_signer(Secp256k1PrivateKey.from_hex(batch_key.private_key))
+    batch_signer = factory.new_signer(
+        Secp256k1PrivateKey.from_hex(batch_key.private_key)
+    )
     batch = batch_pb2.Batch(
         header=batch_header,
         header_signature=batch_signer.sign(batch_header),
-        transactions=[transaction])
+        transactions=[transaction],
+    )
 
-    batch_list = batch_pb2.BatchList(
-        batches=[batch])
+    batch_list = batch_pb2.BatchList(batches=[batch])
     return batch_list, batch.header_signature
 
 
@@ -67,42 +70,43 @@ def make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key):
     header = make_header(
         inputs=inputs,
         outputs=outputs,
-        payload_sha512=hashlib.sha512(
-            rbac_payload.SerializeToString()).hexdigest(),
+        payload_sha512=hashlib.sha512(rbac_payload.SerializeToString()).hexdigest(),
         signer_pubkey=txn_key.public_key,
-        batcher_pubkey=batch_key.public_key)
+        batcher_pubkey=batch_key.public_key,
+    )
 
     return wrap_payload_in_txn_batch(
         txn_key=txn_key,
         payload=rbac_payload.SerializeToString(),
         header=header.SerializeToString(),
-        batch_key=batch_key)
+        batch_key=batch_key,
+    )
 
 
-def make_header(inputs,
-                outputs,
-                payload_sha512,
-                signer_pubkey,
-                batcher_pubkey):
+def make_header(inputs, outputs, payload_sha512, signer_pubkey, batcher_pubkey):
     header = transaction_pb2.TransactionHeader(
         inputs=inputs,
         outputs=outputs,
         batcher_public_key=batcher_pubkey,
         dependencies=[],
-        family_name='rbac',
-        family_version='1.0',
+        family_name="rbac",
+        family_version="1.0",
         nonce=uuid4().hex,
         signer_public_key=signer_pubkey,
-        payload_sha512=payload_sha512)
+        payload_sha512=payload_sha512,
+    )
     return header
 
 
 class Key(object):
-
-    def __init__(self, private_key, public_key = None):
+    def __init__(self, private_key, public_key=None):
         self._private_key = private_key
-        if public_key == None:
-            self._public_key = sawtooth_signing.create_context('secp256k1').get_public_key(Secp256k1PrivateKey.from_hex(private_key)).as_hex()
+        if public_key is None:
+            self._public_key = (
+                sawtooth_signing.create_context("secp256k1")
+                .get_public_key(Secp256k1PrivateKey.from_hex(private_key))
+                .as_hex()
+            )
         else:
             self._public_key = public_key
 

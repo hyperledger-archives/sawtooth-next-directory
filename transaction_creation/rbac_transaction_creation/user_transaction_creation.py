@@ -20,13 +20,9 @@ from rbac_transaction_creation.protobuf import rbac_payload_pb2
 from rbac_transaction_creation.protobuf import user_transaction_pb2
 
 
-def create_user(txn_key,
-                batch_key,
-                name,
-                user_name,
-                user_id,
-                metadata,
-                manager_id=None):
+def create_user(
+    txn_key, batch_key, name, user_name, user_id, metadata, manager_id=None
+):
     """Create a BatchList with a CreateUser RBAC transaction.
 
     Args:
@@ -45,10 +41,8 @@ def create_user(txn_key,
     """
 
     create_user_payload = user_transaction_pb2.CreateUser(
-        name=name,
-        user_name=user_name,
-        user_id=user_id,
-        metadata=metadata)
+        name=name, user_name=user_name, user_id=user_id, metadata=metadata
+    )
     inputs = [addresser.make_user_address(user_id=user_id)]
     outputs = [addresser.make_user_address(user_id=user_id)]
     if manager_id:
@@ -58,11 +52,7 @@ def create_user(txn_key,
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_user_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CREATE_USER)
+        message_type=rbac_payload_pb2.RBACPayload.CREATE_USER,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)

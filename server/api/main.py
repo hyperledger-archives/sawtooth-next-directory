@@ -42,26 +42,26 @@ from api.roles import ROLES_BP
 from api.tasks import TASKS_BP
 from api.users import USERS_BP
 
-APP_BP = Blueprint('utils')
+APP_BP = Blueprint("utils")
 
-CONFIG_FILE = 'config.py'
+CONFIG_FILE = "config.py"
 
-HOST = os.getenv('HOST', 'localhost')
+HOST = os.getenv("HOST", "localhost")
 
 DEFAULT_CONFIG = {
-    'HOST': HOST,
-    'PORT': 8000,
-    'VALIDATOR_HOST': HOST,
-    'VALIDATOR_PORT': 4004,
-    'TIMEOUT': 500,
-    'DB_HOST': HOST,
-    'DB_PORT': 28015,
-    'DB_NAME': 'rbac',
-    'DEBUG': True,
-    'KEEP_ALIVE': False,
-    'SECRET_KEY': None,
-    'AES_KEY': None,
-    'BATCHER_PRIVATE_KEY': None
+    "HOST": HOST,
+    "PORT": 8000,
+    "VALIDATOR_HOST": HOST,
+    "VALIDATOR_PORT": 4004,
+    "TIMEOUT": 500,
+    "DB_HOST": HOST,
+    "DB_PORT": 28015,
+    "DB_NAME": "rbac",
+    "DEBUG": True,
+    "KEEP_ALIVE": False,
+    "SECRET_KEY": None,
+    "AES_KEY": None,
+    "BATCHER_PRIVATE_KEY": None,
 }
 
 KEY_LENGTH_BATCHER = 32
@@ -71,76 +71,65 @@ KEY_LENGTH_SECRET = 34
 LOGGER = logging.getLogger(__name__)
 warning_logger = logging.StreamHandler()
 warning_logger.setLevel(logging.WARNING)
-log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 warning_logger.setFormatter(log_formatter)
 LOGGER.addHandler(warning_logger)
 
 
 async def open_connections(app):
-    LOGGER.warning('opening database connection')
+    LOGGER.warning("opening database connection")
     app.config.DB_CONN = await db_utils.create_connection(
-        app.config.DB_HOST,
-        app.config.DB_PORT,
-        app.config.DB_NAME
+        app.config.DB_HOST, app.config.DB_PORT, app.config.DB_NAME
     )
 
-    validator_url = "{}:{}".format(
-        app.config.VALIDATOR_HOST, app.config.VALIDATOR_PORT
-    )
+    validator_url = "{}:{}".format(app.config.VALIDATOR_HOST, app.config.VALIDATOR_PORT)
     if "tcp://" not in app.config.VALIDATOR_HOST:
         validator_url = "tcp://" + validator_url
     app.config.VAL_CONN = Connection(validator_url)
 
-    LOGGER.warning('opening validator connection')
+    LOGGER.warning("opening validator connection")
     app.config.VAL_CONN.open()
 
 
 def close_connections(app):
-    LOGGER.warning('closing database connection')
+    LOGGER.warning("closing database connection")
     app.config.DB_CONN.close()
 
-    LOGGER.warning('closing validator connection')
+    LOGGER.warning("closing validator connection")
     app.config.VAL_CON.close()
 
 
 def generate_random_string(length, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(length))
+    return "".join(random.choice(chars) for _ in range(length))
 
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host',
-                        help='The host for the api to run on.')
-    parser.add_argument('--port',
-                        help='The port for the api to run on.')
-    parser.add_argument('--validator-host',
-                        help='The host to connect to a running validator')
-    parser.add_argument('--validator-port',
-                        help='The port to connect to a running validator')
-    parser.add_argument('--timeout',
-                        help='Seconds to wait for a validator response')
-    parser.add_argument('--db-host',
-                        help='The host for the state database')
-    parser.add_argument('--db-port',
-                        help='The port for the state database')
-    parser.add_argument('--db-name',
-                        help='The name of the database')
-    parser.add_argument('--debug',
-                        help='Option to run Sanic in debug mode')
-    parser.add_argument('--secret_key',
-                        help='The API secret key')
-    parser.add_argument('--aes-key',
-                        help='The AES key used for private key encryption')
-    parser.add_argument('--batcher-private-key',
-                        help='The sawtooth key used for transaction signing')
+    parser.add_argument("--host", help="The host for the api to run on.")
+    parser.add_argument("--port", help="The port for the api to run on.")
+    parser.add_argument(
+        "--validator-host", help="The host to connect to a running validator"
+    )
+    parser.add_argument(
+        "--validator-port", help="The port to connect to a running validator"
+    )
+    parser.add_argument("--timeout", help="Seconds to wait for a validator response")
+    parser.add_argument("--db-host", help="The host for the state database")
+    parser.add_argument("--db-port", help="The port for the state database")
+    parser.add_argument("--db-name", help="The name of the database")
+    parser.add_argument("--debug", help="Option to run Sanic in debug mode")
+    parser.add_argument("--secret_key", help="The API secret key")
+    parser.add_argument("--aes-key", help="The AES key used for private key encryption")
+    parser.add_argument(
+        "--batcher-private-key", help="The sawtooth key used for transaction signing"
+    )
     return parser.parse_args(args)
 
 
 def load_config(app):  # pylint: disable=too-many-branches
     app.config.update(DEFAULT_CONFIG)
     config_file_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-        CONFIG_FILE
+        os.path.dirname(os.path.dirname(os.path.realpath(__file__))), CONFIG_FILE
     )
     try:
         app.config.from_pyfile(config_file_path)
@@ -175,29 +164,37 @@ def load_config(app):  # pylint: disable=too-many-branches
     if opts.secret_key is not None:
         app.config.SECRET_KEY = opts.secret_key
     if app.config.SECRET_KEY is None:
-        LOGGER.warning(""""The API secret key was not provided. 
+        LOGGER.warning(
+            """"The API secret key was not provided.
         It should be added to config.py before deploying the app to a production environment.
         Generating an API secret key...
-        """)
+        """
+        )
         app.config.SECRET_KEY = generate_random_string(KEY_LENGTH_SECRET)
 
     if opts.aes_key is not None:
         app.config.AES_KEY = opts.aes_key
     if app.config.AES_KEY is None:
-        LOGGER.warning(""""The AES key was not provided. 
+        LOGGER.warning(
+            """"The AES key was not provided.
         It should be added to config.py before deploying the app to a production environment.
         Generating an AES key...
-        """)
-        app.config.AES_KEY = '%030x' % random.randrange(16 ** KEY_LENGTH_AES)
+        """
+        )
+        app.config.AES_KEY = "%030x" % random.randrange(16 ** KEY_LENGTH_AES)
 
     if opts.batcher_private_key is not None:
         app.config.BATCHER_PRIVATE_KEY = opts.batcher_private_key
     if app.config.BATCHER_PRIVATE_KEY is None:
-        LOGGER.warning(""""Batcher private key was not provided. 
+        LOGGER.warning(
+            """"Batcher private key was not provided.
         It should be added to config.py before deploying the app to a production environment.
         Generating a Batcher private key...
-        """)
-        app.config.BATCHER_PRIVATE_KEY = binascii.b2a_hex(os.urandom(KEY_LENGTH_BATCHER))
+        """
+        )
+        app.config.BATCHER_PRIVATE_KEY = binascii.b2a_hex(
+            os.urandom(KEY_LENGTH_BATCHER)
+        )
 
     app.config.BATCHER_KEY_PAIR = Key(app.config.BATCHER_PRIVATE_KEY)
 
@@ -214,23 +211,25 @@ def main():
     app.blueprint(USERS_BP)
     app.blueprint(APP_BP)
 
-    @app.middleware('request')
+    @app.middleware("request")
     async def handle_options(request):  # pylint: disable=unused-variable
-        if request.method == 'OPTIONS':
-            return text('ok', headers={
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods':
-                    'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-            })
+        if request.method == "OPTIONS":
+            return text(
+                "ok",
+                headers={
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+                },
+            )
 
-    @app.middleware('response')
+    @app.middleware("response")
     def allow_cors(request, response):  # pylint: disable=unused-variable
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = \
-            'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = \
-            'Content-Type, Authorization'
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers[
+            "Access-Control-Allow-Methods"
+        ] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
 
     load_config(app)
 

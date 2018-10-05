@@ -20,15 +20,15 @@ from sanic import Blueprint
 from sanic.exceptions import SanicException
 
 
-ERRORS_BP = Blueprint('errors')
+ERRORS_BP = Blueprint("errors")
 LOGGER = logging.getLogger(__name__)
 DEFAULT_MSGS = {
-    400: 'Bad Request',
-    401: 'Unauthorized',
-    403: 'Forbidden',
-    404: 'Not Found',
-    501: 'Not Implemented',
-    503: 'Internal Error'
+    400: "Bad Request",
+    401: "Unauthorized",
+    403: "Forbidden",
+    404: "Not Found",
+    501: "Not Implemented",
+    503: "Internal Error",
 }
 
 
@@ -36,9 +36,11 @@ def add_status_code(code):
     """
     Decorator used for adding exceptions to _sanic_exceptions.
     """
+
     def class_decorator(cls):
         cls.status_code = code
         return cls
+
     return class_decorator
 
 
@@ -87,10 +89,8 @@ class ApiInternalError(ApiException):
 def api_json_error(request, exception):
     LOGGER.exception(exception)
     return json(
-        {
-            'code': exception.status_code,
-            'message': exception.message
-        }, status=exception.status_code
+        {"code": exception.status_code, "message": exception.message},
+        status=exception.status_code,
     )
 
 
@@ -101,9 +101,4 @@ def json_error(request, exception):
     except AttributeError:
         code = 503
     LOGGER.exception(exception)
-    return json(
-        {
-            'code': code,
-            'message': exception.args[0]
-        }, status=code
-    )
+    return json({"code": code, "message": exception.args[0]}, status=code)

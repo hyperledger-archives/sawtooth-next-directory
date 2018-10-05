@@ -23,37 +23,42 @@ LOGGER = logging.getLogger(__name__)
 
 
 class TestSysAdminOwnersAddresser(unittest.TestCase):
-
     def test_det_sysadmin_owner_addr(self):
         """Tests that a specific owner_id generates the expected
         sysadmin owner address, and thus is probably deterministic.
         """
 
-        owner_id = '966ab67317234df489adb4bc1f517b88'
-        expected_address = '9f4448000000000000000000000000\
-00000000000000000000000000000000000000de'
+        owner_id = "966ab67317234df489adb4bc1f517b88"
+        expected_address = "9f4448000000000000000000000000\
+00000000000000000000000000000000000000de"
         address = addresser.make_sysadmin_owners_address(owner_id)
 
-        self.assertEqual(len(address), addresser.ADDRESS_LENGTH,
-                         "The address is 70 characters")
+        self.assertEqual(
+            len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
+        )
 
-        self.assertTrue(addresser.is_address(address),
-                        "The address is 70 character hexidecimal")
+        self.assertTrue(
+            addresser.is_address(address), "The address is 70 character hexidecimal"
+        )
 
-        self.assertTrue(addresser.namespace_ok(address),
-                        "The address has correct namespace prefix")
+        self.assertTrue(
+            addresser.namespace_ok(address), "The address has correct namespace prefix"
+        )
 
         self.assertTrue(
             addresser.is_family_address(address),
-            "The address is 70 character hexidecimal with family prefix")
+            "The address is 70 character hexidecimal with family prefix",
+        )
 
-        self.assertEqual(address, expected_address,
-                         "The address is the one we expected it to be")
+        self.assertEqual(
+            address, expected_address, "The address is the one we expected it to be"
+        )
 
         self.assertEqual(
             addresser.address_is(address),
             AddressSpace.SYSADMIN_OWNERS,
-            "The address created must be a SysAdmin Attributes address.")
+            "The address created must be a SysAdmin Attributes address.",
+        )
 
     def test_gen_sysadmin_owner_addr(self):
         """Tests the sysadmin owner address creation function as well as the
@@ -63,20 +68,25 @@ class TestSysAdminOwnersAddresser(unittest.TestCase):
         owner_id = uuid4().hex
         address = addresser.make_sysadmin_owners_address(owner_id)
 
-        self.assertEqual(len(address), addresser.ADDRESS_LENGTH,
-                         "The address is 70 characters")
+        self.assertEqual(
+            len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
+        )
 
-        self.assertTrue(addresser.is_address(address),
-                        "The address is 70 character hexidecimal")
+        self.assertTrue(
+            addresser.is_address(address), "The address is 70 character hexidecimal"
+        )
 
-        self.assertTrue(addresser.namespace_ok(address),
-                        "The address has correct namespace prefix")
+        self.assertTrue(
+            addresser.namespace_ok(address), "The address has correct namespace prefix"
+        )
 
         self.assertTrue(
             addresser.is_family_address(address),
-            "The address is 70 character hexidecimal with family prefix")
+            "The address is 70 character hexidecimal with family prefix",
+        )
 
         self.assertEqual(
             addresser.address_is(address),
             AddressSpace.SYSADMIN_OWNERS,
-            "The address created must be a SysAdmin Attributes address.")
+            "The address created must be a SysAdmin Attributes address.",
+        )

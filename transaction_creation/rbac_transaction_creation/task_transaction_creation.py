@@ -21,426 +21,327 @@ from rbac_transaction_creation.protobuf import rbac_payload_pb2
 from rbac_transaction_creation.protobuf import task_transaction_pb2
 
 
-def create_task(txn_key,
-                batch_key,
-                task_id,
-                task_name,
-                admins,
-                owners,
-                metadata):
+def create_task(txn_key, batch_key, task_id, task_name, admins, owners, metadata):
 
-    create_payload = task_transaction_pb2.CreateTask(
-        task_id=task_id,
-        name=task_name)
+    create_payload = task_transaction_pb2.CreateTask(task_id=task_id, name=task_name)
 
     create_payload.admins.extend(admins)
 
-    inputs = [addresser.make_task_attributes_address(task_id=task_id),
-              addresser.make_sysadmin_members_address(txn_key.public_key)]
+    inputs = [
+        addresser.make_task_attributes_address(task_id=task_id),
+        addresser.make_sysadmin_members_address(txn_key.public_key),
+    ]
 
     inputs.extend([addresser.make_user_address(user_id=u) for u in admins])
-    inputs.extend([addresser.make_task_admins_address(task_id, u)
-                   for u in admins])
+    inputs.extend([addresser.make_task_admins_address(task_id, u) for u in admins])
 
     outputs = [addresser.make_task_attributes_address(task_id=task_id)]
 
-    outputs.extend([addresser.make_task_admins_address(task_id, u)
-                    for u in admins])
+    outputs.extend([addresser.make_task_admins_address(task_id, u) for u in admins])
 
     if owners:
         create_payload.owners.extend(owners)
-        inputs.extend([addresser.make_user_address(user_id=u)
-                       for u in owners])
-        inputs.extend([addresser.make_task_owners_address(task_id, u)
-                       for u in owners])
-        outputs.extend([addresser.make_task_owners_address(task_id, u)
-                        for u in owners])
+        inputs.extend([addresser.make_user_address(user_id=u) for u in owners])
+        inputs.extend([addresser.make_task_owners_address(task_id, u) for u in owners])
+        outputs.extend([addresser.make_task_owners_address(task_id, u) for u in owners])
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CREATE_TASK)
+        message_type=rbac_payload_pb2.RBACPayload.CREATE_TASK,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def propose_add_task_admins(txn_key,
-                            batch_key,
-                            proposal_id,
-                            task_id,
-                            user_id,
-                            reason,
-                            metadata):
+def propose_add_task_admins(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason, metadata
+):
     propose_payload = task_transaction_pb2.ProposeAddTaskAdmin(
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=user_id,
         reason=reason,
-        metadata=metadata)
+        metadata=metadata,
+    )
 
-    inputs = [addresser.make_user_address(user_id),
-              addresser.make_task_admins_address(
-                  task_id=task_id,
-                  user_id=user_id),
-              addresser.make_proposal_address(task_id, user_id),
-              addresser.make_task_attributes_address(task_id)]
+    inputs = [
+        addresser.make_user_address(user_id),
+        addresser.make_task_admins_address(task_id=task_id, user_id=user_id),
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_attributes_address(task_id),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_ADMINS)
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_ADMINS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_add_task_admins(txn_key,
-                            batch_key,
-                            proposal_id,
-                            task_id,
-                            user_id,
-                            reason):
+def confirm_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, reason):
     confirm_payload = task_transaction_pb2.ConfirmAddTaskAdmin(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
     inputs = [
         addresser.make_task_admins_address(task_id, txn_key.public_key),
-        addresser.make_proposal_address(task_id, user_id)]
+        addresser.make_proposal_address(task_id, user_id),
+    ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id),
-               addresser.make_task_admins_address(task_id, user_id)]
+    outputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_admins_address(task_id, user_id),
+    ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_TASK_ADMINS)
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_TASK_ADMINS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_add_task_admins(txn_key,
-                           batch_key,
-                           proposal_id,
-                           task_id,
-                           user_id,
-                           reason):
+def reject_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, reason):
     reject_payload = task_transaction_pb2.RejectAddTaskAdmin(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
-    inputs = [addresser.make_task_admins_address(task_id, txn_key.public_key),
-              addresser.make_proposal_address(task_id, user_id)]
+    inputs = [
+        addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.make_proposal_address(task_id, user_id),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_TASK_ADMINS)
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_TASK_ADMINS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def propose_remove_task_admins(txn_key,
-                               batch_key,
-                               proposal_id,
-                               task_id,
-                               user_id,
-                               reason,
-                               metadata):
+def propose_remove_task_admins(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason, metadata
+):
     propose = task_transaction_pb2.ProposeRemoveTaskAdmin(
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=user_id,
         reason=reason,
-        metadata=metadata)
+        metadata=metadata,
+    )
 
-    inputs = [addresser.make_user_address(user_id),
-              addresser.make_task_admins_address(
-                  task_id=task_id,
-                  user_id=user_id),
-              addresser.make_proposal_address(task_id, user_id),
-              addresser.make_task_attributes_address(task_id)]
+    inputs = [
+        addresser.make_user_address(user_id),
+        addresser.make_task_admins_address(task_id=task_id, user_id=user_id),
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_attributes_address(task_id),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_ADMINS)
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_ADMINS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_remove_task_admins(txn_key,
-                               batch_key,
-                               proposal_id,
-                               task_id,
-                               user_id,
-                               reason):
+def confirm_remove_task_admins(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason
+):
     confirm_payload = task_transaction_pb2.ConfirmRemoveTaskAdmin(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
     inputs = [
         addresser.make_task_admins_address(task_id, txn_key.public_key),
         addresser.make_task_admins_address(task_id, user_id),
-        addresser.make_proposal_address(task_id, user_id)]
+        addresser.make_proposal_address(task_id, user_id),
+    ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id),
-               addresser.make_task_admins_address(task_id, user_id)]
+    outputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_admins_address(task_id, user_id),
+    ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_TASK_ADMINS)
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_TASK_ADMINS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_remove_task_admins(txn_key,
-                              batch_key,
-                              proposal_id,
-                              task_id,
-                              user_id,
-                              reason):
+def reject_remove_task_admins(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason
+):
     reject_payload = task_transaction_pb2.RejectRemoveTaskAdmin(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
-    inputs = [addresser.make_task_admins_address(task_id, txn_key.public_key),
-              addresser.make_proposal_address(task_id, user_id)]
+    inputs = [
+        addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.make_proposal_address(task_id, user_id),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_TASK_ADMINS)
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_TASK_ADMINS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def propose_add_task_owner(txn_key,
-                           batch_key,
-                           proposal_id,
-                           task_id,
-                           user_id,
-                           reason,
-                           metadata):
+def propose_add_task_owner(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason, metadata
+):
     propose = task_transaction_pb2.ProposeAddTaskOwner(
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=user_id,
         reason=reason,
-        metadata=metadata)
+        metadata=metadata,
+    )
 
-    inputs = [addresser.make_user_address(user_id),
-              addresser.make_task_owners_address(task_id, user_id),
-              addresser.make_task_attributes_address(task_id),
-              addresser.make_proposal_address(task_id, user_id)]
+    inputs = [
+        addresser.make_user_address(user_id),
+        addresser.make_task_owners_address(task_id, user_id),
+        addresser.make_task_attributes_address(task_id),
+        addresser.make_proposal_address(task_id, user_id),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_OWNERS)
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_OWNERS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_add_task_owners(txn_key,
-                            batch_key,
-                            proposal_id,
-                            task_id,
-                            user_id,
-                            reason):
+def confirm_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, reason):
     confirm = task_transaction_pb2.ConfirmAddTaskOwner(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
-    inputs = [addresser.make_proposal_address(task_id, user_id),
-              addresser.make_task_admins_address(task_id, txn_key.public_key)]
+    inputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_admins_address(task_id, txn_key.public_key),
+    ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id),
-               addresser.make_task_owners_address(task_id, user_id)]
+    outputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_owners_address(task_id, user_id),
+    ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_TASK_OWNERS)
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_TASK_OWNERS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_add_task_owners(txn_key,
-                           batch_key,
-                           proposal_id,
-                           task_id,
-                           user_id,
-                           reason):
+def reject_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, reason):
     reject = task_transaction_pb2.RejectAddTaskOwner(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
-    inputs = [addresser.make_proposal_address(task_id, user_id),
-              addresser.make_task_admins_address(task_id, txn_key.public_key)]
+    inputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_admins_address(task_id, txn_key.public_key),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_TASK_OWNERS)
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_TASK_OWNERS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def propose_remove_task_owners(txn_key,
-                               batch_key,
-                               proposal_id,
-                               task_id,
-                               user_id,
-                               reason,
-                               metadata):
+def propose_remove_task_owners(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason, metadata
+):
     propose = task_transaction_pb2.ProposeRemoveTaskOwner(
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=user_id,
         reason=reason,
-        metadata=metadata)
+        metadata=metadata,
+    )
 
-    inputs = [addresser.make_user_address(user_id),
-              addresser.make_task_owners_address(
-                  task_id=task_id,
-                  user_id=user_id),
-              addresser.make_proposal_address(task_id, user_id),
-              addresser.make_task_attributes_address(task_id)]
+    inputs = [
+        addresser.make_user_address(user_id),
+        addresser.make_task_owners_address(task_id=task_id, user_id=user_id),
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_attributes_address(task_id),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_OWNERS)
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_OWNERS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_remove_task_owners(txn_key,
-                               batch_key,
-                               proposal_id,
-                               task_id,
-                               user_id,
-                               reason):
+def confirm_remove_task_owners(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason
+):
     confirm = task_transaction_pb2.ConfirmRemoveTaskOwner(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
-    inputs = [addresser.make_proposal_address(task_id, user_id),
-              addresser.make_task_owners_address(task_id, user_id),
-              addresser.make_task_admins_address(task_id, txn_key.public_key)]
+    inputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_owners_address(task_id, user_id),
+        addresser.make_task_admins_address(task_id, txn_key.public_key),
+    ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id),
-               addresser.make_task_owners_address(task_id, user_id)]
+    outputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_owners_address(task_id, user_id),
+    ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_TASK_OWNERS)
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_TASK_OWNERS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_remove_task_owners(txn_key,
-                              batch_key,
-                              proposal_id,
-                              task_id,
-                              user_id,
-                              reason):
+def reject_remove_task_owners(
+    txn_key, batch_key, proposal_id, task_id, user_id, reason
+):
     reject = task_transaction_pb2.RejectRemoveTaskOwner(
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=user_id,
-        reason=reason)
+        proposal_id=proposal_id, task_id=task_id, user_id=user_id, reason=reason
+    )
 
-    inputs = [addresser.make_proposal_address(task_id, user_id),
-              addresser.make_task_admins_address(task_id, txn_key.public_key)]
+    inputs = [
+        addresser.make_proposal_address(task_id, user_id),
+        addresser.make_task_admins_address(task_id, txn_key.public_key),
+    ]
 
     outputs = [addresser.make_proposal_address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_TASK_OWNERS)
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_TASK_OWNERS,
+    )
 
-    return make_header_and_batch(
-        rbac_payload,
-        inputs,
-        outputs,
-        txn_key,
-        batch_key)
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)

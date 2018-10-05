@@ -29,23 +29,23 @@ from rbac_transaction_creation import task_transaction_creation
 from rbac_transaction_creation import role_transaction_creation
 
 
-PROPOSALS_BP = Blueprint('proposals')
+PROPOSALS_BP = Blueprint("proposals")
 
 
 TABLES = {
-    'ADD_ROLE_TASKS': 'task_owners',
-    'ADD_ROLE_MEMBERS': 'role_owners',
-    'ADD_ROLE_OWNERS': 'role_admins',
-    'ADD_ROLE_ADMINS': 'role_admins',
-    'REMOVE_ROLE_TASKS': 'task_owners',
-    'REMOVE_ROLE_MEMBERS': 'role_owners',
-    'REMOVE_ROLE_OWNERS': 'role_admins',
-    'REMOVE_ROLE_ADMINS': 'role_admins',
-    'ADD_TASK_OWNERS': 'task_admins',
-    'ADD_TASK_ADMINS': 'task_admins',
-    'REMOVE_TASK_OWNERS': 'task_admins',
-    'REMOVE_TASK_ADMINS': 'task_admins',
-    'UPDATE_USER_MANAGER': 'users'
+    "ADD_ROLE_TASKS": "task_owners",
+    "ADD_ROLE_MEMBERS": "role_owners",
+    "ADD_ROLE_OWNERS": "role_admins",
+    "ADD_ROLE_ADMINS": "role_admins",
+    "REMOVE_ROLE_TASKS": "task_owners",
+    "REMOVE_ROLE_MEMBERS": "role_owners",
+    "REMOVE_ROLE_OWNERS": "role_admins",
+    "REMOVE_ROLE_ADMINS": "role_admins",
+    "ADD_TASK_OWNERS": "task_admins",
+    "ADD_TASK_ADMINS": "task_admins",
+    "REMOVE_TASK_OWNERS": "task_admins",
+    "REMOVE_TASK_ADMINS": "task_admins",
+    "UPDATE_USER_MANAGER": "users",
 }
 
 
@@ -75,76 +75,73 @@ class ProposalType(object):  # pylint: disable=too-few-public-methods
 
 
 PROPOSAL_TRANSACTION = {
-
     ProposalType.ADD_ROLE_TASKS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_tasks,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_tasks
+        Status.APPROVED: role_transaction_creation.confirm_add_role_tasks,
     },
     ProposalType.ADD_ROLE_MEMBERS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_members,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_members
+        Status.APPROVED: role_transaction_creation.confirm_add_role_members,
     },
     ProposalType.ADD_ROLE_OWNERS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_owners,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_owners
+        Status.APPROVED: role_transaction_creation.confirm_add_role_owners,
     },
     ProposalType.ADD_ROLE_ADMINS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_admins,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_admins
+        Status.APPROVED: role_transaction_creation.confirm_add_role_admins,
     },
     ProposalType.REMOVE_ROLE_TASKS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_tasks,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_tasks
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_tasks,
     },
     ProposalType.REMOVE_ROLE_MEMBERS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_members,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_members
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_members,
     },
     ProposalType.REMOVE_ROLE_OWNERS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_owners,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_owners
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_owners,
     },
     ProposalType.REMOVE_ROLE_ADMINS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_admins,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_admins
+        Status.APPROVED: role_transaction_creation.confirm_remove_role_admins,
     },
     ProposalType.ADD_TASK_OWNERS: {
         Status.REJECTED: task_transaction_creation.reject_add_task_owners,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_owners
+        Status.APPROVED: task_transaction_creation.confirm_add_task_owners,
     },
     ProposalType.ADD_TASK_ADMINS: {
         Status.REJECTED: task_transaction_creation.reject_add_task_admins,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_admins
+        Status.APPROVED: task_transaction_creation.confirm_add_task_admins,
     },
     ProposalType.REMOVE_TASK_OWNERS: {
         Status.REJECTED: task_transaction_creation.reject_remove_task_owners,
-        Status.APPROVED: task_transaction_creation.confirm_remove_task_owners
+        Status.APPROVED: task_transaction_creation.confirm_remove_task_owners,
     },
     ProposalType.REMOVE_TASK_ADMINS: {
         Status.REJECTED: task_transaction_creation.reject_remove_task_admins,
-        Status.APPROVED: task_transaction_creation.confirm_remove_task_admins
+        Status.APPROVED: task_transaction_creation.confirm_remove_task_admins,
     },
     ProposalType.UPDATE_USER_MANAGER: {
         Status.REJECTED: manager_transaction_creation.reject_manager,
-        Status.APPROVED: manager_transaction_creation.confirm_manager
+        Status.APPROVED: manager_transaction_creation.confirm_manager,
     },
 }
 
 
-@PROPOSALS_BP.get('api/proposals')
+@PROPOSALS_BP.get("api/proposals")
 @authorized()
 async def get_all_proposals(request):
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, head_block.get('num'), start, limit
+        request.app.config.DB_CONN, head_block.get("num"), start, limit
     )
     proposal_resources = []
     for proposal in proposals:
         proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN,
-            proposal,
-            head_block.get('num')
+            request.app.config.DB_CONN, proposal, head_block.get("num")
         )
         proposal_resources.append(proposal_resource)
     return await utils.create_response(
@@ -153,85 +150,74 @@ async def get_all_proposals(request):
         proposal_resources,
         head_block,
         start=start,
-        limit=limit
+        limit=limit,
     )
 
 
-@PROPOSALS_BP.get('api/proposals/<proposal_id>')
+@PROPOSALS_BP.get("api/proposals/<proposal_id>")
 @authorized()
 async def get_proposal(request, proposal_id):
     head_block = await utils.get_request_block(request)
     proposal = await proposals_query.fetch_proposal_resource(
-        request.app.config.DB_CONN,
-        proposal_id,
-        head_block.get('num')
+        request.app.config.DB_CONN, proposal_id, head_block.get("num")
     )
     proposal_resource = await compile_proposal_resource(
-        request.app.config.DB_CONN, proposal, head_block.get('num')
+        request.app.config.DB_CONN, proposal, head_block.get("num")
     )
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        proposal_resource,
-        head_block
+        request.app.config.DB_CONN, request.url, proposal_resource, head_block
     )
 
 
-@PROPOSALS_BP.patch('api/proposals/<proposal_id>')
+@PROPOSALS_BP.patch("api/proposals/<proposal_id>")
 @authorized()
 async def update_proposal(request, proposal_id):
-    required_fields = ['reason', 'status']
+    required_fields = ["reason", "status"]
     utils.validate_fields(required_fields, request.json)
-    if request.json['status'] not in [Status.REJECTED, Status.APPROVED]:
+    if request.json["status"] not in [Status.REJECTED, Status.APPROVED]:
         raise ApiBadRequest(
-            "Bad Request: status must be either 'REJECTED' or 'APPROVED'")
+            "Bad Request: status must be either 'REJECTED' or 'APPROVED'"
+        )
     txn_key = await utils.get_transactor_key(request=request)
     block = await utils.get_request_block(request)
     proposal_resource = await proposals_query.fetch_proposal_resource(
         request.app.config.DB_CONN,
         proposal_id=proposal_id,
-        head_block_num=block.get('num'))
+        head_block_num=block.get("num"),
+    )
 
-    batch_list, _ = PROPOSAL_TRANSACTION[
-        proposal_resource.get('type')][
-            request.json['status']](
-                txn_key,
-                request.app.config.BATCHER_KEY_PAIR,
-                proposal_id,
-                proposal_resource.get('object'),
-                proposal_resource.get('target'),
-                request.json.get('reason'))
+    batch_list, _ = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
+        request.json["status"]
+    ](
+        txn_key,
+        request.app.config.BATCHER_KEY_PAIR,
+        proposal_id,
+        proposal_resource.get("object"),
+        proposal_resource.get("target"),
+        request.json.get("reason"),
+    )
     await utils.send(
-        request.app.config.VAL_CONN,
-        batch_list,
-        request.app.config.TIMEOUT)
-    return json({'proposal_id': proposal_id})
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({"proposal_id": proposal_id})
 
 
 async def compile_proposal_resource(conn, proposal_resource, head_block_num):
-    table = TABLES[proposal_resource['type']]
-    if 'role' in table:
-        proposal_resource['approvers'] = await fetch_relationships(
-            table,
-            'role_id',
-            proposal_resource.get('object'),
-            head_block_num
+    table = TABLES[proposal_resource["type"]]
+    if "role" in table:
+        proposal_resource["approvers"] = await fetch_relationships(
+            table, "role_id", proposal_resource.get("object"), head_block_num
         ).run(conn)
-    elif 'task' in table:
-        proposal_resource['approvers'] = await fetch_relationships(
-            table,
-            'task_id',
-            proposal_resource.get('object'),
-            head_block_num
+    elif "task" in table:
+        proposal_resource["approvers"] = await fetch_relationships(
+            table, "task_id", proposal_resource.get("object"), head_block_num
         ).run(conn)
-    elif 'users' in table:
+    elif "users" in table:
         # approvers needs to be new manager in update manager scenario
-        proposal_resource['approvers'] = [proposal_resource.get('target')]
+        proposal_resource["approvers"] = [proposal_resource.get("target")]
     else:
         user_resource = await fetch_user_resource(
-            conn,
-            proposal_resource.get('object'),
-            head_block_num
+            conn, proposal_resource.get("object"), head_block_num
         )
-        proposal_resource['approvers'] = [user_resource.get('manager')]
+        proposal_resource["approvers"] = [user_resource.get("manager")]
     return proposal_resource

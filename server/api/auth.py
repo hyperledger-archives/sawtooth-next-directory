@@ -29,7 +29,7 @@ from db import auth_query
 
 
 LOGGER = logging.getLogger(__name__)
-AUTH_BP = Blueprint('auth')
+AUTH_BP = Blueprint("auth")
 
 
 def authorized():
@@ -43,36 +43,31 @@ def authorized():
                     request.app.config.SECRET_KEY, request.token
                 )
                 await auth_query.fetch_info_by_user_id(
-                    request.app.config.DB_CONN,
-                    id_dict.get('id')
+                    request.app.config.DB_CONN, id_dict.get("id")
                 )
             except (ApiNotFound, BadSignature):
                 raise ApiUnauthorized("Unauthorized: Invalid bearer token")
             response = await func(request, *args, **kwargs)
             return response
+
         return decorated_function
+
     return decorator
 
 
-@AUTH_BP.post('api/authorization')
+@AUTH_BP.post("api/authorization")
 async def authorize(request):
-    required_fields = ['id', 'password']
+    required_fields = ["id", "password"]
     utils.validate_fields(required_fields, request.json)
 
-    password = request.json.get('password')
-    hashed_pwd = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    password = request.json.get("password")
+    hashed_pwd = hashlib.sha256(password.encode("utf-8")).hexdigest()
     auth_info = await auth_query.fetch_info_by_user_name(
-        request.app.config.DB_CONN, request.json.get('id')
+        request.app.config.DB_CONN, request.json.get("id")
     )
-    if auth_info is None or auth_info.get('hashed_password') != hashed_pwd:
+    if auth_info is None or auth_info.get("hashed_password") != hashed_pwd:
         raise ApiUnauthorized("Unauthorized: Incorrect user id or password")
     token = utils.generate_apikey(
-        request.app.config.SECRET_KEY,
-        auth_info.get('user_id')
+        request.app.config.SECRET_KEY, auth_info.get("user_id")
     )
-    return json({
-        'data': {
-            'authorization': token,
-            'user_id': auth_info.get('user_id')
-        }
-    })
+    return json({"data": {"authorization": token, "user_id": auth_info.get("user_id")}})

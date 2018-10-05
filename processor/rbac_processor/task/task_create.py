@@ -13,7 +13,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from sawtooth_sdk.protobuf import state_context_pb2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
@@ -31,9 +30,7 @@ def apply_create_task(header, payload, state):
     create_payload = task_transaction_pb2.CreateTask()
     create_payload.ParseFromString(payload.content)
 
-    addresses = [
-        addresser.make_task_attributes_address(create_payload.task_id)
-    ]
+    addresses = [addresser.make_task_attributes_address(create_payload.task_id)]
     if not create_payload.admins:
         raise InvalidTransaction("New tasks must have administrators.")
 
@@ -41,34 +38,40 @@ def apply_create_task(header, payload, state):
         raise InvalidTransaction("New tasks must have owners.")
 
     if create_payload.admins:
-        addresses.extend([addresser.make_user_address(u)
-                          for u in create_payload.admins])
+        addresses.extend(
+            [addresser.make_user_address(u) for u in create_payload.admins]
+        )
 
-        addresses.extend([addresser.make_task_admins_address(
-            task_id=create_payload.task_id,
-            user_id=u
-        ) for u in create_payload.admins])
+        addresses.extend(
+            [
+                addresser.make_task_admins_address(
+                    task_id=create_payload.task_id, user_id=u
+                )
+                for u in create_payload.admins
+            ]
+        )
 
     if create_payload.owners:
-        addresses.extend([addresser.make_user_address(u)
-                          for u in create_payload.owners])
-        addresses.extend([addresser.make_task_owners_address(
-            create_payload.task_id,
-            user_id=u
-        ) for u in create_payload.owners])
+        addresses.extend(
+            [addresser.make_user_address(u) for u in create_payload.owners]
+        )
+        addresses.extend(
+            [
+                addresser.make_task_owners_address(create_payload.task_id, user_id=u)
+                for u in create_payload.owners
+            ]
+        )
 
     state_entries = get_state(state, addresses)
 
-    validate_create_task_state(state_entries=state_entries,
-                               payload=create_payload)
+    validate_create_task_state(state_entries=state_entries, payload=create_payload)
 
     handle_create_task(state_entries, create_payload, state)
 
 
 def validate_create_task_data(payload):
     if len(payload.name) < 4:
-        raise InvalidTransaction("The task name must be longer "
-                                 "than 4 characters")
+        raise InvalidTransaction("The task name must be longer " "than 4 characters")
 
 
 def validate_create_task_state(state_entries, payload):
@@ -79,13 +82,14 @@ def validate_create_task_state(state_entries, payload):
 
     try:
         entry = get_state_entry(
-            state_entries,
-            addresser.make_task_attributes_address(payload.task_id))
+            state_entries, addresser.make_task_attributes_address(payload.task_id)
+        )
         container = return_task_container(entry)
 
         if is_in_task_container(container, payload.task_id):
-            raise InvalidTransaction("Task with id {} already in "
-                                     "state".format(payload.task_id))
+            raise InvalidTransaction(
+                "Task with id {} already in " "state".format(payload.task_id)
+            )
     except KeyError:
         # The task container is not in state, so no at this address.
         pass
@@ -94,8 +98,8 @@ def validate_create_task_state(state_entries, payload):
 def handle_create_task(state_entries, payload, state):
     try:
         entry = get_state_entry(
-            state_entries,
-            addresser.make_task_attributes_address(payload.task_id))
+            state_entries, addresser.make_task_attributes_address(payload.task_id)
+        )
         container = return_task_container(entry)
 
     except KeyError:
@@ -112,44 +116,49 @@ def handle_create_task(state_entries, payload, state):
     pubkeys_by_address = {}
     for pubkey in payload.admins:
         address = addresser.make_task_admins_address(
-            task_id=payload.task_id,
-            user_id=pubkey)
+            task_id=payload.task_id, user_id=pubkey
+        )
         if address in pubkeys_by_address:
             pubkeys_by_address[address].append(pubkey)
         else:
             pubkeys_by_address[address] = [pubkey]
 
-    address_values.update(_handle_task_rel_container(
-        state_entries=state_entries,
-        create_task=payload,
-        pubkeys_by_address=pubkeys_by_address,
-        state=state))
+    address_values.update(
+        _handle_task_rel_container(
+            state_entries=state_entries,
+            create_task=payload,
+            pubkeys_by_address=pubkeys_by_address,
+            state=state,
+        )
+    )
 
     pubkeys_by_address = {}
     for pubkey in payload.owners:
         address = addresser.make_task_owners_address(
-            task_id=payload.task_id,
-            user_id=pubkey)
+            task_id=payload.task_id, user_id=pubkey
+        )
         if address in pubkeys_by_address:
             pubkeys_by_address[address].append(pubkey)
         else:
             pubkeys_by_address[address] = [pubkey]
 
-    address_values.update(_handle_task_rel_container(
-        state_entries=state_entries,
-        create_task=payload,
-        pubkeys_by_address=pubkeys_by_address,
-        state=state))
+    address_values.update(
+        _handle_task_rel_container(
+            state_entries=state_entries,
+            create_task=payload,
+            pubkeys_by_address=pubkeys_by_address,
+            state=state,
+        )
+    )
 
-    address_values[addresser.make_task_attributes_address(payload.task_id)] = container.SerializeToString()
+    address_values[
+        addresser.make_task_attributes_address(payload.task_id)
+    ] = container.SerializeToString()
 
     set_state(state, address_values)
 
 
-def _handle_task_rel_container(state_entries,
-                               create_task,
-                               pubkeys_by_address,
-                               state):
+def _handle_task_rel_container(state_entries, create_task, pubkeys_by_address, state):
     entries_to_set = {}
 
     for addr, pubkeys in pubkeys_by_address.items():

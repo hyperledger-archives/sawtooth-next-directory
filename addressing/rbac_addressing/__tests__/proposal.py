@@ -23,38 +23,43 @@ LOGGER = logging.getLogger(__name__)
 
 
 class TestProposalAddresser(unittest.TestCase):
-
     def test_determine_proposal_addr(self):
         """Tests that a specific proposal_id generates the expected
         proposal address, and thus is probably deterministic.
         """
 
-        object_id = 'cb048d507eec42a5845e20eed982d5d2'
-        related_id = 'f1e916b663164211a9ac34516324681a'
-        expected_address = '9f4448e3b874e90b2bcf58e65e0727\
-91ea499543ee52fc9d0449fc1e41f77d4d4f926e'
+        object_id = "cb048d507eec42a5845e20eed982d5d2"
+        related_id = "f1e916b663164211a9ac34516324681a"
+        expected_address = "9f4448e3b874e90b2bcf58e65e0727\
+91ea499543ee52fc9d0449fc1e41f77d4d4f926e"
         address = addresser.make_proposal_address(object_id, related_id)
 
-        self.assertEqual(len(address), addresser.ADDRESS_LENGTH,
-                         "The address is 70 characters")
+        self.assertEqual(
+            len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
+        )
 
-        self.assertTrue(addresser.is_address(address),
-                        "The address is 70 character hexidecimal")
+        self.assertTrue(
+            addresser.is_address(address), "The address is 70 character hexidecimal"
+        )
 
-        self.assertTrue(addresser.namespace_ok(address),
-                        "The address has correct namespace prefix")
+        self.assertTrue(
+            addresser.namespace_ok(address), "The address has correct namespace prefix"
+        )
 
         self.assertTrue(
             addresser.is_family_address(address),
-            "The address is 70 character hexidecimal with family prefix")
+            "The address is 70 character hexidecimal with family prefix",
+        )
 
-        self.assertEqual(address, expected_address,
-                         "The address is the one we expected it to be")
+        self.assertEqual(
+            address, expected_address, "The address is the one we expected it to be"
+        )
 
         self.assertEqual(
             addresser.address_is(address),
             AddressSpace.PROPOSALS,
-            "The address created must be a Proposal address.")
+            "The address created must be a Proposal address.",
+        )
 
     def test_gen_proposal_addr(self):
         """Tests the proposal address creation function as well as the
@@ -65,20 +70,25 @@ class TestProposalAddresser(unittest.TestCase):
         related_id = uuid4().hex
         address = addresser.make_proposal_address(object_id, related_id)
 
-        self.assertEqual(len(address), addresser.ADDRESS_LENGTH,
-                         "The address is 70 characters")
+        self.assertEqual(
+            len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
+        )
 
-        self.assertTrue(addresser.is_address(address),
-                        "The address is 70 character hexidecimal")
+        self.assertTrue(
+            addresser.is_address(address), "The address is 70 character hexidecimal"
+        )
 
-        self.assertTrue(addresser.namespace_ok(address),
-                        "The address has correct namespace prefix")
+        self.assertTrue(
+            addresser.namespace_ok(address), "The address has correct namespace prefix"
+        )
 
         self.assertTrue(
             addresser.is_family_address(address),
-            "The address is 70 character hexidecimal with family prefix")
+            "The address is 70 character hexidecimal with family prefix",
+        )
 
         self.assertEqual(
             addresser.address_is(address),
             AddressSpace.PROPOSALS,
-            "The address created must be a Proposal address.")
+            "The address created must be a Proposal address.",
+        )
