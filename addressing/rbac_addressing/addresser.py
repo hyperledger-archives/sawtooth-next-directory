@@ -75,6 +75,7 @@ class TaskRelationshipNamespace(enum.IntEnum):
 
 
 FAMILY_NAME = "rbac"
+FAMILY_VERSION = "1.0"
 NS = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
 FAMILY_PREFIX = "9f4448"
 ADDRESS_LENGTH = 70

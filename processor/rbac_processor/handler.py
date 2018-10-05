@@ -110,7 +110,7 @@ class RBACTransactionHandler(object):
 
     @property
     def family_versions(self):
-        return ["1.0"]
+        return [addresser.FAMILY_VERSION]
 
     @property
     def encodings(self):
