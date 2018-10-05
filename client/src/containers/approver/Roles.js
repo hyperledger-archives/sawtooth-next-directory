@@ -19,27 +19,36 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import RolesList from '../../components/layouts/RolesList';
+import TrackHeader from '../../components/layouts/TrackHeader';
+
+
 import './Roles.css';
 
 
 /**
  * 
- * @class Batch
- * Batch component
+ * @class Roles
+ * Roles component
  * 
  */
 class Roles extends Component {
 
   render () {
     return (
-      <Grid celled='internally'>
-        <Grid.Column width={10}>
-          <h3>Roles</h3>
-          Left Pane
+      <Grid id='next-approver-grid' celled='internally'>
+
+        <Grid.Column
+          id='next-approver-grid-track-column'
+          width={10}>
+          <TrackHeader title='Roles' {...this.props}/>
+          <RolesList {...this.props}/>
         </Grid.Column>
-        <Grid.Column width={6}>
-          Right Pane
+        <Grid.Column
+          id='next-approver-grid-converse-column'
+          width={6}>
         </Grid.Column>
+
       </Grid>
     );
   }

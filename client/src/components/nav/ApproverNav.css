@@ -15,16 +15,16 @@ limitations under the License.
 
 
 #next-switch-approver-link {
+  bottom: 50px;
   position: absolute;
-  bottom: 50px
 }
 
-.next-approver-nav-search {
-  margin-top: 18px;
-  width: 100%;
-}
-
+.next-approver-nav-search,
 .next-approver-nav-search input,
 .next-approver-nav-search .ui {
   width: 100%;
+}
+
+#next-approver-nav-lists-container h3 {
+  color: var(--nav-heading-color);
 }

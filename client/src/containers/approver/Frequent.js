@@ -19,27 +19,34 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import TrackHeader from '../../components/layouts/TrackHeader';
+
+
 import './Frequent.css';
 
 
 /**
  * 
- * @class Batch
- * Batch component
+ * @class Frequent
+ * Frequent component
  * 
  */
 class Frequent extends Component {
 
   render () {
     return (
-      <Grid celled='internally'>
-        <Grid.Column width={10}>
-          <h3>Frequent</h3>
-          Left Pane
+      <Grid id='next-approver-grid' celled='internally'>
+
+        <Grid.Column
+          id='next-approver-grid-track-column'
+          width={10}>
+          <TrackHeader title='Frequent' {...this.props}/>
         </Grid.Column>
-        <Grid.Column width={6}>
-          Right Pane
+        <Grid.Column
+          id='next-approver-grid-converse-column'
+          width={6}>
         </Grid.Column>
+
       </Grid>
     );
   }

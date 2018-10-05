@@ -19,27 +19,34 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import TrackHeader from '../../components/layouts/TrackHeader';
+
+
 import './Expiring.css';
 
 
 /**
  * 
- * @class Batch
- * Batch component
+ * @class Expiring
+ * Expiring component
  * 
  */
 class Expiring extends Component {
 
   render () {
     return (
-      <Grid celled='internally'>
-        <Grid.Column width={10}>
-          <h3>About to Expire</h3>
-          Left Pane
+      <Grid id='next-approver-grid' celled='internally'>
+
+        <Grid.Column
+          id='next-approver-grid-track-column'
+          width={10}>
+          <TrackHeader title='About to Expire' {...this.props}/>
         </Grid.Column>
-        <Grid.Column width={6}>
-          Right Pane
+        <Grid.Column
+          id='next-approver-grid-converse-column'
+          width={6}>
         </Grid.Column>
+
       </Grid>
     );
   }
