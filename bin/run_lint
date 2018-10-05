@@ -19,6 +19,7 @@ set -e
 
 TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
 
+ret_val=0
 
 lint() {
 
@@ -30,19 +31,33 @@ lint() {
 
 }
 
-ret_val=0
+export PYTHONPATH=$TOP_DIR/addressing:$TOP_DIR/transaction_creation:$TOP_DIR/server:
 
-lint addressing/rbac_addressing || ret_val=1
+opt="$1"
 
-export PYTHONPATH=$TOP_DIR/addressing
-lint transaction_creation || ret_val=1
+ARGS=0
 
-export PYTHONPATH=$TOP_DIR/addressing
-lint processor/rbac_processor || ret_val=1
-lint server/db || ret_val=1
-lint ledger_sync/rbac_ledger_sync || ret_val=1
+for var in "$@"
+do
+    ARGS=1
+    case "$var" in
+    "addressing"        ) lint addressing/rbac_addressing || ret_val=1;;
+    "transaction"       ) lint transaction_creation || ret_val=1;;
+    "processor"         ) lint processor/rbac_processor || ret_val=1;;
+    "server"            ) lint server || ret_val=1;;
+    "sync"              ) lint server || ret_val=1;;
+    "tests"             ) lint tests || ret_val=1;;
+    *                   ) echo "ERROR: Invalid option: \""$var"\"" >&2
+    esac
+done
 
-export PYTHONPATH=$TOP_DIR/server:$TOP_DIR/transaction_creation
-lint server/api || ret_val=1
+if [ $ARGS -eq 0 ]; then
+    lint addressing/rbac_addressing || ret_val=1
+    lint transaction_creation || ret_val=1
+    lint processor/rbac_processor || ret_val=1
+    lint server || ret_val=1
+    lint ledger_sync/rbac_ledger_sync || ret_val=1
+    lint tests || ret_val=1
+fi
 
 exit $ret_val

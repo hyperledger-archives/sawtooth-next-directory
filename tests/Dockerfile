@@ -32,6 +32,8 @@ RUN pip3 install \
     itsdangerous \
     rethinkdb \
     sanic \
-    pycrypto
+    pycrypto \
+    pytest \
+    dredd-hooks
 
 WORKDIR /project/tmobile-rbac

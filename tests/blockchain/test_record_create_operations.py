@@ -15,6 +15,7 @@
 
 import sys
 import logging
+import pytest
 import unittest
 
 from tests.blockchain.rbac_client import RbacClient
@@ -30,12 +31,12 @@ LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 
+@pytest.mark.integration
 class TestUserOperations(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.test_helper = IntegrationTestHelper()
-        cls.client = RbacClient('http://rest-api:8080', IntegrationTestHelper.get_batcher_key())
+        cls.client = RbacClient(None, IntegrationTestHelper.get_batcher_key())
         cls.test_helper.wait_for_containers()
 
         cls.user_key, cls.user_name = cls.test_helper.make_key_and_name()
@@ -47,16 +48,21 @@ class TestUserOperations(unittest.TestCase):
                 key=self.user_key,
                 name=self.user_name,
                 user_name=self.user_name,
-                user_id=self.user_key.public_key)[0]['status'],
-            'COMMITTED')
+                user_id=self.user_key.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
     def test_create_role_no_admin(self):
         response = self.client.create_role(
             key=self.role_key,
             role_name=self.role_name,
-            role_id='role_id',
-            metadata='',
+            role_id="role_id",
+            metadata="",
             admins=[],
-            owners=[])[0]
-        self.assertEqual(response['invalid_transactions'][0]['message'],
-                         'Role must have at least one admin')
+            owners=[],
+        )[0]
+        self.assertEqual(
+            response["invalid_transactions"][0]["message"],
+            "Role must have at least one admin",
+        )

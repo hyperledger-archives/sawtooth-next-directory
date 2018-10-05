@@ -15,6 +15,7 @@
 
 import sys
 import logging
+import pytest
 import unittest
 
 from uuid import uuid4
@@ -26,12 +27,12 @@ LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 
+@pytest.mark.integration
 class TestOrgHierarchy(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.test_helper = IntegrationTestHelper()
-        cls.client = RbacClient('http://rest-api:8080', IntegrationTestHelper.get_batcher_key())
+        cls.client = RbacClient(None, IntegrationTestHelper.get_batcher_key())
         cls.key1, cls.user1 = cls.test_helper.make_key_and_name()
         cls.key2a, cls.user2a = cls.test_helper.make_key_and_name()
         cls.key3a, cls.user3a = cls.test_helper.make_key_and_name()
@@ -68,11 +69,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 - The User must have a name longer than 4 characters.
                 Create 5 Users,
                                 user1
-                                / \
-                               /   \
+                                / |
+                               /   |
                          user2a    user2b
-                         /              \
-                        /                \
+                         /              |
+                        /                |
                       user3a              user3b
 
                 UpdateUserManager Validation rules:
@@ -84,8 +85,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 key=self.key1,
                 name=self.user1,
                 user_name=self.user1,
-                user_id=self.key1.public_key)[0]['status'],
-            'COMMITTED')
+                user_id=self.key1.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -93,8 +96,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user2a,
                 user_name=self.user2a,
                 user_id=self.key2a.public_key,
-                manager_id=self.key1.public_key)[0]['status'],
-            'COMMITTED')
+                manager_id=self.key1.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -102,10 +107,12 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user2b,
                 user_name=self.user2b,
                 user_id=self.key_manager.public_key,
-                manager_id=self.key3a.public_key)[0]['status'],
-            'INVALID',
+                manager_id=self.key3a.public_key,
+            )[0]["status"],
+            "INVALID",
             "The transaction is invalid because the public key given for "
-            "the manager does not exist in state.")
+            "the manager does not exist in state.",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -113,9 +120,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user1,
                 user_name=self.user1,
                 user_id=self.key2a.public_key,
-                manager_id=self.key1.public_key)[0]['status'],
-            'INVALID',
-            "The transaction is invalid because the User already exists.")
+                manager_id=self.key1.public_key,
+            )[0]["status"],
+            "INVALID",
+            "The transaction is invalid because the User already exists.",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -123,9 +132,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user2b,
                 user_name=self.user2b,
                 user_id=self.key_manager.public_key,
-                manager_id=self.key1.public_key)[0]['status'],
-            'INVALID',
-            "The signing key does not belong to the user or manager.")
+                manager_id=self.key1.public_key,
+            )[0]["status"],
+            "INVALID",
+            "The signing key does not belong to the user or manager.",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -133,9 +144,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user_invalid[:4],
                 user_name=self.user_invalid[:4],
                 user_id=self.key_invalid.public_key,
-                manager_id=None)[0]['status'],
-            'INVALID',
-            "The User's name must be at least 5 characters long.")
+                manager_id=None,
+            )[0]["status"],
+            "INVALID",
+            "The User's name must be at least 5 characters long.",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -143,8 +156,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user3a,
                 user_name=self.user3a,
                 user_id=self.key3a.public_key,
-                manager_id=self.key2a.public_key)[0]['status'],
-            'COMMITTED')
+                manager_id=self.key2a.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -152,8 +167,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user2b,
                 user_name=self.user2b,
                 user_id=self.key_manager.public_key,
-                manager_id=self.key1.public_key)[0]['status'],
-            'COMMITTED')
+                manager_id=self.key1.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.create_user(
@@ -161,8 +178,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 name=self.user3b,
                 user_name=self.user3b,
                 user_id=self.key3b.public_key,
-                manager_id=self.key_manager.public_key)[0]['status'],
-            'COMMITTED')
+                manager_id=self.key_manager.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         state_items = self.client.return_state()
         self.assertEqual(len(state_items), 5, "There are 5 users in state.")
@@ -198,8 +217,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 metadata=metadata,
                 admins=[self.key1.public_key, self.key2a.public_key],
-                owners=[self.key_manager.public_key])[0]['status'],
-            "COMMITTED")
+                owners=[self.key_manager.public_key],
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.create_role(
@@ -208,9 +229,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 metadata=metadata,
                 admins=[self.key2a.public_key],
-                owners=[self.key_manager.public_key])[0]['status'],
+                owners=[self.key_manager.public_key],
+            )[0]["status"],
             "INVALID",
-            "The Role Id must not already exist.")
+            "The Role Id must not already exist.",
+        )
 
         _, role2 = self.test_helper.make_key_and_name()
         role_id2 = uuid4().hex
@@ -222,9 +245,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=role_id2,
                 metadata=metadata,
                 admins=[self.key_invalid.public_key, self.key2a.public_key],
-                owners=[self.key_manager.public_key])[0]['status'],
+                owners=[self.key_manager.public_key],
+            )[0]["status"],
             "INVALID",
-            "All Admins listed must be Users")
+            "All Admins listed must be Users",
+        )
 
         self.assertEqual(
             self.client.create_role(
@@ -233,9 +258,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=role_id2,
                 metadata=metadata,
                 admins=[self.key2a.public_key],
-                owners=[self.key_invalid.public_key, self.key_manager.public_key])[0]['status'],
+                owners=[self.key_invalid.public_key, self.key_manager.public_key],
+            )[0]["status"],
             "INVALID",
-            "All Owners listed must be Users")
+            "All Owners listed must be Users",
+        )
 
     def test_02_propose_update_user_manager(self):
         """Tests that the ProposeUpdateUserManager validation rules are
@@ -257,9 +284,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 user_id=self.key_invalid.public_key,
                 new_manager_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must exist")
+            "The User must exist",
+        )
 
         self.assertEqual(
             self.client.propose_update_manager(
@@ -268,9 +297,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 user_id=self.key1.public_key,
                 new_manager_id=self.key_invalid.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The manager must exist")
+            "The manager must exist",
+        )
 
         self.assertEqual(
             self.client.propose_update_manager(
@@ -279,9 +310,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 user_id=self.key2a.public_key,
                 new_manager_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The current manager must sign the txn.")
+            "The current manager must sign the txn.",
+        )
 
         self.assertEqual(
             self.client.propose_update_manager(
@@ -290,8 +323,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 user_id=self.key2a.public_key,
                 new_manager_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_update_manager(
@@ -300,10 +335,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 user_id=self.key2a.public_key,
                 new_manager_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "There is already a proposal to make user2a have user2b "
-            "as a manager.")
+            "There is already a proposal to make user2a have user2b " "as a manager.",
+        )
 
     def test_03_confirm_update_manager_proposal(self):
         """Tests the ConfirmUpdateUserManager validation rules.
@@ -320,10 +356,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.update_manager_proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key_manager.public_key
-            )[0]['status'],
+                manager_id=self.key_manager.public_key,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be the new manager listed on the proposal")
+            "The txn signer must be the new manager listed on the proposal",
+        )
 
         self.assertEqual(
             self.client.confirm_update_manager(
@@ -331,9 +368,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 reason=uuid4().hex,
                 user_id=uuid4().hex,
-                manager_id=self.key_manager.public_key)[0]['status'],
+                manager_id=self.key_manager.public_key,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist")
+            "The proposal must exist",
+        )
 
         self.assertEqual(
             self.client.confirm_update_manager(
@@ -341,8 +380,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.update_manager_proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key_manager.public_key)[0]['status'],
-            "COMMITTED")
+                manager_id=self.key_manager.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.confirm_update_manager(
@@ -350,9 +391,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.update_manager_proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key_manager.public_key)[0]['status'],
+                manager_id=self.key_manager.public_key,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open")
+            "The proposal must be open",
+        )
 
     def test_04_reject_update_manager_proposal(self):
         """Tests the RejectUpdateUserManager validation rules.
@@ -373,8 +416,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
                 new_manager_id=self.key3b.public_key,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_update_manager(
@@ -382,9 +427,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 reason=uuid4().hex,
                 user_id=self.key1.public_key,
-                manager_id=self.key3b.public_key)[0]['status'],
+                manager_id=self.key3b.public_key,
+            )[0]["status"],
             "INVALID",
-            "The proposal does not exist")
+            "The proposal does not exist",
+        )
 
         self.assertEqual(
             self.client.reject_update_manager(
@@ -392,8 +439,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key3b.public_key)[0]['status'],
-            "COMMITTED")
+                manager_id=self.key3b.public_key,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_update_manager(
@@ -401,9 +450,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 reason=uuid4().hex,
                 user_id=self.key2a.public_key,
-                manager_id=self.key3b.public_key)[0]['status'],
+                manager_id=self.key3b.public_key,
+            )[0]["status"],
             "INVALID",
-            "The proposal is not open")
+            "The proposal is not open",
+        )
 
     def test_05_propose_add_role_admins(self):
         """Tests the ProposeAddRoleAdmins validation rules.
@@ -418,11 +469,11 @@ class TestOrgHierarchy(unittest.TestCase):
 
             At this point:
                 user1                            role1
-                    \                                \
+                    |                                |
                      user2b                          admins
-                     /   \                             - user1
+                     /   |                             - user1
                     /   user2a                         - user2a
-                  user3b    \
+                  user3b    |
                             user3a
         """
 
@@ -436,9 +487,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=invalid_role_id,
                 user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The role must exist")
+            "The role must exist",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_admins(
@@ -447,9 +500,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=invalid_user_id,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The user must exist")
+            "The user must exist",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_admins(
@@ -458,9 +513,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3a.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn must be signed by either the user or their manager")
+            "The txn must be signed by either the user or their manager",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_admins(
@@ -469,9 +526,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key2a.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The user must not already be an admin")
+            "The user must not already be an admin",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_admins(
@@ -480,8 +539,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3a.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_admins(
@@ -490,9 +551,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3a.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "There must not be an open proposal for the same change.")
+            "There must not be an open proposal for the same change.",
+        )
 
     def test_06_confirm_add_role_admins(self):
         """Tests the ConfirmAddRoleAdmins validation rules.
@@ -509,10 +572,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_admins_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3a.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer for ConfirmAddRoleAdmin must be an admin "
-            "of the role.")
+            "The txn signer for ConfirmAddRoleAdmin must be an admin " "of the role.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_admins(
@@ -520,9 +584,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=uuid4().hex,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_admins(
@@ -530,8 +596,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_admins_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3a.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_admins(
@@ -539,9 +607,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_admins_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3a.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_07_reject_add_role_admins(self):
         """Tests the RejectAddRoleAdmins validation rules.
@@ -561,8 +631,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_admins(
@@ -570,9 +642,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The user is not a Role Admin.")
+            "The user is not a Role Admin.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_admins(
@@ -580,9 +654,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=uuid4().hex,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_admins(
@@ -590,8 +666,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_admins(
@@ -599,9 +677,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_08_propose_add_role_owners(self):
         """Tests the ProposeAddRoleOwners validation rules.
@@ -622,9 +702,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=uuid4().hex,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The role must exist.")
+            "The role must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_owners(
@@ -633,9 +715,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=uuid4().hex,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The user must exist")
+            "The user must exist",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_owners(
@@ -644,9 +728,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be the user or user's manager.")
+            "The txn signer must be the user or user's manager.",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_owners(
@@ -655,8 +741,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_owners(
@@ -665,11 +753,14 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "No open proposal can exist for the same state change.")
+            "No open proposal can exist for the same state change.",
+        )
 
     def test_09_confirm_add_role_owners(self):
+        # pylint: disable=W1401
         """Tests the ConfirmAddRoleOwners validation rules.
 
         Notes:
@@ -679,11 +770,11 @@ class TestOrgHierarchy(unittest.TestCase):
 
             At this point:
                 user1                            role1
-                    \                                 \
+                    |                                 |
                      user2b                          admins
-                     /   \                             - user1
+                     /   |                             - user1
                     /   user2a                         - user2a
-                  user3b    \                          - user3a
+                  user3b    |                          - user3a
                             user3a
         """
 
@@ -693,10 +784,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_admins_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer for ConfirmAddRoleOwner must be an admin "
-            "of the role.")
+            "The txn signer for ConfirmAddRoleOwner must be an admin " "of the role.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_owners(
@@ -704,9 +796,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=uuid4().hex,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_owners(
@@ -714,8 +808,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_owners_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_owners(
@@ -723,9 +819,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_admins_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_10_reject_add_role_owners(self):
         """Tests the RejectAddRoleOwners validation rules.
@@ -745,8 +843,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_owners(
@@ -754,9 +854,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer is not a Role Admin.")
+            "The txn signer is not a Role Admin.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_owners(
@@ -764,9 +866,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=uuid4().hex,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_owners(
@@ -774,8 +878,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_owners(
@@ -783,11 +889,14 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_11_propose_add_role_members(self):
+        # pylint: disable=W1401
         """Tests the ProposeAddRoleMembers validation rules.
 
         Notes:
@@ -800,11 +909,11 @@ class TestOrgHierarchy(unittest.TestCase):
 
             At this point:
                 user1                            role1
-                    \                            /    \
+                    |                            /    |
                      user2b                  owners   admins
-                     /   \                    - user3b - user1
+                     /   |                    - user3b - user1
                     /   user2a                         - user2a
-                  user3b    \                          - user3a
+                  user3b    |                          - user3a
                             user3a
         """
 
@@ -815,9 +924,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=uuid4().hex,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The role must exist.")
+            "The role must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_members(
@@ -826,9 +937,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=uuid4().hex,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The user must exist")
+            "The user must exist",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_members(
@@ -837,9 +950,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be the user or user's manager.")
+            "The txn signer must be the user or user's manager.",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_members(
@@ -848,8 +963,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_members(
@@ -858,9 +975,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "No open proposal can exist for the same state change.")
+            "No open proposal can exist for the same state change.",
+        )
 
     def test_12_confirm_add_role_members(self):
         """Tests the ConfirmAddRoleMembers validation rules.
@@ -877,10 +996,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_members_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer for ConfirmAddRoleMember must be an owner "
-            "of the role.")
+            "The txn signer for ConfirmAddRoleMember must be an owner " "of the role.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_members(
@@ -888,9 +1008,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=uuid4().hex,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_members(
@@ -898,8 +1020,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_members_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_members(
@@ -907,9 +1031,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_members_proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_13_reject_add_role_members(self):
         """Tests the RejectAddRoleMembers validation rules.
@@ -929,8 +1055,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_members(
@@ -938,9 +1066,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer is not a Role Owner.")
+            "The txn signer is not a Role Owner.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_members(
@@ -948,9 +1078,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=uuid4().hex,
                 role_id=uuid4().hex,
                 user_id=uuid4().hex,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_members(
@@ -958,8 +1090,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_members(
@@ -967,9 +1101,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_14_create_task(self):
         """Tests the CreateTask validation rules.
@@ -988,9 +1124,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_name=uuid4().hex,
                 admins=[uuid4().hex],
                 owners=[self.key1.public_key],
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "All admins must be users.")
+            "All admins must be users.",
+        )
 
         self.assertEqual(
             self.client.create_task(
@@ -999,9 +1137,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_name=uuid4().hex,
                 admins=[self.key1.public_key],
                 owners=[uuid4().hex],
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "All owners must be users")
+            "All owners must be users",
+        )
 
         self.assertEqual(
             self.client.create_task(
@@ -1010,8 +1150,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_name=uuid4().hex,
                 admins=[self.key1.public_key],
                 owners=[self.key2a.public_key],
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.create_task(
@@ -1020,9 +1162,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_name=uuid4().hex,
                 admins=[self.key1.public_key],
                 owners=[self.key1.public_key],
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The task_id must not belong to another task.")
+            "The task_id must not belong to another task.",
+        )
 
     def test_15_propose_add_role_tasks(self):
         """Tests the ProposeAddRoleTasks validation rules.
@@ -1044,9 +1188,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 task_id=self.task_id1,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be a Role Owner")
+            "The txn signer must be a Role Owner",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_tasks(
@@ -1055,9 +1201,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=str(uuid4()),
                 task_id=self.task_id1,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The role must exist.")
+            "The role must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_tasks(
@@ -1066,9 +1214,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=str(uuid4()),
                 task_id=self.task_id1,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The task must exist.")
+            "The task must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_tasks(
@@ -1077,8 +1227,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 task_id=self.task_id1,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_tasks(
@@ -1087,9 +1239,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 task_id=self.task_id1,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "No Proposal for the same Add Role Task can exist.")
+            "No Proposal for the same Add Role Task can exist.",
+        )
 
     def test_16_confirm_add_role_tasks(self):
         """Tests the ConfirmAddRoleTasks validation rules.
@@ -1107,9 +1261,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=str(uuid4()),
                 role_id=self.role_id1,
                 task_id=self.task_id1,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_tasks(
@@ -1117,9 +1273,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_tasks_proposal_id,
                 role_id=self.role_id1,
                 task_id=self.task_id1,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be a Task Owner.")
+            "The txn signer must be a Task Owner.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_tasks(
@@ -1127,8 +1285,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_tasks_proposal_id,
                 role_id=self.role_id1,
                 task_id=self.task_id1,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.confirm_add_role_tasks(
@@ -1136,9 +1296,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_role_tasks_proposal_id,
                 role_id=self.role_id1,
                 task_id=self.task_id1,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_17_reject_add_role_tasks(self):
         """Tests the RejectAddRoleTasks validation rules.
@@ -1160,8 +1322,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_name=uuid4().hex,
                 admins=[self.key1.public_key],
                 owners=[self.key1.public_key],
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_add_role_tasks(
@@ -1170,8 +1334,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 role_id=self.role_id1,
                 task_id=task_id,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_tasks(
@@ -1179,9 +1345,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=str(uuid4()),
                 role_id=self.role_id1,
                 task_id=task_id,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_tasks(
@@ -1189,9 +1357,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 task_id=task_id,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be a Task Owner.")
+            "The txn signer must be a Task Owner.",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_tasks(
@@ -1199,8 +1369,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 task_id=task_id,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_role_tasks(
@@ -1208,9 +1380,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 role_id=self.role_id1,
                 task_id=task_id,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_18_propose_add_task_admins(self):
         """Tests the ProposeAddTaskAdmins validation rules.
@@ -1231,9 +1405,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=str(uuid4()),
                 user_id=self.key_manager.public_key,
                 reason=str(uuid4()),
-                metadata=str(uuid4()))[0]['status'],
+                metadata=str(uuid4()),
+            )[0]["status"],
             "INVALID",
-            "The Task must exist.")
+            "The Task must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_admins(
@@ -1242,9 +1418,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key_invalid.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must exist")
+            "The User must exist",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_admins(
@@ -1253,9 +1431,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id2,
                 user_id=self.key3a.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be the User,  User's manager, or the Task Admin/Owner.")
+            "The txn signer must be the User,  User's manager, or the Task Admin/Owner.",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_admins(
@@ -1264,8 +1444,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_admins(
@@ -1274,9 +1456,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must not already be an Admin of the Task")
+            "The User must not already be an Admin of the Task",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_admins(
@@ -1285,9 +1469,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "There must not be any OPEN proposal for the same change.")
+            "There must not be any OPEN proposal for the same change.",
+        )
 
     def test_19_confirm_add_task_admins(self):
         """Tests the ConfirmAddTaskAdmins validation rules
@@ -1304,9 +1490,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_task_admins(
@@ -1314,8 +1502,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_task_admins_proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.confirm_add_task_admins(
@@ -1323,9 +1513,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_task_admins_proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_20_reject_add_task_admins(self):
         """Tests the RejectAddTaskAdmins validation rules
@@ -1345,8 +1537,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_task_admins(
@@ -1354,9 +1548,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.reject_add_task_admins(
@@ -1364,8 +1560,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_task_admins(
@@ -1373,9 +1571,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_21_propose_add_task_owners(self):
         """Tests the ProposeAddTaskOwners validation rules
@@ -1396,9 +1596,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=str(uuid4()),
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The Task must exist.")
+            "The Task must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_owners(
@@ -1407,9 +1609,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=str(uuid4()),
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must exist.")
+            "The User must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_owners(
@@ -1418,9 +1622,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id2,
                 user_id=self.key_manager.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be the User,  User's manager, or the Task Admin/Owner.")
+            "The txn signer must be the User,  User's manager, or the Task Admin/Owner.",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_owners(
@@ -1429,8 +1635,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_owners(
@@ -1439,9 +1647,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key2a.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must not already be an Owner of the Task")
+            "The User must not already be an Owner of the Task",
+        )
 
         self.assertEqual(
             self.client.propose_add_task_owners(
@@ -1450,9 +1660,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "There must not be an OPEN proposal for the same change.")
+            "There must not be an OPEN proposal for the same change.",
+        )
 
     def test_22_confirm_add_task_owners(self):
         """Tests the ConfirmAddTaskOwners validation rules
@@ -1469,9 +1681,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.confirm_add_task_owners(
@@ -1479,8 +1693,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_task_owners_proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.confirm_add_task_owners(
@@ -1488,9 +1704,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=self.add_task_owners_proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_23_reject_add_task_owners(self):
         """Tests the RejectAddTaskOwners validation rules
@@ -1510,8 +1728,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_task_owners(
@@ -1519,9 +1739,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=str(uuid4()),
                 task_id=self.task_id1,
                 user_id=self.key_manager.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must exist.")
+            "The proposal must exist.",
+        )
 
         self.assertEqual(
             self.client.reject_add_task_owners(
@@ -1529,8 +1751,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                reason=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
         self.assertEqual(
             self.client.reject_add_task_owners(
@@ -1538,9 +1762,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 proposal_id=proposal_id,
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
-                reason=uuid4().hex)[0]['status'],
+                reason=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The proposal must be open.")
+            "The proposal must be open.",
+        )
 
     def test_24_propose_remove_task_admins(self):
         """Tests the ProposeRemoveTaskAdmins txn validation rules.
@@ -1561,9 +1787,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=str(uuid4()),
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The Task must exist.")
+            "The Task must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_admins(
@@ -1572,9 +1800,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=str(uuid4()),
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must exist.")
+            "The User must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_admins(
@@ -1583,9 +1813,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key2a.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must be an Admin of the Task.")
+            "The User must be an Admin of the Task.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_admins(
@@ -1594,9 +1826,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id2,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be the User, User's manager, or the Task Admin/Owner.")
+            "The txn signer must be the User, User's manager, or the Task Admin/Owner.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_admins(
@@ -1605,8 +1839,10 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )
 
     def test_25_propose_remove_task_owners(self):
         """Tests the ProposeRemoveTaskOwners txn validation rules.
@@ -1627,9 +1863,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=str(uuid4()),
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The Task must exist.")
+            "The Task must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_owners(
@@ -1638,9 +1876,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=str(uuid4()),
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must exist.")
+            "The User must exist.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_owners(
@@ -1649,9 +1889,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key3b.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The User must be an Owner of the Task.")
+            "The User must be an Owner of the Task.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_owners(
@@ -1660,9 +1902,11 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id2,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
+                metadata=uuid4().hex,
+            )[0]["status"],
             "INVALID",
-            "The txn signer must be the User, User's manager, or the Task Admin/Owner.")
+            "The txn signer must be the User, User's manager, or the Task Admin/Owner.",
+        )
 
         self.assertEqual(
             self.client.propose_delete_task_owners(
@@ -1671,5 +1915,7 @@ class TestOrgHierarchy(unittest.TestCase):
                 task_id=self.task_id1,
                 user_id=self.key1.public_key,
                 reason=uuid4().hex,
-                metadata=uuid4().hex)[0]['status'],
-            "COMMITTED")
+                metadata=uuid4().hex,
+            )[0]["status"],
+            "COMMITTED",
+        )

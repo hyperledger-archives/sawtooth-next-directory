@@ -129,8 +129,7 @@ docker-compose file as an argument. For example:
 
 ```bash
 bin/build -p
-bin/run_docker_test integration_tests/blockchain/docker-compose.yaml
-bin/run_docker_test integration_tests/api/docker-compose.yaml
+bin/run_docker_test tests/docker-compose.yaml
 ```
 
 A shortcut is available via:

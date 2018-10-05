@@ -21,7 +21,8 @@ RUN apt-get update && \
         python3-grpcio-tools=1.1.3-1 \
         python3-pip \
         python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
+        python3-sawtooth-rest-api \
+        curl
 
 RUN locale-gen en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
@@ -33,7 +34,8 @@ RUN pip3 install \
     rethinkdb \
     sanic==0.7.0 \
     pycrypto \
-    pytest
+    pytest \
+    dredd_hooks
 
 WORKDIR /project/tmobile-rbac
 
