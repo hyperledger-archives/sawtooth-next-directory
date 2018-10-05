@@ -16,12 +16,12 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 import { reducer as AuthReducer } from './AuthRedux';
-import { reducer as HomeReducer } from './RequesterRedux';
+import { reducer as RequesterReducer } from './RequesterRedux';
 
 
 const reducers = combineReducers({
-  auth: AuthReducer,
-  home: HomeReducer,
+  auth:       AuthReducer,
+  requester:  RequesterReducer
 });
 
 export default reducers;

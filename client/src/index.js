@@ -19,17 +19,20 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 
-import './index.css';
+import routes from './routes';
 import App from './containers/app/App';
 import registerServiceWorker from './registerServiceWorker';
 import createCustomStore from './createCustomStore';
+
+
+import './index.css';
 
 
 const store = createCustomStore();
 
 
 ReactDOM.render(
-  <Provider store={store}><App/></Provider>,
+  <Provider store={store}><App routes={routes}/></Provider>,
   document.getElementById('root')
 );
 

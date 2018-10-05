@@ -15,32 +15,25 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Container, Image, List } from 'semantic-ui-react';
+import { List, Segment } from 'semantic-ui-react';
 
 
-import './RequesterHome.css';
+import './RolesList.css';
 
 
 /**
  * 
- * @class Home
- * Component encapsulating the requester home, which serves as the
- * default landing page after login.
+ * @class RolesList
+ * Component encapsulating the track pane body
  * 
  */
-export default class RequesterHome extends Component {
+export default class RolesList extends Component {
 
-  render() {
+  render () {
     const { activePack } = this.props;
 
     return (
-      <Container className='next-requester-container'>
-        <h1>Requester Home</h1>
-        <p>Lorem ipsum dolor sit amet consectitur adipiscing elit.</p>
-
-        { activePack && 
-          <h1>Pack ID: {activePack.id}</h1>
-        }
+      <div id='next-requester-track-body-container'>
 
         { activePack && activePack.description && 
           <p>{activePack.description}</p>
@@ -49,19 +42,20 @@ export default class RequesterHome extends Component {
         { activePack && activePack.roles &&
           <List selection verticalAlign='middle'>
             { activePack.roles.map((role, index) => (
-              <List.Item key={index}>
-                <Image src=''/>
-                <List.Content>
-                  <List.Header>{role.id}</List.Header>
-                  <span>{role.name}</span>
-                  <span>{role.email}</span>
-                </List.Content>
-              </List.Item>
+              <Segment key={index}>
+                {role.name}
+              </Segment>
             )) }
           </List>
         }
-      </Container>
+
+        { activePack && activePack.roles &&
+          activePack.roles.length === 0 &&
+          <h3>No roles found.</h3>
+        }
+
+      </div>
     );
   }
-  
+
 }

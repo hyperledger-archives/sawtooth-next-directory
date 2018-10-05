@@ -14,24 +14,41 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { all, takeLatest } from 'redux-saga/effects'
+import { all, takeLatest } from 'redux-saga/effects';
+
+
+import API from '../services/Api';
+import FixtureAPI from '../services/FixtureApi';
+
+
+import { AuthTypes } from '../redux/AuthRedux';
+import { RequesterTypes } from '../redux/RequesterRedux';
 
 
 import { login } from './AuthSaga';
-import { getPack } from './HomeSaga';
-import { AuthTypes } from '../redux/AuthRedux';
-import { HomeTypes } from '../redux/RequesterRedux';
+import { getBase, getPack } from './RequesterSaga';
+
+
+// TODO: Move to config
+const useFixtures = true;
+const api = useFixtures ? FixtureAPI : API.create();
 
 
 /**
  * 
- * Sagas
+ * Construct sagas
  * 
  * 
  */
 export default function * root() {
   yield all([
-    takeLatest(AuthTypes.LOGIN_REQUEST, login),
-    takeLatest(HomeTypes.GET_PACK_REQUEST, getPack)
+
+    // Auth
+    takeLatest(AuthTypes.LOGIN_REQUEST, login, api),
+
+    // Requester
+    takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
+    takeLatest(RequesterTypes.PACK_REQUEST, getPack, api)
+    
   ]);
 }
