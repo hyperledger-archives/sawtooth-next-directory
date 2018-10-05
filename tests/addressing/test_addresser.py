@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import pytest
 import logging
 import unittest
 from uuid import uuid4
@@ -23,6 +24,8 @@ from rbac_addressing.addresser import AddressSpace
 LOGGER = logging.getLogger(__name__)
 
 
+@pytest.mark.unit
+@pytest.mark.addressing
 class TestAddresser(unittest.TestCase):
     def test_sysadmin_addresses(self):
         """Tests the SysAdmin address creation functions as well as the

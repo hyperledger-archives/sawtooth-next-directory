@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import pytest
 import unittest
 import logging
 from uuid import uuid4
@@ -22,17 +23,19 @@ from rbac_addressing.addresser import AddressSpace
 LOGGER = logging.getLogger(__name__)
 
 
-class TestRoleTasksAddresser(unittest.TestCase):
-    def test_determine_role_task_addr(self):
-        """Tests that a specific role_id and task_id generates the
-        expected role task address, and thus is probably deterministic.
+@pytest.mark.unit
+@pytest.mark.addressing
+class TestProposalAddresser(unittest.TestCase):
+    def test_determine_proposal_addr(self):
+        """Tests that a specific proposal_id generates the expected
+        proposal address, and thus is probably deterministic.
         """
 
-        role_id = "99968acb8f1a48b3a4bc21e2cd252e67"
-        task_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = "9f444809326a1713a905b26359fc8d\
-a2817c1a5f67de6f464701f0c10042da345d28c5"
-        address = addresser.make_role_tasks_address(role_id, task_id)
+        object_id = "cb048d507eec42a5845e20eed982d5d2"
+        related_id = "f1e916b663164211a9ac34516324681a"
+        expected_address = "9f4448e3b874e90b2bcf58e65e0727\
+91ea499543ee52fc9d0449fc1e41f77d4d4f926e"
+        address = addresser.make_proposal_address(object_id, related_id)
 
         self.assertEqual(
             len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
@@ -57,18 +60,18 @@ a2817c1a5f67de6f464701f0c10042da345d28c5"
 
         self.assertEqual(
             addresser.address_is(address),
-            AddressSpace.ROLES_TASKS,
-            "The address created must be a Role Attributes address.",
+            AddressSpace.PROPOSALS,
+            "The address created must be a Proposal address.",
         )
 
-    def test_generated_role_task_addr(self):
-        """Tests the role task address creation function as well as the
+    def test_gen_proposal_addr(self):
+        """Tests the proposal address creation function as well as the
         address_is function.
         """
 
-        role_id = uuid4().hex
-        task_id = uuid4().hex
-        address = addresser.make_role_tasks_address(role_id, task_id)
+        object_id = uuid4().hex
+        related_id = uuid4().hex
+        address = addresser.make_proposal_address(object_id, related_id)
 
         self.assertEqual(
             len(address), addresser.ADDRESS_LENGTH, "The address is 70 characters"
@@ -89,6 +92,6 @@ a2817c1a5f67de6f464701f0c10042da345d28c5"
 
         self.assertEqual(
             addresser.address_is(address),
-            AddressSpace.ROLES_TASKS,
-            "The address created must be a Role Attributes address.",
+            AddressSpace.PROPOSALS,
+            "The address created must be a Proposal address.",
         )

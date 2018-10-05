@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import pytest
 import unittest
 import logging
 from uuid import uuid4
@@ -22,6 +23,8 @@ from rbac_addressing.addresser import AddressSpace
 LOGGER = logging.getLogger(__name__)
 
 
+@pytest.mark.unit
+@pytest.mark.addressing
 class TestRoleAdminsAddresser(unittest.TestCase):
     def test_determine_role_admin_addr(self):
         """Tests that a specific role_id and admin_id generates the

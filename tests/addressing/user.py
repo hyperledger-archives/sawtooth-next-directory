@@ -13,6 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import pytest
 import unittest
 import logging
 from uuid import uuid4
@@ -22,6 +23,8 @@ from rbac_addressing.addresser import AddressSpace
 LOGGER = logging.getLogger(__name__)
 
 
+@pytest.mark.unit
+@pytest.mark.addressing
 class TestUserAddresser(unittest.TestCase):
     def test_deterministic_user_address(self):
         """Tests that a specific user_id generates the expected
