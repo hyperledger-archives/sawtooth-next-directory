@@ -22,17 +22,17 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 
 import './App.css';
 import Login from '../login/Login';
-import Home from '../home/Home';
-import ApproverHome from '../approver-home/ApproverHome';
+import RequesterHome from '../requester/RequesterHome';
+import ApproverHome from '../approver/ApproverHome';
 import Browse from '../browse/Browse';
-import Batch from '../batch/Batch';
-import Roles from '../roles/Roles';
-import Individuals from '../individuals/Individuals';
-import Frequent from '../frequent/Frequent';
-import Expiring from '../expiring/Expiring';
-import Header from '../../components/Header';
-import RequesterNav from '../../components/RequesterNav';
-import ApproverNav from '../../components/ApproverNav';
+import Batch from '../approver/Batch';
+import Roles from '../approver/Roles';
+import Individuals from '../approver/Individuals';
+import Frequent from '../approver/Frequent';
+import Expiring from '../approver/Expiring';
+import Header from '../../components/layouts/Header';
+import RequesterNav from '../../components/nav/RequesterNav';
+import ApproverNav from '../../components/nav/ApproverNav';
 
 
 import { AuthSelectors } from '../../redux/AuthRedux';
@@ -76,7 +76,7 @@ class App extends Component {
       {
         exact: true,
         path: '/home',
-        main: () => <Home {...this.props}/>,
+        main: () => <RequesterHome {...this.props}/>,
         nav: () => <RequesterNav {...this.props}/>
       },
       {
