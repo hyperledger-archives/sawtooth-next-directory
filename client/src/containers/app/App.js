@@ -20,26 +20,13 @@ import { Grid } from 'semantic-ui-react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
 
-import './App.css';
 import Login from '../login/Login';
-import RequesterHome from '../requester/RequesterHome';
-import ApproverHome from '../approver/ApproverHome';
 import Browse from '../browse/Browse';
-import Batch from '../approver/Batch';
-import Roles from '../approver/Roles';
-import Individuals from '../approver/Individuals';
-import Frequent from '../approver/Frequent';
-import Expiring from '../approver/Expiring';
-import Header from '../../components/layouts/Header';
-import RequesterNav from '../../components/nav/RequesterNav';
-import ApproverNav from '../../components/nav/ApproverNav';
+import './App.css';
 
 
 import { AuthSelectors } from '../../redux/AuthRedux';
-import HomeActions, { HomeSelectors } from '../../redux/RequesterRedux';
-
-
-let routes;
+import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
 
 
 /**
@@ -54,110 +41,57 @@ let routes;
  */
 class App extends Component {
 
-  constructor(props) {
-    super(props);
-    this.configureRoutes();
-  }
-
-
   /**
-   * 
-   * Create an array of routes
-   * 
-   * The routes in this array are destructured from the declarative
-   * syntax due to the added complexity of navigation and state.
-   * 
-   * State is sent top-down via this.props to the main and nav
-   * components.
-   * 
+   *
+   * Render grid system
+   *
+   * Create a 2-up top-level grid structure that separates the
+   * sidebar from main content. Each route is mapped via its own
+   * route component.
+   *
    */
-  configureRoutes () {
-    routes = [
-      {
-        exact: true,
-        path: '/home',
-        main: () => <RequesterHome {...this.props}/>,
-        nav: () => <RequesterNav {...this.props}/>
-      },
-      {
-        exact: true,
-        path: '/approval-home',
-        main: () => <ApproverHome {...this.props}/>,
-        nav: () => <ApproverNav {...this.props}/>
-      },
-      {
-        exact: true,
-        path: '/approval-home/batch',
-        main: () => <Batch {...this.props}/>,
-        nav: () => <ApproverNav {...this.props}/>
-      },
-      {
-        exact: true,
-        path: '/approval-home/roles',
-        main: () => <Roles {...this.props}/>,
-        nav: () => <ApproverNav {...this.props}/>
-      },
-      {
-        exact: true,
-        path: '/approval-home/individuals',
-        main: () => <Individuals {...this.props}/>,
-        nav: () => <ApproverNav {...this.props}/>
-      },
-      {
-        exact: true,
-        path: '/approval-home/frequent',
-        main: () => <Frequent {...this.props}/>,
-        nav: () => <ApproverNav {...this.props}/>
-      },
-      {
-        exact: true,
-        path: '/approval-home/expiring',
-        main: () => <Expiring {...this.props}/>,
-        nav: () => <ApproverNav {...this.props}/>
-      }
-    ];
+  renderGrid () {
+    return (
+      <Grid id='next-outer-grid'>
+        <Grid.Column id='next-outer-grid-nav' width={3} only='computer'>
+          { this.routes.map((route, index) => (
+            route.nav &&
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              render={route.nav}
+            />
+          ))}
+        </Grid.Column>
+        <Grid.Column id='next-inner-grid-main' width={13}>
+          { this.routes.map((route, index) => ( 
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              render={route.main}
+            />
+          ))}
+        </Grid.Column>
+      </Grid>
+    )
   }
 
 
   render () {
-    const { isAuthenticated } = this.props;
+    const { isAuthenticated, routes } = this.props;
+    this.routes = routes(this.props);
 
     return (
       <Router>
-        <div className='next-container'>
-          <Header/>
-          <Switch>
-            <Route exact path='/login' component={Login}/>
-            <Route exact path='/browse' component={Browse}/>
-            { !isAuthenticated &&  <Redirect to='/login'/> }
-            </Switch>
-
-            { isAuthenticated &&
-              <Grid className='next-outer-grid'>
-                <Grid.Column id='next-outer-grid-nav' width={4} only='computer'>
-                  {routes.map((route, index) => (
-                    route.nav &&
-                    <Route
-                      key={index}
-                      path={route.path}
-                      exact={route.exact}
-                      render={route.nav}
-                    />
-                  ))}
-                </Grid.Column>
-                <Grid.Column width={12}>
-                  {routes.map((route, index) => ( 
-                    <Route
-                      key={index}
-                      path={route.path}
-                      exact={route.exact}
-                      render={route.main}
-                    />
-                  ))}
-                </Grid.Column>
-              </Grid>
-            }
-        </div>
+        <Switch>
+          <Route exact path='/login' component={Login}/>
+          <Route exact path='/browse' component={Browse}/>
+          
+          { !isAuthenticated && <Redirect to='/login'/> }
+          <Route render={() => ( this.renderGrid() )}/>
+        </Switch>
       </Router>
     );
   }
@@ -167,14 +101,17 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: AuthSelectors.isAuthenticated(state),
-    activePack: HomeSelectors.activePack(state)
+    isAuthenticated:  AuthSelectors.isAuthenticated(state),
+    recommended:      RequesterSelectors.recommended(state),
+    requests:         RequesterSelectors.requests(state),
+    activePack:       RequesterSelectors.activePack(state)
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getPackRequest: (id) => dispatch(HomeActions.getPackRequest(id))
+    getBase:         () => dispatch(RequesterActions.baseRequest()),
+    getPack:         (id) => dispatch(RequesterActions.packRequest(id))
   };
 }
 

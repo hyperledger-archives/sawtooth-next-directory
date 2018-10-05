@@ -15,6 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 import { Image, List } from 'semantic-ui-react';
 
 
@@ -30,32 +31,74 @@ import './NavList.css';
  */
 export default class NavList extends Component {
 
-  render() {
-    const { title, handleClick } = this.props;
+  /**
+   * 
+   * Generate a sub-list of nav links
+   * 
+   * Each list item is ported into a <Link> router element whose
+   * attributes are mapped on <List>.
+   * 
+   * Due to some sidebar sub-list items being dynamic and others static,
+   * (i.e., *Cloud Onboarding Pack* vs. *Individuals*), to support both in
+   * one component, lists are passed in as an array with an optional
+   * slug property, which becomes the ID of the route.
+   * 
+   * In cases where no slug is provided, one is generated.
+   * 
+   */
+  renderList (list) {
+    const { dynamic, route } = this.props;
+
+    return (
+      list.map((item, index) => (
+        <List.Item
+          key={index}
+          as={Link}
+          to={dynamic ?
+            `${route}/${item.slug}` :
+            `${route}/${this.createSlug(item)}`}>
+
+          <Image src=''/>
+          
+          <List.Content>
+            { dynamic ?
+              <List.Header>{item.name}</List.Header> :
+              <List.Header>{item}</List.Header>
+            }
+          </List.Content>
+        </List.Item>
+      ))
+    )
+  }
+
+
+  // TODO: Move to utils
+  createSlug (name) {
+    return name
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
+  }
+
+
+  render () {
+    const { list, listTitle } = this.props;
 
     return (
       <div className='next-requester-nav-list-container'>
-        <h3>{title}</h3>
-        <List selection verticalAlign='middle'>
-          <List.Item onClick={() => handleClick('123')}>
-            <Image src=''/>
-            <List.Content>
-              <List.Header>Pack 1</List.Header>
-            </List.Content>
-          </List.Item>
-          <List.Item onClick={() => handleClick('456')}>
-            <Image src=''/>
-            <List.Content>
-              <List.Header>Pack 2</List.Header>
-            </List.Content>
-          </List.Item>
-          <List.Item onClick={() => handleClick('789')}>
-            <Image src=''/>
-            <List.Content>
-              <List.Header>Pack 3</List.Header>
-            </List.Content>
-          </List.Item>
-        </List>
+        <h3>{listTitle}</h3>
+        
+        { list &&
+          <List inverted link selection>
+            { this.renderList(list) }
+          </List>
+        }
+
+        { !list &&
+          <span className='next-requester-nav-list-label'>
+            No items
+          </span>
+        }
       </div>
     );
   }

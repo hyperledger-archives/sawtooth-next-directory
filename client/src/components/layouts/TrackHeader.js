@@ -14,24 +14,34 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import createCustomStore from '../../createCustomStore';
+import React, { Component } from 'react';
 
-const store = createCustomStore();
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  const routes = () => {};
+import './TrackHeader.css';
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><App routes={routes}/></BrowserRouter>
-    </Provider>, div
-  );
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+/**
+ * 
+ * @class TrackHeader
+ * Component encapsulating the track pane header
+ * 
+ */
+export default class TrackHeader extends Component {
+
+  render () {
+    const { title } = this.props;
+
+    return (
+      <div>
+        <div id='next-requester-track-header-container'>
+          <h1>{title}</h1>
+        </div>
+        <div id='next-wave-container'>
+          <div id='next-wave'></div>
+          <div id='next-wave-alt'></div>
+        </div>
+      </div>
+    );
+  }
+
+}

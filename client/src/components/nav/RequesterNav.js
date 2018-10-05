@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { Button, Container, Search } from 'semantic-ui-react';
+import { Button, Container, Search, Icon } from 'semantic-ui-react';
 
 
 import './RequesterNav.css';
@@ -34,26 +34,56 @@ export default class RequesterNav extends Component {
 
   /**
    * 
-   * @param id Pack Id
+   * Render sidebar hierarchy
    * 
    */
-  getPack = (id) => {
-    const { getPackRequest } = this.props;
-    getPackRequest(id);
+  renderLists () {
+    const { recommended, packs, requests } = this.props;
+
+    return (
+      <div id='next-requester-nav-lists-container'>
+        <NavList
+          dynamic
+          listTitle='Your Requests'
+          route='/home/requests'
+          list={requests}/>
+        <NavList
+          dynamic
+          listTitle='Recommended Packs'
+          route='/home/recommended'
+          list={recommended}/>
+        <NavList
+          dynamic
+          listTitle='Your Packs'
+          route='/home/packs'
+          list={packs}/>
+      </div>
+    );
   }
 
 
   render () {
     return (
       <Container>
+
         <Link to='/browse'>
-          <Button fluid>Browse Packs/Roles</Button>
+          <Button animated secondary fluid id='next-browse-button'>
+            <Button.Content visible>Browse Packs/Roles</Button.Content>
+            <Button.Content hidden><Icon name='arrow right'/></Button.Content>
+          </Button>
         </Link>
-        <Search className='next-requester-nav-search' category loading={false}/>
-        <NavList title='Your Requests' handleClick={this.getPack}/>
-        <NavList title='Recommended Packs' handleClick={this.getPack}/>
-        <NavList title='Your Packs' handleClick={this.getPack}/>
-        <Link to='/approval-home' id='next-switch-requester-link'>Switch to Approver</Link>
+
+        <Search
+          className='next-requester-nav-search'
+          category
+          loading={false}/>
+
+        { this.renderLists() }
+
+        <Link to='/approval-home' id='next-switch-requester-link'>
+          Switch to Approver
+        </Link>
+
       </Container>
     );
   }

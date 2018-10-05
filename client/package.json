@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "Apache 2.0",
   "dependencies": {
+    "apisauce": "^0.16.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-redux": "^5.0.7",

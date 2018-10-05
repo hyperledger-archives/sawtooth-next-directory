@@ -22,17 +22,23 @@ import Immutable from 'seamless-immutable';
  * 
  * Actions
  * 
- * @property getPackRequest
- * @property getPackSuccess
+ * @property request  Initiating action
+ * @property success  Action called on execution success
+ * @property failure  Action called on execution failure
  * 
  */
 const { Types, Creators } = createActions({
-  getPackRequest:       ['id'],
-  getPackSuccess:       ['activePack']
+  baseRequest:       null,
+  baseSuccess:       ['base'],
+  baseFailure:       ['error'],
+
+  packRequest:       ['id'],
+  packSuccess:       ['activePack'],
+  packFailure:       ['error']
 });
 
 
-export const HomeTypes = Types;
+export const RequesterTypes = Types;
 export default Creators;
 
 
@@ -40,14 +46,21 @@ export default Creators;
  * 
  * State
  * 
- * @property isAuthenticated
+ * @property recommended
+ * @property requests
  * @property fetching
+ * @property activePack
  * @property error
+ * 
+ * @todo Consider normalizing recommended, requests, and packs
+ * into one roles entity, queried by selector
  * 
  */
 export const INITIAL_STATE = Immutable({
-  activePack:       null,
+  recommended:      null,
+  requests:         null,
   fetching:         null,
+  activePack:       null,
   error:            null
 });
 
@@ -58,26 +71,55 @@ export const INITIAL_STATE = Immutable({
  * 
  * 
  */
-export const HomeSelectors = {
-  activePack: (state) => {
-    return state.home.activePack;
+export const RequesterSelectors = {
+  activePack:   (state) => state.requester.activePack,
+  recommended:  (state) => state.requester.recommended,
+  requests:     (state) => state.requester.requests,
+
+  idFromSlug: (collection, slug) => {
+    const pack = collection.find((item) => item.slug === slug);
+    return pack && pack.id;
   }
 };
 
 
+/**
+ * 
+ * Reducers - General
+ * 
+ * 
+ */
 export const request = (state) => state.merge({ fetching: true });
-export const success = (state, { activePack }) => {
-  return state.merge({ fetching: false, activePack });
+export const failure = (state, { error }) => {
+  return state.merge({ fetching: false, error });
 }
 
 
 /**
  * 
- * Reducers
+ * Reducers - Success
  * 
  * 
  */
+export const packSuccess = (state, { activePack }) => {
+  return state.merge({ fetching: false, activePack });
+}
+
+export const baseSuccess = (state, { base }) => {
+  return state.merge({
+    fetching: false,
+    recommended: base.recommended,
+    requests: base.requests
+  });
+}
+
+
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.GET_PACK_REQUEST]: request,
-  [Types.GET_PACK_SUCCESS]: success
+  [Types.BASE_REQUEST]: request,
+  [Types.BASE_SUCCESS]: baseSuccess,
+  [Types.BASE_FAILURE]: failure,
+
+  [Types.PACK_REQUEST]: request,
+  [Types.PACK_SUCCESS]: packSuccess,
+  [Types.PACK_FAILURE]: failure
 });
