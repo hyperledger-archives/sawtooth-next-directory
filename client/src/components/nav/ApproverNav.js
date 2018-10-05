@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom'
 import { Container, List, Image, Search } from 'semantic-ui-react';
 
 
-import './styles/ApproverNav.css';
+import './ApproverNav.css';
 
 
 /**

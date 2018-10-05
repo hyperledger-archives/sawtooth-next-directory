@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import { Container, Image, List } from 'semantic-ui-react';
 
 
-import './Home.css';
+import './RequesterHome.css';
 
 
 /**
@@ -28,7 +28,7 @@ import './Home.css';
  * default landing page after login. 
  * 
  */
-export default class Home extends Component {
+export default class RequesterHome extends Component {
 
   render() {
     const { activePack } = this.props;

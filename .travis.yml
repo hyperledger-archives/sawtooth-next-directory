@@ -5,8 +5,7 @@ jobs:
       python:
         - "3.6"
       script:
-        - pytest --ignore=tests
-
+        - bin/build -p && bin/build -i
     - stage: frontend
       language: node_js
       node_js:
@@ -17,3 +16,39 @@ jobs:
         - npm install
       script:
         - npm test
+    
+    # The deploy stage will deploy the master branch to a remote server once a 
+    #   merge occurs on the branch. Steps required to deploy to remote server:
+    #
+    #     1. Generate an SSH keypair to SSH into remote server
+    #
+    #     2. Clone Sawtooth NEXT Directory repo into your remote server and configure the 
+    #        cloned repo to allow pushes:
+    #            $ git clone https://github.com/hyperledger/sawtooth-next-directory.git
+    #            $ cd sawtooth-next-directory
+    #            $ git config --local receive.denyCurrentBranch updateInstead
+    #              
+    #     3. Run 'travis encrypt-file id_rsa' command to encrypt the SSH private key 
+    #        (change id_rsa to the name of your private key). Add the output of the 
+    #        command to the before_install stage and replace id_rsa.enc with the encrypted 
+    #        private key to the .travis folder.
+    #        More information can be found here: https://docs.travis-ci.com/user/encrypting-files/
+    #
+    #     4. Add the following env variables into Travis Repo Settings to properly deploy:
+    #          - IP: remote server's IP
+    #          - DEPLOY_DIR: location of cloned repo on remote server
+    #          - DEPLOY_USER: username of the user on the remote server
+    #
+    - stage: deploy
+      if: branch = master AND type = push AND env(IP)
+      language: generic
+      before_install:
+        # Decrypt the encrypted private key file named 'id_rsa.enc' and save the decrypted key for
+        #   use to SSH into remote server. This command is outputted from the 'travis encrypt-file'
+        #   command.
+        - openssl aes-256-cbc -K $encrypted_[hex string]_key -iv $encrypted_[hex string]_iv 
+          -in .travis/id_rsa.enc -out .travis/id_rsa -d
+        - ssh-keyscan -H $IP >> ~/.ssh/known_hosts
+        - chmod +x ./.travis/deploy.sh
+      after_success:
+        - ./.travis/deploy.sh
