@@ -14,34 +14,18 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import React, { Component } from 'react';
-import { Grid } from 'semantic-ui-react';
+#next-chat-container {
+  height: 100%;
+  position: relative;
+}
 
+#next-chat-conversation-dock {
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+}
 
-import TrackHeader from '../../components/layouts/TrackHeader';
-
-
-import './ApproverHome.css';
-
-
-/**
- * 
- * @class Approver Home
- * Component encapsulating the approver landing page
- * 
- */
-export default class ApproverHome extends Component {
-
-  render() {
-    return (
-      <Grid id='next-approver-grid' celled='internally'>
-        <Grid.Column
-          id='next-approver-grid-track-column'
-          width={16}>
-          <TrackHeader title='Approval Home' {...this.props}/>
-        </Grid.Column>
-      </Grid>
-    );
-  }
-
+.next-chat-message-left,
+.next-chat-message-right {
+  max-width: 290px;
 }

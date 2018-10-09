@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import Chat from '../../components/chat/Chat';
 import { RequesterSelectors } from '../../redux/RequesterRedux';
 
 
@@ -53,7 +54,7 @@ export class Requests extends Component {
 
   /**
    * 
-   * 
+   * Switch pack on ID change
    * 
    */
   componentWillReceiveProps (newProps) {
@@ -81,6 +82,7 @@ export class Requests extends Component {
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={6}>
+          <Chat {...this.props}/>
         </Grid.Column>
 
       </Grid>

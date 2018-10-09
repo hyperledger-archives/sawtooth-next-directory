@@ -28,13 +28,17 @@ import Immutable from 'seamless-immutable';
  * 
  */
 const { Types, Creators } = createActions({
-  loginRequest:     ['username', 'password'],
-  loginSuccess:     ['isAuthenticated'],
-  loginFailure:     ['error']
+  conversationRequest:    ['id'],
+  conversationSuccess:    ['conversation'],
+  conversationFailure:    ['error'],
+
+  sendRequest:            ['message'],
+  sendSuccess:            ['message'],
+  sendFailure:            ['error']
 });
 
 
-export const AuthTypes = Types;
+export const ChatTypes = Types;
 export default Creators;
 
 
@@ -42,15 +46,14 @@ export default Creators;
  * 
  * State
  * 
- * @property isAuthenticated
  * @property fetching 
  * @property error 
  * 
  */
 export const INITIAL_STATE = Immutable({
-  isAuthenticated:  null,
   fetching:         null,
-  error:            null
+  error:            null,
+  messages:         null
 });
 
 
@@ -60,17 +63,21 @@ export const INITIAL_STATE = Immutable({
  * 
  * 
  */
-export const AuthSelectors = {
-  isAuthenticated: (state) => {
-    return state.auth.isAuthenticated;
+export const ChatSelectors = {
+  messages: (state) => {
+    return state.chat.messages;
   }
 };
 
 
+/**
+ * 
+ * Reducers - General
+ * 
+ * 
+ */
 export const request = (state) => state.merge({ fetching: true });
-export const success = (state, { isAuthenticated }) => {
-  return state.merge({ fetching: false, isAuthenticated });
-}
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
@@ -78,12 +85,26 @@ export const failure = (state, { error }) => {
 
 /**
  * 
- * Reducers
+ * Reducers - Success
  * 
  * 
  */
+export const conversationSuccess = (state, { conversation }) => {
+  return state.merge({ fetching: false, messages: conversation.messages });
+}
+
+export const sendSuccess = (state, { message }) => {
+  const messages = state.messages.concat([ message ]);
+  return state.merge({ fetching: false, messages });
+}
+
+
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.LOGIN_REQUEST]: request,
-  [Types.LOGIN_SUCCESS]: success,
-  [Types.LOGIN_FAILURE]: failure
+  [Types.CONVERSATION_REQUEST]: request,
+  [Types.CONVERSATION_SUCCESS]: conversationSuccess,
+  [Types.CONVERSATION_FAILURE]: failure,
+
+  [Types.SEND_REQUEST]: request,
+  [Types.SEND_SUCCESS]: sendSuccess,
+  [Types.SEND_FAILURE]: failure
 });
