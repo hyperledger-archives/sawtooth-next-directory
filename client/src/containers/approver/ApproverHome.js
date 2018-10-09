@@ -15,23 +15,41 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Container } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
+
+
+import RolesList from '../../components/layouts/RolesList';
+import TrackHeader from '../../components/layouts/TrackHeader';
+
+
 import './ApproverHome.css';
 
 
 /**
  * 
  * @class Approver Home
- * Component encapsulating the approver home
+ * Component encapsulating the approver landing page
  * 
  */
 export default class ApproverHome extends Component {
 
   render() {
     return (
-      <Container className='next-approver-container'>
-        <h1>Approver Home</h1>
-      </Container>
+      <Grid id='next-approver-grid' celled='internally'>
+
+        <Grid.Column
+          id='next-approver-grid-track-column'
+          width={10}>
+          <TrackHeader title='Approval Home' {...this.props}/>
+          <RolesList {...this.props}/>
+        </Grid.Column>
+        <Grid.Column
+          id='next-approver-grid-converse-column'
+          width={6}>
+        </Grid.Column>
+
+      </Grid>
     );
   }
+
 }

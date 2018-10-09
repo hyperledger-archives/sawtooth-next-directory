@@ -14,17 +14,25 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.next-requester-nav-search {
-  margin-top: 18px;
-  width: 100%;
-}
-
+.next-requester-nav-search,
 .next-requester-nav-search input,
 .next-requester-nav-search .ui {
   width: 100%;
 }
 
 #next-switch-requester-link {
+  bottom: 50px;
   position: absolute;
-  bottom: 50px
+}
+
+#next-browse-button {
+  margin-bottom: 18px;
+}
+
+#next-requester-nav-lists-container {
+  margin-top: 40px;
+}
+
+#next-requester-nav-lists-container h3 {
+  color: var(--nav-heading-color);
 }

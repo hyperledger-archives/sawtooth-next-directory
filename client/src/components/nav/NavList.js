@@ -85,7 +85,7 @@ export default class NavList extends Component {
     const { list, listTitle } = this.props;
 
     return (
-      <div className='next-requester-nav-list-container'>
+      <div className='next-nav-list-container'>
         <h3>{listTitle}</h3>
         
         { list &&
@@ -95,7 +95,7 @@ export default class NavList extends Component {
         }
 
         { !list &&
-          <span className='next-requester-nav-list-label'>
+          <span className='next-nav-list-label'>
             No items
           </span>
         }

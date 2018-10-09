@@ -12,3 +12,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+
+
+#next-requester-track-header-container {
+  padding: 30px 40px 15px 40px;
+}
+
+#next-wave,
+#next-wave-alt {
+  height: 50px;
+  position: absolute;
+  width: 100%;
+}
+
+#next-wave {
+  background: url('../../images/wave.svg');
+}
+
+#next-wave-alt {
+  background: url('../../images/wave-alt.svg');
+}
