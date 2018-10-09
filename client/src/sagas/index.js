@@ -22,10 +22,12 @@ import FixtureAPI from '../services/FixtureApi';
 
 
 import { AuthTypes } from '../redux/AuthRedux';
+import { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
 
 
 import { login } from './AuthSaga';
+import { getConversation, sendMessage } from './ChatSaga';
 import { getBase, getPack } from './RequesterSaga';
 
 
@@ -48,7 +50,11 @@ export default function * root() {
 
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
-    takeLatest(RequesterTypes.PACK_REQUEST, getPack, api)
+    takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
+
+    // Chat
+    takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, api),
+    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, api)
     
   ]);
 }

@@ -25,6 +25,7 @@ import jazzRevPack from '../mock_data/pack_jazz_rev.json';
 
 
 import onboardingConversation from '../mock_data/conversation_onboarding.json';
+import approvalConversation from '../mock_data/conversation_approval.json';
 
 
 export default {
@@ -75,8 +76,12 @@ export default {
     let data;
 
     switch (id) {
-      case '123':
+      case '490d7d4c-6e07-4795-b785-7a0146d4ec0f':
         data = onboardingConversation;
+        break;
+
+      case 'bf42a57b-6fe4-41ce-9f2a-f6f7dab54e8b':
+        data = approvalConversation;
         break;
 
       default:

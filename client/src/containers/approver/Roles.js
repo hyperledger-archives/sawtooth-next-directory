@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import Chat from '../../components/chat/Chat';
 import RolesList from '../../components/layouts/RolesList';
 import TrackHeader from '../../components/layouts/TrackHeader';
 
@@ -47,6 +48,7 @@ class Roles extends Component {
         <Grid.Column
           id='next-approver-grid-converse-column'
           width={6}>
+          <Chat {...this.props}/>
         </Grid.Column>
 
       </Grid>

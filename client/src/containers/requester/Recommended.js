@@ -17,14 +17,13 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 
 
 import { RequesterSelectors } from '../../redux/RequesterRedux';
 
 
-import PropTypes from 'prop-types';
-
-
+import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import RolesList from '../../components/layouts/RolesList';
 
@@ -48,7 +47,7 @@ export class Recommended extends Component {
 
   /**
    * 
-   * 
+   * Switch pack on ID change
    * 
    * 
    */
@@ -77,6 +76,7 @@ export class Recommended extends Component {
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={6}>
+          <Chat {...this.props}/>
         </Grid.Column>
 
       </Grid>
