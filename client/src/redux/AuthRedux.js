@@ -28,7 +28,8 @@ import Immutable from 'seamless-immutable';
  */
 const { Types, Creators } = createActions({
   loginRequest:     ['username', 'password'],
-  loginSuccess:     ['isAuthenticated']
+  loginSuccess:     ['isAuthenticated'],
+  loginFailure:     ['error']
 });
 
 
@@ -69,6 +70,9 @@ export const request = (state) => state.merge({ fetching: true });
 export const success = (state, { isAuthenticated }) => {
   return state.merge({ fetching: false, isAuthenticated });
 }
+export const failure = (state, { error }) => {
+  return state.merge({ fetching: false, error });
+}
 
 
 /**
@@ -79,5 +83,6 @@ export const success = (state, { isAuthenticated }) => {
  */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_REQUEST]: request,
-  [Types.LOGIN_SUCCESS]: success
+  [Types.LOGIN_SUCCESS]: success,
+  [Types.LOGIN_FAILURE]: failure
 });

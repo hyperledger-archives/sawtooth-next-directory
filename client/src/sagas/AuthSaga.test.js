@@ -14,36 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+import FixtureAPI from '../services/FixtureApi';
 import { call, put } from 'redux-saga/effects';
-import AuthActions from '../redux/AuthRedux';
+import { login } from '../sagas/AuthSaga';
 
 
-/**
- * 
- * Execute login API request
- * 
- * The login generator function executes a request to the
- * API and handles the response.
- * 
- * @param action
- * 
- */
-export function * login (api, action) {
-  try {
-    const { username, password } = action;
-    const res = yield call(api.login, {
-      username: username,
-      password: password
-    });
+const stepper = (fn) => (mock) => fn.next(mock).value;
 
-    if (res.ok) {
-      console.log('Authentication successful.');
-      yield put(AuthActions.loginSuccess(true));
-    } else {
-      alert(res.data.error);
-      yield put(AuthActions.loginFailure(res.data.error));
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
+test('first calls API', () => {
+  const username = 'hello';
+  const password = 'world';
+
+  const step = stepper(login(FixtureAPI, {
+    username: username,
+    password: password
+  }));
+  
+  expect(step()).toEqual(call(FixtureAPI.login, {
+    username: username,
+    password: password
+  }));
+});

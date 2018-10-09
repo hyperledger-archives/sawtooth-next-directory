@@ -95,6 +95,13 @@ export default {
       ok: true,
       data: message
     }
+  },
+
+  login: (username, password) => {
+    return {
+      ok: true,
+      data: {}
+    }
   }
 
 }
