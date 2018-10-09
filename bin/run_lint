@@ -31,7 +31,7 @@ lint() {
 
 }
 
-export PYTHONPATH=$TOP_DIR/addressing:$TOP_DIR/transaction_creation:$TOP_DIR/server:
+export PYTHONPATH=$TOP_DIR/addressing:$TOP_DIR/transaction_creation:$TOP_DIR/processor:$TOP_DIR/server:
 
 opt="$1"
 

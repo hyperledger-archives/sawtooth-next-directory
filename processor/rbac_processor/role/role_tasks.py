@@ -1,3 +1,7 @@
+# Copyright 2018 Contributors to Hyperledger Sawtooth
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
@@ -10,27 +14,24 @@
 # -----------------------------------------------------------------------------
 
 from rbac_addressing import addresser
-
-from rbac_processor.common import validate_role_task_proposal
-from rbac_processor.role.common import validate_role_task
-from rbac_processor.role.common import handle_confirm_add
-from rbac_processor.role.common import handle_reject
-from rbac_processor.role.common import handle_propose_state_set
-
-
+from rbac_processor import proposal_validator
+from rbac_processor import state_change
 from rbac_processor.protobuf import proposal_state_pb2
 from rbac_processor.protobuf import role_transaction_pb2
+from rbac_processor.role import role_validator
 
 
 def apply_propose(header, payload, state):
     propose = role_transaction_pb2.ProposeAddRoleTask()
     propose.ParseFromString(payload.content)
 
-    state_entries = validate_role_task_proposal(header, propose, state)
+    state_entries = proposal_validator.validate_role_task_proposal(
+        header, propose, state
+    )
 
     proposal_address = addresser.make_proposal_address(propose.role_id, propose.task_id)
 
-    handle_propose_state_set(
+    state_change.propose_role_action(
         state_entries=state_entries,
         header=header,
         payload=propose,
@@ -45,11 +46,13 @@ def apply_propose_remove(header, payload, state):
     propose = role_transaction_pb2.ProposeRemoveRoleTask()
     propose.ParseFromString(payload.content)
 
-    state_entries = validate_role_task_proposal(header, propose, state)
+    state_entries = proposal_validator.validate_role_task_proposal(
+        header, propose, state
+    )
 
     proposal_address = addresser.make_proposal_address(propose.role_id, propose.task_id)
 
-    handle_propose_state_set(
+    state_change.propose_role_action(
         state_entries=state_entries,
         header=header,
         payload=propose,
@@ -72,14 +75,14 @@ def apply_confirm(header, payload, state):
         role_id=confirm.role_id, task_id=confirm.task_id
     )
 
-    state_entries = validate_role_task(
+    state_entries = role_validator.validate_role_task(
         header,
         confirm,
         txn_signer_rel_address=txn_signer_task_owner_address,
         state=state,
     )
 
-    handle_confirm_add(
+    state_change.confirm_role_action(
         state_entries=state_entries,
         header=header,
         confirm=confirm,
@@ -97,14 +100,14 @@ def apply_reject(header, payload, state):
         reject.task_id, header.signer_public_key
     )
 
-    state_entries = validate_role_task(
+    state_entries = role_validator.validate_role_task(
         header,
         reject,
         txn_signer_rel_address=txn_signer_task_owner_address,
         state=state,
     )
 
-    handle_reject(
+    state_change.reject_role_action(
         state_entries=state_entries,
         header=header,
         reject=reject,

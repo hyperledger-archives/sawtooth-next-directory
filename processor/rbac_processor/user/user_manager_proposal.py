@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,17 +17,11 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
 
-from rbac_processor.common import get_prop_from_container
-from rbac_processor.common import return_prop_container
-from rbac_processor.common import get_user_from_container
-from rbac_processor.common import get_state_entry
-from rbac_processor.common import return_user_container
-from rbac_processor.common import no_open_proposal
-from rbac_processor.common import proposal_exists_and_open
-from rbac_processor.common import validate_identifier_is_user
-from rbac_processor.state import get_state
-from rbac_processor.state import set_state
-
+from rbac_processor import proposal_validator
+from rbac_processor import message_accessor
+from rbac_processor import state_accessor
+from rbac_processor import state_change
+from rbac_processor.user import user_validator
 from rbac_processor.protobuf import user_transaction_pb2
 from rbac_processor.protobuf import proposal_state_pb2
 
@@ -38,7 +32,7 @@ def apply_user_propose(header, payload, state):
 
     prop_state_entries = _validate_state_and_return_user(header, user_proposal, state)
 
-    handle_state_set(
+    state_change.propose_manager_change(
         proposal_state_entries=prop_state_entries,
         header=header,
         user_proposal=user_proposal,
@@ -59,11 +53,11 @@ def _validate_state_and_return_user(header, user_proposal, state):
 
     """
 
-    prop_state_entries = _validate_unique_proposal(header, user_proposal, state)
+    prop_state_entries = _validate_unique_proposal(user_proposal, state)
 
     user_address = addresser.make_user_address(user_id=user_proposal.user_id)
-    user_state_entries = get_state(state, [user_address])
-    validate_identifier_is_user(
+    user_state_entries = state_accessor.get_state(state, [user_address])
+    user_validator.validate_identifier_is_user(
         state_entries=user_state_entries,
         identifier=user_proposal.user_id,
         address=user_address,
@@ -71,29 +65,29 @@ def _validate_state_and_return_user(header, user_proposal, state):
 
     manager_address = addresser.make_user_address(user_id=user_proposal.new_manager_id)
 
-    manager_state_entries = get_state(state, [manager_address])
+    manager_state_entries = state_accessor.get_state(state, [manager_address])
 
-    validate_identifier_is_user(
+    user_validator.validate_identifier_is_user(
         state_entries=manager_state_entries,
         identifier=user_proposal.new_manager_id,
         address=manager_address,
     )
 
-    user_state_entry = get_state_entry(user_state_entries, user_address)
+    user_state_entry = state_accessor.get_state_entry(user_state_entries, user_address)
 
-    user_container = return_user_container(user_state_entry)
+    user_container = message_accessor.get_user_container(user_state_entry)
 
     _validate_manager_is_signer(header, user_container, user_proposal.user_id)
 
     return prop_state_entries
 
 
-def _validate_unique_proposal(header, user_proposal, state):
+def _validate_unique_proposal(user_proposal, state):
     proposal_address = addresser.make_proposal_address(
         object_id=user_proposal.user_id, related_id=user_proposal.new_manager_id
     )
-    state_return = get_state(state, [proposal_address])
-    if not no_open_proposal(
+    state_return = state_accessor.get_state(state, [proposal_address])
+    if not proposal_validator.has_no_open_proposal(
         state_return,
         proposal_address,
         user_proposal.user_id,
@@ -109,7 +103,7 @@ def _validate_unique_proposal(header, user_proposal, state):
 
 
 def _validate_manager_is_signer(header, user_container, user_id):
-    user = get_user_from_container(user_container, user_id)
+    user = message_accessor.get_user_from_container(user_container, user_id)
     if not user.manager_id == header.signer_public_key and not user.manager_id == "":
         raise InvalidTransaction(
             "Update user for {} was signed by {} not "
@@ -117,31 +111,6 @@ def _validate_manager_is_signer(header, user_container, user_id):
                 user_id, header.signer_public_key, user.manager_id
             )
         )
-
-
-def handle_state_set(proposal_state_entries, header, user_proposal, state):
-    proposal_address = addresser.make_proposal_address(
-        user_proposal.user_id, user_proposal.new_manager_id
-    )
-    try:
-
-        state_entry = get_state_entry(proposal_state_entries, proposal_address)
-        proposal_container = return_prop_container(state_entry)
-
-    except KeyError:
-        proposal_container = proposal_state_pb2.ProposalsContainer()
-
-    proposal = proposal_container.proposals.add()
-    proposal.proposal_id = user_proposal.proposal_id
-    proposal.proposal_type = proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
-    proposal.object_id = user_proposal.user_id
-    proposal.target_id = user_proposal.new_manager_id
-    proposal.opener = header.signer_public_key
-    proposal.status = proposal_state_pb2.Proposal.OPEN
-    proposal.open_reason = user_proposal.reason
-    proposal.metadata = user_proposal.metadata
-
-    set_state(state, {proposal_address: proposal_container.SerializeToString()})
 
 
 def apply_user_confirm(header, payload, state):
@@ -152,9 +121,9 @@ def apply_user_confirm(header, payload, state):
         object_id=confirm_payload.user_id, related_id=confirm_payload.manager_id
     )
 
-    proposal_entries = get_state(state, [proposal_address])
+    proposal_entries = state_accessor.get_state(state, [proposal_address])
 
-    if not proposal_exists_and_open(
+    if not proposal_validator.proposal_exists_and_open(
         state_entries=proposal_entries,
         proposal_address=proposal_address,
         proposal_id=confirm_payload.proposal_id,
@@ -167,9 +136,9 @@ def apply_user_confirm(header, payload, state):
             )
         )
 
-    entry = get_state_entry(proposal_entries, proposal_address)
-    proposal_container = return_prop_container(entry)
-    proposal = get_prop_from_container(
+    entry = state_accessor.get_state_entry(proposal_entries, proposal_address)
+    proposal_container = message_accessor.get_prop_container(entry)
+    proposal = message_accessor.get_prop_from_container(
         container=proposal_container, proposal_id=confirm_payload.proposal_id
     )
 
@@ -179,7 +148,7 @@ def apply_user_confirm(header, payload, state):
             "proposal expecting {}".format(header.signer_public_key, proposal.target_id)
         )
 
-    handle_confirm_state_set(
+    state_change.confirm_manager_change(
         container=proposal_container,
         proposal=proposal,
         closer=header.signer_public_key,
@@ -191,25 +160,6 @@ def apply_user_confirm(header, payload, state):
     )
 
 
-def handle_confirm_state_set(
-    container, proposal, closer, reason, address, user_id, new_manager_id, state
-):
-    proposal.status = proposal_state_pb2.Proposal.CONFIRMED
-    proposal.closer = closer
-    proposal.close_reason = reason
-
-    set_state(state, {address: container.SerializeToString()})
-
-    user_address = addresser.make_user_address(user_id)
-    state_entries = get_state(state, [user_address])
-    state_entry = get_state_entry(state_entries=state_entries, address=user_address)
-    user_container = return_user_container(state_entry)
-    user = get_user_from_container(user_container, user_id)
-    user.manager_id = new_manager_id
-
-    set_state(state, {user_address: user_container.SerializeToString()})
-
-
 def apply_user_reject(header, payload, state):
     reject_payload = user_transaction_pb2.RejectUpdateUserManager()
     reject_payload.ParseFromString(payload.content)
@@ -218,9 +168,9 @@ def apply_user_reject(header, payload, state):
         object_id=reject_payload.user_id, related_id=reject_payload.manager_id
     )
 
-    state_entries = get_state(state, [proposal_address])
+    state_entries = state_accessor.get_state(state, [proposal_address])
 
-    if not proposal_exists_and_open(
+    if not proposal_validator.proposal_exists_and_open(
         state_entries=state_entries,
         proposal_address=proposal_address,
         proposal_id=reject_payload.proposal_id,
@@ -230,9 +180,9 @@ def apply_user_reject(header, payload, state):
             "exist".format(reject_payload.proposal_id)
         )
 
-    entry = get_state_entry(state_entries, proposal_address)
+    entry = state_accessor.get_state_entry(state_entries, proposal_address)
 
-    proposal_container = return_prop_container(entry)
+    proposal_container = message_accessor.get_prop_container(entry)
 
     if not reject_payload.manager_id == header.signer_public_key:
         raise InvalidTransaction(
@@ -240,9 +190,11 @@ def apply_user_reject(header, payload, state):
             "signer was {}".format(reject_payload.manager_id, header.signer_public_key)
         )
 
-    proposal = get_prop_from_container(proposal_container, reject_payload.proposal_id)
+    proposal = message_accessor.get_prop_from_container(
+        proposal_container, reject_payload.proposal_id
+    )
 
-    handle_reject_state_set(
+    state_change.reject_state_change(
         container=proposal_container,
         proposal=proposal,
         closer=header.signer_public_key,
@@ -250,12 +202,3 @@ def apply_user_reject(header, payload, state):
         address=proposal_address,
         state=state,
     )
-
-
-def handle_reject_state_set(container, proposal, closer, reason, address, state):
-
-    proposal.status = proposal_state_pb2.Proposal.REJECTED
-    proposal.closer = closer
-    proposal.close_reason = reason
-
-    set_state(state, {address: container.SerializeToString()})

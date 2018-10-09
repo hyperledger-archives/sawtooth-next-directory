@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,13 +17,9 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
 
-from rbac_processor.common import no_open_proposal
-from rbac_processor.task.common import handle_confirm
-from rbac_processor.task.common import handle_propose_state_set
-from rbac_processor.task.common import handle_reject
-from rbac_processor.task.common import validate_task_rel_proposal
-from rbac_processor.task.common import validate_task_rel_del_proposal
-from rbac_processor.task.common import validate_task_admin_or_owner
+from rbac_processor import state_change
+from rbac_processor import proposal_validator
+from rbac_processor.task import task_validator
 from rbac_processor.protobuf import proposal_state_pb2
 from rbac_processor.protobuf import task_transaction_pb2
 
@@ -40,11 +36,11 @@ def apply_propose(header, payload, state):
         object_id=propose.task_id, related_id=propose.user_id
     )
 
-    state_entries = validate_task_rel_proposal(
+    state_entries = task_validator.validate_task_rel_proposal(
         header=header, propose=propose, rel_address=task_owners_address, state=state
     )
 
-    if not no_open_proposal(
+    if not proposal_validator.has_no_open_proposal(
         state_entries=state_entries,
         object_id=propose.task_id,
         related_id=propose.user_id,
@@ -56,7 +52,7 @@ def apply_propose(header, payload, state):
             "with task id {} and user id {}".format(propose.task_id, propose.user_id)
         )
 
-    handle_propose_state_set(
+    state_change.propose_task_action(
         state_entries=state_entries,
         header=header,
         payload=propose,
@@ -78,11 +74,11 @@ def apply_propose_remove(header, payload, state):
         object_id=propose.task_id, related_id=propose.user_id
     )
 
-    state_entries = validate_task_rel_del_proposal(
+    state_entries = task_validator.validate_task_rel_del_proposal(
         header=header, propose=propose, rel_address=task_owners_address, state=state
     )
 
-    if not no_open_proposal(
+    if not proposal_validator.has_no_open_proposal(
         state_entries=state_entries,
         object_id=propose.task_id,
         related_id=propose.user_id,
@@ -94,7 +90,7 @@ def apply_propose_remove(header, payload, state):
             "with task id {} and user id {}".format(propose.task_id, propose.user_id)
         )
 
-    handle_propose_state_set(
+    state_change.propose_task_action(
         state_entries=state_entries,
         header=header,
         payload=propose,
@@ -133,7 +129,7 @@ def apply_confirm(header, payload, state, is_remove=False):
         task_id=confirm_payload.task_id, user_id=header.signer_public_key
     )
 
-    state_entries = validate_task_admin_or_owner(
+    state_entries = task_validator.validate_task_admin_or_owner(
         header=header,
         confirm=confirm_payload,
         txn_signer_rel_address=txn_signer_admin_address,
@@ -142,7 +138,7 @@ def apply_confirm(header, payload, state, is_remove=False):
         is_remove=is_remove,
     )
 
-    handle_confirm(
+    state_change.confirm_task_action(
         state_entries=state_entries,
         header=header,
         confirm=confirm_payload,
@@ -160,7 +156,7 @@ def apply_reject(header, payload, state):
         task_id=reject_payload.task_id, user_id=header.signer_public_key
     )
 
-    state_entries = validate_task_admin_or_owner(
+    state_entries = task_validator.validate_task_admin_or_owner(
         header=header,
         confirm=reject_payload,
         txn_signer_rel_address=txn_signer_admin_address,
@@ -169,4 +165,4 @@ def apply_reject(header, payload, state):
         is_remove=False,
     )
 
-    handle_reject(state_entries, header, reject_payload, state)
+    state_change.reject_task_action(state_entries, header, reject_payload, state)
