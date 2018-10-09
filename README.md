@@ -142,3 +142,9 @@ bin/build -i
 
 Hyperledger Sawtooth NEXT Identity Platform software is licensed under the 
 [Apache License Version 2.0](LICENSE) software license.
+
+# Acknowledgments
+
+### Big Thanks
+
+Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs](https://saucelabs.com)
