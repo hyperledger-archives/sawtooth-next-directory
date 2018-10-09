@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ from rbac_processor.role import role_owners
 from rbac_processor.role import role_tasks
 from rbac_processor.task import task_admins
 from rbac_processor.task import task_owners
-from rbac_processor.role.role_apply import apply_create_role
-from rbac_processor.task.task_create import apply_create_task
-from rbac_processor.user.user_create import apply_create_user
+from rbac_processor.role import roles
+from rbac_processor.task import tasks
+from rbac_processor.user import users
 from rbac_processor.user.user_manager_proposal import apply_user_confirm
 from rbac_processor.user.user_manager_proposal import apply_user_propose
 from rbac_processor.user.user_manager_proposal import apply_user_reject
@@ -160,13 +160,13 @@ class RBACTransactionHandler(object):
 
 def apply_create(header, payload, state):
     if payload.message_type == RBACPayload.CREATE_USER:
-        apply_create_user(header, payload, state)
+        users.new_user(header, payload, state)
 
     elif payload.message_type == RBACPayload.CREATE_ROLE:
-        apply_create_role(header, payload, state)
+        roles.new_role(payload, state)
 
     elif payload.message_type == RBACPayload.CREATE_TASK:
-        apply_create_task(header, payload, state)
+        tasks.new_task(payload, state)
 
     else:
         raise InvalidTransaction("Message type unknown.")

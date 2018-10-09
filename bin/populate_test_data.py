@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# Copyright 2018 The Sawtooth NEXT Directory Authors
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -58,6 +58,10 @@ def insert_test_data():
 
     auth_current_manager = response_create_current_manager['data']['authorization']
 
+    print('Creating roles...')
+
+    print('Creating role: Sharepoint Admins')
+
     response_create_role_admins = create_role(auth=auth_current_manager,
                                               name="Sharepoint Admins",
                                               owners=[id_current_manager],
@@ -66,6 +70,7 @@ def insert_test_data():
                                               host=host)
 
     print('Created role:', response_create_role_admins['data']['name'])
+    print('Creating role: Infosec Auditors')
 
     response_create_role_auditors = create_role(auth=auth_current_manager,
                                                 name="Infosec Auditors",

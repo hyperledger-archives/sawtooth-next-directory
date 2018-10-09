@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,19 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-import sys
 import argparse
 import logging
 import os
+import sys
 import time
-from rethinkdb import ReqlError
 
 from rbac_ledger_sync.database import Database
-from rbac_ledger_sync.subscriber import Subscriber
 from rbac_ledger_sync.deltas.handlers import get_delta_handler
-
+from rbac_ledger_sync.subscriber import Subscriber
+from rethinkdb import ReqlError
 
 LOGGER = logging.getLogger(__name__)
 

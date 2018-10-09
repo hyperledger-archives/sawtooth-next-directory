@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,29 +13,15 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-set -e
+from rbac_processor.protobuf import role_transaction_pb2
+from rbac_processor.role import role_validator
+from rbac_processor import state_change
 
-TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
 
-format() {
+def new_role(payload, state):
+    create_role = role_transaction_pb2.CreateRole()
+    create_role.ParseFromString(payload.content)
 
-    files="`find $1 -name \*.py | grep -v protobuf`"
-    echo "$1"
-    black $files || error=1
-    return $error
-
-}
-
-export PYTHONPATH=$TOP_DIR/addressing:$TOP_DIR/transaction_creation:$TOP_DIR/server
-
-format addressing/rbac_addressing || ret_val=1
-format transaction_creation || ret_val=1
-format processor/rbac_processor || ret_val=1
-format server/db || ret_val=1
-format ledger_sync/rbac_ledger_sync || ret_val=1
-format server/api || ret_val=1
-format tests || ret_val=1
-
-ret_val=0
-
-exit $ret_val
+    role_validator.validate_create_role_payload(create_role)
+    role_validator.validate_create_role_state(create_role, state)
+    state_change.create_role(create_role, state)

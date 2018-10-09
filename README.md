@@ -124,7 +124,13 @@ a rest client and create the objects through the application's rest api.
 
 #### Running Automated Tests
 
-Tests can be run using the `run_docker_test` script, with the desired
+Unit tests can be run using (pytest)[https://docs.pytest.org/en/latest/]:
+
+```bash
+pytest
+```
+
+Integration tests can be run using the `run_docker_test` script, with the desired
 docker-compose file as an argument. For example:
 
 ```bash
@@ -137,6 +143,36 @@ A shortcut is available via:
 bin/build -p
 bin/build -i
 ```
+
+#### Cleaning the Docker Image Cache
+
+Docker-compose relies on image caching to improve build and deployment time. Some changes (directory renaming, etc)
+can cause the loading of cached images to result in build failures in docker-compose. In addition, not shutting down
+containers properly by doing a docker-compose down also leads to this scenario. When it occurs, you will experience
+hanging in the legacy UI and stack traces from rbac_server:
+
+     Traceback (most recent call last):
+    rbac-server    |   File "/usr/local/lib/python3.5/dist-packages/sanic/app.py", line 556, in handle_request
+    rbac-server    |     response = await response
+    rbac-server    |   File "/usr/lib/python3.5/asyncio/coroutines.py", line 105, in __next__
+    rbac-server    |     return self.gen.send(None)
+    rbac-server    |   File "/project/tmobile-rbac/server/api/users.py", line 74, in create_new_user
+    rbac-server    |     request.app.config.AES_KEY, txn_key.public_key, private_key.as_bytes()
+    rbac-server    |   File "/project/tmobile-rbac/server/api/utils.py", line 172, in encrypt_private_key
+    rbac-server    |     cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
+    rbac-server    | ValueError: non-hexadecimal number found in fromhex() arg at position 30
+
+To work around this situation, shut down the application, delete all containers and images, and rebuild/deploy:
+
+    docker-compose down
+
+    docker rm -vf $(docker ps -a -q)
+
+    docker rmi -f $(docker images -a -q)
+
+    docker-compose up --build
+    
+
 
 # License
 

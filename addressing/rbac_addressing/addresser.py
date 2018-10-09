@@ -92,7 +92,6 @@ class AddressSpace(enum.Enum):
     SYSADMIN_MEMBERS = 4
     SYSADMIN_OWNERS = 5
     SYSADMIN_ADMINS = 6
-
     ROLES_ATTRIBUTES = 7
     ROLES_MEMBERS = 8
     ROLES_OWNERS = 9

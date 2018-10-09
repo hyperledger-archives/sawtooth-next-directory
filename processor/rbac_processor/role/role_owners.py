@@ -13,12 +13,10 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac_addressing import addresser
 
-from rbac_processor.common import no_open_proposal
-from rbac_processor.role.common import handle_confirm_add
-from rbac_processor.role.common import handle_propose_state_set
-from rbac_processor.role.common import handle_reject
-from rbac_processor.role.common import validate_role_admin_or_owner
-from rbac_processor.role.common import validate_role_rel_proposal
+from rbac_processor import proposal_validator
+from rbac_processor.role import role_validator
+from rbac_processor import state_change
+from rbac_processor import state_accessor
 
 from rbac_processor.protobuf import proposal_state_pb2
 from rbac_processor.protobuf import role_transaction_pb2
@@ -36,11 +34,11 @@ def apply_propose(header, payload, state):
         object_id=proposal_payload.role_id, related_id=proposal_payload.user_id
     )
 
-    state_entries = validate_role_rel_proposal(
+    state_entries = role_validator.validate_role_rel_proposal(
         header, proposal_payload, role_owners_address, state
     )
 
-    if not no_open_proposal(
+    if not proposal_validator.has_no_open_proposal(
         state_entries=state_entries,
         object_id=proposal_payload.role_id,
         related_id=proposal_payload.user_id,
@@ -54,7 +52,7 @@ def apply_propose(header, payload, state):
             )
         )
 
-    handle_propose_state_set(
+    state_change.propose_role_action(
         state_entries=state_entries,
         header=header,
         payload=proposal_payload,
@@ -76,11 +74,11 @@ def apply_propose_remove(header, payload, state):
         object_id=proposal_payload.role_id, related_id=proposal_payload.user_id
     )
 
-    state_entries = validate_role_rel_proposal(
+    state_entries = role_validator.validate_role_rel_proposal(
         header, proposal_payload, role_owners_address, state, True
     )
 
-    if not no_open_proposal(
+    if not proposal_validator.has_no_open_proposal(
         state_entries=state_entries,
         object_id=proposal_payload.role_id,
         related_id=proposal_payload.user_id,
@@ -94,7 +92,7 @@ def apply_propose_remove(header, payload, state):
             )
         )
 
-    handle_propose_state_set(
+    state_change.propose_role_action(
         state_entries=state_entries,
         header=header,
         payload=proposal_payload,
@@ -116,14 +114,14 @@ def apply_confirm(header, payload, state):
         role_id=confirm_payload.role_id, user_id=header.signer_public_key
     )
 
-    state_entries = validate_role_admin_or_owner(
+    state_entries = state_accessor.get_state_entries(
         header=header,
         confirm=confirm_payload,
         txn_signer_rel_address=txn_signer_admin_address,
         state=state,
     )
 
-    handle_confirm_add(
+    state_change.confirm_role_action(
         state_entries=state_entries,
         header=header,
         confirm=confirm_payload,
@@ -140,11 +138,13 @@ def apply_reject(header, payload, state):
         role_id=reject_payload.role_id, user_id=header.signer_public_key
     )
 
-    state_entries = validate_role_admin_or_owner(
+    state_entries = state_accessor.get_state_entries(
         header=header,
         confirm=reject_payload,
         txn_signer_rel_address=txn_signer_admins_address,
         state=state,
     )
 
-    handle_reject(state_entries, header, reject=reject_payload, state=state)
+    state_change.reject_role_action(
+        state_entries, header, reject=reject_payload, state=state
+    )
