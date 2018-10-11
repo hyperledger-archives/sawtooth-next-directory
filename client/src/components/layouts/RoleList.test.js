@@ -30,7 +30,7 @@ describe('RoleList component', () => {
 		const div = document.createElement('div');
 
 		const props = {
-			activePack:{
+			activePack: {
 				description: 'pack description',
 				roles: [{name:'role name'}]
 			}
