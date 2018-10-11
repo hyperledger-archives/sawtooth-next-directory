@@ -15,8 +15,6 @@ limitations under the License.
 
 
 import React from 'react';
-
-
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -31,8 +29,9 @@ describe('Header component', () => {
 
     ReactDOM.render(
       <BrowserRouter><Header/></BrowserRouter>, div
-  );
+    );
 
     ReactDOM.unmountComponentAtNode(div);
   });
+
 });

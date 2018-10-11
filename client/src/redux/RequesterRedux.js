@@ -77,6 +77,8 @@ export const RequesterSelectors = {
   requests:     (state) => state.requester.requests,
 
   idFromSlug: (collection, slug) => {
+    if (!collection) return null;
+
     const pack = collection.find((item) => item.slug === slug);
     return pack && pack.id;
   }

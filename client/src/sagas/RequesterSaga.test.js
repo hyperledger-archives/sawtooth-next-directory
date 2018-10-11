@@ -14,18 +14,49 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+import { call, put } from 'redux-saga/effects';
+
+
 import FixtureAPI from '../services/FixtureApi';
-import { call } from 'redux-saga/effects';
+
+
+import RequesterActions from '../redux/RequesterRedux';
 import { getBase, getPack } from '../sagas/RequesterSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;
+
 
 test('getBase: first calls API', () => {
   const step = stepper(getBase(FixtureAPI));
   
   expect(step()).toEqual(call(FixtureAPI.getRequesterBase));
 });
+
+
+test('getBase: success path', () => {
+  const res = FixtureAPI.getRequesterBase();
+  const step = stepper(getBase(FixtureAPI));
+
+  step();
+
+  const stepRes = step(res);
+  expect(stepRes).toEqual(put(RequesterActions.baseSuccess(res.data)));
+});
+
+
+test('getBase: failure path', () => {
+  const res = { ok: false, data: {} };
+
+  const step = stepper(getBase(FixtureAPI));
+
+  step();
+
+  const stepRes = step(res);
+  expect(stepRes).toEqual(put(RequesterActions.baseFailure(res.data.error)));
+});
+
+
 
 
 test('getPack: first calls API', () => {
@@ -36,4 +67,34 @@ test('getPack: first calls API', () => {
   }));
   
   expect(step()).toEqual(call(FixtureAPI.getPack, id));
+});
+
+
+test('getPack: success path', () => {
+  const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
+
+  const res = FixtureAPI.getPack(id);
+  const step = stepper(getPack(FixtureAPI, {
+    id: id,
+  }));
+
+  step();
+
+  const stepRes = step(res);
+  expect(stepRes).toEqual(put(RequesterActions.packSuccess(res.data)));
+});
+
+
+test('getPack: failure path', () => {
+  const res = { ok: false, data: {} };
+  const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
+
+  const step = stepper(getPack(FixtureAPI, {
+    id: id,
+  }));
+
+  step();
+
+  const stepRes = step(res);
+  expect(stepRes).toEqual(put(RequesterActions.packFailure(res.data.error)));
 });

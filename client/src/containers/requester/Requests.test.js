@@ -18,20 +18,29 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+
+import createCustomStore from '../../createCustomStore';
+
+const store = createCustomStore();
 
 
-import { Requests } from './Requests';
+import Requests from './Requests';
 
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
   const props = {
-    getPack: () => {}
+    getPack: () => {},
+    match: { params: {} },
+    requester: { requests: [] }
   };
 
   ReactDOM.render(
-    <BrowserRouter><Requests {...props}/></BrowserRouter>, div
+    <Provider store={store}>
+      <BrowserRouter><Requests {...props}/></BrowserRouter>
+    </Provider>, div
   );
 
   ReactDOM.unmountComponentAtNode(div);

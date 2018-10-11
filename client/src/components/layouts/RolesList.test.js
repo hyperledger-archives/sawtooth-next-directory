@@ -15,16 +15,14 @@ limitations under the License.
 
 
 import React from 'react';
-
-
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import RoleList from './RolesList';
+import RolesList from './RolesList';
 
 
-describe('RoleList component', () => {
+describe('RolesList component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
@@ -34,12 +32,13 @@ describe('RoleList component', () => {
         description: 'pack description',
         roles: [{name:'role name'}]
       }
-    }
+    };
 
     ReactDOM.render(
-      <BrowserRouter><RoleList {...props}/></BrowserRouter>, div
+      <BrowserRouter><RolesList {...props}/></BrowserRouter>, div
     );
 	
     ReactDOM.unmountComponentAtNode(div);
-    });
+  });
+
 });

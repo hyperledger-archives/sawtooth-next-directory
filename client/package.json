@@ -16,10 +16,20 @@
     "seamless-immutable": "^7.1.4",
     "semantic-ui-react": "^0.82.5"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!**/e2e/**",
+      "!**/mock_data/**",
+      "!src/index.js",
+      "!src/routes.js",
+      "!src/registerServiceWorker.js"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --coverage",
     "eject": "react-scripts eject"
   }
 }
