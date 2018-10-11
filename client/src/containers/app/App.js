@@ -29,6 +29,9 @@ import { AuthSelectors } from '../../redux/AuthRedux';
 import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
 
 
+import PropTypes from 'prop-types';
+
+
 /**
  * 
  * @class App
@@ -97,6 +100,12 @@ class App extends Component {
   }
 
 }
+
+
+App.proptypes = {
+  isAuthenticated: PropTypes.bool,
+  routes: PropTypes.func
+};
 
 
 const mapStateToProps = (state) => {

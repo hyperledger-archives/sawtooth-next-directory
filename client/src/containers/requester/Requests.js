@@ -22,6 +22,9 @@ import { Grid } from 'semantic-ui-react';
 import { RequesterSelectors } from '../../redux/RequesterRedux';
 
 
+import PropTypes from 'prop-types';
+
+
 import TrackHeader from '../../components/layouts/TrackHeader';
 import RolesList from '../../components/layouts/RolesList';
 
@@ -87,6 +90,7 @@ export class Requests extends Component {
 }
 
 
+
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
   const { requests } = state.requester;
@@ -101,3 +105,14 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Requests);
+
+
+Requests.proptypes = {
+  getPack: PropTypes.func,
+  activePack: PropTypes.arrayOf(PropTypes.shape(
+    {
+      name: PropTypes.string
+    }
+  ))
+
+};

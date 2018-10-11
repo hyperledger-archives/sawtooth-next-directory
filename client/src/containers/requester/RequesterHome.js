@@ -18,6 +18,9 @@ import React, { Component } from 'react';
 import { Container, Image, List } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './RequesterHome.css';
 
 
@@ -65,3 +68,20 @@ export default class RequesterHome extends Component {
   }
   
 }
+
+
+RequesterHome.proptypes = {
+  activePack: PropTypes.arrayOf(PropTypes.shape(
+    {
+      id: PropTypes.string,
+      description: PropTypes.string,
+      roles: PropTypes.arrayOf(PropTypes.shape(
+        {
+          id: PropTypes.string,
+          name: PropTypes.string,
+          email: PropTypes.email
+        }  
+      ))
+    }
+  ))
+};
