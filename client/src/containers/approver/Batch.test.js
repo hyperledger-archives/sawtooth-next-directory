@@ -21,7 +21,9 @@ import { BrowserRouter } from 'react-router-dom';
 import Batch from './Batch';
 import createCustomStore from '../../createCustomStore';
 
+
 const store = createCustomStore();
+
 
 it('renders without crashing', () => {
   const div = document.createElement('div');

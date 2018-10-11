@@ -19,10 +19,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+
+
 import Roles from './Roles';
 import createCustomStore from '../../createCustomStore';
 
+
 const store = createCustomStore();
+
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
