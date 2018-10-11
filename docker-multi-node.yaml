@@ -1,0 +1,584 @@
+# Copyright 2018 Contributors to Hyperledger Sawtooth
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------------
+
+# This .yaml file will spin up four nodes hosting the Sawtooth Next Directory.
+# The Next Directory UI will be available at:
+#     http://10.5.0.70:4200 (node 0)
+#     http://10.5.0.71:4200 (node 1)
+#     http://10.5.0.72:4200 (node 2)
+#     http://10.5.0.73:4200 (node 3)
+
+version: "3"
+
+networks:
+  node_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+
+services:
+  shell:
+    build:
+      context: .
+      dockerfile: ./shell/Dockerfile
+    image: hyperledger/sawtooth-shell:1.0
+    container_name: rbac-shell
+    depends_on:
+      - rest-api-0
+      - rest-api-1
+      - rest-api-2
+      - rest-api-3
+    volumes:
+      - ".:/project/tmobile-rbac"
+    networks:
+      - node_network
+    environment:
+      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+
+  rbac-server-0:
+    build:
+      context: .
+      dockerfile: ./rbac/server/Dockerfile
+    container_name: rbac-server-0
+    image: rbac-server-production:${ISOLATION_ID-latest}
+    ports:
+      - "8000"
+    depends_on:
+      - ledger-sync-0
+      - rethink-0
+      - validator-0
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.60
+    environment:
+      - HOST=10.5.0.60
+    command: ./bin/rbac-server --db-host rethink-0 --validator-host validator-0
+
+  rbac-server-1:
+    build:
+      context: .
+      dockerfile: ./rbac/server/Dockerfile
+    container_name: rbac-server-1
+    image: rbac-server-production:${ISOLATION_ID-latest}
+    ports:
+      - "8000"
+    depends_on:
+      - ledger-sync-1
+      - rethink-1
+      - validator-1
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.61
+    environment:
+      - HOST=10.5.0.61
+    command: ./bin/rbac-server --db-host rethink-1 --validator-host validator-1
+  
+  rbac-server-2:
+    build:
+      context: .
+      dockerfile: ./rbac/server/Dockerfile
+    container_name: rbac-server-2
+    image: rbac-server-production:${ISOLATION_ID-latest}
+    ports:
+      - "8000"
+    depends_on:
+      - ledger-sync-2
+      - rethink-2
+      - validator-2
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.62
+    environment:
+      - HOST=10.5.0.62
+    command: ./bin/rbac-server --db-host rethink-2 --validator-host validator-2
+
+  rbac-server-3:
+    build:
+      context: .
+      dockerfile: ./rbac/server/Dockerfile
+    container_name: rbac-server-3
+    image: rbac-server-production:${ISOLATION_ID-latest}
+    ports:
+      - "8000"
+    depends_on:
+      - ledger-sync-3
+      - rethink-3
+      - validator-3
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.63
+    environment:
+      - HOST=10.5.0.63
+    command: ./bin/rbac-server --db-host rethink-3 --validator-host validator-3
+    
+
+  rethink-0:
+    container_name: rbac-rethink-0
+    image: rethinkdb:2.3
+    ports:
+      - "8080"
+    networks:
+      - node_network
+  
+  rethink-1:
+    container_name: rbac-rethink-1
+    image: rethinkdb:2.3
+    ports:
+      - "8080"
+    networks:
+      - node_network
+  
+  rethink-2:
+    container_name: rbac-rethink-2
+    image: rethinkdb:2.3
+    ports:
+      - "8080"
+    networks:
+      - node_network
+  
+  rethink-3:
+    container_name: rbac-rethink-3
+    image: rethinkdb:2.3
+    ports:
+      - "8080"
+    networks:
+      - node_network
+
+  rbac-tp-0:
+    build:
+      context: .
+      dockerfile: ./rbac/processor/Dockerfile
+    container_name: rbac-tp-0
+    image: rbac-tp-production:${ISOLATION_ID-latest}
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.60
+    command: ./bin/rbac-tp -vv tcp://validator-0:4004
+  
+  rbac-tp-1:
+    build:
+      context: .
+      dockerfile: ./rbac/processor/Dockerfile
+    container_name: rbac-tp-1
+    image: rbac-tp-production:${ISOLATION_ID-latest}
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.61
+    command: ./bin/rbac-tp -vv tcp://validator-1:4004
+  
+  rbac-tp-2:
+    build:
+      context: .
+      dockerfile: ./rbac/processor/Dockerfile
+    container_name: rbac-tp-2
+    image: rbac-tp-production:${ISOLATION_ID-latest}
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.62
+    command: ./bin/rbac-tp -vv tcp://validator-2:4004
+
+  rbac-tp-3:
+    build:
+      context: .
+      dockerfile: ./rbac/processor/Dockerfile
+    container_name: rbac-tp-3
+    image: rbac-tp-production:${ISOLATION_ID-latest}
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.63
+    command: ./bin/rbac-tp -vv tcp://validator-3:4004
+
+  ledger-sync-0:
+    build:
+      context: .
+      dockerfile: ./rbac/ledger_sync/Dockerfile
+    container_name: rbac-ledger-sync-0
+    image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
+    depends_on:
+      - rethink-0
+      - validator-0
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.60
+    command: |
+      bash -c "
+        ./bin/setup_db --host rethink-0 &&
+        ./bin/rbac-ledger-sync -vv --db-host rethink-0 --validator tcp://validator-0:4004
+      \"\""
+
+  ledger-sync-1:
+    build:
+      context: .
+      dockerfile: ./rbac/ledger_sync/Dockerfile
+    container_name: rbac-ledger-sync-1
+    image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
+    depends_on:
+      - rethink-1
+      - validator-1
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.61
+    command: |
+      bash -c "
+        ./bin/setup_db --host rethink-1 &&
+        ./bin/rbac-ledger-sync -vv --db-host rethink-1 --validator tcp://validator-1:4004
+      \"\""
+  
+  ledger-sync-2:
+    build:
+      context: .
+      dockerfile: ./rbac/ledger_sync/Dockerfile
+    container_name: rbac-ledger-sync-2
+    image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
+    depends_on:
+      - rethink-2
+      - validator-2
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.62
+    command: |
+      bash -c "
+        ./bin/setup_db --host rethink-2 &&
+        ./bin/rbac-ledger-sync -vv --db-host rethink-2 --validator tcp://validator-2:4004
+      \"\""
+
+  ledger-sync-3:
+    build:
+      context: .
+      dockerfile: ./rbac/ledger_sync/Dockerfile
+    container_name: rbac-ledger-sync-3
+    image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
+    depends_on:
+      - rethink-3
+      - validator-3
+    networks:
+      - node_network
+    environment:
+      - HOST=10.5.0.63
+    command: |
+      bash -c "
+        ./bin/setup_db --host rethink-3 &&
+        ./bin/rbac-ledger-sync -vv --db-host rethink-3 --validator tcp://validator-3:4004
+      \"\""
+
+  rbac-ui-0:
+    build:
+      context: .
+      dockerfile: ./ui/Dockerfile
+    container_name: rbac-ui-0
+    image: rbac-ui-production:${ISOLATION_ID-latest}
+    ports:
+      - "4200"
+    depends_on:
+      - rbac-server-0
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.70
+    environment:
+      - HOST=10.5.0.60
+
+  rbac-ui-1:
+    build:
+      context: .
+      dockerfile: ./ui/Dockerfile
+    container_name: rbac-ui-1
+    image: rbac-ui-production:${ISOLATION_ID-latest}
+    ports:
+      - "4200"
+    depends_on:
+      - rbac-server-1
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.71
+    environment:
+      - HOST=10.5.0.61
+
+  rbac-ui-2:
+    build:
+      context: .
+      dockerfile: ./ui/Dockerfile
+    container_name: rbac-ui-2
+    image: rbac-ui-production:${ISOLATION_ID-latest}
+    ports:
+      - "4200"
+    depends_on:
+      - rbac-server-2
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.72
+    environment:
+      - HOST=10.5.0.62
+
+  rbac-ui-3:
+    build:
+      context: .
+      dockerfile: ./ui/Dockerfile
+    container_name: rbac-ui-3
+    image: rbac-ui-production:${ISOLATION_ID-latest}
+    ports:
+      - "4200"
+    depends_on:
+      - rbac-server-3
+    networks:
+      node_network:
+        ipv4_address: 10.5.0.73
+    environment:
+      - HOST=10.5.0.63
+
+  rest-api-0:
+    container_name: sawtooth-rest-api-0
+    image: hyperledger/sawtooth-rest-api:1.0
+    expose:
+      - 8008
+    depends_on:
+      - validator-0
+    networks:
+      - node_network
+    command: sawtooth-rest-api --connect tcp://validator-0:4004 --bind rest-api-0:8008 -vv
+
+  rest-api-1:
+    container_name: sawtooth-rest-api-1
+    image: hyperledger/sawtooth-rest-api:1.0
+    expose:
+      - 8008
+    depends_on:
+      - validator-1
+    networks:
+      - node_network
+    command: sawtooth-rest-api --connect tcp://validator-1:4004 --bind rest-api-1:8008 -vvv
+
+  rest-api-2:
+    container_name: sawtooth-rest-api-2
+    image: hyperledger/sawtooth-rest-api:1.0
+    expose:
+      - 8008
+    depends_on:
+      - validator-2
+    networks:
+      - node_network
+    command: sawtooth-rest-api --connect tcp://validator-2:4004 --bind rest-api-2:8008 -vv
+  
+  rest-api-3:
+    container_name: sawtooth-rest-api-3
+    image: hyperledger/sawtooth-rest-api:1.0
+    expose:
+      - 8008
+    depends_on:
+      - validator-3
+    networks:
+      - node_network
+    command: sawtooth-rest-api --connect tcp://validator-3:4004 --bind rest-api-3:8008 -vv
+
+  settings-tp-0:
+    container_name: rbac-settings-tp-0
+    image: hyperledger/sawtooth-settings-tp:1.0
+    depends_on:
+      - validator-0
+    networks:
+      - node_network
+    command: settings-tp -v --connect tcp://validator-0:4004
+  
+  settings-tp-1:
+    container_name: rbac-settings-tp-1
+    image: hyperledger/sawtooth-settings-tp:1.0
+    depends_on:
+      - validator-1
+    networks:
+      - node_network
+    command: settings-tp -v --connect tcp://validator-1:4004
+  
+  settings-tp-2:
+    container_name: rbac-settings-tp-2
+    image: hyperledger/sawtooth-settings-tp:1.0
+    depends_on:
+      - validator-2
+    networks:
+      - node_network
+    command: settings-tp -v --connect tcp://validator-2:4004
+
+  settings-tp-3:
+    container_name: rbac-settings-tp-3
+    image: hyperledger/sawtooth-settings-tp:1.0
+    depends_on:
+      - validator-3
+    networks:
+      - node_network
+    command: settings-tp -v --connect tcp://validator-3:4004
+
+  validator-0:
+    container_name: rbac-validator-tp-0
+    image: hyperledger/sawtooth-validator:1.0
+    expose:
+      - 4004
+      - 8800
+    networks:
+      - node_network
+    entrypoint: |
+      bash -c "
+        if [ ! -e /etc/sawtooth/keys/validator.priv ]; then \
+          sawadm keygen; \
+        fi && \
+        if [ ! -e config-genesis.batch ]; then \
+          sawset genesis -k /etc/sawtooth/keys/validator.priv -o config-genesis.batch; \
+        fi && \
+        if [ ! -e config.batch ]; then \
+          sawset proposal create \
+            -k /etc/sawtooth/keys/validator.priv \
+            sawtooth.consensus.algorithm=poet \
+            sawtooth.poet.report_public_key_pem=\"$$(cat /etc/sawtooth/simulator_rk_pub.pem)\" \
+            sawtooth.poet.valid_enclave_measurements=$$(poet enclave measurement) \
+            sawtooth.poet.valid_enclave_basenames=$$(poet enclave basename) \
+            sawtooth.poet.initial_wait_time=15 \
+            sawtooth.poet.target_wait_time=15 \
+            sawtooth.publisher.max_batches_per_block=100 \
+            -o config.batch; \
+        fi && \
+        if [ ! -e poet_genesis.batch ]; then \
+          poet registration create -k /etc/sawtooth/keys/validator.priv -o poet_genesis.batch; \
+        fi && \
+        if [ ! -e /var/lib/sawtooth/genesis.batch ]; then \
+          sawadm genesis config-genesis.batch config.batch poet_genesis.batch; \
+        fi && \
+        if [ ! -e /root/.sawtooth/keys/my_key.priv ]; then \
+          sawtooth keygen my_key; \
+        fi &&  \
+        sawtooth-validator -v \
+          --endpoint tcp://validator-0:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800 \
+          --scheduler parallel \
+          --peers tcp://validator-1:8800 \
+          --peers tcp://validator-2:8800 \
+          --peers tcp://validator-3:8800
+      \"\""
+
+  validator-1:
+    container_name: rbac-validator-tp-1
+    image: hyperledger/sawtooth-validator:1.0
+    expose:
+      - 4004
+      - 8800
+    networks:
+      - node_network
+    entrypoint: |
+      bash -c "
+        sawadm keygen && \
+        sawtooth keygen my_key && \
+        sawtooth-validator -v \
+          --endpoint tcp://validator-1:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800 \
+          --scheduler parallel \
+          --peers tcp://validator-0:8800 \
+          --peers tcp://validator-2:8800 \
+          --peers tcp://validator-3:8800
+      \"\""
+  
+  validator-2:
+    container_name: rbac-validator-tp-2
+    image: hyperledger/sawtooth-validator:1.0
+    expose:
+      - 4004
+      - 8800
+    networks:
+      - node_network
+    entrypoint: |
+      bash -c "
+        sawadm keygen && \
+        sawtooth keygen my_key && \
+        sawtooth-validator -v \
+          --endpoint tcp://validator-2:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800 \
+          --scheduler parallel \
+          --peers tcp://validator-0:8800 \
+          --peers tcp://validator-1:8800 \
+          --peers tcp://validator-3:8800
+      \"\""
+
+  validator-3:
+    container_name: rbac-validator-tp-3
+    image: hyperledger/sawtooth-validator:1.0
+    expose:
+      - 4004
+      - 5050
+      - 8800
+    networks:
+      - node_network
+    entrypoint: |
+      bash -c "
+        sawadm keygen && \
+        sawtooth keygen my_key && \
+        sawtooth-validator -v \
+          --endpoint tcp://validator-3:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800 \
+          --scheduler parallel \
+          --peers tcp://validator-0:8800 \
+          --peers tcp://validator-1:8800 \
+          --peers tcp://validator-2:8800
+      \"\""
+  
+  poet-validator-registry-tp-0:
+    image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
+    container_name: sawtooth-poet-validator-registry-tp-0
+    expose:
+      - 4004
+    depends_on:
+      - validator-0
+    networks:
+      - node_network
+    command: poet-validator-registry-tp -C tcp://validator-0:4004
+
+  poet-validator-registry-tp-1:
+    image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
+    container_name: sawtooth-poet-validator-registry-tp-1
+    expose:
+      - 4004
+    depends_on:
+      - validator-1
+    networks:
+      - node_network
+    command: poet-validator-registry-tp -C tcp://validator-1:4004
+  
+  poet-validator-registry-tp-2:
+    image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
+    container_name: sawtooth-poet-validator-registry-tp-2
+    expose:
+      - 4004
+    depends_on:
+      - validator-2
+    networks:
+      - node_network
+    command: poet-validator-registry-tp -C tcp://validator-2:4004
+      
+  poet-validator-registry-tp-3:
+    image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
+    container_name: sawtooth-poet-validator-registry-tp-3
+    expose:
+      - 4004
+    depends_on:
+      - validator-3
+    networks:
+      - node_network
+    command: poet-validator-registry-tp -C tcp://validator-3:4004
