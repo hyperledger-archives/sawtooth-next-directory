@@ -19,6 +19,9 @@ import { Link } from 'react-router-dom'
 import { Image, List } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './NavList.css';
 
 
@@ -104,3 +107,11 @@ export default class NavList extends Component {
   }
   
 }
+
+
+NavList.prototypes = {
+  route: PropTypes.string,
+  listTitle: PropTypes.string,
+  list: PropTypes.arrayOf(PropTypes.number),
+  dynamic: PropTypes.bool
+};

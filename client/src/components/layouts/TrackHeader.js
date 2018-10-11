@@ -17,6 +17,9 @@ limitations under the License.
 import React, { Component } from 'react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './TrackHeader.css';
 
 
@@ -45,3 +48,8 @@ export default class TrackHeader extends Component {
   }
 
 }
+
+
+TrackHeader.proptypes = {
+  title: PropTypes.string
+};

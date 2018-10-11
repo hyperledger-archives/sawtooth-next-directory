@@ -18,6 +18,9 @@ import React, { Component } from 'react';
 import { Form } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 /**
  * 
  * @class LoginForm
@@ -70,3 +73,8 @@ export default class LoginForm extends Component {
   }
   
 }
+
+
+LoginForm.proptypes = {
+  submit: PropTypes.func.isRequired
+};

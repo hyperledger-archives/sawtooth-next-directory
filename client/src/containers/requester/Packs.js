@@ -19,6 +19,9 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import TrackHeader from '../../components/layouts/TrackHeader';
 import RolesList from '../../components/layouts/RolesList';
 
@@ -57,6 +60,15 @@ class Packs extends Component {
   }
 
 }
+
+
+Packs.proptypes = {
+  activePack: PropTypes.arrayOf(PropTypes.shape(
+    {
+      name: PropTypes.string
+    }
+  ))
+};
 
 
 const mapStateToProps = (state) => {

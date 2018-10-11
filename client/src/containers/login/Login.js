@@ -19,6 +19,9 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './Login.css';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import LoginForm from '../../components/forms/LoginForm'
@@ -68,6 +71,12 @@ class Login extends Component {
   }
 
 }
+
+
+Login.prototypes = {
+  isAuthenticated: PropTypes.bool,
+  attemptLogin: PropTypes.func.isRequired
+};
 
 
 const mapStateToProps = (state) => {
