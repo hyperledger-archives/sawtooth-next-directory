@@ -93,6 +93,25 @@ bin/build -p
 bin/start -d
 ```
 
+#### Deploying Multi-Node Network
+
+The multi-node network consists of four nodes (more can be added) hosting Sawtooth 
+Next Directory. The multi-node network utilizes the PoET simulator consensus 
+between the validators allowing PoET to run on non-SGX hardware. 
+
+After starting the containers, the Next Directory UI will be available at:
+- **http://10.5.0.70:4200** (node 0)
+- **http://10.5.0.71:4200** (node 1)
+- **http://10.5.0.72:4200** (node 2)
+- **http://10.5.0.73:4200** (node 3)
+
+
+To start the containers in a multi-node configuration run:
+```bash
+docker-compose -f docker-multi-node.yaml up
+```
+
+
 ## Deploying to Any Non-Localhost Server
 
 Pay special attention to the notes about secret keys in config.py.example. 
