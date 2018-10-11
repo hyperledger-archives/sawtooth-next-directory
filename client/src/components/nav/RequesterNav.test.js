@@ -1,4 +1,3 @@
-
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,27 +24,26 @@ import { BrowserRouter } from 'react-router-dom';
 import RequesterNav from './RequesterNav';
 
 
-describe("RequesterNav component", () => {
-    
-    it('renders without crashing', () => {
-        const div = document.createElement('div');
-    
-        const props = {
-            getPack: () => {},
-            activePack: null,
-            getBase: () => {},
-            getPack: (id) => {},
-            isAuthenticated: true,
-            recommended: null,
-            requests: null,
-            routes: () => {}
-        };
-    
-        ReactDOM.render(
-            <BrowserRouter><RequesterNav {...props}/></BrowserRouter>, div
-        );
-    
-        ReactDOM.unmountComponentAtNode(div);
-    });
-});
+describe('RequesterNav component', () => {
 
+	it('renders without crashing', () => {
+		const div = document.createElement('div');
+
+		const props = {
+			getPack: () => {},
+			activePack: null,
+			getBase: () => {},
+			getPack: (id) => {},
+			isAuthenticated: true,
+			recommended: null,
+			requests: null,
+			routes: () => {}
+		};
+
+		ReactDOM.render(
+			<BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
+		);
+
+		ReactDOM.unmountComponentAtNode(div);
+	});
+});

@@ -1,4 +1,3 @@
-
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,19 +24,19 @@ import { BrowserRouter } from 'react-router-dom';
 import LoginForm from './LoginForm';
 
 
-describe("LoginForm component", () => {
-    
-    it('renders without crashing', () => {
-        const div = document.createElement('div');
+describe('LoginForm component', () => {
 
-        const props = {
-            submit: (username, password) => {}
-        }
-        
-        ReactDOM.render(
-            <BrowserRouter><LoginForm {...props} /></BrowserRouter>, div
-        );
-    
-        ReactDOM.unmountComponentAtNode(div);
-    });
+	it('renders without crashing', () => {
+		const div = document.createElement('div');
+
+		const props = {
+			submit: (username, password) => {}
+		}
+
+		ReactDOM.render(
+			<BrowserRouter><LoginForm {...props} /></BrowserRouter>, div
+		);
+
+		ReactDOM.unmountComponentAtNode(div);
+	});
 });

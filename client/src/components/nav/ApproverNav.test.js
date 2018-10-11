@@ -1,4 +1,3 @@
-
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,15 +24,14 @@ import { BrowserRouter } from 'react-router-dom';
 import ApproverNav from './ApproverNav';
 
 
-describe("ApproverNav component", () => {
-    
-    it('renders without crashing', () => {
-        const div = document.createElement('div');
-    
-        ReactDOM.render(
-            <BrowserRouter><ApproverNav/></BrowserRouter>, div
-        );
-    
-        ReactDOM.unmountComponentAtNode(div);
-    });
+describe('ApproverNav component', () => {
+	it('renders without crashing', () => {
+		const div = document.createElement('div');
+
+		ReactDOM.render(
+			<BrowserRouter><ApproverNav/></BrowserRouter>, div
+		);
+
+		ReactDOM.unmountComponentAtNode(div);
+	});
 });

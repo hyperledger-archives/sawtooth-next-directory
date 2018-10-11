@@ -1,4 +1,3 @@
-
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,15 +24,15 @@ import { BrowserRouter } from 'react-router-dom';
 import Header from './Header';
 
 
-describe("Header component", () => {
-    
-    it('renders without crashing', () => {
-        const div = document.createElement('div');
-        
-        ReactDOM.render(
-            <BrowserRouter><Header/></BrowserRouter>, div
-        );
-    
-        ReactDOM.unmountComponentAtNode(div);
-    });
+describe('Header component', () => {
+
+	it('renders without crashing', () => {
+		const div = document.createElement('div');
+
+		ReactDOM.render(
+			<BrowserRouter><Header/></BrowserRouter>, div
+		);
+
+		ReactDOM.unmountComponentAtNode(div);
+	});
 });

@@ -1,4 +1,3 @@
-
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,23 +24,22 @@ import { BrowserRouter } from 'react-router-dom';
 import NavList from './NavList';
 
 
-describe("NavList component", () => {
-    
-    it('renders without crashing', () => {
-        const div = document.createElement('div');
-    
-        const props = {
-            dynamic: false,
-            list: ['List header'],
-            listTitle: "Title",
-            route: "/home/requests"
-        };
-    
-        ReactDOM.render(
-            <BrowserRouter><NavList {...props}/></BrowserRouter>, div
-        );
-    
-        ReactDOM.unmountComponentAtNode(div);
-    });
-});
+describe('NavList component', () => {
 
+	it('renders without crashing', () => {
+		const div = document.createElement('div');
+
+		const props = {
+			dynamic: false,
+			list: ['List header'],
+			listTitle: 'Title',
+			route: '/home/requests'
+		};
+
+		ReactDOM.render(
+			<BrowserRouter><NavList {...props}/></BrowserRouter>, div
+		);
+
+		ReactDOM.unmountComponentAtNode(div);
+	});
+});

@@ -1,4 +1,3 @@
-
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,22 +24,22 @@ import { BrowserRouter } from 'react-router-dom';
 import RoleList from './RolesList';
 
 
-describe("RoleList component", () => {
-    
-    it('renders without crashing', () => {
-        const div = document.createElement('div');
+describe('RoleList component', () => {
 
-        const props = {
-            activePack:{
-                description : 'pack description',
-                roles : [{name:'role name'}]
-            }
-        }
-        
-        ReactDOM.render(
-            <BrowserRouter><RoleList {...props}/></BrowserRouter>, div
-        );
-    
-        ReactDOM.unmountComponentAtNode(div);
-    });
+	it('renders without crashing', () => {
+		const div = document.createElement('div');
+
+		const props = {
+			activePack:{
+				description: 'pack description',
+				roles: [{name:'role name'}]
+			}
+		}
+
+		ReactDOM.render(
+			<BrowserRouter><RoleList {...props}/></BrowserRouter>, div
+		);
+
+		ReactDOM.unmountComponentAtNode(div);
+	});
 });
