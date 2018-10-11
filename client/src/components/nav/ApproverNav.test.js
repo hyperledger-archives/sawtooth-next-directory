@@ -25,13 +25,13 @@ import ApproverNav from './ApproverNav';
 
 
 describe('ApproverNav component', () => {
-	it('renders without crashing', () => {
-		const div = document.createElement('div');
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
-		ReactDOM.render(
-			<BrowserRouter><ApproverNav/></BrowserRouter>, div
-		);
+    ReactDOM.render(
+      <BrowserRouter><ApproverNav/></BrowserRouter>, div
+    );
 
-		ReactDOM.unmountComponentAtNode(div);
-	});
+    ReactDOM.unmountComponentAtNode(div);
+  });
 });

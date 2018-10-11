@@ -26,24 +26,24 @@ import RequesterNav from './RequesterNav';
 
 describe('RequesterNav component', () => {
 
-	it('renders without crashing', () => {
-		const div = document.createElement('div');
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
-		const props = {
-			getPack: () => {},
-			activePack: null,
-			getBase: () => {},
-			getPack: (id) => {},
-			isAuthenticated: true,
-			recommended: null,
-			requests: null,
-			routes: () => {}
-		};
+    const props = {
+      getPack: () => {},
+      activePack: null,
+      getBase: () => {},
+      getPack: (id) => {},
+      isAuthenticated: true,
+      recommended: null,
+      requests: null,
+      routes: () => {}
+    };
 
-		ReactDOM.render(
-			<BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
-		);
+    ReactDOM.render(
+      <BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
+    );
 
-		ReactDOM.unmountComponentAtNode(div);
-	});
+    ReactDOM.unmountComponentAtNode(div);
+  });
 });

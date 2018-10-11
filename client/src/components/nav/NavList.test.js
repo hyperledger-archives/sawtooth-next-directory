@@ -26,20 +26,20 @@ import NavList from './NavList';
 
 describe('NavList component', () => {
 
-	it('renders without crashing', () => {
-		const div = document.createElement('div');
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
-		const props = {
-			dynamic: false,
-			list: ['List header'],
-			listTitle: 'Title',
-			route: '/home/requests'
-		};
+    const props = {
+      dynamic: false,
+      list: ['List header'],
+      listTitle: 'Title',
+      route: '/home/requests'
+  };
 
-		ReactDOM.render(
-			<BrowserRouter><NavList {...props}/></BrowserRouter>, div
-		);
+    ReactDOM.render(
+      <BrowserRouter><NavList {...props}/></BrowserRouter>, div
+    );
 
-		ReactDOM.unmountComponentAtNode(div);
-	});
+    ReactDOM.unmountComponentAtNode(div);
+  });
 });

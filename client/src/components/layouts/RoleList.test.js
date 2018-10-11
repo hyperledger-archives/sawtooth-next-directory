@@ -26,20 +26,20 @@ import RoleList from './RolesList';
 
 describe('RoleList component', () => {
 
-	it('renders without crashing', () => {
-		const div = document.createElement('div');
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
-		const props = {
-			activePack: {
-				description: 'pack description',
-				roles: [{name:'role name'}]
-			}
-		}
+    const props = {
+      activePack: {
+        description: 'pack description',
+        roles: [{name:'role name'}]
+      }
+    }
 
-		ReactDOM.render(
-			<BrowserRouter><RoleList {...props}/></BrowserRouter>, div
-		);
-
-		ReactDOM.unmountComponentAtNode(div);
-	});
+    ReactDOM.render(
+      <BrowserRouter><RoleList {...props}/></BrowserRouter>, div
+    );
+	
+    ReactDOM.unmountComponentAtNode(div);
+    });
 });
