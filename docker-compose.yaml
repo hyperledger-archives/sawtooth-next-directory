@@ -27,12 +27,12 @@ services:
     volumes:
       - ".:/project/tmobile-rbac"
     environment:
-      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+      PYTHONPATH: /project/tmobile-rbac/
   
   rbac-server:
     build:
       context: .
-      dockerfile: ./server/Dockerfile
+      dockerfile: ./rbac/server/Dockerfile
     container_name: rbac-server
     image: rbac-server-production:${ISOLATION_ID-latest}
     ports:
@@ -54,7 +54,7 @@ services:
   rbac-tp:
     build:
       context: .
-      dockerfile: ./processor/Dockerfile
+      dockerfile: ./rbac/processor/Dockerfile
     container_name: rbac-tp
     image: rbac-tp-production:${ISOLATION_ID-latest}
     environment:
@@ -64,7 +64,7 @@ services:
   ledger-sync:
     build:
       context: .
-      dockerfile: ./ledger_sync/Dockerfile
+      dockerfile: ./rbac/ledger_sync/Dockerfile
     container_name: rbac-ledger-sync
     image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
     depends_on:

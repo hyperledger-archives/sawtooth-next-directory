@@ -4,7 +4,7 @@ addressing/rbac_addressing
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
 transaction_creation
-************* Module rbac_transaction_creation.common
+************* Module rbac.transaction_creation.rbac_transaction_creation.common
 transaction_creation/rbac_transaction_creation/common.py:19:0: E0401: Unable to import 'sawtooth_rest_api.protobuf' (import-error)
 transaction_creation/rbac_transaction_creation/common.py:20:0: E0401: Unable to import 'sawtooth_rest_api.protobuf' (import-error)
 

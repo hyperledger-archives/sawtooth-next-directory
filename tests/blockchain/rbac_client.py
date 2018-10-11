@@ -1,11 +1,13 @@
 from base64 import b64decode
 from uuid import uuid4
-from rbac_addressing import addresser
-from rbac_transaction_creation.protobuf import user_state_pb2
-from rbac_transaction_creation import manager_transaction_creation
-from rbac_transaction_creation.user_transaction_creation import create_user
-from rbac_transaction_creation import role_transaction_creation
-from rbac_transaction_creation import task_transaction_creation
+from rbac.addressing import addresser
+from rbac.transaction_creation.protobuf import user_state_pb2
+from rbac.transaction_creation.user_transaction_creation import create_user
+from rbac.transaction_creation import (
+    task_transaction_creation,
+    role_transaction_creation,
+    manager_transaction_creation,
+)
 
 from sawtooth_cli.rest_client import RestClient
 
