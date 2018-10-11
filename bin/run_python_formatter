@@ -28,14 +28,13 @@ format() {
 
 }
 
-export PYTHONPATH=$TOP_DIR/addressing:$TOP_DIR/transaction_creation:$TOP_DIR/server
+export PYTHONPATH=$TOP_DIR
 
-format addressing/rbac_addressing || ret_val=1
-format transaction_creation || ret_val=1
-format processor/rbac_processor || ret_val=1
-format server/db || ret_val=1
-format ledger_sync/rbac_ledger_sync || ret_val=1
-format server/api || ret_val=1
+format rbac/addressing || ret_val=1
+format rbac/ledger_sync || ret_val=1
+format rbac/processor || ret_val=1
+format rbac/server || ret_val=1
+format rbac/transaction_creation || ret_val=1
 format tests || ret_val=1
 
 ret_val=0

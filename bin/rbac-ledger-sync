@@ -18,15 +18,11 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-    'ledger_sync'))
 
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-    'addressing'))
+TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, TOP_DIR)
 
-from rbac_ledger_sync.main import main
+from rbac.ledger_sync.main import main
 
 if __name__ == '__main__':
     main()

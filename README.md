@@ -84,7 +84,7 @@ To start the dev containers, from the root project directory run:
 
 ```bash
 bin/build -p
-docker-compose -f docker-compose-dev.yaml -f docker-dev.yaml up
+docker-compose -f docker-compose.yaml -f docker-dev.yaml up
 ```
 
 A shortcut is available via:

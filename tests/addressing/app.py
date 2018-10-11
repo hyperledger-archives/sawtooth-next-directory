@@ -17,7 +17,7 @@ import pytest
 import unittest
 import logging
 from hashlib import sha512
-from rbac_addressing import addresser
+from rbac.addressing import addresser
 
 LOGGER = logging.getLogger(__name__)
 
