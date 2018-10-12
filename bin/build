@@ -59,8 +59,7 @@ do
             ;;
         l)
             info "Running lint"
-            docker build . -f tests/Dockerfile -t rbac-test-env
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
+            $TOP_DIR/bin/run_lint
             ;;
         i)
             info "Running tests"

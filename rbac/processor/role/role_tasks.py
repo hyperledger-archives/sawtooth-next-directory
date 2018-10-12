@@ -116,8 +116,16 @@ def apply_reject(header, payload, state):
 
 
 def apply_confirm_remove(header, payload, state):
-    raise RuntimeError('apply_confirm_remove not implemented! Args: {0},{1},{2}'.format(header, payload, state))
+    raise RuntimeError(
+        "apply_confirm_remove not implemented! Args: {0},{1},{2}".format(
+            header, payload, state
+        )
+    )
 
 
 def apply_reject_remove(header, payload, state):
-    raise RuntimeError('apply_reject_remove not implemented! Args: {0},{1},{2}'.format(header, payload, state))
+    raise RuntimeError(
+        "apply_reject_remove not implemented! Args: {0},{1},{2}".format(
+            header, payload, state
+        )
+    )

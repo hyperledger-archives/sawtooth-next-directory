@@ -31,6 +31,7 @@ format() {
 export PYTHONPATH=$TOP_DIR
 
 format rbac/addressing || ret_val=1
+format rbac/common/sawtooth || ret_val=1
 format rbac/ledger_sync || ret_val=1
 format rbac/processor || ret_val=1
 format rbac/server || ret_val=1
