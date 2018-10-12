@@ -31,11 +31,6 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F10
 
 WORKDIR /project/tmobile-rbac
 
-# Note that the context must be set to the project's root directory
-COPY bin/protogen bin/protogen
-COPY protos/ protos/
-RUN bin/protogen
-
 COPY . .
 
 CMD ["./bin/rbac-tp"]

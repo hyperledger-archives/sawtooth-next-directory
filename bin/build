@@ -30,7 +30,7 @@ usage() {
             -p           build protobuf modules using docker containers
             -l           lint source code
             -t           run unit and integration tests
-            -a           protogen, lint, tests in order
+            -a           lint, tests in order
 EOM
 
 }
@@ -68,12 +68,8 @@ do
             ;;
         a)
             docker build . -f tests/Dockerfile -t rbac-test-env
-            info "Building Protobuf modules"
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             info "Running lint"
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
-            info "Running tests"
-            pytest
             info "Running tests"
             $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
             ;;
