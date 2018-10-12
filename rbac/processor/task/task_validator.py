@@ -66,9 +66,7 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
         message_accessor.get_user_container(user_entry), user_id
     )
 
-    validate_identifier_is_task(
-        state_entries, identifier=task_id, address=task_address
-    )
+    validate_identifier_is_task(state_entries, identifier=task_id, address=task_address)
 
     try:
         task_rel_entry = state_accessor.get_state_entry(state_entries, rel_address)

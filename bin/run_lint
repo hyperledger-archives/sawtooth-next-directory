@@ -42,10 +42,11 @@ do
     ARGS=1
     case "$var" in
     "rbac/addressing"           ) lint rbac/addressing || ret_val=1;;
+    "rbac/common/sawtooth"      ) lint rbac/common/sawtooth || ret_val=1;;
     "rbac/ledger_sync"          ) lint rbac/ledger_sync || ret_val=1;;
     "rbac/processor"            ) lint rbac/processor || ret_val=1;;
     "rbac/server"               ) lint rbac/server || ret_val=1;;
-    "rbac/transaction_creation" ) lint rbac/Transaction_creation || ret_val=1;;
+    "rbac/transaction_creation" ) lint rbac/transaction_creation || ret_val=1;;
     "tests"                     ) lint tests || ret_val=1;;
     *                   ) echo "ERROR: Invalid option: \""$var"\"" >&2
     esac
@@ -53,6 +54,7 @@ done
 
 if [ $ARGS -eq 0 ]; then
     lint rbac/addressing || ret_val=1
+    lint rbac/common/sawtooth || ret_val=1
     lint rbac/ledger_sync || ret_val=1
     lint rbac/processor || ret_val=1
     lint rbac/server || ret_val=1

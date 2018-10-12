@@ -41,9 +41,7 @@ def get_state_entries(header, confirm, txn_signer_rel_address, state):
         object_id=confirm.role_id, related_id=confirm.user_id
     )
 
-    state_entries = get_state(
-        state, [txn_signer_rel_address, proposal_address]
-    )
+    state_entries = get_state(state, [txn_signer_rel_address, proposal_address])
 
     if not proposal_validator.proposal_exists_and_open(
         state_entries, proposal_address, confirm.proposal_id
