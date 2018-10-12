@@ -23,14 +23,17 @@ usage() {
 
     cat << EOM
         Usage:
-            $0 [-p] [-t] [-l] [-a]
+            $0 [-t] [-l] [-f] [-p] [-a]
 
         Options:
-            -h           print help text
-            -p           build protobuf modules using docker containers
-            -l           lint source code
             -t           run unit and integration tests
+            -l           lint source code
+            -f           format python source (black)
+            -p           build protobuf modules using docker containers
             -a           lint, tests in order
+            -h           print help text
+            
+            
 EOM
 
 }
@@ -41,7 +44,7 @@ info() {
 }
 
 
-while getopts hpltia opt;
+while getopts hpltiaf opt;
 do
     case $opt in
         h)
@@ -61,6 +64,10 @@ do
             info "Running lint"
             docker build . -f tests/Dockerfile -t rbac-test-env
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
+            ;;
+        f)
+            info "Running formatter"
+            $TOP_DIR/bin/run_python_formatter
             ;;
         i)
             info "Running tests"
