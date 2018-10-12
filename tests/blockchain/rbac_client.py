@@ -9,7 +9,7 @@ from rbac.transaction_creation import (
     manager_transaction_creation,
 )
 
-from sawtooth_cli.rest_client import RestClient
+from rbac.common.sawtooth.rest_client import RestClient
 
 REST_ENDPOINT = "http://rest-api:8008"
 
