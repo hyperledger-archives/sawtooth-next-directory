@@ -41,11 +41,11 @@ def apply_propose(header, payload, state):
     )
 
     if not proposal_validator.has_no_open_proposal(
-        state_entries=state_entries,
-        object_id=proposal_payload.role_id,
-        related_id=proposal_payload.user_id,
-        proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBERS,
+            state_entries=state_entries,
+            object_id=proposal_payload.role_id,
+            related_id=proposal_payload.user_id,
+            proposal_address=proposal_address,
+            proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBERS,
     ):
         raise InvalidTransaction(
             "There is already an open proposal for ADD_ROLE_MEMBERS "
@@ -81,11 +81,11 @@ def apply_propose_remove(header, payload, state):
     )
 
     if not proposal_validator.has_no_open_proposal(
-        state_entries=state_entries,
-        object_id=proposal_payload.role_id,
-        related_id=proposal_payload.user_id,
-        proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_MEMBERS,
+            state_entries=state_entries,
+            object_id=proposal_payload.role_id,
+            related_id=proposal_payload.user_id,
+            proposal_address=proposal_address,
+            proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_MEMBERS,
     ):
         raise InvalidTransaction(
             "There is already an open proposal for REMOVE_ROLE_MEMBERS "
@@ -150,3 +150,11 @@ def apply_reject(header, payload, state):
     state_change.reject_role_action(
         state_entries, header, reject=reject_payload, state=state
     )
+
+
+def apply_confirm_remove(header, payload, state):
+    raise RuntimeError('apply_confirm_remove not implemented! Args: {0},{1},{2}'.format(header, payload, state))
+
+
+def apply_reject_remove(header, payload, state):
+    raise RuntimeError('apply_reject_remove not implemented! Args: {0},{1},{2}'.format(header, payload, state))
