@@ -183,9 +183,6 @@ class TestOrgHierarchy(unittest.TestCase):
             "COMMITTED",
         )
 
-        state_items = self.client.return_state()
-        self.assertEqual(len(state_items), 5, "There are 5 users in state.")
-
     def test_01_create_roles(self):
         """Tests that the CreateRole validation rules are correct.
 
