@@ -30,7 +30,19 @@ LOGGER = logging.getLogger(__name__)
 # likely genesis, defeating the purpose. Rewind just 15 blocks to handle forks.
 KNOWN_COUNT = 15
 
-HOST = os.getenv("HOST", "localhost")
+
+def getenv(name, default):
+    value = os.getenv(name)
+    if value is None or value is "":
+        return default
+    return value
+
+
+VALIDATOR_HOST = getenv("VALIDATOR_HOST", "validator")
+VALIDATOR_PORT = getenv("VALIDATOR_PORT", "4004")
+DB_HOST = getenv("DB_HOST", "rethink")
+DB_PORT = getenv("DB_PORT", "28015")
+DB_NAME = getenv("DB_NAME", "rbac")
 
 
 def parse_args(args):
@@ -45,16 +57,16 @@ def parse_args(args):
     parser.add_argument(
         "--validator",
         help="The url of the validator to sync with",
-        default="tcp://" + HOST + ":4004",
+        default="tcp://" + VALIDATOR_HOST + ":" + VALIDATOR_PORT,
     )
     parser.add_argument(
-        "--db-host", help="The host of the database to connect to", default=HOST
+        "--db-host", help="The host of the database to connect to", default=DB_HOST
     )
     parser.add_argument(
-        "--db-port", help="The port of the database to connect to", default="28015"
+        "--db-port", help="The port of the database to connect to", default=DB_PORT
     )
     parser.add_argument(
-        "--db-name", help="The name of the database to use", default="rbac"
+        "--db-name", help="The name of the database to use", default=DB_NAME
     )
     return parser.parse_args(args)
 

@@ -22,7 +22,16 @@ from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac.processor.event_handler import RBACTransactionHandler
 
-HOST = os.getenv("HOST", "localhost")
+
+def getenv(name, default):
+    value = os.getenv(name)
+    if value is None or value is "":
+        return default
+    return value
+
+
+VALIDATOR_HOST = getenv("VALIDATOR_HOST", "validator")
+VALIDATOR_PORT = getenv("VALIDATOR_PORT", "4004")
 
 
 def parse_args(args):
@@ -33,7 +42,7 @@ def parse_args(args):
     parser.add_argument(
         "validator_endpoint",
         nargs="?",
-        default="tcp://" + HOST + ":4004",
+        default="tcp://" + VALIDATOR_HOST + ":" + VALIDATOR_PORT,
         help="The validator's component address.",
     )
 
