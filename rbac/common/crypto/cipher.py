@@ -12,30 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+import base64
+from cryptography.fernet import Fernet
 
-FROM hyperledger/sawtooth-validator:1.0
 
-RUN apt-get update && \
-    apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3-grpcio-tools=1.1.3-1 \
-        python3-pip \
-        python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
+class AES(Fernet):
+    def __init__(self, key):
+        try:
+            key = base64.urlsafe_b64encode(bytes.fromhex(key))
+            super().__init__(key)
+        except Exception:
+            raise ValueError("Fernet (AES) key must be 64 hex-encoded bytes.")
 
-RUN locale-gen en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+    def encrypt(self, data):
+        if isinstance(data, str):
+            data = data.encode()
+        return super().encrypt(data)
 
-RUN pip3 install -U pip setuptools
-
-RUN pip3 install \
-    pycodestyle \
-    pylint \
-    itsdangerous \
-    rethinkdb \
-    sanic \
-    pytest \
-    dredd-hooks \
-    cryptography
-
-WORKDIR /project/tmobile-rbac
+    def decrypt(self, token, ttl=None):
+        if isinstance(token, str):
+            token = token.encode()
+        return super().decrypt(token=token, ttl=ttl)

@@ -27,15 +27,17 @@ RUN apt-get update && \
 RUN locale-gen en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+RUN pip3 install -U pip setuptools
+
 RUN pip3 install \
     pycodestyle \
     pylint \
     itsdangerous \
     rethinkdb \
     sanic==0.7.0 \
-    pycrypto \
     pytest \
-    dredd_hooks
+    dredd_hooks \
+    cryptography
 
 WORKDIR /project/tmobile-rbac
 

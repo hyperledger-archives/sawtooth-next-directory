@@ -12,30 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-FROM hyperledger/sawtooth-validator:1.0
-
-RUN apt-get update && \
-    apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3-grpcio-tools=1.1.3-1 \
-        python3-pip \
-        python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
-
-RUN locale-gen en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-
-RUN pip3 install -U pip setuptools
-
-RUN pip3 install \
-    pycodestyle \
-    pylint \
-    itsdangerous \
-    rethinkdb \
-    sanic \
-    pytest \
-    dredd-hooks \
-    cryptography
-
-WORKDIR /project/tmobile-rbac

@@ -23,13 +23,16 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F10
         python3 \
         python3-pip \
         python3-sawtooth-sdk \
-        python3-sawtooth-rest-api \
- && pip3 install \
+        python3-sawtooth-rest-api
+
+RUN pip3 install -U pip setuptools
+
+RUN pip3 install \
         grpcio-tools \
         itsdangerous \
         rethinkdb \
         sanic==0.7.0 \
-        pycrypto \
+        cryptography \
  && locale-gen en_US.UTF-8 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
