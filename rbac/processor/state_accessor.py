@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-from rbac_addressing import addresser
-from rbac_processor import proposal_validator
-from rbac_processor import message_accessor
+ 
+from rbac.addressing import addresser
+from rbac.processor import proposal_validator
+from rbac.processor import message_accessor
 
 from sawtooth_sdk.messaging.future import FutureTimeoutError
 from sawtooth_sdk.processor.exceptions import InternalError
