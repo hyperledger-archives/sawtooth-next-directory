@@ -17,11 +17,11 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.addressing import addresser
 
-from rbac_processor import proposal_validator
-from rbac_processor.role import role_validator
-from rbac_processor import state_change
-from rbac_processor import state_accessor
-from rbac_processor.role import role_operation
+from rbac.processor import proposal_validator
+from rbac.processor.role import role_validator
+from rbac.processor import state_change
+from rbac.processor import state_accessor
+from rbac.processor.role import role_operation
 
 from rbac.processor.protobuf import proposal_state_pb2
 from rbac.processor.protobuf import role_transaction_pb2
