@@ -23,7 +23,7 @@ from rbac.processor.protobuf import role_transaction_pb2
 from rbac.processor.role import role_validator
 from rbac.processor import state_accessor, proposal_validator, state_change
 
-from rbac_processor.role import role_operation
+from rbac.processor.role import role_operation
 
 
 def apply_propose(header, payload, state):
