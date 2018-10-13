@@ -13,8 +13,9 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.addressing import addresser
-from rbac.processor import message_accessor, proposal_validator
+from rbac_addressing import addresser
+from rbac_processor import proposal_validator
+from rbac_processor import message_accessor
 
 from sawtooth_sdk.messaging.future import FutureTimeoutError
 from sawtooth_sdk.processor.exceptions import InternalError
@@ -22,53 +23,6 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 TIMEOUT_SECONDS = 2
 ERROR_MESSAGE_TIMEOUT = "Timeout after %s seconds during get from state"
-
-
-def get_state_entries(header, confirm, txn_signer_rel_address, state):
-    """Fetch a collection of state entries veri
-
-    Args:
-        header (TransactionHeader): The transaction header protobuf class.:
-        confirm: ConfirmAddRoleAdmin, RejectAddRoleAdmin, ...
-        txn_signer_rel_address: Transaction signer role relationship address
-        state (Context): The class responsible for gets and sets of state.
-
-    Returns:
-        (dict of addresses)
-    """
-
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm.role_id, related_id=confirm.user_id
-    )
-
-    state_entries = get_state(state, [txn_signer_rel_address, proposal_address])
-
-    if not proposal_validator.proposal_exists_and_open(
-        state_entries, proposal_address, confirm.proposal_id
-    ):
-        raise InvalidTransaction(
-            "The proposal {} does not exist or "
-            "is not open".format(confirm.proposal_id)
-        )
-    try:
-        entry = get_state_entry(state_entries, txn_signer_rel_address)
-        role_rel_container = message_accessor.get_role_rel_container(entry)
-    except KeyError:
-        raise InvalidTransaction(
-            "Signer {} does not have the Role permissions "
-            "to close the proposal".format(header.signer_public_key)
-        )
-    if not message_accessor.is_in_role_rel_container(
-        role_rel_container, role_id=confirm.role_id, identifier=header.signer_public_key
-    ):
-        raise InvalidTransaction(
-            "Signer {} does not have the Role "
-            "permissions to close the "
-            "proposal".format(header.signer_public_key)
-        )
-
-    return state_entries
-
 
 def get_state_entry(state_entries, address):
     """Get a StateEntry by address or raise KeyError if it is not in
@@ -103,3 +57,20 @@ def set_state(state, entries):
         return state.set_state(entries=entries, timeout=TIMEOUT_SECONDS)
     except FutureTimeoutError:
         raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
+
+def get_user_from_id(state, user_id):
+    user_address = addresser.make_user_address(user_id)
+    state_entries = get_state(
+        state, [user_address]
+    )
+    user_entry = get_state_entry(state_entries, user_address)
+    return message_accessor.get_user_from_container(message_accessor.get_user_container(user_entry), user_id)
+
+def is_hierarchical_manager_of_user(state, header, user_id):  
+    while(True):
+        user = get_user_from_id(state, user_id)
+        if header.signer_public_key == user_id: 
+            return True
+        if not user.manager_id:
+            return False
+        user_id = user.manager_id

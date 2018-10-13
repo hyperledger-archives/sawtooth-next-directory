@@ -23,6 +23,8 @@ from rbac.processor.protobuf import role_transaction_pb2
 from rbac.processor.role import role_validator
 from rbac.processor import state_accessor, proposal_validator, state_change
 
+from rbac_processor.role import role_operation
+
 
 def apply_propose(header, payload, state):
     role_admins_payload = role_transaction_pb2.ProposeAddRoleAdmin()
@@ -116,7 +118,7 @@ def apply_confirm(header, payload, state):
         role_id=confirm_payload.role_id, user_id=header.signer_public_key
     )
 
-    state_entries = state_accessor.get_state_entries(
+    state_entries = role_validator.get_state_entries(
         header=header,
         confirm=confirm_payload,
         txn_signer_rel_address=txn_signer_admin_address,
@@ -140,7 +142,7 @@ def apply_reject(header, payload, state):
         role_id=reject_payload.role_id, user_id=header.signer_public_key
     )
 
-    state_entries = state_accessor.get_state_entries(
+    state_entries = role_validator.get_state_entries(
         header=header,
         confirm=reject_payload,
         txn_signer_rel_address=txn_signer_admin_address,
@@ -166,3 +168,18 @@ def apply_reject_remove(header, payload, state):
             header, payload, state
         )
     )
+def hierachical_approve(header, payload, state):
+    hierachical_decide(header, payload, state, True)
+
+def hierachical_reject(header, payload, state):
+    hierachical_decide(header, payload, state, False)
+
+def hierachical_decide(header, payload, state, isApproval):
+    confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
+    confirm.ParseFromString(payload.content)
+
+    txn_signer_admin_address = addresser.make_role_admins_address(
+        role_id=confirm.role_id, user_id=confirm.on_behalf_id
+    )
+
+    role_operation.hierachical_decide(header, confirm, state, txn_signer_admin_address, isApproval)
