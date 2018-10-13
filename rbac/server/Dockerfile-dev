@@ -28,11 +28,13 @@ RUN echo "deb apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 
 RUN locale-gen en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+RUN pip3 install -U pip setuptools
+
 RUN pip3 install \
     itsdangerous \
     rethinkdb \
     sanic==0.7.0 \
-    pycrypto
+    cryptography
 
 WORKDIR /project/tmobile-rbac
 

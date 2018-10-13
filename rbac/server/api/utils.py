@@ -11,30 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import logging
-
 import binascii
-
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-
-from Crypto.Cipher import AES
-
 import rethinkdb as r
-
 from sanic.response import json
 
 from sawtooth_rest_api.protobuf import client_batch_submit_pb2
 from sawtooth_rest_api.protobuf import validator_pb2
-
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError
-
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
-
 from rbac.transaction_creation.common import Key
-
+from rbac.common.crypto.secrets import decrypt_private_key
+from rbac.common.crypto.secrets import deserialize_apikey
 
 LOGGER = logging.getLogger(__name__)
 
@@ -146,29 +137,6 @@ async def get_transactor_key(request):
     )
     hex_private_key = binascii.hexlify(private_key)
     return Key(hex_private_key)
-
-
-def generate_apikey(secret_key, user_id):
-    serializer = Serializer(secret_key)
-    token = serializer.dumps({"id": user_id})
-    return token.decode("ascii")
-
-
-def deserialize_apikey(secret_key, token):
-    serializer = Serializer(secret_key)
-    return serializer.loads(token)
-
-
-def decrypt_private_key(aes_key, user_id, encrypted_private_key):
-    init_vector = bytes.fromhex(user_id[:32])
-    cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
-    return cipher.decrypt(encrypted_private_key)
-
-
-def encrypt_private_key(aes_key, user_id, private_key):
-    init_vector = bytes.fromhex(user_id[:32])
-    cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
-    return cipher.encrypt(private_key)
 
 
 async def send(conn, batch_list, timeout):
