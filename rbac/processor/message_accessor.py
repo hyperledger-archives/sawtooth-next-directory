@@ -124,3 +124,4 @@ def is_in_role_attributes_container(container, identifier):
         if role_attr.role_id == identifier:
             return True
     return False
+    
