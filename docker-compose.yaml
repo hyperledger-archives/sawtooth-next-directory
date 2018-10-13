@@ -27,8 +27,18 @@ services:
     volumes:
       - ".:/project/tmobile-rbac"
     environment:
-      PYTHONPATH: /project/tmobile-rbac/
-  
+      - PYTHONPATH=/project/tmobile-rbac/
+      - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
+      - SERVER_PORT=${SERVER_PORT:-8000}
+      - VALIDATOR_HOST=${VALIDATOR_HOST:-validator}
+      - VALIDATOR_PORT=${VALIDATOR_PORT:-4004}
+      - VALIDATOR_TIMEOUT=${VALIDATOR_TIMEOUT:-500}
+      - DB_HOST=${DB_HOST:-rethink}
+      - DB_PORT=${DB_PORT:-28015}
+      - DB_NAME=${DB_NAME:-rbac}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
+
   rbac-server:
     build:
       context: .
@@ -42,8 +52,9 @@ services:
       - rethink
       - validator
     environment:
-      - HOST=${HOST:-localhost}
-    command: ./bin/rbac-server --host 0.0.0.0 --db-host rethink --validator-host validator
+      - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
+      - SERVER_PORT=${SERVER_PORT:-8000}
+    command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:
     container_name: rbac-rethink

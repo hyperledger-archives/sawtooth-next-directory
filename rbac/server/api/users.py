@@ -22,6 +22,7 @@ from sanic import Blueprint
 from sanic.response import json
 
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
+from rbac.common.crypto.secrets import encrypt_private_key
 
 from rbac.server.api.errors import ApiNotImplemented
 from rbac.server.api.auth import authorized
@@ -35,7 +36,7 @@ from rbac.server.db import users_query
 from rbac.transaction_creation.common import Key
 from rbac.transaction_creation.user_transaction_creation import create_user
 from rbac.transaction_creation.manager_transaction_creation import propose_manager
-
+from rbac.common.crypto.secrets import generate_apikey
 
 LOGGER = logging.getLogger(__name__)
 USERS_BP = Blueprint("users")
@@ -67,7 +68,7 @@ async def create_new_user(request):
     # Generate keys
     private_key = Secp256k1PrivateKey.new_random()
     txn_key = Key(private_key.as_hex())
-    encrypted_private_key = utils.encrypt_private_key(
+    encrypted_private_key = encrypt_private_key(
         request.app.config.AES_KEY, txn_key.public_key, private_key.as_bytes()
     )
 
@@ -180,7 +181,7 @@ async def fetch_open_proposals(request, user_id):
 
 
 def create_user_response(request, public_key):
-    token = utils.generate_apikey(request.app.config.SECRET_KEY, public_key)
+    token = generate_apikey(request.app.config.SECRET_KEY, public_key)
     user_resource = {
         "id": public_key,
         "name": request.json.get("name"),

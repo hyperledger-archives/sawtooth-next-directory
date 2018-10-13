@@ -113,7 +113,7 @@ docker-compose -f docker-multi-node.yaml up
 
 ## Deploying to Any Non-Localhost Server
 
-Pay special attention to the notes about secret keys in config.py.example. 
+Pay special attention to the notes about secret keys in .env. 
 Due to their private/sensitive nature, the values of these keys should be 
 provided to the application using 
   - a configuration file that is not stored/managed by git 

@@ -22,19 +22,27 @@ import os
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError
 
-HOST = os.getenv('HOST', 'localhost')
+def getenv(name, default):
+    value = os.getenv(name)
+    if (value is None or value is ""):
+        return default
+    return value
+
+DB_HOST = getenv('DB_HOST', 'localhost')
+DB_PORT = getenv('DB_PORT', '28015')
+DB_NAME = getenv('DB_NAME', 'rbac')
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('--host',
                         help='The host for the database',
-                        default=HOST)
+                        default=DB_HOST)
     parser.add_argument('--port',
                         help='The port for the database',
-                        default='28015')
+                        default=DB_PORT)
     parser.add_argument('--name',
                         help='The name of the database',
-                        default='rbac')
+                        default=DB_NAME)
     return parser.parse_args(args)
 
 

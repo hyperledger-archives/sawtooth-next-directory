@@ -1,3 +1,6 @@
+# environment
+.env
+
 # OS
 .DS_Store
 
@@ -65,9 +68,6 @@ local_settings.py
 # Flask stuff:
 instance/
 .webassets-cache
-
-# Sanic stuff:
-config.py
 
 # Scrapy stuff:
 .scrapy
