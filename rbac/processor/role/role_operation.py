@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ from rbac.processor import state_accessor
 from rbac.processor.protobuf import proposal_state_pb2
 from rbac.processor.protobuf import role_transaction_pb2
 
-def hierachical_decide(header, confirm, state, txn_signer_rel_address, isApproval): 
+def hierarchical_decide(header, confirm, state, txn_signer_rel_address, isApproval): 
     proposal_address = addresser.make_proposal_address(
         object_id=confirm.role_id, related_id=confirm.user_id
     )
