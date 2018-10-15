@@ -106,13 +106,13 @@ def apply_propose_remove(header, payload, state):
         state=state,
     )
 
-def hierachical_approve(header, payload, state):
-    hierachical_decide(header, payload, state, True)
+def hierarchical_approve(header, payload, state):
+    hierarchical_decide(header, payload, state, True)
 
-def hierachical_reject(header, payload, state):
-    hierachical_decide(header, payload, state, False)
+def hierarchical_reject(header, payload, state):
+    hierarchical_decide(header, payload, state, False)
 
-def hierachical_decide(header, payload, state, isApproval):
+def hierarchical_decide(header, payload, state, isApproval):
     confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm.ParseFromString(payload.content)
 
@@ -120,7 +120,7 @@ def hierachical_decide(header, payload, state, isApproval):
         role_id=confirm.role_id, user_id=confirm.on_behalf_id
     )
 
-    role_operation.hierachical_decide(header, confirm, state, txn_signer_admin_address, isApproval)
+    role_operation.hierarchical_decide(header, confirm, state, txn_signer_admin_address, isApproval)
 
 def apply_confirm(header, payload, state):
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
