@@ -4,8 +4,11 @@ jobs:
       language: python
       python:
         - "3.6"
+      install:
+        - pip install pylint
       script:
-        - bin/build -p && bin/build -i
+        - bin/build -i
+        - bin/build -l
     - stage: frontend
       language: node_js
       node_js:
