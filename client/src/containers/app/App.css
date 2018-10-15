@@ -14,11 +14,15 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.next-container,
-.next-outer-grid {
+#next-outer-grid {
   height: 100%;
+  margin: 0;
 }
 
 #next-outer-grid-nav {
-  padding: 30px 15px 0 30px;
+  background: var(--nav-bg-color);
+}
+
+#next-inner-grid-main {
+  padding: 0;
 }

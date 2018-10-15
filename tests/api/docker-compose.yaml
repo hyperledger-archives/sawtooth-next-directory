@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ services:
   server:
     build:
       context: ../..
-      dockerfile: ../../../server/Dockerfile-dev
+      dockerfile: ../../../rbac/server/Dockerfile-dev
     image: rbac-server-dev
     volumes:
       - "../../:/project/tmobile-rbac"
@@ -40,7 +40,7 @@ services:
   rbac-tp:
     build:
       context: ../..
-      dockerfile: ../../../processor/Dockerfile-dev
+      dockerfile: ../../../rbac/processor/Dockerfile-dev
     image: rbac-tp-dev
     volumes:
       - "../../:/project/tmobile-rbac"
@@ -49,7 +49,7 @@ services:
   ledger-sync:
     build:
       context: ../..
-      dockerfile: ../../../ledger_sync/Dockerfile-dev
+      dockerfile: ../../../rbac/ledger_sync/Dockerfile-dev
     image: rbac-ledger-sync-dev
     volumes:
       - "../../:/project/tmobile-rbac"
@@ -96,7 +96,7 @@ services:
     volumes:
       - '../../:/project/tmobile-rbac'
     environment:
-      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+      PYTHONPATH: /project/tmobile-rbac/
     command: |
       dredd ./server/openapi.yaml http://server:8000
         --language=python

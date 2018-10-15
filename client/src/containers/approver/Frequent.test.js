@@ -18,10 +18,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+
+
 import Frequent from './Frequent';
 import createCustomStore from '../../createCustomStore';
 
+
 const store = createCustomStore();
+
 
 it('renders without crashing', () => {
   const div = document.createElement('div');

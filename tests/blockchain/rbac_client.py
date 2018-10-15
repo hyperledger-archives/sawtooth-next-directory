@@ -1,13 +1,30 @@
+# Copyright 2018 Contributors to Hyperledger Sawtooth
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
 from base64 import b64decode
 from uuid import uuid4
-from rbac_addressing import addresser
-from rbac_transaction_creation.protobuf import user_state_pb2
-from rbac_transaction_creation import manager_transaction_creation
-from rbac_transaction_creation.user_transaction_creation import create_user
-from rbac_transaction_creation import role_transaction_creation
-from rbac_transaction_creation import task_transaction_creation
+from rbac.addressing import addresser
+from rbac.transaction_creation.protobuf import user_state_pb2
+from rbac.transaction_creation.user_transaction_creation import create_user
+from rbac.transaction_creation import (
+    task_transaction_creation,
+    role_transaction_creation,
+    manager_transaction_creation,
+)
 
-from sawtooth_cli.rest_client import RestClient
+from rbac.common.sawtooth.rest_client import RestClient
 
 REST_ENDPOINT = "http://rest-api:8008"
 

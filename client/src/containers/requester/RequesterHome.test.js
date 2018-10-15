@@ -1,3 +1,4 @@
+
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,10 +20,17 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import RequesterHome from './RequesterHome';
 
+
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
-  // TODO: Wrap with <Provider>
-  ReactDOM.render(<BrowserRouter><RequesterHome/></BrowserRouter>, div);
+  const props = {
+    getBase: () => {}
+  };
+
+  ReactDOM.render(
+    <BrowserRouter><RequesterHome {...props}/></BrowserRouter>, div
+  );
+
   ReactDOM.unmountComponentAtNode(div);
 });

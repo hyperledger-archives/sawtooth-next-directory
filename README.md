@@ -73,7 +73,6 @@ Docker containers are also available for developers, and are marked with a
 containers work compared to the defaults:
 
 - They do not need to be rebuilt when local files change
-- Protobuf files will need to be built locally
 - Some dependencies may need to be installed locally\*
 - A _Sawtooth shell_ container is included for testing
 - Sawtooth's blockchain REST API will be available at **http://localhost:8080**
@@ -84,7 +83,7 @@ To start the dev containers, from the root project directory run:
 
 ```bash
 bin/build -p
-docker-compose -f docker-compose-dev.yaml -f docker-dev.yaml up
+docker-compose -f docker-compose.yaml -f docker-dev.yaml up
 ```
 
 A shortcut is available via:
@@ -92,6 +91,25 @@ A shortcut is available via:
 bin/build -p
 bin/start -d
 ```
+
+#### Deploying Multi-Node Network
+
+The multi-node network consists of four nodes (more can be added) hosting Sawtooth 
+Next Directory. The multi-node network utilizes the PoET simulator consensus 
+between the validators allowing PoET to run on non-SGX hardware. 
+
+After starting the containers, the Next Directory UI will be available at:
+- **http://10.5.0.70:4200** (node 0)
+- **http://10.5.0.71:4200** (node 1)
+- **http://10.5.0.72:4200** (node 2)
+- **http://10.5.0.73:4200** (node 3)
+
+
+To start the containers in a multi-node configuration run:
+```bash
+docker-compose -f docker-multi-node.yaml up
+```
+
 
 ## Deploying to Any Non-Localhost Server
 
@@ -124,7 +142,13 @@ a rest client and create the objects through the application's rest api.
 
 #### Running Automated Tests
 
-Tests can be run using the `run_docker_test` script, with the desired
+Unit tests can be run using (pytest)[https://docs.pytest.org/en/latest/]:
+
+```bash
+pytest
+```
+
+Integration tests can be run using the `run_docker_test` script, with the desired
 docker-compose file as an argument. For example:
 
 ```bash
@@ -138,7 +162,45 @@ bin/build -p
 bin/build -i
 ```
 
+#### Cleaning the Docker Image Cache
+
+Docker-compose relies on image caching to improve build and deployment time. Some changes (directory renaming, etc)
+can cause the loading of cached images to result in build failures in docker-compose. In addition, not shutting down
+containers properly by doing a docker-compose down also leads to this scenario. When it occurs, you will experience
+hanging in the legacy UI and stack traces from rbac_server:
+
+     Traceback (most recent call last):
+    rbac-server    |   File "/usr/local/lib/python3.5/dist-packages/sanic/app.py", line 556, in handle_request
+    rbac-server    |     response = await response
+    rbac-server    |   File "/usr/lib/python3.5/asyncio/coroutines.py", line 105, in __next__
+    rbac-server    |     return self.gen.send(None)
+    rbac-server    |   File "/project/tmobile-rbac/server/api/users.py", line 74, in create_new_user
+    rbac-server    |     request.app.config.AES_KEY, txn_key.public_key, private_key.as_bytes()
+    rbac-server    |   File "/project/tmobile-rbac/server/api/utils.py", line 172, in encrypt_private_key
+    rbac-server    |     cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
+    rbac-server    | ValueError: non-hexadecimal number found in fromhex() arg at position 30
+
+To work around this situation, shut down the application, delete all containers and images, and rebuild/deploy:
+
+    docker-compose down
+
+    docker rm -vf $(docker ps -a -q)
+
+    docker rmi -f $(docker images -a -q)
+
+    docker-compose up --build
+    
+
+
 # License
 
 Hyperledger Sawtooth NEXT Identity Platform software is licensed under the 
 [Apache License Version 2.0](LICENSE) software license.
+
+# Acknowledgements
+
+### Big Thanks
+
+Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs][homepage]
+
+[homepage]: https://saucelabs.com

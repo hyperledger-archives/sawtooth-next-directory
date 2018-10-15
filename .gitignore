@@ -7,9 +7,6 @@ __pycache__/
 *$py.class
 .pytest_cache/
 
-# Protobuf
-**/protobuf/
-
 # Jetbrains IDEs
 .idea/
 
@@ -55,6 +52,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+coverage/
 
 # Translations
 *.mo
@@ -122,11 +120,7 @@ ENV/
 !.vscode/extensions.json
 
 # Node
-node_modules
-
-# UI
-ui/coverage
-ui/build
+node_modules/
 
 # NPM et al.
 npm-debug.log*

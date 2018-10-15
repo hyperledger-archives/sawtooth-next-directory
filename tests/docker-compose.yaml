@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ services:
   rbac-tp:
     build:
       context: ../
-      dockerfile: ./processor/Dockerfile-dev
+      dockerfile: ./rbac/processor/Dockerfile-dev
     image: rbac-tp-dev
     volumes:
       - "../:/project/tmobile-rbac"
@@ -60,5 +60,5 @@ services:
       - "../:/project/tmobile-rbac"
     command: pytest
     environment:
-      - PYTHONPATH=/project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+      - PYTHONPATH=/project/tmobile-rbac/addressing:/project/tmobile-rbac/rbac/transaction_creation
       - HOST=${HOST:-localhost}

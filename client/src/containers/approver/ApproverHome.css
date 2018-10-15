@@ -13,6 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-.next-approver-container {
-  padding: 50px;
+
+#next-approver-grid {
+  height: 100%;
+}
+
+#next-approver-grid-track-column {
+  padding: 0;
+}
+
+#next-approver-grid-converse-column {
+  background: var(--chat-bg-color);
 }

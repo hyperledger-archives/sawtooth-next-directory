@@ -13,13 +13,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+
+:root {
+  --nav-bg-color: #263645;
+  --nav-heading-color: #727c85;
+  --chat-bg-color: #fafafa;
 }
 
 body,
 #root {
   height: 100%;
+}
+
+#next-wave {
+  position: absolute;
 }

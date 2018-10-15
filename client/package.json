@@ -4,6 +4,7 @@
   "license": "Apache 2.0",
   "dependencies": {
     "apisauce": "^0.16.0",
+    "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-redux": "^5.0.7",
@@ -15,11 +16,21 @@
     "seamless-immutable": "^7.1.4",
     "semantic-ui-react": "^0.82.5"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!**/e2e/**",
+      "!**/mock_data/**",
+      "!src/index.js",
+      "!src/routes.js",
+      "!src/registerServiceWorker.js"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint --ext=js --ext=jsx .",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --coverage",
     "eject": "react-scripts eject"
   },
   "devDependencies": {

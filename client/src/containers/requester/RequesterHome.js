@@ -15,7 +15,13 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Container, Image, List } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
+
+
+import TrackHeader from '../../components/layouts/TrackHeader';
+
+
+import PropTypes from 'prop-types';
 
 
 import './RequesterHome.css';
@@ -23,45 +29,51 @@ import './RequesterHome.css';
 
 /**
  * 
- * @class Home
+ * @class RequesterHome
  * Component encapsulating the requester home, which serves as the
- * default landing page after login.
+ * default landing page after login. 
  * 
  */
 export default class RequesterHome extends Component {
 
-  render() {
-    const { activePack } = this.props;
+  /**
+   * 
+   * Hydrate base data
+   * 
+   */
+  componentDidMount () {
+    const { getBase } = this.props;
+    getBase();
+  }
 
+
+  render () {
     return (
-      <Container className='next-requester-container'>
-        <h1>Requester Home</h1>
-        <p>Lorem ipsum dolor sit amet consectitur adipiscing elit.</p>
-
-        { activePack && 
-          <h1>Pack ID: {activePack.id}</h1>
-        }
-
-        { activePack && activePack.description && 
-          <p>{activePack.description}</p>
-        }
-
-        { activePack && activePack.roles &&
-          <List selection verticalAlign='middle'>
-            { activePack.roles.map((role, index) => (
-              <List.Item key={index}>
-                <Image src=''/>
-                <List.Content>
-                  <List.Header>{role.id}</List.Header>
-                  <span>{role.name}</span>
-                  <span>{role.email}</span>
-                </List.Content>
-              </List.Item>
-            )) }
-          </List>
-        }
-      </Container>
+      <Grid id='next-requester-grid' celled='internally'>
+        <Grid.Column
+          id='next-requester-grid-track-column'
+          width={16}>
+          <TrackHeader title='Home' {...this.props}/>
+        </Grid.Column>
+      </Grid>
     );
   }
-  
+
 }
+
+
+RequesterHome.proptypes = {
+  activePack: PropTypes.arrayOf(PropTypes.shape(
+    {
+      id: PropTypes.string,
+      description: PropTypes.string,
+      roles: PropTypes.arrayOf(PropTypes.shape(
+        {
+          id: PropTypes.string,
+          name: PropTypes.string,
+          email: PropTypes.email
+        }  
+      ))
+    }
+  ))
+};

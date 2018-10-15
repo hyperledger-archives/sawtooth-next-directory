@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,14 +23,17 @@ usage() {
 
     cat << EOM
         Usage:
-            $0 [-p] [-t] [-l] [-a]
+            $0 [-t] [-l] [-f] [-p] [-a]
 
         Options:
-            -h           print help text
-            -p           build protobuf modules using docker containers
-            -l           lint source code
             -t           run unit and integration tests
-            -a           protogen, lint, tests in order
+            -l           lint source code
+            -f           format python source (black)
+            -p           build protobuf modules using docker containers
+            -a           lint, tests in order
+            -h           print help text
+            
+            
 EOM
 
 }
@@ -41,7 +44,7 @@ info() {
 }
 
 
-while getopts hpltia opt;
+while getopts hpltiaf opt;
 do
     case $opt in
         h)
@@ -59,8 +62,11 @@ do
             ;;
         l)
             info "Running lint"
-            docker build . -f tests/Dockerfile -t rbac-test-env
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
+            $TOP_DIR/bin/run_lint
+            ;;
+        f)
+            info "Running formatter"
+            $TOP_DIR/bin/run_python_formatter
             ;;
         i)
             info "Running tests"
@@ -68,12 +74,8 @@ do
             ;;
         a)
             docker build . -f tests/Dockerfile -t rbac-test-env
-            info "Building Protobuf modules"
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             info "Running lint"
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
-            info "Running tests"
-            pytest
             info "Running tests"
             $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
             ;;

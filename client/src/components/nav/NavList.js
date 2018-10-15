@@ -19,6 +19,9 @@ import { Link } from 'react-router-dom'
 import { Image, List } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './NavList.css';
 
 
@@ -85,7 +88,7 @@ export default class NavList extends Component {
     const { list, listTitle } = this.props;
 
     return (
-      <div className='next-requester-nav-list-container'>
+      <div className='next-nav-list-container'>
         <h3>{listTitle}</h3>
         
         { list &&
@@ -95,7 +98,7 @@ export default class NavList extends Component {
         }
 
         { !list &&
-          <span className='next-requester-nav-list-label'>
+          <span className='next-nav-list-label'>
             No items
           </span>
         }
@@ -104,3 +107,11 @@ export default class NavList extends Component {
   }
   
 }
+
+
+NavList.prototypes = {
+  route: PropTypes.string,
+  listTitle: PropTypes.string,
+  list: PropTypes.arrayOf(PropTypes.number),
+  dynamic: PropTypes.bool
+};

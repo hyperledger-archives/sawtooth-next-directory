@@ -1,4 +1,4 @@
-# Copyright contributors to Hyperledger Sawtooth
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 import pytest
 import unittest
 import logging
-from rbac_addressing import addresser
-from rbac_addressing.addresser import AddressSpace
+from rbac.addressing import addresser
+from rbac.addressing.addresser import AddressSpace
 
 LOGGER = logging.getLogger(__name__)
 

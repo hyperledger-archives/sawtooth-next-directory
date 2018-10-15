@@ -16,9 +16,10 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { Container, List, Image, Search } from 'semantic-ui-react';
+import { Container, Search } from 'semantic-ui-react';
 
 
+import NavList from './NavList';
 import './ApproverNav.css';
 
 
@@ -31,61 +32,59 @@ import './ApproverNav.css';
  */
 export default class ApproverNav extends Component {
 
+  /**
+   * 
+   * Render sidebar hierarchy
+   * 
+   */
+  renderLists () {
+    return (
+      <div id='next-approver-nav-lists-container'>
+        <NavList
+          listTitle='Pending'
+          list={[
+            'Batch',
+            'Roles',
+            'Individuals',
+            'Frequent',
+            'About to Expire'
+          ]}
+          route='/approval-home/pending'/>
+        <NavList
+          listTitle='Approved'
+          list={null}
+          route='/approval-home/approved'/>
+        <NavList
+          listTitle='Expired'
+          list={null}
+          route='/approval-home/expired'/>
+        <NavList
+          listTitle='Manage Groups'
+          list={null}
+          route='/approval-home/manage-groups'/>
+        <NavList
+          listTitle='People'
+          list={null}
+          route='/approval-home/people'/>
+      </div>
+    );
+  }
+
+
   render () {
     return (
       <Container>
-        <Search className='next-approver-nav-search' category loading={false}/>
-        <h3>Pending</h3>
 
-        <List selection verticalAlign='middle'>
-          <Link to='/approval-home/batch'>
-            <List.Item>
-              <Image src=''/>
-              <List.Content>
-                <List.Header>Batch</List.Header>
-              </List.Content>
-            </List.Item>
-          </Link>
-          <Link to='/approval-home/roles'>
-            <List.Item>
-              <Image src=''/>
-              <List.Content>
-                <List.Header>Roles</List.Header>
-              </List.Content>
-            </List.Item>
-          </Link>
-          <Link to='/approval-home/individuals'>
-            <List.Item>
-              <Image src=''/>
-              <List.Content>
-                <List.Header>Individuals</List.Header>
-              </List.Content>
-            </List.Item>
-          </Link>
-          <Link to='/approval-home/frequent'>
-            <List.Item>
-              <Image src=''/>
-              <List.Content>
-                <List.Header>Frequent</List.Header>
-              </List.Content>
-            </List.Item>
-          </Link>
-          <Link to='/approval-home/expiring'>
-            <List.Item>
-              <Image src=''/>
-              <List.Content>
-                <List.Header>About to Expire</List.Header>
-              </List.Content>
-            </List.Item>
-          </Link>
-        </List>
+        <Search
+          className='next-approver-nav-search'
+          category
+          loading={false}/>
 
-        <h3>Approved</h3>
-        <h3>Expired</h3>
-        <h3>Manage Groups</h3>
-        <h3>People</h3>
+        { this.renderLists() }
 
-        <Link to='/home' id='next-switch-approver-link'>Switch to Requester</Link>
+        <Link to='/home' id='next-switch-approver-link'>
+          Switch to Requester
+        </Link>
 
       </Container>
     );

@@ -26,7 +26,11 @@ import './App.css';
 
 
 import { AuthSelectors } from '../../redux/AuthRedux';
+import ChatActions, { ChatSelectors } from '../../redux/ChatRedux';
 import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
+
+
+import PropTypes from 'prop-types';
 
 
 /**
@@ -99,19 +103,29 @@ class App extends Component {
 }
 
 
+App.proptypes = {
+  isAuthenticated: PropTypes.bool,
+  routes: PropTypes.func
+};
+
+
 const mapStateToProps = (state) => {
   return {
     isAuthenticated:  AuthSelectors.isAuthenticated(state),
     recommended:      RequesterSelectors.recommended(state),
     requests:         RequesterSelectors.requests(state),
-    activePack:       RequesterSelectors.activePack(state)
+    activePack:       RequesterSelectors.activePack(state),
+    messages:         ChatSelectors.messages(state)
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     getBase:         () => dispatch(RequesterActions.baseRequest()),
-    getPack:         (id) => dispatch(RequesterActions.packRequest(id))
+    getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
+
+    sendMessage:     (message) => dispatch(ChatActions.sendRequest(message)),
+    getConversation: (id) => dispatch(ChatActions.conversationRequest(id))
   };
 }
 

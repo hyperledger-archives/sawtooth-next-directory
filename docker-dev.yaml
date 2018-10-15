@@ -1,3 +1,18 @@
+# Copyright 2018 Contributors to Hyperledger Sawtooth
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------------
+
 # Development configuration
 #
 # Start from genesis without persistent data:
@@ -28,7 +43,7 @@ services:
 
   rbac-server:
     build:
-      dockerfile: ./server/Dockerfile-dev
+      dockerfile: rbac/server/Dockerfile-dev
     container_name: rbac-server-dev
     image: rbac-server-dev:${ISOLATION_ID-latest}
     volumes:
@@ -36,7 +51,7 @@ services:
 
   rbac-tp:
     build:
-      dockerfile: ./processor/Dockerfile-dev
+      dockerfile: rbac/processor/Dockerfile-dev
     container_name: rbac-tp-dev
     image: rbac-tp-dev:${ISOLATION_ID-latest}
     volumes:
@@ -44,7 +59,7 @@ services:
 
   ledger-sync:
     build:
-      dockerfile: ./ledger_sync/Dockerfile-dev
+      dockerfile: rbac/ledger_sync/Dockerfile-dev
     container_name: rbac-ledger-sync-dev
     image: rbac-ledger-sync-dev:${ISOLATION_ID-latest}
     volumes:

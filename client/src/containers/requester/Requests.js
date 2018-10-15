@@ -19,7 +19,11 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import Chat from '../../components/chat/Chat';
 import { RequesterSelectors } from '../../redux/RequesterRedux';
+
+
+import PropTypes from 'prop-types';
 
 
 import TrackHeader from '../../components/layouts/TrackHeader';
@@ -50,7 +54,7 @@ export class Requests extends Component {
 
   /**
    * 
-   * 
+   * Switch pack on ID change
    * 
    */
   componentWillReceiveProps (newProps) {
@@ -78,6 +82,7 @@ export class Requests extends Component {
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={6}>
+          <Chat {...this.props}/>
         </Grid.Column>
 
       </Grid>
@@ -85,6 +90,7 @@ export class Requests extends Component {
   }
 
 }
+
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -101,3 +107,14 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Requests);
+
+
+Requests.proptypes = {
+  getPack: PropTypes.func,
+  activePack: PropTypes.arrayOf(PropTypes.shape(
+    {
+      name: PropTypes.string
+    }
+  ))
+
+};

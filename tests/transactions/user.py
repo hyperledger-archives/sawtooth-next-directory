@@ -1,4 +1,4 @@
-# Copyright contributors to Hyperledger Sawtooth
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@ import logging
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 from sawtooth_rest_api.protobuf import batch_pb2
 from sawtooth_rest_api.protobuf import transaction_pb2
-from rbac_addressing import addresser
-from rbac_addressing.addresser import AddressSpace
-from rbac_transaction_creation.common import Key
-from rbac_transaction_creation.protobuf import rbac_payload_pb2
-from rbac_transaction_creation.protobuf import user_transaction_pb2
+from rbac.addressing import addresser
+from rbac.addressing.addresser import AddressSpace
+from rbac.transaction_creation.common import Key
+from rbac.transaction_creation.protobuf import user_transaction_pb2, rbac_payload_pb2
 from tests.transactions.common import SIGNATURE_LENGTH
 from tests.transactions.common import SIGNATURE_PATTERN
-from rbac_transaction_creation.user_transaction_creation import create_user
+from rbac.transaction_creation.user_transaction_creation import create_user
 
 LOGGER = logging.getLogger(__name__)
 

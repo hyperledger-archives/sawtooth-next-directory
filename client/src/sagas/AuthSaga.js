@@ -14,7 +14,7 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { put } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 import AuthActions from '../redux/AuthRedux';
 
 
@@ -28,14 +28,21 @@ import AuthActions from '../redux/AuthRedux';
  * @param action
  * 
  */
-export function * login (action) {
+export function * login (api, action) {
   try {
-    // const { username, password } = action;
-    // console.log(username, password);
+    const { username, password } = action;
+    const res = yield call(api.login, {
+      username: username,
+      password: password
+    });
 
-    // Default to success for now
-    yield put(AuthActions.loginSuccess(true));
-    console.log('Successfully authenticated...');
+    if (res.ok) {
+      console.log('Authentication successful.');
+      yield put(AuthActions.loginSuccess(true));
+    } else {
+      alert(res.data.error);
+      yield put(AuthActions.loginFailure(res.data.error));
+    }
   } catch (err) {
     console.error(err);
   }

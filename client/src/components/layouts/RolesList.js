@@ -18,6 +18,9 @@ import React, { Component } from 'react';
 import { List, Segment } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './RolesList.css';
 
 
@@ -28,6 +31,7 @@ import './RolesList.css';
  * 
  */
 export default class RolesList extends Component {
+ 
 
   render () {
     const { activePack } = this.props;
@@ -59,3 +63,17 @@ export default class RolesList extends Component {
   }
 
 }
+
+
+RolesList.proptypes = {
+  activePack: PropTypes.arrayOf(PropTypes.shape(
+    {
+      description: PropTypes.string,
+      roles: PropTypes.arrayOf(PropTypes.shape(
+        {
+          name: PropTypes.string
+        }  
+      ))
+    }
+  ))
+};
