@@ -1,4 +1,4 @@
-# Copyright contributors to Hyperledger Sawtooth
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -207,6 +207,12 @@ class RestClient:
                     self._base_url
                 )
             )
+
+    def get(self, *args, **kwargs):
+        return self._get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        return self._post(*args, **kwargs)
 
     @staticmethod
     def _format_queries(queries):
