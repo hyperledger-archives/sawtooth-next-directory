@@ -20,6 +20,9 @@ HEX_PATTERN = re.compile(r"^[0-9a-fA-F]{2,}$")
 
 
 class CommonAssertions(TestCase):
+    def __init__(self, *args, **kwargs):
+        TestCase.__init__(self, *args, **kwargs)
+
     def assertIsString(self, value):
         """Value is a non-zero length string"""
         self.assertIsInstance(value, str)
