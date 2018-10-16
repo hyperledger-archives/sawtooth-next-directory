@@ -34,6 +34,8 @@ from rbac.app.config import DB_NAME
 from rbac.app.config import AES_KEY
 from rbac.app.config import SECRET_KEY
 from rbac.app.config import BATCHER_KEY_PAIR
+from rbac.app.config import VALIDATOR_ENDPOINT
+from rbac.app.config import VALIDATOR_REST_ENDPOINT
 
 
 @pytest.mark.unit
@@ -81,8 +83,23 @@ class TestAppConfig(CommonAssertions):
             "Expected to {} match {}".format(SECRET_KEY, SECRET_KEY_PATTERN.pattern),
         )
         self.assertIsInstance(BATCHER_KEY_PAIR, Key)
+        self.assertEqual(
+            VALIDATOR_ENDPOINT,
+            "tcp://{VALIDATOR_HOST}:{VALIDATOR_PORT}".format(
+                VALIDATOR_HOST=VALIDATOR_HOST, VALIDATOR_PORT=VALIDATOR_PORT
+            ),
+        )
+        self.assertEqual(
+            VALIDATOR_REST_ENDPOINT,
+            "http://{VALIDATOR_REST_HOST}:{VALIDATOR_REST_PORT}".format(
+                VALIDATOR_REST_HOST=VALIDATOR_REST_HOST,
+                VALIDATOR_REST_PORT=VALIDATOR_REST_PORT,
+            ),
+        )
 
-    @pytest.mark.skip("Allow default configuration for test, unmark this to enforce non-default .env configuration")
+    @pytest.mark.skip(
+        "Allow default configuration for test, unmark this to enforce non-default .env configuration"
+    )
     def test_non_default_config(self):
         self.assertNotEqual(
             AES_KEY,
