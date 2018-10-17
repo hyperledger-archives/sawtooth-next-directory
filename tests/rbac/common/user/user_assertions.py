@@ -1,4 +1,4 @@
-# Copyright 2018 Contributors to Hyperledger Sawtooth
+# Copyright contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,23 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM ubuntu:16.04
+import logging
+from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
- && echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
- && apt-get update \
- && apt-get install -y --allow-unauthenticated -q \
-        python3 \
-        python3-pip \
-        python3-sawtooth-sdk \
- && pip3 install \
-        rethinkdb \
-        grpcio-tools \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+LOGGER = logging.getLogger(__name__)
 
-WORKDIR /project/tmobile-rbac
 
-COPY . .
-
-CMD ["./bin/rbac-ledger-sync"]
+class UserAssertions(BatchAssertions):
+    def __init__(self, *args, **kwargs):
+        BatchAssertions.__init__(self, *args, **kwargs)

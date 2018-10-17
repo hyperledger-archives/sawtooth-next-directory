@@ -40,11 +40,6 @@ RUN pip3 install \
 ENV LC_ALL=en_US.UTF-8
 WORKDIR /project/tmobile-rbac
 
-# Note that the context must be set to the project's root directory
-COPY bin/protogen bin/protogen
-COPY protos/ protos/
-RUN bin/protogen
-
 COPY . .
 
 EXPOSE 8000/tcp

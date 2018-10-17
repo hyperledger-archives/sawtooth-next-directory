@@ -73,7 +73,6 @@ Docker containers are also available for developers, and are marked with a
 containers work compared to the defaults:
 
 - They do not need to be rebuilt when local files change
-- Protobuf files will need to be built locally
 - Some dependencies may need to be installed locally\*
 - A _Sawtooth shell_ container is included for testing
 - Sawtooth's blockchain REST API will be available at **http://localhost:8080**

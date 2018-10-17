@@ -10,9 +10,6 @@ __pycache__/
 *$py.class
 .pytest_cache/
 
-# Protobuf
-**/protobuf/
-
 # Jetbrains IDEs
 .idea/
 
