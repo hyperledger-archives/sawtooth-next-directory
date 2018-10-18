@@ -22,7 +22,7 @@ from sawtooth_rest_api.protobuf import transaction_pb2
 from rbac.addressing import addresser
 from rbac.addressing.addresser import AddressSpace
 from rbac.transaction_creation.common import Key
-from rbac.transaction_creation.protobuf import user_transaction_pb2, rbac_payload_pb2
+from rbac.common.protobuf import user_transaction_pb2, rbac_payload_pb2
 from tests.transactions.common import SIGNATURE_LENGTH
 from tests.transactions.common import SIGNATURE_PATTERN
 from rbac.transaction_creation.user_transaction_creation import create_user
