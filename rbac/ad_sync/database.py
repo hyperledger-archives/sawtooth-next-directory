@@ -53,49 +53,18 @@ class Database(object):
         """
         return r.db(self._name).table(table_name).insert(docs).run(self._conn)
 
-    def last_known_blocks(self, count):
-        """Fetches the ids of the specified number of most recent blocks
-        """
-        cursor = (
-            r.db(self._name)
-                .table("blocks")
-                .order_by("block_num")
-                .get_field("block_id")
-                .run(self._conn)
-        )
-
-        return list(cursor)[-count:]
-
-    def drop_fork(self, block_num):
-        """Deletes all resources from a particular block_num
-        """
-        block_results = (
-            r.db(self._name)
-                .table("blocks")
-                .filter(lambda rsc: rsc["block_num"].ge(block_num))
-                .delete()
-                .run(self._conn)
-        )
-
-        resource_results = (
-            r.db(self._name)
-                .table_list()
-                .for_each(
-                lambda table_name: r.branch(
-                    r.eq(table_name, "blocks"),
-                    [],
-                    r.eq(table_name, "auth"),
-                    [],
-                    r.db(self._name)
-                        .table(table_name)
-                        .filter(lambda rsc: rsc["start_block_num"].ge(block_num))
-                        .delete(),
-                )
-            )
-                .run(self._conn)
-        )
-
-        return {k: v + resource_results[k] for k, v in block_results.items()}
+    # def last_known_blocks(self, count):
+    #     """Fetches the ids of the specified number of most recent blocks
+    #     """
+    #     cursor = (
+    #         r.db(self._name)
+    #             .table("blocks")
+    #             .order_by("block_num")
+    #             .get_field("block_id")
+    #             .run(self._conn)
+    #     )
+    #
+    #     return list(cursor)[-count:]
 
     def get_table(self, table_name):
         """Returns a rethink table query, which can be added to, and
