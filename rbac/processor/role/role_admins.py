@@ -13,17 +13,20 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import logging
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.addressing import addresser
 
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import role_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import role_transaction_pb2
 
 from rbac.processor.role import role_validator
 from rbac.processor import state_accessor, proposal_validator, state_change
 
 from rbac.processor.role import role_operation
+
+LOGGER = logging.getLogger(__name__)
 
 
 def apply_propose(header, payload, state):
@@ -107,6 +110,7 @@ def apply_propose_remove(header, payload, state):
 
 
 def apply_confirm(header, payload, state):
+
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm_payload.ParseFromString(payload.content)
 
@@ -168,11 +172,15 @@ def apply_reject_remove(header, payload, state):
             header, payload, state
         )
     )
+
+
 def hierarchical_approve(header, payload, state):
     hierarchical_decide(header, payload, state, True)
 
+
 def hierarchical_reject(header, payload, state):
     hierarchical_decide(header, payload, state, False)
+
 
 def hierarchical_decide(header, payload, state, isApproval):
     confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
@@ -182,4 +190,6 @@ def hierarchical_decide(header, payload, state, isApproval):
         role_id=confirm.role_id, user_id=confirm.on_behalf_id
     )
 
-    role_operation.hierarchical_decide(header, confirm, state, txn_signer_admin_address, isApproval)
+    role_operation.hierarchical_decide(
+        header, confirm, state, txn_signer_admin_address, isApproval
+    )

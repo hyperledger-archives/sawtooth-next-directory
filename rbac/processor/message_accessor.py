@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.processor import protobuf
+from rbac.common import protobuf
 
 
 def add_role_rel_to_container(container, role_id, identifiers):
@@ -124,4 +124,3 @@ def is_in_role_attributes_container(container, identifier):
         if role_attr.role_id == identifier:
             return True
     return False
-    

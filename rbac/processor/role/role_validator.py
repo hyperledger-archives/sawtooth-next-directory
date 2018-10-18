@@ -15,7 +15,7 @@
 
 from rbac.addressing import addresser
 from rbac.processor import message_accessor, state_accessor, proposal_validator
-from rbac.processor.protobuf import role_state_pb2
+from rbac.common.protobuf import role_state_pb2
 from rbac.processor.user import user_validator
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
@@ -196,6 +196,7 @@ def _role_already_exists(state_return, role_id):
         container=role_attr_container, identifier=role_id
     )
 
+
 def get_state_entries(header, confirm, txn_signer_rel_address, state):
     """Fetch a collection of state entries veri
 
@@ -225,14 +226,20 @@ def get_state_entries(header, confirm, txn_signer_rel_address, state):
             "is not open".format(confirm.proposal_id)
         )
 
-    verify_user_with_role_permission_on_proposal(proposal_address, 
-        header.signer_public_key, 
-        confirm.role_id, txn_signer_rel_address, state)
+    verify_user_with_role_permission_on_proposal(
+        proposal_address,
+        header.signer_public_key,
+        confirm.role_id,
+        txn_signer_rel_address,
+        state,
+    )
 
     return state_entries
 
 
-def verify_user_with_role_permission_on_proposal(proposal_address, user_id, role_id, txn_signer_rel_address, state):
+def verify_user_with_role_permission_on_proposal(
+    proposal_address, user_id, role_id, txn_signer_rel_address, state
+):
 
     state_entries = state_accessor.get_state(
         state, [txn_signer_rel_address, proposal_address]
