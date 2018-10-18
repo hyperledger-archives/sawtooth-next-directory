@@ -46,3 +46,4 @@ if __name__ == '__main__':
     make_protobuf('rbac/server/api', 'protobuf')
     make_protobuf('rbac/server/db', 'protobuf')
     make_protobuf('rbac/ledger_sync', 'protobuf')
+    make_protobuf('rbac/common', 'protobuf')
