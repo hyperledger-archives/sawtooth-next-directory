@@ -43,6 +43,4 @@ def make_protobuf(path, pkg_name):
 if __name__ == '__main__':
     make_protobuf('rbac/processor', 'protobuf')
     make_protobuf('rbac/transaction_creation', 'protobuf')
-    make_protobuf('rbac/server/api', 'protobuf')
-    make_protobuf('rbac/server/db', 'protobuf')
     make_protobuf('rbac/common', 'protobuf')
