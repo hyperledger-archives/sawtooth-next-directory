@@ -23,8 +23,8 @@ from rbac.processor import state_change
 from rbac.processor import state_accessor
 from rbac.processor.role import role_operation
 
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import role_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import role_transaction_pb2
 
 
 def apply_propose(header, payload, state):
@@ -106,11 +106,14 @@ def apply_propose_remove(header, payload, state):
         state=state,
     )
 
+
 def hierarchical_approve(header, payload, state):
     hierarchical_decide(header, payload, state, True)
 
+
 def hierarchical_reject(header, payload, state):
     hierarchical_decide(header, payload, state, False)
+
 
 def hierarchical_decide(header, payload, state, isApproval):
     confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
@@ -120,7 +123,10 @@ def hierarchical_decide(header, payload, state, isApproval):
         role_id=confirm.role_id, user_id=confirm.on_behalf_id
     )
 
-    role_operation.hierarchical_decide(header, confirm, state, txn_signer_owners_address, isApproval)
+    role_operation.hierarchical_decide(
+        header, confirm, state, txn_signer_owners_address, isApproval
+    )
+
 
 def apply_confirm(header, payload, state):
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
