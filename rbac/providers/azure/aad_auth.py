@@ -24,7 +24,7 @@ AAD_AUTH_URL = 'https://login.microsoftonline.com/{}'.format(TENANT_ID)
 TOKEN_ENDPOINT = '/oauth2/v2.0/token'
 
 
-class AADAuth:
+class AadAuth:
     """Class method for Azure Active Directory Authentication."""
 
     graph_token = None
@@ -50,7 +50,6 @@ class AADAuth:
             if diff < 3598:
                 return True
         return False
-
 
     def check_token(self):
         """Check it Token exists and calls for and caches as global variable if it does not."""
