@@ -16,7 +16,7 @@
 from base64 import b64decode
 from uuid import uuid4
 from rbac.addressing import addresser
-from rbac.transaction_creation.protobuf import user_state_pb2
+from rbac.common.protobuf import user_state_pb2
 from rbac.transaction_creation.user_transaction_creation import create_user
 from rbac.transaction_creation import (
     task_transaction_creation,
