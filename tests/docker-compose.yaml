@@ -27,7 +27,7 @@ services:
     command: bin/rbac-tp -vv tcp://validator:4004
     environment:
       - HOST=${HOST:-localhost}
-      
+
   settings-tp:
     image: hyperledger/sawtooth-settings-tp:1.0
     command: settings-tp -v --connect tcp://validator:4004

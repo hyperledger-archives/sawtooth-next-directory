@@ -23,15 +23,15 @@ from sawtooth_sdk.processor.log import init_console_logging
 from rbac.processor.event_handler import RBACTransactionHandler
 
 
-def getenv(name, default):
+def get_env_with_fallback(name, default):
     value = os.getenv(name)
     if value is None or value is "":
         return default
     return value
 
 
-VALIDATOR_HOST = getenv("VALIDATOR_HOST", "validator")
-VALIDATOR_PORT = getenv("VALIDATOR_PORT", "4004")
+VALIDATOR_HOST = get_env_with_fallback("VALIDATOR_HOST", "validator")
+VALIDATOR_PORT = get_env_with_fallback("VALIDATOR_PORT", "4004")
 
 
 def parse_args(args):

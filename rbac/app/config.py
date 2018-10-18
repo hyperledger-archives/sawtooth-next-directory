@@ -21,7 +21,7 @@ from rbac.common.crypto.secrets import generate_secret_key
 LOGGER = logging.getLogger(__name__)
 
 
-def getenv(name, default):
+def get_env_with_fallback(name, default):
     value = os.getenv(name)
     if value is None or value is "":
         return default
@@ -43,24 +43,24 @@ DEFAULT_CONFIG = {
     "AES_KEY": "1111111111111111111111111111111111111111111111111111111111111111",
 }
 
-SERVER_HOST = getenv("SERVER_HOST", DEFAULT_CONFIG["SERVER_HOST"])
-SERVER_PORT = getenv("SERVER_PORT", DEFAULT_CONFIG["SERVER_PORT"])
-VALIDATOR_HOST = getenv("VALIDATOR_HOST", DEFAULT_CONFIG["VALIDATOR_HOST"])
-VALIDATOR_PORT = getenv("VALIDATOR_PORT", DEFAULT_CONFIG["VALIDATOR_PORT"])
+SERVER_HOST = get_env_with_fallback("SERVER_HOST", DEFAULT_CONFIG["SERVER_HOST"])
+SERVER_PORT = get_env_with_fallback("SERVER_PORT", DEFAULT_CONFIG["SERVER_PORT"])
+VALIDATOR_HOST = get_env_with_fallback("VALIDATOR_HOST", DEFAULT_CONFIG["VALIDATOR_HOST"])
+VALIDATOR_PORT = get_env_with_fallback("VALIDATOR_PORT", DEFAULT_CONFIG["VALIDATOR_PORT"])
 VALIDATOR_TIMEOUT = int(
-    getenv("VALIDATOR_TIMEOUT", DEFAULT_CONFIG["VALIDATOR_TIMEOUT"])
+    get_env_with_fallback("VALIDATOR_TIMEOUT", DEFAULT_CONFIG["VALIDATOR_TIMEOUT"])
 )
-VALIDATOR_REST_HOST = getenv(
+VALIDATOR_REST_HOST = get_env_with_fallback(
     "VALIDATOR_REST_HOST", DEFAULT_CONFIG["VALIDATOR_REST_HOST"]
 )
-VALIDATOR_REST_PORT = getenv(
+VALIDATOR_REST_PORT = get_env_with_fallback(
     "VALIDATOR_REST_PORT", DEFAULT_CONFIG["VALIDATOR_REST_PORT"]
 )
-DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
-AES_KEY = getenv("AES_KEY", DEFAULT_CONFIG["AES_KEY"])
-SECRET_KEY = getenv("SECRET_KEY", DEFAULT_CONFIG["SECRET_KEY"])
+DB_HOST = get_env_with_fallback("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
+DB_PORT = get_env_with_fallback("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
+DB_NAME = get_env_with_fallback("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+AES_KEY = get_env_with_fallback("AES_KEY", DEFAULT_CONFIG["AES_KEY"])
+SECRET_KEY = get_env_with_fallback("SECRET_KEY", DEFAULT_CONFIG["SECRET_KEY"])
 
 if SECRET_KEY is DEFAULT_CONFIG["SECRET_KEY"]:
     LOGGER.warning(
