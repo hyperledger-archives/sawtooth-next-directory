@@ -19,12 +19,12 @@ from google.protobuf.json_format import MessageToDict
 
 from rbac.addressing.addresser import address_is
 from rbac.addressing.addresser import AddressSpace
-from rbac.ledger_sync.protobuf.proposal_state_pb2 import ProposalsContainer
-from rbac.ledger_sync.protobuf.role_state_pb2 import RoleAttributesContainer
-from rbac.ledger_sync.protobuf.role_state_pb2 import RoleRelationshipContainer
-from rbac.ledger_sync.protobuf.task_state_pb2 import TaskAttributesContainer
-from rbac.ledger_sync.protobuf.task_state_pb2 import TaskRelationshipContainer
-from rbac.ledger_sync.protobuf.user_state_pb2 import UserContainer
+from rbac.common.protobuf.proposal_state_pb2 import ProposalsContainer
+from rbac.common.protobuf.role_state_pb2 import RoleAttributesContainer
+from rbac.common.protobuf.role_state_pb2 import RoleRelationshipContainer
+from rbac.common.protobuf.task_state_pb2 import TaskAttributesContainer
+from rbac.common.protobuf.task_state_pb2 import TaskRelationshipContainer
+from rbac.common.protobuf.user_state_pb2 import UserContainer
 
 
 DESERIALIZERS = {
