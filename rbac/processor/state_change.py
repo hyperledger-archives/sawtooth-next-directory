@@ -13,13 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import logging
 from rbac.processor import message_accessor, state_accessor
 from rbac.addressing import addresser
 
-from rbac.processor.protobuf import proposal_state_pb2, task_state_pb2, role_state_pb2
-from rbac.processor.protobuf import user_state_pb2
-
-import logging
+from rbac.common.protobuf import proposal_state_pb2, task_state_pb2, role_state_pb2
+from rbac.common.protobuf import user_state_pb2
 
 LOGGER = logging.getLogger(__name__)
 
@@ -331,6 +330,7 @@ def reject_role_action(state_entries, header, reject, state, rel_type="user_id")
 
     state_accessor.set_state(state, address_values)
 
+
 def confirm_new_user(create_user, state, manager_id=None):
     user_container = user_state_pb2.UserContainer()
     user = user_state_pb2.User(
@@ -358,10 +358,10 @@ def reject_state_change(container, proposal, closer, reason, address, state):
     proposal.closer = closer
     proposal.close_reason = reason
 
-    state_accessor.set_state(state, {address: container.SerializeToString()})    
+    state_accessor.set_state(state, {address: container.SerializeToString()})
 
 
-def record_decision(state, header, confirm, isApproval): 
+def record_decision(state, header, confirm, isApproval):
 
     """
         Record decisions made and who made it in the proposal object
@@ -369,7 +369,8 @@ def record_decision(state, header, confirm, isApproval):
     on_behalf_id = confirm.on_behalf_id
 
     proposal_address = addresser.make_proposal_address(
-        object_id=confirm.role_id, related_id=confirm.user_id)
+        object_id=confirm.role_id, related_id=confirm.user_id
+    )
 
     state_entries = state_accessor.get_state(state, [proposal_address])
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -388,15 +389,12 @@ def record_decision(state, header, confirm, isApproval):
         record.rejector = header.signer_public_key
         record.on_behalf = on_behalf_id
 
-    LOGGER.info("recording decision from {}, on behalf of {} for proposal {}".format(
-        header.signer_public_key,
-        confirm.on_behalf_id,
-        confirm.proposal_id))
-
-    state_accessor.set_state(
-        state, 
-        {
-            proposal_address: proposal_container.SerializeToString()
-        }
+    LOGGER.info(
+        "recording decision from {}, on behalf of {} for proposal {}".format(
+            header.signer_public_key, confirm.on_behalf_id, confirm.proposal_id
+        )
     )
 
+    state_accessor.set_state(
+        state, {proposal_address: proposal_container.SerializeToString()}
+    )

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
- 
+
 from rbac.addressing import addresser
 from rbac.processor import proposal_validator
 from rbac.processor import message_accessor
@@ -23,6 +23,7 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 TIMEOUT_SECONDS = 2
 ERROR_MESSAGE_TIMEOUT = "Timeout after %s seconds during get from state"
+
 
 def get_state_entry(state_entries, address):
     """Get a StateEntry by address or raise KeyError if it is not in
@@ -58,18 +59,20 @@ def set_state(state, entries):
     except FutureTimeoutError:
         raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
 
+
 def get_user_from_id(state, user_id):
     user_address = addresser.make_user_address(user_id)
-    state_entries = get_state(
-        state, [user_address]
-    )
+    state_entries = get_state(state, [user_address])
     user_entry = get_state_entry(state_entries, user_address)
-    return message_accessor.get_user_from_container(message_accessor.get_user_container(user_entry), user_id)
+    return message_accessor.get_user_from_container(
+        message_accessor.get_user_container(user_entry), user_id
+    )
 
-def is_hierarchical_manager_of_user(state, header, user_id):  
-    while(True):
+
+def is_hierarchical_manager_of_user(state, header, user_id):
+    while True:
         user = get_user_from_id(state, user_id)
-        if header.signer_public_key == user_id: 
+        if header.signer_public_key == user_id:
             return True
         if not user.manager_id:
             return False

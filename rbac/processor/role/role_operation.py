@@ -22,10 +22,11 @@ from rbac.processor.role import role_validator
 from rbac.processor import state_change
 from rbac.processor import state_accessor
 
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import role_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import role_transaction_pb2
 
-def hierarchical_decide(header, confirm, state, txn_signer_rel_address, isApproval): 
+
+def hierarchical_decide(header, confirm, state, txn_signer_rel_address, isApproval):
     proposal_address = addresser.make_proposal_address(
         object_id=confirm.role_id, related_id=confirm.user_id
     )
@@ -42,17 +43,24 @@ def hierarchical_decide(header, confirm, state, txn_signer_rel_address, isApprov
             "is not open".format(confirm.proposal_id)
         )
 
-    #verify on_behalf user has the permission to perform the action
-    role_validator.verify_user_with_role_permission_on_proposal(proposal_address, 
-        confirm.on_behalf_id, 
-        confirm.role_id, txn_signer_rel_address, state)
+    # verify on_behalf user has the permission to perform the action
+    role_validator.verify_user_with_role_permission_on_proposal(
+        proposal_address,
+        confirm.on_behalf_id,
+        confirm.role_id,
+        txn_signer_rel_address,
+        state,
+    )
 
-    #verify current user is in the manager hierachy of on_behalf user
-    if not state_accessor.is_hierarchical_manager_of_user(state, header, confirm.on_behalf_id):
+    # verify current user is in the manager hierachy of on_behalf user
+    if not state_accessor.is_hierarchical_manager_of_user(
+        state, header, confirm.on_behalf_id
+    ):
         raise InvalidTransaction(
             "Signer {} is not a higher manager of {}. Signer cannot "
-            "make decision on behalf of {}"
-            .format(header.signer_public_key, confirm.on_behalf_id, confirm.on_behalf_id)
+            "make decision on behalf of {}".format(
+                header.signer_public_key, confirm.on_behalf_id, confirm.on_behalf_id
+            )
         )
 
     state_change.record_decision(state, header, confirm, isApproval)
