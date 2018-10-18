@@ -31,18 +31,18 @@ LOGGER = logging.getLogger(__name__)
 KNOWN_COUNT = 15
 
 
-def getenv(name, default):
+def get_env_with_fallback(name, default):
     value = os.getenv(name)
     if value is None or value is "":
         return default
     return value
 
 
-VALIDATOR_HOST = getenv("VALIDATOR_HOST", "validator")
-VALIDATOR_PORT = getenv("VALIDATOR_PORT", "4004")
-DB_HOST = getenv("DB_HOST", "rethink")
-DB_PORT = getenv("DB_PORT", "28015")
-DB_NAME = getenv("DB_NAME", "rbac")
+VALIDATOR_HOST = get_env_with_fallback("VALIDATOR_HOST", "validator")
+VALIDATOR_PORT = get_env_with_fallback("VALIDATOR_PORT", "4004")
+DB_HOST = get_env_with_fallback("DB_HOST", "rethink")
+DB_PORT = get_env_with_fallback("DB_PORT", "28015")
+DB_NAME = get_env_with_fallback("DB_NAME", "rbac")
 
 
 def parse_args(args):
