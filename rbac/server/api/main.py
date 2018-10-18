@@ -207,7 +207,6 @@ def main():
     app.blueprint(USERS_BP)
     app.blueprint(APP_BP)
 
-
     @app.middleware("request")
     async def handle_options(request):  # pylint: disable=unused-variable
         if request.method == "OPTIONS":
