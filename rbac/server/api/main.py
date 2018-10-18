@@ -34,6 +34,7 @@ from zmq.asyncio import ZMQEventLoop
 
 from rbac.server.db import db_utils
 from rbac.server.api.auth import AUTH_BP
+from rbac.server.api.aad_sync import AAD_SYNC_BP
 from rbac.server.api.blocks import BLOCKS_BP
 from rbac.server.api.errors import ERRORS_BP
 from rbac.server.api.proposals import PROPOSALS_BP
@@ -206,6 +207,8 @@ def main():
     app.blueprint(TASKS_BP)
     app.blueprint(USERS_BP)
     app.blueprint(APP_BP)
+    app.blueprint(AAD_SYNC_BP)
+
 
     @app.middleware("request")
     async def handle_options(request):  # pylint: disable=unused-variable

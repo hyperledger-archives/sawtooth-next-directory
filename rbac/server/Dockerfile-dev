@@ -34,7 +34,8 @@ RUN pip3 install \
     itsdangerous \
     rethinkdb \
     sanic==0.7.0 \
-    cryptography
+    cryptography \
+    requests
 
 WORKDIR /project/tmobile-rbac
 
