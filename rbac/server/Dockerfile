@@ -33,6 +33,7 @@ RUN pip3 install \
         rethinkdb \
         sanic==0.7.0 \
         cryptography \
+        requests \
  && locale-gen en_US.UTF-8 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
