@@ -22,15 +22,18 @@ import os
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError
 
-def getenv(name, default):
+
+def get_env_with_fallback(name, default):
     value = os.getenv(name)
-    if (value is None or value is ""):
+    if value is None or value is "":
         return default
     return value
 
-DB_HOST = getenv('DB_HOST', 'localhost')
-DB_PORT = getenv('DB_PORT', '28015')
-DB_NAME = getenv('DB_NAME', 'rbac')
+
+DB_HOST = get_env_with_fallback('DB_HOST', 'localhost')
+DB_PORT = get_env_with_fallback('DB_PORT', '28015')
+DB_NAME = get_env_with_fallback('DB_NAME', 'rbac')
+
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
@@ -68,6 +71,9 @@ def setup_db(host, port, name):
         r.db(name).table_create('proposals').run(conn)
         r.db(name).table('proposals').index_create('proposal_id').run(conn)
         r.db(name).table('proposals').index_create('opener').run(conn)
+
+        print('Creating table: queue_outbound')
+        r.db(name).table_create('queue_outbound').run(conn)
 
         print('Creating table and sub-tables: tasks')
         task_tables = r.expr(['tasks', 'task_admins', 'task_owners'])
