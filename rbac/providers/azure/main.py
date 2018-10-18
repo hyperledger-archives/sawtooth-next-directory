@@ -14,27 +14,21 @@
 # ------------------------------------------------------------------------------
 
 import requests
-from sanic.response import json
-from sanic import Blueprint
-from rbac.server.api.aad_auth import AADAuth
+from rbac.providers.azure.aad_auth import AadAuth
 
 GRAPH_URL = 'https://graph.microsoft.com/v1.0/'
-AUTH = AADAuth()
-
-AAD_SYNC_BP = Blueprint("aad_sync")
+AUTH = AadAuth()
 
 
-@AAD_SYNC_BP.get('groups')
-def groups(request):
+def fetch_groups():
     """JSON payload for all Groups in Azure Active Directory."""
     headers = AUTH.check_token()
     groups_payload = requests.get(url=GRAPH_URL + 'groups', headers=headers)
-    return json(groups_payload.json())
+    return groups_payload.json()
 
 
-@AAD_SYNC_BP.get('users')
-def users(request):
+def fetch_users():
     """JSON payload for all Users in Azure Active Directory."""
     headers = AUTH.check_token()
-    groups_payload = requests.get(url=GRAPH_URL + 'users', headers=headers)
-    return json(groups_payload.json())
+    users_payload = requests.get(url=GRAPH_URL + 'users', headers=headers)
+    return users_payload.json()

@@ -12,36 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+FROM python:3.7
 
-FROM ubuntu:16.04
+RUN pip install \
+    requests
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
- && echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
- && apt-get update \
- && apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3 \
-        python3-pip \
-        python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
-
-RUN pip3 install -U pip setuptools
-
-RUN pip3 install \
-        grpcio-tools \
-        itsdangerous \
-        rethinkdb \
-        sanic==0.7.0 \
-        cryptography \
- && locale-gen en_US.UTF-8 \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-ENV LC_ALL=en_US.UTF-8
 WORKDIR /project/tmobile-rbac
 
 COPY . .
 
-EXPOSE 8000/tcp
-
-CMD ["./bin/rbac-server"]
+CMD [ "./bin/rbac-providers-azure" ]
