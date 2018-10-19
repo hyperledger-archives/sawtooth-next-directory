@@ -17,8 +17,8 @@ import pytest
 import unittest
 import logging
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
-from sawtooth_rest_api.protobuf import batch_pb2
-from sawtooth_rest_api.protobuf import transaction_pb2
+from sawtooth_sdk.protobuf import batch_pb2
+from sawtooth_sdk.protobuf import transaction_pb2
 from rbac.addressing import addresser
 from rbac.addressing.addresser import AddressSpace
 from rbac.transaction_creation.common import Key
