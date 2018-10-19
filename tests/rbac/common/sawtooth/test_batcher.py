@@ -19,8 +19,8 @@ import pytest
 from rbac.common.crypto.keys import Key
 from rbac.app.config import BATCHER_KEY_PAIR
 from rbac.addressing.addresser import make_user_address
-from rbac.transaction_creation.protobuf.rbac_payload_pb2 import RBACPayload
-from rbac.transaction_creation.protobuf import user_transaction_pb2
+from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth.batcher import Batcher
 from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
 

@@ -120,7 +120,6 @@ class RBACTransactionHandler(object):
         return [addresser.NS]
 
     def apply(self, transaction, state):
-        # try:
         payload = RBACPayload()
         payload.ParseFromString(transaction.payload)
 
@@ -156,9 +155,6 @@ class RBACTransactionHandler(object):
 
         else:
             raise InvalidTransaction("Message type unknown.")
-        # except Exception as exe:  # pylint: disable=broad-except
-        #    LOGGER.error("Error: %s", exe)
-        #    raise InvalidTransaction("Exception {}".format(exe))
 
 
 def apply_create(header, payload, state):

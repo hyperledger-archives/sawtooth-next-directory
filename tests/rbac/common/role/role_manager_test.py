@@ -19,13 +19,13 @@ import random
 from uuid import uuid4
 
 from rbac.common.crypto.keys import Key
-from rbac.processor.protobuf import user_state_pb2
+from rbac.common.protobuf import user_state_pb2
 from tests.rbac.common.user.user_manager_test import UserManagerTest
 from rbac.common.role.role_manager import RoleManager
 
 # from rbac.common.proposal.proposal_manager import ProposalManager
 # from tests.rbac.common.user.test_user_manager import TestUserManager
-from rbac.transaction_creation.protobuf import role_transaction_pb2
+from rbac.common.protobuf import role_transaction_pb2
 from tests.rbac.common.manager.test_assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
