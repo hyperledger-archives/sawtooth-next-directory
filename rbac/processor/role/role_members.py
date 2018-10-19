@@ -20,7 +20,6 @@ from rbac.addressing import addresser
 from rbac.processor import proposal_validator
 from rbac.processor.role import role_validator
 from rbac.processor import state_change
-from rbac.processor import state_accessor
 from rbac.processor.role import role_operation
 
 from rbac.common.protobuf import proposal_state_pb2

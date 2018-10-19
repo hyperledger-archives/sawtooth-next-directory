@@ -22,9 +22,6 @@ from rbac.processor.role import role_validator
 from rbac.processor import state_change
 from rbac.processor import state_accessor
 
-from rbac.common.protobuf import proposal_state_pb2
-from rbac.common.protobuf import role_transaction_pb2
-
 
 def hierarchical_decide(header, confirm, state, txn_signer_rel_address, isApproval):
     proposal_address = addresser.make_proposal_address(
