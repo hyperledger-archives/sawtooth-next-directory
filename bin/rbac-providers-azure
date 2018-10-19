@@ -18,12 +18,10 @@
 import os
 import sys
 
-
 TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, TOP_DIR)
 
-from rbac.providers.azure.main import fetch_users
+from rbac.providers.azure.main import initialize_aad_sync
 
 if __name__ == "__main__":
-    users = fetch_users()
-    print(users)
+    initialize_aad_sync()
