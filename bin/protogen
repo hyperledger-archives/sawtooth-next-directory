@@ -24,23 +24,23 @@ from grpc.tools.protoc import main as _protoc
 TOP_DIR = DIRNAME(DIRNAME(__file__))
 
 
-def make_protobuf(path, pkg_name):
-    OUT_DIR = os.path.join(TOP_DIR, path, pkg_name)
-    os.makedirs(OUT_DIR, exist_ok=True)
+def make_protobuf(src, dest):
+    src = os.path.join(TOP_DIR, src)
+    dest = os.path.join(TOP_DIR, dest)
+    match = os.path.join(src, '*.proto')
+    os.makedirs(dest, exist_ok=True)
 
-    init_py = os.path.join(OUT_DIR, '__init__.py')
+    init_py = os.path.join(dest, '__init__.py')
 
     if not os.path.exists(init_py):
         with open(init_py, mode='w'):
             pass
 
     _protoc([__file__,
-             '-I={}'.format(os.path.join(TOP_DIR, 'protos')),
-             '--python_out={}'.format(OUT_DIR)] +
-            glob(os.path.join(TOP_DIR, 'protos/*.proto')))
+             '-I={}'.format(src),
+             '--python_out={}'.format(dest)] +
+            glob(match))
 
 
 if __name__ == '__main__':
-    make_protobuf('rbac/processor', 'protobuf')
-    make_protobuf('rbac/transaction_creation', 'protobuf')
-    make_protobuf('rbac/common', 'protobuf')
+    make_protobuf('rbac/common/protos', 'rbac/common/protobuf')
