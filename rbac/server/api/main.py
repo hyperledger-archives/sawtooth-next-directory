@@ -24,7 +24,7 @@ from sanic import Sanic
 from sanic import Blueprint
 from sanic.response import text
 
-from sawtooth_rest_api.messaging import Connection
+from rbac.common.sawtooth.messaging import Connection
 
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import generate_aes_key
