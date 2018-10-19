@@ -43,4 +43,8 @@ def make_protobuf(src, dest):
 
 
 if __name__ == '__main__':
-    make_protobuf('rbac/common/protos', 'rbac/common/protobuf')
+    make_protobuf('rbac/common/user', 'rbac/common/protobuf')
+    make_protobuf('rbac/common/role', 'rbac/common/protobuf')
+    make_protobuf('rbac/common/task', 'rbac/common/protobuf')
+    make_protobuf('rbac/common/proposal', 'rbac/common/protobuf')
+    make_protobuf('rbac/common/sawtooth', 'rbac/common/protobuf')
