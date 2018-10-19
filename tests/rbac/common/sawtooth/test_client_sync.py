@@ -20,10 +20,10 @@ import pytest
 from rbac.addressing import addresser
 from rbac.addressing.addresser import AddressSpace
 from rbac.common.sawtooth.client_sync import ClientSync
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import role_state_pb2
-from rbac.processor.protobuf import task_state_pb2
-from rbac.processor.protobuf import user_state_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import role_state_pb2
+from rbac.common.protobuf import task_state_pb2
+from rbac.common.protobuf import user_state_pb2
 from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
 
 LOGGER = logging.getLogger(__name__)
