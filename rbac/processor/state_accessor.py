@@ -14,12 +14,10 @@
 # -----------------------------------------------------------------------------
 
 from rbac.addressing import addresser
-from rbac.processor import proposal_validator
 from rbac.processor import message_accessor
 
 from sawtooth_sdk.messaging.future import FutureTimeoutError
 from sawtooth_sdk.processor.exceptions import InternalError
-from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 TIMEOUT_SECONDS = 2
 ERROR_MESSAGE_TIMEOUT = "Timeout after %s seconds during get from state"

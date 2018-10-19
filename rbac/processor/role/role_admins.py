@@ -22,7 +22,7 @@ from rbac.common.protobuf import proposal_state_pb2
 from rbac.common.protobuf import role_transaction_pb2
 
 from rbac.processor.role import role_validator
-from rbac.processor import state_accessor, proposal_validator, state_change
+from rbac.processor import proposal_validator, state_change
 
 from rbac.processor.role import role_operation
 
