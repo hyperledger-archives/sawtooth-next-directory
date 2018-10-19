@@ -390,7 +390,7 @@ def record_decision(state, header, confirm, isApproval):
         record.on_behalf = on_behalf_id
 
     LOGGER.info(
-        "recording decision from {}, on behalf of {} for proposal {}".format(
+        "recording decision from {}, on behalf of {} for proposal {}".format(  # pylint: disable=logging-format-interpolation
             header.signer_public_key, confirm.on_behalf_id, confirm.proposal_id
         )
     )
