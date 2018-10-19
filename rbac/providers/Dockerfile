@@ -15,7 +15,8 @@
 FROM python:3.7
 
 RUN pip install \
-    requests
+    requests    \
+    rethinkdb
 
 WORKDIR /project/tmobile-rbac
 
