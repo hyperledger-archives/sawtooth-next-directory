@@ -18,13 +18,10 @@ import requests
 import datetime as dt
 
 CLIENT_ID = os.environ.get('CLIENT_ID')
-CLIENT_ASSERTION = os.environ.get('CLIENT_ASSERTION')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 TENANT_ID = os.environ.get('TENANT_ID')
 AAD_AUTH_URL = 'https://login.microsoftonline.com/{}'.format(TENANT_ID)
 TOKEN_ENDPOINT = '/oauth2/v2.0/token'
-GRANT_TYPE = 'client_credentials'
-CLIENT_ASSERTION_TYPE = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer'
-SCOPE = 'https://graph.microsoft.com/.default'
 
 
 class AadAuth:
@@ -38,11 +35,10 @@ class AadAuth:
 
     def get_token(self):
         """Get an access Token for Azure Active Directory Graph API."""
-        data = {'grant_type': GRANT_TYPE,
-                'client_id': CLIENT_ID,
-                'client_assertion_type': CLIENT_ASSERTION_TYPE,
-                'client_assertion': CLIENT_ASSERTION,
-                'scope': SCOPE}
+        data = {'client_id': CLIENT_ID,
+                'scope': 'https://graph.microsoft.com/.default',
+                'client_secret': CLIENT_SECRET,
+                'grant_type': 'client_credentials'}
         response = requests.post(url=AAD_AUTH_URL + TOKEN_ENDPOINT, data=data)
         return response
 
@@ -61,6 +57,4 @@ class AadAuth:
             response = self.get_token()
             self.token_creation_timestamp = dt.datetime.now()
             self.graph_token = response.json()['access_token']
-        return {'Authorization': self.graph_token, 
-                'Accept': 'application/json', 
-                'Host': 'graph.microsoft.com'}
+        return {'Authorization': self.graph_token, 'Accept': 'application/json'}

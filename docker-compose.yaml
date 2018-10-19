@@ -47,7 +47,7 @@ services:
     image: rbac-provider-azure-production:${ISOLATION_ID-latest}
     environment:
       - CLIENT_ID=${CLIENT_ID}
-      - CLIENT_ASSERTION=${CLIENT_ASSERTION}
+      - CLIENT_SECRET=${CLIENT_SECRET}
       - TENANT_ID=${TENANT_ID}
     command: ./bin/rbac-providers-azure
 
