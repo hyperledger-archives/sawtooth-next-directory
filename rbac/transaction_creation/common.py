@@ -16,8 +16,8 @@
 import hashlib
 from uuid import uuid4
 
-from sawtooth_rest_api.protobuf import batch_pb2
-from sawtooth_rest_api.protobuf import transaction_pb2
+from sawtooth_sdk.protobuf import batch_pb2
+from sawtooth_sdk.protobuf import transaction_pb2
 
 import sawtooth_signing
 from sawtooth_signing import CryptoFactory
