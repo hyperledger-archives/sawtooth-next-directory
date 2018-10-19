@@ -16,9 +16,9 @@
 import logging
 from hashlib import sha512
 from uuid import uuid4
-from sawtooth_rest_api.protobuf import batch_pb2
-from sawtooth_rest_api.protobuf import client_batch_submit_pb2
-from sawtooth_rest_api.protobuf import transaction_pb2
+from sawtooth_sdk.protobuf import batch_pb2
+from sawtooth_sdk.protobuf import client_batch_submit_pb2
+from sawtooth_sdk.protobuf import transaction_pb2
 from rbac.addressing import addresser
 from rbac.common.protobuf import rbac_payload_pb2
 from rbac.app.config import BATCHER_KEY_PAIR
