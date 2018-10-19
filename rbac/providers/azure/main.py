@@ -14,21 +14,25 @@
 # ------------------------------------------------------------------------------
 
 import requests
+import os
 from rbac.providers.azure.aad_auth import AadAuth
 
 GRAPH_URL = 'https://graph.microsoft.com/v1.0/'
 AUTH = AadAuth()
+AUTH_TYPE = os.environ.get('AUTH_TYPE')
 
 
 def fetch_groups():
     """JSON payload for all Groups in Azure Active Directory."""
-    headers = AUTH.check_token()
-    groups_payload = requests.get(url=GRAPH_URL + 'groups', headers=headers)
-    return groups_payload.json()
+    headers = AUTH.check_token(AUTH_TYPE)
+    if headers is not None:
+        groups_payload = requests.get(url=GRAPH_URL + 'groups', headers=headers)
+        return groups_payload.json()
 
 
 def fetch_users():
     """JSON payload for all Users in Azure Active Directory."""
-    headers = AUTH.check_token()
-    users_payload = requests.get(url=GRAPH_URL + 'users', headers=headers)
-    return users_payload.json()
+    headers = AUTH.check_token(AUTH_TYPE)
+    if headers is not None:
+        users_payload = requests.get(url=GRAPH_URL + 'users', headers=headers)
+        return users_payload.json()
