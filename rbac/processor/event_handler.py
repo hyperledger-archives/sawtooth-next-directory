@@ -44,7 +44,7 @@ ROLE_PROPOSE = [
 
 ROLE_CONFIRM = [
     RBACPayload.CONFIRM_ADD_ROLE_TASKS,
-    RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
+    RBACPayload.APPROVE_ADD_ROLE_MEMBERS,
     RBACPayload.CONFIRM_ADD_ROLE_OWNERS,
     RBACPayload.CONFIRM_ADD_ROLE_ADMINS,
     RBACPayload.CONFIRM_REMOVE_ROLE_TASKS,
@@ -207,7 +207,7 @@ def apply_role_confirm(header, payload, state):
     elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_OWNERS:
         role_owners.apply_confirm(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_MEMBERS:
+    elif payload.message_type == RBACPayload.APPROVE_ADD_ROLE_MEMBERS:
         role_members.apply_confirm(header, payload, state)
 
     elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_TASKS:

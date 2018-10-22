@@ -17,7 +17,6 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.addressing import addresser
 
-from rbac.processor import proposal_validator
 from rbac.processor.role import role_validator
 from rbac.processor import state_change
 from rbac.processor.role import role_operation

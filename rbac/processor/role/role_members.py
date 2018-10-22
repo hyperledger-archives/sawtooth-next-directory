@@ -17,7 +17,6 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.addressing import addresser
 
-from rbac.processor import proposal_validator
 from rbac.processor.role import role_validator
 from rbac.processor import state_change
 from rbac.processor.role import role_operation
@@ -115,7 +114,7 @@ def hierarchical_reject(header, payload, state):
 
 
 def hierarchical_decide(header, payload, state, isApproval):
-    confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
+    confirm = role_transaction_pb2.ConfirmAddRoleMember()
     confirm.ParseFromString(payload.content)
 
     txn_signer_owners_address = addresser.make_role_owners_address(
@@ -128,7 +127,10 @@ def hierarchical_decide(header, payload, state, isApproval):
 
 
 def apply_confirm(header, payload, state):
-    confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
+
+    hierarchical_approve(header, payload, state)
+
+    confirm_payload = role_transaction_pb2.ConfirmAddRoleMember()
     confirm_payload.ParseFromString(payload.content)
 
     role_member_address = addresser.make_role_members_address(

@@ -196,6 +196,7 @@ message ConfirmAddRoleMember {
 
     string reason = 4;
 
+    string on_behalf_id = 5;
 }
 
 
