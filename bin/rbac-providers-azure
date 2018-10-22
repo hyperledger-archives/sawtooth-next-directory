@@ -17,12 +17,14 @@
 
 import os
 import sys
+import time
 
 
 TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, TOP_DIR)
 
 from rbac.providers.azure.main import fetch_users
+
 
 if __name__ == "__main__":
     users = fetch_users()
