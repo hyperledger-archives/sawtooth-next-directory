@@ -19,18 +19,31 @@ import rethinkdb as r
 from datetime import datetime as dt
 from rbac.providers.azure.aad_auth import AadAuth
 
-GRAPH_URL = 'https://graph.microsoft.com/'
-TENANT_ID = os.environ.get('TENANT_ID')
+DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
+
+
+def getenv(name, default):
+    value = os.getenv(name)
+    if value is None or value is "":
+        return default
+    return value
+
+
+DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
+DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
+DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+GRAPH_URL = "https://graph.microsoft.com/"
+TENANT_ID = os.environ.get("TENANT_ID")
 AUTH = AadAuth()
-AUTH_TYPE = os.environ.get('AUTH_TYPE')
-r.connect(host="rethink", port=28015, db="rbac").repl()
+AUTH_TYPE = os.environ.get("AUTH_TYPE")
+r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
 
 
 def fetch_groups():
     """Call to get JSON payload for all Groups in Azure Active Directory."""
     headers = AUTH.check_token(AUTH_TYPE)
     if headers is not None:
-        groups_payload = requests.get(url=GRAPH_URL + 'v1.0/groups', headers=headers)
+        groups_payload = requests.get(url=GRAPH_URL + "v1.0/groups", headers=headers)
         return groups_payload.json()
 
 
@@ -38,7 +51,9 @@ def fetch_groups_with_members():
     """Call to get JSON payload for all Groups with membership in Azure Active Directory."""
     headers = AUTH.check_token(AUTH_TYPE)
     if headers is not None:
-        groups_payload = requests.get(url=GRAPH_URL + 'beta/groups/?$expand=members', headers=headers)
+        groups_payload = requests.get(
+            url=GRAPH_URL + "beta/groups/?$expand=members", headers=headers
+        )
         return groups_payload.json()
 
 
@@ -46,7 +61,7 @@ def fetch_users():
     """Call to get JSON payload for all Users in Azure Active Directory."""
     headers = AUTH.check_token(AUTH_TYPE)
     if headers is not None:
-        users_payload = requests.get(url=GRAPH_URL + 'beta/users', headers=headers)
+        users_payload = requests.get(url=GRAPH_URL + "beta/users", headers=headers)
         return users_payload.json()
 
 
@@ -54,10 +69,39 @@ def fetch_user_manager(user_id):
     """Call to get JSON payload for a user's manager in Azure Active Directory."""
     headers = AUTH.check_token(AUTH_TYPE)
     if headers is not None:
-        manager_payload = requests.get(url=GRAPH_URL + 'beta/users/' + user_id + '/manager', headers=headers)
-        if 'error' in manager_payload.json():
+        manager_payload = requests.get(
+            url=GRAPH_URL + "beta/users/" + user_id + "/manager", headers=headers
+        )
+        if "error" in manager_payload.json():
             return None
         return manager_payload.json()
+
+
+def insert_group_to_db(groups_dict):
+    """Insert groups individually to rethinkdb from dict of groups"""
+    for group in groups_dict["value"]:
+        inbound_entry = {
+            "data": group,
+            "data_type": "group",
+            "timestamp": dt.now().isoformat(),
+            "provider_id": TENANT_ID,
+        }
+        r.table("inbound_queue").insert(inbound_entry).run()
+
+
+def insert_user_to_db(users_dict):
+    """Insert users individually to rethinkdb from dict of users.  This will also look up a user's manager."""
+    for user in users_dict["value"]:
+        manager = fetch_user_manager(user["id"])
+        if manager:
+            user["manager"] = manager["id"]
+        inbound_entry = {
+            "data": user,
+            "data_type": "user",
+            "timestamp": dt.now().isoformat(),
+            "provider_id": TENANT_ID,
+        }
+        r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def initialize_aad_sync():
@@ -66,28 +110,10 @@ def initialize_aad_sync():
 
     print("Getting Users...")
     users = fetch_users()
-
-    for user in users['value']:
-        manager = fetch_user_manager(user['id'])
-        if manager:
-            user['manager'] = manager['id']
-        inbound_entry = {
-            "data": user,
-            "data_type": 'user',
-            "timestamp": dt.now().isoformat(),
-            "provider_id": TENANT_ID
-        }
-        r.table("inbound_queue").insert(inbound_entry).run()
+    insert_user_to_db(users)
 
     print("Getting Groups with Members...")
     groups = fetch_groups_with_members()
-    for group in groups['value']:
-        inbound_entry = {
-            "data": group,
-            "data_type": 'group',
-            "timestamp": dt.now().isoformat(),
-            "provider_id": TENANT_ID
-        }
-        r.table("inbound_queue").insert(inbound_entry).run()
+    insert_group_to_db(groups)
 
     print("User_upload_complete! :)")
