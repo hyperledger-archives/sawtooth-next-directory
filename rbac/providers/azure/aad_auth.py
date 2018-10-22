@@ -72,19 +72,13 @@ class AadAuth:
         """Check it Token exists and calls for and caches as global variable if it does not."""
         if self.graph_token is None or not self._time_left():
             response = self.get_token(AUTH_TYPE)
-            if response is None:
-                return None
-            else:
-                self.token_creation_timestamp = dt.datetime.now()
-                self.graph_token = response.json()["access_token"]
-                if AUTH_TYPE.upper() == "SECRET":
-                    return {
-                        "Authorization": self.graph_token,
-                        "Accept": "application/json",
-                    }
-                elif AUTH_TYPE.upper() == "CERT":
-                    return {
-                        "Authorization": self.graph_token,
-                        "Accept": "application/json",
-                        "Host": "graph.microsoft.com",
-                    }
+            self.token_creation_timestamp = dt.datetime.now()
+            self.graph_token = response.json()["access_token"]
+        if AUTH_TYPE.upper() == "SECRET":
+            return {"Authorization": self.graph_token, "Accept": "application/json"}
+        elif AUTH_TYPE.upper() == "CERT":
+            return {
+                "Authorization": self.graph_token,
+                "Accept": "application/json",
+                "Host": "graph.microsoft.com",
+            }

@@ -87,7 +87,7 @@ def get_last_known_blocks(database):
         try:
             count = count + 1
             return database.last_known_blocks(KNOWN_COUNT)
-        except Exception as err:   # pylint: disable=broad-except
+        except Exception as err:  # pylint: disable=broad-except
             if count > 3:
                 LOGGER.error(
                     "Tried to get last known block for more than 3 times. Reporting Error ..."
