@@ -20,7 +20,7 @@ services:
   rbac-tp:
     build:
       context: ../
-      dockerfile: ./rbac/processor/Dockerfile-dev
+      dockerfile: ./docker/dev/rbac.processor.Dockerfile
     image: rbac-tp-dev
     volumes:
       - "../:/project/tmobile-rbac"

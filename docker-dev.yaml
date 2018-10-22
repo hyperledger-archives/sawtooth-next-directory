@@ -43,7 +43,7 @@ services:
 
   rbac-server:
     build:
-      dockerfile: rbac/server/Dockerfile-dev
+      dockerfile: docker/dev/rbac.server.Dockerfile
     container_name: rbac-server-dev
     image: rbac-server-dev:${ISOLATION_ID-latest}
     volumes:
@@ -51,7 +51,7 @@ services:
 
   rbac-tp:
     build:
-      dockerfile: rbac/processor/Dockerfile-dev
+      dockerfile: docker/dev/rbac.processor.Dockerfile
     container_name: rbac-tp-dev
     image: rbac-tp-dev:${ISOLATION_ID-latest}
     volumes:
@@ -59,7 +59,7 @@ services:
 
   ledger-sync:
     build:
-      dockerfile: rbac/ledger_sync/Dockerfile-dev
+      dockerfile: docker/dev/rbac.ledger_sync.Dockerfile
     container_name: rbac-ledger-sync-dev
     image: rbac-ledger-sync-dev:${ISOLATION_ID-latest}
     volumes:
