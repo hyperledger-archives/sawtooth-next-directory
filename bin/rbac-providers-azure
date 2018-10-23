@@ -21,7 +21,7 @@ import sys
 TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, TOP_DIR)
 
-from rbac.providers.azure.main import initialize_aad_sync
+from rbac.providers.azure.initial_inbound_sync import initialize_aad_sync
 
 if __name__ == "__main__":
     initialize_aad_sync()
