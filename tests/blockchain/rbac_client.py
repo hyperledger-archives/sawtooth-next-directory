@@ -220,11 +220,9 @@ class RbacClient(object):
 
     def confirm_add_role_members(self, key, proposal_id, role_id, user_id, reason):
         data_blob = {
-            'reason': reason,
-            'on_behalf_id': self._key,
-            'head_block_num': 5
+            'reason': reason
         }
-        batch_list, signature = role_transaction_creation.approve_add_role_members(
+        batch_list, signature = role_transaction_creation.confirm_add_role_members(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
