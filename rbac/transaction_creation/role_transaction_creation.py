@@ -25,6 +25,7 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
+
 def create_role(txn_key, batch_key, role_name, role_id, metadata, admins, owners):
     """Create a BatchList with a CreateRole transaction in it.
 
@@ -425,29 +426,6 @@ def propose_add_role_members(
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_add_role_members(txn_key, batch_key, proposal_id, role_id, user_id, data_blob):
-
-    confirm_payload = role_transaction_pb2.ConfirmAddRoleMember(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=data_blob['reason']
-    )
-
-    inputs = [
-        addresser.make_proposal_address(role_id, user_id),
-        addresser.make_role_owners_address(role_id, txn_key.public_key),
-    ]
-
-    outputs = [
-        addresser.make_proposal_address(role_id, user_id),
-        addresser.make_role_members_address(role_id, user_id),
-    ]
-
-    rbac_payload = rbac_payload_pb2.RBACPayload(
-        content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
-    )
-
-    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
-
 async def approve_add_role_members(txn_key, batch_key, proposal_id, role_id, user_id, data_blob):
 
     confirm_payload = role_transaction_pb2.ConfirmAddRoleMember(
@@ -473,11 +451,12 @@ async def approve_add_role_members(txn_key, batch_key, proposal_id, role_id, use
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
+
 async def get_hierarchy_users(conn, txn_key, on_behalf_id, head_block_num):
     addresses = [
         addresser.make_user_address(txn_key.public_key),
         addresser.make_user_address(on_behalf_id)
-    ] 
+    ]
     user_id = on_behalf_id
     while (True):
         user_resource = await fetch_user_resource(

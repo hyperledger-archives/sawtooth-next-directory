@@ -127,13 +127,16 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def confirm_add_role_admins(self, key, proposal_id, role_id, user_id, reason):
+        data_blob = {
+            'reason': reason
+        }
         batch_list, signature = role_transaction_creation.confirm_add_role_admins(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
-            reason=reason,
+            data_blob=data_blob,
         )
 
         self._client.send_batches(batch_list)
@@ -141,13 +144,16 @@ class RbacClient(object):
 
     def reject_add_role_admins(self, key, proposal_id, role_id, user_id, reason):
 
+        data_blob = {
+            'reason': reason
+        }
         batch_list, signature = role_transaction_creation.reject_add_role_admins(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
-            reason=reason,
+            data_blob=data_blob,
         )
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
@@ -168,25 +174,31 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def confirm_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
+        data_blob = {
+            'reason': reason
+        }
         batch_list, signature = role_transaction_creation.confirm_add_role_owners(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
-            reason=reason,
+            data_blob=data_blob,
         )
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
     def reject_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
+        data_blob = {
+            'reason': reason
+        }
         batch_list, signature = role_transaction_creation.reject_add_role_owners(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
-            reason=reason,
+            data_blob=data_blob,
         )
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
@@ -207,25 +219,33 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def confirm_add_role_members(self, key, proposal_id, role_id, user_id, reason):
-        batch_list, signature = role_transaction_creation.confirm_add_role_members(
+        data_blob = {
+            'reason': reason,
+            'on_behalf_id': self._key,
+            'head_block_num': 5
+        }
+        batch_list, signature = role_transaction_creation.approve_add_role_members(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
-            reason=reason,
+            data_blob=data_blob,
         )
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
     def reject_add_role_members(self, key, proposal_id, role_id, user_id, reason):
+        data_blob = {
+            'reason': reason
+        }
         batch_list, signature = role_transaction_creation.reject_add_role_members(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
-            reason=reason,
+            data_blob=data_blob,
         )
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
@@ -247,26 +267,32 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def confirm_add_role_tasks(self, key, proposal_id, role_id, task_id, reason):
+        data_blob = {
+            'reason': reason
+        }
         batch_list, signature = role_transaction_creation.confirm_add_role_tasks(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             task_id=task_id,
-            reason=reason,
+            data_blob=data_blob,
         )
 
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
     def reject_add_role_tasks(self, key, proposal_id, role_id, task_id, reason):
+        data_blob = {
+            'reason': reason
+        }
         batch_list, signature = role_transaction_creation.reject_add_role_tasks(
             txn_key=key,
             batch_key=self._key,
             proposal_id=proposal_id,
             role_id=role_id,
             task_id=task_id,
-            reason=reason,
+            data_blob=data_blob,
         )
 
         self._client.send_batches(batch_list)

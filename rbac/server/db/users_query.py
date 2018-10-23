@@ -144,4 +144,3 @@ def fetch_user_ids_by_manager(manager_id, head_block_num):
         .get_field("user_id")
         .coerce_to("array")
     )
-    
