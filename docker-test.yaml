@@ -19,11 +19,11 @@ services:
 
   rbac-tp:
     build:
-      context: ../
+      context: .
       dockerfile: ./docker/dev/rbac.processor.Dockerfile
     image: rbac-tp-dev
     volumes:
-      - "../:/project/tmobile-rbac"
+      - ".:/project/tmobile-rbac"
     command: bin/rbac-tp -vv tcp://validator:4004
     environment:
       - HOST=${HOST:-localhost}
@@ -53,11 +53,11 @@ services:
 
   test-runner:
     build:
-      context: ../
-      dockerfile: ./tests/Dockerfile
+      context: .
+      dockerfile: ./docker/tests.Dockerfile
     image: blockchain-test-env
     volumes:
-      - "../:/project/tmobile-rbac"
+      - ".:/project/tmobile-rbac"
     command: pytest
     environment:
       - PYTHONPATH=/project/tmobile-rbac/addressing:/project/tmobile-rbac/rbac/transaction_creation
