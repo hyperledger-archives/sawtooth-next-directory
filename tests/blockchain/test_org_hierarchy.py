@@ -978,9 +978,9 @@ class TestOrgHierarchy(unittest.TestCase):
             "No open proposal can exist for the same state change.",
         )
 
-    #temporarily disable
-    #   need to adding rethink db container 
-    #   confirm_add_role_member transaction is replaced by approve_add_role_member which needs db access
+    # temporarily disable
+    #    need to adding rethink db container
+    #    confirm_add_role_member transaction is replaced by approve_add_role_member which needs db access
     @pytest.mark.skip
     def test_12_confirm_add_role_members(self):
         """Tests the ConfirmAddRoleMembers validation rules.
