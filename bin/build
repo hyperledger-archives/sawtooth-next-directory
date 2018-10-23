@@ -53,12 +53,12 @@ do
             ;;
         p)
             info "Building Protobuf modules"
-            docker build . -f tests/Dockerfile -t rbac-test-env
+            docker build . -f docker/tests.Dockerfile -t rbac-test-env
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
             ;;
         t)
             info "Running tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/docker-test.yaml
             ;;
         l)
             info "Running lint"
@@ -70,14 +70,14 @@ do
             ;;
         i)
             info "Running tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/docker-test.yaml
             ;;
         a)
-            docker build . -f tests/Dockerfile -t rbac-test-env
+            docker build . -f docker/tests.Dockerfile -t rbac-test-env
             info "Running lint"
             docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
             info "Running tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/tests/docker-compose.yaml
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/docker-test.yaml
             ;;
         \?)
             usage
