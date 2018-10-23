@@ -18,15 +18,15 @@ from hashlib import sha512
 
 from tests.rbac.common.assertions import CommonAssertions
 
-from sawtooth_rest_api.protobuf import transaction_pb2
-from sawtooth_rest_api.protobuf import batch_pb2
-from sawtooth_rest_api.protobuf import client_batch_submit_pb2
+from sawtooth_sdk.protobuf import transaction_pb2
+from sawtooth_sdk.protobuf import batch_pb2
+from sawtooth_sdk.protobuf import client_batch_submit_pb2
 
 from rbac.common.crypto.keys import Key
 from rbac.addressing import addresser
 from rbac.addressing.addresser import AddressSpace
-from rbac.transaction_creation.protobuf.rbac_payload_pb2 import RBACPayload
-from rbac.transaction_creation.protobuf import user_transaction_pb2
+from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac.common.protobuf import user_transaction_pb2
 
 LOGGER = logging.getLogger(__name__)
 

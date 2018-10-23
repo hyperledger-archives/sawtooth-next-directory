@@ -13,15 +13,20 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import logging
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.addressing import addresser
 
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import role_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import role_transaction_pb2
 
 from rbac.processor.role import role_validator
-from rbac.processor import state_accessor, proposal_validator, state_change
+from rbac.processor import proposal_validator, state_change
+
+from rbac.processor.role import role_operation
+
+LOGGER = logging.getLogger(__name__)
 
 
 def apply_propose(header, payload, state):
@@ -105,6 +110,7 @@ def apply_propose_remove(header, payload, state):
 
 
 def apply_confirm(header, payload, state):
+
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm_payload.ParseFromString(payload.content)
 
@@ -116,7 +122,7 @@ def apply_confirm(header, payload, state):
         role_id=confirm_payload.role_id, user_id=header.signer_public_key
     )
 
-    state_entries = state_accessor.get_state_entries(
+    state_entries = role_validator.get_state_entries(
         header=header,
         confirm=confirm_payload,
         txn_signer_rel_address=txn_signer_admin_address,
@@ -140,7 +146,7 @@ def apply_reject(header, payload, state):
         role_id=reject_payload.role_id, user_id=header.signer_public_key
     )
 
-    state_entries = state_accessor.get_state_entries(
+    state_entries = role_validator.get_state_entries(
         header=header,
         confirm=reject_payload,
         txn_signer_rel_address=txn_signer_admin_address,
@@ -165,4 +171,25 @@ def apply_reject_remove(header, payload, state):
         "apply_reject_remove not implemented! Args: {0},{1},{2}".format(
             header, payload, state
         )
+    )
+
+
+def hierarchical_approve(header, payload, state):
+    hierarchical_decide(header, payload, state, True)
+
+
+def hierarchical_reject(header, payload, state):
+    hierarchical_decide(header, payload, state, False)
+
+
+def hierarchical_decide(header, payload, state, isApproval):
+    confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
+    confirm.ParseFromString(payload.content)
+
+    txn_signer_admin_address = addresser.make_role_admins_address(
+        role_id=confirm.role_id, user_id=confirm.on_behalf_id
+    )
+
+    role_operation.hierarchical_decide(
+        header, confirm, state, txn_signer_admin_address, isApproval
     )

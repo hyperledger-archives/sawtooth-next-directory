@@ -17,9 +17,9 @@ import logging
 from rbac.common.crypto.keys import Key
 from rbac.addressing.addresser import make_user_address
 from rbac.common.sawtooth.client_sync import ClientSync
-from rbac.transaction_creation.protobuf.rbac_payload_pb2 import RBACPayload
-from rbac.transaction_creation.protobuf import user_transaction_pb2
-from rbac.processor.protobuf import user_state_pb2
+from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac.common.protobuf import user_transaction_pb2
+from rbac.common.protobuf import user_state_pb2
 from rbac.common.sawtooth.batcher import Batcher
 
 LOGGER = logging.getLogger(__name__)

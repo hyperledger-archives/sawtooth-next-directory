@@ -18,8 +18,8 @@ import binascii
 import rethinkdb as r
 from sanic.response import json
 
-from sawtooth_rest_api.protobuf import client_batch_submit_pb2
-from sawtooth_rest_api.protobuf import validator_pb2
+from sawtooth_sdk.protobuf import client_batch_submit_pb2
+from sawtooth_sdk.protobuf import validator_pb2
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query

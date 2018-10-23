@@ -67,6 +67,9 @@ def setup_db(host, port, name):
         r.db(name).table_create('users').run(conn)
         r.db(name).table('users').index_create('user_id').run(conn)
 
+        print('Creating table: inbound_queue')
+        r.db(name).table_create('inbound_queue').run(conn)
+
         print('Creating table: proposals')
         r.db(name).table_create('proposals').run(conn)
         r.db(name).table('proposals').index_create('proposal_id').run(conn)

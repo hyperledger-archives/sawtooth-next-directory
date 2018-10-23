@@ -15,8 +15,8 @@
 
 from rbac.addressing import addresser
 from rbac.processor import proposal_validator, state_change
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import role_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import role_transaction_pb2
 from rbac.processor.role import role_validator
 
 

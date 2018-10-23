@@ -17,8 +17,8 @@
 # import unittest.mock
 # from unittest.mock import Mock
 #
-# sys.modules["rbac_processor.protobuf"] = Mock()
-# from rbac.processor.rbac_processor import message_accessor
+# sys.modules["rbac.common.protobuf"] = Mock()
+# from rbac.processor import message_accessor
 #
 #
 # class MessageAccessorTests(unittest.TestCase):

@@ -24,8 +24,8 @@ from rbac.processor import (
     state_change,
 )
 from rbac.processor.user import user_validator
-from rbac.processor.protobuf import user_transaction_pb2
-from rbac.processor.protobuf import proposal_state_pb2
+from rbac.common.protobuf import user_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
 
 
 def apply_user_propose(header, payload, state):

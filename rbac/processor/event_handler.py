@@ -13,11 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import logging
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.addressing import addresser
 
-from rbac.processor.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.processor.role import role_admins, roles, role_members, role_owners
 from rbac.processor.role import role_tasks
 from rbac.processor.task import task_admins
@@ -26,6 +27,8 @@ from rbac.processor.user import users
 from rbac.processor.user.user_manager_proposal import apply_user_confirm
 from rbac.processor.user.user_manager_proposal import apply_user_propose
 from rbac.processor.user.user_manager_proposal import apply_user_reject
+
+LOGGER = logging.getLogger(__name__)
 
 ROLE_PROPOSE = [
     RBACPayload.PROPOSE_ADD_ROLE_TASKS,
