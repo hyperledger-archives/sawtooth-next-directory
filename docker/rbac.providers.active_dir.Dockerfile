@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-import argparse
-import logging
-import os
-import sys
-import time
+FROM ubuntu:16.04
 
-from rbac.ad_sync.database import Database
-from rethinkdb import ReqlError
+RUN echo "deb apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD" && \
+    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y --allow-unauthenticated -q python3-grpcio-tools=1.1.3-1 \
+        python3-pip
 
-# Reference: rbac.ledger_sync.deltas.handlers.get_delta_handler
-# Reference: rbac.ledger_sync.subscriber.Subscriber
+RUN pip3 install rethinkdb \
+                 websocket-client
 
+WORKDIR /project/tmobile-rbac
+
+CMD ["./bin/rbac-providers-active-dir"]

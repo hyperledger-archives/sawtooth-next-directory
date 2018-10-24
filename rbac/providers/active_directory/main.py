@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,4 +15,18 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-# Receives updates from rethinkdb via a websocket connection
+import logging
+import os
+
+# Reference: rbac.ledger_sync.deltas.handlers.get_delta_handler
+# Reference: rbac.ledger_sync.subscriber.Subscriber
+
+LOGGER = logging.getLogger(__name__)
+
+
+def get_env_with_fallback(name, default):
+    value = os.getenv(name)
+    if value is None or value is "":
+        return default
+    return value
+

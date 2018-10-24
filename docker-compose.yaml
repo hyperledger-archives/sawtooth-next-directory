@@ -39,7 +39,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - AES_KEY=${AES_KEY}
 
-  rbac-provider:
+  rbac-provider-azure:
     build:
       context: .
       dockerfile: ./docker/rbac.providers.azure.Dockerfile
@@ -54,6 +54,22 @@ services:
     depends_on:
       - ledger-sync
     command: ./bin/rbac-providers-azure
+
+  rbac-provider-active-dir:
+    build:
+      context: .
+      dockerfile: ./docker/rbac.providers.active_dir.Dockerfile
+    container_name: rbac-providers-active-dir
+    image: rbac-provider-active-dir-production:${ISOLATION_ID-latest}
+    environment:
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - CLIENT_ASSERTION=${CLIENT_ASSERTION}
+      - TENANT_ID=${TENANT_ID}
+      - AUTH_TYPE=${AUTH_TYPE}
+    depends_on:
+      - ledger-sync
+    command: ./bin/rbac-providers-active-dir
 
   rbac-server:
     build:

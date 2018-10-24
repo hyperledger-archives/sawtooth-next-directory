@@ -64,4 +64,3 @@ services:
     image: rbac-ledger-sync-dev:${ISOLATION_ID-latest}
     volumes:
       - ".:/project/tmobile-rbac"
-
