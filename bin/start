@@ -30,7 +30,6 @@ usage() {
                                start from genesis (no data) [default]
             -p --persist       start with persistent data
             -d --dev           start in development mode (local files)
-            -b --build         (re)build docker images before starting
 
 EOM
 
@@ -44,7 +43,6 @@ while [[ $# -gt 0 ]]; do
     shift;
     case "$opt" in
     "-h"|"--help"       ) usage; exit 0;;
-    "-b"|"--build"      ) BUILD=1;;
     "-p"|"--persist"    ) PERSIST=1;;
     "-d"|"--dev"        ) DEV=1;;
     *                   ) echo "ERROR: Invalid option: \""$opt"\"" >&2
@@ -63,9 +61,7 @@ if [[ "$DEV" == "1" ]]; then
     CMD="$CMD -f docker-dev.yaml"
 fi
 CMD="$CMD up"
-if [[ "$BUILD" == "1" ]]; then
-    CMD="$CMD --build"
-fi
+CMD="$CMD --build"
 
 echo $CMD
 $CMD
