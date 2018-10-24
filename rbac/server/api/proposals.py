@@ -187,19 +187,19 @@ async def update_proposal(request, proposal_id):
         head_block_num=block.get("num"),
     )
 
-    data_blob = {
+    additional_params = {
         "reason" : request.json.get("reason")
     }
 
     # the condition below is due to hierachical approval only applied to "approval of ADD_ROLE_MEMBERS"
     # once its been expanded to all other scenarios, this condition should be removed
     if proposal_resource.get('type') == ProposalType.ADD_ROLE_MEMBERS and request.json['status'] == Status.APPROVED :
-        data_blob['on_behalf_id'] = request.json.get("on_behalf_id", "")
-        data_blob['head_block_num'] = block.get("num")
-        data_blob['db_connection'] = request.app.config.DB_CONN
+        additional_params['on_behalf_id'] = request.json.get("on_behalf_id", "")
+        additional_params['head_block_num'] = block.get("num")
+        additional_params['db_connection'] = request.app.config.DB_CONN
 
     # this line below is due to "on_behalf_id" is not currently being passed from UI. temporarily set to the current user
-    data_blob['on_behalf_id'] = txn_key.public_key
+    additional_params['on_behalf_id'] = txn_key.public_key
     #
 
     batch_list, _ = await PROPOSAL_TRANSACTION[proposal_resource.get("type")][
@@ -210,7 +210,7 @@ async def update_proposal(request, proposal_id):
         proposal_id,
         proposal_resource.get("object"),
         proposal_resource.get("target"),
-        data_blob
+        additional_params
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
