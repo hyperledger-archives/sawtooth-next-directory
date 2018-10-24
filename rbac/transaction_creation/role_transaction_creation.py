@@ -463,7 +463,7 @@ async def get_hierarchy_users(conn, txn_key, on_behalf_id, head_block_num):
             conn, user_id, head_block_num
         )
         manager_id = user_resource.get("manager")
-        LOGGER.warning("user {} manager is {}".format(user_id, manager_id))
+        LOGGER.warning("user %s manager is %s", user_id, manager_id)
         if not manager_id:
             break
         else :
