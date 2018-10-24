@@ -12,14 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-FROM python:3.7
 
-RUN pip install \
-    requests    \
-    rethinkdb
 
-WORKDIR /project/tmobile-rbac
-
-COPY . .
-
-CMD [ "./bin/rbac-providers-azure" ]
+FROM node:8
+COPY ./client /client
+WORKDIR /client
+EXPOSE 3000
+RUN npm install
+CMD ["./entrypoint.sh"]

@@ -1,4 +1,4 @@
-# Copyright 2018 Contributors to Hyperledger Sawtooth
+# Copyright contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,29 +13,39 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
+# Begin base docker image config for Hyperledger RBAC Next Directory
+# This should remain the same for all python containers to maximize caching
+# -----------------------------------------------------------------------------
 FROM hyperledger/sawtooth-validator:1.0
 
-RUN apt-get update && \
-    apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3-grpcio-tools=1.1.3-1 \
+RUN apt-get update \
+ && apt-get install -y --allow-unauthenticated -q \
         python3-pip \
         python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
-
-RUN locale-gen en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y  apt-utils
 
 RUN pip3 install -U pip setuptools
 
 RUN pip3 install \
+        grpcio-tools \
+        itsdangerous \
+        rethinkdb \
+        sanic==0.7.0
+
+WORKDIR /project/hyperledger-rbac
+# -----------------------------------------------------------------------------
+# End base docker image config for Hyperledger RBAC Next Directory
+# -----------------------------------------------------------------------------
+
+RUN apt-get install -y --allow-unauthenticated -q \
+        curl \
+&& pip3 install \
     pycodestyle \
     pylint \
-    itsdangerous \
-    rethinkdb \
-    sanic \
     pytest \
-    dredd-hooks \
-    cryptography
+    dredd_hooks
 
-WORKDIR /project/tmobile-rbac
+WORKDIR /project/hyperledger-rbac

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,14 +15,18 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM ubuntu:16.04
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD && \
-    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
-    apt-get update
+TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
 
-RUN apt-get install -y -q python3-sawtooth-sdk
+if [ "$1" ]; then
+    WHERE="$1"
+else
+    WHERE="$PWD"
+fi
 
-WORKDIR /project/tmobile-rbac
+find "$WHERE" \
+    -name '__pycache__' -delete -print \
+    -o \
+    -name '*.pyc' -delete -print
 
-CMD ["./bin/rbac-tp"]
+docker system prune -a

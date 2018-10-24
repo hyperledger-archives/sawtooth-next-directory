@@ -18,8 +18,6 @@ RUN pip install \
     requests    \
     rethinkdb
 
-WORKDIR /project/tmobile-rbac
-
-COPY . .
+WORKDIR /project/hyperledger-rbac
 
 CMD [ "./bin/rbac-providers-azure" ]

@@ -13,17 +13,19 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM ubuntu:16.04
+# -----------------------------------------------------------------------------
+# Begin base docker image config for Hyperledger RBAC Next Directory
+# This should remain the same for all python containers to maximize caching
+# -----------------------------------------------------------------------------
+FROM hyperledger/sawtooth-validator:1.0
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
- && echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
- && apt-get update \
+RUN apt-get update \
  && apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3 \
         python3-pip \
         python3-sawtooth-sdk \
-        python3-sawtooth-rest-api
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y  apt-utils
 
 RUN pip3 install -U pip setuptools
 
@@ -31,16 +33,12 @@ RUN pip3 install \
         grpcio-tools \
         itsdangerous \
         rethinkdb \
-        sanic==0.7.0 \
-        cryptography \
- && locale-gen en_US.UTF-8 \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+        sanic==0.7.0
 
-ENV LC_ALL=en_US.UTF-8
-WORKDIR /project/tmobile-rbac
-
-COPY . .
+WORKDIR /project/hyperledger-rbac
+# -----------------------------------------------------------------------------
+# End base docker image config for Hyperledger RBAC Next Directory
+# -----------------------------------------------------------------------------
 
 EXPOSE 8000/tcp
 
