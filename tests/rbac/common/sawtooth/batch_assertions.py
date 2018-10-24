@@ -14,8 +14,9 @@
 # -----------------------------------------------------------------------------
 
 import logging
+import json
+from google.protobuf import json_format
 from hashlib import sha512
-
 from tests.rbac.common.assertions import CommonAssertions
 
 from sawtooth_sdk.protobuf import transaction_pb2
@@ -27,6 +28,7 @@ from rbac.addressing import addresser
 from rbac.addressing.addresser import AddressSpace
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
+from rbac.common.sawtooth.rbac_payload import unmake_payload
 
 LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +37,28 @@ class BatchAssertions(CommonAssertions):
     def __init__(self, *args, **kwargs):
         CommonAssertions.__init__(self, *args, **kwargs)
 
+    def assertEqualMessage(self, message1, message2):
+        """A shallow comparison of the the json representation
+        of two messages"""
+        message1 = json.loads(json_format.MessageToJson(message1))
+        message2 = json.loads(json_format.MessageToJson(message2))
+        for prop in message1:
+            self.assertEqual(message1[prop], message2[prop])
+        for prop in message2:
+            self.assertEqual(message2[prop], message1[prop])
+
+    def assertEqualPayload(self, payload1, payload2):
+        """Check that two payloads are the equivalent"""
+        message_type1, message1, inputs1, outputs1 = unmake_payload(payload1)
+        message_type2, message2, inputs2, outputs2 = unmake_payload(payload2)
+        self.assertEqual(message_type1, message_type2)
+        self.assertEqual(inputs1, inputs2)
+        self.assertEqual(outputs1, outputs2)
+        self.assertEqualMessage(message1, message2)
+
+    # override this for in each *_manager_test for appropriate message_type inputs/outputs
     def assertValidPayload(self, payload, message, message_type):
+        """Check a payload the valid representation of a message given its type"""
         if isinstance(payload, bytes):
             decoded = RBACPayload()
             decoded.ParseFromString(payload)
@@ -50,10 +73,13 @@ class BatchAssertions(CommonAssertions):
             self.assertEqual(decoded.name, message.name)
         else:
             raise Exception(
-                "assertValidPayload doesn't yet support {}".format(message_type)
+                "BatchAssertions.assertValidPayload doesn't support message_type {}".format(
+                    message_type
+                )
             )
 
     def assertValidInputs(self, inputs, outputs, message_type, message=None):
+        """Check the inputs and outputs match the expected message type"""
         if inputs is not None and not isinstance(inputs, list):
             inputs = list(inputs)
         if outputs is not None and not isinstance(outputs, list):
@@ -68,25 +94,19 @@ class BatchAssertions(CommonAssertions):
             self.assertEqual(addresser.address_is(outputs[0]), AddressSpace.USER)
         else:
             raise Exception(
-                "assertValidInputs doesn't yet support {}".format(message_type)
+                "BatchAssertions.assertValidInputs doesn't support message_type {}".format(
+                    message_type
+                )
             )
 
     def assertValidTransactionHeader(
-        self,
-        header,
-        signature,
-        message,
-        message_type,
-        inputs,
-        outputs,
-        signer_public_key,
+        self, header, signature, payload, signer_public_key
     ):
+        """Check a transaction header is valid given a payload"""
         if isinstance(header, bytes):
             decoded = transaction_pb2.TransactionHeader()
             decoded.ParseFromString(header)
             header = decoded
-
-        payload = self.make_payload(message=message, message_type=message_type)
 
         self.assertIsInstance(header, transaction_pb2.TransactionHeader)
         self.assertEqual(header.family_name, addresser.FAMILY_NAME)
@@ -97,7 +117,6 @@ class BatchAssertions(CommonAssertions):
         self.assertEqual(
             header.payload_sha512, sha512(payload.SerializeToString()).hexdigest()
         )
-
         signer = Key(public_key=signer_public_key)
         self.assertTrue(
             signer.verify(signature=signature, message=header.SerializeToString())
@@ -107,44 +126,30 @@ class BatchAssertions(CommonAssertions):
             other_key.verify(signature=signature, message=header.SerializeToString())
         )
 
-        self.assertEqual(header.inputs, inputs)
-        self.assertEqual(header.outputs, outputs)
-        self.assertValidInputs(
-            inputs=header.inputs,
-            outputs=header.outputs,
-            message_type=message_type,
-            message=message,
-        )
+        self.assertEqual(header.inputs, payload.inputs)
+        self.assertEqual(header.outputs, payload.outputs)
 
-    def assertValidTransaction(
-        self, transaction, message, message_type, inputs, outputs, signer_public_key
-    ):
+    def assertValidTransaction(self, transaction, payload, signer_public_key):
+        """Check a transaction is valid given a payload"""
         if isinstance(transaction, bytes):
             decoded = transaction_pb2.Transaction()
             decoded.ParseFromString(transaction)
             transaction = decoded
         self.assertIsInstance(transaction, transaction_pb2.Transaction)
-
         self.assertValidTransactionHeader(
             header=transaction.header,
             signature=transaction.header_signature,
-            message=message,
-            message_type=message_type,
-            inputs=inputs,
-            outputs=outputs,
+            payload=payload,
             signer_public_key=signer_public_key,
         )
+        self.assertEqualPayload(payload1=transaction.payload, payload2=payload)
+        message_type, message, _, _ = unmake_payload(payload)
+        self.assertValidPayload(
+            payload=transaction.payload, message=message, message_type=message_type
+        )
 
-    def assertValidBatch(
-        self,
-        batch,
-        message,
-        message_type,
-        inputs,
-        outputs,
-        signer_public_key,
-        batcher_public_key,
-    ):
+    def assertValidBatch(self, batch, payload, signer_public_key, batcher_public_key):
+        """Check a batch is valid given a payload"""
         self.assertIsInstance(batch, batch_pb2.Batch)
         batch_header = batch_pb2.BatchHeader()
         batch_header.ParseFromString(batch.header)
@@ -170,23 +175,14 @@ class BatchAssertions(CommonAssertions):
 
         self.assertValidTransaction(
             transaction=transactions[0],
-            message=message,
-            message_type=message_type,
-            inputs=inputs,
-            outputs=outputs,
+            payload=payload,
             signer_public_key=signer_public_key,
         )
 
     def assertValidBatchList(
-        self,
-        batch_list,
-        message,
-        message_type,
-        inputs,
-        outputs,
-        signer_public_key,
-        batcher_public_key,
+        self, batch_list, payload, signer_public_key, batcher_public_key
     ):
+        """Check a batch list is valid given a payload"""
         self.assertIsInstance(batch_list, batch_pb2.BatchList)
         # batch_list = list(batch_list)
         batch_count = 0
@@ -195,25 +191,16 @@ class BatchAssertions(CommonAssertions):
             self.assertIsInstance(batch, batch_pb2.Batch)
             self.assertValidBatch(
                 batch=batch,
-                message=message,
-                message_type=message_type,
-                inputs=inputs,
-                outputs=outputs,
+                payload=payload,
                 signer_public_key=signer_public_key,
                 batcher_public_key=batcher_public_key,
             )
         self.assertEqual(batch_count, 1)
 
     def assertValidBatchRequest(
-        self,
-        batch_request,
-        message,
-        message_type,
-        inputs,
-        outputs,
-        signer_public_key,
-        batcher_public_key,
+        self, batch_request, payload, signer_public_key, batcher_public_key
     ):
+        """Check a batch request is valid given a payload"""
         self.assertIsInstance(
             batch_request, client_batch_submit_pb2.ClientBatchSubmitRequest
         )
@@ -224,12 +211,24 @@ class BatchAssertions(CommonAssertions):
             self.assertIsInstance(batch, batch_pb2.Batch)
             self.assertValidBatch(
                 batch=batch,
-                message=message,
-                message_type=message_type,
-                inputs=inputs,
-                outputs=outputs,
+                payload=payload,
                 signer_public_key=signer_public_key,
                 batcher_public_key=batcher_public_key,
             )
         self.assertEqual(batch_count, 1)
-        return
+
+    def assertSingleStatus(self, status):
+        """Check a single successful status result"""
+        self.assertIsInstance(status, list)
+        self.assertEqual(len(status), 1)
+        status = status[0]
+        self.assertIsInstance(status["invalid_transactions"], list)
+        self.assertIsInstance(status["status"], str)
+        return status["status"], status["invalid_transactions"]
+
+    def assertStatusSuccess(self, status):
+        """Check a status result is successful"""
+        state, invalid = self.assertSingleStatus(status)
+        self.assertEqual(state, "COMMITTED")
+        self.assertEqual(len(invalid), 0)
+        return state, invalid
