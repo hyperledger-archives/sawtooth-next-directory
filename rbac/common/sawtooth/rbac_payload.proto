@@ -76,4 +76,8 @@ message RBACPayload {
 
     bytes content = 2;
 
+    repeated string inputs = 3;
+
+    repeated string outputs = 4;
+
 }
