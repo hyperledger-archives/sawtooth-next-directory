@@ -24,7 +24,8 @@ import PropTypes from 'prop-types';
 
 import './Login.css';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
-import LoginForm from '../../components/forms/LoginForm'
+import LoginForm from '../../components/forms/LoginForm';
+import SignupForm from '../../components/forms/SignupForm';
 
 
 /**
@@ -50,6 +51,7 @@ class Login extends Component {
    * 
    */
   componentWillReceiveProps (newProps) {
+    this.props = newProps;
     if (newProps.isAuthenticated) {
 
       // TODO: Consider pulling from a user-saved cache
@@ -59,12 +61,14 @@ class Login extends Component {
 
 
   render () {
-    const { attemptLogin } = this.props;
+    const { attemptLogin, attemptSignup } = this.props;
+
+    let formDom = (this.props.location.pathname==='/sign-up'? <SignupForm submit={attemptSignup}/> :<LoginForm submit={attemptLogin}/>);
 
     return (
       <Grid centered columns={2}>
         <Grid.Column className='next-login-column'>
-          <LoginForm submit={attemptLogin}/>
+          {formDom}
         </Grid.Column>
       </Grid>
     );
@@ -88,7 +92,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    attemptLogin: (email, password) => dispatch(AuthActions.loginRequest(email, password))
+    attemptLogin: (email, password) => dispatch(AuthActions.loginRequest(email, password)),
+    attemptSignup: (name, username, password, email) => dispatch(AuthActions.signupRequest(name, username, password, email))
   };
 }
 

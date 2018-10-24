@@ -26,7 +26,7 @@ import { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
 
 
-import { login } from './AuthSaga';
+import { login, signup } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
 import { getBase, getPack } from './RequesterSaga';
 
@@ -46,7 +46,8 @@ export default function * root() {
   yield all([
 
     // Auth
-    takeLatest(AuthTypes.LOGIN_REQUEST, login, api),
+    takeLatest(AuthTypes.LOGIN_REQUEST, login, API.create()),
+    takeLatest(AuthTypes.SIGNUP_REQUEST, signup, API.create()),
 
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
