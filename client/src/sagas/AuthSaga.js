@@ -32,7 +32,7 @@ export function * login (api, action) {
   try {
     const { username, password } = action;
     const res = yield call(api.login, {
-      username: username,
+      id: username,
       password: password
     });
 
@@ -40,8 +40,41 @@ export function * login (api, action) {
       console.log('Authentication successful.');
       yield put(AuthActions.loginSuccess(true));
     } else {
-      alert(res.data.error);
-      yield put(AuthActions.loginFailure(res.data.error));
+      alert(res.data.message);
+      yield put(AuthActions.loginFailure(res.data.message));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/**
+ * 
+ * Execute Signup API request
+ * 
+ * The s=Signup generator function executes a request to the
+ * API for creating new user and handles the response.
+ * 
+ * @param action
+ * 
+ */
+
+export function * signup (api, action) {
+  try {
+    const { username, password, name, email } = action;
+    const res = yield call(api.signup, {
+      username: username,
+      password: password,
+      email: email, 
+      name: name
+    });
+
+    if (res.ok) {
+      console.log('New user added');
+      yield put(AuthActions.loginSuccess(true));
+    } else {
+      alert(res.data.message);
+      yield put(AuthActions.loginFailure(res.data.message));
     }
   } catch (err) {
     console.error(err);
