@@ -15,7 +15,7 @@
 
 from rbac.addressing import addresser
 from rbac.processor import message_accessor, state_accessor, proposal_validator
-from rbac.processor.protobuf import role_state_pb2
+from rbac.common.protobuf import role_state_pb2
 from rbac.processor.user import user_validator
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
@@ -195,3 +195,68 @@ def _role_already_exists(state_return, role_id):
     return message_accessor.is_in_role_attributes_container(
         container=role_attr_container, identifier=role_id
     )
+
+
+def get_state_entries(header, confirm, txn_signer_rel_address, state):
+    """Fetch a collection of state entries veri
+
+    Args:
+        header (TransactionHeader): The transaction header protobuf class.:
+        confirm: ConfirmAddRoleAdmin, RejectAddRoleAdmin, ...
+        txn_signer_rel_address: Transaction signer role relationship address
+        state (Context): The class responsible for gets and sets of state.
+
+    Returns:
+        (dict of addresses)
+    """
+
+    proposal_address = addresser.make_proposal_address(
+        object_id=confirm.role_id, related_id=confirm.user_id
+    )
+
+    state_entries = state_accessor.get_state(
+        state, [txn_signer_rel_address, proposal_address]
+    )
+
+    if not proposal_validator.proposal_exists_and_open(
+        state_entries, proposal_address, confirm.proposal_id
+    ):
+        raise InvalidTransaction(
+            "The proposal {} does not exist or "
+            "is not open".format(confirm.proposal_id)
+        )
+
+    verify_user_with_role_permission_on_proposal(
+        proposal_address,
+        header.signer_public_key,
+        confirm.role_id,
+        txn_signer_rel_address,
+        state,
+    )
+
+    return state_entries
+
+
+def verify_user_with_role_permission_on_proposal(
+    proposal_address, user_id, role_id, txn_signer_rel_address, state
+):
+
+    state_entries = state_accessor.get_state(
+        state, [txn_signer_rel_address, proposal_address]
+    )
+    try:
+        entry = state_accessor.get_state_entry(state_entries, txn_signer_rel_address)
+        role_rel_container = message_accessor.get_role_rel_container(entry)
+    except KeyError:
+        raise InvalidTransaction(
+            "Signer {} does not have the Role permissions "
+            "to close the proposal".format(user_id)
+        )
+    if not message_accessor.is_in_role_rel_container(
+        role_rel_container, role_id=role_id, identifier=user_id
+    ):
+        raise InvalidTransaction(
+            "Signer {} does not have the Role "
+            "permissions to close the "
+            "proposal".format(user_id)
+        )

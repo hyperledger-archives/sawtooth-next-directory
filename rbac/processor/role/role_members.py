@@ -17,11 +17,13 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.addressing import addresser
 
+from rbac.processor import proposal_validator
 from rbac.processor.role import role_validator
-from rbac.processor import state_accessor, proposal_validator, state_change
+from rbac.processor import state_change
+from rbac.processor.role import role_operation
 
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import role_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import role_transaction_pb2
 
 
 def apply_propose(header, payload, state):
@@ -104,6 +106,27 @@ def apply_propose_remove(header, payload, state):
     )
 
 
+def hierarchical_approve(header, payload, state):
+    hierarchical_decide(header, payload, state, True)
+
+
+def hierarchical_reject(header, payload, state):
+    hierarchical_decide(header, payload, state, False)
+
+
+def hierarchical_decide(header, payload, state, isApproval):
+    confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
+    confirm.ParseFromString(payload.content)
+
+    txn_signer_owners_address = addresser.make_role_owners_address(
+        role_id=confirm.role_id, user_id=confirm.on_behalf_id
+    )
+
+    role_operation.hierarchical_decide(
+        header, confirm, state, txn_signer_owners_address, isApproval
+    )
+
+
 def apply_confirm(header, payload, state):
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm_payload.ParseFromString(payload.content)
@@ -116,7 +139,7 @@ def apply_confirm(header, payload, state):
         role_id=confirm_payload.role_id, user_id=header.signer_public_key
     )
 
-    state_entries = state_accessor.get_state_entries(
+    state_entries = role_validator.get_state_entries(
         header=header,
         confirm=confirm_payload,
         txn_signer_rel_address=txn_signer_owners_address,
@@ -140,7 +163,7 @@ def apply_reject(header, payload, state):
         reject_payload.role_id, header.signer_public_key
     )
 
-    state_entries = state_accessor.get_state_entries(
+    state_entries = role_validator.get_state_entries(
         header=header,
         confirm=reject_payload,
         txn_signer_rel_address=txn_signer_owners_address,

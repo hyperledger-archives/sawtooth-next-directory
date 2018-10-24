@@ -19,8 +19,8 @@ from rbac.addressing import addresser
 
 from rbac.processor import proposal_validator, state_change
 from rbac.processor.task import task_validator
-from rbac.processor.protobuf import proposal_state_pb2
-from rbac.processor.protobuf import task_transaction_pb2
+from rbac.common.protobuf import proposal_state_pb2
+from rbac.common.protobuf import task_transaction_pb2
 
 
 def apply_propose(header, payload, state):

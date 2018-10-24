@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.processor.protobuf import user_transaction_pb2
+from rbac.common.protobuf import user_transaction_pb2
 from rbac.processor.user import user_validator
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from rbac.processor import state_change

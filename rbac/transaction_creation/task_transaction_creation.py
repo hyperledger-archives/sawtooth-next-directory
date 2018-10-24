@@ -17,7 +17,7 @@ from rbac.addressing import addresser
 
 from rbac.transaction_creation.common import make_header_and_batch
 
-from rbac.transaction_creation.protobuf import rbac_payload_pb2, task_transaction_pb2
+from rbac.common.protobuf import rbac_payload_pb2, task_transaction_pb2
 
 
 def create_task(txn_key, batch_key, task_id, task_name, admins, owners, metadata):
