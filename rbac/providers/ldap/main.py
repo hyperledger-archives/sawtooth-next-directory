@@ -18,6 +18,8 @@
 import logging
 import os
 
+from rbac.providers.ldap import outbound_queue_listener
+
 # Reference: rbac.ledger_sync.deltas.handlers.get_delta_handler
 # Reference: rbac.ledger_sync.subscriber.Subscriber
 
@@ -30,3 +32,8 @@ def get_env_with_fallback(name, default):
         return default
     return value
 
+
+def start_listener():
+    listener = outbound_queue_listener.OutboundQueueListener()
+    listener.on_open()
+    print('Outbound queue listener is up and running')

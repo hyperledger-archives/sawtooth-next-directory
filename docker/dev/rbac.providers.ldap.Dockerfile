@@ -26,4 +26,4 @@ RUN pip3 install rethinkdb \
 
 WORKDIR /project/tmobile-rbac
 
-CMD ["./bin/rbac-providers-active-dir"]
+CMD ["./bin/rbac-providers-ldap"]
