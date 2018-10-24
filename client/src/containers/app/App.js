@@ -91,6 +91,7 @@ class App extends Component {
       <Router>
         <Switch>
           <Route exact path='/login' component={Login}/>
+          <Route exact path='/sign-up' component={Login}/>
           <Route exact path='/browse' component={Browse}/>
           
           { !isAuthenticated && <Redirect to='/login'/> }

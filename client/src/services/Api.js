@@ -33,7 +33,7 @@ import apisauce from 'apisauce';
  *    yield call(api.login, ...)
  *  
  */
-const create = (baseURL = '') => {
+const create = (baseURL = 'http://localhost:8000/') => {
 
   /**
    * 
@@ -53,7 +53,8 @@ const create = (baseURL = '') => {
    * 
    */
   const getRoot = () => api.get('');
-  const login = (creds) => api.post('login', creds);
+  const login = (creds) => api.post('api/authorization', creds);
+  const signup = (creds) => api.post('/api/users', creds);
   const getRequesterBase = () => api.get('me/base');
   const getPack = (id) => api.get(`${id}`);
   const search = (query) => api.post('', { q: query });
@@ -64,7 +65,8 @@ const create = (baseURL = '') => {
     login,
     getRequesterBase,
     getPack,
-    search
+    search,
+    signup
   }
 
 }

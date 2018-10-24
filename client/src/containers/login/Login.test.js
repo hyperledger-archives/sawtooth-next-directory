@@ -26,9 +26,15 @@ const store = createCustomStore();
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
+  const props = {
+    location: {
+      pathname: ''
+    }
+  }
+
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Login/></BrowserRouter>
+      <BrowserRouter><Login {...props}/></BrowserRouter>
     </Provider>, div
   );
 

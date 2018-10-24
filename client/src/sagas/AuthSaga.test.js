@@ -37,7 +37,7 @@ test('first calls API', () => {
   }));
   
   expect(step()).toEqual(call(FixtureAPI.login, {
-    username: username,
+    id: username,
     password: password
   }));
 });
