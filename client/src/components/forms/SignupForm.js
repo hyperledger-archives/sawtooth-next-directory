@@ -25,18 +25,17 @@ import PropTypes from 'prop-types';
 
 /**
  * 
- * @class LoginForm
- * Component encapsulating a reusable login form suitable for
- * composing within containers where login functionality is required
+ * @class SignupForm
+ * Component encapsulating sign-up form suitable for creating new users
  * 
  */
-export default class LoginForm extends Component {
+export default class SignupForm extends Component {
 
   constructor (props) {
     super(props);
 
     // TODO: Consider moving to Redux
-    this.state = { username: '', password: '' };
+    this.state = { username: '', password: '', name: '', email: '' };
   }
 
 
@@ -54,13 +53,18 @@ export default class LoginForm extends Component {
   
   render () {
     const { submit } = this.props;
-    const { username, password } = this.state;
+    const { username, password, name, email  } = this.state;
 
     return (
-      <Form onSubmit={() => submit(username, password)}>
+      <Form onSubmit={() => submit(name, username, password, email)}>
         <Form.Input
-          label='User ID'
-          placeholder='User ID'
+          label='Name'
+          placeholder='Name'
+          name='name'
+          onChange={this.handleChange}/>
+        <Form.Input
+          label='User Name'
+          placeholder='user name'
           name='username'
           onChange={this.handleChange}/>
         <Form.Input
@@ -69,9 +73,16 @@ export default class LoginForm extends Component {
           name='password'
           type='password'
           onChange={this.handleChange}/>
-        <Form.Button content='Login'/>
-        <Link to="/sign-up">
-          <Button>Sign up</Button>
+        <Form.Input
+          label='Email'
+          placeholder='email'
+          name='email'
+          type='email'
+          onChange={this.handleChange}/>
+        <Form.Button content='Sign Up'/>
+
+        <Link to = '/login'>
+            <Button>Return to Login</Button>
         </Link>
       </Form>
     );
@@ -80,6 +91,6 @@ export default class LoginForm extends Component {
 }
 
 
-LoginForm.proptypes = {
+SignupForm.proptypes = {
   submit: PropTypes.func.isRequired
 };
