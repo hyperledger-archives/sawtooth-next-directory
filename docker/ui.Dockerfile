@@ -12,15 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+
 FROM node:8
-
 COPY ./ui /ui
-
 WORKDIR /ui
-
 EXPOSE 4200
-
 RUN npm install
-RUN npm rebuild node-sass --force
-
-CMD [ "./entrypoint.sh" ]
+CMD ["./entrypoint.sh" ]

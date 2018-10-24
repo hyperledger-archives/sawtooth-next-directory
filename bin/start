@@ -24,12 +24,11 @@ usage() {
     cat << EOM
 
         Usage:
-            $0 [-p --persist] [-d --dev] [-b --build]
+            $0 [-p --persist] [-b --build]
 
         Options:
                                start from genesis (no data) [default]
             -p --persist       start with persistent data
-            -d --dev           start in development mode (local files)
             -b --build         (re)build docker images before starting
 
 EOM
@@ -58,9 +57,6 @@ CMD="docker-compose -f docker-compose.yaml"
 
 if [[ "$PERSIST" == "1" ]]; then
     CMD="$CMD -f docker-persist.yaml"
-fi
-if [[ "$DEV" == "1" ]]; then
-    CMD="$CMD -f docker-dev.yaml"
 fi
 CMD="$CMD up"
 if [[ "$BUILD" == "1" ]]; then
