@@ -20,32 +20,30 @@ from sawtooth_sdk.protobuf import batch_pb2
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import transaction_pb2
 from rbac.addressing import addresser
-from rbac.common.protobuf import rbac_payload_pb2
 from rbac.app.config import BATCHER_KEY_PAIR
+from rbac.common.sawtooth import rbac_payload
 
 LOGGER = logging.getLogger(__name__)
 
 
 class Batcher:
-    @classmethod
-    def make_payload(self, message, message_type):
-        return rbac_payload_pb2.RBACPayload(
-            content=message.SerializeToString(), message_type=message_type
+    def make_payload(self, message, message_type, inputs, outputs):
+        """Turn a message into a payload"""
+        return rbac_payload.make_payload(
+            message=message, message_type=message_type, inputs=inputs, outputs=outputs
         )
 
-    @classmethod
-    def make_transaction_header(
-        self,
-        payload,
-        inputs,
-        outputs,
-        signer_keypair,
-        batcher_public_key=BATCHER_KEY_PAIR.public_key,
-    ):
+    def unmake_payload(self, payload):
+        """Turn a payload back into a message"""
+        return rbac_payload.unmake_payload(payload=payload)
 
+    def make_transaction_header(
+        self, payload, signer_keypair, batcher_public_key=BATCHER_KEY_PAIR.public_key
+    ):
+        """Make the signed transaction header for a payload"""
         header = transaction_pb2.TransactionHeader(
-            inputs=inputs,
-            outputs=outputs,
+            inputs=payload.inputs,
+            outputs=payload.outputs,
             batcher_public_key=batcher_public_key,
             dependencies=[],
             family_name=addresser.FAMILY_NAME,
@@ -58,23 +56,12 @@ class Batcher:
         signature = signer_keypair.sign(header.SerializeToString())
         return header, signature
 
-    @classmethod
     def make_transaction(
-        self,
-        message,
-        message_type,
-        inputs,
-        outputs,
-        signer_keypair,
-        batcher_public_key=BATCHER_KEY_PAIR.public_key,
+        self, payload, signer_keypair, batcher_public_key=BATCHER_KEY_PAIR.public_key
     ):
-
-        payload = self.make_payload(message=message, message_type=message_type)
-
+        """Make a transaction from a payload"""
         header, signature = self.make_transaction_header(
             payload=payload,
-            inputs=inputs,
-            outputs=outputs,
             signer_keypair=signer_keypair,
             batcher_public_key=batcher_public_key,
         )
@@ -85,9 +72,8 @@ class Batcher:
             header_signature=signature,
         )
 
-    @classmethod
     def make_batch(self, transaction, batcher_keypair=BATCHER_KEY_PAIR):
-
+        """Batch a transaction"""
         batch_header = batch_pb2.BatchHeader(
             signer_public_key=batcher_keypair.public_key,
             transaction_ids=[transaction.header_signature],
@@ -99,20 +85,35 @@ class Batcher:
             transactions=[transaction],
         )
 
-    @classmethod
     def batch_to_list(self, batch):
+        """Make a batch list from a batch"""
         return batch_pb2.BatchList(batches=[batch])
 
-    @classmethod
     def make_batch_list(self, transaction):
+        """Make a batch list from a transaction"""
         return self.batch_to_list(self.make_batch(transaction=transaction))
 
-    @classmethod
     def make_batch_request(self, batch_list):
+        """Make a batch request from a batch list"""
         batch_request = client_batch_submit_pb2.ClientBatchSubmitRequest()
         batch_request.batches.extend(list(batch_list.batches))
         return batch_request
 
-    @classmethod
     def get_batch_ids(self, batch_list):
+        """Get the IDs (signatures) of a batch list"""
         return list(batch.header_signature for batch in batch_list.batches)
+
+    def make(self, payload, signer_keypair, batcher_keypair=BATCHER_KEY_PAIR):
+        """From a payload return a transaction, batch, batch list and batch request"""
+        transaction = self.make_transaction(
+            payload=payload, signer_keypair=signer_keypair
+        )
+
+        batch = self.make_batch(
+            transaction=transaction, batcher_keypair=batcher_keypair
+        )
+
+        batch_list = self.batch_to_list(batch=batch)
+        batch_request = self.make_batch_request(batch_list=batch_list)
+
+        return transaction, batch, batch_list, batch_request
