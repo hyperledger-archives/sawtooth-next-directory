@@ -39,7 +39,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - AES_KEY=${AES_KEY}
 
-  rbac-provider:
+  azure-rbac-provider:
     build:
       context: .
       dockerfile: ./docker/rbac.providers.azure.Dockerfile
@@ -56,6 +56,21 @@ services:
     depends_on:
       - ledger-sync
     command: ./bin/rbac-providers-azure
+
+  ldap-rbac-provider:
+    build:
+      context: .
+      dockerfile: ./docker/rbac.providers.ldap.Dockerfile
+    container_name: rbac-providers-ldap
+    image: rbac-provider-ldap-production:${ISOLATION_ID-latest}
+    environment:
+      - LDAP_DC=${LDAP_DC}
+      - LDAP_SERVER=${LDAP_SERVER}
+      - LDAP_USER=${LDAP_USER}
+      - LDAP_PASS=${LDAP_PASS}
+    depends_on:
+      - ledger-sync
+    command: ./bin/rbac-providers-ldap
 
   rbac-server:
     build:
