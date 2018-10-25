@@ -68,7 +68,7 @@ services:
       - TENANT_ID=${TENANT_ID}
       - AUTH_TYPE=${AUTH_TYPE}
     depends_on:
-      - ledger-sync
+      - rethink
     command: ./bin/rbac-providers-ldap
 
   rbac-server:

@@ -13,12 +13,15 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import sys
 import logging
 import rethinkdb as r
 from tornado import ioloop, gen
 from tornado.concurrent import Future, chain_future
 
 LOGGER = logging.getLogger(__name__)
+LOGGER.level = logging.DEBUG
+LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 
 class OutboundQueueListener(object):
@@ -26,9 +29,10 @@ class OutboundQueueListener(object):
         self._connection = connection
         self._sentinel = object()
         self._cancel_future = Future()
+        self._feeds_ready = {}
 
     @gen.coroutine
-    def print_cfeed_data(self, table):
+    def report_changes_to_table(self, table):
         feed = yield r.table(table).changes().run(self._connection)
         self._feeds_ready[table].set_result(True)
         while (yield feed.fetch_next()):
@@ -37,7 +41,7 @@ class OutboundQueueListener(object):
             item = yield cursor
             if item is self._sentinel:
                 return
-            print("Seen on table %s: %s" % (table, item))
+            LOGGER.debug("Change observed on table %s: %s" % (table, item))
 
     @gen.coroutine
     def table_write(self, table):
@@ -46,23 +50,21 @@ class OutboundQueueListener(object):
 
     @gen.coroutine
     def exercise_changefeeds(self):
-        self._feeds_ready = {'a': Future(), 'b': Future()}
+        self._feeds_ready = {'queue_outbound': Future()}
         loop = ioloop.IOLoop.current()
-        loop.add_callback(self.print_cfeed_data, 'a')
-        loop.add_callback(self.print_cfeed_data, 'b')
+        loop.add_callback(self.report_changes_to_table, 'queue_outbound')
         yield self._feeds_ready
-        yield [self.table_write('a'), self.table_write('b')]
+        yield [self.table_write('queue_outbound')]
         self._cancel_future.set_result(self._sentinel)
 
     @classmethod
     @gen.coroutine
     def run(cls, connection_future):
         connection = yield connection_future
-        if 'a' in (yield r.table_list().run(connection)):
-            yield r.table_drop('a').run(connection)
-        yield r.table_create('a').run(connection)
-        if 'b' in (yield r.table_list().run(connection)):
-            yield r.table_drop('b').run(connection)
-        yield r.table_create('b').run(connection)
-        noticer = cls(connection)
-        yield noticer.exercise_changefeeds()
+        if 'queue_outbound' in (yield r.table_list().run(connection)):
+            LOGGER.info('Dropping queue_outbound table')
+            yield r.table_drop('queue_outbound').run(connection)
+        LOGGER.debug('Creating queue_outbound table')
+        yield r.table_create('queue_outbound').run(connection)
+        observer = cls(connection)
+        yield observer.exercise_changefeeds()
