@@ -18,7 +18,7 @@ FROM python:3.7
 RUN pip install \
     requests    \
     rethinkdb   \
-    websocket-client
+    tornado
 
 WORKDIR /project/tmobile-rbac
 

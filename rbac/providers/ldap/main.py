@@ -35,5 +35,4 @@ def get_env_with_fallback(name, default):
 
 def start_listener():
     listener = outbound_queue_listener.OutboundQueueListener()
-    listener.on_open()
     print('Outbound queue listener is up and running')
