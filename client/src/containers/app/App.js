@@ -25,7 +25,7 @@ import Browse from '../browse/Browse';
 import './App.css';
 
 
-import { AuthSelectors } from '../../redux/AuthRedux';
+import AuthActions,{ AuthSelectors } from '../../redux/AuthRedux';
 import ChatActions, { ChatSelectors } from '../../redux/ChatRedux';
 import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
 
@@ -126,7 +126,9 @@ const mapDispatchToProps = (dispatch) => {
     getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
 
     sendMessage:     (message) => dispatch(ChatActions.sendRequest(message)),
-    getConversation: (id) => dispatch(ChatActions.conversationRequest(id))
+    getConversation: (id) => dispatch(ChatActions.conversationRequest(id)),
+
+    logout:          () => dispatch(AuthActions.logoutRequest())
   };
 }
 

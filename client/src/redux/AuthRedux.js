@@ -82,6 +82,8 @@ export const success = (state, { isAuthenticated, authData }) => {
    */
   localStorage.setItem("authToken", authData.authorization);
   localStorage.setItem("userID", authData.user_id);
+
+  console.log("Local Storage:", localStorage);
   
   return state.merge({ fetching: false, isAuthenticated });
 }
@@ -98,6 +100,8 @@ export const logout = (state) => {
 
   localStorage.removeItem("authToken");
   localStorage.removeItem("userID");
+
+  console.log("Local Storage:", localStorage);
 
   return state.merge({ fetching: false, isAuthenticated: false});
 } 
