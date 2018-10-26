@@ -12,15 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-FROM python:3.5.2
 
-RUN pip install \
-    requests    \
-    rethinkdb   \
-    ldap3
+# -----------------------------------------------------------------------------
+# Begin base docker image config for Hyperledger RBAC Next Directory
+# This should remain the same for all python containers to maximize caching
+# -----------------------------------------------------------------------------
+FROM hyperledger/sawtooth-validator:1.0
 
-WORKDIR /project/tmobile-rbac
+RUN apt-get update \
+ && apt-get install -y --allow-unauthenticated -q \
+        python3-pip \
+        python3-sawtooth-sdk \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y  apt-utils
 
-COPY . .
+RUN pip3 install -U pip setuptools
+
+RUN pip3 install \
+        grpcio-tools \
+        itsdangerous \
+        rethinkdb \
+        sanic==0.7.0
+
+WORKDIR /project/hyperledger-rbac
+# -----------------------------------------------------------------------------
+# End base docker image config for Hyperledger RBAC Next Directory
+# -----------------------------------------------------------------------------
+
+RUN pip3 install \
+        rethinkdb \
+        ldap3 \
+        pyasn1==0.4.4
 
 CMD [ "./bin/rbac-providers-ldap" ]
