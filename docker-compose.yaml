@@ -62,7 +62,9 @@ services:
       context: .
       dockerfile: ./docker/rbac.providers.ldap.Dockerfile
     container_name: rbac-providers-ldap
-    image: rbac-provider-ldap-production:${ISOLATION_ID-latest}
+    image: rbac-provider-ldap:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     environment:
       - LDAP_DC=${LDAP_DC}
       - LDAP_SERVER=${LDAP_SERVER}
