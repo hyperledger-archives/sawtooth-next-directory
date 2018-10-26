@@ -29,10 +29,13 @@ import Immutable from 'seamless-immutable';
  */
 const { Types, Creators } = createActions({
   loginRequest:     ['username', 'password'],
-  loginSuccess:     ['isAuthenticated'],
+  loginSuccess:     ['isAuthenticated', 'authData'],
   loginFailure:     ['error'],
 
-  signupRequest:    ['name', 'username', 'password', 'email']
+  signupRequest:    ['name', 'username', 'password', 'email'],
+
+  logoutRequest:    null,
+  logoutSuccess:    null
 });
 
 
@@ -70,12 +73,34 @@ export const AuthSelectors = {
 
 
 export const request = (state) => state.merge({ fetching: true });
-export const success = (state, { isAuthenticated }) => {
+
+export const success = (state, { isAuthenticated, authData }) => {
+  /**
+   * Storing the userID and authorization token in the local storage
+   * 
+   * 
+   */
+  localStorage.setItem("authToken", authData.authorization);
+  localStorage.setItem("userID", authData.user_id);
+  
   return state.merge({ fetching: false, isAuthenticated });
 }
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
+
+export const logout = (state) => {
+  /**
+   * Clear local storage on logout
+   * 
+   */
+
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userID");
+
+  return state.merge({ fetching: false, isAuthenticated: false});
+} 
 
 
 /**
@@ -88,5 +113,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_REQUEST]: request,
   [Types.LOGIN_SUCCESS]: success,
   [Types.LOGIN_FAILURE]: failure,
-  [Types.SIGNUP_REQUEST]: request
+  [Types.SIGNUP_REQUEST]: request,
+  [Types.LOGOUT_REQUEST]: request,
+  [Types.LOGOUT_SUCCESS]: logout,
 });

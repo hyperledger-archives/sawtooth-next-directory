@@ -38,7 +38,11 @@ export function * login (api, action) {
 
     if (res.ok) {
       console.log('Authentication successful.');
-      yield put(AuthActions.loginSuccess(true));
+      /**
+       * Sending the authorization token and user id.
+       * 
+       */
+      yield put(AuthActions.loginSuccess(true, res.data.data));
     } else {
       alert(res.data.message);
       yield put(AuthActions.loginFailure(res.data.message));
@@ -71,10 +75,25 @@ export function * signup (api, action) {
 
     if (res.ok) {
       console.log('New user added');
-      yield put(AuthActions.loginSuccess(true));
+      /**
+       * Sending the authorization token and user id.
+       * 
+       */
+      yield put(AuthActions.loginSuccess(true, res.data.data));
     } else {
       alert(res.data.message);
       yield put(AuthActions.loginFailure(res.data.message));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export function * logout (api, action) {
+  try {
+    const res = yield call(api.logout);
+    if (res.ok) {
+      yield put(AuthActions.logoutSuccess());
     }
   } catch (err) {
     console.error(err);

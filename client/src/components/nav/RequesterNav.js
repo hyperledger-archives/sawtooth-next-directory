@@ -65,6 +65,8 @@ export default class RequesterNav extends Component {
 
 
   render () {
+    const { logout } = this.props;
+
     return (
       <Container>
 
@@ -85,6 +87,11 @@ export default class RequesterNav extends Component {
         <Link to='/approval-home' id='next-switch-requester-link'>
           Switch to Approver
         </Link>
+        
+        <Button onClick={() => logout()} animated secondary id="next-logout-button">
+          <Button.Content visible>Logout</Button.Content>
+          <Button.Content hidden><Icon name='log out'/></Button.Content>
+        </Button>
 
       </Container>
     );

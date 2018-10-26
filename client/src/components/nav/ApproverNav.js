@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { Container, Search } from 'semantic-ui-react';
+import { Container, Search, Button, Icon } from 'semantic-ui-react';
 
 
 import NavList from './NavList';
@@ -72,6 +72,8 @@ export default class ApproverNav extends Component {
 
 
   render () {
+    const { logout } = this.props;
+
     return (
       <Container>
 
@@ -85,6 +87,11 @@ export default class ApproverNav extends Component {
         <Link to='/home' id='next-switch-approver-link'>
           Switch to Requester
         </Link>
+
+        <Button onClick={() => logout()} animated secondary id="next-logout-button">
+          <Button.Content visible>Logout</Button.Content>
+          <Button.Content hidden><Icon name='log out'/></Button.Content>
+        </Button>
 
       </Container>
     );

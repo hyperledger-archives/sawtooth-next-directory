@@ -26,7 +26,7 @@ import { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
 
 
-import { login, signup } from './AuthSaga';
+import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
 import { getBase, getPack } from './RequesterSaga';
 
@@ -48,7 +48,8 @@ export default function * root() {
     // Auth
     takeLatest(AuthTypes.LOGIN_REQUEST, login, API.create()),
     takeLatest(AuthTypes.SIGNUP_REQUEST, signup, API.create()),
-
+    takeLatest(AuthTypes.LOGOUT_REQUEST, logout, api),
+    
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
     takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
