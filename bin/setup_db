@@ -76,6 +76,9 @@ def setup_db(host, port, name):
         print('Creating table: sync_tracker')
         r.db(name).table_create('sync_tracker').run(conn)
 
+        print('Creating table: sync_tracker')
+        r.db(name).table_create('sync_tracker').run(conn)
+
         print('Creating table: proposals')
         r.db(name).table_create('proposals').run(conn)
         r.db(name).table('proposals').index_create('proposal_id').run(conn)
