@@ -28,7 +28,11 @@ test('loginRequest', () => {
 
 test('loginSuccess', () => {
   const isAuthenticated = true;
-  const state = reducer(INITIAL_STATE, Actions.loginSuccess(isAuthenticated));
+  const authData = {
+    authorization: '',
+    user_id: ''
+  };
+  const state = reducer(INITIAL_STATE, Actions.loginSuccess(isAuthenticated, authData));
 
   expect(state.fetching).toBe(false);
   expect(state.isAuthenticated).toBe(true);
