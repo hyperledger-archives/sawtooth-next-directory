@@ -33,7 +33,7 @@ services:
   shell:
     build:
       context: .
-      dockerfile: ./shell/Dockerfile
+      dockerfile: ./docker/shell.Dockerfile
     image: hyperledger/sawtooth-shell:1.0
     container_name: rbac-shell
     depends_on:
@@ -42,16 +42,16 @@ services:
       - rest-api-2
       - rest-api-3
     volumes:
-      - ".:/project/tmobile-rbac"
+      - ".:/project/hyperledger-rbac"
     networks:
       - node_network
     environment:
-      PYTHONPATH: /project/tmobile-rbac/addressing:/project/tmobile-rbac/transaction_creation
+      PYTHONPATH: /project/hyperledger-rbac/addressing:/project/hyperledger-rbac/transaction_creation
 
   rbac-server-0:
     build:
       context: .
-      dockerfile: ./rbac/server/Dockerfile
+      dockerfile: ./docker/rbac.server.Dockerfile
     container_name: rbac-server-0
     image: rbac-server-production:${ISOLATION_ID-latest}
     ports:
@@ -70,7 +70,7 @@ services:
   rbac-server-1:
     build:
       context: .
-      dockerfile: ./rbac/server/Dockerfile
+      dockerfile: ./docker/rbac.server.Dockerfile
     container_name: rbac-server-1
     image: rbac-server-production:${ISOLATION_ID-latest}
     ports:
@@ -89,7 +89,7 @@ services:
   rbac-server-2:
     build:
       context: .
-      dockerfile: ./rbac/server/Dockerfile
+      dockerfile: ./docker/rbac.server.Dockerfile
     container_name: rbac-server-2
     image: rbac-server-production:${ISOLATION_ID-latest}
     ports:
@@ -108,7 +108,7 @@ services:
   rbac-server-3:
     build:
       context: .
-      dockerfile: ./rbac/server/Dockerfile
+      dockerfile: ./docker/rbac.server.Dockerfile
     container_name: rbac-server-3
     image: rbac-server-production:${ISOLATION_ID-latest}
     ports:
@@ -160,7 +160,7 @@ services:
   rbac-tp-0:
     build:
       context: .
-      dockerfile: ./rbac/processor/Dockerfile
+      dockerfile: ./docker/rbac.processor.Dockerfile
     container_name: rbac-tp-0
     image: rbac-tp-production:${ISOLATION_ID-latest}
     networks:
@@ -172,7 +172,7 @@ services:
   rbac-tp-1:
     build:
       context: .
-      dockerfile: ./rbac/processor/Dockerfile
+      dockerfile: ./docker/rbac.processor.Dockerfile
     container_name: rbac-tp-1
     image: rbac-tp-production:${ISOLATION_ID-latest}
     networks:
@@ -184,7 +184,7 @@ services:
   rbac-tp-2:
     build:
       context: .
-      dockerfile: ./rbac/processor/Dockerfile
+      dockerfile: ./docker/rbac.processor.Dockerfile
     container_name: rbac-tp-2
     image: rbac-tp-production:${ISOLATION_ID-latest}
     networks:
@@ -196,7 +196,7 @@ services:
   rbac-tp-3:
     build:
       context: .
-      dockerfile: ./rbac/processor/Dockerfile
+      dockerfile: ./docker/rbac.processor.Dockerfile
     container_name: rbac-tp-3
     image: rbac-tp-production:${ISOLATION_ID-latest}
     networks:
@@ -208,7 +208,7 @@ services:
   ledger-sync-0:
     build:
       context: .
-      dockerfile: ./rbac/ledger_sync/Dockerfile
+      dockerfile: ./docker/rbac.ledger_sync.Dockerfile
     container_name: rbac-ledger-sync-0
     image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
     depends_on:
@@ -227,7 +227,7 @@ services:
   ledger-sync-1:
     build:
       context: .
-      dockerfile: ./rbac/ledger_sync/Dockerfile
+      dockerfile: ./docker/rbac.ledger_sync.Dockerfile
     container_name: rbac-ledger-sync-1
     image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
     depends_on:
@@ -246,7 +246,7 @@ services:
   ledger-sync-2:
     build:
       context: .
-      dockerfile: ./rbac/ledger_sync/Dockerfile
+      dockerfile: ./docker/rbac.ledger_sync.Dockerfile
     container_name: rbac-ledger-sync-2
     image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
     depends_on:
@@ -265,7 +265,7 @@ services:
   ledger-sync-3:
     build:
       context: .
-      dockerfile: ./rbac/ledger_sync/Dockerfile
+      dockerfile: ./docker/rbac.ledger_sync.Dockerfile
     container_name: rbac-ledger-sync-3
     image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
     depends_on:
@@ -284,7 +284,7 @@ services:
   rbac-ui-0:
     build:
       context: .
-      dockerfile: ./ui/Dockerfile
+      dockerfile: ./docker/ui.Dockerfile
     container_name: rbac-ui-0
     image: rbac-ui-production:${ISOLATION_ID-latest}
     ports:
@@ -300,7 +300,7 @@ services:
   rbac-ui-1:
     build:
       context: .
-      dockerfile: ./ui/Dockerfile
+      dockerfile: ./docker/ui.Dockerfile
     container_name: rbac-ui-1
     image: rbac-ui-production:${ISOLATION_ID-latest}
     ports:
@@ -316,7 +316,7 @@ services:
   rbac-ui-2:
     build:
       context: .
-      dockerfile: ./ui/Dockerfile
+      dockerfile: ./docker/ui.Dockerfile
     container_name: rbac-ui-2
     image: rbac-ui-production:${ISOLATION_ID-latest}
     ports:
@@ -332,7 +332,7 @@ services:
   rbac-ui-3:
     build:
       context: .
-      dockerfile: ./ui/Dockerfile
+      dockerfile: ./docker/ui.Dockerfile
     container_name: rbac-ui-3
     image: rbac-ui-production:${ISOLATION_ID-latest}
     ports:

@@ -20,14 +20,14 @@ services:
     build:
       context: .
       dockerfile: ./docker/shell.Dockerfile
-    image: hyperledger/sawtooth-shell:1.0
     container_name: rbac-shell
+    image: hyperledger/sawtooth-shell:1.0
+    volumes:
+      - ".:/project/hyperledger-rbac"
     depends_on:
       - rest-api
-    volumes:
-      - ".:/project/tmobile-rbac"
     environment:
-      - PYTHONPATH=/project/tmobile-rbac/
+      - PYTHONPATH=/project/hyperledger-rbac/
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
       - VALIDATOR_HOST=${VALIDATOR_HOST:-validator}
@@ -44,7 +44,9 @@ services:
       context: .
       dockerfile: ./docker/rbac.providers.azure.Dockerfile
     container_name: rbac-providers-azure
-    image: rbac-provider-azure-production:${ISOLATION_ID-latest}
+    image: rbac-provider-azure:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     environment:
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_SECRET=${CLIENT_SECRET}
@@ -60,7 +62,9 @@ services:
       context: .
       dockerfile: ./docker/rbac.server.Dockerfile
     container_name: rbac-server
-    image: rbac-server-production:${ISOLATION_ID-latest}
+    image: rbac-server:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     ports:
       - "8000:8000"
     depends_on:
@@ -85,7 +89,9 @@ services:
       context: .
       dockerfile: ./docker/rbac.processor.Dockerfile
     container_name: rbac-tp
-    image: rbac-tp-production:${ISOLATION_ID-latest}
+    image: rbac-tp:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     environment:
       - HOST=${HOST:-localhost}
     command: ./bin/rbac-tp -vv tcp://validator:4004
@@ -95,7 +101,9 @@ services:
       context: .
       dockerfile: ./docker/rbac.ledger_sync.Dockerfile
     container_name: rbac-ledger-sync
-    image: rbac-ledger-sync-production:${ISOLATION_ID-latest}
+    image: rbac-ledger-sync:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     depends_on:
       - rethink
       - validator
@@ -112,13 +120,28 @@ services:
       context: .
       dockerfile: ./docker/ui.Dockerfile
     container_name: rbac-ui
-    image: rbac-ui-production:${ISOLATION_ID-latest}
+    image: rbac-ui:${ISOLATION_ID-latest}
     ports:
       - "4200:4200"
     depends_on:
       - rbac-server
     environment:
       - HOST=${HOST:-localhost}
+
+  rbac-client:
+    build:
+      context: .
+      dockerfile: ./docker/client.Dockerfile
+    container_name: rbac-client
+    image: rbac-client:${ISOLATION_ID-latest}
+    volumes:
+      - "./client/src:/client/src"
+      - "./client/public:/client/public"
+    ports:
+      - "4201:3000"
+      - "35729:35729"
+    depends_on:
+      - rbac-server
 
   rest-api:
     container_name: sawtooth-rest-api

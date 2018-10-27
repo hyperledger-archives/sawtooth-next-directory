@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +16,17 @@
 # -----------------------------------------------------------------------------
 
 
-FROM node:8
-COPY ./client /client
-WORKDIR /client
-EXPOSE 3000
-RUN npm install
-CMD ["./entrypoint.sh"]
+TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
+
+if [ "$1" ]; then
+    WHERE="$1"
+else
+    WHERE="$PWD"
+fi
+
+find "$WHERE" \
+    -name '__pycache__' -delete -print \
+    -o \
+    -name '*.pyc' -delete -print
+
+docker system prune -a

@@ -24,4 +24,4 @@ RUN pip3 install \
     requests \
     dredd-hooks
 
-WORKDIR /project/tmobile-rbac
+WORKDIR /project/hyperledger-rbac

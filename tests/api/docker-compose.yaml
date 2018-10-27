@@ -23,7 +23,7 @@ services:
       dockerfile: ../../../rbac/server/Dockerfile-dev
     image: rbac-server-dev
     volumes:
-      - "../../:/project/tmobile-rbac"
+      - "../../:/project/hyperledger-rbac"
     depends_on:
       - ledger-sync
       - rethink
@@ -43,7 +43,7 @@ services:
       dockerfile: ../../../rbac/processor/Dockerfile-dev
     image: rbac-tp-dev
     volumes:
-      - "../../:/project/tmobile-rbac"
+      - "../../:/project/hyperledger-rbac"
     command: bin/rbac-tp -vv tcp://validator:4004
 
   ledger-sync:
@@ -52,7 +52,7 @@ services:
       dockerfile: ../../../rbac/ledger_sync/Dockerfile-dev
     image: rbac-ledger-sync-dev
     volumes:
-      - "../../:/project/tmobile-rbac"
+      - "../../:/project/hyperledger-rbac"
     depends_on:
       - rethink
       - validator
@@ -94,9 +94,9 @@ services:
       - ledger-sync
       - rbac-tp
     volumes:
-      - '../../:/project/tmobile-rbac'
+      - '../../:/project/hyperledger-rbac'
     environment:
-      PYTHONPATH: /project/tmobile-rbac/
+      PYTHONPATH: /project/hyperledger-rbac/
     command: |
       dredd ./server/openapi.yaml http://server:8000
         --language=python
