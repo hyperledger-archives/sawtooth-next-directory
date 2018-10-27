@@ -182,13 +182,15 @@ hanging in the legacy UI and stack traces from rbac_server:
 
 To work around this situation, shut down the application, delete all containers and images, and rebuild/deploy:
 
-    docker-compose down
+    bin/stop
 
     docker rm -vf $(docker ps -a -q)
 
     docker rmi -f $(docker images -a -q)
 
-    docker-compose up --build
+    bin/build
+    
+    bin/start
     
 
 

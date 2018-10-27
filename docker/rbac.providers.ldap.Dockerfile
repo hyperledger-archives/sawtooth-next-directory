@@ -18,7 +18,7 @@ FROM python:3.7
 RUN pip install \
     requests    \
     rethinkdb   \
-    tornado
+    tornado==4.5.3
 
 WORKDIR /project/tmobile-rbac
 
