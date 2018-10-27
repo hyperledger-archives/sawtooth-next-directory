@@ -134,8 +134,12 @@ services:
       dockerfile: ./docker/client.Dockerfile
     container_name: rbac-client
     image: rbac-client:${ISOLATION_ID-latest}
+    volumes:
+      - "./client/src:/client/src"
+      - "./client/public:/client/public"
     ports:
       - "4201:3000"
+      - "35729:35729"
     depends_on:
       - rbac-server
 
