@@ -1,7 +1,12 @@
 {
   "name": "next-directory",
+  "description": "NEXT Directory client",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyperledger/sawtooth-next-directory"
+  },
   "version": "0.1.0",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "apisauce": "^0.16.0",
     "prop-types": "^15.6.2",
