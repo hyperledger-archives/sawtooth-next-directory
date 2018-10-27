@@ -34,24 +34,24 @@ import Expiring from './containers/approver/Expiring';
 
 
 /**
- * 
+ *
  * Destructured routes
- * 
+ *
  * The routes in this array are destructured from the declarative
  * syntax due to the added complexity of navigation and state.
- * 
+ *
  * State is sent top-down via props to the main and nav
  * components.
- * 
+ *
  */
 const routes = (props) => [
 
   /**
-   * 
+   *
    * Requester routes
-   * 
-   * 
-   * 
+   *
+   *
+   *
    */
 
   {
@@ -67,7 +67,13 @@ const routes = (props) => [
     exact:  true
   },
   {
-    path:   '/home/recommended/:id',
+    path:   '/home/recommended-packs/:id',
+    main:   (rest) => <Recommended {...props} {...rest}/>,
+    nav:    () => <RequesterNav {...props}/>,
+    exact:  true
+  },
+  {
+    path:   '/home/recommended-roles/:id',
     main:   (rest) => <Recommended {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true
@@ -79,13 +85,13 @@ const routes = (props) => [
     exact:  true
   },
 
-  
+
   /**
-   * 
+   *
    * Approver routes
-   * 
-   * 
-   * 
+   *
+   *
+   *
    */
 
   {

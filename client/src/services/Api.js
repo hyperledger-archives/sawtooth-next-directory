@@ -18,28 +18,28 @@ import apisauce from 'apisauce';
 
 
 /**
- * 
+ *
  * Encapsulated service that eases configuration and other
  * API-related tasks.
- * 
+ *
  * @example
  *    const api = API.create(...)
  *    api.login(...)
  *
  * If you would like to use this service in sagas, pass it as an
  * argument and then:
- * 
+ *
  * @example
  *    yield call(api.login, ...)
- *  
+ *
  */
-const create = (baseURL = 'http://localhost:8000/') => {
+const create = (baseURL = 'http://localhost:8000/api/') => {
 
   /**
-   * 
+   *
    * Create and configure API object
-   * 
-   * 
+   *
+   *
    */
   const api = apisauce.create({
     baseURL
@@ -47,16 +47,16 @@ const create = (baseURL = 'http://localhost:8000/') => {
 
 
   /**
-   * 
+   *
    * Definitions
-   * 
-   * 
+   *
+   *
    */
   const getRoot = () => api.get('');
-  const login = (creds) => api.post('api/authorization', creds);
-  const signup = (creds) => api.post('/api/users', creds);
+  const login = (creds) => api.post('authorization', creds);
+  const signup = (creds) => api.post('users', creds);
   const getRequesterBase = () => api.get('me/base');
-  const getPack = (id) => api.get(`${id}`);
+  const getPack = (id) => api.get(`roles/${id}`);
   const search = (query) => api.post('', { q: query });
 
 
