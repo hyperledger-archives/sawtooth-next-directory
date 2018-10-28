@@ -16,16 +16,17 @@ limitations under the License.
 
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
+import * as utils from '../services/Utils';
 
 
 /**
- * 
+ *
  * Actions
- * 
+ *
  * @property request  Initiating action
  * @property success  Action called on execution success
  * @property failure  Action called on execution failure
- * 
+ *
  */
 const { Types, Creators } = createActions({
   baseRequest:       null,
@@ -43,18 +44,18 @@ export default Creators;
 
 
 /**
- * 
+ *
  * State
- * 
+ *
  * @property recommended
  * @property requests
  * @property fetching
  * @property activePack
  * @property error
- * 
+ *
  * @todo Consider normalizing recommended, requests, and packs
  * into one roles entity, queried by selector
- * 
+ *
  */
 export const INITIAL_STATE = Immutable({
   recommended:      null,
@@ -66,10 +67,10 @@ export const INITIAL_STATE = Immutable({
 
 
 /**
- * 
+ *
  * Selectors
- * 
- * 
+ *
+ *
  */
 export const RequesterSelectors = {
   activePack:   (state) => state.requester.activePack,
@@ -79,17 +80,23 @@ export const RequesterSelectors = {
   idFromSlug: (collection, slug) => {
     if (!collection) return null;
 
-    const pack = collection.find((item) => item.slug === slug);
+    // const pack = collection.find((item) => item.slug === slug);
+
+    // ! Use name until slugs added
+    const pack = collection.find((item) => {
+      return utils.createSlug(item.name) === slug
+    });
+
     return pack && pack.id;
   }
 };
 
 
 /**
- * 
+ *
  * Reducers - General
- * 
- * 
+ *
+ *
  */
 export const request = (state) => state.merge({ fetching: true });
 export const failure = (state, { error }) => {
@@ -98,10 +105,10 @@ export const failure = (state, { error }) => {
 
 
 /**
- * 
+ *
  * Reducers - Success
- * 
- * 
+ *
+ *
  */
 export const packSuccess = (state, { activePack }) => {
   return state.merge({ fetching: false, activePack });
@@ -110,7 +117,10 @@ export const packSuccess = (state, { activePack }) => {
 export const baseSuccess = (state, { base }) => {
   return state.merge({
     fetching: false,
-    recommended: base.recommended,
+    // recommended: base.recommended,
+
+    // ! Use existing endpoint for now
+    recommended: base.data,
     requests: base.requests
   });
 }

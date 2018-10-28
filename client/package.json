@@ -1,7 +1,12 @@
 {
   "name": "next-directory",
+  "description": "NEXT Directory client",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyperledger/sawtooth-next-directory"
+  },
   "version": "0.1.0",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "apisauce": "^0.16.0",
     "prop-types": "^15.6.2",
@@ -38,7 +43,8 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1"
+    "eslint-plugin-react": "^7.11.1",
+    "jest-localstorage-mock": "^2.3.0"
   },
   "browserslist": [
     ">0.2%",

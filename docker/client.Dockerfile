@@ -15,8 +15,13 @@
 
 
 FROM node:8
-COPY ./client /client
+
+WORKDIR /tmp
+COPY ./client/package*.json ./
+RUN npm install --no-optional
+
 WORKDIR /client
-EXPOSE 3000
-RUN npm install
+RUN cp -a /tmp/node_modules .
+COPY ./client .
+
 CMD ["./entrypoint.sh"]

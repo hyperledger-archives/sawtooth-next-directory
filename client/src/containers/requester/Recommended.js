@@ -32,24 +32,27 @@ import './Recommended.css';
 
 
 /**
- * 
+ *
  * @class Recommended
  * *Recommended* component
- * 
+ *
  */
 export class Recommended extends Component {
 
   componentDidMount () {
     const { getPack, packId } = this.props;
-    getPack(packId);
+
+    if (packId) {
+      getPack(packId);
+    }
   }
 
 
   /**
-   * 
+   *
    * Switch pack on ID change
-   * 
-   * 
+   *
+   *
    */
   componentWillReceiveProps (newProps) {
     const { getPack, packId } = this.props;
@@ -93,7 +96,7 @@ Recommended.proptypes = {
       name: PropTypes.string
     }
   ))
-  
+
 };
 
 
