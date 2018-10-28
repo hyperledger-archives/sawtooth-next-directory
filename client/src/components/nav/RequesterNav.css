@@ -36,3 +36,10 @@ limitations under the License.
 #next-requester-nav-lists-container h3 {
   color: var(--nav-heading-color);
 }
+
+#next-logout-button {
+  position: absolute;
+  bottom: 10px;
+  background-color: #fff;
+  color: #e20074;
+}

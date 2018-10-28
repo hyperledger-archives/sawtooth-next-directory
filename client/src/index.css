@@ -15,6 +15,7 @@ limitations under the License.
 
 
 :root {
+  --header-bg-color: #000;
   --nav-bg-color: #263645;
   --nav-heading-color: #727c85;
   --chat-bg-color: #fafafa;

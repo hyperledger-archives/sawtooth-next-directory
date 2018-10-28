@@ -15,48 +15,54 @@ limitations under the License.
 
 
 import apisauce from 'apisauce';
+import * as storage from './Storage';
 
 
 /**
- * 
+ *
  * Encapsulated service that eases configuration and other
  * API-related tasks.
- * 
+ *
  * @example
  *    const api = API.create(...)
  *    api.login(...)
  *
  * If you would like to use this service in sagas, pass it as an
  * argument and then:
- * 
+ *
  * @example
  *    yield call(api.login, ...)
- *  
+ *
  */
-const create = (baseURL = 'http://localhost:8000/') => {
+const create = (baseURL = 'http://localhost:8000/api/') => {
 
   /**
-   * 
+   *
    * Create and configure API object
-   * 
-   * 
+   *
+   *
    */
   const api = apisauce.create({
-    baseURL
+    baseURL,
+
+    headers: {
+      'Authorization': storage.getToken()
+    }
   });
 
 
   /**
-   * 
+   *
    * Definitions
-   * 
-   * 
+   *
+   *
    */
   const getRoot = () => api.get('');
-  const login = (creds) => api.post('api/authorization', creds);
-  const signup = (creds) => api.post('/api/users', creds);
+  const login = (creds) => api.post('authorization', creds);
+  const signup = (creds) => api.post('users', creds);
   const getRequesterBase = () => api.get('me/base');
-  const getPack = (id) => api.get(`${id}`);
+  const getRoles = () => api.get('roles');
+  const getPack = (id) => api.get(`roles/${id}`);
   const search = (query) => api.post('', { q: query });
 
 
@@ -64,6 +70,7 @@ const create = (baseURL = 'http://localhost:8000/') => {
     getRoot,
     login,
     getRequesterBase,
+    getRoles,
     getPack,
     search,
     signup

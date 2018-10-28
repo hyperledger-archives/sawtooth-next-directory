@@ -27,6 +27,11 @@
       "id": "d7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0",
       "name": "Jazz Rev",
       "slug": "jazz-rev"
+    },
+    {
+      "id": "84a5d4b9-ea6a-4fdc-9a3b-957acb76e918",
+      "name": "Cloud Access",
+      "slug": "cloud-access"
     }
   ]
 }
