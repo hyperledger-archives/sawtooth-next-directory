@@ -107,6 +107,13 @@ export default {
       ok: true,
       data: {}
     }
+  },
+
+  logout: () => {
+    return {
+      ok: true,
+      data: {}
+    }
   }
 
 }

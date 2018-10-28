@@ -24,20 +24,20 @@ import NavList from './NavList';
 
 
 /**
- * 
+ *
  * @class RequesterNav
  * Component encapsulating the template for the sidebar displayed
  * on the requester landing page.
- * 
+ *
  */
 export default class RequesterNav extends Component {
 
-  
+
 
   /**
-   * 
+   *
    * Render sidebar hierarchy
-   * 
+   *
    */
   renderLists () {
     const { recommended, packs, requests } = this.props;
@@ -46,25 +46,32 @@ export default class RequesterNav extends Component {
       <div id='next-requester-nav-lists-container'>
         <NavList
           dynamic
+          listTitle='Your Packs / Roles'
+          route='/home/packs'
+          list={packs}/>
+        <NavList
+          dynamic
           listTitle='Your Requests'
           route='/home/requests'
           list={requests}/>
         <NavList
           dynamic
           listTitle='Recommended Packs'
-          route='/home/recommended'
+          route='/home/recommended-packs'
           list={recommended}/>
         <NavList
           dynamic
-          listTitle='Your Packs'
-          route='/home/packs'
-          list={packs}/>
+          listTitle='Recommended Roles'
+          route='/home/recommended-roles'
+          list={recommended}/>
       </div>
     );
   }
 
 
   render () {
+    const { logout } = this.props;
+
     return (
       <Container>
 
@@ -85,6 +92,11 @@ export default class RequesterNav extends Component {
         <Link to='/approval-home' id='next-switch-requester-link'>
           Switch to Approver
         </Link>
+        
+        <Button onClick={() => logout()} animated secondary id="next-logout-button">
+          <Button.Content visible>Logout</Button.Content>
+          <Button.Content hidden><Icon name='log out'/></Button.Content>
+        </Button>
 
       </Container>
     );

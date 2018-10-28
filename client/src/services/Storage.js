@@ -14,16 +14,21 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-global-container,
-#next-outer-grid {
-  height: 100%;
-  margin: 0;
-}
+/**
+ *
+ * Extensible storage service
+ *
+ *
+ *
+ */
+const tokenKey = 'auth_token';
 
-#next-outer-grid-nav {
-  background: var(--nav-bg-color);
-}
 
-#next-inner-grid-main {
-  padding: 0;
-}
+export const get = (key) => localStorage.getItem(key);
+export const set = (key, value) => localStorage.setItem(key, value);
+export const remove = (key) => localStorage.removeItem(key);
+
+
+export const getToken = () => localStorage.getItem(tokenKey);
+export const setToken = (value) => localStorage.setItem(tokenKey, value);
+export const removeToken = () => localStorage.removeItem(tokenKey);

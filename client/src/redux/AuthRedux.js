@@ -16,23 +16,30 @@ limitations under the License.
 
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
+import * as storage from '../services/Storage';
 
 
 /**
- * 
+ *
  * Actions
- * 
+ *
  * @property request  Initiating action
  * @property success  Action called on execution success
  * @property failure  Action called on execution failure
- * 
+ *
  */
 const { Types, Creators } = createActions({
   loginRequest:     ['username', 'password'],
-  loginSuccess:     ['isAuthenticated'],
+  loginSuccess:     ['isAuthenticated', 'payload'],
   loginFailure:     ['error'],
 
-  signupRequest:    ['name', 'username', 'password', 'email']
+  signupRequest:    ['name', 'username', 'password', 'email'],
+  signupSuccess:    ['isAuthenticated'],
+  signupFailure:    ['error'],
+
+  logoutRequest:    null,
+  logoutSuccess:    null,
+  logoutFailure:    ['error']
 });
 
 
@@ -41,13 +48,13 @@ export default Creators;
 
 
 /**
- * 
+ *
  * State
- * 
+ *
  * @property isAuthenticated
- * @property fetching 
- * @property error 
- * 
+ * @property fetching
+ * @property error
+ *
  */
 export const INITIAL_STATE = Immutable({
   isAuthenticated:  null,
@@ -57,36 +64,62 @@ export const INITIAL_STATE = Immutable({
 
 
 /**
- * 
+ *
  * Selectors
- * 
- * 
+ *
+ *
  */
 export const AuthSelectors = {
   isAuthenticated: (state) => {
-    return state.auth.isAuthenticated;
+    return storage.getToken() ||
+      state.auth.isAuthenticated;
   }
 };
 
 
+/**
+ *
+ * Reducers
+ *
+ *
+ */
 export const request = (state) => state.merge({ fetching: true });
-export const success = (state, { isAuthenticated }) => {
+
+export const success = (state, { isAuthenticated, payload }) => {
+  storage.setToken(payload.authorization);
+  storage.set('user_id', payload.user_id);
+
   return state.merge({ fetching: false, isAuthenticated });
 }
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
 
+export const logout = (state) => {
+  storage.removeToken();
+  storage.remove('user_id');
+
+  return INITIAL_STATE;
+}
+
 
 /**
- * 
- * Reducers
- * 
- * 
+ *
+ * Hooks
+ *
+ *
  */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_REQUEST]: request,
   [Types.LOGIN_SUCCESS]: success,
   [Types.LOGIN_FAILURE]: failure,
-  [Types.SIGNUP_REQUEST]: request
+
+  [Types.SIGNUP_REQUEST]: request,
+  [Types.SIGNUP_SUCCESS]: success,
+  [Types.SIGNUP_FAILURE]: failure,
+
+  [Types.LOGOUT_REQUEST]: request,
+  [Types.LOGOUT_SUCCESS]: logout,
+  [Types.LOGOUT_FAILURE]: failure,
 });
