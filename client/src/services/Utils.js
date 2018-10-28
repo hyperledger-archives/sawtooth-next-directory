@@ -14,16 +14,15 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-global-container,
-#next-outer-grid {
-  height: 100%;
-  margin: 0;
-}
-
-#next-outer-grid-nav {
-  background: var(--nav-bg-color);
-}
-
-#next-inner-grid-main {
-  padding: 0;
-}
+/**
+ *
+ * Extensible utils service
+ *
+ *
+ *
+ */
+export const createSlug = (name) =>
+  name
+    .toLowerCase()
+    .replace(/ /g, '-')
+    .replace(/[^\w-]+/g, '');

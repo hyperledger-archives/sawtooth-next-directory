@@ -26,36 +26,37 @@ import { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
 
 
-import { login, signup } from './AuthSaga';
+import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
 import { getBase, getPack } from './RequesterSaga';
 
 
 // TODO: Move to config
-const useFixtures = true;
+const useFixtures = false;
 const api = useFixtures ? FixtureAPI : API.create();
 
 
 /**
- * 
+ *
  * Construct sagas
- * 
- * 
+ *
+ *
  */
 export default function * root() {
   yield all([
 
     // Auth
-    takeLatest(AuthTypes.LOGIN_REQUEST, login, API.create()),
-    takeLatest(AuthTypes.SIGNUP_REQUEST, signup, API.create()),
+    takeLatest(AuthTypes.LOGIN_REQUEST, login, api),
+    takeLatest(AuthTypes.SIGNUP_REQUEST, signup, api),
+    takeLatest(AuthTypes.LOGOUT_REQUEST, logout, FixtureAPI),
 
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
     takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
 
     // Chat
-    takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, api),
-    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, api)
-    
+    takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, FixtureAPI),
+    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, FixtureAPI)
+
   ]);
 }
