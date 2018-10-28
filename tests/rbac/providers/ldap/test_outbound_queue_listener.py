@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,21 +13,17 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import os
-import sys
-import logging
-import tornado.ioloop
+import pytest
+from unittest import TestCase, mock
+from rbac.providers.ldap import outbound_queue_listener
 
-TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, TOP_DIR)
 
-from rbac.providers.ldap.main import start_listener
+@pytest.mark.unit
+class TestPrintFeedChangeData(TestCase):
+    def test_print_feed_change_data(self):
+        r = mock.Mock()
+        r.connect = mock.Mock(return_value=mock.Mock())
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+        outbound_queue_listener.print_feed_change_data()
 
-if __name__ == '__main__':
-    io_loop = tornado.ioloop.IOLoop.instance().current()
-    start_listener()
-    io_loop.start()
+        r.connect.called_with('queue_outbound')

@@ -25,6 +25,7 @@ LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 DB_HOST = "rethink"
 DB_PORT = 28015
 DB_NAME = "rbac"
+DB_TABLE = 'queue_outbound'
 
 r.set_loop_type("tornado")
 
@@ -33,12 +34,12 @@ r.set_loop_type("tornado")
 def print_feed_change_data():
     try:
         connection = yield r.connect(DB_HOST, DB_PORT, DB_NAME)
-        feed = yield r.table('queue_outbound').changes().run(connection)
+        feed = yield r.table(DB_TABLE).changes().run(connection)
         while (yield feed.fetch_next()):
             item = yield feed.next()
-            LOGGER.debug('Next item...')
+            # TODO: Transform if necessary, send to Active directory
             LOGGER.debug(item)
     except r.ReqlRuntimeError as e:
         LOGGER.error(
-            "Rethink error: %s", str(e)
+            "Rethink threw exception: %s", str(e)
         )

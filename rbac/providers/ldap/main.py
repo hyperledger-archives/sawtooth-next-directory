@@ -31,11 +31,11 @@ def start_listener():
 
     try:
         LOGGER.debug("Starting outbound queue listener")
-        # ioloop.IOLoop.current().add_callback(outbound_queue_listener.print_feed_change_data(connection_args=opts))
         ioloop.IOLoop.current().run_sync(print_feed_change_data)
 
     except KeyboardInterrupt:
         pass
     except Exception as err:  # pylint: disable=broad-except
+        LOGGER.error('Encountered an error running the outbound queue listener')
         LOGGER.exception(err)
         sys.exit(1)
