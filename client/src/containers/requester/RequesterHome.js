@@ -36,6 +36,29 @@ import './RequesterHome.css';
  */
 export default class RequesterHome extends Component {
 
+  /**
+   *
+   * Hydrate base data
+   *
+   */
+  componentDidMount () {
+    const { getBase, isAuthenticated } = this.props;
+
+    if (isAuthenticated) {
+      getBase();
+    }
+
+  }
+
+
+  componentWillReceiveProps (newProps) {
+    const { getBase, isAuthenticated } = this.props;
+
+    if (newProps.isAuthenticated !== isAuthenticated) {
+      getBase();
+    }
+  }
+
   render () {
     return (
       <Grid id='next-requester-grid' celled='internally'>
