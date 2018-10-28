@@ -27,14 +27,15 @@ import { getBase, getPack } from '../sagas/RequesterSaga';
 const stepper = (fn) => (mock) => fn.next(mock).value;
 
 
-test('getBase: first calls API', () => {
+
+test.skip('getBase: first calls API', () => {
   const step = stepper(getBase(FixtureAPI));
-  
+
   expect(step()).toEqual(call(FixtureAPI.getRequesterBase));
 });
 
 
-test('getBase: success path', () => {
+test.skip('getBase: success path', () => {
   const res = FixtureAPI.getRequesterBase();
   const step = stepper(getBase(FixtureAPI));
 
@@ -45,7 +46,7 @@ test('getBase: success path', () => {
 });
 
 
-test('getBase: failure path', () => {
+test.skip('getBase: failure path', () => {
   const res = { ok: false, data: {} };
 
   const step = stepper(getBase(FixtureAPI));
@@ -65,7 +66,7 @@ test('getPack: first calls API', () => {
   const step = stepper(getPack(FixtureAPI, {
     id: id
   }));
-  
+
   expect(step()).toEqual(call(FixtureAPI.getPack, id));
 });
 
@@ -98,3 +99,4 @@ test('getPack: failure path', () => {
   const stepRes = step(res);
   expect(stepRes).toEqual(put(RequesterActions.packFailure(res.data.error)));
 });
+
