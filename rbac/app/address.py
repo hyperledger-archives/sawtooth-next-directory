@@ -13,14 +13,23 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM ubuntu:16.04
+from hashlib import sha512
+import re
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD && \
-    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
-    apt-get update
+FAMILY_NAME = "rbac"
+FAMILY_VERSION = "1.0"
+NAMESPACE = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
+FAMILY_PREFIX = "9f4448"
+ADDRESS_LENGTH = 70
+ADDRESS_PATTERN = re.compile(r"^[0-9a-f]{70}$")
+FAMILY_PATTERN = re.compile(r"^9f4448[0-9a-f]{64}$")
 
-RUN apt-get install -y -q python3-sawtooth-sdk
 
-WORKDIR /project/tmobile-rbac
+def contains(num, start, stop):
+    return start <= num < stop
 
-CMD ["./bin/rbac-tp"]
+
+def compress(object_id, start, limit):
+    return "%.2X".lower() % (
+        int(sha512(object_id.encode()).hexdigest(), base=16) % limit + start
+    )

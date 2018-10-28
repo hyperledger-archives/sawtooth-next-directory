@@ -13,32 +13,41 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
+# Begin base docker image config for Hyperledger RBAC Next Directory
+# This should remain the same for all python containers to maximize caching
+# -----------------------------------------------------------------------------
 FROM hyperledger/sawtooth-validator:1.0
 
-RUN apt-get update && \
-    apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3-grpcio-tools=1.1.3-1 \
+RUN apt-get update \
+ && apt-get install -y --allow-unauthenticated -q \
         python3-pip \
         python3-sawtooth-sdk \
-        python3-sawtooth-rest-api \
-        curl
-
-RUN locale-gen en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y  apt-utils
 
 RUN pip3 install -U pip setuptools
 
 RUN pip3 install \
+        grpcio-tools \
+        itsdangerous \
+        rethinkdb \
+        sanic==0.7.0
+
+WORKDIR /project/hyperledger-rbac
+# -----------------------------------------------------------------------------
+# End base docker image config for Hyperledger RBAC Next Directory
+# -----------------------------------------------------------------------------
+
+RUN apt-get install -y --allow-unauthenticated -q \
+        curl \
+&& pip3 install \
     pycodestyle \
     pylint \
-    itsdangerous \
-    rethinkdb \
-    sanic==0.7.0 \
     pytest \
-    dredd_hooks \
-    cryptography
+    dredd_hooks
 
-WORKDIR /project/tmobile-rbac
+WORKDIR /project/hyperledger-rbac
 
 CMD ["tail", "-f", "/dev/null"]

@@ -20,6 +20,8 @@ The easiest way to run these components is with
 [Docker](https://www.docker.com/what-docker). To start these components,
 first install Docker for your platform and clone this repo.
 
+Docker volume mounts must be enabled, to allow docker to mount the repository
+files.
 
 To build and deploy the app, run:
 
@@ -33,11 +35,50 @@ bin/start
 ```
 
 This will build all components, start them in individual Docker containers,
-and download and run the necessary Sawtooth components. Once complete, the
-REST API will be available at **http://localhost:8000**.
+and download and run the necessary Sawtooth components.
 
-Later, if the repo is updated, the local components will need to be rebuilt,
-which can be accomplished using the `--build` flag:
+- Sawtooth's blockchain REST API will be available at **http://localhost:8080**
+- Rethink's database admin panel will be available at **http://localhost:9090**
+- The legacy NEXT UI will be available at **http://localhost:4200**
+- The next generation NEXT UI will be available at **http://localhost:4201**
+
+
+
+To stop the containers, hit Ctrl-C and then:
+
+```bash
+docker-compose down
+```
+
+A shortcut is available via:
+```bash
+bin/stop
+```
+
+## Persistent Data
+
+By default, the data in the development environment is ephemeral.
+It will be lost when the application is stopped and restarted.
+
+To enable persistent data, use the -p flag:
+
+```bash
+bin/start -p
+```
+
+To delete the persistent data, delete the related docker volumes:
+
+To clear data and start again from genesis, delete the volumes:
+    docker volume ls
+    docker volume rm {folder_name}_chain
+    docker volume rm {folder_name}_keys
+    docker volume rm {folder_name}_db
+
+## Rebuilds
+
+One may tell docker to rebuild the containers, using the the 
+`--build` flag. This may be useful if dependencies have changed
+in a way docker did not detect. 
 
 ```bash
 docker-compose up --build
@@ -48,49 +89,24 @@ A shortcut is available via:
 bin/start -b
 ```
 
-Once all the docker containers are running without error, see ui/readme.md
-for configuring / running the UI server.
+To do a hard rebuild by first removing all cached docker volumes 
+and python caches, run:
+
+```bash
+bin/clean
+bin/start
+```
 
 ## Development
 
 #### System Dependencies 
 
-The server code is written in python3. Confirm your version using command:
+The server code is written in python 3. Confirm your version using command:
 
     python -V
 
-If Python is missing or an earlier version, install python3 and pip3. 
-
-PyYaml is required for running tests. Install it using pip3:
-
-    pip3 install pyyaml
-
-
-#### Deploying to Localhost
-
-Docker containers are also available for developers, and are marked with a
-`-dev` tag in their filename. There are a few differences between how these
-containers work compared to the defaults:
-
-- They do not need to be rebuilt when local files change
-- Some dependencies may need to be installed locally\*
-- A _Sawtooth shell_ container is included for testing
-- Sawtooth's blockchain REST API will be available at **http://localhost:8080**
-- Rethink's database admin panel will be available at **http://localhost:9090**
-- The NEXT UI will be available at **http://localhost:4200**
-
-To start the dev containers, from the root project directory run:
-
-```bash
-bin/build -p
-docker-compose -f docker-compose.yaml -f docker-dev.yaml up
-```
-
-A shortcut is available via:
-```bash
-bin/build -p
-bin/start -d
-```
+For information in setting up your development environment, visit:
+https://github.com/hyperledger/sawtooth-next-directory/wiki/Developer-Setup
 
 #### Deploying Multi-Node Network
 
@@ -145,22 +161,27 @@ a rest client and create the objects through the application's rest api.
 Unit tests can be run using (pytest)[https://docs.pytest.org/en/latest/]:
 
 ```bash
-pytest
+pytest -m "unit"
 ```
 
-Integration tests can be run using the `run_docker_test` script, with the desired
-docker-compose file as an argument. For example:
+Integration tests can be run non-interactively via the `run_docker_test` script, 
+with the desired docker-compose file as an argument. For example:
 
 ```bash
-bin/build -p
-bin/run_docker_test tests/docker-compose.yaml
+bin/run_docker_test docker-tests.yaml
 ```
 
 A shortcut is available via:
 ```bash
-bin/build -p
-bin/build -i
+bin/build -t
 ```
+
+They can be run interactively from the rbac-shell:
+```bash
+docker exec -it rbac-shell bash
+pytest
+```
+
 
 #### Cleaning the Docker Image Cache
 
@@ -174,9 +195,9 @@ hanging in the legacy UI and stack traces from rbac_server:
     rbac-server    |     response = await response
     rbac-server    |   File "/usr/lib/python3.5/asyncio/coroutines.py", line 105, in __next__
     rbac-server    |     return self.gen.send(None)
-    rbac-server    |   File "/project/tmobile-rbac/server/api/users.py", line 74, in create_new_user
+    rbac-server    |   File "/project/hyperledger-rbac/server/api/users.py", line 74, in create_new_user
     rbac-server    |     request.app.config.AES_KEY, txn_key.public_key, private_key.as_bytes()
-    rbac-server    |   File "/project/tmobile-rbac/server/api/utils.py", line 172, in encrypt_private_key
+    rbac-server    |   File "/project/hyperledger-rbac/server/api/utils.py", line 172, in encrypt_private_key
     rbac-server    |     cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
     rbac-server    | ValueError: non-hexadecimal number found in fromhex() arg at position 30
 

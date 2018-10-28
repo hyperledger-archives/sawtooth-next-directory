@@ -1,4 +1,4 @@
-# Copyright 2018 Contributors to Hyperledger Sawtooth
+# Copyright contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,6 +40,12 @@ WORKDIR /project/hyperledger-rbac
 # End base docker image config for Hyperledger RBAC Next Directory
 # -----------------------------------------------------------------------------
 
-EXPOSE 8000/tcp
+RUN apt-get install -y --allow-unauthenticated -q \
+        curl \
+&& pip3 install \
+    pycodestyle \
+    pylint \
+    pytest \
+    dredd_hooks
 
-CMD ["./bin/rbac-server"]
+WORKDIR /project/hyperledger-rbac

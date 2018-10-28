@@ -18,6 +18,7 @@ import requests
 import rethinkdb as r
 from datetime import datetime as dt
 from rbac.providers.azure.aad_auth import AadAuth
+from rbac.providers.inbound_filters import inbound_user_filter, inbound_group_filter
 
 DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
 
@@ -57,6 +58,16 @@ def fetch_groups_with_members():
         return groups_payload.json()
 
 
+def fetch_group_owner(group_id):
+    """Call to get JSON payload for a group's owner in Azure Active Directory."""
+    headers = AUTH.check_token(AUTH_TYPE)
+    if headers is not None:
+        owner_payload = requests.get(
+            url=GRAPH_URL + "beta/groups/" + group_id + "/owners", headers=headers
+        )
+        return owner_payload.json()
+
+
 def fetch_users():
     """Call to get JSON payload for all Users in Azure Active Directory."""
     headers = AUTH.check_token(AUTH_TYPE)
@@ -77,11 +88,24 @@ def fetch_user_manager(user_id):
         return manager_payload.json()
 
 
+def get_ids_from_list_of_dicts(lst):
+    """Get all ids out of a list of objects and return a list of string ids."""
+    id_list = []
+    for item_dict in lst:
+        if "id" in item_dict:
+            id_list.append(item_dict["id"])
+    return id_list
+
+
 def insert_group_to_db(groups_dict):
     """Insert groups individually to rethinkdb from dict of groups"""
     for group in groups_dict["value"]:
+        owners = fetch_group_owner(group["id"])
+        group["owners"] = get_ids_from_list_of_dicts(owners["value"])
+        group["members"] = get_ids_from_list_of_dicts(group["members"])
+        standardized_group = inbound_group_filter(group, "azure")
         inbound_entry = {
-            "data": group,
+            "data": standardized_group,
             "data_type": "group",
             "timestamp": dt.now().isoformat(),
             "provider_id": TENANT_ID,
@@ -95,8 +119,9 @@ def insert_user_to_db(users_dict):
         manager = fetch_user_manager(user["id"])
         if manager:
             user["manager"] = manager["id"]
+        standardized_user = inbound_user_filter(user, "azure")
         inbound_entry = {
-            "data": user,
+            "data": standardized_user,
             "data_type": "user",
             "timestamp": dt.now().isoformat(),
             "provider_id": TENANT_ID,

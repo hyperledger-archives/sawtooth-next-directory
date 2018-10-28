@@ -30,7 +30,9 @@ import Immutable from 'seamless-immutable';
 const { Types, Creators } = createActions({
   loginRequest:     ['username', 'password'],
   loginSuccess:     ['isAuthenticated'],
-  loginFailure:     ['error']
+  loginFailure:     ['error'],
+
+  signupRequest:    ['name', 'username', 'password', 'email']
 });
 
 
@@ -85,5 +87,6 @@ export const failure = (state, { error }) => {
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_REQUEST]: request,
   [Types.LOGIN_SUCCESS]: success,
-  [Types.LOGIN_FAILURE]: failure
+  [Types.LOGIN_FAILURE]: failure,
+  [Types.SIGNUP_REQUEST]: request
 });

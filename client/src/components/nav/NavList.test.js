@@ -34,7 +34,7 @@ describe('NavList component', () => {
       list: ['List header'],
       listTitle: 'Title',
       route: '/home/requests'
-  };
+    };
 
     ReactDOM.render(
       <BrowserRouter><NavList {...props}/></BrowserRouter>, div

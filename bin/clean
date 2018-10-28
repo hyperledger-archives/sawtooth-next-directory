@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-FROM python:3.7
 
-RUN pip install \
-    requests    \
-    rethinkdb
 
-WORKDIR /project/tmobile-rbac
+TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
 
-COPY . .
+if [ "$1" ]; then
+    WHERE="$1"
+else
+    WHERE="$PWD"
+fi
 
-CMD [ "./bin/rbac-providers-azure" ]
+find "$WHERE" \
+    -name '__pycache__' -delete -print \
+    -o \
+    -name '*.pyc' -delete -print
+
+docker system prune -a

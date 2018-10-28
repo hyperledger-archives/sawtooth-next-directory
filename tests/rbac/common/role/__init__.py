@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +11,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
-
-import os
-import sys
-
-TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, TOP_DIR)
-
-from rbac.providers.azure.initial_inbound_sync import initialize_aad_sync
-
-if __name__ == "__main__":
-    initialize_aad_sync()
+# -----------------------------------------------------------------------------

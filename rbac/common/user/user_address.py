@@ -13,17 +13,24 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM ubuntu:16.04
+import enum
+from hashlib import sha512
+from rbac.app.address import FAMILY_PREFIX, compress
 
-RUN echo "deb apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD" && \
-    echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y --allow-unauthenticated -q python3-grpcio-tools=1.1.3-1 \
-        python3-pip \
-        python3-sawtooth-sdk
 
-RUN pip3 install rethinkdb
+class UserNamespace(enum.IntEnum):
+    USER_START = 49
+    USER_STOP = 149
 
-WORKDIR /project/tmobile-rbac
 
-CMD ["./bin/rbac-ledger-sync"]
+def make_user_address(user_id):
+    """Makes an address for the given user_id"""
+    return (
+        FAMILY_PREFIX
+        + compress(
+            user_id,
+            UserNamespace.USER_START,
+            UserNamespace.USER_STOP - UserNamespace.USER_START,
+        )
+        + sha512(user_id.encode()).hexdigest()[:62]
+    )
