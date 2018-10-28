@@ -34,7 +34,7 @@ const { Types, Creators } = createActions({
   loginFailure:     ['error'],
 
   signupRequest:    ['name', 'username', 'password', 'email'],
-  signupSuccess:    ['isAuthenticated'],
+  signupSuccess:    ['isAuthenticated', 'payload'],
   signupFailure:    ['error'],
 
   logoutRequest:    null,
@@ -71,8 +71,7 @@ export const INITIAL_STATE = Immutable({
  */
 export const AuthSelectors = {
   isAuthenticated: (state) => {
-    return storage.getToken() ||
-      state.auth.isAuthenticated;
+    return !!storage.getToken() || state.auth.isAuthenticated;
   }
 };
 
