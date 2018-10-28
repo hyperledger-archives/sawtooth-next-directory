@@ -22,7 +22,7 @@ limitations under the License.
  *
  */
 export const createSlug = (name) =>
-  name
+  name && name
     .toLowerCase()
     .replace(/ /g, '-')
     .replace(/[^\w-]+/g, '');
