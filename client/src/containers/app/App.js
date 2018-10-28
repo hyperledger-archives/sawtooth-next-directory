@@ -46,17 +46,6 @@ import PropTypes from 'prop-types';
  */
 class App extends Component {
 
-    /**
-   *
-   * Hydrate base data
-   *
-   */
-  componentDidMount () {
-    const { getBase } = this.props;
-    getBase();
-  }
-
-
   /**
    *
    * Render grid system
