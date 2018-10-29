@@ -14,7 +14,14 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-requester-track-header-container {
+#next-requester-tracker-header-container {
+  position: fixed;
+  width: 100%;
+  z-index: 99;
+}
+
+#next-requester-track-header {
+  background: purple;
   padding: 30px 40px 15px 40px;
 }
 
@@ -31,4 +38,9 @@ limitations under the License.
 
 #next-wave-alt {
   background: url('../../images/wave-alt.svg');
+}
+
+#next-wave-container {
+  background: purple;
+  height: 42px;
 }

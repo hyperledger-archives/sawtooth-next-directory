@@ -14,6 +14,11 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+#next-global-container {
+  display: flex;
+  flex-direction: column;
+}
+
 #next-global-container,
 #next-outer-grid {
   height: 100%;

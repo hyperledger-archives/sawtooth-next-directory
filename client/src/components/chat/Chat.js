@@ -23,40 +23,57 @@ import ChatMessage from './ChatMessage';
 import './Chat.css';
 
 
+import chatTest from '../../mock_data/conversation_action.json';
+
+
 /**
- * 
+ *
  * @class Chat
  * Component encapsulating the chat widget
- * 
+ *
+ * TODO: Normalize all JSON objects behind a schema
+ *
  */
 export default class Chat extends Component {
 
   /**
-   * 
-   * Switch chat context when active pack changes 
-   * 
+   *
+   * Switch chat context when active pack changes
+   *
    */
   componentWillReceiveProps (newProps) {
     const { activePack, getConversation } = this.props;
 
     if (newProps.activePack !== activePack) {
-
-      // TODO: Normalize all JSON objects behind a schema
       getConversation(newProps.activePack['conversation_id']);
     }
   }
 
 
-  send (message) {
-    const { sendMessage } = this.props;
+  send (message, action) {
+    const { activePack, me, requestAccess, sendMessage } = this.props;
 
-    // TODO: Retrieve user from session
-    const payload = {
-      body: message,
-      from: { id: '519909ec-f0c8-4be9-ac62-d340161507b3', name: 'John Doe' }
-    };
-  
-    sendMessage(payload);
+    if (action) {
+      const payload = {
+        body: action['response_text'],
+        from: { id: me.id, name: 'John Doe' }
+      };
+
+      console.log(action);
+      console.log(payload);
+      console.log(activePack);
+
+      sendMessage(payload);
+
+      switch (action.type) {
+        case 0:
+          requestAccess(activePack.id, me.id, 'some reason');
+          break;
+
+        default:
+          break;
+      }
+    }
   }
 
 
@@ -65,24 +82,20 @@ export default class Chat extends Component {
 
     return (
       <div id='next-chat-container'>
-        <div>
-          { messages &&
+        { messages &&
             <ChatMessage {...this.props}/>
           }
 
-          { messages && messages.length === 0 &&
-            <Segment inverted color='violet'>
-              <p>Approv is here to help you get access to groups,
-              approvals and everything in between.</p>
-              <p>I will recommended groups you should be a part of.
-              Tips ... faster approvals from managers!</p>
-            </Segment>
-          }
-        </div>
-
+        { messages && messages.length === 0 &&
+          <Segment inverted color='violet'>
+            Would you like me to request access?
+          </Segment>
+        }
 
         <div id='next-chat-conversation-dock'>
-          <ChatForm submit={(message) => this.send(message)}/>
+          <ChatForm
+            actions={chatTest.actions}
+            submit={(message, action) => this.send(message, action)}/>
         </div>
       </div>
     );

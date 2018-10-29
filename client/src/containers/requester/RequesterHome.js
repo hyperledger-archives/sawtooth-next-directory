@@ -16,14 +16,10 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Grid } from 'semantic-ui-react';
-
-
-import TrackHeader from '../../components/layouts/TrackHeader';
-
-
 import PropTypes from 'prop-types';
 
 
+import TrackHeader from '../../components/layouts/TrackHeader';
 import './RequesterHome.css';
 
 
@@ -35,29 +31,6 @@ import './RequesterHome.css';
  *
  */
 export default class RequesterHome extends Component {
-
-  /**
-   *
-   * Hydrate base data
-   *
-   */
-  componentDidMount () {
-    const { getBase, isAuthenticated } = this.props;
-
-    if (isAuthenticated) {
-      getBase();
-    }
-
-  }
-
-
-  componentWillReceiveProps (newProps) {
-    const { getBase, isAuthenticated } = this.props;
-
-    if (newProps.isAuthenticated !== isAuthenticated) {
-      getBase();
-    }
-  }
 
   render () {
     return (

@@ -29,3 +29,7 @@ limitations under the License.
 .next-chat-message-right {
   max-width: 290px;
 }
+
+#next-chat-actions {
+  margin-top: 15px;
+}

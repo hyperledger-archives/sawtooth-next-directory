@@ -15,17 +15,17 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Form, Icon } from 'semantic-ui-react';
+import { Button, Form, Icon } from 'semantic-ui-react';
 
 
 /**
- * 
+ *
  * @class ChatForm
  * Component encapsulating a reusable chat form suitable for
  * composing within containers where chat functionality is required
- * 
- * @todo Add validation to forms
- * 
+ *
+ * TODO: Add validation to forms
+ *
  */
 export default class ChatForm extends Component {
 
@@ -41,46 +41,75 @@ export default class ChatForm extends Component {
   }
 
 
-  handleSubmit (message) {
+  handleSubmit (action) {
     const { submit } = this.props;
+    const { message } = this.state;
 
-    submit(message);
+    submit(message, action);
     this.reset();
   }
 
 
   /**
-   * 
+   *
    * @param event   Event passed by Semantic UI
    * @param name    Name of form element derived from 'name' HTML attribute
    * @param value   Value of form field
-   * 
+   *
    */
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });
   }
 
-  
+
+  renderActions () {
+    const { actions } = this.props;
+
+    return (
+      <div id='next-chat-actions'>
+        { actions &&
+          actions.action_types.map((action, index) => (
+            <Button
+              key={index}
+              icon
+              onClick={() => this.handleSubmit(action)}>
+              {action.type === 0 && <Icon name='check circle'></Icon> }
+              {action.type === 1 && <Icon name='x'></Icon> }
+              {action.action_text}
+            </Button>
+          ))
+        }
+      </div>
+    )
+  }
+
+
   render () {
     const { message } = this.state;
 
     return (
-      <Form onSubmit={() => this.handleSubmit(message)}>
-        <Form.Input
-          icon
-          fluid
-          placeholder='Say something...'
-          name='message'
-          value={this.state.message}
-          onChange={this.handleChange}>
-          <input/>
-          <Icon
-            link
-            name='paper plane'
-            onClick={() => this.handleSubmit(message)}/>
-        </Form.Input>
-      </Form>
+      <div>
+
+        <Form onSubmit={() => this.handleSubmit(message)}>
+          <Form.Input
+            icon
+            fluid
+            placeholder='Say something...'
+            name='message'
+            value={this.state.message}
+            onChange={this.handleChange}>
+            <input/>
+            <Icon
+              link
+              name='paper plane'
+              onClick={() => this.handleSubmit(message)}/>
+          </Form.Input>
+        </Form>
+
+        {this.renderActions()}
+
+      </div>
     );
   }
-  
+
 }

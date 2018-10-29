@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import apisauce from 'apisauce';
-import * as storage from './Storage';
+import * as storage from '../services/Storage';
 
 
 /**
@@ -43,11 +43,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    */
   const api = apisauce.create({
-    baseURL,
-
-    headers: {
-      'Authorization': storage.getToken()
-    }
+    baseURL
   });
 
 
@@ -57,21 +53,33 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    *
    */
-  const getRoot = () => api.get('');
+  const me = () => {
+    const userId = storage.get('user_id');
+
+    api.setHeaders({ 'Authorization': storage.getToken() });
+    return api.get(`users/${userId}`);
+  }
+
   const login = (creds) => api.post('authorization', creds);
-  const signup = (creds) => api.post('users', creds);
+  const getPack = (id) => api.get(`roles/${id}`);
+  const getProposal = (id) => api.get(`proposals/${id}`);
   const getRequesterBase = () => api.get('me/base');
   const getRoles = () => api.get('roles');
-  const getPack = (id) => api.get(`roles/${id}`);
+  const getRoot = () => api.get('');
+  const requestAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const search = (query) => api.post('', { q: query });
+  const signup = (creds) => api.post('users', creds);
 
 
   return {
-    getRoot,
     login,
+    getPack,
+    getProposal,
     getRequesterBase,
     getRoles,
-    getPack,
+    getRoot,
+    me,
+    requestAccess,
     search,
     signup
   }

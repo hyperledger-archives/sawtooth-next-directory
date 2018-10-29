@@ -24,16 +24,16 @@ import FixtureAPI from '../services/FixtureApi';
 import { AuthTypes } from '../redux/AuthRedux';
 import { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
+import { UserTypes } from '../redux/UserRedux';
 
 
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
-import { getBase, getPack } from './RequesterSaga';
+import { requestAccess, getBase, getPack } from './RequesterSaga';
+import { me } from './UserSaga';
 
 
-// TODO: Move to config
-const useFixtures = false;
-const api = useFixtures ? FixtureAPI : API.create();
+const api = API.create();
 
 
 /**
@@ -53,10 +53,14 @@ export default function * root() {
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
     takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
+    takeLatest(RequesterTypes.ACCESS_REQUEST, requestAccess, api),
 
     // Chat
     takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, FixtureAPI),
-    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, FixtureAPI)
+    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, FixtureAPI),
+
+    // User
+    takeLatest(UserTypes.ME_REQUEST, me, api),
 
   ]);
 }
