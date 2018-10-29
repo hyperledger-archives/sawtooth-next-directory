@@ -40,6 +40,8 @@ class BatchAssertions(CommonAssertions):
     def assertEqualMessage(self, message1, message2):
         """A shallow comparison of the the json representation
         of two messages"""
+        self.assertIsNotNone(message1)
+        self.assertIsNotNone(message2)
         message1 = json.loads(json_format.MessageToJson(message1))
         message2 = json.loads(json_format.MessageToJson(message2))
         for prop in message1:
