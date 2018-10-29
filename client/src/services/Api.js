@@ -47,6 +47,11 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   });
 
 
+  const setHeaders = () => {
+    api.setHeaders({ 'Authorization': storage.getToken() });
+  }
+
+
   /**
    *
    * Definitions
@@ -54,17 +59,23 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    */
   const me = () => {
-    const userId = storage.get('user_id');
+    setHeaders();
 
-    api.setHeaders({ 'Authorization': storage.getToken() });
+    const userId = storage.get('user_id');
     return api.get(`users/${userId}`);
   }
+
+  const getRoles = () => {
+    setHeaders();
+
+    return api.get('roles');
+  }
+
 
   const login = (creds) => api.post('authorization', creds);
   const getPack = (id) => api.get(`roles/${id}`);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRequesterBase = () => api.get('me/base');
-  const getRoles = () => api.get('roles');
   const getRoot = () => api.get('');
   const requestAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const search = (query) => api.post('', { q: query });
