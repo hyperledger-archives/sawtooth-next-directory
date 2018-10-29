@@ -77,7 +77,7 @@ export default class RequesterNav extends Component {
 
         <Link to='/browse'>
           <Button animated secondary fluid id='next-browse-button'>
-            <Button.Content visible>Browse Packs/Roles</Button.Content>
+            <Button.Content visible>BROWSE</Button.Content>
             <Button.Content hidden><Icon name='arrow right'/></Button.Content>
           </Button>
         </Link>
@@ -93,6 +93,11 @@ export default class RequesterNav extends Component {
           Switch to Approver
         </Link>
         
+        <Button onClick={() => logout()} animated secondary id="next-logout-button">
+          <Button.Content visible>Logout</Button.Content>
+          <Button.Content hidden><Icon name='log out'/></Button.Content>
+        </Button>
+
         <Button onClick={() => logout()} animated secondary id="next-logout-button">
           <Button.Content visible>Logout</Button.Content>
           <Button.Content hidden><Icon name='log out'/></Button.Content>

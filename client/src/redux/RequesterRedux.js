@@ -35,7 +35,11 @@ const { Types, Creators } = createActions({
 
   packRequest:       ['id'],
   packSuccess:       ['activePack'],
-  packFailure:       ['error']
+  packFailure:       ['error'],
+
+  accessRequest:     ['id', 'userId', 'reason'],
+  accessSuccess:     null,
+  accessFailure:     null
 });
 
 
@@ -59,7 +63,6 @@ export default Creators;
  */
 export const INITIAL_STATE = Immutable({
   recommended:      null,
-  requests:         null,
   fetching:         null,
   activePack:       null,
   error:            null
@@ -75,12 +78,9 @@ export const INITIAL_STATE = Immutable({
 export const RequesterSelectors = {
   activePack:   (state) => state.requester.activePack,
   recommended:  (state) => state.requester.recommended,
-  requests:     (state) => state.requester.requests,
 
   idFromSlug: (collection, slug) => {
     if (!collection) return null;
-
-    // const pack = collection.find((item) => item.slug === slug);
 
     // ! Use name until slugs added
     const pack = collection.find((item) => {
@@ -98,7 +98,9 @@ export const RequesterSelectors = {
  *
  *
  */
-export const request = (state) => state.merge({ fetching: true });
+export const request = (state) => {
+  return state.merge({ fetching: true });
+}
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
@@ -111,7 +113,10 @@ export const failure = (state, { error }) => {
  *
  */
 export const packSuccess = (state, { activePack }) => {
-  return state.merge({ fetching: false, activePack });
+  return state.merge({
+    fetching: false,
+    activePack: activePack.data
+  });
 }
 
 export const baseSuccess = (state, { base }) => {
@@ -125,7 +130,17 @@ export const baseSuccess = (state, { base }) => {
   });
 }
 
+export const accessSuccess = (state) => {
+  return state.merge({ fetching: false });
+}
 
+
+/**
+ *
+ * Hooks
+ *
+ *
+ */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.BASE_REQUEST]: request,
   [Types.BASE_SUCCESS]: baseSuccess,
@@ -133,5 +148,9 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.PACK_REQUEST]: request,
   [Types.PACK_SUCCESS]: packSuccess,
-  [Types.PACK_FAILURE]: failure
+  [Types.PACK_FAILURE]: failure,
+
+  [Types.ACCESS_REQUEST]: request,
+  [Types.ACCESS_SUCCESS]: accessSuccess,
+  [Types.ACCESS_FAILURE]: failure
 });

@@ -22,34 +22,19 @@ import Immutable from 'seamless-immutable';
  *
  * Actions
  *
- * @property
- * @property
+ * @property request  Initiating action
+ * @property success  Action called on execution success
+ * @property failure  Action called on execution failure
  *
  */
 const { Types, Creators } = createActions({
-  batchRequest:           ['userId'],
-  batchSuccess:           null,
-  batchFailure:           ['error'],
-
-  rolesRequest:           ['userId'],
-  rolesSuccess:           null,
-  rolesFailure:           ['error'],
-
-  individualsRequest:     ['userId'],
-  individualsSuccess:     null,
-  individualsFailure:     ['error'],
-
-  frequentRequest:        ['userId'],
-  frequentSuccess:        null,
-  frequentFailure:        ['error'],
-
-  nearExpiryRequest:      ['userId'],
-  nearExpirySuccess:      null,
-  nearExpiryFailure:      ['error']
+  meRequest:     null,
+  meSuccess:     ['me'],
+  meFailure:     ['error'],
 });
 
 
-export const ApproverTypes = Types;
+export const UserTypes = Types;
 export default Creators;
 
 
@@ -64,7 +49,9 @@ export default Creators;
  */
 export const INITIAL_STATE = Immutable({
   fetching:         null,
-  error:            null
+  error:            null,
+  me:               null,
+  requests:         null
 });
 
 
@@ -74,8 +61,9 @@ export const INITIAL_STATE = Immutable({
  *
  *
  */
-export const ApproverSelectors = {
-
+export const UserSelectors = {
+  me: (state) => state.user.me,
+  requests: (state) => state.user.me && state.user.me.proposals
 };
 
 
@@ -86,9 +74,15 @@ export const ApproverSelectors = {
  *
  */
 export const request = (state) => state.merge({ fetching: true });
-export const success = (state) => {
-  return state.merge({ fetching: false });
+
+export const success = (state, { me }) => {
+  return state.merge({
+    fetching: false,
+    requests: me.proposals,
+    me: me
+  });
 }
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
@@ -101,23 +95,7 @@ export const failure = (state, { error }) => {
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.BATCH_REQUEST]: request,
-  [Types.BATCH_SUCCESS]: success,
-  [Types.BATCH_FAILURE]: failure,
-
-  [Types.ROLES_REQUEST]: request,
-  [Types.ROLES_SUCCESS]: success,
-  [Types.ROLES_FAILURE]: failure,
-
-  [Types.INDIVIDUALS_REQUEST]: request,
-  [Types.INDIVIDUALS_SUCCESS]: success,
-  [Types.INDIVIDUALS_FAILURE]: failure,
-
-  [Types.FREQUENT_REQUEST]: request,
-  [Types.FREQUENT_SUCCESS]: success,
-  [Types.FREQUENT_FAILURE]: failure,
-
-  [Types.NEAR_EXPIRY_REQUEST]: request,
-  [Types.NEAR_EXPIRY_SUCCESS]: success,
-  [Types.NEAR_EXPIRY_FAILURE]: failure
+  [Types.ME_REQUEST]: request,
+  [Types.ME_SUCCESS]: success,
+  [Types.ME_FAILURE]: failure,
 });

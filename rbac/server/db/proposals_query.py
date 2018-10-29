@@ -137,6 +137,6 @@ def fetch_proposal_ids_by_opener(opener, head_block_num):
             lambda doc: (head_block_num >= doc["start_block_num"])
             & (head_block_num < doc["end_block_num"])
         )
-        .get_field("proposal_id")
+        .pluck("proposal_id", "object_id")
         .coerce_to("array")
     )
