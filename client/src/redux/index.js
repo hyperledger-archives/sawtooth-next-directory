@@ -20,12 +20,14 @@ import { combineReducers } from 'redux';
 import { reducer as AuthReducer } from './AuthRedux';
 import { reducer as ChatReducer } from './ChatRedux';
 import { reducer as RequesterReducer } from './RequesterRedux';
+import { reducer as UserReducer } from './UserRedux';
 
 
 const reducers = combineReducers({
   auth:       AuthReducer,
   chat:       ChatReducer,
-  requester:  RequesterReducer
+  requester:  RequesterReducer,
+  user:       UserReducer
 });
 
 export default reducers;

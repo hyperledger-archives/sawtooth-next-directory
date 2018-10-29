@@ -78,3 +78,34 @@ export function * getPack (api, action) {
     console.error(err);
   }
 }
+
+
+/**
+ *
+ * Execute request access API request
+ *
+ * The requestAccess generator function executes a request to the
+ * API and handles the response.
+ *
+ * @param action
+ *
+ */
+export function * requestAccess (api, action) {
+  try {
+    const { id, userId, reason } = action;
+    const res = yield call(api.requestAccess, id, {
+      id: userId,
+      reason: reason
+    });
+
+    if (res.ok) {
+      console.log('Requested access');
+      yield put(RequesterActions.accessSuccess(res.data));
+    } else {
+      alert(res.data.error);
+      yield put(RequesterActions.accessFailure(res.data.error));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}

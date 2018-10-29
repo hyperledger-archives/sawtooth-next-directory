@@ -59,7 +59,8 @@ export default Creators;
 export const INITIAL_STATE = Immutable({
   isAuthenticated:  null,
   fetching:         null,
-  error:            null
+  error:            null,
+  user:             null
 });
 
 
@@ -71,7 +72,11 @@ export const INITIAL_STATE = Immutable({
  */
 export const AuthSelectors = {
   isAuthenticated: (state) => {
+
     return !!storage.getToken() || state.auth.isAuthenticated;
+  },
+  user: (state) => {
+    return state.auth.user || { id: storage.get('user_id') }
   }
 };
 
@@ -86,9 +91,17 @@ export const request = (state) => state.merge({ fetching: true });
 
 export const success = (state, { isAuthenticated, payload }) => {
   storage.setToken(payload.authorization);
-  storage.set('user_id', payload.user_id);
 
-  return state.merge({ fetching: false, isAuthenticated });
+  payload.user ?
+    storage.set('user_id', payload.user.id) :
+    storage.set('user_id', payload.user_id);
+
+  return state.merge({
+    isAuthenticated,
+    fetching: false,
+    user: payload.user,
+    token: payload.authorization
+  });
 }
 
 export const failure = (state, { error }) => {

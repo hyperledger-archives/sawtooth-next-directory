@@ -24,10 +24,10 @@ import './TrackHeader.css';
 
 
 /**
- * 
+ *
  * @class TrackHeader
  * Component encapsulating the track pane header
- * 
+ *
  */
 export default class TrackHeader extends Component {
 
@@ -35,8 +35,8 @@ export default class TrackHeader extends Component {
     const { title } = this.props;
 
     return (
-      <div>
-        <div id='next-requester-track-header-container'>
+      <div id='next-requester-tracker-header-container'>
+        <div id='next-requester-track-header'>
           <h1>{title}</h1>
         </div>
         <div id='next-wave-container'>

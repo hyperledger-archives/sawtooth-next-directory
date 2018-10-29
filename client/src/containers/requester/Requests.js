@@ -34,28 +34,27 @@ import './Requests.css';
 
 
 /**
- * 
+ *
  * @class Requests
  * *Your Requests* component
- * 
+ *
  */
 export class Requests extends Component {
 
-  /**
-   * 
-   * 
-   * 
-   */
   componentDidMount () {
     const { getPack, packId } = this.props;
-    getPack(packId);
+
+    if (packId) {
+      getPack(packId);
+    }
   }
 
 
   /**
-   * 
+   *
    * Switch pack on ID change
-   * 
+   *
+   *
    */
   componentWillReceiveProps (newProps) {
     const { getPack, packId } = this.props;
@@ -95,7 +94,7 @@ export class Requests extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
-  const { requests } = state.requester;
+  const { requests } = state.user;
 
   return {
     packId: RequesterSelectors.idFromSlug(requests, id)
