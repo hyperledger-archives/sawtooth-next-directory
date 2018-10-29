@@ -23,12 +23,15 @@ from rbac.server.api import utils
 from rbac.server.db import proposals_query
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.users_query import fetch_user_resource
+import logging
 
 from rbac.transaction_creation import (
     task_transaction_creation,
     role_transaction_creation,
     manager_transaction_creation,
 )
+
+LOGGER = logging.getLogger(__name__)
 
 PROPOSALS_BP = Blueprint("proposals")
 
@@ -53,6 +56,7 @@ TABLES = {
 class Status(object):  # pylint: disable=too-few-public-methods
     REJECTED = "REJECTED"
     APPROVED = "APPROVED"
+    CONFIRMED = "CONFIRMED"
 
 
 class ProposalType(object):  # pylint: disable=too-few-public-methods
@@ -78,55 +82,56 @@ class ProposalType(object):  # pylint: disable=too-few-public-methods
 PROPOSAL_TRANSACTION = {
     ProposalType.ADD_ROLE_TASKS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_tasks,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_tasks,
+        Status.CONFIRMED: role_transaction_creation.confirm_add_role_tasks,
     },
     ProposalType.ADD_ROLE_MEMBERS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_members,
+        Status.CONFIRMED: role_transaction_creation.confirm_add_role_members,
         Status.APPROVED: role_transaction_creation.approve_add_role_members,
     },
     ProposalType.ADD_ROLE_OWNERS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_owners,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_owners,
+        Status.CONFIRMED: role_transaction_creation.confirm_add_role_owners,
     },
     ProposalType.ADD_ROLE_ADMINS: {
         Status.REJECTED: role_transaction_creation.reject_add_role_admins,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_admins,
+        Status.CONFIRMED: role_transaction_creation.confirm_add_role_admins,
     },
     ProposalType.REMOVE_ROLE_TASKS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_tasks,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_tasks,
+        Status.CONFIRMED: role_transaction_creation.confirm_remove_role_tasks,
     },
     ProposalType.REMOVE_ROLE_MEMBERS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_members,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_members,
+        Status.CONFIRMED: role_transaction_creation.confirm_remove_role_members,
     },
     ProposalType.REMOVE_ROLE_OWNERS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_owners,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_owners,
+        Status.CONFIRMED: role_transaction_creation.confirm_remove_role_owners,
     },
     ProposalType.REMOVE_ROLE_ADMINS: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_admins,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_admins,
+        Status.CONFIRMED: role_transaction_creation.confirm_remove_role_admins,
     },
     ProposalType.ADD_TASK_OWNERS: {
         Status.REJECTED: task_transaction_creation.reject_add_task_owners,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_owners,
+        Status.CONFIRMED: task_transaction_creation.confirm_add_task_owners,
     },
     ProposalType.ADD_TASK_ADMINS: {
         Status.REJECTED: task_transaction_creation.reject_add_task_admins,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_admins,
+        Status.CONFIRMED: task_transaction_creation.confirm_add_task_admins,
     },
     ProposalType.REMOVE_TASK_OWNERS: {
         Status.REJECTED: task_transaction_creation.reject_remove_task_owners,
-        Status.APPROVED: task_transaction_creation.confirm_remove_task_owners,
+        Status.CONFIRMED: task_transaction_creation.confirm_remove_task_owners,
     },
     ProposalType.REMOVE_TASK_ADMINS: {
         Status.REJECTED: task_transaction_creation.reject_remove_task_admins,
-        Status.APPROVED: task_transaction_creation.confirm_remove_task_admins,
+        Status.CONFIRMED: task_transaction_creation.confirm_remove_task_admins,
     },
     ProposalType.UPDATE_USER_MANAGER: {
         Status.REJECTED: manager_transaction_creation.reject_manager,
-        Status.APPROVED: manager_transaction_creation.confirm_manager,
+        Status.CONFIRMED: manager_transaction_creation.confirm_manager,
     },
 }
 
@@ -175,9 +180,13 @@ async def get_proposal(request, proposal_id):
 async def update_proposal(request, proposal_id):
     required_fields = ["reason", "status"]
     utils.validate_fields(required_fields, request.json)
-    if request.json["status"] not in [Status.REJECTED, Status.APPROVED]:
+    if request.json["status"] not in [
+        Status.REJECTED,
+        Status.CONFIRMED,
+        Status.APPROVED,
+    ]:
         raise ApiBadRequest(
-            "Bad Request: status must be either 'REJECTED' or 'APPROVED'"
+            "Bad Request: status must be either 'REJECTED' or 'APPROVED' or 'CONFIRMED'"
         )
     txn_key = await utils.get_transactor_key(request=request)
     block = await utils.get_request_block(request)
@@ -187,22 +196,25 @@ async def update_proposal(request, proposal_id):
         head_block_num=block.get("num"),
     )
 
-    additional_params = {
-        "reason" : request.json.get("reason")
-    }
+    additional_params = {"reason": request.json.get("reason")}
 
     # the condition below is due to hierachical approval only applied to "approval of ADD_ROLE_MEMBERS"
     # once its been expanded to all other scenarios, this condition should be removed
-    if proposal_resource.get('type') == ProposalType.ADD_ROLE_MEMBERS and request.json['status'] == Status.APPROVED :
-        additional_params['on_behalf_id'] = request.json.get("on_behalf_id", "")
-        additional_params['head_block_num'] = block.get("num")
-        additional_params['db_connection'] = request.app.config.DB_CONN
+    if (
+        proposal_resource.get("type") == ProposalType.ADD_ROLE_MEMBERS
+        and request.json["status"] == Status.APPROVED
+    ):
+        additional_params["on_behalf_id"] = request.json.get(
+            "on_behalf_id", txn_key.public_key
+        )
+        additional_params["hierarchy_users"] = await get_hierarchy_users(
+            request.app.config.DB_CONN,
+            txn_key,
+            additional_params["on_behalf_id"],
+            block.get("num"),
+        )
 
-    # this line below is due to "on_behalf_id" is not currently being passed from UI. temporarily set to the current user
-    additional_params['on_behalf_id'] = txn_key.public_key
-    #
-
-    batch_list, _ = await PROPOSAL_TRANSACTION[proposal_resource.get("type")][
+    batch_list, _ = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
         request.json["status"]
     ](
         txn_key,
@@ -210,12 +222,27 @@ async def update_proposal(request, proposal_id):
         proposal_id,
         proposal_resource.get("object"),
         proposal_resource.get("target"),
-        additional_params
+        additional_params,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     return json({"proposal_id": proposal_id})
+
+
+async def get_hierarchy_users(conn, txn_key, on_behalf_id, head_block_num):
+    users = [txn_key.public_key, on_behalf_id]
+    user_id = on_behalf_id
+    while True:
+        user_resource = await fetch_user_resource(conn, user_id, head_block_num)
+        manager_id = user_resource.get("manager")
+        LOGGER.warning("user %s manager is %s", user_id, manager_id)
+        if not manager_id:
+            break
+        else:
+            users.append(manager_id)
+            user_id = manager_id
+    return users
 
 
 async def compile_proposal_resource(conn, proposal_resource, head_block_num):

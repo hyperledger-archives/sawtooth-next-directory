@@ -19,11 +19,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='rbac_payload.proto',
   package='',
   syntax='proto3',
-<<<<<<< HEAD
+
   serialized_pb=_b('\n\x12rbac_payload.proto\"\x9a\x0b\n\x0bRBACPayload\x12.\n\x0cmessage_type\x18\x01 \x01(\x0e\x32\x18.RBACPayload.MessageType\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\x12\x0e\n\x06inputs\x18\x03 \x03(\t\x12\x0f\n\x07outputs\x18\x04 \x03(\t\"\xa8\n\n\x0bMessageType\x12\x1a\n\x16PROPOSE_ADD_ROLE_TASKS\x10\x00\x12\x1c\n\x18PROPOSE_ADD_ROLE_MEMBERS\x10\x01\x12\x1b\n\x17PROPOSE_ADD_ROLE_OWNERS\x10\x02\x12\x1b\n\x17PROPOSE_ADD_ROLE_ADMINS\x10\x03\x12\x1d\n\x19PROPOSE_REMOVE_ROLE_TASKS\x10\x04\x12\x1f\n\x1bPROPOSE_REMOVE_ROLE_MEMBERS\x10\x05\x12\x1e\n\x1aPROPOSE_REMOVE_ROLE_OWNERS\x10\x06\x12\x1e\n\x1aPROPOSE_REMOVE_ROLE_ADMINS\x10\x07\x12\x1a\n\x16\x43ONFIRM_ADD_ROLE_TASKS\x10\x08\x12\x1c\n\x18\x43ONFIRM_ADD_ROLE_MEMBERS\x10\t\x12\x1b\n\x17\x43ONFIRM_ADD_ROLE_OWNERS\x10\n\x12\x1b\n\x17\x43ONFIRM_ADD_ROLE_ADMINS\x10\x0b\x12\x1d\n\x19\x43ONFIRM_REMOVE_ROLE_TASKS\x10\x0c\x12\x1f\n\x1b\x43ONFIRM_REMOVE_ROLE_MEMBERS\x10\r\x12\x1e\n\x1a\x43ONFIRM_REMOVE_ROLE_OWNERS\x10\x0e\x12\x1e\n\x1a\x43ONFIRM_REMOVE_ROLE_ADMINS\x10\x0f\x12\x19\n\x15REJECT_ADD_ROLE_TASKS\x10\x10\x12\x1b\n\x17REJECT_ADD_ROLE_MEMBERS\x10\x11\x12\x1a\n\x16REJECT_ADD_ROLE_OWNERS\x10\x12\x12\x1a\n\x16REJECT_ADD_ROLE_ADMINS\x10\x13\x12\x1c\n\x18REJECT_REMOVE_ROLE_TASKS\x10\x14\x12\x1e\n\x1aREJECT_REMOVE_ROLE_MEMBERS\x10\x15\x12\x1d\n\x19REJECT_REMOVE_ROLE_OWNERS\x10\x16\x12\x1d\n\x19REJECT_REMOVE_ROLE_ADMINS\x10\x17\x12\x1b\n\x17PROPOSE_ADD_TASK_OWNERS\x10\x18\x12\x1b\n\x17PROPOSE_ADD_TASK_ADMINS\x10\x19\x12\x1e\n\x1aPROPOSE_REMOVE_TASK_OWNERS\x10\x1a\x12\x1e\n\x1aPROPOSE_REMOVE_TASK_ADMINS\x10\x1b\x12\x1b\n\x17\x43ONFIRM_ADD_TASK_OWNERS\x10\x1c\x12\x1b\n\x17\x43ONFIRM_ADD_TASK_ADMINS\x10\x1d\x12\x1e\n\x1a\x43ONFIRM_REMOVE_TASK_OWNERS\x10\x1e\x12\x1e\n\x1a\x43ONFIRM_REMOVE_TASK_ADMINS\x10\x1f\x12\x1a\n\x16REJECT_ADD_TASK_OWNERS\x10 \x12\x1a\n\x16REJECT_ADD_TASK_ADMINS\x10!\x12\x1d\n\x19REJECT_REMOVE_TASK_OWNERS\x10\"\x12\x1d\n\x19REJECT_REMOVE_TASK_ADMINS\x10#\x12\x1f\n\x1bPROPOSE_UPDATE_USER_MANAGER\x10$\x12\x1f\n\x1b\x43ONFIRM_UPDATE_USER_MANAGER\x10%\x12\x1e\n\x1aREJECT_UPDATE_USER_MANAGER\x10&\x12\x0f\n\x0b\x43REATE_ROLE\x10\'\x12\x0f\n\x0b\x43REATE_USER\x10(\x12\x0f\n\x0b\x43REATE_TASK\x10)\x12\x0f\n\x0bUPDATE_ROLE\x10*\x12\x13\n\x0fUPDATE_PROPOSAL\x10+\x12\x0f\n\x0bUPDATE_TASK\x10,\x12\x0f\n\x0bUPDATE_USER\x10-b\x06proto3')
-=======
-  serialized_pb=_b('\n\x12rbac_payload.proto\"\xf9\n\n\x0bRBACPayload\x12.\n\x0cmessage_type\x18\x01 \x01(\x0e\x32\x18.RBACPayload.MessageType\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\"\xa8\n\n\x0bMessageType\x12\x1a\n\x16PROPOSE_ADD_ROLE_TASKS\x10\x00\x12\x1c\n\x18PROPOSE_ADD_ROLE_MEMBERS\x10\x01\x12\x1b\n\x17PROPOSE_ADD_ROLE_OWNERS\x10\x02\x12\x1b\n\x17PROPOSE_ADD_ROLE_ADMINS\x10\x03\x12\x1d\n\x19PROPOSE_REMOVE_ROLE_TASKS\x10\x04\x12\x1f\n\x1bPROPOSE_REMOVE_ROLE_MEMBERS\x10\x05\x12\x1e\n\x1aPROPOSE_REMOVE_ROLE_OWNERS\x10\x06\x12\x1e\n\x1aPROPOSE_REMOVE_ROLE_ADMINS\x10\x07\x12\x1a\n\x16\x43ONFIRM_ADD_ROLE_TASKS\x10\x08\x12\x1c\n\x18\x41PPROVE_ADD_ROLE_MEMBERS\x10\t\x12\x1b\n\x17\x43ONFIRM_ADD_ROLE_OWNERS\x10\n\x12\x1b\n\x17\x43ONFIRM_ADD_ROLE_ADMINS\x10\x0b\x12\x1d\n\x19\x43ONFIRM_REMOVE_ROLE_TASKS\x10\x0c\x12\x1f\n\x1b\x43ONFIRM_REMOVE_ROLE_MEMBERS\x10\r\x12\x1e\n\x1a\x43ONFIRM_REMOVE_ROLE_OWNERS\x10\x0e\x12\x1e\n\x1a\x43ONFIRM_REMOVE_ROLE_ADMINS\x10\x0f\x12\x19\n\x15REJECT_ADD_ROLE_TASKS\x10\x10\x12\x1b\n\x17REJECT_ADD_ROLE_MEMBERS\x10\x11\x12\x1a\n\x16REJECT_ADD_ROLE_OWNERS\x10\x12\x12\x1a\n\x16REJECT_ADD_ROLE_ADMINS\x10\x13\x12\x1c\n\x18REJECT_REMOVE_ROLE_TASKS\x10\x14\x12\x1e\n\x1aREJECT_REMOVE_ROLE_MEMBERS\x10\x15\x12\x1d\n\x19REJECT_REMOVE_ROLE_OWNERS\x10\x16\x12\x1d\n\x19REJECT_REMOVE_ROLE_ADMINS\x10\x17\x12\x1b\n\x17PROPOSE_ADD_TASK_OWNERS\x10\x18\x12\x1b\n\x17PROPOSE_ADD_TASK_ADMINS\x10\x19\x12\x1e\n\x1aPROPOSE_REMOVE_TASK_OWNERS\x10\x1a\x12\x1e\n\x1aPROPOSE_REMOVE_TASK_ADMINS\x10\x1b\x12\x1b\n\x17\x43ONFIRM_ADD_TASK_OWNERS\x10\x1c\x12\x1b\n\x17\x43ONFIRM_ADD_TASK_ADMINS\x10\x1d\x12\x1e\n\x1a\x43ONFIRM_REMOVE_TASK_OWNERS\x10\x1e\x12\x1e\n\x1a\x43ONFIRM_REMOVE_TASK_ADMINS\x10\x1f\x12\x1a\n\x16REJECT_ADD_TASK_OWNERS\x10 \x12\x1a\n\x16REJECT_ADD_TASK_ADMINS\x10!\x12\x1d\n\x19REJECT_REMOVE_TASK_OWNERS\x10\"\x12\x1d\n\x19REJECT_REMOVE_TASK_ADMINS\x10#\x12\x1f\n\x1bPROPOSE_UPDATE_USER_MANAGER\x10$\x12\x1f\n\x1b\x43ONFIRM_UPDATE_USER_MANAGER\x10%\x12\x1e\n\x1aREJECT_UPDATE_USER_MANAGER\x10&\x12\x0f\n\x0b\x43REATE_ROLE\x10\'\x12\x0f\n\x0b\x43REATE_USER\x10(\x12\x0f\n\x0b\x43REATE_TASK\x10)\x12\x0f\n\x0bUPDATE_ROLE\x10*\x12\x13\n\x0fUPDATE_PROPOSAL\x10+\x12\x0f\n\x0bUPDATE_TASK\x10,\x12\x0f\n\x0bUPDATE_USER\x10-b\x06proto3')
->>>>>>> hierachical approval transaction creation
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -72,7 +69,7 @@ _RBACPAYLOAD_MESSAGETYPE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='APPROVE_ADD_ROLE_MEMBERS', index=9, number=9,
+      name='CONFIRM_ADD_ROLE_MEMBERS', index=9, number=9,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
@@ -192,38 +189,47 @@ _RBACPAYLOAD_MESSAGETYPE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CREATE_ROLE', index=39, number=39,
+      name='APPROVE_ADD_ROLE_MEMBERS', index=39, number=39,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CREATE_USER', index=40, number=40,
+      name='CREATE_ROLE', index=40, number=40,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CREATE_TASK', index=41, number=41,
+      name='CREATE_USER', index=41, number=41,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='UPDATE_ROLE', index=42, number=42,
+      name='CREATE_TASK', index=42, number=42,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='UPDATE_PROPOSAL', index=43, number=43,
+      name='UPDATE_ROLE', index=43, number=43,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='UPDATE_TASK', index=44, number=44,
+      name='UPDATE_PROPOSAL', index=44, number=44,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='UPDATE_USER', index=45, number=45,
+      name='UPDATE_TASK', index=45, number=45,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='UPDATE_USER', index=46, number=46,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
+<<<<<<< HEAD
   serialized_start=137,
   serialized_end=1457,
+=======
+  serialized_start=104,
+  serialized_end=1454,
+>>>>>>> hierachical approval
 )
 _sym_db.RegisterEnumDescriptor(_RBACPAYLOAD_MESSAGETYPE)
 
@@ -277,7 +283,11 @@ _RBACPAYLOAD = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=23,
+<<<<<<< HEAD
   serialized_end=1457,
+=======
+  serialized_end=1454,
+>>>>>>> hierachical approval
 )
 
 _RBACPAYLOAD.fields_by_name['message_type'].enum_type = _RBACPAYLOAD_MESSAGETYPE

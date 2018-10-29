@@ -30,7 +30,7 @@ message RBACPayload {
         PROPOSE_REMOVE_ROLE_OWNERS = 6;
         PROPOSE_REMOVE_ROLE_ADMINS = 7;
         CONFIRM_ADD_ROLE_TASKS = 8;
-        APPROVE_ADD_ROLE_MEMBERS = 9;
+        CONFIRM_ADD_ROLE_MEMBERS = 9;
         CONFIRM_ADD_ROLE_OWNERS = 10;
         CONFIRM_ADD_ROLE_ADMINS = 11;
         CONFIRM_REMOVE_ROLE_TASKS = 12;
@@ -60,17 +60,19 @@ message RBACPayload {
         PROPOSE_UPDATE_USER_MANAGER = 36;
         CONFIRM_UPDATE_USER_MANAGER = 37;
         REJECT_UPDATE_USER_MANAGER = 38;
+        APPROVE_ADD_ROLE_MEMBERS = 39;
 
 
+        CREATE_ROLE = 40;
+        CREATE_USER = 41;
+        CREATE_TASK = 42;
 
-        CREATE_ROLE = 39;
-        CREATE_USER = 40;
-        CREATE_TASK = 41;
+        UPDATE_ROLE = 43;
+        UPDATE_PROPOSAL = 44;
+        UPDATE_TASK = 45;
+        UPDATE_USER = 46;
 
-        UPDATE_ROLE = 42;
-        UPDATE_PROPOSAL = 43;
-        UPDATE_TASK = 44;
-        UPDATE_USER = 45;
+        
     }
 
 

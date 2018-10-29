@@ -41,12 +41,12 @@ export class RequestsService {
     }
 
     approveRequest(requestId, reason = '') {
-        let request = environment.patch_proposal(requestId, 'APPROVED', reason, '');
+        let request = environment.patch_proposal(requestId, 'CONFIRMED', reason, '');
 
         return this.http[request.method](request.url, request.body, this.context.httpOptions())
             .toPromise()
             .then((response) => {
-                console.log('Approved Request ', response.status);
+                console.log('Confirm Request ', response.status);
                 return response.status;
             })
             .catch(this.utils.catchError);

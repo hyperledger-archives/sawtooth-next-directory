@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='role_transaction.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n\x16role_transaction.proto\"o\n\x14ProposeAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"r\n\x17ProposeRemoveRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"q\n\x16ProposeRemoveRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"q\n\x16ProposeRemoveRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"m\n\x12ProposeAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"[\n\x12\x43onfirmAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"Z\n\x11RejectAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"p\n\x15ProposeRemoveRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"^\n\x15\x43onfirmRemoveRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"]\n\x14RejectRemoveRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"s\n\x14\x43onfirmAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x14\n\x0con_behalf_id\x18\x05 \x01(\t\"`\n\x17\x43onfirmRemoveRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"\\\n\x13\x43onfirmAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"_\n\x16\x43onfirmRemoveRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"\\\n\x13\x43onfirmAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"_\n\x16\x43onfirmRemoveRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"\\\n\x13RejectAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"_\n\x16RejectRemoveRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"[\n\x12RejectAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"^\n\x15RejectRemoveRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"[\n\x12RejectAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"^\n\x15RejectRemoveRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"]\n\nCreateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"b\n\nUpdateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x10\n\x08new_name\x18\x02 \x01(\t\x12\x1b\n\x13old_metadata_sha512\x18\x03 \x01(\t\x12\x14\n\x0cnew_metadata\x18\x04 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16role_transaction.proto\"o\n\x14ProposeAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"r\n\x17ProposeRemoveRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"q\n\x16ProposeRemoveRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"q\n\x16ProposeRemoveRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"m\n\x12ProposeAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"[\n\x12\x43onfirmAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"Z\n\x11RejectAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"p\n\x15ProposeRemoveRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"^\n\x15\x43onfirmRemoveRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"]\n\x14RejectRemoveRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"]\n\x14\x43onfirmAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"s\n\x14\x41pproveAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x14\n\x0con_behalf_id\x18\x05 \x01(\t\"`\n\x17\x43onfirmRemoveRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"\\\n\x13\x43onfirmAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"_\n\x16\x43onfirmRemoveRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"\\\n\x13\x43onfirmAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"_\n\x16\x43onfirmRemoveRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"\\\n\x13RejectAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"_\n\x16RejectRemoveRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"[\n\x12RejectAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"^\n\x15RejectRemoveRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"[\n\x12RejectAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"^\n\x15RejectRemoveRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"]\n\nCreateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"b\n\nUpdateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x10\n\x08new_name\x18\x02 \x01(\t\x12\x1b\n\x13old_metadata_sha512\x18\x03 \x01(\t\x12\x14\n\x0cnew_metadata\x18\x04 \x01(\tb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -741,8 +741,60 @@ _CONFIRMADDROLEMEMBER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1310,
+  serialized_end=1403,
+)
+
+
+_APPROVEADDROLEMEMBER = _descriptor.Descriptor(
+  name='ApproveAddRoleMember',
+  full_name='ApproveAddRoleMember',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='on_behalf_id', full_name='ConfirmAddRoleMember.on_behalf_id', index=4,
+      name='proposal_id', full_name='ApproveAddRoleMember.proposal_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='role_id', full_name='ApproveAddRoleMember.role_id', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='user_id', full_name='ApproveAddRoleMember.user_id', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='reason', full_name='ApproveAddRoleMember.reason', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='on_behalf_id', full_name='ApproveAddRoleMember.on_behalf_id', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -760,8 +812,8 @@ _CONFIRMADDROLEMEMBER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1310,
-  serialized_end=1425,
+  serialized_start=1405,
+  serialized_end=1520,
 )
 
 
@@ -812,8 +864,8 @@ _CONFIRMREMOVEROLEMEMBER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1427,
-  serialized_end=1523,
+  serialized_start=1522,
+  serialized_end=1618,
 )
 
 
@@ -864,8 +916,8 @@ _CONFIRMADDROLEOWNER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1525,
-  serialized_end=1617,
+  serialized_start=1620,
+  serialized_end=1712,
 )
 
 
@@ -916,8 +968,8 @@ _CONFIRMREMOVEROLEOWNER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1619,
-  serialized_end=1714,
+  serialized_start=1714,
+  serialized_end=1809,
 )
 
 
@@ -968,8 +1020,8 @@ _CONFIRMADDROLEADMIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1716,
-  serialized_end=1808,
+  serialized_start=1811,
+  serialized_end=1903,
 )
 
 
@@ -1020,8 +1072,8 @@ _CONFIRMREMOVEROLEADMIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1810,
-  serialized_end=1905,
+  serialized_start=1905,
+  serialized_end=2000,
 )
 
 
@@ -1072,8 +1124,8 @@ _REJECTADDROLEMEMBER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1907,
-  serialized_end=1999,
+  serialized_start=2002,
+  serialized_end=2094,
 )
 
 
@@ -1124,8 +1176,8 @@ _REJECTREMOVEROLEMEMBER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2001,
-  serialized_end=2096,
+  serialized_start=2096,
+  serialized_end=2191,
 )
 
 
@@ -1176,8 +1228,8 @@ _REJECTADDROLEOWNER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2098,
-  serialized_end=2189,
+  serialized_start=2193,
+  serialized_end=2284,
 )
 
 
@@ -1228,8 +1280,8 @@ _REJECTREMOVEROLEOWNER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2191,
-  serialized_end=2285,
+  serialized_start=2286,
+  serialized_end=2380,
 )
 
 
@@ -1280,8 +1332,8 @@ _REJECTADDROLEADMIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2287,
-  serialized_end=2378,
+  serialized_start=2382,
+  serialized_end=2473,
 )
 
 
@@ -1332,8 +1384,8 @@ _REJECTREMOVEROLEADMIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2380,
-  serialized_end=2474,
+  serialized_start=2475,
+  serialized_end=2569,
 )
 
 
@@ -1391,8 +1443,8 @@ _CREATEROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2476,
-  serialized_end=2569,
+  serialized_start=2571,
+  serialized_end=2664,
 )
 
 
@@ -1443,8 +1495,8 @@ _UPDATEROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2571,
-  serialized_end=2669,
+  serialized_start=2666,
+  serialized_end=2764,
 )
 
 DESCRIPTOR.message_types_by_name['ProposeAddRoleMember'] = _PROPOSEADDROLEMEMBER
@@ -1460,6 +1512,7 @@ DESCRIPTOR.message_types_by_name['ProposeRemoveRoleTask'] = _PROPOSEREMOVEROLETA
 DESCRIPTOR.message_types_by_name['ConfirmRemoveRoleTask'] = _CONFIRMREMOVEROLETASK
 DESCRIPTOR.message_types_by_name['RejectRemoveRoleTask'] = _REJECTREMOVEROLETASK
 DESCRIPTOR.message_types_by_name['ConfirmAddRoleMember'] = _CONFIRMADDROLEMEMBER
+DESCRIPTOR.message_types_by_name['ApproveAddRoleMember'] = _APPROVEADDROLEMEMBER
 DESCRIPTOR.message_types_by_name['ConfirmRemoveRoleMember'] = _CONFIRMREMOVEROLEMEMBER
 DESCRIPTOR.message_types_by_name['ConfirmAddRoleOwner'] = _CONFIRMADDROLEOWNER
 DESCRIPTOR.message_types_by_name['ConfirmRemoveRoleOwner'] = _CONFIRMREMOVEROLEOWNER
@@ -1564,6 +1617,13 @@ ConfirmAddRoleMember = _reflection.GeneratedProtocolMessageType('ConfirmAddRoleM
   # @@protoc_insertion_point(class_scope:ConfirmAddRoleMember)
   ))
 _sym_db.RegisterMessage(ConfirmAddRoleMember)
+
+ApproveAddRoleMember = _reflection.GeneratedProtocolMessageType('ApproveAddRoleMember', (_message.Message,), dict(
+  DESCRIPTOR = _APPROVEADDROLEMEMBER,
+  __module__ = 'role_transaction_pb2'
+  # @@protoc_insertion_point(class_scope:ApproveAddRoleMember)
+  ))
+_sym_db.RegisterMessage(ApproveAddRoleMember)
 
 ConfirmRemoveRoleMember = _reflection.GeneratedProtocolMessageType('ConfirmRemoveRoleMember', (_message.Message,), dict(
   DESCRIPTOR = _CONFIRMREMOVEROLEMEMBER,

@@ -19,12 +19,6 @@ from rbac.transaction_creation.common import make_header_and_batch
 
 from rbac.common.protobuf import rbac_payload_pb2, role_transaction_pb2
 
-from rbac.server.db.users_query import fetch_user_resource
-
-import logging
-
-LOGGER = logging.getLogger(__name__)
-
 
 def create_role(txn_key, batch_key, role_name, role_id, metadata, admins, owners):
     """Create a BatchList with a CreateRole transaction in it.
@@ -121,7 +115,9 @@ def propose_add_role_admins(
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_add_role_admins(txn_key, batch_key, proposal_id, role_id, user_id, additional_params):
+def confirm_add_role_admins(
+    txn_key, batch_key, proposal_id, role_id, user_id, additional_params
+):
     """Creates a BatchList with a ConfirmAddRoleAdmin transaction in it.
 
     Args:
@@ -137,7 +133,10 @@ def confirm_add_role_admins(txn_key, batch_key, proposal_id, role_id, user_id, a
     """
 
     confirm_add_payload = role_transaction_pb2.ConfirmAddRoleAdmin(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -158,10 +157,15 @@ def confirm_add_role_admins(txn_key, batch_key, proposal_id, role_id, user_id, a
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_add_role_admins(txn_key, batch_key, proposal_id, role_id, user_id, additional_params):
+def reject_add_role_admins(
+    txn_key, batch_key, proposal_id, role_id, user_id, additional_params
+):
 
     reject_add_payload = role_transaction_pb2.RejectAddRoleAdmin(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -212,7 +216,10 @@ def confirm_remove_role_admins(
 ):
 
     confirm_add_payload = role_transaction_pb2.ConfirmRemoveRoleAdmin(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -238,7 +245,10 @@ def reject_remove_role_admins(
 ):
 
     reject_add_payload = role_transaction_pb2.RejectRemoveRoleAdmin(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -281,10 +291,15 @@ def propose_add_role_owners(
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_add_role_owners(txn_key, batch_key, proposal_id, role_id, user_id, additional_params):
+def confirm_add_role_owners(
+    txn_key, batch_key, proposal_id, role_id, user_id, additional_params
+):
 
     confirm_payload = role_transaction_pb2.ConfirmAddRoleOwner(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -305,9 +320,14 @@ def confirm_add_role_owners(txn_key, batch_key, proposal_id, role_id, user_id, a
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_add_role_owners(txn_key, batch_key, proposal_id, role_id, user_id, additional_params):
+def reject_add_role_owners(
+    txn_key, batch_key, proposal_id, role_id, user_id, additional_params
+):
     reject_payload = role_transaction_pb2.RejectAddRoleOwner(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -358,7 +378,10 @@ def confirm_remove_role_owners(
 ):
 
     confirm_payload = role_transaction_pb2.ConfirmRemoveRoleOwner(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -383,7 +406,10 @@ def reject_remove_role_owners(
     txn_key, batch_key, proposal_id, role_id, user_id, additional_params
 ):
     reject_payload = role_transaction_pb2.RejectRemoveRoleOwner(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -426,10 +452,15 @@ def propose_add_role_members(
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-async def approve_add_role_members(txn_key, batch_key, proposal_id, role_id, user_id, additional_params):
+def confirm_add_role_members(
+    txn_key, batch_key, proposal_id, role_id, user_id, additional_params
+):
 
     confirm_payload = role_transaction_pb2.ConfirmAddRoleMember(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason'], on_behalf_id=additional_params['on_behalf_id']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -437,7 +468,38 @@ async def approve_add_role_members(txn_key, batch_key, proposal_id, role_id, use
         addresser.make_role_owners_address(role_id, txn_key.public_key),
     ]
 
-    inputs.extend(await get_hierarchy_users(additional_params['db_connection'], txn_key, additional_params['on_behalf_id'], additional_params['head_block_num']))
+    outputs = [
+        addresser.make_proposal_address(role_id, user_id),
+        addresser.make_role_members_address(role_id, user_id),
+    ]
+
+    rbac_payload = rbac_payload_pb2.RBACPayload(
+        content=confirm_payload.SerializeToString(),
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
+    )
+
+    return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
+
+
+def approve_add_role_members(
+    txn_key, batch_key, proposal_id, role_id, user_id, additional_params
+):
+
+    confirm_payload = role_transaction_pb2.ApproveAddRoleMember(
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
+        on_behalf_id=additional_params["on_behalf_id"],
+    )
+
+    inputs = [
+        addresser.make_proposal_address(role_id, user_id),
+        addresser.make_role_owners_address(role_id, additional_params["on_behalf_id"]),
+    ]
+
+    for user in additional_params["hierarchy_users"]:
+        inputs.append(addresser.make_user_address(user))
 
     outputs = [
         addresser.make_proposal_address(role_id, user_id),
@@ -452,29 +514,14 @@ async def approve_add_role_members(txn_key, batch_key, proposal_id, role_id, use
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-async def get_hierarchy_users(conn, txn_key, on_behalf_id, head_block_num):
-    addresses = [
-        addresser.make_user_address(txn_key.public_key),
-        addresser.make_user_address(on_behalf_id)
-    ]
-    user_id = on_behalf_id
-    while (True):
-        user_resource = await fetch_user_resource(
-            conn, user_id, head_block_num
-        )
-        manager_id = user_resource.get("manager")
-        LOGGER.warning("user %s manager is %s", user_id, manager_id)
-        if not manager_id:
-            break
-        else :
-            addresses.append(addresser.make_user_address(manager_id))
-            user_id = manager_id
-    return addresses
-
-
-def reject_add_role_members(txn_key, batch_key, proposal_id, role_id, user_id, additional_params):
+def reject_add_role_members(
+    txn_key, batch_key, proposal_id, role_id, user_id, additional_params
+):
     reject_payload = role_transaction_pb2.RejectAddRoleMember(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -525,7 +572,10 @@ def confirm_remove_role_members(
 ):
 
     confirm_payload = role_transaction_pb2.ConfirmRemoveRoleMember(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -550,7 +600,10 @@ def reject_remove_role_members(
     txn_key, batch_key, proposal_id, role_id, user_id, additional_params
 ):
     reject_payload = role_transaction_pb2.RejectRemoveRoleMember(
-        proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        user_id=user_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -597,10 +650,15 @@ def propose_add_role_tasks(
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def confirm_add_role_tasks(txn_key, batch_key, proposal_id, role_id, task_id, additional_params):
+def confirm_add_role_tasks(
+    txn_key, batch_key, proposal_id, role_id, task_id, additional_params
+):
 
     confirm_payload = role_transaction_pb2.ConfirmAddRoleTask(
-        proposal_id=proposal_id, role_id=role_id, task_id=task_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -621,10 +679,15 @@ def confirm_add_role_tasks(txn_key, batch_key, proposal_id, role_id, task_id, ad
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_add_role_tasks(txn_key, batch_key, proposal_id, role_id, task_id, additional_params):
+def reject_add_role_tasks(
+    txn_key, batch_key, proposal_id, role_id, task_id, additional_params
+):
 
     reject_payload = role_transaction_pb2.RejectAddRoleTask(
-        proposal_id=proposal_id, role_id=role_id, task_id=task_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -675,7 +738,10 @@ def confirm_remove_role_tasks(
 ):
 
     confirm_payload = role_transaction_pb2.ConfirmRemoveRoleTask(
-        proposal_id=proposal_id, role_id=role_id, task_id=task_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [
@@ -696,10 +762,15 @@ def confirm_remove_role_tasks(
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
 
 
-def reject_remove_role_tasks(txn_key, batch_key, proposal_id, role_id, task_id, additional_params):
+def reject_remove_role_tasks(
+    txn_key, batch_key, proposal_id, role_id, task_id, additional_params
+):
 
     reject_payload = role_transaction_pb2.RejectRemoveRoleTask(
-        proposal_id=proposal_id, role_id=role_id, task_id=task_id, reason=additional_params['reason']
+        proposal_id=proposal_id,
+        role_id=role_id,
+        task_id=task_id,
+        reason=additional_params["reason"],
     )
 
     inputs = [

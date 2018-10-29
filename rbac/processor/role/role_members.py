@@ -24,6 +24,11 @@ from rbac.processor.role import role_operation
 from rbac.common.protobuf import proposal_state_pb2
 from rbac.common.protobuf import role_transaction_pb2
 
+import logging
+
+
+LOGGER = logging.getLogger(__name__)
+
 
 def apply_propose(header, payload, state):
     proposal_payload = role_transaction_pb2.ProposeAddRoleMember()
@@ -114,7 +119,7 @@ def hierarchical_reject(header, payload, state):
 
 
 def hierarchical_decide(header, payload, state, isApproval):
-    confirm = role_transaction_pb2.ConfirmAddRoleMember()
+    confirm = role_transaction_pb2.ApproveAddRoleMember()
     confirm.ParseFromString(payload.content)
 
     txn_signer_owners_address = addresser.make_role_owners_address(
@@ -126,9 +131,11 @@ def hierarchical_decide(header, payload, state, isApproval):
     )
 
 
-def apply_confirm(header, payload, state):
-
+def apply_approve(header, payload, state):
     hierarchical_approve(header, payload, state)
+
+
+def apply_confirm(header, payload, state):
 
     confirm_payload = role_transaction_pb2.ConfirmAddRoleMember()
     confirm_payload.ParseFromString(payload.content)

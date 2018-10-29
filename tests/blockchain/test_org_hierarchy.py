@@ -978,13 +978,80 @@ class TestOrgHierarchy(unittest.TestCase):
             "No open proposal can exist for the same state change.",
         )
 
-    # temporarily disable
-    #    need to adding rethink db container
-    #    confirm_add_role_member transaction is replaced by approve_add_role_member which needs db access
-    @pytest.mark.skip
-    def test_12_confirm_add_role_members(self):
-        """Tests the ConfirmAddRoleMembers validation rules.
+    def test_12_approve_add_role_members(self):
+        """Tests the ApproveAddRoleMembers hierachical approval validation rules.
 
+        Notes:
+            ApproveAddRoleMembers validation rules
+                - The proposal exists and is open.
+                - The txn signer is a Role owner or his/her hierachical manager.
+        """
+
+        self.assertEqual(
+            self.client.approve_add_role_members(
+                key=self.key3b,
+                proposal_id=uuid4().hex,
+                role_id=uuid4().hex,
+                user_id=uuid4().hex,
+                reason=uuid4().hex,
+                on_behalf_id=self.key3b.public_key,
+                hierarchy_users=[self.key1.public_key, self.key3b.public_key],
+            )[0]["status"],
+            "INVALID",
+            "The proposal must exist.",
+        )
+
+        self.assertEqual(
+            self.client.approve_add_role_members(
+                key=self.key2a,
+                proposal_id=self.add_role_members_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key_manager.public_key,
+                reason=uuid4().hex,
+                on_behalf_id=self.key3b.public_key,
+                hierarchy_users=[
+                    self.key2a.public_key,
+                    self.key3b.public_key,
+                    self.key1.public_key,
+                    self.key2a.public_key,
+                ],
+            )[0]["status"],
+            "INVALID",
+            "Signer is not a higher manager of decision-making user. Signer cannot make decision on his/her behalf",
+        )
+
+        self.assertEqual(
+            self.client.approve_add_role_members(
+                key=self.key1,
+                proposal_id=self.add_role_members_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key_manager.public_key,
+                reason=uuid4().hex,
+                on_behalf_id=self.key3b.public_key,
+                hierarchy_users=[
+                    self.key3b.public_key,
+                    self.key_manager.public_key,
+                    self.key1.public_key,
+                ],
+            )[0]["status"],
+            "COMMITTED",
+        )
+
+        self.assertEqual(
+            self.client.approve_add_role_members(
+                key=self.key3b,
+                proposal_id=self.add_role_members_proposal_id,
+                role_id=self.role_id1,
+                user_id=self.key_manager.public_key,
+                reason=uuid4().hex,
+                on_behalf_id=self.key3b.public_key,
+                hierarchy_users=[self.key3b.public_key],
+            )[0]["status"],
+            "COMMITTED",
+        )
+
+    def test_13_confirm_add_role_members(self):
+        """Tests the ConfirmAddRoleMembers validation rules.
         Notes:
             ConfirmAddRoleMembers validation rules
                 - The proposal exists and is open.
@@ -1038,7 +1105,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_13_reject_add_role_members(self):
+    def test_14_reject_add_role_members(self):
         """Tests the RejectAddRoleMembers validation rules.
 
         Notes:
@@ -1108,7 +1175,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_14_create_task(self):
+    def test_15_create_task(self):
         """Tests the CreateTask validation rules.
 
         Notes:
@@ -1169,7 +1236,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The task_id must not belong to another task.",
         )
 
-    def test_15_propose_add_role_tasks(self):
+    def test_16_propose_add_role_tasks(self):
         """Tests the ProposeAddRoleTasks validation rules.
 
         Notes:
@@ -1246,7 +1313,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "No Proposal for the same Add Role Task can exist.",
         )
 
-    def test_16_confirm_add_role_tasks(self):
+    def test_17_confirm_add_role_tasks(self):
         """Tests the ConfirmAddRoleTasks validation rules.
 
         Notes:
@@ -1303,7 +1370,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_17_reject_add_role_tasks(self):
+    def test_18_reject_add_role_tasks(self):
         """Tests the RejectAddRoleTasks validation rules.
 
         Notes:
@@ -1387,7 +1454,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_18_propose_add_task_admins(self):
+    def test_19_propose_add_task_admins(self):
         """Tests the ProposeAddTaskAdmins validation rules.
 
         Notes:
@@ -1476,7 +1543,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "There must not be any OPEN proposal for the same change.",
         )
 
-    def test_19_confirm_add_task_admins(self):
+    def test_20_confirm_add_task_admins(self):
         """Tests the ConfirmAddTaskAdmins validation rules
 
         Notes
@@ -1520,7 +1587,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_20_reject_add_task_admins(self):
+    def test_21_reject_add_task_admins(self):
         """Tests the RejectAddTaskAdmins validation rules
 
         Notes
@@ -1578,7 +1645,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_21_propose_add_task_owners(self):
+    def test_22_propose_add_task_owners(self):
         """Tests the ProposeAddTaskOwners validation rules
 
         Notes:
@@ -1667,7 +1734,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "There must not be an OPEN proposal for the same change.",
         )
 
-    def test_22_confirm_add_task_owners(self):
+    def test_23_confirm_add_task_owners(self):
         """Tests the ConfirmAddTaskOwners validation rules
 
         Notes
@@ -1711,7 +1778,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_23_reject_add_task_owners(self):
+    def test_24_reject_add_task_owners(self):
         """Tests the RejectAddTaskOwners validation rules
 
         Notes:
@@ -1769,7 +1836,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_24_propose_remove_task_admins(self):
+    def test_25_propose_remove_task_admins(self):
         """Tests the ProposeRemoveTaskAdmins txn validation rules.
 
         Notes:
@@ -1845,7 +1912,7 @@ class TestOrgHierarchy(unittest.TestCase):
             "COMMITTED",
         )
 
-    def test_25_propose_remove_task_owners(self):
+    def test_26_propose_remove_task_owners(self):
         """Tests the ProposeRemoveTaskOwners txn validation rules.
 
         Notes:

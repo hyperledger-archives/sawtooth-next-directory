@@ -127,9 +127,7 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def confirm_add_role_admins(self, key, proposal_id, role_id, user_id, reason):
-        additional_params = {
-            'reason': reason
-        }
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.confirm_add_role_admins(
             txn_key=key,
             batch_key=self._key,
@@ -144,9 +142,7 @@ class RbacClient(object):
 
     def reject_add_role_admins(self, key, proposal_id, role_id, user_id, reason):
 
-        additional_params = {
-            'reason': reason
-        }
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.reject_add_role_admins(
             txn_key=key,
             batch_key=self._key,
@@ -174,9 +170,7 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def confirm_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
-        additional_params = {
-            'reason': reason
-        }
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.confirm_add_role_owners(
             txn_key=key,
             batch_key=self._key,
@@ -189,9 +183,7 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def reject_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
-        additional_params = {
-            'reason': reason
-        }
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.reject_add_role_owners(
             txn_key=key,
             batch_key=self._key,
@@ -218,10 +210,27 @@ class RbacClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses([signature], wait=10)
 
-    def confirm_add_role_members(self, key, proposal_id, role_id, user_id, reason):
+    def approve_add_role_members(
+        self, key, proposal_id, role_id, user_id, reason, on_behalf_id, hierarchy_users
+    ):
         additional_params = {
-            'reason': reason
+            "reason": reason,
+            "on_behalf_id": on_behalf_id,
+            "hierarchy_users": hierarchy_users,
         }
+        batch_list, signature = role_transaction_creation.approve_add_role_members(
+            txn_key=key,
+            batch_key=self._key,
+            proposal_id=proposal_id,
+            role_id=role_id,
+            user_id=user_id,
+            additional_params=additional_params,
+        )
+        self._client.send_batches(batch_list)
+        return self._client.get_statuses([signature], wait=10)
+
+    def confirm_add_role_members(self, key, proposal_id, role_id, user_id, reason):
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.confirm_add_role_members(
             txn_key=key,
             batch_key=self._key,
@@ -234,9 +243,7 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def reject_add_role_members(self, key, proposal_id, role_id, user_id, reason):
-        additional_params = {
-            'reason': reason
-        }
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.reject_add_role_members(
             txn_key=key,
             batch_key=self._key,
@@ -265,9 +272,7 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def confirm_add_role_tasks(self, key, proposal_id, role_id, task_id, reason):
-        additional_params = {
-            'reason': reason
-        }
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.confirm_add_role_tasks(
             txn_key=key,
             batch_key=self._key,
@@ -281,9 +286,7 @@ class RbacClient(object):
         return self._client.get_statuses([signature], wait=10)
 
     def reject_add_role_tasks(self, key, proposal_id, role_id, task_id, reason):
-        additional_params = {
-            'reason': reason
-        }
+        additional_params = {"reason": reason}
         batch_list, signature = role_transaction_creation.reject_add_role_tasks(
             txn_key=key,
             batch_key=self._key,

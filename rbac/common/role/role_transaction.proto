@@ -195,6 +195,17 @@ message ConfirmAddRoleMember {
     string user_id = 3;
 
     string reason = 4;
+}
+
+message ApproveAddRoleMember {
+
+    string proposal_id = 1;
+
+    string role_id = 2;
+
+    string user_id = 3;
+
+    string reason = 4;
 
     string on_behalf_id = 5;
 }
