@@ -19,13 +19,13 @@ import Immutable from 'seamless-immutable';
 
 
 /**
- * 
+ *
  * Actions
- * 
+ *
  * @property request  Initiating action
  * @property success  Action called on execution success
  * @property failure  Action called on execution failure
- * 
+ *
  */
 const { Types, Creators } = createActions({
   conversationRequest:    ['id'],
@@ -34,7 +34,9 @@ const { Types, Creators } = createActions({
 
   sendRequest:            ['message'],
   sendSuccess:            ['message'],
-  sendFailure:            ['error']
+  sendFailure:            ['error'],
+
+  actionSet:              ['action']
 });
 
 
@@ -43,38 +45,38 @@ export default Creators;
 
 
 /**
- * 
+ *
  * State
- * 
- * @property fetching 
- * @property error 
- * 
+ *
+ * @property fetching
+ * @property error
+ *
  */
 export const INITIAL_STATE = Immutable({
   fetching:         null,
   error:            null,
-  messages:         null
+  messages:         null,
+  action:           null
 });
 
 
 /**
- * 
+ *
  * Selectors
- * 
- * 
+ *
+ *
  */
 export const ChatSelectors = {
-  messages: (state) => {
-    return state.chat.messages;
-  }
+  messages: (state) => state.chat.messages,
+  action: (state) => state.chat.action
 };
 
 
 /**
- * 
+ *
  * Reducers - General
- * 
- * 
+ *
+ *
  */
 export const request = (state) => state.merge({ fetching: true });
 
@@ -84,10 +86,10 @@ export const failure = (state, { error }) => {
 
 
 /**
- * 
+ *
  * Reducers - Success
- * 
- * 
+ *
+ *
  */
 export const conversationSuccess = (state, { conversation }) => {
   return state.merge({ fetching: false, messages: conversation.messages });
@@ -99,6 +101,23 @@ export const sendSuccess = (state, { message }) => {
 }
 
 
+/**
+ *
+ * Reducers - Action
+ *
+ *
+ */
+export const actionSet = (state, { action }) => {
+  return state.merge({ fetching: false, action });
+}
+
+
+/**
+ *
+ * Hooks
+ *
+ *
+ */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.CONVERSATION_REQUEST]: request,
   [Types.CONVERSATION_SUCCESS]: conversationSuccess,
@@ -106,5 +125,7 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.SEND_REQUEST]: request,
   [Types.SEND_SUCCESS]: sendSuccess,
-  [Types.SEND_FAILURE]: failure
+  [Types.SEND_FAILURE]: failure,
+
+  [Types.ACTION_SET]: actionSet,
 });

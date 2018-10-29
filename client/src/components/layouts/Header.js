@@ -15,9 +15,11 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { Icon, Image } from 'semantic-ui-react';
+
+
 import './Header.css';
+import logo from '../../images/next-logo-primary.png';
 
 
 /**
@@ -29,12 +31,21 @@ import './Header.css';
 export default class Header extends Component {
 
   render () {
+    const { me } = this.props;
+
     return (
       <header className='next-header'>
-        <Link id='next-header-logo' to='/home'>Next Directory</Link>
+        <div id='next-header-logo'>
+          <Image
+            src={logo}
+            as='a'
+            size='tiny'
+            href='/home'/>
+        </div>
         <Icon inverted name='search'/>
         <Icon inverted name='bell'/>
         <Image src='http://i.pravatar.cc/300' avatar/>
+        <span id='next-header-username'>{ me && me.name }</span>
       </header>
     );
   }

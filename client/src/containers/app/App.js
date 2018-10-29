@@ -29,6 +29,7 @@ import './App.css';
 import AuthActions,{ AuthSelectors } from '../../redux/AuthRedux';
 import ChatActions, { ChatSelectors } from '../../redux/ChatRedux';
 import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
+import UserActions, { UserSelectors } from '../../redux/UserRedux';
 
 
 import PropTypes from 'prop-types';
@@ -45,6 +46,31 @@ import PropTypes from 'prop-types';
  *
  */
 class App extends Component {
+
+  /**
+   *
+   * Hydrate base data
+   *
+   */
+  componentDidMount () {
+    const { getBase, getUser, isAuthenticated } = this.props;
+
+    if (isAuthenticated) {
+      getUser();
+      getBase();
+    }
+
+  }
+
+
+  componentWillReceiveProps (newProps) {
+    const { getBase, isAuthenticated } = this.props;
+
+    if (newProps.isAuthenticated &&
+      newProps.isAuthenticated !== isAuthenticated) {
+      getBase();
+    }
+  }
 
   /**
    *
@@ -91,13 +117,20 @@ class App extends Component {
     return (
       <Router>
         <div id='next-global-container'>
-          <Header/>
+          <Header {...this.props}/>
           <Switch>
             <Route exact path='/login' component={Login}/>
             <Route exact path='/sign-up' component={Login}/>
-            <Route exact path='/browse' component={Browse}/>
 
             { !isAuthenticated && <Redirect to='/login'/> }
+
+            <Route exact path='/' render={() => (
+              isAuthenticated ?
+                (<Redirect to="/home"/>) :
+                (<Redirect to='/login'/>)
+            )}/>
+
+            <Route exact path='/browse' component={Browse}/>
             <Route render={() => ( this.renderGrid() )}/>
           </Switch>
         </div>
@@ -118,16 +151,21 @@ const mapStateToProps = (state) => {
   return {
     isAuthenticated:  AuthSelectors.isAuthenticated(state),
     recommended:      RequesterSelectors.recommended(state),
-    requests:         RequesterSelectors.requests(state),
     activePack:       RequesterSelectors.activePack(state),
-    messages:         ChatSelectors.messages(state)
+    me:               UserSelectors.me(state),
+    requests:         UserSelectors.requests(state),
+    messages:         ChatSelectors.messages(state),
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    getUser:         () => dispatch(UserActions.meRequest()),
     getBase:         () => dispatch(RequesterActions.baseRequest()),
     getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
+    requestAccess:   (id, userId, reason) => {
+      return dispatch(RequesterActions.accessRequest(id, userId, reason))
+    },
 
     sendMessage:     (message) => dispatch(ChatActions.sendRequest(message)),
     getConversation: (id) => dispatch(ChatActions.conversationRequest(id)),

@@ -15,6 +15,7 @@ limitations under the License.
 
 
 .next-header {
+  align-items: center;
   background: var(--header-bg-color);
   display: flex;
   height: 40px;
@@ -25,4 +26,8 @@ limitations under the License.
 
 #next-header-logo {
   flex: 1;
+}
+
+#next-header-username {
+  color: var(--header-color);
 }
