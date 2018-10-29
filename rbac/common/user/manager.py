@@ -13,14 +13,13 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import logging
-from rbac.common.user.create_user import CreateUser
-from rbac.common.user.manager import Manager
-
-LOGGER = logging.getLogger(__name__)
+from rbac.common.user.propose_manager import ProposeUpdateUserManager
+from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
+from rbac.common.user.reject_manager import RejectUpdateUserManager
 
 
-class UserManager(CreateUser):
+class Manager:
     def __init__(self):
-        CreateUser.__init__(self)
-        self.manager = Manager()
+        self.propose = ProposeUpdateUserManager()
+        self.confirm = ConfirmUpdateUserManager()
+        self.reject = RejectUpdateUserManager()
