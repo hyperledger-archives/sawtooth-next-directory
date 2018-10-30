@@ -21,11 +21,12 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 
 
 import Login from '../login/Login';
+import Header from '../../components/layouts/Header';
 import Browse from '../browse/Browse';
 import './App.css';
 
 
-import { AuthSelectors } from '../../redux/AuthRedux';
+import AuthActions,{ AuthSelectors } from '../../redux/AuthRedux';
 import ChatActions, { ChatSelectors } from '../../redux/ChatRedux';
 import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
 
@@ -34,14 +35,14 @@ import PropTypes from 'prop-types';
 
 
 /**
- * 
+ *
  * @class App
  * Component encapsulating the navigation implementation based on
  * React Router. Routes pathways are composed from two top-level components
  * to provide one navigation container and one main area.
- * 
+ *
  * Component communication should be synced only through the Redux store.
- * 
+ *
  */
 class App extends Component {
 
@@ -69,7 +70,7 @@ class App extends Component {
           ))}
         </Grid.Column>
         <Grid.Column id='next-inner-grid-main' width={13}>
-          { this.routes.map((route, index) => ( 
+          { this.routes.map((route, index) => (
             <Route
               key={index}
               path={route.path}
@@ -89,14 +90,17 @@ class App extends Component {
 
     return (
       <Router>
-        <Switch>
-          <Route exact path='/login' component={Login}/>
-          <Route exact path='/sign-up' component={Login}/>
-          <Route exact path='/browse' component={Browse}/>
-          
-          { !isAuthenticated && <Redirect to='/login'/> }
-          <Route render={() => ( this.renderGrid() )}/>
-        </Switch>
+        <div id='next-global-container'>
+          <Header/>
+          <Switch>
+            <Route exact path='/login' component={Login}/>
+            <Route exact path='/sign-up' component={Login}/>
+            <Route exact path='/browse' component={Browse}/>
+
+            { !isAuthenticated && <Redirect to='/login'/> }
+            <Route render={() => ( this.renderGrid() )}/>
+          </Switch>
+        </div>
       </Router>
     );
   }
@@ -126,7 +130,9 @@ const mapDispatchToProps = (dispatch) => {
     getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
 
     sendMessage:     (message) => dispatch(ChatActions.sendRequest(message)),
-    getConversation: (id) => dispatch(ChatActions.conversationRequest(id))
+    getConversation: (id) => dispatch(ChatActions.conversationRequest(id)),
+
+    logout:          () => dispatch(AuthActions.logoutRequest())
   };
 }
 

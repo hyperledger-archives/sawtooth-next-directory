@@ -28,24 +28,36 @@ import './RequesterHome.css';
 
 
 /**
- * 
+ *
  * @class RequesterHome
  * Component encapsulating the requester home, which serves as the
- * default landing page after login. 
- * 
+ * default landing page after login.
+ *
  */
 export default class RequesterHome extends Component {
 
   /**
-   * 
+   *
    * Hydrate base data
-   * 
+   *
    */
   componentDidMount () {
-    const { getBase } = this.props;
-    getBase();
+    const { getBase, isAuthenticated } = this.props;
+
+    if (isAuthenticated) {
+      getBase();
+    }
+
   }
 
+
+  componentWillReceiveProps (newProps) {
+    const { getBase, isAuthenticated } = this.props;
+
+    if (newProps.isAuthenticated !== isAuthenticated) {
+      getBase();
+    }
+  }
 
   render () {
     return (
@@ -72,7 +84,7 @@ RequesterHome.proptypes = {
           id: PropTypes.string,
           name: PropTypes.string,
           email: PropTypes.email
-        }  
+        }
       ))
     }
   ))

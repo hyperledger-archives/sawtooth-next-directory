@@ -39,7 +39,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - AES_KEY=${AES_KEY}
 
-  rbac-provider-azure:
+  azure-rbac-provider:
     build:
       context: .
       dockerfile: ./docker/rbac.providers.azure.Dockerfile
@@ -57,20 +57,21 @@ services:
       - ledger-sync
     command: ./bin/rbac-providers-azure
 
-  rbac-provider-ldap:
+  ldap-rbac-provider:
     build:
       context: .
-      dockerfile: docker/rbac.providers.ldap.Dockerfile
+      dockerfile: ./docker/rbac.providers.ldap.Dockerfile
     container_name: rbac-providers-ldap
-    image: rbac-provider-ldap-production:${ISOLATION_ID-latest}
+    image: rbac-provider-ldap:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     environment:
-      - CLIENT_ID=${CLIENT_ID}
-      - CLIENT_SECRET=${CLIENT_SECRET}
-      - CLIENT_ASSERTION=${CLIENT_ASSERTION}
-      - TENANT_ID=${TENANT_ID}
-      - AUTH_TYPE=${AUTH_TYPE}
+      - LDAP_DC=${LDAP_DC}
+      - LDAP_SERVER=${LDAP_SERVER}
+      - LDAP_USER=${LDAP_USER}
+      - LDAP_PASS=${LDAP_PASS}
     depends_on:
-      - rethink
+      - ledger-sync
     command: ./bin/rbac-providers-ldap
 
   rbac-server:
@@ -150,8 +151,12 @@ services:
       dockerfile: ./docker/client.Dockerfile
     container_name: rbac-client
     image: rbac-client:${ISOLATION_ID-latest}
+    volumes:
+      - "./client/src:/client/src"
+      - "./client/public:/client/public"
     ports:
       - "4201:3000"
+      - "35729:35729"
     depends_on:
       - rbac-server
 

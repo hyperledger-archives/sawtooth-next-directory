@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +15,20 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+# http://docs.python-requests.org/en/master/
 
-FROM node:8
-COPY ./client /client
-WORKDIR /client
-EXPOSE 3000
-RUN npm install
-CMD ["./entrypoint.sh"]
+from datetime import datetime
+
+
+def to_ldap_datetime(rethink_timestamp):
+    """
+        Call to transform timestamp stored in RethinkDB to a datetime object in the following format:
+        YYYY-MM-DD HH:MM:SS.ms
+        This function will return the datetime object.
+    """
+
+    return datetime.strptime(rethink_timestamp.split('+')[0], "%Y-%m-%dT%H:%M:%S.%f")
+
+
+def time_to_query_format(sync_time):
+    return sync_time.strftime("%Y%m%d%H%M%S.0Z")

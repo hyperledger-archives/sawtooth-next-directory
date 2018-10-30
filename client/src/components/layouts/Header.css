@@ -15,10 +15,14 @@ limitations under the License.
 
 
 .next-header {
-  background: #fff;
-  border-bottom: 1px solid #ddd;
+  background: var(--header-bg-color);
+  display: flex;
   height: 40px;
   padding: 10px;
   position: relative;
   z-index: 999;
+}
+
+#next-header-logo {
+  flex: 1;
 }

@@ -19,17 +19,18 @@ import RequesterActions from '../redux/RequesterRedux';
 
 
 /**
- * 
+ *
  * Execute base API request
- * 
+ *
  * The getBase generator function executes a request to the
  * API to retrieve base data required to hydrate the landing screen.
- * 
+ *
  * @param action
- * 
+ *
  */
 export function * getBase (api, action) {
   try {
+    /*
     const res = yield call(api.getRequesterBase);
 
     if (res.ok) {
@@ -39,6 +40,11 @@ export function * getBase (api, action) {
       alert(res.data.error);
       yield put(RequesterActions.baseFailure(res.data.error));
     }
+    */
+
+    const res = yield call(api.getRoles);
+    yield put(RequesterActions.baseSuccess(res.data));
+
 
   } catch (err) {
     console.error(err);
@@ -47,14 +53,14 @@ export function * getBase (api, action) {
 
 
 /**
- * 
+ *
  * Execute pack API request
- * 
+ *
  * The getPack generator function executes a request to the
  * API and handles the response.
- * 
+ *
  * @param action
- * 
+ *
  */
 export function * getPack (api, action) {
   try {

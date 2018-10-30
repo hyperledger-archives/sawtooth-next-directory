@@ -16,21 +16,25 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Icon, Image } from 'semantic-ui-react';
 import './Header.css';
 
 
 /**
- * 
+ *
  * @class Header
  * Component encapsulating the main application header
- * 
+ *
  */
 export default class Header extends Component {
 
   render () {
     return (
       <header className='next-header'>
-        <Link to='/home'>Next Directory</Link>
+        <Link id='next-header-logo' to='/home'>Next Directory</Link>
+        <Icon inverted name='search'/>
+        <Icon inverted name='bell'/>
+        <Image src='http://i.pravatar.cc/300' avatar/>
       </header>
     );
   }
