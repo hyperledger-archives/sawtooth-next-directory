@@ -150,6 +150,11 @@ missing keys.
 
 ## Testing
 
+#### Preparing Unit Tests
+
+If you are unit testing a feature having a new Pip dependency in it, then add the new dependency to tests.Dockerfile
+to ensure it is available in the test runtime.
+
 #### Populating Test Data
 
 To quickly populate the application with test users, roles, etc., run script 
