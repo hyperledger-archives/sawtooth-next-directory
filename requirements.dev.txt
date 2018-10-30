@@ -6,7 +6,7 @@ sawtooth_signing==1.0.5
 sanic==0.8.3
 sanic-oauth==0.2.5
 protobuf==3.6.1
-requests==2.19.1
+requests==2.20.0
 pyzmq==17.1.2
 black==18.9b0
 pylint==2.1.1
