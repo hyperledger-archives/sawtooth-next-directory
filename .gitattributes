@@ -1,0 +1,2 @@
+# always use LF line endings (windwos line endings break docker)
+* text eol=lf
