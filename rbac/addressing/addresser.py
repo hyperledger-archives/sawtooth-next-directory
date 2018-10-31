@@ -147,7 +147,7 @@ def address_is(address):
     """
     if not FAMILY_PATTERN.match(address):
         raise ValueError(
-            "Address %s isn't part of the %s namespace", address, FAMILY_NAME
+            "Address {} isn't part of the {} namespace".format(address, FAMILY_NAME)
         )
 
     addr1 = int(address[len(NS) : len(NS) + 2], base=16)
@@ -167,7 +167,9 @@ def address_is(address):
     ):
         return AddressSpace.PROPOSALS
     else:
-        raise ValueError("Unable to determine state location of address %s", address)
+        raise ValueError(
+            "Unable to determine state location of address {}".format(address)
+        )
 
 
 def _sysadmin_address_is(address):
@@ -233,9 +235,9 @@ def _role_address_is(address):
         return AddressSpace.ROLES_ADMINS
     else:
         raise ValueError(
-            "Unable to determine state location of address %s"
-            " within the Role namespace",
-            address,
+            "Unable to determine state location of address {} within the Role namespace".format(
+                address
+            )
         )
 
 
@@ -262,9 +264,9 @@ def _task_address_is(address):
         return AddressSpace.TASKS_ADMINS
     else:
         raise ValueError(
-            "Unable to determine state location of address %s"
-            " within the Task namespace",
-            address,
+            "Unable to determine state location of address {} within the Task namespace".format(
+                address
+            )
         )
 
 
