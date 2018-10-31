@@ -51,7 +51,9 @@ LDAP_DC = os.environ.get("LDAP_DC")
 LDAP_SERVER = os.environ.get("LDAP_SERVER")
 LDAP_USER = os.environ.get("LDAP_USER")
 LDAP_PASS = os.environ.get("LDAP_PASS")
-DELTA_SYNC_INTERVAL_SECONDS = getenv("DELTA_SYNC_INTERVAL_SECONDS", DEFAULT_CONFIG["DELTA_SYNC_INTERVAL_SECONDS"])
+DELTA_SYNC_INTERVAL_SECONDS = getenv(
+    "DELTA_SYNC_INTERVAL_SECONDS", DEFAULT_CONFIG["DELTA_SYNC_INTERVAL_SECONDS"]
+)
 
 LDAP_FILTER_USER = "(objectClass=person)"
 LDAP_FILTER_USER_DELTA = "(&(objectClass=person)(whenChanged>=%s))"
@@ -68,12 +70,25 @@ def fetch_ldap_data(sync_type, data_type):
     r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
 
     if sync_type == "delta":
-        last_sync = r.table("sync_tracker").filter({"source": "ldap-" + data_type}).coerce_to('array').run()
-        last_sync_time = ldap_transformer.to_ldap_datetime(rethink_timestamp=last_sync[0]["timestamp"])
+        last_sync = (
+            r.table("sync_tracker")
+            .filter({"source": "ldap-" + data_type})
+            .coerce_to("array")
+            .run()
+        )
+        last_sync_time = ldap_transformer.to_ldap_datetime(
+            rethink_timestamp=last_sync[0]["timestamp"]
+        )
         if data_type == "user":
-            search_filter = LDAP_FILTER_USER_DELTA % ldap_transformer.time_to_query_format(last_sync_time)
+            search_filter = (
+                LDAP_FILTER_USER_DELTA
+                % ldap_transformer.time_to_query_format(last_sync_time)
+            )
         elif data_type == "group":
-            search_filter = LDAP_FILTER_GROUP_DELTA % ldap_transformer.time_to_query_format(last_sync_time)
+            search_filter = (
+                LDAP_FILTER_GROUP_DELTA
+                % ldap_transformer.time_to_query_format(last_sync_time)
+            )
 
     elif sync_type == "initial":
         if data_type == "user":
@@ -85,7 +100,11 @@ def fetch_ldap_data(sync_type, data_type):
     conn = Connection(server, user=LDAP_USER, password=LDAP_PASS)
     if not conn.bind():
         print("Error connecting to LDAP server %s : %s" % (LDAP_SERVER, conn.result))
-    conn.search(search_base=LDAP_DC, search_filter=search_filter, attributes=ldap3.ALL_ATTRIBUTES)
+    conn.search(
+        search_base=LDAP_DC,
+        search_filter=search_filter,
+        attributes=ldap3.ALL_ATTRIBUTES,
+    )
 
     last_sync_time = datetime.now().replace(tzinfo=timezone.utc).isoformat()
     save_sync_time(last_sync_time, data_type)
@@ -100,27 +119,28 @@ def insert_to_db(data_dict, data_type):
         if data_type == "user":
             standardized_entry = inbound_filters.inbound_user_filter(entry_data, "ldap")
         elif data_type == "group":
-            standardized_entry = inbound_filters.inbound_group_filter(entry_data, "ldap")
+            standardized_entry = inbound_filters.inbound_group_filter(
+                entry_data, "ldap"
+            )
         inbound_entry = {
             "data": standardized_entry,
             "data_type": data_type,
             "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
-            "provider_id": LDAP_DC
+            "provider_id": LDAP_DC,
         }
         r.table("inbound_queue").insert(inbound_entry).run()
 
     print("Inserted %s records into inbound_queue." % len(data_dict))
-    Timer(DELTA_SYNC_INTERVAL_SECONDS, fetch_ldap_data, args=("delta", data_type)).start()
+    Timer(
+        DELTA_SYNC_INTERVAL_SECONDS, fetch_ldap_data, args=("delta", data_type)
+    ).start()
 
 
 def save_sync_time(last_sync_time, data_type):
     """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
 
     sync_source = "ldap-" + data_type
-    sync_entry = {
-        "timestamp": last_sync_time,
-        "source": sync_source,
-    }
+    sync_entry = {"timestamp": last_sync_time, "source": sync_source}
 
     r.table("sync_tracker").filter({"source": sync_source}).delete().run()
     r.table("sync_tracker").insert(sync_entry).run()
@@ -138,6 +158,9 @@ def ldap_sync():
         print("Getting Groups with Members...")
         fetch_ldap_data(sync_type="initial", data_type="group")
 
-        print("Initial AD inbound sync completed. Delta sync will occur in %s seconds." % int(DELTA_SYNC_INTERVAL_SECONDS))
+        print(
+            "Initial AD inbound sync completed. Delta sync will occur in %s seconds."
+            % int(DELTA_SYNC_INTERVAL_SECONDS)
+        )
     else:
         print("LDAP Domain Controller is not provided, skipping LDAP sync.")
