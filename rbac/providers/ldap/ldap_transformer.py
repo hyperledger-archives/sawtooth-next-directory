@@ -27,7 +27,7 @@ def to_ldap_datetime(rethink_timestamp):
         This function will return the datetime object.
     """
 
-    return datetime.strptime(rethink_timestamp.split('+')[0], "%Y-%m-%dT%H:%M:%S.%f")
+    return datetime.strptime(rethink_timestamp.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f")
 
 
 def time_to_query_format(sync_time):

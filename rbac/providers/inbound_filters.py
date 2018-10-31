@@ -32,7 +32,10 @@ USER_TRANSFORM = {
     "email": {"azure": "mail", "ldap": None},
     "manager": {"azure": "manager", "ldap": "manager"},
     "mobile_phone": {"azure": "mobilePhone", "ldap": None},
-    "distinguished_name": {"azure": "onPremisesDistinguishedName", "ldap": "distinguishedName"},
+    "distinguished_name": {
+        "azure": "onPremisesDistinguishedName",
+        "ldap": "distinguishedName",
+    },
     "office_location": {"azure": "officeLocation", "ldap": None},
     "postal_code": {"azure": "postalCode", "ldap": None},
     "preferred_language": {"azure": "preferredLanguage", "ldap": None},
