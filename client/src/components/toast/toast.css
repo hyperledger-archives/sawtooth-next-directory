@@ -1,0 +1,28 @@
+.next-toast-container {
+  position: fixed;
+  bottom: 20px;
+  left:20px;
+  box-shadow: 1px 1px 5px 0px #000;
+  border-radius: 5px;
+  background-color: beige;
+  padding: 10px;
+  transition: all 0.5s ease;
+  opacity:1;
+  width: 30vw;
+  z-index: 999;
+}
+.toast-icon-wrapper {
+  cursor: pointer;
+  margin: 0 0 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.hide-toast{
+  opacity: 0;
+  visibility: hidden;
+}
+
+.toast-title {
+  font-weight: 600;
+}
