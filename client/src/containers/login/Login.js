@@ -26,6 +26,7 @@ import './Login.css';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import LoginForm from '../../components/forms/LoginForm';
 import SignupForm from '../../components/forms/SignupForm';
+import Toast from '../../components/toast/toast';
 
 
 /**
@@ -36,7 +37,17 @@ import SignupForm from '../../components/forms/SignupForm';
  */
 class Login extends Component {
 
-  componentWillMount () {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isToastOpen: false,
+      toastMessage: ''
+    }
+    this.closeToast = this.closeToast.bind(this);
+  }
+
+  componentWillMount() {
     const { isAuthenticated } = this.props;
     if (isAuthenticated) {
       this.props.history.push('/home');
@@ -50,26 +61,49 @@ class Login extends Component {
    * @param {*} newProps 
    * 
    */
-  componentWillReceiveProps (newProps) {
+  componentWillReceiveProps(newProps) {
     this.props = newProps;
     if (newProps.isAuthenticated) {
 
       // TODO: Consider pulling from a user-saved cache
       this.props.history.push('/home');
     }
+    if (newProps.error) {
+      /**
+       * Open toast to display the error response
+       * 
+       */
+      this.setState({
+        isToastOpen: true,
+        toastMessage: newProps.error
+      });
+    }
   }
 
+  closeToast() {
+    this.setState({
+      isToastOpen: false,
+      toastMessage: ''
+    })
+  }
 
-  render () {
+  render() {
     const { attemptLogin, attemptSignup } = this.props;
+    const { isToastOpen, toastMessage } = this.state;
 
-    let formDom = (this.props.location.pathname==='/sign-up'? <SignupForm submit={attemptSignup}/> :<LoginForm submit={attemptLogin}/>);
+    let formDom = (this.props.location.pathname === '/sign-up' ? <SignupForm submit={attemptSignup} /> : <LoginForm submit={attemptLogin} />);
 
     return (
       <Grid centered columns={2}>
         <Grid.Column className='next-login-column'>
           {formDom}
         </Grid.Column>
+        <Toast
+          open={isToastOpen}
+          close={this.closeToast}
+          message={toastMessage}
+          timeout={10000}
+          title='Authentication Error' />
       </Grid>
     );
   }
