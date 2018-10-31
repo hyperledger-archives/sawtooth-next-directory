@@ -35,7 +35,7 @@ EOM
 
 }
 
-if ! [ -e .env.example] 
+if ! [ -e .env ] 
 then
     echo ".env file not found. Creating one from .env.example ..."
     cp ./.env.example ./.env
