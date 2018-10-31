@@ -37,7 +37,7 @@ class BatchAssertions(CommonAssertions):
     def __init__(self, *args, **kwargs):
         CommonAssertions.__init__(self, *args, **kwargs)
 
-    def assertEqualMessage(self, message1, message2):
+    def assertEqualMessage(self, message1, message2, ignored_fields=None):
         """A shallow comparison of the the json representation
         of two messages"""
         self.assertIsNotNone(message1)
@@ -45,9 +45,11 @@ class BatchAssertions(CommonAssertions):
         message1 = json.loads(json_format.MessageToJson(message1))
         message2 = json.loads(json_format.MessageToJson(message2))
         for prop in message1:
-            self.assertEqual(message1[prop], message2[prop])
+            if ignored_fields is None or prop not in ignored_fields:
+                self.assertEqual(message1[prop], message2[prop])
         for prop in message2:
-            self.assertEqual(message2[prop], message1[prop])
+            if ignored_fields is None or prop not in ignored_fields:
+                self.assertEqual(message2[prop], message1[prop])
 
     def assertEqualPayload(self, payload1, payload2):
         """Check that two payloads are the equivalent"""

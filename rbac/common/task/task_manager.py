@@ -14,20 +14,16 @@
 # -----------------------------------------------------------------------------
 
 import logging
-from rbac.common.role.create_role import CreateRole
-from rbac.common.role.relationship_member import MemberRelationship
+from rbac.common.task.create_task import CreateTask
 
-from rbac.common.role.relationship_owner import OwnerRelationship
-from rbac.common.role.relationship_admin import AdminRelationship
-from rbac.common.role.relationship_task import TaskRelationship
+from rbac.common.task.relationship_owner import OwnerRelationship
+from rbac.common.task.relationship_admin import AdminRelationship
 
 LOGGER = logging.getLogger(__name__)
 
 
-class RoleManager(CreateRole):
+class TaskManager(CreateTask):
     def __init__(self):
-        CreateRole.__init__(self)
-        self.member = MemberRelationship()
+        CreateTask.__init__(self)
         self.owner = OwnerRelationship()
         self.admin = AdminRelationship()
-        self.task = TaskRelationship()

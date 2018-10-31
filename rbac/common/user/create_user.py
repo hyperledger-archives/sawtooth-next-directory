@@ -84,8 +84,8 @@ class CreateUser(BaseMessage):
         )
         return message, keypair
 
-    def make_addresses(self, message):
-        """Makes the approporiate inputs & output addresses for the message type"""
+    def make_addresses(self, message, signer_keypair=None):
+        """Makes the appropriate inputs & output addresses for the message type"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
