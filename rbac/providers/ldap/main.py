@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
@@ -15,23 +15,27 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import os
-import sys
 import logging
-import tornado.ioloop
+import sys
 
-TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, TOP_DIR)
+from tornado import ioloop
 
-from rbac.providers.ldap.main import start_listener
-from rbac.providers.ldap.ldap_sync import ldap_sync
+from rbac.providers.ldap.outbound_queue_listener import print_feed_change_data
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-if __name__ == '__main__':
-    io_loop = tornado.ioloop.IOLoop.instance().current()
-    start_listener()
-    io_loop.start()
-    ldap_sync()
+
+def start_listener():
+
+    try:
+        LOGGER.debug("Starting outbound queue listener")
+        ioloop.IOLoop.current().run_sync(print_feed_change_data)
+
+    except KeyboardInterrupt:
+        pass
+    except Exception as err:  # pylint: disable=broad-except
+        LOGGER.error('Encountered an error running the outbound queue listener')
+        LOGGER.exception(err)
+        sys.exit(1)
