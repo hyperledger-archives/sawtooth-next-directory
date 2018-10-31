@@ -17,8 +17,10 @@
 
 # http://docs.python-requests.org/en/master/
 
-import json
 import os
+import sys
+import json
+import logging
 from datetime import datetime, timezone
 from threading import Timer
 
@@ -27,6 +29,10 @@ import rethinkdb as r
 from ldap3 import ALL, Connection, Server
 from rbac.providers import inbound_filters
 from rbac.providers.ldap import ldap_transformer
+
+LOGGER = logging.getLogger(__name__)
+LOGGER.level = logging.DEBUG
+LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 DEFAULT_CONFIG = {
     "DB_HOST": "rethink",
@@ -71,24 +77,17 @@ def fetch_ldap_data(sync_type, data_type):
 
     if sync_type == "delta":
         last_sync = (
-            r.table("sync_tracker")
-            .filter({"source": "ldap-" + data_type})
-            .coerce_to("array")
-            .run()
+            r.table("sync_tracker").filter({"source": "ldap-" + data_type}).coerce_to("array").run()
         )
         last_sync_time = ldap_transformer.to_ldap_datetime(
             rethink_timestamp=last_sync[0]["timestamp"]
         )
         if data_type == "user":
-            search_filter = (
-                LDAP_FILTER_USER_DELTA
-                % ldap_transformer.time_to_query_format(last_sync_time)
-            )
+            search_filter = (LDAP_FILTER_USER_DELTA % ldap_transformer.time_to_query_format(last_sync_time)
+                             )
         elif data_type == "group":
-            search_filter = (
-                LDAP_FILTER_GROUP_DELTA
-                % ldap_transformer.time_to_query_format(last_sync_time)
-            )
+            search_filter = (LDAP_FILTER_GROUP_DELTA % ldap_transformer.time_to_query_format(last_sync_time)
+                             )
 
     elif sync_type == "initial":
         if data_type == "user":
@@ -99,7 +98,7 @@ def fetch_ldap_data(sync_type, data_type):
     server = Server(LDAP_SERVER, get_info=ALL)
     conn = Connection(server, user=LDAP_USER, password=LDAP_PASS)
     if not conn.bind():
-        print("Error connecting to LDAP server %s : %s" % (LDAP_SERVER, conn.result))
+        LOGGER.error("Error connecting to LDAP server %s : %s", LDAP_SERVER, conn.result)
     conn.search(
         search_base=LDAP_DC,
         search_filter=search_filter,
@@ -128,9 +127,9 @@ def insert_to_db(data_dict, data_type):
             "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
             "provider_id": LDAP_DC,
         }
-        r.table("inbound_queue").insert(inbound_entry).run()
+        r.table("queue_inbound").insert(inbound_entry).run()
 
-    print("Inserted %s records into inbound_queue." % len(data_dict))
+    LOGGER.info("Inserted %s records into inbound_queue.", str(len(data_dict)))
     Timer(
         DELTA_SYNC_INTERVAL_SECONDS, fetch_ldap_data, args=("delta", data_type)
     ).start()
@@ -150,17 +149,16 @@ def ldap_sync():
     """Fetches (Users | Groups) from Active Directory and inserts them into RethinkDB."""
 
     if LDAP_DC:
-        print("Inserting AD data...")
+        LOGGER.debug("Inserting AD data...")
 
-        print("Getting Users...")
+        LOGGER.debug("Getting Users...")
         fetch_ldap_data(sync_type="initial", data_type="user")
 
-        print("Getting Groups with Members...")
+        LOGGER.debug("Getting Groups with Members...")
         fetch_ldap_data(sync_type="initial", data_type="group")
 
-        print(
-            "Initial AD inbound sync completed. Delta sync will occur in %s seconds."
-            % int(DELTA_SYNC_INTERVAL_SECONDS)
-        )
+        LOGGER.debug(
+            "Initial AD inbound sync completed. Delta sync will occur in %s seconds.",
+            str(int(DELTA_SYNC_INTERVAL_SECONDS)))
     else:
-        print("LDAP Domain Controller is not provided, skipping LDAP sync.")
+        LOGGER.debug("LDAP Domain Controller is not provided, skipping LDAP sync.")

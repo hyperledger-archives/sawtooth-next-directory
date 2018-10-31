@@ -15,22 +15,29 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import sys
-import argparse
 import os
-
+import sys
+import logging
+import argparse
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError
 
-def getenv(name, default):
+LOGGER = logging.getLogger(__name__)
+LOGGER.level = logging.INFO
+LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+
+
+def get_env_with_fallback(name, default):
     value = os.getenv(name)
-    if (value is None or value is ""):
+    if value is None or value is "":
         return default
     return value
 
-DB_HOST = getenv('DB_HOST', 'localhost')
-DB_PORT = getenv('DB_PORT', '28015')
-DB_NAME = getenv('DB_NAME', 'rbac')
+
+DB_HOST = get_env_with_fallback('DB_HOST', 'localhost')
+DB_PORT = get_env_with_fallback('DB_PORT', '28015')
+DB_NAME = get_env_with_fallback('DB_NAME', 'rbac')
+
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
@@ -48,49 +55,52 @@ def parse_args(args):
 
 def setup_db(host, port, name):
     conn = r.connect(host=host, port=port)
-    print('Connection opened')
+    LOGGER.info('Connection opened')
     try:
-        print('Creating database:', name)
+        LOGGER.info('Creating database:', name)
         r.db_create(name).run(conn)
 
-        print('Creating table: auth')
+        LOGGER.info('Creating table: auth')
         r.db(name).table_create('auth', primary_key='user_id').run(conn)
 
-        print('Creating table: blocks')
+        LOGGER.info('Creating table: blocks')
         r.db(name).table_create('blocks', primary_key='block_num').run(conn)
         r.db(name).table('blocks').index_create('block_id').run(conn)
 
-        print('Creating table: users')
+        LOGGER.info('Creating table: users')
         r.db(name).table_create('users').run(conn)
         r.db(name).table('users').index_create('user_id').run(conn)
 
-        print('Creating table: inbound_queue')
-        r.db(name).table_create('inbound_queue').run(conn)
-
-        print('Creating table: sync_tracker')
+        LOGGER.info('Creating table: sync_tracker')
         r.db(name).table_create('sync_tracker').run(conn)
 
-        print('Creating table: proposals')
+        LOGGER.info('Creating table: queue_inbound')
+        r.db(name).table_create('queue_inbound').run(conn)
+
+        LOGGER.info('Creating table: queue_outbound')
+        r.db(name).table_create('queue_outbound').run(conn)
+
+        LOGGER.info('Creating table: proposals')
         r.db(name).table_create('proposals').run(conn)
         r.db(name).table('proposals').index_create('proposal_id').run(conn)
         r.db(name).table('proposals').index_create('opener').run(conn)
 
-        print('Creating table and sub-tables: tasks')
+        LOGGER.info('Creating table and sub-tables: tasks')
         task_tables = r.expr(['tasks', 'task_admins', 'task_owners'])
         task_tables.for_each(r.db(name).table_create(r.row)).run(conn)
         task_tables.for_each(r.db(name).table(r.row).index_create('task_id')).run(conn)
 
-        print('Creating table and sub-tables: roles')
+        LOGGER.info('Creating table and sub-tables: roles')
         role_tables = r.expr(['roles', 'role_admins', 'role_members', 'role_owners', 'role_tasks'])
         role_tables.for_each(r.db(name).table_create(r.row)).run(conn)
         role_tables.for_each(r.db(name).table(r.row).index_create('role_id')).run(conn)
 
     except RqlRuntimeError:
-        print('Database already exists:', name)
+        LOGGER.info('Database already exists:', name)
 
     finally:
         conn.close()
-        print('Connection closed')
+        LOGGER.info('Connection closed')
 
 
 if __name__ == '__main__':

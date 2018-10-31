@@ -46,7 +46,8 @@ RUN apt-get install -y --allow-unauthenticated -q \
     pycodestyle \
     pylint \
     pytest \
+    dredd_hooks \
     pytest-cov \
-    dredd_hooks
+    tornado==4.5.3
 
 WORKDIR /project/hyperledger-rbac

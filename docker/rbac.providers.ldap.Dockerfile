@@ -32,17 +32,16 @@ RUN pip3 install -U pip setuptools
 RUN pip3 install \
         grpcio-tools \
         itsdangerous \
-        rethinkdb \
         sanic==0.7.0
 
 WORKDIR /project/hyperledger-rbac
-# -----------------------------------------------------------------------------
-# End base docker image config for Hyperledger RBAC Next Directory
-# -----------------------------------------------------------------------------
 
+# Container-specific dependencies are installed separately for
+# optimizing cacheing
 RUN pip3 install \
         rethinkdb \
         ldap3 \
-        pyasn1==0.4.4
+        pyasn1==0.4.4 \
+        tornado==4.5.3
 
 CMD [ "./bin/rbac-providers-ldap" ]

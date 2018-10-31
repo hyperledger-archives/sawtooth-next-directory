@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,23 +13,32 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import os
 import sys
 import logging
-import tornado.ioloop
-
-TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, TOP_DIR)
-
-from rbac.providers.ldap.main import start_listener
-from rbac.providers.ldap.ldap_sync import ldap_sync
+import rethinkdb as r
+from tornado import gen
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-if __name__ == '__main__':
-    io_loop = tornado.ioloop.IOLoop.instance().current()
-    start_listener()
-    io_loop.start()
-    ldap_sync()
+DB_HOST = "rethink"
+DB_PORT = 28015
+DB_NAME = "rbac"
+DB_TABLE = 'queue_outbound'
+
+r.set_loop_type("tornado")
+
+
+@gen.coroutine
+def print_feed_change_data():
+    try:
+        connection = yield r.connect(DB_HOST, DB_PORT, DB_NAME)
+        feed = yield r.table(DB_TABLE).changes().run(connection)
+        while (yield feed.fetch_next()):
+            item = yield feed.next()
+            LOGGER.debug(item)
+    except r.ReqlRuntimeError as e:
+        LOGGER.error(
+            "Rethink threw exception: %s", str(e)
+        )
