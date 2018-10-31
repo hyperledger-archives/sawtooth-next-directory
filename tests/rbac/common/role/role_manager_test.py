@@ -187,7 +187,7 @@ class RoleManagerTest(RoleManager, RoleAssertions):
         return got, user, keypair
 
     @pytest.mark.unit
-    def test_make_propose_member(self, role=None, user=None, keypair=None):
+    def test_make_propose_member(self):
         """Test a message proposing a member of a role"""
         role, user, keypair = self.get_testunit_user_role()
         message = self.make_propose_member(
@@ -200,7 +200,7 @@ class RoleManagerTest(RoleManager, RoleAssertions):
         self.assertEqual(message.user_id, user.user_id)
 
     @pytest.mark.unit
-    def test_make_propose_owner(self, role=None, user=None, keypair=None):
+    def test_make_propose_owner(self):
         """Test a message proposing an owner of a role"""
         role, user, keypair = self.get_testunit_user_role()
         message = self.make_propose_owner(
@@ -213,7 +213,7 @@ class RoleManagerTest(RoleManager, RoleAssertions):
         self.assertEqual(message.user_id, user.user_id)
 
     @pytest.mark.unit
-    def test_make_propose_admin(self, role=None, user=None, keypair=None):
+    def test_make_propose_admin(self):
         """Test message proposing an admin of a role"""
         role, user, keypair = self.get_testunit_user_role()
         message = self.make_propose_admin(
