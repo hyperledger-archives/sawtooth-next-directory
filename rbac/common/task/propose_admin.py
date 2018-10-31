@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
+from uuid import uuid4
 from rbac.addressing import addresser
 from rbac.common import protobuf
 from rbac.common.manager.base_message import BaseMessage
@@ -21,7 +22,7 @@ from rbac.common.manager.base_message import BaseMessage
 LOGGER = logging.getLogger(__name__)
 
 
-class ConfirmUpdateUserManager(BaseMessage):
+class ProposeAddTaskAdmin(BaseMessage):
     def __init__(self):
         BaseMessage.__init__(self)
 
@@ -31,11 +32,11 @@ class ConfirmUpdateUserManager(BaseMessage):
 
     @property
     def message_type(self):
-        return protobuf.rbac_payload_pb2.RBACPayload.CONFIRM_UPDATE_USER_MANAGER
+        return protobuf.rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_ADMINS
 
     @property
     def message_proto(self):
-        return protobuf.user_transaction_pb2.ConfirmUpdateUserManager
+        return protobuf.task_transaction_pb2.ProposeAddTaskAdmin
 
     @property
     def container_proto(self):
@@ -52,13 +53,14 @@ class ConfirmUpdateUserManager(BaseMessage):
         )
 
     # pylint: disable=arguments-differ, not-callable
-    def make(self, proposal_id, user_id, manager_id, reason=None):
+    def make(self, task_id, user_id, reason=None, metadata=None):
         """Make the message"""
         return self.message_proto(
-            proposal_id=proposal_id,
+            proposal_id=uuid4().hex,
+            task_id=task_id,
             user_id=user_id,
-            manager_id=manager_id,
             reason=reason,
+            metadata=metadata,
         )
 
     def make_addresses(self, message, signer_keypair=None):
@@ -66,12 +68,16 @@ class ConfirmUpdateUserManager(BaseMessage):
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
-        proposal_address = addresser.make_proposal_address(
-            object_id=message.user_id, related_id=message.manager_id
+        relationship_address = addresser.make_task_admins_address(
+            task_id=message.task_id, user_id=message.user_id
         )
         user_address = addresser.make_user_address(user_id=message.user_id)
+        task_address = addresser.make_task_attributes_address(task_id=message.task_id)
+        proposal_address = self.address(
+            object_id=message.task_id, target_id=message.user_id
+        )
 
-        inputs = [proposal_address, user_address]
-        outputs = inputs
+        inputs = [relationship_address, task_address, user_address, proposal_address]
+        outputs = [proposal_address]
 
         return inputs, outputs

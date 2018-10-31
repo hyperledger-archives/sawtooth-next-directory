@@ -62,22 +62,29 @@ class BaseMessage:
     def state_proto(self):
         raise NotImplementedError("Class must implement this method")
 
+    @property
+    def message_fields_not_in_state(self):
+        """Fields that are on the message but not stored on the state object"""
+        return []
+
     def address(self, object_id, target_id):
         raise NotImplementedError("Class must implement this method")
 
     def make(self, object_id):
         raise NotImplementedError("Class must implement this method")
 
-    def make_addresses(self, message):
+    def make_addresses(self, message, signer_keypair):
         raise NotImplementedError("Class must implement this method")
 
-    def make_payload(self, message):
+    def make_payload(self, message, signer_keypair=None):
         """Make a payload for the given message type"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
         message_type = self.message_type
-        inputs, outputs = self.make_addresses(message=message)
+        inputs, outputs = self.make_addresses(
+            message=message, signer_keypair=signer_keypair
+        )
         return self.batch.make_payload(
             message=message, message_type=message_type, inputs=inputs, outputs=outputs
         )
@@ -89,7 +96,7 @@ class BaseMessage:
 
         return self.send(
             signer_keypair=signer_keypair,
-            payload=self.make_payload(message=message),
+            payload=self.make_payload(message=message, signer_keypair=signer_keypair),
             object_id=object_id,
             target_id=target_id,
         )

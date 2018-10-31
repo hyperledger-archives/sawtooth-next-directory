@@ -44,7 +44,7 @@ class ProposeUpdateUserManager(BaseMessage):
 
     @property
     def state_proto(self):
-        return protobuf.proposal_state_pb2.ProposalsContainer
+        return protobuf.proposal_state_pb2.Proposal
 
     def address(self, object_id, target_id):
         """Make the blockchain address for the given message"""
@@ -63,8 +63,8 @@ class ProposeUpdateUserManager(BaseMessage):
             metadata=metadata,
         )
 
-    def make_addresses(self, message):
-        """Makes the approporiate inputs & output addresses for the message"""
+    def make_addresses(self, message, signer_keypair=None):
+        """Makes the appropriate inputs & output addresses for the message"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
