@@ -33,7 +33,8 @@ RUN pip3 install \
         grpcio-tools \
         itsdangerous \
         rethinkdb \
-        sanic==0.7.0
+        sanic==0.7.0 \
+        tornado==4.5.3
 
 WORKDIR /project/hyperledger-rbac
 # -----------------------------------------------------------------------------
