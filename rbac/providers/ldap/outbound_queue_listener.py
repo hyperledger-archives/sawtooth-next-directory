@@ -14,6 +14,7 @@
 # ------------------------------------------------------------------------------
 
 import sys
+import time
 import logging
 import rethinkdb as r
 from tornado import gen
@@ -26,19 +27,28 @@ DB_HOST = "rethink"
 DB_PORT = 28015
 DB_NAME = "rbac"
 DB_TABLE = 'queue_outbound'
+RETRY_INTERVAL_SECONDS_TABLE_READY = 3
 
 r.set_loop_type("tornado")
 
 
 @gen.coroutine
 def print_feed_change_data():
-    try:
-        connection = yield r.connect(DB_HOST, DB_PORT, DB_NAME)
-        feed = yield r.table(DB_TABLE).changes().run(connection)
-        while (yield feed.fetch_next()):
-            item = yield feed.next()
-            LOGGER.debug(item)
-    except r.ReqlRuntimeError as e:
-        LOGGER.error(
-            "Rethink threw exception: %s", str(e)
-        )
+    connected = False
+
+    while not connected:
+        try:
+            connection = yield r.connect(DB_HOST, DB_PORT, DB_NAME)
+            feed = yield r.table(DB_TABLE).changes().run(connection)
+            connected = True
+            while (yield feed.fetch_next()):
+                item = yield feed.next()
+                LOGGER.debug(item)
+        except r.ReqlRuntimeError as e:
+            LOGGER.info(
+                "Attempt to connect to %s threw exception: %s. Retrying in %s seconds",
+                DB_TABLE,
+                str(e),
+                RETRY_INTERVAL_SECONDS_TABLE_READY
+            )
+            time.sleep(RETRY_INTERVAL_SECONDS_TABLE_READY)
