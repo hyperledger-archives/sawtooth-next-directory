@@ -97,6 +97,14 @@ def get_ids_from_list_of_dicts(lst):
     return id_list
 
 
+def get_next_payload(next_url):
+    """Get the next payload from the redirect url for large payload pagination"""
+    headers = AUTH.check_token(AUTH_TYPE)
+    if headers is not None:
+        payload = requests.get(url=next_url, headers=headers)
+        return payload.json()
+
+
 def insert_group_to_db(groups_dict):
     """Insert groups individually to rethinkdb from dict of groups"""
     for group in groups_dict["value"]:
@@ -136,9 +144,15 @@ def initialize_aad_sync():
     print("Getting Users...")
     users = fetch_users()
     insert_user_to_db(users)
+    while '@odata.nextLink' in users:
+        users = get_next_payload(users['@odata.nextLink'])
+        insert_user_to_db(users)
 
     print("Getting Groups with Members...")
     groups = fetch_groups_with_members()
     insert_group_to_db(groups)
+    while '@odata.nextLink' in groups:
+        groups = get_next_payload(groups['@odata.nextLink'])
+        insert_group_to_db(groups)
 
     print("User_upload_complete! :)")
