@@ -22,6 +22,7 @@ CLIENT_ID = os.environ.get("CLIENT_ID")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
 CLIENT_ASSERTION = os.environ.get("CLIENT_ASSERTION")
 TENANT_ID = os.environ.get("TENANT_ID")
+AUTH_TYPE = os.environ.get("AUTH_TYPE")
 AAD_AUTH_URL = "https://login.microsoftonline.com/{}".format(TENANT_ID)
 TOKEN_ENDPOINT = "/oauth2/v2.0/token"
 
@@ -37,7 +38,7 @@ class AadAuth:
     def __init__(self):
         """Initialize the class."""
 
-    def get_token(self, AUTH_TYPE=""):
+    def get_token(self):
         if AUTH_TYPE.upper() == "SECRET":
             data = {
                 "client_id": CLIENT_ID,
@@ -76,17 +77,17 @@ class AadAuth:
                 return True
         return False
 
-    def check_token(self, AUTH_TYPE):
+    def check_token(self, request_type):
         """Check it Token exists and calls for and caches as global variable if it does not."""
         if self.graph_token is None or not self._time_left():
-            response = self.get_token(AUTH_TYPE)
+            response = self.get_token()
             self.token_creation_timestamp = dt.datetime.now()
             self.graph_token = response.json()["access_token"]
-        if AUTH_TYPE.upper() == "SECRET":
-            return {"Authorization": self.graph_token, "Accept": "application/json"}
-        elif AUTH_TYPE.upper() == "CERT":
-            return {
-                "Authorization": self.graph_token,
-                "Accept": "application/json",
-                "Host": "graph.microsoft.com",
-            }
+        headers = {"Authorization": self.graph_token}
+        if AUTH_TYPE.upper() == "CERT":
+            headers["Host"] = "graph.microsoft.com"
+        if request_type == "GET":
+            headers["Accept"] = "application/json"
+        elif request_type == "PATCH":
+            headers["Content-Type"] = "application/json"
+        return headers
