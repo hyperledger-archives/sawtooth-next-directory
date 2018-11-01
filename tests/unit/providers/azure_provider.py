@@ -133,20 +133,39 @@ class AzureResponseTestCase(unittest.TestCase):
         self.assertEqual(json_data, {"access_token": "you_got_access_token"})
 
     @mock.patch("requests.post", side_effect=mock_requests_post)
-    def test_check_token_secret(self, mock_post):
+    def test_check_token_GET_secret(self, mock_post):
         """"Test when there is no graph_token."""
-        result = AADAUTH.check_token("secret")
+        result = AADAUTH.check_token_GET("secret")
         assert result == {
             "Authorization": "you_got_access_token",
             "Accept": "application/json",
         }
 
     @mock.patch("requests.post", side_effect=mock_requests_post)
-    def test_check_token_cert(self, mock_post):
+    def test_check_token_POST_secret(self, mock_post):
         """"Test when there is no graph_token."""
-        result = AADAUTH.check_token("cert")
+        result = AADAUTH.check_token_POST("secret")
+        assert result == {
+            "Authorization": "you_got_access_token",
+            "Content-Type": "application/json",
+        }
+
+    @mock.patch("requests.post", side_effect=mock_requests_post)
+    def test_check_token_GET_cert(self, mock_post):
+        """"Test when there is no graph_token."""
+        result = AADAUTH.check_token_GET("cert")
         assert result == {
             "Authorization": "you_got_access_token",
             "Accept": "application/json",
+            "Host": "graph.microsoft.com",
+        }
+
+    @mock.patch("requests.post", side_effect=mock_requests_post)
+    def test_check_token_POST_cert(self, mock_post):
+        """"Test when there is no graph_token."""
+        result = AADAUTH.check_token_POST("cert")
+        assert result == {
+            "Authorization": "you_got_access_token",
+            "Content-Type": "application/json",
             "Host": "graph.microsoft.com",
         }

@@ -76,17 +76,31 @@ class AadAuth:
                 return True
         return False
 
-    def check_token(self, AUTH_TYPE):
-        """Check it Token exists and calls for and caches as global variable if it does not."""
+    def _check_token(self, AUTH_TYPE):
+        """check if Token exists and calls for then caches as a global variable
+        if it does not"""
         if self.graph_token is None or not self._time_left():
             response = self.get_token(AUTH_TYPE)
             self.token_creation_timestamp = dt.datetime.now()
             self.graph_token = response.json()["access_token"]
+
+    def _common_headers(self, AUTH_TYPE):
         if AUTH_TYPE.upper() == "SECRET":
-            return {"Authorization": self.graph_token, "Accept": "application/json"}
+            return {"Authorization": self.graph_token}
         elif AUTH_TYPE.upper() == "CERT":
-            return {
-                "Authorization": self.graph_token,
-                "Accept": "application/json",
-                "Host": "graph.microsoft.com",
-            }
+            return {"Authorization": self.graph_token, "Host": "graph.microsoft.com"}
+
+    def check_token_GET(self, AUTH_TYPE):
+        """Check it Token exists and calls for and caches as global variable if it does not."""
+        self._check_token(AUTH_TYPE)
+        headers = self._common_headers(AUTH_TYPE)
+        headers["Accept"] = "application/json"
+        return headers
+
+    def check_token_POST(self, AUTH_TYPE):
+        """check if Token exists and calls for then caches as a global variable
+        if it does not"""
+        self._check_token(AUTH_TYPE)
+        headers = self._common_headers(AUTH_TYPE)
+        headers["Content-Type"] = "application/json"
+        return headers
