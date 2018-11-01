@@ -66,7 +66,7 @@ tests.
 Please ensure that lint passes by running `./bin/run_lint`. The command should
 produce no output if there are no lint errors. The linter requires all Python 
 dependencies be installed locally (if not it'll throw import-errors). Install
-dependencies locally by running `pip3 install -r requirements.dev.txt` from the 
+dependencies locally by running `pip3 install -r requirements.txt` from the 
 root project directory.
 
 Pull Request Guidelines
