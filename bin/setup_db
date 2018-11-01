@@ -57,7 +57,7 @@ def setup_db(host, port, name):
     conn = r.connect(host=host, port=port)
     LOGGER.info('Connection opened')
     try:
-        LOGGER.info('Creating database:', name)
+        LOGGER.info('Creating database: %s', name)
         r.db_create(name).run(conn)
 
         LOGGER.info('Creating table: auth')
@@ -66,6 +66,9 @@ def setup_db(host, port, name):
         LOGGER.info('Creating table: blocks')
         r.db(name).table_create('blocks', primary_key='block_num').run(conn)
         r.db(name).table('blocks').index_create('block_id').run(conn)
+
+        LOGGER.info('Creating table: state')
+        r.db(name).table_create('state', primary_key='address').run(conn)
 
         LOGGER.info('Creating table: users')
         r.db(name).table_create('users').run(conn)
@@ -96,7 +99,7 @@ def setup_db(host, port, name):
         role_tables.for_each(r.db(name).table(r.row).index_create('role_id')).run(conn)
 
     except RqlRuntimeError:
-        LOGGER.info('Database already exists:', name)
+        LOGGER.info('Database already exists: %s', name)
 
     finally:
         conn.close()
