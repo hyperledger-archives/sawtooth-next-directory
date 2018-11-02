@@ -9,6 +9,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "apisauce": "^0.16.0",
+    "exec-sh": "^0.3.2",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
