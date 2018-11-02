@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import apisauce from 'apisauce';
-import * as storage from '../services/Storage';
+import * as storage from "./Storage";
 
 
 /**
@@ -43,7 +43,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    */
   const api = apisauce.create({
-    baseURL
+    baseURL,
   });
 
 
@@ -92,11 +92,10 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     me,
     requestAccess,
     search,
-    signup
-  }
-
-}
+    signup,
+  };
+};
 
 export default {
-  create
-}
+  create,
+};

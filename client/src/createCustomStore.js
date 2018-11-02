@@ -28,7 +28,7 @@ const createCustomStore = () => {
   sagaMiddleware.run(sagas);
 
   return store;
-}
+};
 
 
 export default createCustomStore;

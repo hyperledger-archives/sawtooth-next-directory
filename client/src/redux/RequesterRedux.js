@@ -29,9 +29,9 @@ import * as utils from '../services/Utils';
  *
  */
 const { Types, Creators } = createActions({
-  baseRequest:       null,
-  baseSuccess:       ['base'],
-  baseFailure:       ['error'],
+  baseRequest: null,
+  baseSuccess: ['base'],
+  baseFailure: ['error'],
 
   packRequest:       ['id'],
   packSuccess:       ['activePack'],
@@ -88,7 +88,7 @@ export const RequesterSelectors = {
     });
 
     return pack && pack.id;
-  }
+  },
 };
 
 

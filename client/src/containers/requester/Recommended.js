@@ -38,8 +38,7 @@ import './Recommended.css';
  *
  */
 export class Recommended extends Component {
-
-  componentDidMount () {
+  componentDidMount() {
     const { getPack, packId } = this.props;
 
     if (packId) {
@@ -54,7 +53,7 @@ export class Recommended extends Component {
    *
    *
    */
-  componentWillReceiveProps (newProps) {
+  componentWillReceiveProps(newProps) {
     const { getPack, packId } = this.props;
 
     if (newProps.packId !== packId) {
@@ -63,33 +62,34 @@ export class Recommended extends Component {
   }
 
 
-  render () {
+  render() {
     const { activePack } = this.props;
     const title = activePack && activePack.name;
 
     return (
-      <Grid id='next-requester-grid' celled='internally'>
+      <Grid id="next-requester-grid" celled="internally">
 
         <Grid.Column
-          id='next-requester-grid-track-column'
-          width={10}>
-          <TrackHeader title={title} {...this.props}/>
-          <RolesList {...this.props}/>
+          id="next-requester-grid-track-column"
+          width={10}
+        >
+          <TrackHeader title={title} {...this.props} />
+          <RolesList {...this.props} />
         </Grid.Column>
         <Grid.Column
-          id='next-requester-grid-converse-column'
-          width={6}>
-          <Chat {...this.props}/>
+          id="next-requester-grid-converse-column"
+          width={6}
+        >
+          <Chat {...this.props} />
         </Grid.Column>
 
       </Grid>
     );
   }
-
 }
 
 
-Recommended.proptypes = {
+Recommended.propTypes = {
   getPack: PropTypes.func,
   activePack: PropTypes.arrayOf(PropTypes.shape(
     {
@@ -99,18 +99,21 @@ Recommended.proptypes = {
 
 };
 
+Recommended.defaultProps = {
+  activePack: '',
+  getPack:'',
+};
+
 
 const mapStateToProps = (state, ownProps) => {
   const { params } = ownProps.match;
   const { recommended } = state.requester;
 
   return {
-    packId: RequesterSelectors.idFromSlug(recommended, params.id)
+    packId: RequesterSelectors.idFromSlug(recommended, params.id),
   };
-}
+};
 
-const mapDispatchToProps = (dispatch) => {
-  return {};
-}
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Recommended);

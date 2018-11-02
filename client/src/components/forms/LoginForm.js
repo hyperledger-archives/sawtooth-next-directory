@@ -62,14 +62,16 @@ export default class LoginForm extends Component {
           label='User ID'
           placeholder='User ID'
           name='username'
-          onChange={this.handleChange}/>
+          onChange={this.handleChange}
+        />
         <Form.Input
           label='Password'
           placeholder='Password'
           name='password'
           type='password'
-          onChange={this.handleChange}/>
-        <Form.Button content='Login'/>
+          onChange={this.handleChange}
+        />
+        <Form.Button content='Login' />
         <Link to="/sign-up">
           <Button>Sign up</Button>
         </Link>
@@ -80,6 +82,6 @@ export default class LoginForm extends Component {
 }
 
 
-LoginForm.proptypes = {
+LoginForm.propTypes = {
   submit: PropTypes.func.isRequired
 };

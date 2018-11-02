@@ -17,9 +17,9 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-
 import TrackHeader from '../../components/layouts/TrackHeader';
+
+
 import './RequesterHome.css';
 
 
@@ -34,20 +34,20 @@ export default class RequesterHome extends Component {
 
   render () {
     return (
-      <Grid id='next-requester-grid' celled='internally'>
+      <Grid id="next-requester-grid" celled="internally">
         <Grid.Column
-          id='next-requester-grid-track-column'
-          width={16}>
-          <TrackHeader title='Home' {...this.props}/>
+          id="next-requester-grid-track-column"
+          width={16}
+        >
+          <TrackHeader title="Home" {...this.props} />
         </Grid.Column>
       </Grid>
     );
   }
-
 }
 
 
-RequesterHome.proptypes = {
+RequesterHome.propTypes = {
   activePack: PropTypes.arrayOf(PropTypes.shape(
     {
       id: PropTypes.string,
@@ -61,4 +61,8 @@ RequesterHome.proptypes = {
       ))
     }
   ))
+};
+
+RequesterHome.defaultProps = {
+  activePack: '',
 };

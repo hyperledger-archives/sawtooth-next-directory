@@ -28,7 +28,7 @@ import RequesterActions from '../redux/RequesterRedux';
  * @param action
  *
  */
-export function * getBase (api, action) {
+export function* getBase(api, action) {
   try {
     /*
     const res = yield call(api.getRequesterBase);
@@ -62,7 +62,7 @@ export function * getBase (api, action) {
  * @param action
  *
  */
-export function * getPack (api, action) {
+export function* getPack(api, action) {
   try {
     const { id } = action;
     const res = yield call(api.getPack, id);

@@ -35,13 +35,12 @@ import chatTest from '../../mock_data/conversation_action.json';
  *
  */
 export default class Chat extends Component {
-
   /**
    *
    * Switch chat context when active pack changes
    *
    */
-  componentWillReceiveProps (newProps) {
+  componentWillReceiveProps(newProps) {
     const { activePack, getConversation } = this.props;
 
     if (newProps.activePack !== activePack) {
@@ -77,28 +76,28 @@ export default class Chat extends Component {
   }
 
 
-  render () {
+  render() {
     const { messages } = this.props;
 
     return (
       <div id='next-chat-container'>
         { messages &&
-            <ChatMessage {...this.props}/>
+        <ChatMessage {...this.props} />
           }
 
-        { messages && messages.length === 0 &&
-          <Segment inverted color='violet'>
+        { messages && messages.length === 0 && (
+        <Segment inverted color='violet'>
             Would you like me to request access?
-          </Segment>
-        }
+        </Segment>
+)}
 
         <div id='next-chat-conversation-dock'>
           <ChatForm
             actions={chatTest.actions}
-            submit={(message, action) => this.send(message, action)}/>
+            submit={(message, action) => this.send(message, action)}
+          />
         </div>
       </div>
     );
   }
-
 }

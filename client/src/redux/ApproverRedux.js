@@ -27,25 +27,25 @@ import Immutable from 'seamless-immutable';
  *
  */
 const { Types, Creators } = createActions({
-  batchRequest:           ['userId'],
-  batchSuccess:           null,
-  batchFailure:           ['error'],
+  batchRequest: ['userId'],
+  batchSuccess: null,
+  batchFailure: ['error'],
 
-  rolesRequest:           ['userId'],
-  rolesSuccess:           null,
-  rolesFailure:           ['error'],
+  rolesRequest: ['userId'],
+  rolesSuccess: null,
+  rolesFailure: ['error'],
 
-  individualsRequest:     ['userId'],
-  individualsSuccess:     null,
-  individualsFailure:     ['error'],
+  individualsRequest: ['userId'],
+  individualsSuccess: null,
+  individualsFailure: ['error'],
 
-  frequentRequest:        ['userId'],
-  frequentSuccess:        null,
-  frequentFailure:        ['error'],
+  frequentRequest: ['userId'],
+  frequentSuccess: null,
+  frequentFailure: ['error'],
 
-  nearExpiryRequest:      ['userId'],
-  nearExpirySuccess:      null,
-  nearExpiryFailure:      ['error']
+  nearExpiryRequest: ['userId'],
+  nearExpirySuccess: null,
+  nearExpiryFailure: ['error'],
 });
 
 
@@ -63,8 +63,8 @@ export default Creators;
  *
  */
 export const INITIAL_STATE = Immutable({
-  fetching:         null,
-  error:            null
+  fetching: null,
+  error: null,
 });
 
 
@@ -119,5 +119,5 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.NEAR_EXPIRY_REQUEST]: request,
   [Types.NEAR_EXPIRY_SUCCESS]: success,
-  [Types.NEAR_EXPIRY_FAILURE]: failure
+  [Types.NEAR_EXPIRY_FAILURE]: failure,
 });

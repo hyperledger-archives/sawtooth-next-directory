@@ -21,10 +21,10 @@ import FixtureAPI from '../services/FixtureApi';
 
 
 import RequesterActions from '../redux/RequesterRedux';
-import { getBase, getPack } from '../sagas/RequesterSaga';
+import { getBase, getPack } from './RequesterSaga';
 
 
-const stepper = (fn) => (mock) => fn.next(mock).value;
+const stepper = fn => mock => fn.next(mock).value;
 
 
 
@@ -58,13 +58,11 @@ test.skip('getBase: failure path', () => {
 });
 
 
-
-
 test('getPack: first calls API', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
   const step = stepper(getPack(FixtureAPI, {
-    id: id
+    id,
   }));
 
   expect(step()).toEqual(call(FixtureAPI.getPack, id));
@@ -76,7 +74,7 @@ test('getPack: success path', () => {
 
   const res = FixtureAPI.getPack(id);
   const step = stepper(getPack(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();
@@ -91,7 +89,7 @@ test('getPack: failure path', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
   const step = stepper(getPack(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();

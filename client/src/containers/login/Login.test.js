@@ -28,14 +28,14 @@ it('renders without crashing', () => {
 
   const props = {
     location: {
-      pathname: ''
-    }
-  }
+      pathname: '',
+    },
+  };
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Login {...props}/></BrowserRouter>
-    </Provider>, div
+      <BrowserRouter><Login {...props} /></BrowserRouter>
+    </Provider>, div,
   );
 
   ReactDOM.unmountComponentAtNode(div);

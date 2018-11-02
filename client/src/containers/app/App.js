@@ -17,7 +17,12 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router, Route, Redirect, Switch,
+} from 'react-router-dom';
+
+
+import PropTypes from 'prop-types';
 
 
 import Login from '../login/Login';
@@ -32,7 +37,7 @@ import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux
 import UserActions, { UserSelectors } from '../../redux/UserRedux';
 
 
-import PropTypes from 'prop-types';
+
 
 
 /**
@@ -46,7 +51,6 @@ import PropTypes from 'prop-types';
  *
  */
 class App extends Component {
-
   /**
    *
    * Hydrate base data
@@ -81,18 +85,20 @@ class App extends Component {
    * route component.
    *
    */
-  renderGrid () {
+  renderGrid() {
     return (
-      <Grid id='next-outer-grid'>
-        <Grid.Column id='next-outer-grid-nav' width={3} only='computer'>
+      <Grid id="next-outer-grid">
+        <Grid.Column id="next-outer-grid-nav" width={3} only="computer">
           { this.routes.map((route, index) => (
-            route.nav &&
+            route.nav
+            && (
             <Route
               key={index}
               path={route.path}
               exact={route.exact}
               render={route.nav}
             />
+            )
           ))}
         </Grid.Column>
         <Grid.Column id='next-inner-grid-main' width={13}>
@@ -106,46 +112,53 @@ class App extends Component {
           ))}
         </Grid.Column>
       </Grid>
-    )
+    );
   }
 
 
-  render () {
+  render() {
     const { isAuthenticated, routes } = this.props;
     this.routes = routes(this.props);
 
     return (
       <Router>
         <div id='next-global-container'>
-          <Header {...this.props}/>
+          <Header {...this.props} />
           <Switch>
-            <Route exact path='/login' component={Login}/>
-            <Route exact path='/sign-up' component={Login}/>
+            <Route exact path='/login' component={Login} />
+            <Route exact path='/sign-up' component={Login} />
 
-            { !isAuthenticated && <Redirect to='/login'/> }
+            { !isAuthenticated && <Redirect to='/login' /> }
 
-            <Route exact path='/' render={() => (
+            <Route
+              exact
+              path='/'
+              render={() => (
               isAuthenticated ?
-                (<Redirect to="/home"/>) :
-                (<Redirect to='/login'/>)
-            )}/>
+                (<Redirect to="/home" />) :
+                (<Redirect to='/login' />)
+            )}
+            />
 
-            <Route exact path='/browse' component={Browse}/>
-            <Route render={() => ( this.renderGrid() )}/>
+            <Route exact path='/browse' component={Browse} />
+            <Route render={() => ( this.renderGrid() )} />
           </Switch>
         </div>
       </Router>
     );
   }
-
 }
 
 
-App.proptypes = {
+App.propTypes = {
   isAuthenticated: PropTypes.bool,
-  routes: PropTypes.func
+  routes: PropTypes.func,
 };
 
+App.defaultProps = {
+  isAuthenticated: '',
+  routes:'',
+};
 
 const mapStateToProps = (state) => {
   return {

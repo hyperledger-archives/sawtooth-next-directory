@@ -17,50 +17,68 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Segment } from 'semantic-ui-react';
 
+import PropTypes from 'prop-types';
+
 
 /**
- * 
+ *
  * @class ChatMessage
  * Component encapsulating the chat message
- * 
+ *
  */
 export default class ChatMessage extends Component {
-
   /**
-   * 
+   *
    * @todo Retrieve from auth session
-   * 
-   * 
+   *
+   *
    */
-  isMe (message) {
+  isMe(message) {
     return message.from.id === '519909ec-f0c8-4be9-ac62-d340161507b3';
   }
 
 
-  render () {
+  render() {
     const { messages } = this.props;
 
     return (
       messages.map((message, index) => (
-        this.isMe(message) ?
-        
-         <Segment compact inverted
-           floated='right'
-           color='blue'
-           className='clear next-chat-message-right'
-           size='small'
-           key={index}>
-           <div>{message.body}</div>
-         </Segment> :      
-         <Segment compact raised
-           floated='left'
-           className='clear next-chat-message-left'
-           size='small'
-           key={index}>
-           <div>{message.body}</div>
-         </Segment>
+        this.isMe(message)
+
+          ? (
+            <Segment
+              compact
+              inverted
+              floated="right"
+              color="blue"
+              className="clear next-chat-message-right"
+              size="small"
+              key={index}
+            >
+              <div>{message.body}</div>
+            </Segment>
+          )
+          : (
+            <Segment
+              compact
+              raised
+              floated="left"
+              className="clear next-chat-message-left"
+              size="small"
+              key={index}
+            >
+              <div>{message.body}</div>
+            </Segment>
+          )
       ))
     );
   }
-
 }
+
+ChatMessage.propTypes = {
+  messages: PropTypes.string,
+};
+
+ChatMessage.defaultProps = {
+  messages: '',
+};

@@ -20,7 +20,6 @@ import { Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import RolesList from '../../components/layouts/RolesList';
@@ -30,54 +29,53 @@ import './Packs.css';
 
 
 /**
- * 
+ *
  * @class Packs
  * *Your Packs* component
- * 
+ *
  */
 class Packs extends Component {
-
-  render () {
+  render() {
     const { activePack } = this.props;
     const title = activePack && activePack.name;
 
     return (
-      <Grid id='next-requester-grid' celled='internally'>
+      <Grid id="next-requester-grid" celled="internally">
 
         <Grid.Column
-          id='next-requester-grid-track-column'
-          width={10}>
-          <TrackHeader title={title} {...this.props}/>
-          <RolesList {...this.props}/>
+          id="next-requester-grid-track-column"
+          width={10}
+        >
+          <TrackHeader title={title} {...this.props} />
+          <RolesList {...this.props} />
         </Grid.Column>
         <Grid.Column
-          id='next-requester-grid-converse-column'
-          width={6}>
-          <Chat {...this.props}/>
+          id="next-requester-grid-converse-column"
+          width={6}
+        >
+          <Chat {...this.props} />
         </Grid.Column>
 
       </Grid>
     );
   }
-
 }
 
 
-Packs.proptypes = {
+Packs.propTypes = {
   activePack: PropTypes.arrayOf(PropTypes.shape(
     {
-      name: PropTypes.string
-    }
-  ))
+      name: PropTypes.string,
+    },
+  )),
 };
 
+Packs.defaultProps = {
+  activePack: '',
+};
 
-const mapStateToProps = (state) => {
-  return {};
-}
+const mapStateToProps = state => ({});
 
-const mapDispatchToProps = (dispatch) => {
-  return {};
-}
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Packs);

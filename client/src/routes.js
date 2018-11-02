@@ -44,7 +44,7 @@ import Expiring from './containers/approver/Expiring';
  * components.
  *
  */
-const routes = (props) => [
+const routes = props => [
 
   /**
    *
@@ -55,34 +55,34 @@ const routes = (props) => [
    */
 
   {
-    path:   '/home',
-    main:   (rest) => <RequesterHome {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home',
+    main: rest => <RequesterHome {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/home/requests/:id',
-    main:   (rest) => <Requests {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home/requests/:id',
+    main: rest => <Requests {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
   {
     path:   '/home/recommended-packs/:id',
-    main:   (rest) => <Recommended {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
+    main:   (rest) => <Recommended {...props} {...rest} />,
+    nav:    () => <RequesterNav {...props} />,
     exact:  true
   },
   {
     path:   '/home/recommended-roles/:id',
-    main:   (rest) => <Recommended {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
+    main:   (rest) => <Recommended {...props} {...rest} />,
+    nav:    () => <RequesterNav {...props} />,
     exact:  true
   },
   {
-    path:   '/home/packs/:id',
-    main:   (rest) => <Packs {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home/packs/:id',
+    main: rest => <Packs {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
 
 
@@ -95,41 +95,41 @@ const routes = (props) => [
    */
 
   {
-    path:   '/approval-home',
-    main:   (rest) => <ApproverHome {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    path: '/approval-home',
+    main: rest => <ApproverHome {...props} {...rest} />,
+    nav: () => <ApproverNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/approval-home/pending/batch',
-    main:   (rest) => <Batch {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    path: '/approval-home/pending/batch',
+    main: rest => <Batch {...props} {...rest} />,
+    nav: () => <ApproverNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/approval-home/pending/roles',
-    main:   (rest) => <Roles {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    path: '/approval-home/pending/roles',
+    main: rest => <Roles {...props} {...rest} />,
+    nav: () => <ApproverNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/approval-home/pending/individuals',
-    main:   (rest) => <Individuals {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    path: '/approval-home/pending/individuals',
+    main: rest => <Individuals {...props} {...rest} />,
+    nav: () => <ApproverNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/approval-home/pending/frequent',
-    main:   (rest) => <Frequent {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    path: '/approval-home/pending/frequent',
+    main: rest => <Frequent {...props} {...rest} />,
+    nav: () => <ApproverNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/approval-home/pending/about-to-expire',
-    main:   (rest) => <Expiring {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
-  }
+    path: '/approval-home/pending/about-to-expire',
+    main: rest => <Expiring {...props} {...rest} />,
+    nav: () => <ApproverNav {...props} />,
+    exact: true,
+  },
 
 ];
 

@@ -18,6 +18,7 @@ import React, { Component } from 'react';
 import { Icon, Image } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
 import './Header.css';
 import logo from '../../images/next-logo-primary.png';
 
@@ -30,7 +31,7 @@ import logo from '../../images/next-logo-primary.png';
  */
 export default class Header extends Component {
 
-  render () {
+  render() {
     const { me } = this.props;
 
     return (
@@ -40,14 +41,27 @@ export default class Header extends Component {
             src={logo}
             as='a'
             size='tiny'
-            href='/home'/>
+            href='/home'
+          />
         </div>
-        <Icon inverted name='search'/>
-        <Icon inverted name='bell'/>
-        <Image src='http://i.pravatar.cc/300' avatar/>
-        <span id='next-header-username'>{ me && me.name }</span>
+        <Icon inverted name='search' />
+        <Icon inverted name='bell' />
+        <Image src='http://i.pravatar.cc/300' avatar />
+        <span id='next-header-username'>{me && me.name}</span>
       </header>
     );
   }
-
 }
+
+Header.propTypes = {
+  me: PropTypes.arrayOf(PropTypes.shape(
+    {
+      name: PropTypes.string,
+    },
+  )),
+};
+
+Header.defaultProps = {
+  me: '',
+};
+

@@ -19,53 +19,58 @@ import { Link } from 'react-router-dom'
 import { Container, Search, Button, Icon } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
 import NavList from './NavList';
 import './ApproverNav.css';
 
 
 /**
- * 
+ *
  * @class ApproverNav
  * Component encapsulating the template for the sidebar displayed
  * on the approver landing page.
- * 
+ *
  */
 export default class ApproverNav extends Component {
-
   /**
-   * 
+   *
    * Render sidebar hierarchy
-   * 
+   *
    */
-  renderLists () {
+  renderLists() {
     return (
-      <div id='next-approver-nav-lists-container'>
+      <div id="next-approver-nav-lists-container">
         <NavList
-          listTitle='Pending'
+          listTitle="Pending"
           list={[
             'Batch',
             'Roles',
             'Individuals',
             'Frequent',
-            'About to Expire'
+            'About to Expire',
           ]}
-          route='/approval-home/pending'/>
+          route="/approval-home/pending"
+        />
         <NavList
-          listTitle='Approved'
+          listTitle="Approved"
           list={null}
-          route='/approval-home/approved'/>
+          route="/approval-home/approved"
+        />
         <NavList
-          listTitle='Expired'
+          listTitle="Expired"
           list={null}
-          route='/approval-home/expired'/>
+          route="/approval-home/expired"
+        />
         <NavList
-          listTitle='Manage Groups'
+          listTitle="Manage Groups"
           list={null}
-          route='/approval-home/manage-groups'/>
+          route="/approval-home/manage-groups"
+        />
         <NavList
-          listTitle='People'
+          listTitle="People"
           list={null}
-          route='/approval-home/people'/>
+          route="/approval-home/people"
+        />
       </div>
     );
   }
@@ -78,23 +83,31 @@ export default class ApproverNav extends Component {
       <Container>
 
         <Search
-          className='next-approver-nav-search'
+          className="next-approver-nav-search"
           category
-          loading={false}/>
+          loading={false}
+        />
 
         { this.renderLists() }
 
-        <Link to='/home' id='next-switch-approver-link'>
+        <Link to="/home" id="next-switch-approver-link">
           Switch to Requester
         </Link>
 
         <Button onClick={() => logout()} animated secondary id="next-logout-button">
           <Button.Content visible>Logout</Button.Content>
-          <Button.Content hidden><Icon name='log out'/></Button.Content>
+          <Button.Content hidden><Icon name='log out' /></Button.Content>
         </Button>
 
       </Container>
     );
   }
-
 }
+
+ApproverNav.propTypes = {
+  logout: PropTypes.func,
+};
+
+ApproverNav.defaultProps = {
+  logout:'',
+};

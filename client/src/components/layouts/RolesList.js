@@ -25,55 +25,58 @@ import './RolesList.css';
 
 
 /**
- * 
+ *
  * @class RolesList
  * Component encapsulating the track pane body
- * 
+ *
  */
 export default class RolesList extends Component {
- 
-
-  render () {
+  render() {
     const { activePack } = this.props;
 
     return (
-      <div id='next-requester-track-body-container'>
+      <div id="next-requester-track-body-container">
 
-        { activePack && activePack.description && 
-          <p>{activePack.description}</p>
+        { activePack && activePack.description
+          && <p>{activePack.description}</p>
         }
 
-        { activePack && activePack.roles &&
-          <List selection verticalAlign='middle'>
+        { activePack && activePack.roles
+          && (
+          <List selection verticalAlign="middle">
             { activePack.roles.map((role, index) => (
               <Segment key={index}>
                 {role.name}
               </Segment>
             )) }
           </List>
+          )
         }
 
-        { activePack && activePack.roles &&
-          activePack.roles.length === 0 &&
-          <h3>No roles found.</h3>
+        { activePack && activePack.roles
+          && activePack.roles.length === 0
+          && <h3>No roles found.</h3>
         }
 
       </div>
     );
   }
-
 }
 
 
-RolesList.proptypes = {
+RolesList.propTypes = {
   activePack: PropTypes.arrayOf(PropTypes.shape(
     {
       description: PropTypes.string,
       roles: PropTypes.arrayOf(PropTypes.shape(
         {
-          name: PropTypes.string
-        }  
-      ))
-    }
-  ))
+          name: PropTypes.string,
+        },
+      )),
+    },
+  )),
+};
+
+RolesList.defaultProps = {
+  activePack: '',
 };

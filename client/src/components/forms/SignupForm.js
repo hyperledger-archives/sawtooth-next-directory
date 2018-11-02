@@ -61,28 +61,32 @@ export default class SignupForm extends Component {
           label='Name'
           placeholder='Name'
           name='name'
-          onChange={this.handleChange}/>
+          onChange={this.handleChange}
+        />
         <Form.Input
           label='User Name'
           placeholder='user name'
           name='username'
-          onChange={this.handleChange}/>
+          onChange={this.handleChange}
+        />
         <Form.Input
           label='Password'
           placeholder='Password'
           name='password'
           type='password'
-          onChange={this.handleChange}/>
+          onChange={this.handleChange}
+        />
         <Form.Input
           label='Email'
           placeholder='email'
           name='email'
           type='email'
-          onChange={this.handleChange}/>
-        <Form.Button content='Sign Up'/>
+          onChange={this.handleChange}
+        />
+        <Form.Button content='Sign Up' />
 
-        <Link to = '/login'>
-            <Button>Return to Login</Button>
+        <Link to='/login'>
+          <Button>Return to Login</Button>
         </Link>
       </Form>
     );
@@ -91,6 +95,6 @@ export default class SignupForm extends Component {
 }
 
 
-SignupForm.proptypes = {
+SignupForm.propTypes = {
   submit: PropTypes.func.isRequired
 };

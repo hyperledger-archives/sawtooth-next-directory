@@ -23,15 +23,13 @@ import TrackHeader from './Header';
 
 
 describe('TrackHeader component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><TrackHeader/></BrowserRouter>, div
+      <BrowserRouter><TrackHeader /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
 });

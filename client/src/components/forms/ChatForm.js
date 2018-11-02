@@ -17,6 +17,8 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Button, Form, Icon } from 'semantic-ui-react';
 
+import PropTypes from 'prop-types';
+
 
 /**
  *
@@ -33,6 +35,9 @@ export default class ChatForm extends Component {
     super(props);
 
     this.state = { message: '' };
+  }
+  handleChange = (event, { name, value }) => {
+    this.setState({ [name]: value });
   }
 
 
@@ -57,9 +62,7 @@ export default class ChatForm extends Component {
    * @param value   Value of form field
    *
    */
-  handleChange = (event, { name, value }) => {
-    this.setState({ [name]: value });
-  }
+  
 
 
   renderActions () {
@@ -72,9 +75,10 @@ export default class ChatForm extends Component {
             <Button
               key={index}
               icon
-              onClick={() => this.handleSubmit(action)}>
-              {action.type === 0 && <Icon name='check circle'></Icon> }
-              {action.type === 1 && <Icon name='x'></Icon> }
+              onClick={() => this.handleSubmit(action)}
+            >
+              {action.type === 0 && <Icon name='check circle' /> }
+              {action.type === 1 && <Icon name='x' /> }
               {action.action_text}
             </Button>
           ))
@@ -88,28 +92,45 @@ export default class ChatForm extends Component {
     const { message } = this.state;
 
     return (
-      <div>
-
-        <Form onSubmit={() => this.handleSubmit(message)}>
-          <Form.Input
-            icon
-            fluid
-            placeholder='Say something...'
-            name='message'
-            value={this.state.message}
-            onChange={this.handleChange}>
-            <input/>
-            <Icon
-              link
-              name='paper plane'
-              onClick={() => this.handleSubmit(message)}/>
-          </Form.Input>
-        </Form>
-
-        {this.renderActions()}
-
-      </div>
+      <Form onSubmit={() => this.handleSubmit(message)}>
+        <Form.Input
+          icon
+          fluid
+          placeholder='Say something...'
+          name='message'
+          value={this.state.message}
+          onChange={this.handleChange}
+        >
+          <input />
+          <Icon
+            link
+            name='paper plane'
+            onClick={() => this.handleSubmit(message)}
+          />
+        </Form.Input>
+      </Form>
     );
   }
 
 }
+ChatForm.propTypes = {
+  submit:PropTypes.func,
+  actions: PropTypes.arrayOf(PropTypes.shape(
+      {
+        action_types: PropTypes.arrayOf(PropTypes.shape(
+          {
+            type: PropTypes.string,
+            name: PropTypes.string,
+            action_text: PropTypes.string,
+
+          },
+        )),
+      },
+    )),
+  };
+
+
+ChatForm.defaultProps = {
+  submit: '',
+  actions: '',
+};

@@ -30,12 +30,10 @@ import approvalConversation from '../mock_data/conversation_approval.json';
 
 export default {
 
-  getRequesterBase: () => {
-    return {
-      ok: true,
-      data: base
-    }
-  },
+  getRequesterBase: () => ({
+    ok: true,
+    data: base,
+  }),
 
   getPack: (id) => {
     let data;
@@ -44,7 +42,7 @@ export default {
       case 'e15a71ee-58d2-49e8-a8e4-21888144be1f':
         data = cloudOnboardingPack;
         break;
-      
+
       case '539d9dd3-6b4d-4136-ab67-b6ff6b307c9f':
         data = rebellionAccessPack;
         break;
@@ -68,8 +66,8 @@ export default {
 
     return {
       ok: true,
-      data: data
-    }
+      data,
+    };
   },
 
   getConversation: (id) => {
@@ -91,16 +89,14 @@ export default {
 
     return {
       ok: true,
-      data: data
-    }
+      data,
+    };
   },
 
-  sendMessage: (message) => {
-    return {
-      ok: true,
-      data: message
-    }
-  },
+  sendMessage: message => ({
+    ok: true,
+    data: message,
+  }),
 
   login: (username, password) => {
     return {
@@ -116,4 +112,4 @@ export default {
     }
   }
 
-}
+};

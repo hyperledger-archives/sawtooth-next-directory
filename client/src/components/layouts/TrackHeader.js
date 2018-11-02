@@ -30,8 +30,7 @@ import './TrackHeader.css';
  *
  */
 export default class TrackHeader extends Component {
-
-  render () {
+  render() {
     const { title } = this.props;
 
     return (
@@ -39,17 +38,21 @@ export default class TrackHeader extends Component {
         <div id='next-requester-track-header'>
           <h1>{title}</h1>
         </div>
-        <div id='next-wave-container'>
-          <div id='next-wave'></div>
-          <div id='next-wave-alt'></div>
+        <div id="next-wave-container">
+          <div id="next-wave" />
+          <div id="next-wave-alt" />
         </div>
       </div>
     );
   }
-
 }
 
 
-TrackHeader.proptypes = {
-  title: PropTypes.string
+TrackHeader.propTypes = {
+  title: PropTypes.string,
+};
+
+
+TrackHeader.defaultProps = {
+  title: '',
 };

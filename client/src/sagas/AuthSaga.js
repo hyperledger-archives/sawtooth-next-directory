@@ -28,13 +28,13 @@ import AuthActions from '../redux/AuthRedux';
  * @param action
  *
  */
-export function * login (api, action) {
+export function* login(api, action) {
   try {
 
     const { username, password } = action;
     const res = yield call(api.login, {
       id: username,
-      password: password
+      password,
     });
 
     if (res.ok) {
@@ -62,7 +62,7 @@ export function * login (api, action) {
  *
  */
 
-export function * signup (api, action) {
+export function* signup(api, action) {
   try {
 
     const { username, password, name, email } = action;

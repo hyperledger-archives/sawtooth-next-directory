@@ -34,13 +34,13 @@ it('renders without crashing', () => {
   const props = {
     getPack: () => {},
     match: { params: {} },
-    requester: { recommended: [] }
+    requester: { recommended: [] },
   };
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Recommended {...props}/></BrowserRouter>
-    </Provider>, div
+      <BrowserRouter><Recommended {...props} /></BrowserRouter>
+    </Provider>, div,
   );
 
   ReactDOM.unmountComponentAtNode(div);

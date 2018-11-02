@@ -53,8 +53,6 @@ test('nearExpiryRequest', () => {
 });
 
 
-
-
 test('batchSuccess', () => {
   const state = reducer(INITIAL_STATE, Actions.batchSuccess(null));
 
@@ -89,8 +87,6 @@ test('nearExpirySuccess', () => {
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
-
-
 
 
 test('batchFailure', () => {

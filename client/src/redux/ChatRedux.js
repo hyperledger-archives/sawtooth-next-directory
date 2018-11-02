@@ -28,9 +28,9 @@ import Immutable from 'seamless-immutable';
  *
  */
 const { Types, Creators } = createActions({
-  conversationRequest:    ['id'],
-  conversationSuccess:    ['conversation'],
-  conversationFailure:    ['error'],
+  conversationRequest: ['id'],
+  conversationSuccess: ['conversation'],
+  conversationFailure: ['error'],
 
   sendRequest:            ['message'],
   sendSuccess:            ['message'],
@@ -78,11 +78,9 @@ export const ChatSelectors = {
  *
  *
  */
-export const request = (state) => state.merge({ fetching: true });
+export const request = state => state.merge({ fetching: true });
 
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-}
+export const failure = (state, { error }) => state.merge({ fetching: false, error });
 
 
 /**
@@ -91,14 +89,12 @@ export const failure = (state, { error }) => {
  *
  *
  */
-export const conversationSuccess = (state, { conversation }) => {
-  return state.merge({ fetching: false, messages: conversation.messages });
-}
+export const conversationSuccess = (state, { conversation }) => state.merge({ fetching: false, messages: conversation.messages });
 
 export const sendSuccess = (state, { message }) => {
-  const messages = state.messages.concat([ message ]);
+  const messages = state.messages.concat([message]);
   return state.merge({ fetching: false, messages });
-}
+};
 
 
 /**

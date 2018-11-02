@@ -80,10 +80,17 @@ export default class Toast extends Component {
   }
 }
 
-Toast.prototypes = {
+Toast.propTypes = {
   title: PropTypes.string,
   close: PropTypes.func.isRequired,
   open: PropTypes.bool,
   message: PropTypes.string,
   timeout: PropTypes.number
+};
+
+Toast.defaultProps = {
+  title: '',
+  open: '',
+  message: '',
+  timeout:'',
 };

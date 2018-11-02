@@ -24,7 +24,7 @@ test.skip('baseRequest', () => {
 });
 
 test('packRequest', () => {
-  const id = 'abc123'
+  const id = 'abc123';
   const state = reducer(INITIAL_STATE, Actions.packRequest(id));
 
   expect(state.fetching).toBe(true);

@@ -19,31 +19,27 @@ import ChatActions from '../redux/ChatRedux';
 
 
 /**
- * 
+ *
  * Execute conversation API request
- * 
+ *
  * The getConversation generator function executes a request to the
  * API and handles the response.
- * 
+ *
  * @param action
- * 
+ *
  */
-export function * getConversation (api, action) {
+export function* getConversation(api, action) {
   try {
-
     const { id } = action;
     const res = yield call(api.getConversation, id);
 
     if (res.ok) {
-
       console.log('Retrieved conversation');
       yield put(ChatActions.conversationSuccess(res.data));
-
     } else {
       alert(res.data.error);
       yield put(ChatActions.conversationFailure(res.data.error));
     }
-
   } catch (err) {
     console.error(err);
   }
@@ -51,31 +47,27 @@ export function * getConversation (api, action) {
 
 
 /**
- * 
+ *
  * Send a message
- * 
+ *
  * The sendMessage generator function executes a request to the
  * API and handles the response.
- * 
+ *
  * @param action
- * 
+ *
  */
-export function * sendMessage (api, action) {
+export function* sendMessage(api, action) {
   try {
-
     const { message } = action;
     const res = yield call(api.sendMessage, message);
 
     if (res.ok) {
-
       console.log('Sent message');
       yield put(ChatActions.sendSuccess(res.data));
-
     } else {
       alert(res.data.error);
       yield put(ChatActions.sendFailure(res.data.error));
     }
-
   } catch (err) {
     console.error(err);
   }

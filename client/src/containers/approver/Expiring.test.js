@@ -32,8 +32,8 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Expiring/></BrowserRouter>
-    </Provider>, div
+      <BrowserRouter><Expiring /></BrowserRouter>
+    </Provider>, div,
   );
 
   ReactDOM.unmountComponentAtNode(div);
