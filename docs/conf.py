@@ -19,14 +19,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'sawtooth-next-directory'
-copyright = '2018, Hyperledger Contributors'
-author = 'Hyperledger Contributors'
+project = 'Sawtooth NEXT Directory'
+copyright = '2018 Contributors to Hyperledger Sawtooth'
+author = 'Contributors to Hyperledger Sawtooth'
 
 # The short X.Y version
-version = ''
+version = '0.2'
 # The full version, including alpha/beta/rc tags
-release = ''
+release = '0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -76,7 +76,9 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'classic'
+
+html_logo = '_static/logo-thumb.png'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
