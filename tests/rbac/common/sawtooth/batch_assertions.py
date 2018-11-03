@@ -236,3 +236,10 @@ class BatchAssertions(CommonAssertions):
         self.assertEqual(state, "COMMITTED")
         self.assertEqual(len(invalid), 0)
         return state, invalid
+
+    def assertStatusInvalid(self, status):
+        """Check a status result is successful"""
+        state, invalid = self.assertSingleStatus(status)
+        self.assertEqual(state, "INVALID")
+        self.assertEqual(len(invalid), 1)
+        return state, invalid

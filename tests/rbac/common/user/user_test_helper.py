@@ -30,6 +30,18 @@ class UserTestHelper(BatchAssertions):
         BatchAssertions.__init__(self, *args, **kwargs)
         self.user = UserManager()
 
+    def get_testdata_name(self):
+        """Get a random name"""
+        return "User" + str(random.randint(1000, 10000))
+
+    def get_testdata_username(self):
+        """Get a random username"""
+        return "user" + str(random.randint(10000, 100000))
+
+    def get_testdata_reason(self):
+        """Get a random reason"""
+        return "Because" + str(random.randint(10000, 100000))
+
     def get_testdata_user(self, user_id=None):
         """Get a test data CreateUser message"""
         self.assertTrue(callable(self.user.make))
@@ -62,18 +74,6 @@ class UserTestHelper(BatchAssertions):
         )
         self.assertEqual(manager.user_id, user.manager_id)
         return user, user_key, manager, manager_key
-
-    def get_testdata_name(self):
-        """Get a random name"""
-        return "User" + str(random.randint(1000, 10000))
-
-    def get_testdata_username(self):
-        """Get a random username"""
-        return "user" + str(random.randint(10000, 100000))
-
-    def get_testdata_reason(self):
-        """Get a random reason"""
-        return "Because" + str(random.randint(10000, 100000))
 
     @pytest.mark.unit
     def test_get_testdata_user_with_keys(self):
@@ -110,34 +110,3 @@ class UserTestHelper(BatchAssertions):
         got, keypair = self.get_testdata_user_created(user=user, keypair=user_keypair)
         self.assertEqual(got.manager_id, manager.user_id)
         return got, keypair, manager, manager_key
-
-    @pytest.mark.integration
-    def get_testdata_user_manager_proposal(self):
-        """Return a test update manager proposal"""
-        self.assertTrue(callable(self.user.manager.propose.create))
-        user, user_key = self.get_testdata_user_created()
-        manager, manager_key = self.get_testdata_user_created()
-        reason = self.get_testdata_reason()
-        message = self.user.manager.propose.make(
-            user_id=user.user_id,
-            new_manager_id=manager.user_id,
-            reason=reason,
-            metadata=None,
-        )
-        got, status = self.user.manager.propose.create(
-            signer_keypair=user_key,
-            message=message,
-            object_id=user.user_id,
-            target_id=manager.user_id,
-        )
-        self.assertStatusSuccess(status)
-        self.assertIsInstance(got, protobuf.proposal_state_pb2.Proposal)
-        self.assertEqual(
-            got.proposal_type, protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
-        )
-        self.assertEqual(got.proposal_id, message.proposal_id)
-        self.assertEqual(got.object_id, user.user_id)
-        self.assertEqual(got.target_id, manager.user_id)
-        self.assertEqual(got.opener, user_key.public_key)
-        self.assertEqual(got.open_reason, reason)
-        return got, manager_key

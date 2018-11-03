@@ -13,11 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from tests.rbac.common.user.user_assertions import UserAssertions
-from tests.rbac.common.role.role_assertions import RoleAssertions
+from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
+from tests.rbac.common.user.user_helper import UserTestHelper
 
 
-class TestAssertions(UserAssertions, RoleAssertions):
+class TestHelper(BatchAssertions):
     def __init__(self, *args, **kwargs):
-        RoleAssertions.__init__(self, *args, **kwargs)
-        UserAssertions.__init__(self, *args, **kwargs)
+        BatchAssertions.__init__(self, *args, **kwargs)
+        self.user = UserTestHelper()
