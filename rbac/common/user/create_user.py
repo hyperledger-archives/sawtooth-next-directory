@@ -18,7 +18,6 @@ from rbac.common.crypto.keys import Key
 from rbac.common.user.user_address import make_user_address
 from rbac.common import protobuf
 from rbac.common.manager.base_message import BaseMessage
-from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 LOGGER = logging.getLogger(__name__)
 
@@ -56,9 +55,11 @@ class CreateUser(BaseMessage):
         self, user_id, name, user_name=None, email=None, metadata=None, manager_id=None
     ):
         """Makes a CreateUser message"""
-        return self.message_proto(
+        message = self.message_proto(
             user_id=user_id, name=name, metadata=metadata, manager_id=manager_id
         )
+        self.validate(message=message)
+        return message
 
     def make_with_key(
         self,
@@ -101,7 +102,31 @@ class CreateUser(BaseMessage):
         outputs = inputs
         return inputs, outputs
 
-    def new_state(self, state, message, object_id, target_id=None):
+    def validate(self, message, signer=None, state=None):
+        """Validates the message values"""
+        signer = self.base_validate(message=message, signer=signer)
+        if len(message.name) < 5:
+            raise ValueError("Users must have names longer than 4 characters")
+        if message.manager_id is not None:
+            if message.user_id == message.manager_id:
+                raise ValueError("User cannot be their own manager")
+        if signer is not None:
+            if signer not in [message.user_id, message.manager_id]:
+                raise ValueError("Signer must be the user or their manager")
+        if state is not None:
+            self.validate_state(state=state, message=message, signer=signer)
+
+    def validate_state(self, state, message, signer):
+        """Validates the message against state"""
+        self.base_validate_state(state=state, message=message, signer=signer)
+        if self.exists_state(state=state, object_id=message.user_id):
+            raise ValueError("User already exists")
+        if message.manager_id and not self.exists_state(
+            state=state, object_id=message.manager_id
+        ):
+            raise ValueError("Manager does not exist")
+
+    def set_state(self, state, message, object_id, target_id=None):
         """Creates a new address in the blockchain state"""
         address = self.address(object_id=object_id, target_id=target_id)
         container = self.container_proto()
@@ -114,35 +139,10 @@ class CreateUser(BaseMessage):
         container.users.extend([item])
         self.state.set_address(state=state, address=address, container=container)
 
-    def apply(self, state, payload, header):
+    def apply(self, header, payload, state):
         """Handles a message in the transaction processor"""
         message = self.message_proto()
         message.ParseFromString(payload.content)
 
-        if not (
-            message.user_id == header.signer_public_key
-            or header.signer_public_key == message.manager_id
-        ):
-            raise InvalidTransaction(
-                "The public key {} that signed this CreateUser txn "
-                "does not belong to the user or their manager.".format(
-                    header.signer_public_key
-                )
-            )
-
-        if len(message.name) < 5:
-            raise InvalidTransaction(
-                "CreateUser txn with name {} is invalid. Users "
-                "must have names longer than 4 characters.".format(message.name)
-            )
-
-        check_user = self.get_state(state=state, object_id=message.user_id)
-        if check_user is not None:
-            raise InvalidTransaction("User already exists")
-
-        if message.manager_id:
-            check_manager = self.get_state(state=state, object_id=message.manager_id)
-            if check_manager is None:
-                raise InvalidTransaction("Manager is not in state")
-
-        self.new_state(state=state, message=message, object_id=message.user_id)
+        self.validate(message=message, signer=header.signer_public_key, state=state)
+        self.set_state(state=state, message=message, object_id=message.user_id)

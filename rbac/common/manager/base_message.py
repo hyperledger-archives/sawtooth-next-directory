@@ -16,6 +16,7 @@
 import logging
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
+from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.sawtooth.batcher import Batcher
 from rbac.common.sawtooth.state_client import StateClient
 from rbac.common.sawtooth.client_sync import ClientSync
@@ -76,10 +77,33 @@ class BaseMessage:
     def make_addresses(self, message, signer_keypair):
         raise NotImplementedError("Class must implement this method")
 
-    def make_payload(self, message, signer_keypair=None):
-        """Make a payload for the given message type"""
+    def base_validate(self, message, signer=None):
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
+        if (
+            signer is not None
+            and not isinstance(signer, Key)
+            and not (isinstance(signer, str) and PUBLIC_KEY_PATTERN.match(signer))
+        ):
+            raise TypeError("Expected signer to be a keypair or a public key")
+        if isinstance(signer, Key):
+            signer = signer.public_key
+        return signer
+
+    def base_validate_state(self, state, message, signer):
+        if signer is None:
+            raise ValueError("Signer is required")
+        if not isinstance(signer, str) and PUBLIC_KEY_PATTERN.match(signer):
+            raise TypeError("Expected signer to be a public key")
+        if state is None:
+            raise ValueError("State is required")
+
+    def validate(self, message, signer=None):
+        signer = self.base_validate(message=message, signer=signer)
+
+    def make_payload(self, message, signer_keypair=None):
+        """Make a payload for the given message type"""
+        self.validate(message=message, signer=signer_keypair)
 
         message_type = self.message_type
         inputs, outputs = self.make_addresses(
@@ -91,8 +115,7 @@ class BaseMessage:
 
     def create(self, signer_keypair, message, object_id=None, target_id=None):
         """Send a message to the blockchain"""
-        if not isinstance(signer_keypair, Key):
-            raise TypeError("Expected signer_keypair to be a Key")
+        self.validate(message=message, signer=signer_keypair)
 
         return self.send(
             signer_keypair=signer_keypair,
@@ -177,3 +200,8 @@ class BaseMessage:
             object_id=object_id,
             target_id=target_id,
         )
+
+    def exists_state(self, state, object_id, target_id=None):
+        """Checks an object exists in the blockchain"""
+        got = self.get_state(state=state, object_id=object_id, target_id=target_id)
+        return bool(got is not None)
