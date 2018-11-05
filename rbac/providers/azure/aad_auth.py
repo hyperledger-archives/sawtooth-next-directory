@@ -14,6 +14,7 @@
 # ------------------------------------------------------------------------------
 
 import os
+import logging
 import requests
 import datetime as dt
 
@@ -24,6 +25,7 @@ TENANT_ID = os.environ.get("TENANT_ID")
 AAD_AUTH_URL = "https://login.microsoftonline.com/{}".format(TENANT_ID)
 TOKEN_ENDPOINT = "/oauth2/v2.0/token"
 TENANT_ID = os.environ.get("TENANT_ID")
+LOGGER = logging.getLogger(__name__)
 
 
 class AadAuth:
@@ -52,12 +54,15 @@ class AadAuth:
                 "scope": "https://graph.microsoft.com/.default",
             }
         else:
-            print(
+            LOGGER.info(
                 "Missing AUTH_TYPE environment variable. Aborting sync with Azure AD."
             )
             return None
         response = requests.post(url=AAD_AUTH_URL + TOKEN_ENDPOINT, data=data)
-        return response
+        if response.status_code == 200:
+            return response
+        LOGGER.error("A %s error has occurred when getting authorization: %s",
+                     response.status_code, response)
 
     def _time_left(self):
         """Check for how much time is left on the token."""
