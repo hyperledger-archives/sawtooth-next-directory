@@ -1,1 +1,2 @@
+PyYAML==3.13
 black==18.9b0
