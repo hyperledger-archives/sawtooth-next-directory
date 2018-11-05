@@ -83,17 +83,15 @@ export default class NavList extends Component {
       <div className='next-nav-list-container'>
         <h3>{listTitle}</h3>
 
-        { list &&
+        { list && list.length !== 0 ?
           <List inverted link selection>
             { this.renderList(list) }
-          </List>
-        }
-
-        { !list &&
+          </List> :
           <span className='next-nav-list-label'>
             No items
           </span>
         }
+
       </div>
     );
   }

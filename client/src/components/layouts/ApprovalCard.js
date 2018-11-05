@@ -15,50 +15,59 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Container, Grid } from 'semantic-ui-react';
+import { Card, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import TrackHeader from '../../components/layouts/TrackHeader';
-import './RequesterHome.css';
+import './ApprovalCard.css';
 
 
 /**
- *
- * @class RequesterHome
- * Component encapsulating the requester home, which serves as the
- * default landing page after login.
- *
+ * 
+ * @class ApprovalCard
+ * Component encapsulating the approval card
+ * 
  */
-export default class RequesterHome extends Component {
+export default class ApprovalCard extends Component {
+ 
 
   render () {
     return (
-      <Grid id='next-requester-grid' celled='internally'>
-        <Grid.Column
-          id='next-requester-grid-track-column'
-          width={16}>
-          <TrackHeader {...this.props}/>
-          <Container id='next-requester-landing-container'></Container>
-        </Grid.Column>
-      </Grid>
+      <div id=''>
+        <Card>
+          <Card.Header>
+            <span role='img' aria-label=''>🙇</span>
+            <div>Awaiting approval</div>
+          </Card.Header>
+          <Card.Content extra>
+            <Grid columns={3} padded='vertically'>
+              <Grid.Column>
+                Request ID
+              </Grid.Column>
+              <Grid.Column>
+                Request Date
+              </Grid.Column>
+              <Grid.Column>
+                Approver
+              </Grid.Column>
+            </Grid>
+          </Card.Content>
+        </Card>
+      </div>
     );
   }
 
 }
 
 
-RequesterHome.proptypes = {
+ApprovalCard.proptypes = {
   activePack: PropTypes.arrayOf(PropTypes.shape(
     {
-      id: PropTypes.string,
       description: PropTypes.string,
       roles: PropTypes.arrayOf(PropTypes.shape(
         {
-          id: PropTypes.string,
-          name: PropTypes.string,
-          email: PropTypes.email
-        }
+          name: PropTypes.string
+        }  
       ))
     }
   ))

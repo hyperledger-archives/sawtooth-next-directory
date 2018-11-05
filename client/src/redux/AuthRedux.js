@@ -72,7 +72,6 @@ export const INITIAL_STATE = Immutable({
  */
 export const AuthSelectors = {
   isAuthenticated: (state) => {
-
     return !!storage.getToken() || state.auth.isAuthenticated;
   },
   user: (state) => {
