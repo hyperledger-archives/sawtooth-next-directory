@@ -16,6 +16,7 @@ limitations under the License.
 
 import apisauce from 'apisauce';
 import * as storage from '../services/Storage';
+import * as AuthActions from '../redux/AuthRedux';
 
 
 /**
@@ -70,6 +71,18 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
 
     return api.get('roles');
   }
+
+  /**
+   *
+   * Added condition for unauthorized API call.
+   *
+   *
+   */
+  api.addResponseTransform(response => {
+    if (response.data.code == 401) {
+      AuthActions.logout();
+    }
+  });
 
 
   const login = (creds) => api.post('authorization', creds);
