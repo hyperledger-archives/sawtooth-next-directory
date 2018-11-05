@@ -42,15 +42,6 @@ import './Requests.css';
  */
 export class Requests extends Component {
 
-  // componentDidMount () {
-  //   const { getPack, packId } = this.props;
-
-  //   if (packId) {
-  //     getPack(packId);
-  //   }
-  // }
-
-
   /**
    *
    * Switch pack on ID change

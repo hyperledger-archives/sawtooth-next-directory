@@ -64,13 +64,19 @@ class App extends Component {
 
 
   componentWillReceiveProps (newProps) {
-    const { getBase, isAuthenticated } = this.props;
+    const { getBase, getUser, isAuthenticated } = this.props;
 
     if (newProps.isAuthenticated &&
       newProps.isAuthenticated !== isAuthenticated) {
+      getUser();
       getBase();
     }
+
+    if (!newProps.isAuthenticated) {
+
+    }
   }
+
 
   /**
    *
@@ -147,6 +153,12 @@ App.proptypes = {
 };
 
 
+const logout = (dispatch) => {
+  return dispatch(AuthActions.logoutRequest()) &&
+         dispatch(UserActions.meReset())
+}
+
+
 const mapStateToProps = (state) => {
   return {
     isAuthenticated:  AuthSelectors.isAuthenticated(state),
@@ -172,7 +184,7 @@ const mapDispatchToProps = (dispatch) => {
     sendMessage:     (message) => dispatch(ChatActions.sendRequest(message)),
     getConversation: (id) => dispatch(ChatActions.conversationRequest(id)),
 
-    logout:          () => dispatch(AuthActions.logoutRequest())
+    logout:          () => logout(dispatch),
   };
 }
 
