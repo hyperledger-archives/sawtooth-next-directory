@@ -1,4 +1,4 @@
-![logo](docs/_static/logo-full.png)
+![logo](logo.png)
 
 # Hyperledger Sawtooth NEXT Identity Platform
 

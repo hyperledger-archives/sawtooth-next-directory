@@ -1,6 +1,43 @@
 # always use LF line endings (windows line endings break docker)
-* text  eol=lf
-* .jpg  -text
-* .jpeg -text
-* .png  -text
-* .gif  -text
+* text eol=lf
+
+## These files are text and should be normalized (Convert crlf => lf)
+
+# sources
+*.css text
+*.sass text
+*.scss text
+*.less text
+*.js text
+*.json text
+*.htm text
+*.html text
+*.svg text
+*.txt text
+*.py text
+*.sh text
+*.bat text
+
+# git config
+.gitattributes text
+.gitignore text
+.gitconfig text
+
+# deployment config
+*.yaml text
+*.yml text
+
+# Documentation
+*.md text
+*.rst text
+LICENSE text
+MAINTAINERS text
+
+
+## These files are binary and should be left untouched
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
