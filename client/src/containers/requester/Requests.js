@@ -27,7 +27,8 @@ import PropTypes from 'prop-types';
 
 
 import TrackHeader from '../../components/layouts/TrackHeader';
-import RolesList from '../../components/layouts/RolesList';
+import ApprovalCard from '../../components/layouts/ApprovalCard';
+import MemberList from '../../components/layouts/MemberList';
 
 
 import './Requests.css';
@@ -67,7 +68,10 @@ export class Requests extends Component {
 
   render () {
     const { activePack } = this.props;
-    const title = activePack && activePack.name;
+
+    if (!activePack) {
+      return null;
+    }
 
     return (
       <Grid id='next-requester-grid' celled='internally'>
@@ -75,8 +79,14 @@ export class Requests extends Component {
         <Grid.Column
           id='next-requester-grid-track-column'
           width={10}>
-          <TrackHeader title={title} {...this.props}/>
-          <RolesList {...this.props}/>
+          <TrackHeader title={activePack.name} {...this.props}/>
+
+          <div id='next-requester-content'>
+            <ApprovalCard {...this.props}/>
+            <p>Lorem ipsum dolor sit amet.</p>
+            <MemberList members={activePack.members} owners={activePack.owners}/>
+          </div>
+          
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'

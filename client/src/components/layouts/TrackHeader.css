@@ -21,7 +21,7 @@ limitations under the License.
 }
 
 #next-requester-track-header {
-  background: purple;
+  background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
   padding: 30px 40px 15px 40px;
 }
 
@@ -41,6 +41,8 @@ limitations under the License.
 }
 
 #next-wave-container {
-  background: purple;
-  height: 42px;
+  background: -webkit-linear-gradient(top, #de209d 0%,#ea4c9d 100%);
+  height: 41px;
+  position: relative;
+  top: -3px;
 }

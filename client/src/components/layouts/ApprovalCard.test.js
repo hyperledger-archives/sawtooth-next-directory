@@ -14,20 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-requester-grid {
-  height: 100%;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-#next-requester-grid-track-column {
-  padding: 0;
-}
 
-#next-requester-grid-converse-column {
-  background: var(--chat-bg-color);
-}
+import ApprovalCard from './ApprovalCard';
 
-#next-requester-landing-container {
-  background: url('../../images/next-logo-landing.gif') 50% 45% / 250px no-repeat;
-  height: 100%;
-  opacity: 0.25;
-}
+
+describe('ApprovalCard component', () => {
+
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    ReactDOM.render(
+      <BrowserRouter><ApprovalCard/></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});

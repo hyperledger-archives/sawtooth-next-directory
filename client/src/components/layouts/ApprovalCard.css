@@ -12,22 +12,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-
-
-#next-requester-grid {
-  height: 100%;
-}
-
-#next-requester-grid-track-column {
-  padding: 0;
-}
-
-#next-requester-grid-converse-column {
-  background: var(--chat-bg-color);
-}
-
-#next-requester-landing-container {
-  background: url('../../images/next-logo-landing.gif') 50% 45% / 250px no-repeat;
-  height: 100%;
-  opacity: 0.25;
-}
