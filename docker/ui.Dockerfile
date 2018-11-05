@@ -20,4 +20,5 @@ WORKDIR /ui
 EXPOSE 4200
 RUN npm install
 RUN npm rebuild node-sass --force
+
 CMD ["./entrypoint.sh" ]
