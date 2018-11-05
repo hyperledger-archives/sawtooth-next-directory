@@ -9,7 +9,6 @@ sanic-oauth==0.2.5
 protobuf==3.6.1
 requests==2.20.0
 pyzmq==17.1.2
-black==18.9b0
 pylint==2.1.1
 astroid==2.0.4
 clang==6.0
