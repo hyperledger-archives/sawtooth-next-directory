@@ -152,6 +152,7 @@ const mapStateToProps = (state) => {
     isAuthenticated:  AuthSelectors.isAuthenticated(state),
     recommended:      RequesterSelectors.recommended(state),
     activePack:       RequesterSelectors.activePack(state),
+    activeProposal:   RequesterSelectors.activeProposal(state),
     me:               UserSelectors.me(state),
     requests:         UserSelectors.requests(state),
     messages:         ChatSelectors.messages(state),
@@ -163,6 +164,7 @@ const mapDispatchToProps = (dispatch) => {
     getUser:         () => dispatch(UserActions.meRequest()),
     getBase:         () => dispatch(RequesterActions.baseRequest()),
     getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
+    getProposal:     (id) => dispatch(RequesterActions.proposalRequest(id)),
     requestAccess:   (id, userId, reason) => {
       return dispatch(RequesterActions.accessRequest(id, userId, reason))
     },

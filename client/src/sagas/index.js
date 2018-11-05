@@ -29,7 +29,7 @@ import { UserTypes } from '../redux/UserRedux';
 
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
-import { requestAccess, getBase, getPack } from './RequesterSaga';
+import { requestAccess, getBase, getPack, getProposal } from './RequesterSaga';
 import { me } from './UserSaga';
 
 
@@ -53,6 +53,7 @@ export default function * root() {
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
     takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
+    takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
     takeLatest(RequesterTypes.ACCESS_REQUEST, requestAccess, api),
 
     // Chat

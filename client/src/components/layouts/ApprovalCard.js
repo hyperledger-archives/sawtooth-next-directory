@@ -30,8 +30,13 @@ import './ApprovalCard.css';
  */
 export default class ApprovalCard extends Component {
  
-
   render () {
+    const { activeProposal } = this.props;
+
+    if (!activeProposal) {
+      return null;
+    }
+
     return (
       <div id=''>
         <Card>
@@ -48,7 +53,8 @@ export default class ApprovalCard extends Component {
                 Request Date
               </Grid.Column>
               <Grid.Column>
-                Approver
+                Approver(s)
+                {activeProposal.approvers}
               </Grid.Column>
             </Grid>
           </Card.Content>

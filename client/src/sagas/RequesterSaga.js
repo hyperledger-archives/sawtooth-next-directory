@@ -82,6 +82,34 @@ export function * getPack (api, action) {
 
 /**
  *
+ * Execute proposal API request
+ *
+ * The getProposal generator function executes a request to the
+ * API and handles the response.
+ *
+ * @param action
+ *
+ */
+export function * getProposal (api, action) {
+  try {
+    const { id } = action;
+    const res = yield call(api.getProposal, id);
+
+    if (res.ok) {
+      console.log('Retrieved proposal');
+      yield put(RequesterActions.proposalSuccess(res.data));
+    } else {
+      alert(res.data.error);
+      yield put(RequesterActions.proposalFailure(res.data.error));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ *
  * Execute request access API request
  *
  * The requestAccess generator function executes a request to the

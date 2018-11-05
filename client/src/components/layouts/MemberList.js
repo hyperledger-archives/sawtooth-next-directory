@@ -16,7 +16,6 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Segment } from 'semantic-ui-react';
-import PropTypes from 'prop-types';
 
 
 import './MemberList.css';

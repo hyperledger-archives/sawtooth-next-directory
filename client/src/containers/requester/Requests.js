@@ -42,13 +42,13 @@ import './Requests.css';
  */
 export class Requests extends Component {
 
-  componentDidMount () {
-    const { getPack, packId } = this.props;
+  // componentDidMount () {
+  //   const { getPack, packId } = this.props;
 
-    if (packId) {
-      getPack(packId);
-    }
-  }
+  //   if (packId) {
+  //     getPack(packId);
+  //   }
+  // }
 
 
   /**
@@ -58,18 +58,22 @@ export class Requests extends Component {
    *
    */
   componentWillReceiveProps (newProps) {
-    const { getPack, packId } = this.props;
+    const { getPack, getProposal, packId, proposalId } = this.props;
 
     if (newProps.packId !== packId) {
       getPack(newProps.packId);
+    }
+
+    if (newProps.proposalId !== proposalId) {
+      getProposal(newProps.proposalId);
     }
   }
 
 
   render () {
-    const { activePack } = this.props;
+    const { activePack, activeProposal } = this.props;
 
-    if (!activePack) {
+    if (!activePack || !activeProposal) {
       return null;
     }
 
@@ -107,7 +111,8 @@ const mapStateToProps = (state, ownProps) => {
   const { requests } = state.user;
 
   return {
-    packId: RequesterSelectors.idFromSlug(requests, id)
+    packId: RequesterSelectors.idFromSlug(requests, id),
+    proposalId: RequesterSelectors.proposalIdFromSlug(requests, id)
   };
 }
 
@@ -120,10 +125,10 @@ export default connect(mapStateToProps, mapDispatchToProps)(Requests);
 
 Requests.proptypes = {
   getPack: PropTypes.func,
+  getProposal: PropTypes.func,
   activePack: PropTypes.arrayOf(PropTypes.shape(
     {
       name: PropTypes.string
     }
   ))
-
 };
