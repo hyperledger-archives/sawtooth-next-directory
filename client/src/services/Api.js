@@ -79,7 +79,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    */
   api.addResponseTransform(response => {
-    if (response.data.code == 401) {
+    if (response.data.code === 401) {
       AuthActions.logout();
     }
   });

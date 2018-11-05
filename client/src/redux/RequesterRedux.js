@@ -37,6 +37,10 @@ const { Types, Creators } = createActions({
   packSuccess:       ['activePack'],
   packFailure:       ['error'],
 
+  proposalRequest:   ['id'],
+  proposalSuccess:   ['activeProposal'],
+  proposalFailure:   ['error'],
+
   accessRequest:     ['id', 'userId', 'reason'],
   accessSuccess:     null,
   accessFailure:     null
@@ -65,6 +69,7 @@ export const INITIAL_STATE = Immutable({
   recommended:      null,
   fetching:         null,
   activePack:       null,
+  activeProposal:   null,
   error:            null
 });
 
@@ -76,8 +81,9 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const RequesterSelectors = {
-  activePack:   (state) => state.requester.activePack,
-  recommended:  (state) => state.requester.recommended,
+  activePack:      (state) => state.requester.activePack,
+  activeProposal:  (state) => state.requester.activeProposal,
+  recommended:     (state) => state.requester.recommended,
 
   idFromSlug: (collection, slug) => {
     if (!collection) return null;
@@ -88,6 +94,16 @@ export const RequesterSelectors = {
     });
 
     return pack && pack.id;
+  },
+
+  proposalIdFromSlug: (collection, slug) => {
+    if (!collection) return null;
+
+    const entity = collection.find((item) => {
+      return utils.createSlug(item.name) === slug
+    });
+
+    return entity && entity['proposal_id'];
   }
 };
 
@@ -116,6 +132,13 @@ export const packSuccess = (state, { activePack }) => {
   return state.merge({
     fetching: false,
     activePack: activePack.data
+  });
+}
+
+export const proposalSuccess = (state, { activeProposal }) => {
+  return state.merge({
+    fetching: false,
+    activeProposal: activeProposal.data
   });
 }
 
@@ -149,6 +172,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.PACK_REQUEST]: request,
   [Types.PACK_SUCCESS]: packSuccess,
   [Types.PACK_FAILURE]: failure,
+
+  [Types.PROPOSAL_REQUEST]: request,
+  [Types.PROPOSAL_SUCCESS]: proposalSuccess,
+  [Types.PROPOSAL_FAILURE]: failure,
 
   [Types.ACCESS_REQUEST]: request,
   [Types.ACCESS_SUCCESS]: accessSuccess,

@@ -64,13 +64,19 @@ class App extends Component {
 
 
   componentWillReceiveProps (newProps) {
-    const { getBase, isAuthenticated } = this.props;
+    const { getBase, getUser, isAuthenticated } = this.props;
 
     if (newProps.isAuthenticated &&
       newProps.isAuthenticated !== isAuthenticated) {
+      getUser();
       getBase();
     }
+
+    if (!newProps.isAuthenticated) {
+
+    }
   }
+
 
   /**
    *
@@ -147,11 +153,18 @@ App.proptypes = {
 };
 
 
+const logout = (dispatch) => {
+  return dispatch(AuthActions.logoutRequest()) &&
+         dispatch(UserActions.meReset())
+}
+
+
 const mapStateToProps = (state) => {
   return {
     isAuthenticated:  AuthSelectors.isAuthenticated(state),
     recommended:      RequesterSelectors.recommended(state),
     activePack:       RequesterSelectors.activePack(state),
+    activeProposal:   RequesterSelectors.activeProposal(state),
     me:               UserSelectors.me(state),
     requests:         UserSelectors.requests(state),
     messages:         ChatSelectors.messages(state),
@@ -163,6 +176,7 @@ const mapDispatchToProps = (dispatch) => {
     getUser:         () => dispatch(UserActions.meRequest()),
     getBase:         () => dispatch(RequesterActions.baseRequest()),
     getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
+    getProposal:     (id) => dispatch(RequesterActions.proposalRequest(id)),
     requestAccess:   (id, userId, reason) => {
       return dispatch(RequesterActions.accessRequest(id, userId, reason))
     },
@@ -170,7 +184,7 @@ const mapDispatchToProps = (dispatch) => {
     sendMessage:     (message) => dispatch(ChatActions.sendRequest(message)),
     getConversation: (id) => dispatch(ChatActions.conversationRequest(id)),
 
-    logout:          () => dispatch(AuthActions.logoutRequest())
+    logout:          () => logout(dispatch),
   };
 }
 

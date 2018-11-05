@@ -31,6 +31,7 @@ const { Types, Creators } = createActions({
   meRequest:     null,
   meSuccess:     ['me'],
   meFailure:     ['error'],
+  meReset:       null
 });
 
 
@@ -87,6 +88,8 @@ export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
 
+export const reset = (state) => INITIAL_STATE;
+
 
 /**
  *
@@ -98,4 +101,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ME_REQUEST]: request,
   [Types.ME_SUCCESS]: success,
   [Types.ME_FAILURE]: failure,
+  [Types.ME_RESET]: reset,
 });
