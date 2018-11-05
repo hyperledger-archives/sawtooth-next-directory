@@ -1,2 +1,6 @@
-# always use LF line endings (windwos line endings break docker)
-* text eol=lf
+# always use LF line endings (windows line endings break docker)
+* text  eol=lf
+* .jpg  -text
+* .jpeg -text
+* .png  -text
+* .gif  -text
