@@ -41,13 +41,13 @@ WORKDIR /project/hyperledger-rbac
 # -----------------------------------------------------------------------------
 
 RUN apt-get install -y --allow-unauthenticated -q \
-        curl \
 && pip3 install \
     pycodestyle \
     pylint \
     pytest \
     dredd_hooks \
     pytest-cov \
+    pytest-env \
     tornado==4.5.3
 
 WORKDIR /project/hyperledger-rbac

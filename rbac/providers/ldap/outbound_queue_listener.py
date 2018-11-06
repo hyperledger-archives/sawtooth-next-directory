@@ -26,7 +26,7 @@ LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 DB_HOST = "rethink"
 DB_PORT = 28015
 DB_NAME = "rbac"
-DB_TABLE = 'queue_outbound'
+DB_TABLE = "queue_outbound"
 RETRY_INTERVAL_SECONDS_TABLE_READY = 3
 
 r.set_loop_type("tornado")
@@ -49,6 +49,6 @@ def print_feed_change_data():
                 "Attempt to connect to %s threw exception: %s. Retrying in %s seconds",
                 DB_TABLE,
                 str(e),
-                RETRY_INTERVAL_SECONDS_TABLE_READY
+                RETRY_INTERVAL_SECONDS_TABLE_READY,
             )
             time.sleep(RETRY_INTERVAL_SECONDS_TABLE_READY)

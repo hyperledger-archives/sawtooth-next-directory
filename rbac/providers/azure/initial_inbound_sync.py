@@ -43,7 +43,6 @@ GRAPH_URL = "https://graph.microsoft.com/beta/"
 TENANT_ID = os.environ.get("TENANT_ID")
 AUTH = AadAuth()
 AUTH_TYPE = os.environ.get("AUTH_TYPE")
-r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
 
 
 def fetch_groups_with_members():
@@ -57,8 +56,11 @@ def fetch_groups_with_members():
             return fetch_retry(groups_payload.headers, fetch_groups_with_members)
         if groups_payload.status_code == 200:
             return groups_payload.json()
-        LOGGER.error("A %s error has occurred when getting the groups: %s",
-                     groups_payload.status_code, groups_payload)
+        LOGGER.error(
+            "A %s error has occurred when getting the groups: %s",
+            groups_payload.status_code,
+            groups_payload,
+        )
 
 
 def fetch_group_owner(group_id):
@@ -72,8 +74,11 @@ def fetch_group_owner(group_id):
             return fetch_retry(owner_payload.headers, fetch_group_owner, group_id)
         if owner_payload.status_code == 200:
             return owner_payload.json()
-        LOGGER.error("A %s error has occurred when getting the groups's owner: %s",
-                     owner_payload.status_code, owner_payload)
+        LOGGER.error(
+            "A %s error has occurred when getting the groups's owner: %s",
+            owner_payload.status_code,
+            owner_payload,
+        )
 
 
 def fetch_users():
@@ -85,8 +90,11 @@ def fetch_users():
             return fetch_retry(users_payload.headers, fetch_users)
         if users_payload.status_code == 200:
             return users_payload.json()
-        LOGGER.error("A %s error has occurred when getting the users: %s",
-                     users_payload.status_code, users_payload)
+        LOGGER.error(
+            "A %s error has occurred when getting the users: %s",
+            users_payload.status_code,
+            users_payload,
+        )
 
 
 def fetch_user_manager(user_id):
@@ -102,8 +110,11 @@ def fetch_user_manager(user_id):
             return None
         if manager_payload.status_code == 429:
             return fetch_retry(manager_payload.headers, fetch_user_manager, user_id)
-        LOGGER.error("A %s error has occurred when getting the user's manger: %s",
-                     manager_payload.status_code, manager_payload)
+        LOGGER.error(
+            "A %s error has occurred when getting the user's manger: %s",
+            manager_payload.status_code,
+            manager_payload,
+        )
 
 
 def fetch_next_payload(next_url):
@@ -115,14 +126,17 @@ def fetch_next_payload(next_url):
             return fetch_retry(payload.headers, fetch_next_payload, next_url)
         if payload.status_code == 200:
             return payload.json()
-        LOGGER.error("A %s error has occurred when getting the paginated payload: %s",
-                     payload.status_code, payload)
+        LOGGER.error(
+            "A %s error has occurred when getting the paginated payload: %s",
+            payload.status_code,
+            payload,
+        )
 
 
 def fetch_retry(headers, func, *args):
     """Error 429 from Azure is from throttling.  This will wait the allotted time and retry the fetch."""
-    if 'Retry-After' in headers:
-        time.sleep(headers['Retry-After'])
+    if "Retry-After" in headers:
+        time.sleep(headers["Retry-After"])
         return func(*args)
     else:
         time.sleep(30)
@@ -142,7 +156,7 @@ def insert_group_to_db(groups_dict):
     """Insert groups individually to rethinkdb from dict of groups"""
     for group in groups_dict["value"]:
         owner = fetch_group_owner(group["id"])
-        if owner and 'error' not in owner:
+        if owner and "error" not in owner:
             group["owners"] = get_ids_from_list_of_dicts(owner["value"])
         else:
             group["owners"] = []
@@ -177,14 +191,15 @@ def insert_user_to_db(users_dict):
 
 def initialize_aad_sync():
     """Initialize a sync with Azure Active Directory."""
+    r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
     LOGGER.info("Inserting AAD data...")
 
     LOGGER.info("Getting Users...")
     users = fetch_users()
     if users:
         insert_user_to_db(users)
-        while '@odata.nextLink' in users:
-            users = fetch_next_payload(users['@odata.nextLink'])
+        while "@odata.nextLink" in users:
+            users = fetch_next_payload(users["@odata.nextLink"])
             if users:
                 insert_user_to_db(users)
             else:
@@ -197,8 +212,8 @@ def initialize_aad_sync():
     groups = fetch_groups_with_members()
     if groups:
         insert_group_to_db(groups)
-        while '@odata.nextLink' in groups:
-            groups = fetch_next_payload(groups['@odata.nextLink'])
+        while "@odata.nextLink" in groups:
+            groups = fetch_next_payload(groups["@odata.nextLink"])
             if groups:
                 insert_group_to_db(groups)
             else:

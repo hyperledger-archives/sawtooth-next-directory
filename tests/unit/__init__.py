@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,28 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
-import logging
-import sys
-
-from tornado import ioloop
-
-from rbac.providers.ldap.outbound_queue_listener import print_feed_change_data
-
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
-
-
-def start_listener():
-
-    try:
-        LOGGER.debug("Starting outbound queue listener")
-        ioloop.IOLoop.current().run_sync(print_feed_change_data)
-
-    except KeyboardInterrupt:
-        pass
-    except Exception as err:  # pylint: disable=broad-except
-        LOGGER.error("Encountered an error running the outbound queue listener")
-        LOGGER.exception(err)
-        sys.exit(1)
