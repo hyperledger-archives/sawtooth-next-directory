@@ -32,8 +32,6 @@ import NavList from './NavList';
  */
 export default class RequesterNav extends Component {
 
-
-
   /**
    *
    * Render sidebar hierarchy
@@ -58,7 +56,7 @@ export default class RequesterNav extends Component {
           dynamic
           listTitle='Recommended Packs'
           route='/home/recommended-packs'
-          list={recommended}/>
+          list={[]}/>
         <NavList
           dynamic
           listTitle='Recommended Roles'

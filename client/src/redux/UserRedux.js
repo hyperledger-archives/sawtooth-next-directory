@@ -31,7 +31,12 @@ const { Types, Creators } = createActions({
   meRequest:     null,
   meSuccess:     ['me'],
   meFailure:     ['error'],
-  meReset:       null
+
+  meReset:       null,
+
+  userRequest:   ['id'],
+  userSuccess:   ['user'],
+  userFailure:   ['error'],
 });
 
 
@@ -52,6 +57,7 @@ export const INITIAL_STATE = Immutable({
   fetching:         null,
   error:            null,
   me:               null,
+  users:            null,
   requests:         null
 });
 
@@ -64,25 +70,18 @@ export const INITIAL_STATE = Immutable({
  */
 export const UserSelectors = {
   me: (state) => state.user.me,
-  requests: (state) => state.user.me && state.user.me.proposals
+  requests: (state) => state.user.me && state.user.me.proposals,
+  users: (state) => state.user.users
 };
 
 
 /**
  *
- * Reducers
+ * Reducers - General
  *
  *
  */
 export const request = (state) => state.merge({ fetching: true });
-
-export const success = (state, { me }) => {
-  return state.merge({
-    fetching: false,
-    requests: me.proposals,
-    me: me
-  });
-}
 
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
@@ -93,13 +92,41 @@ export const reset = (state) => INITIAL_STATE;
 
 /**
  *
+ * Reducers - Success
+ *
+ *
+ */
+export const meSuccess = (state, { me }) => {
+  return state.merge({
+    fetching: false,
+    requests: me.proposals,
+    me: me
+  });
+}
+
+export const userSuccess = (state, { user }) => {
+  const users = state.users ?
+    state.users.concat([ user ]) :
+    [].concat([ user ]);
+
+  return state.merge({ fetching: false, users: users });
+}
+
+
+/**
+ *
  * Hooks
  *
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.ME_REQUEST]: request,
-  [Types.ME_SUCCESS]: success,
+  [Types.ME_SUCCESS]: meSuccess,
   [Types.ME_FAILURE]: failure,
+
   [Types.ME_RESET]: reset,
+
+  [Types.USER_REQUEST]: request,
+  [Types.USER_SUCCESS]: userSuccess,
+  [Types.USER_FAILURE]: failure,
 });

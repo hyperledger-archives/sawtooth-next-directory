@@ -53,10 +53,10 @@ class App extends Component {
    *
    */
   componentDidMount () {
-    const { getBase, getUser, isAuthenticated } = this.props;
+    const { getBase, getMe, isAuthenticated } = this.props;
 
     if (isAuthenticated) {
-      getUser();
+      getMe();
       getBase();
     }
 
@@ -64,16 +64,12 @@ class App extends Component {
 
 
   componentWillReceiveProps (newProps) {
-    const { getBase, getUser, isAuthenticated } = this.props;
+    const { getBase, getMe, isAuthenticated } = this.props;
 
     if (newProps.isAuthenticated &&
       newProps.isAuthenticated !== isAuthenticated) {
-      getUser();
+      getMe();
       getBase();
-    }
-
-    if (!newProps.isAuthenticated) {
-
     }
   }
 
@@ -168,12 +164,14 @@ const mapStateToProps = (state) => {
     me:               UserSelectors.me(state),
     requests:         UserSelectors.requests(state),
     messages:         ChatSelectors.messages(state),
+    users:            UserSelectors.users(state)
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getUser:         () => dispatch(UserActions.meRequest()),
+    getMe:           () => dispatch(UserActions.meRequest()),
+    getUser:         (id) => dispatch(UserActions.userRequest(id)),
     getBase:         () => dispatch(RequesterActions.baseRequest()),
     getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
     getProposal:     (id) => dispatch(RequesterActions.proposalRequest(id)),

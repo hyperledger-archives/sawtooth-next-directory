@@ -22,6 +22,7 @@ limitations under the License.
 
 #next-requester-track-header {
   background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
+  color: var(--header-color);
   padding: 30px 40px 15px 40px;
 }
 

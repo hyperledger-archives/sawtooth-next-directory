@@ -42,10 +42,12 @@ export default class Header extends Component {
             size='tiny'
             href='/home'/>
         </div>
-        <Icon inverted name='search'/>
-        <Icon inverted name='bell'/>
-        <Image src='http://i.pravatar.cc/300' avatar/>
-        <span id='next-header-username'>{ me && me.name }</span>
+        <div id='next-header-actions'>
+          <Icon inverted name='search'/>
+          <Icon inverted name='bell'/>
+          <span id='next-header-username'>{ me && me.name }</span>
+          <Image src='http://i.pravatar.cc/300' avatar/>
+        </div>
       </header>
     );
   }

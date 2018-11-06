@@ -30,4 +30,15 @@ limitations under the License.
 
 #next-header-username {
   color: var(--header-color);
+  margin-right: 10px;
+}
+
+#next-header-actions {
+  align-items: center;
+  display: flex;
+}
+
+#next-header-actions i {
+  font-size: 1.3em;
+  margin-right: 22px;
 }

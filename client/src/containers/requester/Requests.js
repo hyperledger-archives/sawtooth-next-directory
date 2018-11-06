@@ -16,16 +16,14 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
-
-
-import Chat from '../../components/chat/Chat';
-import { RequesterSelectors } from '../../redux/RequesterRedux';
-
-
+import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
+import { RequesterSelectors } from '../../redux/RequesterRedux';
+
+
+import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import ApprovalCard from '../../components/layouts/ApprovalCard';
 import MemberList from '../../components/layouts/MemberList';
@@ -41,6 +39,16 @@ import './Requests.css';
  *
  */
 export class Requests extends Component {
+
+  componentDidMount () {
+    const { getPack, getProposal, packId, proposalId } = this.props;
+
+    if (packId && proposalId) {
+      getPack(packId);
+      getProposal(proposalId);
+    }
+  }
+
 
   /**
    *
@@ -76,10 +84,12 @@ export class Requests extends Component {
           width={10}>
           <TrackHeader title={activePack.name} {...this.props}/>
 
-          <div id='next-requester-content'>
+          <div id='next-requester-requests-content'>
             <ApprovalCard {...this.props}/>
-            <p>Lorem ipsum dolor sit amet.</p>
-            <MemberList members={activePack.members} owners={activePack.owners}/>
+            <Container id='next-requester-description'>Lorem ipsum dolor sit amet.</Container>
+            <MemberList {...this.props}
+              members={activePack.members}
+              owners={activePack.owners}/>
           </div>
           
         </Grid.Column>

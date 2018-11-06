@@ -30,7 +30,7 @@ import { UserTypes } from '../redux/UserRedux';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
 import { requestAccess, getBase, getPack, getProposal } from './RequesterSaga';
-import { me } from './UserSaga';
+import { me, getUser } from './UserSaga';
 
 
 const api = API.create();
@@ -62,6 +62,7 @@ export default function * root() {
 
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),
+    takeLatest(UserTypes.USER_REQUEST, getUser, api),
 
   ]);
 }

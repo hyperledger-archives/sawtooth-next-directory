@@ -19,7 +19,7 @@
     "redux-saga": "^0.16.0",
     "reduxsauce": "^1.0.0",
     "seamless-immutable": "^7.1.4",
-    "semantic-ui-react": "^0.82.5"
+    "semantic-ui-react": "^0.83.0"
   },
   "jest": {
     "collectCoverageFrom": [
