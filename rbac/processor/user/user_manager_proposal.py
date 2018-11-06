@@ -15,7 +15,7 @@
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.processor import (
     message_accessor,
@@ -57,7 +57,7 @@ def _validate_state_and_return_user(header, user_proposal, state):
 
     prop_state_entries = _validate_unique_proposal(user_proposal, state)
 
-    user_address = addresser.make_user_address(user_id=user_proposal.user_id)
+    user_address = addresser.user.address(user_proposal.user_id)
     user_state_entries = state_accessor.get_state(state, [user_address])
     user_validator.validate_identifier_is_user(
         state_entries=user_state_entries,
@@ -65,7 +65,7 @@ def _validate_state_and_return_user(header, user_proposal, state):
         address=user_address,
     )
 
-    manager_address = addresser.make_user_address(user_id=user_proposal.new_manager_id)
+    manager_address = addresser.user.address(user_proposal.new_manager_id)
 
     manager_state_entries = state_accessor.get_state(state, [manager_address])
 
@@ -85,8 +85,8 @@ def _validate_state_and_return_user(header, user_proposal, state):
 
 
 def _validate_unique_proposal(user_proposal, state):
-    proposal_address = addresser.make_proposal_address(
-        object_id=user_proposal.user_id, related_id=user_proposal.new_manager_id
+    proposal_address = addresser.proposal.address(
+        object_id=user_proposal.user_id, target_id=user_proposal.new_manager_id
     )
     state_return = state_accessor.get_state(state, [proposal_address])
     if not proposal_validator.has_no_open_proposal(
@@ -119,8 +119,8 @@ def apply_user_confirm(header, payload, state):
     confirm_payload = user_transaction_pb2.ConfirmUpdateUserManager()
     confirm_payload.ParseFromString(payload.content)
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm_payload.user_id, related_id=confirm_payload.manager_id
+    proposal_address = addresser.proposal.address(
+        object_id=confirm_payload.user_id, target_id=confirm_payload.manager_id
     )
 
     proposal_entries = state_accessor.get_state(state, [proposal_address])
@@ -166,8 +166,8 @@ def apply_user_reject(header, payload, state):
     reject_payload = user_transaction_pb2.RejectUpdateUserManager()
     reject_payload.ParseFromString(payload.content)
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=reject_payload.user_id, related_id=reject_payload.manager_id
+    proposal_address = addresser.proposal.address(
+        object_id=reject_payload.user_id, target_id=reject_payload.manager_id
     )
 
     state_entries = state_accessor.get_state(state, [proposal_address])

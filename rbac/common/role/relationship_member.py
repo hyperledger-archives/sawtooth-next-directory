@@ -15,7 +15,7 @@
 
 import logging
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.manager.base_relationship import BaseRelationship
 from rbac.common.role.propose_member import ProposeAddRoleMember
@@ -41,4 +41,4 @@ class MemberRelationship(BaseRelationship):
         return protobuf.role_state_pb2.RoleRelationshipContainer
 
     def address(self, object_id, target_id):
-        return addresser.make_role_members_address(object_id, target_id)
+        return addresser.role.member.address(object_id, target_id)

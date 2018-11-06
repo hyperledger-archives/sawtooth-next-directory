@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
-from rbac.addressing import addresser as legacy
+from rbac.legacy import addresser as legacy
 from rbac.common.addresser.app import FAMILY_NAME
 from rbac.common.addresser.app import FAMILY_VERSION
 from rbac.common.addresser.app import NAMESPACE

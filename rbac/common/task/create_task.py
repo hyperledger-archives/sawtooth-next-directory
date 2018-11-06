@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.manager.base_message import BaseMessage
@@ -57,7 +57,7 @@ class CreateTask(BaseMessage):
 
     def address(self, object_id, target_id=None):
         """Make an address for the given task_id"""
-        return addresser.make_task_attributes_address(task_id=object_id)
+        return addresser.task.address(object_id)
 
     # pylint: disable=arguments-differ, not-callable
     def make(self, task_id, name, metadata=None, owners=None, admins=None):
@@ -72,22 +72,16 @@ class CreateTask(BaseMessage):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
         inputs = [
-            # addresser.make_sysadmin_members_address(signer_public_key),
-            addresser.make_task_attributes_address(message.task_id)
+            # addresser.sysadmin.member.address(signer_public_key),
+            addresser.task.address(message.task_id)
         ]
-        inputs.extend([addresser.make_user_address(u) for u in message.admins])
-        inputs.extend([addresser.make_user_address(u) for u in message.owners])
+        inputs.extend([addresser.user.address(u) for u in message.admins])
+        inputs.extend([addresser.user.address(u) for u in message.owners])
         inputs.extend(
-            [
-                addresser.make_task_admins_address(task_id=message.task_id, user_id=a)
-                for a in message.admins
-            ]
+            [addresser.task.admin.address(message.task_id, a) for a in message.admins]
         )
         inputs.extend(
-            [
-                addresser.make_task_owners_address(task_id=message.task_id, user_id=o)
-                for o in message.owners
-            ]
+            [addresser.task.owner.address(message.task_id, o) for o in message.owners]
         )
         outputs = inputs
         return inputs, outputs

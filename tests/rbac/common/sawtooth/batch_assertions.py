@@ -24,8 +24,7 @@ from sawtooth_sdk.protobuf import batch_pb2
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 
 from rbac.common.crypto.keys import Key
-from rbac.addressing import addresser
-from rbac.addressing.addresser import AddressSpace
+from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth.rbac_payload import unmake_payload
@@ -94,8 +93,12 @@ class BatchAssertions(CommonAssertions):
             self.assertIsInstance(outputs, list)
             self.assertEqual(len(inputs), 1)
             self.assertEqual(len(outputs), 1)
-            self.assertEqual(addresser.address_is(inputs[0]), AddressSpace.USER)
-            self.assertEqual(addresser.address_is(outputs[0]), AddressSpace.USER)
+            self.assertEqual(
+                addresser.address_is(inputs[0]), addresser.AddressSpace.USER
+            )
+            self.assertEqual(
+                addresser.address_is(outputs[0]), addresser.AddressSpace.USER
+            )
         else:
             raise Exception(
                 "BatchAssertions.assertValidInputs doesn't support message_type {}".format(

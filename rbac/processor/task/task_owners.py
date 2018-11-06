@@ -15,7 +15,7 @@
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.processor import proposal_validator, state_change
 from rbac.processor.task import task_validator
@@ -27,12 +27,10 @@ def apply_propose(header, payload, state):
     propose = task_transaction_pb2.ProposeAddTaskOwner()
     propose.ParseFromString(payload.content)
 
-    task_owners_address = addresser.make_task_owners_address(
-        task_id=propose.task_id, user_id=propose.user_id
-    )
+    task_owners_address = addresser.task.owner.address(propose.task_id, propose.user_id)
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=propose.task_id, related_id=propose.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=propose.task_id, target_id=propose.user_id
     )
 
     state_entries = task_validator.validate_task_rel_proposal(
@@ -65,12 +63,10 @@ def apply_propose_remove(header, payload, state):
     propose = task_transaction_pb2.ProposeRemoveTaskOwner()
     propose.ParseFromString(payload.content)
 
-    task_owners_address = addresser.make_task_owners_address(
-        task_id=propose.task_id, user_id=propose.user_id
-    )
+    task_owners_address = addresser.task.owner.address(propose.task_id, propose.user_id)
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=propose.task_id, related_id=propose.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=propose.task_id, target_id=propose.user_id
     )
 
     state_entries = task_validator.validate_task_rel_del_proposal(
@@ -120,12 +116,12 @@ def apply_confirm(header, payload, state, is_remove=False):
 
     confirm_payload.ParseFromString(payload.content)
 
-    task_owners_address = addresser.make_task_owners_address(
-        task_id=confirm_payload.task_id, user_id=confirm_payload.user_id
+    task_owners_address = addresser.task.owner.address(
+        confirm_payload.task_id, confirm_payload.user_id
     )
 
-    txn_signer_admin_address = addresser.make_task_admins_address(
-        task_id=confirm_payload.task_id, user_id=header.signer_public_key
+    txn_signer_admin_address = addresser.task.admin.address(
+        confirm_payload.task_id, header.signer_public_key
     )
 
     state_entries = task_validator.validate_task_admin_or_owner(
@@ -151,8 +147,8 @@ def apply_reject(header, payload, state):
     reject_payload = task_transaction_pb2.RejectAddTaskOwner()
     reject_payload.ParseFromString(payload.content)
 
-    txn_signer_admin_address = addresser.make_task_admins_address(
-        task_id=reject_payload.task_id, user_id=header.signer_public_key
+    txn_signer_admin_address = addresser.task.admin.address(
+        reject_payload.task_id, header.signer_public_key
     )
 
     state_entries = task_validator.validate_task_admin_or_owner(

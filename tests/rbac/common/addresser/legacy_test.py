@@ -17,7 +17,7 @@ import logging
 import pytest
 
 from rbac.common.crypto.keys import Key
-from rbac.addressing import addresser as legacy
+from rbac.legacy import addresser as legacy
 from rbac.common import addresser
 
 from tests.rbac.common.addresser.address_assertions import AddressAssertions

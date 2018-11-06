@@ -15,7 +15,7 @@
 
 import logging
 
-from rbac.addressing.addresser import namespace_ok
+from rbac.common import addresser
 from rbac.ledger_sync.deltas.decoding import data_to_dicts
 from rbac.ledger_sync.deltas.updating import get_updater
 
@@ -46,7 +46,7 @@ def _handle_delta(database, delta):
     # Parse changes and update database
     update = get_updater(database, delta.block_num)
     for change in delta.state_changes:
-        if namespace_ok(change.address):
+        if addresser.namespace_ok(change.address):
             resources = data_to_dicts(change.address, change.value)
             for resource in resources:
                 update_results = update(change.address, resource)

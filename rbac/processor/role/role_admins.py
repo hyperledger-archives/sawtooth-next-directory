@@ -16,7 +16,7 @@
 import logging
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.common.protobuf import proposal_state_pb2
 from rbac.common.protobuf import role_transaction_pb2
@@ -33,12 +33,12 @@ def apply_propose(header, payload, state):
     role_admins_payload = role_transaction_pb2.ProposeAddRoleAdmin()
     role_admins_payload.ParseFromString(payload.content)
 
-    role_admins_address = addresser.make_role_admins_address(
-        role_id=role_admins_payload.role_id, user_id=role_admins_payload.user_id
+    role_admins_address = addresser.role.admin.address(
+        role_admins_payload.role_id, role_admins_payload.user_id
     )
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=role_admins_payload.role_id, related_id=role_admins_payload.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=role_admins_payload.role_id, target_id=role_admins_payload.user_id
     )
 
     state_entries = role_validator.validate_role_rel_proposal(
@@ -73,12 +73,12 @@ def apply_propose_remove(header, payload, state):
     role_admins_payload = role_transaction_pb2.ProposeRemoveRoleAdmin()
     role_admins_payload.ParseFromString(payload.content)
 
-    role_admins_address = addresser.make_role_admins_address(
-        role_id=role_admins_payload.role_id, user_id=role_admins_payload.user_id
+    role_admins_address = addresser.role.admin.address(
+        role_admins_payload.role_id, role_admins_payload.user_id
     )
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=role_admins_payload.role_id, related_id=role_admins_payload.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=role_admins_payload.role_id, target_id=role_admins_payload.user_id
     )
 
     state_entries = role_validator.validate_role_rel_proposal(
@@ -114,12 +114,12 @@ def apply_confirm(header, payload, state):
     confirm_payload = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm_payload.ParseFromString(payload.content)
 
-    role_admin_address = addresser.make_role_admins_address(
-        role_id=confirm_payload.role_id, user_id=confirm_payload.user_id
+    role_admin_address = addresser.role.admin.address(
+        confirm_payload.role_id, confirm_payload.user_id
     )
 
-    txn_signer_admin_address = addresser.make_role_admins_address(
-        role_id=confirm_payload.role_id, user_id=header.signer_public_key
+    txn_signer_admin_address = addresser.role.admin.address(
+        confirm_payload.role_id, header.signer_public_key
     )
 
     state_entries = role_validator.get_state_entries(
@@ -142,8 +142,8 @@ def apply_reject(header, payload, state):
     reject_payload = role_transaction_pb2.RejectAddRoleAdmin()
     reject_payload.ParseFromString(payload.content)
 
-    txn_signer_admin_address = addresser.make_role_admins_address(
-        role_id=reject_payload.role_id, user_id=header.signer_public_key
+    txn_signer_admin_address = addresser.role.admin.address(
+        reject_payload.role_id, header.signer_public_key
     )
 
     state_entries = role_validator.get_state_entries(
@@ -186,8 +186,8 @@ def hierarchical_decide(header, payload, state, isApproval):
     confirm = role_transaction_pb2.ConfirmAddRoleAdmin()
     confirm.ParseFromString(payload.content)
 
-    txn_signer_admin_address = addresser.make_role_admins_address(
-        role_id=confirm.role_id, user_id=confirm.on_behalf_id
+    txn_signer_admin_address = addresser.role.admin.address(
+        confirm.role_id, confirm.on_behalf_id
     )
 
     role_operation.hierarchical_decide(

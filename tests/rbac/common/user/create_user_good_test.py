@@ -16,7 +16,7 @@
 import pytest
 import logging
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common.crypto.keys import Key
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
@@ -51,7 +51,7 @@ class CreateUserGoodTest(TestBase):
         self.assertTrue(callable(self.rbac.user.address))
         user_id = self.test.user.id()
         address1 = self.rbac.user.address(object_id=user_id)
-        address2 = addresser.make_user_address(user_id=user_id)
+        address2 = addresser.user.address(user_id)
         self.assertEqual(address1, address2)
 
     @pytest.mark.unit

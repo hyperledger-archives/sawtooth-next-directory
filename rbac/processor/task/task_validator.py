@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.processor import message_accessor, state_accessor, proposal_validator
 from rbac.processor.user import user_validator
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
@@ -49,11 +49,9 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
 
     task_id = propose.task_id
     user_id = propose.user_id
-    user_address = addresser.make_user_address(user_id)
-    task_address = addresser.make_task_attributes_address(task_id)
-    proposal_address = addresser.make_proposal_address(
-        object_id=task_id, related_id=user_id
-    )
+    user_address = addresser.user.address(user_id)
+    task_address = addresser.task.address(task_id)
+    proposal_address = addresser.proposal.address(object_id=task_id, target_id=user_id)
 
     state_entries = state_accessor.get_state(
         state, [user_address, task_address, proposal_address, rel_address]
@@ -113,11 +111,11 @@ def validate_task_rel_del_proposal(header, propose, rel_address, state):
         (dict of addresses)
     """
 
-    user_address = addresser.make_user_address(propose.user_id)
-    task_address = addresser.make_task_attributes_address(propose.task_id)
+    user_address = addresser.user.address(propose.user_id)
+    task_address = addresser.task.address(propose.task_id)
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=propose.task_id, related_id=propose.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=propose.task_id, target_id=propose.user_id
     )
 
     state_entries = state_accessor.get_state(
@@ -193,8 +191,8 @@ def validate_task_admin_or_owner(
             - The transaction is invalid.
     """
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm.task_id, related_id=confirm.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=confirm.task_id, target_id=confirm.user_id
     )
 
     if not is_remove:
@@ -239,7 +237,7 @@ def validate_create_task_state(state_entries, payload):
 
     try:
         entry = state_accessor.get_state_entry(
-            state_entries, addresser.make_task_attributes_address(payload.task_id)
+            state_entries, addresser.task.address(payload.task_id)
         )
         container = message_accessor.get_task_container(entry)
 

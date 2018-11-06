@@ -15,7 +15,7 @@
 
 import logging
 from uuid import uuid4
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.manager.base_message import BaseMessage
 
@@ -48,9 +48,7 @@ class ProposeAddRoleOwner(BaseMessage):
 
     def address(self, object_id, target_id):
         """Make the blockchain address for the given message"""
-        return addresser.make_proposal_address(
-            object_id=object_id, related_id=target_id
-        )
+        return addresser.proposal.address(object_id=object_id, target_id=target_id)
 
     # pylint: disable=arguments-differ, not-callable
     def make(self, role_id, user_id, reason=None, metadata=None):
@@ -68,11 +66,11 @@ class ProposeAddRoleOwner(BaseMessage):
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
-        relationship_address = addresser.make_role_owners_address(
-            role_id=message.role_id, user_id=message.user_id
+        relationship_address = addresser.role.owner.address(
+            message.role_id, message.user_id
         )
-        user_address = addresser.make_user_address(user_id=message.user_id)
-        role_address = addresser.make_role_attributes_address(role_id=message.role_id)
+        user_address = addresser.user.address(message.user_id)
+        role_address = addresser.role.address(message.role_id)
         proposal_address = self.address(
             object_id=message.role_id, target_id=message.user_id
         )

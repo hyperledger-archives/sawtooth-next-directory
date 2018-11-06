@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.processor import message_accessor, state_accessor, proposal_validator
 from rbac.common.protobuf import role_state_pb2
 from rbac.processor.user import user_validator
@@ -36,10 +36,10 @@ def validate_role_rel_proposal(header, propose, rel_address, state, is_remove=Fa
         (dict of addresses)
     """
 
-    user_address = addresser.make_user_address(propose.user_id)
-    role_address = addresser.make_role_attributes_address(propose.role_id)
-    proposal_address = addresser.make_proposal_address(
-        object_id=propose.role_id, related_id=propose.user_id
+    user_address = addresser.user.address(propose.user_id)
+    role_address = addresser.role.address(propose.role_id)
+    proposal_address = addresser.proposal.address(
+        object_id=propose.role_id, target_id=propose.user_id
     )
 
     state_entries = state_accessor.get_state(
@@ -133,7 +133,7 @@ def validate_create_role_payload(create_role):
 
 def validate_create_role_state(create_role, state):
     state_return = state_accessor.get_state(
-        state, [addresser.make_role_attributes_address(create_role.role_id)]
+        state, [addresser.role.address(create_role.role_id)]
     )
 
     if _role_already_exists(state_return, create_role.role_id):
@@ -143,15 +143,15 @@ def validate_create_role_state(create_role, state):
 
     users = list(create_role.admins) + list(create_role.owners)
     user_state_return = state_accessor.get_state(
-        state, [addresser.make_user_address(u) for u in users]
+        state, [addresser.user.address(u) for u in users]
     )
 
     user_validator.validate_list_of_user_are_users(user_state_return, users)
 
 
 def validate_role_task(header, confirm, txn_signer_rel_address, state):
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm.role_id, related_id=confirm.task_id
+    proposal_address = addresser.proposal.address(
+        object_id=confirm.role_id, target_id=confirm.task_id
     )
 
     state_entries = state_accessor.get_state(
@@ -210,8 +210,8 @@ def get_state_entries(header, confirm, txn_signer_rel_address, state):
         (dict of addresses)
     """
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm.role_id, related_id=confirm.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=confirm.role_id, target_id=confirm.user_id
     )
 
     state_entries = state_accessor.get_state(

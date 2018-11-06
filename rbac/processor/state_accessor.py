@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.processor import message_accessor
 
 from sawtooth_sdk.messaging.future import FutureTimeoutError
@@ -59,7 +59,7 @@ def set_state(state, entries):
 
 
 def get_user_from_id(state, user_id):
-    user_address = addresser.make_user_address(user_id)
+    user_address = addresser.user.address(user_id)
     state_entries = get_state(state, [user_address])
     user_entry = get_state_entry(state_entries, user_address)
     return message_accessor.get_user_from_container(

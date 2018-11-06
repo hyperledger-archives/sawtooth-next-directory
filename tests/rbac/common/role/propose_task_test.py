@@ -16,7 +16,7 @@
 import pytest
 import logging
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.role.role_manager import RoleManager
@@ -84,16 +84,16 @@ class ProposeRoleAddTaskTest(RoleTestHelper):
             message=message, signer_keypair=signer_keypair
         )
 
-        relationship_address = addresser.make_role_tasks_address(
-            role_id=message.role_id, task_id=message.task_id
+        relationship_address = addresser.role.task.address(
+            message.role_id, message.task_id
         )
         task_address = self.task.address(object_id=message.task_id)
         role_address = self.role.address(object_id=message.role_id)
         proposal_address = self.role.task.propose.address(
             object_id=message.role_id, target_id=message.task_id
         )
-        signer_address = addresser.make_role_owners_address(
-            role_id=message.role_id, user_id=signer_keypair.public_key
+        signer_address = addresser.role.owner.address(
+            message.role_id, signer_keypair.public_key
         )
 
         self.assertIsInstance(inputs, list)
@@ -117,16 +117,16 @@ class ProposeRoleAddTaskTest(RoleTestHelper):
             message=message, signer_keypair=signer_keypair
         )
 
-        relationship_address = addresser.make_role_tasks_address(
-            role_id=message.role_id, task_id=message.task_id
+        relationship_address = addresser.role.task.address(
+            message.role_id, message.task_id
         )
         task_address = self.task.address(object_id=message.task_id)
         role_address = self.role.address(object_id=message.role_id)
         proposal_address = self.role.task.propose.address(
             object_id=message.role_id, target_id=message.task_id
         )
-        signer_address = addresser.make_role_owners_address(
-            role_id=message.role_id, user_id=signer_keypair.public_key
+        signer_address = addresser.role.owner.address(
+            message.role_id, signer_keypair.public_key
         )
 
         self.assertIsInstance(payload, RBACPayload)

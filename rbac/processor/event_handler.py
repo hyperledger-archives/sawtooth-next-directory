@@ -16,8 +16,7 @@
 import logging
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
-from rbac.addressing import addresser
-
+from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.processor.role import role_admins, roles, role_members, role_owners
 from rbac.processor.role import role_tasks
@@ -117,7 +116,7 @@ class RBACTransactionHandler(object):
 
     @property
     def namespaces(self):
-        return [addresser.NS]
+        return [addresser.NAMESPACE]
 
     def apply(self, transaction, state):
         payload = RBACPayload()

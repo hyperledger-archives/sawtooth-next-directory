@@ -15,7 +15,7 @@
 
 import logging
 from uuid import uuid4
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.manager.base_message import BaseMessage
 
@@ -48,9 +48,7 @@ class ProposeUpdateUserManager(BaseMessage):
 
     def address(self, object_id, target_id):
         """Make the blockchain address for the given message"""
-        return addresser.make_proposal_address(
-            object_id=object_id, related_id=target_id
-        )
+        return addresser.proposal.address(object_id=object_id, target_id=target_id)
 
     # pylint: disable=arguments-differ, not-callable
     def make(self, user_id, new_manager_id, reason=None, metadata=None):
@@ -68,10 +66,10 @@ class ProposeUpdateUserManager(BaseMessage):
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
-        user_address = addresser.make_user_address(user_id=message.user_id)
-        manager_address = addresser.make_user_address(user_id=message.new_manager_id)
-        proposal_address = addresser.make_proposal_address(
-            object_id=message.user_id, related_id=message.new_manager_id
+        user_address = addresser.user.address(message.user_id)
+        manager_address = addresser.user.address(message.new_manager_id)
+        proposal_address = addresser.proposal.address(
+            object_id=message.user_id, target_id=message.new_manager_id
         )
 
         inputs = [user_address, manager_address, proposal_address]
