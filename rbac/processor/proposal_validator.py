@@ -15,7 +15,7 @@
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.common.protobuf import proposal_state_pb2
 from rbac.processor import message_accessor, state_accessor
@@ -79,19 +79,17 @@ def validate_role_task_proposal(header, propose, state):
 
     """
 
-    role_address = addresser.make_role_attributes_address(propose.role_id)
+    role_address = addresser.role.address(propose.role_id)
 
-    task_address = addresser.make_task_attributes_address(propose.task_id)
+    task_address = addresser.task.address(propose.task_id)
 
-    proposal_address = addresser.make_proposal_address(propose.role_id, propose.task_id)
+    proposal_address = addresser.proposal.address(propose.role_id, propose.task_id)
 
-    txn_signer_role_owner_address = addresser.make_role_owners_address(
-        role_id=propose.role_id, user_id=header.signer_public_key
+    txn_signer_role_owner_address = addresser.role.owner.address(
+        propose.role_id, header.signer_public_key
     )
 
-    role_tasks_address = addresser.make_role_tasks_address(
-        propose.role_id, propose.task_id
-    )
+    role_tasks_address = addresser.role.task.address(propose.role_id, propose.task_id)
 
     state_entries = state_accessor.get_state(
         state=state,

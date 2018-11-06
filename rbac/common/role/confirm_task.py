@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from rbac.common.manager.base_message import BaseMessage
@@ -48,9 +48,7 @@ class ConfirmAddRoleTask(BaseMessage):
 
     def address(self, object_id, target_id):
         """Make the blockchain address for the given message"""
-        return addresser.make_proposal_address(
-            object_id=object_id, related_id=target_id
-        )
+        return addresser.proposal.address(object_id=object_id, target_id=target_id)
 
     # pylint: disable=arguments-differ, not-callable
     def make(self, proposal_id, role_id, task_id, reason=None, metadata=None):
@@ -66,12 +64,12 @@ class ConfirmAddRoleTask(BaseMessage):
         if not isinstance(signer_keypair, Key):
             raise TypeError("Expected signer_keypair to be provided")
 
-        signer_address = addresser.make_task_owners_address(
-            task_id=message.task_id, user_id=signer_keypair.public_key
+        signer_address = addresser.task.owner.address(
+            message.task_id, signer_keypair.public_key
         )
 
-        relationship_address = addresser.make_role_tasks_address(
-            role_id=message.role_id, task_id=message.task_id
+        relationship_address = addresser.role.task.address(
+            message.role_id, message.task_id
         )
 
         proposal_address = self.address(

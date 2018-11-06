@@ -16,8 +16,8 @@
 import pytest
 import unittest
 import logging
-from rbac.addressing import addresser
-from rbac.addressing.addresser import AddressSpace
+from rbac.legacy import addresser
+from rbac.legacy.addresser import AddressSpace
 
 LOGGER = logging.getLogger(__name__)
 

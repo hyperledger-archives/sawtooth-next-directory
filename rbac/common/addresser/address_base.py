@@ -15,7 +15,7 @@
 
 import os
 from hashlib import sha512
-from rbac.addressing import addresser as legacy
+from rbac.legacy import addresser as legacy
 from rbac.common.addresser.address_space import AddressSpace
 
 

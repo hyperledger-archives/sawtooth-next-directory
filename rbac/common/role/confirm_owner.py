@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from rbac.common.manager.base_message import BaseMessage
@@ -48,9 +48,7 @@ class ConfirmAddRoleOwner(BaseMessage):
 
     def address(self, object_id, target_id):
         """Make the blockchain address for the given message"""
-        return addresser.make_proposal_address(
-            object_id=object_id, related_id=target_id
-        )
+        return addresser.proposal.address(object_id=object_id, target_id=target_id)
 
     # pylint: disable=arguments-differ, not-callable
     def make(self, proposal_id, role_id, user_id, reason=None, metadata=None):
@@ -67,15 +65,15 @@ class ConfirmAddRoleOwner(BaseMessage):
             raise TypeError("Expected signer_keypair to be provided")
 
         # should be owner not admin
-        signer_admin_address = addresser.make_role_admins_address(
-            role_id=message.role_id, user_id=signer_keypair.public_key
+        signer_admin_address = addresser.role.admin.address(
+            message.role_id, signer_keypair.public_key
         )
-        signer_owner_address = addresser.make_role_owners_address(
-            role_id=message.role_id, user_id=signer_keypair.public_key
+        signer_owner_address = addresser.role.owner.address(
+            message.role_id, signer_keypair.public_key
         )
 
-        relationship_address = addresser.make_role_owners_address(
-            role_id=message.role_id, user_id=message.user_id
+        relationship_address = addresser.role.owner.address(
+            message.role_id, message.user_id
         )
 
         proposal_address = self.address(

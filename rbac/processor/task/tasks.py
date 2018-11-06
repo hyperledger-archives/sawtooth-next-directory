@@ -15,7 +15,7 @@
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.processor.task import task_validator
 from rbac.common.protobuf import task_state_pb2
 from rbac.common.protobuf import task_transaction_pb2
@@ -26,7 +26,7 @@ def new_task(payload, state):
     create_payload = task_transaction_pb2.CreateTask()
     create_payload.ParseFromString(payload.content)
 
-    addresses = [addresser.make_task_attributes_address(create_payload.task_id)]
+    addresses = [addresser.task.address(create_payload.task_id)]
     if not create_payload.admins:
         raise InvalidTransaction("New tasks must have administrators.")
 
@@ -34,26 +34,20 @@ def new_task(payload, state):
         raise InvalidTransaction("New tasks must have owners.")
 
     if create_payload.admins:
-        addresses.extend(
-            [addresser.make_user_address(u) for u in create_payload.admins]
-        )
+        addresses.extend([addresser.user.address(u) for u in create_payload.admins])
 
         addresses.extend(
             [
-                addresser.make_task_admins_address(
-                    task_id=create_payload.task_id, user_id=u
-                )
+                addresser.task.admin.address(create_payload.task_id, u)
                 for u in create_payload.admins
             ]
         )
 
     if create_payload.owners:
-        addresses.extend(
-            [addresser.make_user_address(u) for u in create_payload.owners]
-        )
+        addresses.extend([addresser.user.address(u) for u in create_payload.owners])
         addresses.extend(
             [
-                addresser.make_task_owners_address(create_payload.task_id, user_id=u)
+                addresser.task.owner.address(create_payload.task_id, u)
                 for u in create_payload.owners
             ]
         )
@@ -70,7 +64,7 @@ def new_task(payload, state):
 def create_task(state_entries, payload, state):
     try:
         entry = state_accessor.get_state_entry(
-            state_entries, addresser.make_task_attributes_address(payload.task_id)
+            state_entries, addresser.task.address(payload.task_id)
         )
         container = message_accessor.get_task_container(entry)
 
@@ -87,9 +81,7 @@ def create_task(state_entries, payload, state):
 
     pubkeys_by_address = {}
     for pubkey in payload.admins:
-        address = addresser.make_task_admins_address(
-            task_id=payload.task_id, user_id=pubkey
-        )
+        address = addresser.task.admin.address(payload.task_id, pubkey)
         if address in pubkeys_by_address:
             pubkeys_by_address[address].append(pubkey)
         else:
@@ -105,9 +97,7 @@ def create_task(state_entries, payload, state):
 
     pubkeys_by_address = {}
     for pubkey in payload.owners:
-        address = addresser.make_task_owners_address(
-            task_id=payload.task_id, user_id=pubkey
-        )
+        address = addresser.task.owner.address(payload.task_id, pubkey)
         if address in pubkeys_by_address:
             pubkeys_by_address[address].append(pubkey)
         else:
@@ -122,7 +112,7 @@ def create_task(state_entries, payload, state):
     )
 
     address_values[
-        addresser.make_task_attributes_address(payload.task_id)
+        addresser.task.address(payload.task_id)
     ] = container.SerializeToString()
 
     state_accessor.set_state(state, address_values)

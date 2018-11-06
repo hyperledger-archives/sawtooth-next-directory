@@ -19,8 +19,7 @@ import logging
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 from sawtooth_sdk.protobuf import batch_pb2
 from sawtooth_sdk.protobuf import transaction_pb2
-from rbac.addressing import addresser
-from rbac.addressing.addresser import AddressSpace
+from rbac.common import addresser
 from rbac.transaction_creation.common import Key
 from rbac.common.protobuf import user_transaction_pb2, rbac_payload_pb2
 from tests.transactions.common import SIGNATURE_LENGTH
@@ -85,10 +84,9 @@ class TestUserTransactionCreation(unittest.TestCase):
                     input_count += 1
                     self.assertEqual(type(address), str)
                     self.assertEqual(len(address), addresser.ADDRESS_LENGTH)
-                    self.assertTrue(addresser.is_address(address))
-                    self.assertTrue(addresser.namespace_ok(address))
-                    self.assertTrue(addresser.is_family_address(address))
-                    self.assertEqual(addresser.address_is(address), AddressSpace.USER)
+                    self.assertEqual(
+                        addresser.address_is(address), addresser.AddressSpace.USER
+                    )
 
                 self.assertEqual(input_count, 1)
 
@@ -97,10 +95,9 @@ class TestUserTransactionCreation(unittest.TestCase):
                     output_count += 1
                     self.assertEqual(type(address), str)
                     self.assertEqual(len(address), addresser.ADDRESS_LENGTH)
-                    self.assertTrue(addresser.is_address(address))
-                    self.assertTrue(addresser.namespace_ok(address))
-                    self.assertTrue(addresser.is_family_address(address))
-                    self.assertEqual(addresser.address_is(address), AddressSpace.USER)
+                    self.assertEqual(
+                        addresser.address_is(address), addresser.AddressSpace.USER
+                    )
 
                 self.assertEqual(output_count, 1)
 

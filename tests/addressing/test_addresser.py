@@ -18,8 +18,8 @@ import logging
 import unittest
 from uuid import uuid4
 
-from rbac.addressing import addresser
-from rbac.addressing.addresser import AddressSpace
+from rbac.legacy import addresser
+from rbac.legacy.addresser import AddressSpace
 
 LOGGER = logging.getLogger(__name__)
 

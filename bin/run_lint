@@ -41,7 +41,7 @@ for var in "$@"
 do
     ARGS=1
     case "$var" in
-    "rbac/addressing"           ) lint rbac/addressing || ret_val=1;;
+    "rbac/legacy"               ) lint rbac/legacy || ret_val=1;;
     "rbac/common"               ) lint rbac/common || ret_val=1;;
     "rbac/ledger_sync"          ) lint rbac/ledger_sync || ret_val=1;;
     "rbac/processor"            ) lint rbac/processor || ret_val=1;;
@@ -54,7 +54,7 @@ do
 done
 
 if [ $ARGS -eq 0 ]; then
-    lint rbac/addressing || ret_val=1
+    lint rbac/legacy || ret_val=1
     lint rbac/common || ret_val=1
     lint rbac/ledger_sync || ret_val=1
     lint rbac/processor || ret_val=1

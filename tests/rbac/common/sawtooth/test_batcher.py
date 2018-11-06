@@ -18,9 +18,7 @@ import pytest
 
 from rbac.common.crypto.keys import Key
 from rbac.app.config import BATCHER_KEY_PAIR
-from rbac.addressing import addresser
-from rbac.addressing.addresser import AddressSpace
-from rbac.common.user.user_address import make_user_address
+from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth.batcher import Batcher
@@ -39,7 +37,7 @@ class TestBatchClient(BatchAssertions, Batcher):
             signer = Key()
             message = user_transaction_pb2.CreateUser(name="foobar")
             message.user_id = signer.public_key
-            inputs = [make_user_address(user_id=message.user_id)]
+            inputs = [addresser.user.address(message.user_id)]
             outputs = inputs
             return message, message_type, inputs, outputs, signer
         else:
@@ -63,7 +61,6 @@ class TestBatchClient(BatchAssertions, Batcher):
     def test_get_test_inputs(self):
         """Verifies the test data inputs function returns the expected test data"""
         self.assertTrue(callable(self.get_test_inputs))
-        self.assertTrue(callable(make_user_address))
         message, message_type, inputs, outputs, signer = self.get_test_inputs()
         self.assertIsInstance(signer, Key)
         self.assertEqual(message_type, RBACPayload.CREATE_USER)
@@ -73,8 +70,8 @@ class TestBatchClient(BatchAssertions, Batcher):
         self.assertIsInstance(outputs, list)
         self.assertEqual(len(inputs), 1)
         self.assertEqual(len(outputs), 1)
-        self.assertEqual(addresser.address_is(inputs[0]), AddressSpace.USER)
-        self.assertEqual(addresser.address_is(outputs[0]), AddressSpace.USER)
+        self.assertEqual(addresser.address_is(inputs[0]), addresser.AddressSpace.USER)
+        self.assertEqual(addresser.address_is(outputs[0]), addresser.AddressSpace.USER)
 
     def test_make_payload(self):
         """Test the make payload batch function"""

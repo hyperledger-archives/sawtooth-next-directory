@@ -15,7 +15,7 @@
 
 import logging
 from rbac.processor import message_accessor, state_accessor
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.common.protobuf import proposal_state_pb2, task_state_pb2, role_state_pb2
 from rbac.common.protobuf import user_state_pb2
@@ -31,17 +31,13 @@ def create_role(new_role, state):
     role.metadata = new_role.metadata
 
     entries_to_set = {
-        addresser.make_role_attributes_address(
-            new_role.role_id
-        ): role_container.SerializeToString()
+        addresser.role.address(new_role.role_id): role_container.SerializeToString()
     }
 
     pubkeys_by_address = {}
 
     for admin in list(new_role.admins):
-        admin_address = addresser.make_role_admins_address(
-            role_id=new_role.role_id, user_id=admin
-        )
+        admin_address = addresser.role.admin.address(new_role.role_id, admin)
 
         if admin_address in pubkeys_by_address:
             pubkeys_by_address[admin_address].append(admin)
@@ -49,9 +45,7 @@ def create_role(new_role, state):
             pubkeys_by_address[admin_address] = [admin]
 
     for owner in list(new_role.owners):
-        owner_address = addresser.make_role_owners_address(
-            role_id=new_role.role_id, user_id=owner
-        )
+        owner_address = addresser.role.owner.address(new_role.role_id, owner)
 
         if owner_address in pubkeys_by_address:
             pubkeys_by_address[owner_address].append(owner)
@@ -60,14 +54,8 @@ def create_role(new_role, state):
 
     state_returns = state_accessor.get_state(
         state,
-        [
-            addresser.make_role_admins_address(role_id=new_role.role_id, user_id=a)
-            for a in new_role.admins
-        ]
-        + [
-            addresser.make_role_owners_address(role_id=new_role.role_id, user_id=o)
-            for o in new_role.owners
-        ],
+        [addresser.role.admin.address(new_role.role_id, a) for a in new_role.admins]
+        + [addresser.role.owner.address(new_role.role_id, o) for o in new_role.owners],
     )
 
     for addr, pubkeys in pubkeys_by_address.items():
@@ -86,7 +74,7 @@ def create_role(new_role, state):
 
 
 def propose_manager_change(proposal_state_entries, header, user_proposal, state):
-    proposal_address = addresser.make_proposal_address(
+    proposal_address = addresser.proposal.address(
         user_proposal.user_id, user_proposal.new_manager_id
     )
     try:
@@ -123,7 +111,7 @@ def confirm_manager_change(
 
     state_accessor.set_state(state, {address: container.SerializeToString()})
 
-    user_address = addresser.make_user_address(user_id)
+    user_address = addresser.user.address(user_id)
     state_entries = state_accessor.get_state(state, [user_address])
     state_entry = state_accessor.get_state_entry(
         state_entries=state_entries, address=user_address
@@ -181,8 +169,8 @@ def confirm_task_action(
             is_remove (boolean): Determines if task admin/owner is being removed or added.
 
     """
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm.task_id, related_id=confirm.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=confirm.task_id, target_id=confirm.user_id
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -224,8 +212,8 @@ def confirm_task_action(
 
 
 def reject_task_action(state_entries, header, reject, state):
-    proposal_address = addresser.make_proposal_address(
-        object_id=reject.task_id, related_id=reject.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=reject.task_id, target_id=reject.user_id
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -275,8 +263,8 @@ def propose_role_action(
 def confirm_role_action(
     state_entries, header, confirm, role_rel_address, state, rel_type="user_id"
 ):
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm.role_id, related_id=getattr(confirm, rel_type)
+    proposal_address = addresser.proposal.address(
+        object_id=confirm.role_id, target_id=getattr(confirm, rel_type)
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -312,8 +300,8 @@ def confirm_role_action(
 
 
 def reject_role_action(state_entries, header, reject, state, rel_type="user_id"):
-    proposal_address = addresser.make_proposal_address(
-        object_id=reject.role_id, related_id=getattr(reject, rel_type)
+    proposal_address = addresser.proposal.address(
+        object_id=reject.role_id, target_id=getattr(reject, rel_type)
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -346,7 +334,7 @@ def confirm_new_user(create_user, state, manager_id=None):
     state_accessor.set_state(
         state,
         {
-            addresser.make_user_address(
+            addresser.user.address(
                 create_user.user_id
             ): user_container.SerializeToString()
         },
@@ -368,8 +356,8 @@ def record_decision(state, header, confirm, isApproval):
     """
     on_behalf_id = confirm.on_behalf_id
 
-    proposal_address = addresser.make_proposal_address(
-        object_id=confirm.role_id, related_id=confirm.user_id
+    proposal_address = addresser.proposal.address(
+        object_id=confirm.role_id, target_id=confirm.user_id
     )
 
     state_entries = state_accessor.get_state(state, [proposal_address])

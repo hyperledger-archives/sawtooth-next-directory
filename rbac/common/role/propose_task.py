@@ -15,7 +15,7 @@
 
 import logging
 from uuid import uuid4
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.manager.base_message import BaseMessage
 
@@ -48,9 +48,7 @@ class ProposeAddRoleTask(BaseMessage):
 
     def address(self, object_id, target_id):
         """Make the blockchain address for the given message"""
-        return addresser.make_proposal_address(
-            object_id=object_id, related_id=target_id
-        )
+        return addresser.proposal.address(object_id=object_id, target_id=target_id)
 
     # pylint: disable=arguments-differ, not-callable
     def make(self, role_id, task_id, reason=None, metadata=None):
@@ -68,11 +66,11 @@ class ProposeAddRoleTask(BaseMessage):
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
-        relationship_address = addresser.make_role_tasks_address(
-            role_id=message.role_id, task_id=message.task_id
+        relationship_address = addresser.role.task.address(
+            message.role_id, message.task_id
         )
-        task_address = addresser.make_task_attributes_address(task_id=message.task_id)
-        role_address = addresser.make_role_attributes_address(role_id=message.role_id)
+        task_address = addresser.task.address(message.task_id)
+        role_address = addresser.role.address(message.role_id)
         proposal_address = self.address(
             object_id=message.role_id, target_id=message.task_id
         )
@@ -80,8 +78,8 @@ class ProposeAddRoleTask(BaseMessage):
         inputs = [relationship_address, role_address, task_address, proposal_address]
 
         if signer_keypair is not None:
-            signer_address = addresser.make_role_owners_address(
-                role_id=message.role_id, user_id=signer_keypair.public_key
+            signer_address = addresser.role.owner.address(
+                message.role_id, signer_keypair.public_key
             )
             inputs.append(signer_address)
 

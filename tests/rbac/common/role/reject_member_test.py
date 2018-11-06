@@ -17,7 +17,7 @@ import pytest
 import logging
 from uuid import uuid4
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.role.role_manager import RoleManager
@@ -90,8 +90,8 @@ class RejectRoleAddMemberTest(RoleTestHelper):
             message=message, signer_keypair=owner_key
         )
 
-        proposal_address = addresser.make_proposal_address(
-            object_id=message.role_id, related_id=message.user_id
+        proposal_address = addresser.proposal.address(
+            object_id=message.role_id, target_id=message.user_id
         )
 
         self.assertIsInstance(inputs, list)

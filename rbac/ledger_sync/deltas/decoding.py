@@ -17,8 +17,8 @@
 # needed for the google.protobuf imports to pass pylint
 from google.protobuf.json_format import MessageToDict
 
-from rbac.addressing.addresser import address_is
-from rbac.addressing.addresser import AddressSpace
+from rbac.common import addresser
+from rbac.common.addresser import AddressSpace
 from rbac.common.protobuf.proposal_state_pb2 import ProposalsContainer
 from rbac.common.protobuf.role_state_pb2 import RoleAttributesContainer
 from rbac.common.protobuf.role_state_pb2 import RoleRelationshipContainer
@@ -73,7 +73,7 @@ def data_to_dicts(address, data):
     """Deserializes a protobuf binary based on its address. Returns a list of
     the decoded objects which were stored at that address.
     """
-    data_type = address_is(address)
+    data_type = addresser.address_is(address)
 
     try:
         deserializer = DESERIALIZERS[data_type]

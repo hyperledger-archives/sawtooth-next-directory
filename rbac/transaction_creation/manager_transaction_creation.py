@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.transaction_creation.common import make_header_and_batch
 
@@ -50,14 +50,12 @@ def propose_manager(
     )
 
     inputs = [
-        addresser.make_user_address(user_id=user_id),
-        addresser.make_user_address(user_id=new_manager_id),
-        addresser.make_proposal_address(object_id=user_id, related_id=new_manager_id),
+        addresser.user.address(user_id),
+        addresser.user.address(new_manager_id),
+        addresser.proposal.address(object_id=user_id, target_id=new_manager_id),
     ]
 
-    outputs = [
-        addresser.make_proposal_address(object_id=user_id, related_id=new_manager_id)
-    ]
+    outputs = [addresser.proposal.address(object_id=user_id, target_id=new_manager_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_update_payload.SerializeToString(),
@@ -86,13 +84,13 @@ def confirm_manager(txn_key, batch_key, proposal_id, user_id, manager_id, reason
     )
 
     inputs = [
-        addresser.make_proposal_address(user_id, manager_id),
-        addresser.make_user_address(user_id),
+        addresser.proposal.address(user_id, manager_id),
+        addresser.user.address(user_id),
     ]
 
     outputs = [
-        addresser.make_proposal_address(user_id, manager_id),
-        addresser.make_user_address(user_id),
+        addresser.proposal.address(user_id, manager_id),
+        addresser.user.address(user_id),
     ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
@@ -123,11 +121,9 @@ def reject_manager(txn_key, batch_key, proposal_id, reason, user_id, manager_id)
         proposal_id=proposal_id, user_id=user_id, manager_id=manager_id, reason=reason
     )
 
-    inputs = [addresser.make_proposal_address(object_id=user_id, related_id=manager_id)]
+    inputs = [addresser.proposal.address(object_id=user_id, target_id=manager_id)]
 
-    outputs = [
-        addresser.make_proposal_address(object_id=user_id, related_id=manager_id)
-    ]
+    outputs = [addresser.proposal.address(object_id=user_id, target_id=manager_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_update_payload.SerializeToString(),

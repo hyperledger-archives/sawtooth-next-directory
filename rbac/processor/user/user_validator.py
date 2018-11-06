@@ -15,7 +15,7 @@
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from rbac.processor import message_accessor, state_accessor
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 
 def validate_identifier_is_user(state_entries, identifier, address):
@@ -43,7 +43,7 @@ def validate_identifier_is_user(state_entries, identifier, address):
 
 def validate_user_state(create_user, state):
     user_entries = state_accessor.get_state(
-        state, [addresser.make_user_address(create_user.user_id)]
+        state, [addresser.user.address(create_user.user_id)]
     )
     if user_entries:
         # this is necessary for state collisions.
@@ -61,7 +61,7 @@ def validate_user_state(create_user, state):
 
 def validate_manager_state(create_user, state):
     manager_entries = state_accessor.get_state(
-        state, [addresser.make_user_address(create_user.manager_id)]
+        state, [addresser.user.address(create_user.manager_id)]
     )
     if not manager_entries:
         raise InvalidTransaction(
@@ -70,7 +70,7 @@ def validate_manager_state(create_user, state):
         )
 
     state_entry = state_accessor.get_state_entry(
-        manager_entries, addresser.make_user_address(user_id=create_user.manager_id)
+        manager_entries, addresser.user.address(create_user.manager_id)
     )
     manager_container = message_accessor.get_user_container(state_entry)
     if not message_accessor.is_in_user_container(
@@ -83,7 +83,7 @@ def validate_manager_state(create_user, state):
 
 
 def validate_list_of_user_are_users(state_return, admins):
-    for address, user_id in [(addresser.make_user_address(a), a) for a in admins]:
+    for address, user_id in [(addresser.user.address(a), a) for a in admins]:
         validate_identifier_is_user(
             state_entries=state_return, identifier=user_id, address=address
         )

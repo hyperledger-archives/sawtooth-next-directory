@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.transaction_creation.common import make_header_and_batch
 
@@ -27,22 +27,22 @@ def create_task(txn_key, batch_key, task_id, task_name, admins, owners, metadata
     create_payload.admins.extend(admins)
 
     inputs = [
-        addresser.make_task_attributes_address(task_id=task_id),
-        addresser.make_sysadmin_members_address(txn_key.public_key),
+        addresser.task.address(task_id),
+        addresser.sysadmin.member.address(txn_key.public_key),
     ]
 
-    inputs.extend([addresser.make_user_address(user_id=u) for u in admins])
-    inputs.extend([addresser.make_task_admins_address(task_id, u) for u in admins])
+    inputs.extend([addresser.user.address(u) for u in admins])
+    inputs.extend([addresser.task.admin.address(task_id, u) for u in admins])
 
-    outputs = [addresser.make_task_attributes_address(task_id=task_id)]
+    outputs = [addresser.task.address(task_id)]
 
-    outputs.extend([addresser.make_task_admins_address(task_id, u) for u in admins])
+    outputs.extend([addresser.task.admin.address(task_id, u) for u in admins])
 
     if owners:
         create_payload.owners.extend(owners)
-        inputs.extend([addresser.make_user_address(user_id=u) for u in owners])
-        inputs.extend([addresser.make_task_owners_address(task_id, u) for u in owners])
-        outputs.extend([addresser.make_task_owners_address(task_id, u) for u in owners])
+        inputs.extend([addresser.user.address(u) for u in owners])
+        inputs.extend([addresser.task.owner.address(task_id, u) for u in owners])
+        outputs.extend([addresser.task.owner.address(task_id, u) for u in owners])
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_payload.SerializeToString(),
@@ -64,13 +64,13 @@ def propose_add_task_admins(
     )
 
     inputs = [
-        addresser.make_user_address(user_id),
-        addresser.make_task_admins_address(task_id=task_id, user_id=user_id),
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_attributes_address(task_id),
+        addresser.user.address(user_id),
+        addresser.task.admin.address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.address(task_id),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_payload.SerializeToString(),
@@ -86,13 +86,13 @@ def confirm_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, r
     )
 
     inputs = [
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
-        addresser.make_proposal_address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.proposal.address(task_id, user_id),
     ]
 
     outputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_admins_address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.admin.address(task_id, user_id),
     ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
@@ -109,11 +109,11 @@ def reject_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, re
     )
 
     inputs = [
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
-        addresser.make_proposal_address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.proposal.address(task_id, user_id),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
@@ -135,13 +135,13 @@ def propose_remove_task_admins(
     )
 
     inputs = [
-        addresser.make_user_address(user_id),
-        addresser.make_task_admins_address(task_id=task_id, user_id=user_id),
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_attributes_address(task_id),
+        addresser.user.address(user_id),
+        addresser.task.admin.address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.address(task_id),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
@@ -159,14 +159,14 @@ def confirm_remove_task_admins(
     )
 
     inputs = [
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
-        addresser.make_task_admins_address(task_id, user_id),
-        addresser.make_proposal_address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.task.admin.address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
     ]
 
     outputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_admins_address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.admin.address(task_id, user_id),
     ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
@@ -185,11 +185,11 @@ def reject_remove_task_admins(
     )
 
     inputs = [
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
-        addresser.make_proposal_address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.proposal.address(task_id, user_id),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
@@ -211,13 +211,13 @@ def propose_add_task_owner(
     )
 
     inputs = [
-        addresser.make_user_address(user_id),
-        addresser.make_task_owners_address(task_id, user_id),
-        addresser.make_task_attributes_address(task_id),
-        addresser.make_proposal_address(task_id, user_id),
+        addresser.user.address(user_id),
+        addresser.task.owner.address(task_id, user_id),
+        addresser.task.address(task_id),
+        addresser.proposal.address(task_id, user_id),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
@@ -233,13 +233,13 @@ def confirm_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, r
     )
 
     inputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
     ]
 
     outputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_owners_address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.owner.address(task_id, user_id),
     ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
@@ -256,11 +256,11 @@ def reject_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, re
     )
 
     inputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject.SerializeToString(),
@@ -282,13 +282,13 @@ def propose_remove_task_owners(
     )
 
     inputs = [
-        addresser.make_user_address(user_id),
-        addresser.make_task_owners_address(task_id=task_id, user_id=user_id),
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_attributes_address(task_id),
+        addresser.user.address(user_id),
+        addresser.task.owner.address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.address(task_id),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
@@ -306,14 +306,14 @@ def confirm_remove_task_owners(
     )
 
     inputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_owners_address(task_id, user_id),
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.owner.address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
     ]
 
     outputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_owners_address(task_id, user_id),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.owner.address(task_id, user_id),
     ]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
@@ -332,11 +332,11 @@ def reject_remove_task_owners(
     )
 
     inputs = [
-        addresser.make_proposal_address(task_id, user_id),
-        addresser.make_task_admins_address(task_id, txn_key.public_key),
+        addresser.proposal.address(task_id, user_id),
+        addresser.task.admin.address(task_id, txn_key.public_key),
     ]
 
-    outputs = [addresser.make_proposal_address(task_id, user_id)]
+    outputs = [addresser.proposal.address(task_id, user_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject.SerializeToString(),

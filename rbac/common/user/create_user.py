@@ -15,7 +15,7 @@
 
 import logging
 from rbac.common.crypto.keys import Key
-from rbac.common.user.user_address import make_user_address
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.manager.base_message import BaseMessage
 
@@ -48,7 +48,7 @@ class CreateUser(BaseMessage):
 
     def address(self, object_id, target_id=None):
         """Make an address for the given user_id"""
-        return make_user_address(object_id)
+        return addresser.user.address(object_id)
 
     # pylint: disable=arguments-differ, not-callable
     def make(

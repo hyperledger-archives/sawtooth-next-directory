@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 
 from rbac.transaction_creation.common import make_header_and_batch
 from rbac.common.protobuf import user_transaction_pb2, rbac_payload_pb2
@@ -42,12 +42,12 @@ def create_user(
     create_user_payload = user_transaction_pb2.CreateUser(
         name=name, user_name=user_name, user_id=user_id, metadata=metadata
     )
-    inputs = [addresser.make_user_address(user_id=user_id)]
-    outputs = [addresser.make_user_address(user_id=user_id)]
+    inputs = [addresser.user.address(user_id)]
+    outputs = [addresser.user.address(user_id)]
     if manager_id:
         create_user_payload.manager_id = manager_id
-        inputs.append(addresser.make_user_address(user_id=manager_id))
-        outputs.append(addresser.make_user_address(user_id=manager_id))
+        inputs.append(addresser.user.address(manager_id))
+        outputs.append(addresser.user.address(manager_id))
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_user_payload.SerializeToString(),

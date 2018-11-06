@@ -17,7 +17,7 @@ import pytest
 import logging
 from uuid import uuid4
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.role.role_manager import RoleManager
@@ -68,7 +68,7 @@ class CreateRoleTest(RoleTestHelper):
         self.assertIsInstance(role, protobuf.role_transaction_pb2.CreateRole)
         self.assertIsInstance(role.role_id, str)
         address1 = self.role.address(object_id=role.role_id)
-        address2 = addresser.make_role_attributes_address(role_id=role.role_id)
+        address2 = addresser.role.address(role.role_id)
         self.assertEqual(address1, address2)
 
     @pytest.mark.unit
@@ -94,14 +94,10 @@ class CreateRoleTest(RoleTestHelper):
         message, user, _ = self.get_testunit_user_role()
         inputs, outputs = self.role.make_addresses(message=message)
 
-        role_address = addresser.make_role_attributes_address(message.role_id)
-        user_address = addresser.make_user_address(user_id=user.user_id)
-        owner_address = addresser.make_role_owners_address(
-            role_id=message.role_id, user_id=user.user_id
-        )
-        admin_address = addresser.make_role_admins_address(
-            role_id=message.role_id, user_id=user.user_id
-        )
+        role_address = addresser.role.address(message.role_id)
+        user_address = addresser.user.address(user.user_id)
+        owner_address = addresser.role.owner.address(message.role_id, user.user_id)
+        admin_address = addresser.role.admin.address(message.role_id, user.user_id)
 
         self.assertIsInstance(inputs, list)
         self.assertIn(role_address, inputs)
@@ -122,14 +118,10 @@ class CreateRoleTest(RoleTestHelper):
         payload = self.role.make_payload(message=message)
         self.assertEqual(payload.message_type, RBACPayload.CREATE_ROLE)
 
-        role_address = addresser.make_role_attributes_address(message.role_id)
-        user_address = addresser.make_user_address(user_id=user.user_id)
-        owner_address = addresser.make_role_owners_address(
-            role_id=message.role_id, user_id=user.user_id
-        )
-        admin_address = addresser.make_role_admins_address(
-            role_id=message.role_id, user_id=user.user_id
-        )
+        role_address = addresser.role.address(message.role_id)
+        user_address = addresser.user.address(user.user_id)
+        owner_address = addresser.role.owner.address(message.role_id, user.user_id)
+        admin_address = addresser.role.admin.address(message.role_id, user.user_id)
 
         inputs = list(payload.inputs)
         outputs = list(payload.outputs)

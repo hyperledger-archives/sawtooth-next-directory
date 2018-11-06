@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.processor import proposal_validator, state_change
 from rbac.common.protobuf import proposal_state_pb2
 from rbac.common.protobuf import role_transaction_pb2
@@ -28,7 +28,7 @@ def apply_propose(header, payload, state):
         header, propose, state
     )
 
-    proposal_address = addresser.make_proposal_address(propose.role_id, propose.task_id)
+    proposal_address = addresser.proposal.address(propose.role_id, propose.task_id)
 
     state_change.propose_role_action(
         state_entries=state_entries,
@@ -49,7 +49,7 @@ def apply_propose_remove(header, payload, state):
         header, propose, state
     )
 
-    proposal_address = addresser.make_proposal_address(propose.role_id, propose.task_id)
+    proposal_address = addresser.proposal.address(propose.role_id, propose.task_id)
 
     state_change.propose_role_action(
         state_entries=state_entries,
@@ -66,13 +66,11 @@ def apply_confirm(header, payload, state):
     confirm = role_transaction_pb2.ConfirmAddRoleTask()
     confirm.ParseFromString(payload.content)
 
-    txn_signer_task_owner_address = addresser.make_task_owners_address(
+    txn_signer_task_owner_address = addresser.task.owner.address(
         confirm.task_id, header.signer_public_key
     )
 
-    role_rel_address = addresser.make_role_tasks_address(
-        role_id=confirm.role_id, task_id=confirm.task_id
-    )
+    role_rel_address = addresser.role.task.address(confirm.role_id, confirm.task_id)
 
     state_entries = role_validator.validate_role_task(
         header,
@@ -95,7 +93,7 @@ def apply_reject(header, payload, state):
     reject = role_transaction_pb2.RejectAddRoleTask()
     reject.ParseFromString(payload.content)
 
-    txn_signer_task_owner_address = addresser.make_task_owners_address(
+    txn_signer_task_owner_address = addresser.task.owner.address(
         reject.task_id, header.signer_public_key
     )
 

@@ -16,7 +16,7 @@
 import pytest
 import logging
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.role.role_manager import RoleManager
@@ -83,13 +83,13 @@ class ProposeRoleAddMemberTest(RoleTestHelper):
 
         inputs, outputs = self.role.member.propose.make_addresses(message=message)
 
-        relationship_address = addresser.make_role_members_address(
-            role_id=message.role_id, user_id=message.user_id
+        relationship_address = addresser.role.member.address(
+            message.role_id, message.user_id
         )
-        user_address = addresser.make_user_address(user_id=message.user_id)
-        role_address = addresser.make_role_attributes_address(role_id=message.role_id)
-        proposal_address = addresser.make_proposal_address(
-            object_id=message.role_id, related_id=message.user_id
+        user_address = addresser.user.address(message.user_id)
+        role_address = addresser.role.address(message.role_id)
+        proposal_address = addresser.proposal.address(
+            object_id=message.role_id, target_id=message.user_id
         )
 
         self.assertIsInstance(inputs, list)
@@ -107,11 +107,11 @@ class ProposeRoleAddMemberTest(RoleTestHelper):
         self.assertTrue(callable(self.role.member.propose.make_payload))
         message = self.test_make()
         payload = self.role.member.propose.make_payload(message=message)
-        relationship_address = addresser.make_role_members_address(
-            role_id=message.role_id, user_id=message.user_id
+        relationship_address = addresser.role.member.address(
+            message.role_id, message.user_id
         )
         user_address = self.user.address(object_id=message.user_id)
-        role_address = addresser.make_role_attributes_address(role_id=message.role_id)
+        role_address = addresser.role.address(message.role_id)
         proposal_address = self.role.member.propose.address(
             object_id=message.role_id, target_id=message.user_id
         )

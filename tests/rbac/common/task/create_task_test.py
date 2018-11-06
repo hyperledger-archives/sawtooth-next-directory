@@ -17,7 +17,7 @@ import pytest
 import logging
 from uuid import uuid4
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.task.task_manager import TaskManager
@@ -68,7 +68,7 @@ class CreateTaskTest(TaskTestHelper):
         self.assertIsInstance(task, protobuf.task_transaction_pb2.CreateTask)
         self.assertIsInstance(task.task_id, str)
         address1 = self.task.address(object_id=task.task_id)
-        address2 = addresser.make_task_attributes_address(task_id=task.task_id)
+        address2 = addresser.task.address(task.task_id)
         self.assertEqual(address1, address2)
 
     @pytest.mark.unit
@@ -94,14 +94,10 @@ class CreateTaskTest(TaskTestHelper):
         message, user, _ = self.get_testunit_user_task()
         inputs, outputs = self.task.make_addresses(message=message)
 
-        task_address = addresser.make_task_attributes_address(message.task_id)
-        user_address = addresser.make_user_address(user_id=user.user_id)
-        owner_address = addresser.make_task_owners_address(
-            task_id=message.task_id, user_id=user.user_id
-        )
-        admin_address = addresser.make_task_admins_address(
-            task_id=message.task_id, user_id=user.user_id
-        )
+        task_address = addresser.task.address(message.task_id)
+        user_address = addresser.user.address(user.user_id)
+        owner_address = addresser.task.owner.address(message.task_id, user.user_id)
+        admin_address = addresser.task.admin.address(message.task_id, user.user_id)
 
         self.assertIsInstance(inputs, list)
         self.assertIn(task_address, inputs)
@@ -122,14 +118,10 @@ class CreateTaskTest(TaskTestHelper):
         payload = self.task.make_payload(message=message)
         self.assertEqual(payload.message_type, RBACPayload.CREATE_TASK)
 
-        task_address = addresser.make_task_attributes_address(message.task_id)
-        user_address = addresser.make_user_address(user_id=user.user_id)
-        owner_address = addresser.make_task_owners_address(
-            task_id=message.task_id, user_id=user.user_id
-        )
-        admin_address = addresser.make_task_admins_address(
-            task_id=message.task_id, user_id=user.user_id
-        )
+        task_address = addresser.task.address(message.task_id)
+        user_address = addresser.user.address(user.user_id)
+        owner_address = addresser.task.owner.address(message.task_id, user.user_id)
+        admin_address = addresser.task.admin.address(message.task_id, user.user_id)
 
         inputs = list(payload.inputs)
         outputs = list(payload.outputs)

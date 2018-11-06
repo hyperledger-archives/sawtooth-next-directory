@@ -15,7 +15,7 @@
 
 import logging
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.manager.base_relationship import BaseRelationship
 from rbac.common.task.propose_admin import ProposeAddTaskAdmin
@@ -41,4 +41,4 @@ class AdminRelationship(BaseRelationship):
         return protobuf.task_state_pb2.TaskRelationshipContainer
 
     def address(self, object_id, target_id):
-        return addresser.make_task_admins_address(object_id, target_id)
+        return addresser.task.admin.address(object_id, target_id)

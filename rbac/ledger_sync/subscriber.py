@@ -21,7 +21,7 @@ from sawtooth_sdk.protobuf import events_pb2
 from sawtooth_sdk.protobuf import transaction_receipt_pb2
 from sawtooth_sdk.protobuf.validator_pb2 import Message
 
-from rbac.addressing.addresser import NAMESPACE
+from rbac.common import addresser
 
 
 LOGGER = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ class Subscriber(object):
                     filters=[
                         events_pb2.EventFilter(
                             key="address",
-                            match_string="^" + NAMESPACE + ".*",
+                            match_string="^" + addresser.NAMESPACE + ".*",
                             filter_type=events_pb2.EventFilter.REGEX_ANY,
                         )
                     ],

@@ -16,7 +16,7 @@
 import pytest
 import logging
 
-from rbac.addressing import addresser
+from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.task.task_manager import TaskManager
@@ -83,13 +83,13 @@ class ProposeTaskAddAdminTest(TaskTestHelper):
 
         inputs, outputs = self.task.admin.propose.make_addresses(message=message)
 
-        relationship_address = addresser.make_task_admins_address(
-            task_id=message.task_id, user_id=message.user_id
+        relationship_address = addresser.task.admin.address(
+            message.task_id, message.user_id
         )
-        user_address = addresser.make_user_address(user_id=message.user_id)
-        task_address = addresser.make_task_attributes_address(task_id=message.task_id)
-        proposal_address = addresser.make_proposal_address(
-            object_id=message.task_id, related_id=message.user_id
+        user_address = addresser.user.address(message.user_id)
+        task_address = addresser.task.address(message.task_id)
+        proposal_address = addresser.proposal.address(
+            object_id=message.task_id, target_id=message.user_id
         )
 
         self.assertIsInstance(inputs, list)
@@ -107,11 +107,11 @@ class ProposeTaskAddAdminTest(TaskTestHelper):
         self.assertTrue(callable(self.task.admin.propose.make_payload))
         message = self.test_make()
         payload = self.task.admin.propose.make_payload(message=message)
-        relationship_address = addresser.make_task_admins_address(
-            task_id=message.task_id, user_id=message.user_id
+        relationship_address = addresser.task.admin.address(
+            message.task_id, message.user_id
         )
         user_address = self.user.address(object_id=message.user_id)
-        task_address = addresser.make_task_attributes_address(task_id=message.task_id)
+        task_address = addresser.task.address(message.task_id)
         proposal_address = self.task.admin.propose.address(
             object_id=message.task_id, target_id=message.user_id
         )

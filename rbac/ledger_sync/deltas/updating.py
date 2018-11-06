@@ -14,10 +14,12 @@
 # -----------------------------------------------------------------------------
 
 import sys
+import logging
 
-from rbac.addressing.addresser import address_is
-from rbac.addressing.addresser import AddressSpace
+from rbac.common import addresser
+from rbac.common.addresser import AddressSpace
 
+LOGGER = logging.getLogger(__name__)
 
 TABLE_NAMES = {
     AddressSpace.USER: "users",
@@ -74,7 +76,7 @@ def get_updater(database, block_num):
 
 
 def _update(database, block_num, address, resource):
-    data_type = address_is(address)
+    data_type = addresser.address_is(address)
 
     resource["start_block_num"] = block_num
     resource["end_block_num"] = str(sys.maxsize)
