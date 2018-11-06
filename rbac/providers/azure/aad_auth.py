@@ -24,7 +24,7 @@ CLIENT_ASSERTION = os.environ.get("CLIENT_ASSERTION")
 TENANT_ID = os.environ.get("TENANT_ID")
 AAD_AUTH_URL = "https://login.microsoftonline.com/{}".format(TENANT_ID)
 TOKEN_ENDPOINT = "/oauth2/v2.0/token"
-TENANT_ID = os.environ.get("TENANT_ID")
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -37,7 +37,7 @@ class AadAuth:
     def __init__(self):
         """Initialize the class."""
 
-    def get_token(self, AUTH_TYPE):
+    def get_token(self, AUTH_TYPE=""):
         if AUTH_TYPE.upper() == "SECRET":
             data = {
                 "client_id": CLIENT_ID,
@@ -54,21 +54,24 @@ class AadAuth:
                 "scope": "https://graph.microsoft.com/.default",
             }
         else:
-            LOGGER.info(
+            LOGGER.error(
                 "Missing AUTH_TYPE environment variable. Aborting sync with Azure AD."
             )
             return None
         response = requests.post(url=AAD_AUTH_URL + TOKEN_ENDPOINT, data=data)
         if response.status_code == 200:
             return response
-        LOGGER.error("A %s error has occurred when getting authorization: %s",
-                     response.status_code, response)
+        LOGGER.error(
+            "A %s error has occurred when getting authorization: %s",
+            response.status_code,
+            response,
+        )
 
     def _time_left(self):
         """Check for how much time is left on the token."""
         if self.token_creation_timestamp:
             current_time = dt.datetime.now()
-            diff = (current_time - self.token_creation_timestamp).seconds
+            diff = (current_time - self.token_creation_timestamp).total_seconds()
             if diff < 3598:
                 return True
         return False

@@ -77,17 +77,24 @@ def fetch_ldap_data(sync_type, data_type):
 
     if sync_type == "delta":
         last_sync = (
-            r.table("sync_tracker").filter({"source": "ldap-" + data_type}).coerce_to("array").run()
+            r.table("sync_tracker")
+            .filter({"source": "ldap-" + data_type})
+            .coerce_to("array")
+            .run()
         )
         last_sync_time = ldap_transformer.to_ldap_datetime(
             rethink_timestamp=last_sync[0]["timestamp"]
         )
         if data_type == "user":
-            search_filter = (LDAP_FILTER_USER_DELTA % ldap_transformer.time_to_query_format(last_sync_time)
-                             )
+            search_filter = (
+                LDAP_FILTER_USER_DELTA
+                % ldap_transformer.time_to_query_format(last_sync_time)
+            )
         elif data_type == "group":
-            search_filter = (LDAP_FILTER_GROUP_DELTA % ldap_transformer.time_to_query_format(last_sync_time)
-                             )
+            search_filter = (
+                LDAP_FILTER_GROUP_DELTA
+                % ldap_transformer.time_to_query_format(last_sync_time)
+            )
 
     elif sync_type == "initial":
         if data_type == "user":
@@ -98,7 +105,9 @@ def fetch_ldap_data(sync_type, data_type):
     server = Server(LDAP_SERVER, get_info=ALL)
     conn = Connection(server, user=LDAP_USER, password=LDAP_PASS)
     if not conn.bind():
-        LOGGER.error("Error connecting to LDAP server %s : %s", LDAP_SERVER, conn.result)
+        LOGGER.error(
+            "Error connecting to LDAP server %s : %s", LDAP_SERVER, conn.result
+        )
     conn.search(
         search_base=LDAP_DC,
         search_filter=search_filter,
@@ -159,6 +168,7 @@ def ldap_sync():
 
         LOGGER.debug(
             "Initial AD inbound sync completed. Delta sync will occur in %s seconds.",
-            str(int(DELTA_SYNC_INTERVAL_SECONDS)))
+            str(int(DELTA_SYNC_INTERVAL_SECONDS)),
+        )
     else:
         LOGGER.debug("LDAP Domain Controller is not provided, skipping LDAP sync.")
