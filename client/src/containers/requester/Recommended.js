@@ -25,7 +25,7 @@ import { RequesterSelectors } from '../../redux/RequesterRedux';
 
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
-import RolesList from '../../components/layouts/RolesList';
+import MemberList from '../../components/layouts/MemberList';
 
 
 import './Recommended.css';
@@ -65,7 +65,10 @@ export class Recommended extends Component {
 
   render () {
     const { activePack } = this.props;
-    const title = activePack && activePack.name;
+
+    if (!activePack) {
+      return null;
+    }
 
     return (
       <Grid id='next-requester-grid' celled='internally'>
@@ -73,8 +76,14 @@ export class Recommended extends Component {
         <Grid.Column
           id='next-requester-grid-track-column'
           width={10}>
-          <TrackHeader title={title} {...this.props}/>
-          <RolesList {...this.props}/>
+          <TrackHeader title={activePack.name} {...this.props}/>
+
+          <div id='next-requester-recommended-content'>
+            <p>Lorem ipsum dolor sit amet.</p>
+            <MemberList {...this.props}
+              members={activePack.members}
+              owners={activePack.owners}/>
+          </div>
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'

@@ -12,3 +12,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+
+
+#next-approval-container {
+  margin: 0 auto;
+  width: 70%;
+}
+
+#next-approval-status-emoji {
+  font-size: 4em;
+}
+
+#next-approval-status {
+  padding: 43px 0 16px 0;
+  text-align: center;
+}
+
+#next-approval-status h3 {
+  margin-top: 5px;
+}

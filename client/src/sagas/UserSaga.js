@@ -20,7 +20,7 @@ import UserActions from '../redux/UserRedux';
 
 /**
  *
- * Execute user API request
+ * Execute me API request
  *
  * The me generator function executes a request to the
  * API and handles the response.
@@ -53,12 +53,43 @@ export function * me (api, action) {
       }
 
       me.proposals = proposals;
-      console.log('Retrieved user info');
+      console.log('Retrieved current user info');
 
       yield put(UserActions.meSuccess(me));
     } else {
       alert(res.data.message);
       yield put(UserActions.meFailure(res.data.message));
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ *
+ * Execute getUser API request
+ *
+ * The getUser generator function executes a request to the
+ * API and handles the response.
+ *
+ * @param action
+ *
+ */
+export function * getUser (api, action) {
+  try {
+    const { id } = action;
+    const res = yield call(api.getUser, id);
+
+    if (res.ok) {
+      let user = res.data.data;
+      console.log(`Retrieved user ${id}'s info`);
+
+      yield put(UserActions.userSuccess(user));
+    } else {
+      alert(res.data.message);
+      yield put(UserActions.userFailure(res.data.message));
     }
 
   } catch (err) {

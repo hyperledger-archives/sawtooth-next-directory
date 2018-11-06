@@ -62,8 +62,8 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   const me = () => {
     setHeaders();
 
-    const userId = storage.get('user_id');
-    return api.get(`users/${userId}`);
+    const id = storage.get('user_id');
+    return api.get(`users/${id}`);
   }
 
   const getRoles = () => {
@@ -90,6 +90,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRequesterBase = () => api.get('me/base');
   const getRoot = () => api.get('');
+  const getUser = (id) => api.get(`users/${id}`);
   const requestAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const search = (query) => api.post('', { q: query });
   const signup = (creds) => api.post('users', creds);
@@ -102,6 +103,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     getRequesterBase,
     getRoles,
     getRoot,
+    getUser,
     me,
     requestAccess,
     search,

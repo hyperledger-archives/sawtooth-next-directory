@@ -29,6 +29,36 @@ import './ApprovalCard.css';
  * 
  */
 export default class ApprovalCard extends Component {
+
+  /**
+   *
+   * Hydrate data
+   *
+   */
+  componentDidMount () {
+    const { activeProposal, getUser, users } = this.props;
+
+    if (!activeProposal) {
+      return;
+    }
+
+    activeProposal.appprovers &&
+    activeProposal.appprovers.map((userId) => {
+      return users && users.find((user) => user.id === userId) ?
+        undefined :
+        getUser(userId)
+    })
+  }
+
+
+  renderApprover (userId, index) {
+    const { users } = this.props;
+    
+    if (!users) return null;
+    const user = users.find((user) => user.id === userId);
+    return (<div key={index}>{user.name}</div>);
+  }
+  
  
   render () {
     const { activeProposal } = this.props;
@@ -38,11 +68,13 @@ export default class ApprovalCard extends Component {
     }
 
     return (
-      <div id=''>
-        <Card>
-          <Card.Header>
-            <span role='img' aria-label=''>🙇</span>
-            <div>Awaiting approval</div>
+      <div id='next-approval-container'>
+        <Card fluid>
+          <Card.Header id='next-approval-status'>
+            <span id='next-approval-status-emoji' role='img' aria-label=''>
+              🙇
+            </span>
+            <h3>Awaiting approval</h3>
           </Card.Header>
           <Card.Content extra>
             <Grid columns={3} padded='vertically'>
@@ -54,7 +86,10 @@ export default class ApprovalCard extends Component {
               </Grid.Column>
               <Grid.Column>
                 Approver(s)
-                {activeProposal.approvers}
+                { activeProposal.approvers &&
+                  activeProposal.approvers.map((approver, index) => (
+                  this.renderApprover(approver, index)
+                )) }
               </Grid.Column>
             </Grid>
           </Card.Content>

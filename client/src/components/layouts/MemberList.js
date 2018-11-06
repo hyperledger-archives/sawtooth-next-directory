@@ -29,21 +29,50 @@ import './MemberList.css';
  */
 export default class MemberList extends Component {
 
+  /**
+   *
+   * Hydrate data
+   *
+   */
+  componentDidMount () {
+    const { getUser, owners, users } = this.props;
+
+    owners && owners.map((userId) => {
+      return users && users.find((user) => user.id === userId) ?
+        undefined :
+        getUser(userId)
+    })
+  }
+
+
+  renderUserSegment (userId, index) {
+    const { users } = this.props;
+    
+    if (!users) { 
+      return null;
+    }
+
+    const user = users.find((user) => user.id === userId);
+
+    return (
+      <Segment compact key={index}>
+        {user.name}
+      </Segment>
+    );
+  }
+
+
   render () {
     const { members, owners } = this.props;
 
     return (
       <div>
         { owners && owners.map((owner, index) => (
-          <Segment key={index}>
-            {owner}
-          </Segment>
+          this.renderUserSegment(owner, index)
         )) }
 
         { members && members.map((member, index) => (
-          <Segment key={index}>
-            {member}
-          </Segment>
+          this.renderUserSegment(member, index)
         )) }
       </div>
     );
