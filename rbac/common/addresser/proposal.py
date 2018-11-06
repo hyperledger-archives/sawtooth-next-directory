@@ -13,22 +13,25 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from hashlib import sha512
-import re
-
-FAMILY_NAME = "rbac"
-FAMILY_VERSION = "1.0"
-NAMESPACE = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
-ADDRESS_LENGTH = 70
-ADDRESS_PATTERN = re.compile(r"^[0-9a-f]{70}$")
-FAMILY_PATTERN = re.compile(r"^9f4448[0-9a-f]{64}$")
+from rbac.addressing import addresser as legacy
+from rbac.common.addresser.address_base import AddressBase
+from rbac.common.addresser.address_space import AddressSpace
 
 
-def contains(num, start, stop):
-    return start <= num < stop
+class ProposalAddress(AddressBase):
+    def __init__(self):
+        AddressBase.__init__(self)
+
+    @property
+    def address_type(self):
+        """The address type from AddressSpace implemented by this class"""
+        return AddressSpace.PROPOSALS
+
+    def address(self, object_id, target_id):
+        """Makes a blockchain address of this address type"""
+        return legacy.make_proposal_address(object_id=object_id, related_id=target_id)
 
 
-def compress(object_id, start, limit):
-    return "%.2X".lower() % (
-        int(sha512(object_id.encode()).hexdigest(), base=16) % limit + start
-    )
+proposal = ProposalAddress()
+
+__all__ = ["proposal"]

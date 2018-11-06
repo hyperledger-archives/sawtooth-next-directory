@@ -21,7 +21,7 @@ from sawtooth_sdk.protobuf import events_pb2
 from sawtooth_sdk.protobuf import transaction_receipt_pb2
 from sawtooth_sdk.protobuf.validator_pb2 import Message
 
-from rbac.addressing.addresser import NS as NAMESPACE
+from rbac.addressing.addresser import NAMESPACE
 
 
 LOGGER = logging.getLogger(__name__)
@@ -158,6 +158,7 @@ class StateDeltaEvent:
         self.block_id = self._get_attr(block_commit, "block_id")
         self.block_num = self._get_attr(block_commit, "block_num")
         self.previous_block_id = self._get_attr(block_commit, "previous_block_id")
+        self.state_root_hash = self._get_attr(block_commit, "state_root_hash")
 
         try:
             state_delta = self._get_event("sawtooth/state-delta", event_list)

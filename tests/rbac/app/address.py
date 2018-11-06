@@ -18,7 +18,6 @@ import pytest
 from rbac.app.address import FAMILY_NAME
 from rbac.app.address import FAMILY_VERSION
 from rbac.app.address import NAMESPACE
-from rbac.app.address import FAMILY_PREFIX
 from rbac.app.address import ADDRESS_LENGTH
 from rbac.app.address import ADDRESS_PATTERN
 from rbac.app.address import FAMILY_PATTERN
@@ -35,8 +34,7 @@ class TestAppAddress(CommonAssertions):
         """Test app address configuration"""
         self.assertEqual(FAMILY_NAME, "rbac")
         self.assertEqual(FAMILY_VERSION, "1.0")
-        self.assertEqual(FAMILY_PREFIX, NAMESPACE)
-        self.assertEqual(FAMILY_PREFIX, "9f4448")
+        self.assertEqual(NAMESPACE, "9f4448")
         self.assertEqual(ADDRESS_LENGTH, 70)
         self.assertEqual(ADDRESS_PATTERN.pattern, r"^[0-9a-f]{70}$")
         self.assertEqual(FAMILY_PATTERN.pattern, r"^9f4448[0-9a-f]{64}$")

@@ -39,7 +39,7 @@ class TestRestClient(BatchAssertions):
     @pytest.mark.state
     @pytest.mark.skip("too expensive if large chain, refactor elsewhere")
     def test_state(self):
-        subtree = addresser.NS
+        subtree = addresser.NAMESPACE
         for item in self.client.list_state(subtree=subtree)["data"]:
             address_type = item["address_type"] = addresser.address_is(item["address"])
             if address_type == AddressSpace.USER:

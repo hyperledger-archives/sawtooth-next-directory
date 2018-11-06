@@ -12,23 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-from hashlib import sha512
-import re
-
-FAMILY_NAME = "rbac"
-FAMILY_VERSION = "1.0"
-NAMESPACE = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
-ADDRESS_LENGTH = 70
-ADDRESS_PATTERN = re.compile(r"^[0-9a-f]{70}$")
-FAMILY_PATTERN = re.compile(r"^9f4448[0-9a-f]{64}$")
-
-
-def contains(num, start, stop):
-    return start <= num < stop
-
-
-def compress(object_id, start, limit):
-    return "%.2X".lower() % (
-        int(sha512(object_id.encode()).hexdigest(), base=16) % limit + start
-    )
