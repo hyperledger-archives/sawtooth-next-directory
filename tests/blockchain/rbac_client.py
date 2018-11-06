@@ -38,7 +38,7 @@ class RbacClient(object):
 
     def return_state(self):
         items = []
-        for item in self._client.list_state(subtree=addresser.NS)["data"]:
+        for item in self._client.list_state(subtree=addresser.NAMESPACE)["data"]:
             if addresser.address_is(item["address"]) == addresser.AddressSpace.USER:
                 user_container = user_state_pb2.UserContainer()
                 user_container.ParseFromString(b64decode(item["data"]))

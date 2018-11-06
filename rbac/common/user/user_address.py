@@ -15,7 +15,7 @@
 
 import enum
 from hashlib import sha512
-from rbac.app.address import FAMILY_PREFIX, compress
+from rbac.app.address import NAMESPACE, compress
 
 
 class UserNamespace(enum.IntEnum):
@@ -26,7 +26,7 @@ class UserNamespace(enum.IntEnum):
 def make_user_address(user_id):
     """Makes an address for the given user_id"""
     return (
-        FAMILY_PREFIX
+        NAMESPACE
         + compress(
             user_id,
             UserNamespace.USER_START,

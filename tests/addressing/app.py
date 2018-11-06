@@ -30,8 +30,8 @@ class TestAddresser(unittest.TestCase):
 
         namespace = sha512(addresser.FAMILY_NAME.encode()).hexdigest()[:6]
 
-        self.assertEqual(addresser.NS, namespace)
-        self.assertEqual(addresser.NS, "9f4448")
+        self.assertEqual(addresser.NAMESPACE, namespace)
+        self.assertEqual(addresser.NAMESPACE, "9f4448")
 
     def test_short_address(self):
         """Tests that an address that is too short does not validate.

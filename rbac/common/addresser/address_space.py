@@ -13,22 +13,28 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from hashlib import sha512
-import re
-
-FAMILY_NAME = "rbac"
-FAMILY_VERSION = "1.0"
-NAMESPACE = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
-ADDRESS_LENGTH = 70
-ADDRESS_PATTERN = re.compile(r"^[0-9a-f]{70}$")
-FAMILY_PATTERN = re.compile(r"^9f4448[0-9a-f]{64}$")
+import enum
 
 
-def contains(num, start, stop):
-    return start <= num < stop
+@enum.unique
+class AddressSpace(enum.Enum):
+    """Enumerates the different types of addresses stored on the
+    sawtooth blockchain by this application"""
 
+    USER = 1
+    PROPOSALS = 2
 
-def compress(object_id, start, limit):
-    return "%.2X".lower() % (
-        int(sha512(object_id.encode()).hexdigest(), base=16) % limit + start
-    )
+    SYSADMIN_ATTRIBUTES = 3
+    SYSADMIN_MEMBERS = 4
+    SYSADMIN_OWNERS = 5
+    SYSADMIN_ADMINS = 6
+
+    ROLES_ATTRIBUTES = 7
+    ROLES_MEMBERS = 8
+    ROLES_OWNERS = 9
+    ROLES_ADMINS = 10
+    ROLES_TASKS = 11
+
+    TASKS_ATTRIBUTES = 12
+    TASKS_OWNERS = 13
+    TASKS_ADMINS = 14

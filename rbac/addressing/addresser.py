@@ -75,8 +75,8 @@ class TaskRelationshipNamespace(enum.IntEnum):
 
 FAMILY_NAME = "rbac"
 FAMILY_VERSION = "1.0"
-NS = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
-FAMILY_PREFIX = "9f4448"
+NAMESPACE = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
+NS = NAMESPACE
 ADDRESS_LENGTH = 70
 ADDRESS_PATTERN = re.compile(r"^[0-9a-f]{70}$")
 FAMILY_PATTERN = re.compile(r"^9f4448[0-9a-f]{64}$")
@@ -107,7 +107,7 @@ def _contains(num, start, stop):
 
 
 def namespace_ok(address):
-    return address[: len(NS)] == NS
+    return address[: len(NAMESPACE)] == NAMESPACE
 
 
 def is_address(address):
@@ -150,7 +150,7 @@ def address_is(address):
             "Address {} isn't part of the {} namespace".format(address, FAMILY_NAME)
         )
 
-    addr1 = int(address[len(NS) : len(NS) + 2], base=16)
+    addr1 = int(address[len(NAMESPACE) : len(NAMESPACE) + 2], base=16)
 
     if _contains(
         addr1, SysAdminNamespace.SYS_ADMIN_START, SysAdminNamespace.SYS_ADMIN_STOP
@@ -278,7 +278,7 @@ def _compress(object_id, start, limit):
 
 def _make_role_address(role_id):
     return (
-        NS
+        NAMESPACE
         + _compress(
             role_id,
             RoleNamespace.ROLE_START,
@@ -290,7 +290,7 @@ def _make_role_address(role_id):
 
 def _make_task_address(task_id):
     return (
-        NS
+        NAMESPACE
         + _compress(
             task_id,
             TaskNamespace.TASK_START,
@@ -302,7 +302,7 @@ def _make_task_address(task_id):
 
 def make_user_address(user_id):
     return (
-        NS
+        NAMESPACE
         + _compress(
             user_id,
             UserNamespace.USER_START,
@@ -314,7 +314,7 @@ def make_user_address(user_id):
 
 def make_proposal_address(object_id, related_id):
     return (
-        NS
+        NAMESPACE
         + _compress(
             object_id,
             ProposalNamespace.PROPOSAL_START,
@@ -326,7 +326,7 @@ def make_proposal_address(object_id, related_id):
 
 
 def _make_sysadmin_address():
-    return NS + "0" * 62
+    return NAMESPACE + "0" * 62
 
 
 def make_sysadmin_attr_address():
