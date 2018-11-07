@@ -17,117 +17,23 @@ limitations under the License.
 import Actions, { reducer, INITIAL_STATE } from './ApproverRedux';
 
 
-test('batchRequest', () => {
-  const userId = 'abc123';
-  const state = reducer(INITIAL_STATE, Actions.batchRequest(userId));
-
-  expect(state.fetching).toBe(true);
-});
-
-test('rolesRequest', () => {
-  const userId = 'abc123';
-  const state = reducer(INITIAL_STATE, Actions.rolesRequest(userId));
-
-  expect(state.fetching).toBe(true);
-});
-
-test('individualsRequest', () => {
-  const userId = 'abc123';
-  const state = reducer(INITIAL_STATE, Actions.individualsRequest(userId));
-
-  expect(state.fetching).toBe(true);
-});
-
-test('frequentRequest', () => {
-  const userId = 'abc123';
-  const state = reducer(INITIAL_STATE, Actions.frequentRequest(userId));
-
-  expect(state.fetching).toBe(true);
-});
-
-test('nearExpiryRequest', () => {
-  const userId = 'abc123';
-  const state = reducer(INITIAL_STATE, Actions.nearExpiryRequest(userId));
-
+test('openProposalsRequest', () => {
+  const state = reducer(INITIAL_STATE, Actions.openProposalsRequest(null));
   expect(state.fetching).toBe(true);
 });
 
 
-
-
-test('batchSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.batchSuccess(null));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBeNull();
-});
-
-test('rolesSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.rolesSuccess(null));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBeNull();
-});
-
-test('individualsSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.individualsSuccess(null));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBeNull();
-});
-
-test('frequentSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.frequentSuccess(null));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBeNull();
-});
-
-test('nearExpirySuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.nearExpirySuccess(null));
+test('openProposalsSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.openProposalsSuccess([]));
 
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
 
 
-
-
-test('batchFailure', () => {
+test('openProposalsFailure', () => {
   const error = '';
-  const state = reducer(INITIAL_STATE, Actions.batchFailure(error));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBe('');
-});
-
-test('rolesFailure', () => {
-  const error = '';
-  const state = reducer(INITIAL_STATE, Actions.rolesFailure(error));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBe('');
-});
-
-test('individualsFailure', () => {
-  const error = '';
-  const state = reducer(INITIAL_STATE, Actions.individualsFailure(error));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBe('');
-});
-
-test('frequentFailure', () => {
-  const error = '';
-  const state = reducer(INITIAL_STATE, Actions.frequentFailure(error));
-
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBe('');
-});
-
-test('nearExpiryFailure', () => {
-  const error = '';
-  const state = reducer(INITIAL_STATE, Actions.nearExpiryFailure(error));
+  const state = reducer(INITIAL_STATE, Actions.openProposalsFailure(error));
 
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');

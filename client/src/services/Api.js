@@ -53,26 +53,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   }
 
 
-  /**
-   *
-   * Definitions
-   *
-   *
-   */
-  const me = () => {
-    setHeaders();
-
-    const id = storage.get('user_id');
-    return api.get(`users/${id}`);
-  }
-
-  const getRoles = () => {
-    setHeaders();
-
-    return api.get('roles');
-  }
-
-  /**
+    /**
    *
    * Added condition for unauthorized API call.
    *
@@ -85,10 +66,33 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   });
 
 
+  /**
+   *
+   * Definitions
+   *
+   *
+   */
+  const me = () => {
+    setHeaders();
+    const id = storage.get('user_id');
+    return api.get(`users/${id}`);
+  }
+
+  const getRoles = () => {
+    setHeaders();
+    return api.get('roles');
+  }
+
+  const getOpenProposals = () => {
+    const id = storage.get('user_id');
+    return api.get(`users/${id}/proposals/open`);
+  }
+
+
   const login = (creds) => api.post('authorization', creds);
-  const getPack = (id) => api.get(`roles/${id}`);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRequesterBase = () => api.get('me/base');
+  const getRole = (id) => api.get(`roles/${id}`);
   const getRoot = () => api.get('');
   const getUser = (id) => api.get(`users/${id}`);
   const requestAccess = (id, body) => api.post(`roles/${id}/members`, body);
@@ -98,9 +102,10 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
 
   return {
     login,
-    getPack,
+    getOpenProposals,
     getProposal,
     getRequesterBase,
+    getRole,
     getRoles,
     getRoot,
     getUser,

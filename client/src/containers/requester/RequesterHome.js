@@ -34,11 +34,11 @@ export default class RequesterHome extends Component {
 
   render () {
     return (
-      <Grid id='next-requester-grid' celled='internally'>
+      <Grid id='next-requester-grid'>
         <Grid.Column
           id='next-requester-grid-track-column'
           width={16}>
-          <TrackHeader {...this.props}/>
+          <TrackHeader waves {...this.props}/>
           <Container id='next-requester-landing-container'></Container>
         </Grid.Column>
       </Grid>
@@ -49,7 +49,7 @@ export default class RequesterHome extends Component {
 
 
 RequesterHome.proptypes = {
-  activePack: PropTypes.arrayOf(PropTypes.shape(
+  activeRole: PropTypes.arrayOf(PropTypes.shape(
     {
       id: PropTypes.string,
       description: PropTypes.string,

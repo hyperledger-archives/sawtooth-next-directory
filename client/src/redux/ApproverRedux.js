@@ -27,25 +27,9 @@ import Immutable from 'seamless-immutable';
  *
  */
 const { Types, Creators } = createActions({
-  batchRequest:           ['userId'],
-  batchSuccess:           null,
-  batchFailure:           ['error'],
-
-  rolesRequest:           ['userId'],
-  rolesSuccess:           null,
-  rolesFailure:           ['error'],
-
-  individualsRequest:     ['userId'],
-  individualsSuccess:     null,
-  individualsFailure:     ['error'],
-
-  frequentRequest:        ['userId'],
-  frequentSuccess:        null,
-  frequentFailure:        ['error'],
-
-  nearExpiryRequest:      ['userId'],
-  nearExpirySuccess:      null,
-  nearExpiryFailure:      ['error']
+  openProposalsRequest:   null,
+  openProposalsSuccess:   ['openProposals'],
+  openProposalsFailure:   ['error'],
 });
 
 
@@ -64,7 +48,8 @@ export default Creators;
  */
 export const INITIAL_STATE = Immutable({
   fetching:         null,
-  error:            null
+  error:            null,
+  openProposals:    null,
 });
 
 
@@ -75,7 +60,7 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const ApproverSelectors = {
-
+  openProposals: (state) => state.approver.openProposals
 };
 
 
@@ -86,8 +71,8 @@ export const ApproverSelectors = {
  *
  */
 export const request = (state) => state.merge({ fetching: true });
-export const success = (state) => {
-  return state.merge({ fetching: false });
+export const success = (state, { openProposals }) => {
+  return state.merge({ fetching: false, openProposals });
 }
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
@@ -101,23 +86,7 @@ export const failure = (state, { error }) => {
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.BATCH_REQUEST]: request,
-  [Types.BATCH_SUCCESS]: success,
-  [Types.BATCH_FAILURE]: failure,
-
-  [Types.ROLES_REQUEST]: request,
-  [Types.ROLES_SUCCESS]: success,
-  [Types.ROLES_FAILURE]: failure,
-
-  [Types.INDIVIDUALS_REQUEST]: request,
-  [Types.INDIVIDUALS_SUCCESS]: success,
-  [Types.INDIVIDUALS_FAILURE]: failure,
-
-  [Types.FREQUENT_REQUEST]: request,
-  [Types.FREQUENT_SUCCESS]: success,
-  [Types.FREQUENT_FAILURE]: failure,
-
-  [Types.NEAR_EXPIRY_REQUEST]: request,
-  [Types.NEAR_EXPIRY_SUCCESS]: success,
-  [Types.NEAR_EXPIRY_FAILURE]: failure
+  [Types.OPEN_PROPOSALS_REQUEST]: request,
+  [Types.OPEN_PROPOSALS_SUCCESS]: success,
+  [Types.OPEN_PROPOSALS_FAILURE]: failure,
 });

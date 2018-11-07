@@ -21,15 +21,17 @@ import API from '../services/Api';
 import FixtureAPI from '../services/FixtureApi';
 
 
+import { ApproverTypes } from '../redux/ApproverRedux';
 import { AuthTypes } from '../redux/AuthRedux';
 import { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
 import { UserTypes } from '../redux/UserRedux';
 
 
+import { getOpenProposals } from './ApproverSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
-import { requestAccess, getBase, getPack, getProposal } from './RequesterSaga';
+import { requestAccess, getBase, getRole, getProposal } from './RequesterSaga';
 import { me, getUser } from './UserSaga';
 
 
@@ -45,20 +47,23 @@ const api = API.create();
 export default function * root() {
   yield all([
 
+    // Approver
+    takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
+
     // Auth
     takeLatest(AuthTypes.LOGIN_REQUEST, login, api),
     takeLatest(AuthTypes.SIGNUP_REQUEST, signup, api),
     takeLatest(AuthTypes.LOGOUT_REQUEST, logout, FixtureAPI),
 
-    // Requester
-    takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
-    takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
-    takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
-    takeLatest(RequesterTypes.ACCESS_REQUEST, requestAccess, api),
-
     // Chat
     takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, FixtureAPI),
     takeLatest(ChatTypes.SEND_REQUEST, sendMessage, FixtureAPI),
+
+    // Requester
+    takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
+    takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),
+    takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
+    takeLatest(RequesterTypes.ACCESS_REQUEST, requestAccess, api),
 
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),

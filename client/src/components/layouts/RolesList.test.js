@@ -28,7 +28,7 @@ describe('RolesList component', () => {
     const div = document.createElement('div');
 
     const props = {
-      activePack: {
+      activeRole: {
         description: 'pack description',
         roles: [{name:'role name'}]
       }
@@ -37,7 +37,7 @@ describe('RolesList component', () => {
     ReactDOM.render(
       <BrowserRouter><RolesList {...props}/></BrowserRouter>, div
     );
-	
+
     ReactDOM.unmountComponentAtNode(div);
   });
 

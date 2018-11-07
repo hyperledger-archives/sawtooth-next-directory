@@ -23,10 +23,10 @@ import './ApprovalCard.css';
 
 
 /**
- * 
+ *
  * @class ApprovalCard
  * Component encapsulating the approval card
- * 
+ *
  */
 export default class ApprovalCard extends Component {
 
@@ -53,13 +53,13 @@ export default class ApprovalCard extends Component {
 
   renderApprover (userId, index) {
     const { users } = this.props;
-    
+
     if (!users) return null;
     const user = users.find((user) => user.id === userId);
     return (<div key={index}>{user.name}</div>);
   }
-  
- 
+
+
   render () {
     const { activeProposal } = this.props;
 
@@ -102,13 +102,13 @@ export default class ApprovalCard extends Component {
 
 
 ApprovalCard.proptypes = {
-  activePack: PropTypes.arrayOf(PropTypes.shape(
+  activeRole: PropTypes.arrayOf(PropTypes.shape(
     {
       description: PropTypes.string,
       roles: PropTypes.arrayOf(PropTypes.shape(
         {
           name: PropTypes.string
-        }  
+        }
       ))
     }
   ))

@@ -42,16 +42,16 @@ export default class Chat extends Component {
    *
    */
   componentWillReceiveProps (newProps) {
-    const { activePack, getConversation } = this.props;
+    const { activeRole, getConversation } = this.props;
 
-    if (newProps.activePack !== activePack) {
-      getConversation(newProps.activePack['conversation_id']);
+    if (newProps.activeRole !== activeRole) {
+      getConversation(newProps.activeRole['conversation_id']);
     }
   }
 
 
   send (message, action) {
-    const { activePack, me, requestAccess, sendMessage } = this.props;
+    const { activeRole, me, requestAccess, sendMessage } = this.props;
 
     if (action) {
       const payload = {
@@ -61,13 +61,13 @@ export default class Chat extends Component {
 
       console.log(action);
       console.log(payload);
-      console.log(activePack);
+      console.log(activeRole);
 
       sendMessage(payload);
 
       switch (action.type) {
         case 0:
-          requestAccess(activePack.id, me.id, 'some reason');
+          requestAccess(activeRole.id, me.id, 'some reason');
           break;
 
         default:

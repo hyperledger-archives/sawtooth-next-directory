@@ -17,6 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 
 
 import Chat from '../../components/chat/Chat';
@@ -27,16 +28,27 @@ import './Individuals.css';
 
 
 /**
- * 
+ *
  * @class Individuals
  * Individuals component
- * 
+ *
  */
 class Individuals extends Component {
 
+  componentDidMount () {
+    const { getOpenProposals } = this.props;
+
+    getOpenProposals();
+  }
+
+
   render () {
+    const { openProposals } = this.props;
+
+    console.log(openProposals);
+
     return (
-      <Grid id='next-approver-grid' celled='internally'>
+      <Grid id='next-approver-grid'>
 
         <Grid.Column
           id='next-approver-grid-track-column'
@@ -65,3 +77,8 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Individuals);
+
+
+Individuals.proptypes = {
+  getOpenProposals: PropTypes.func
+};

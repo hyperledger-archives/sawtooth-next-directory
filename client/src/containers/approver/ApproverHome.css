@@ -16,6 +16,7 @@ limitations under the License.
 
 #next-approver-grid {
   height: 100%;
+  margin: 0;
 }
 
 #next-approver-grid-track-column {

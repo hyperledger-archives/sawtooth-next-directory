@@ -40,10 +40,10 @@ import './Recommended.css';
 export class Recommended extends Component {
 
   componentDidMount () {
-    const { getPack, packId } = this.props;
+    const { getRole, roleId } = this.props;
 
-    if (packId) {
-      getPack(packId);
+    if (roleId) {
+      getRole(roleId);
     }
   }
 
@@ -55,34 +55,34 @@ export class Recommended extends Component {
    *
    */
   componentWillReceiveProps (newProps) {
-    const { getPack, packId } = this.props;
+    const { getRole, roleId } = this.props;
 
-    if (newProps.packId !== packId) {
-      getPack(newProps.packId);
+    if (newProps.roleId !== roleId) {
+      getRole(newProps.roleId);
     }
   }
 
 
   render () {
-    const { activePack } = this.props;
+    const { activeRole } = this.props;
 
-    if (!activePack) {
+    if (!activeRole) {
       return null;
     }
 
     return (
-      <Grid id='next-requester-grid' celled='internally'>
+      <Grid id='next-requester-grid'>
 
         <Grid.Column
           id='next-requester-grid-track-column'
           width={10}>
-          <TrackHeader title={activePack.name} {...this.props}/>
+          <TrackHeader waves title={activeRole.name} {...this.props}/>
 
           <div id='next-requester-recommended-content'>
             <p>Lorem ipsum dolor sit amet.</p>
             <MemberList {...this.props}
-              members={activePack.members}
-              owners={activePack.owners}/>
+              members={activeRole.members}
+              owners={activeRole.owners}/>
           </div>
         </Grid.Column>
         <Grid.Column
@@ -99,8 +99,8 @@ export class Recommended extends Component {
 
 
 Recommended.proptypes = {
-  getPack: PropTypes.func,
-  activePack: PropTypes.arrayOf(PropTypes.shape(
+  getRole: PropTypes.func,
+  activeRole: PropTypes.arrayOf(PropTypes.shape(
     {
       name: PropTypes.string
     }
@@ -114,7 +114,7 @@ const mapStateToProps = (state, ownProps) => {
   const { recommended } = state.requester;
 
   return {
-    packId: RequesterSelectors.idFromSlug(recommended, params.id)
+    roleId: RequesterSelectors.idFromSlug(recommended, params.id)
   };
 }
 

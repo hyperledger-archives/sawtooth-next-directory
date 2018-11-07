@@ -60,7 +60,7 @@ export default class NavList extends Component {
           as={Link}
           to={item.slug ?
             `${route}/${item.slug}` :
-            `${route}/${utils.createSlug(item.name)}`}>
+            `${route}/${utils.createSlug(item.name || item)}`}>
 
           <Image src=''/>
 

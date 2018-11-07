@@ -23,9 +23,9 @@ test.skip('baseRequest', () => {
   expect(state.fetching).toBe(true);
 });
 
-test('packRequest', () => {
+test('roleRequest', () => {
   const id = 'abc123'
-  const state = reducer(INITIAL_STATE, Actions.packRequest(id));
+  const state = reducer(INITIAL_STATE, Actions.roleRequest(id));
 
   expect(state.fetching).toBe(true);
 });
@@ -42,12 +42,12 @@ test.skip('baseSuccess', () => {
   expect(state.error).toBeNull();
 });
 
-test.skip('packSuccess', () => {
-  const activePack = {};
-  const state = reducer(INITIAL_STATE, Actions.packSuccess(activePack));
+test.skip('roleSuccess', () => {
+  const activeRole = {};
+  const state = reducer(INITIAL_STATE, Actions.roleSuccess(activeRole));
 
   expect(state.fetching).toBe(false);
-  expect(state.activePack).toEqual({});
+  expect(state.activeRole).toEqual({});
   expect(state.error).toBeNull();
 });
 
@@ -61,9 +61,9 @@ test.skip('baseFailure', () => {
   expect(state.error).toBe('');
 });
 
-test('packFailure', () => {
+test('roleFailure', () => {
   const error = '';
-  const state = reducer(INITIAL_STATE, Actions.packFailure(error));
+  const state = reducer(INITIAL_STATE, Actions.roleFailure(error));
 
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');

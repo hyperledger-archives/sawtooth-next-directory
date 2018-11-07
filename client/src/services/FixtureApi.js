@@ -37,14 +37,14 @@ export default {
     }
   },
 
-  getPack: (id) => {
+  getRole: (id) => {
     let data;
 
     switch (id) {
       case 'e15a71ee-58d2-49e8-a8e4-21888144be1f':
         data = cloudOnboardingPack;
         break;
-      
+
       case '539d9dd3-6b4d-4136-ab67-b6ff6b307c9f':
         data = rebellionAccessPack;
         break;

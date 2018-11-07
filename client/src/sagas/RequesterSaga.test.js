@@ -21,7 +21,7 @@ import FixtureAPI from '../services/FixtureApi';
 
 
 import RequesterActions from '../redux/RequesterRedux';
-import { getBase, getPack } from '../sagas/RequesterSaga';
+import { getBase, getRole } from '../sagas/RequesterSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;
@@ -60,43 +60,43 @@ test.skip('getBase: failure path', () => {
 
 
 
-test('getPack: first calls API', () => {
+test('getRole: first calls API', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
-  const step = stepper(getPack(FixtureAPI, {
+  const step = stepper(getRole(FixtureAPI, {
     id: id
   }));
 
-  expect(step()).toEqual(call(FixtureAPI.getPack, id));
+  expect(step()).toEqual(call(FixtureAPI.getRole, id));
 });
 
 
-test('getPack: success path', () => {
+test('getRole: success path', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
-  const res = FixtureAPI.getPack(id);
-  const step = stepper(getPack(FixtureAPI, {
+  const res = FixtureAPI.getRole(id);
+  const step = stepper(getRole(FixtureAPI, {
     id: id,
   }));
 
   step();
 
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(RequesterActions.packSuccess(res.data)));
+  expect(stepRes).toEqual(put(RequesterActions.roleSuccess(res.data)));
 });
 
 
-test('getPack: failure path', () => {
+test('getRole: failure path', () => {
   const res = { ok: false, data: {} };
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
-  const step = stepper(getPack(FixtureAPI, {
+  const step = stepper(getRole(FixtureAPI, {
     id: id,
   }));
 
   step();
 
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(RequesterActions.packFailure(res.data.error)));
+  expect(stepRes).toEqual(put(RequesterActions.roleFailure(res.data.error)));
 });
 

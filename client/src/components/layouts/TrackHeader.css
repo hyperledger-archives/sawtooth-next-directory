@@ -17,7 +17,6 @@ limitations under the License.
 #next-requester-tracker-header-container {
   position: fixed;
   width: 100%;
-  z-index: 99;
 }
 
 #next-requester-track-header {

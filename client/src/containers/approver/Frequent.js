@@ -27,16 +27,16 @@ import './Frequent.css';
 
 
 /**
- * 
+ *
  * @class Frequent
  * Frequent component
- * 
+ *
  */
 class Frequent extends Component {
 
   render () {
     return (
-      <Grid id='next-approver-grid' celled='internally'>
+      <Grid id='next-approver-grid'>
 
         <Grid.Column
           id='next-approver-grid-track-column'

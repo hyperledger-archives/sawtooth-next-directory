@@ -30,24 +30,24 @@ import './Packs.css';
 
 
 /**
- * 
+ *
  * @class Packs
  * *Your Packs* component
- * 
+ *
  */
 class Packs extends Component {
 
   render () {
-    const { activePack } = this.props;
-    const title = activePack && activePack.name;
+    const { activeRole } = this.props;
+    const title = activeRole && activeRole.name;
 
     return (
-      <Grid id='next-requester-grid' celled='internally'>
+      <Grid id='next-requester-grid'>
 
         <Grid.Column
           id='next-requester-grid-track-column'
           width={10}>
-          <TrackHeader title={title} {...this.props}/>
+          <TrackHeader waves title={title} {...this.props}/>
           <RolesList {...this.props}/>
         </Grid.Column>
         <Grid.Column
@@ -64,7 +64,7 @@ class Packs extends Component {
 
 
 Packs.proptypes = {
-  activePack: PropTypes.arrayOf(PropTypes.shape(
+  activeRole: PropTypes.arrayOf(PropTypes.shape(
     {
       name: PropTypes.string
     }
