@@ -13,6 +13,8 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+# pylint: disable=too-few-public-methods
+
 from rbac.common.user.propose_manager import ProposeUpdateUserManager
 from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
 from rbac.common.user.reject_manager import RejectUpdateUserManager

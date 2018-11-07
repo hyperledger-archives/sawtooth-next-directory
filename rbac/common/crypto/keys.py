@@ -32,7 +32,7 @@ SIGNATURE_LENGTH = 64
 SIGNATURE_PATTERN = re.compile(r"^[0-9a-f]{128}$")
 
 
-class Key(object):
+class Key:
     """
         Key class provides a shim on top of Sawtooth Signing
         for key generation and signing/verification key

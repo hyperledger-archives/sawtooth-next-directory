@@ -93,6 +93,8 @@ class BaseMessage:
     def base_validate_state(self, state, message, signer):
         if signer is None:
             raise ValueError("Signer is required")
+        if message is None:
+            raise ValueError("Message is required")
         if not isinstance(signer, str) and PUBLIC_KEY_PATTERN.match(signer):
             raise TypeError("Expected signer to be a public key")
         if state is None:
@@ -145,9 +147,9 @@ class BaseMessage:
 
     def _find_in_container(self, container, address, object_id, target_id=None):
         items = list(getattr(container, self.names))
-        if len(items) == 0:
+        if not items:
             return None
-        elif len(items) > 1:
+        if len(items) > 1:
             LOGGER.warning(
                 "%s container for %s target %s has more than one record at address %s",
                 self.name,
@@ -190,7 +192,7 @@ class BaseMessage:
         container = self.container_proto()
 
         results = self.state.get_address(state=state, address=address)
-        if len(list(results)) == 0:
+        if not list(results):
             return None
 
         container.ParseFromString(results[0].data)

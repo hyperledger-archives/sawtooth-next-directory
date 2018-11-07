@@ -58,11 +58,13 @@ def deserialize_apikey(secret_key, token):
     return serializer.loads(token)
 
 
+# pylint: disable=unused-argument
 def encrypt_private_key(aes_key, user_id, private_key):
     cipher = AES(aes_key)
     return cipher.encrypt(private_key)
 
 
+# pylint: disable=unused-argument
 def decrypt_private_key(aes_key, user_id, encrypted_private_key):
     cipher = AES(aes_key)
     return cipher.decrypt(encrypted_private_key)

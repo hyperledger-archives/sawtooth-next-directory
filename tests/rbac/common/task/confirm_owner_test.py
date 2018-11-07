@@ -70,7 +70,6 @@ class ConfirmTaskAddOwnerTest(TaskTestHelper):
             user_id=user.user_id,
             task_id=task.task_id,
             reason=reason,
-            metadata=None,
         )
         self.assertIsInstance(
             message, protobuf.task_transaction_pb2.ConfirmAddTaskOwner
@@ -145,7 +144,6 @@ class ConfirmTaskAddOwnerTest(TaskTestHelper):
             task_id=proposal.object_id,
             user_id=proposal.target_id,
             reason=reason,
-            metadata=None,
         )
         got, status = self.task.owner.confirm.create(
             signer_keypair=owner_key,

@@ -70,7 +70,6 @@ class RejectTaskAddAdminTest(TaskTestHelper):
             user_id=user.user_id,
             task_id=task.task_id,
             reason=reason,
-            metadata=None,
         )
         self.assertIsInstance(message, protobuf.task_transaction_pb2.RejectAddTaskAdmin)
         self.assertEqual(message.user_id, user.user_id)
@@ -133,7 +132,6 @@ class RejectTaskAddAdminTest(TaskTestHelper):
             task_id=proposal.object_id,
             user_id=proposal.target_id,
             reason=reason,
-            metadata=None,
         )
         got, status = self.task.admin.reject.create(
             signer_keypair=owner_key,

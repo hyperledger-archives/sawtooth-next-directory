@@ -22,12 +22,12 @@ from rbac.app.config import VALIDATOR_REST_ENDPOINT
 
 LOGGER = logging.getLogger(__name__)
 
-_client = RestClient(base_url=VALIDATOR_REST_ENDPOINT)
+_CLIENT = RestClient(base_url=VALIDATOR_REST_ENDPOINT)
 
 
 class ClientSync:
     def __init__(self):
-        self._client = _client
+        self._client = _CLIENT
         self.batch = Batcher()
 
     def send_batches_get_status(self, batch_list):

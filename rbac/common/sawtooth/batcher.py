@@ -96,6 +96,7 @@ class Batcher:
     def make_batch_request(self, batch_list):
         """Make a batch request from a batch list"""
         batch_request = client_batch_submit_pb2.ClientBatchSubmitRequest()
+        # pylint: disable=no-member
         batch_request.batches.extend(list(batch_list.batches))
         return batch_request
 
