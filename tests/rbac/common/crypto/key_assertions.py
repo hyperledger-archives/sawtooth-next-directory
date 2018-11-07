@@ -16,12 +16,12 @@
 import logging
 import binascii
 
-from tests.rbac.common.assertions import CommonAssertions
-
 import sawtooth_signing
 from sawtooth_signing.secp256k1 import Secp256k1PublicKey
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 from sawtooth_signing.core import ParseError
+
+from tests.rbac.common.assertions import CommonAssertions
 
 # from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import ALGORITHM

@@ -13,9 +13,9 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
 import logging
 from uuid import uuid4
+import pytest
 
 from rbac.common import addresser
 from rbac.common import protobuf

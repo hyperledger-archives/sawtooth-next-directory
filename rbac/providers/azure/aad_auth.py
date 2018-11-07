@@ -15,8 +15,8 @@
 
 import os
 import logging
-import requests
 import datetime as dt
+import requests
 
 CLIENT_ID = os.environ.get("CLIENT_ID")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET")

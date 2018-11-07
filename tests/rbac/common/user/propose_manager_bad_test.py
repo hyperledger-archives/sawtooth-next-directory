@@ -13,8 +13,8 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
 import logging
+import pytest
 
 from tests.rbac.common.manager.test_base import TestBase
 

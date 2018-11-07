@@ -13,8 +13,8 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
 import logging
+import pytest
 
 from rbac.common.crypto.keys import Key
 from rbac.common import protobuf

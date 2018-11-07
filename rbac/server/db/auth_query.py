@@ -13,11 +13,10 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import logging
 import rethinkdb as r
 
 from rbac.server.api.errors import ApiNotFound
-
-import logging
 
 LOGGER = logging.getLogger(__name__)
 

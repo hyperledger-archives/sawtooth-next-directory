@@ -15,13 +15,14 @@
 
 import sys
 import logging
-import pytest
 import unittest
+import pytest
+
+from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
 from tests.blockchain.rbac_client import RbacClient
 from tests.blockchain.integration_test_helper import IntegrationTestHelper
 from rbac.transaction_creation.common import Key
-from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
 BATCHER_PRIVATE_KEY = Secp256k1PrivateKey.new_random().as_hex()
 BATCHER_KEY = Key(BATCHER_PRIVATE_KEY)

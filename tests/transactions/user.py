@@ -13,18 +13,21 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
-import unittest
 import logging
+import unittest
+import pytest
+
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 from sawtooth_sdk.protobuf import batch_pb2
 from sawtooth_sdk.protobuf import transaction_pb2
+
 from rbac.common import addresser
 from rbac.transaction_creation.common import Key
 from rbac.common.protobuf import user_transaction_pb2, rbac_payload_pb2
+from rbac.transaction_creation.user_transaction_creation import create_user
 from tests.transactions.common import SIGNATURE_LENGTH
 from tests.transactions.common import SIGNATURE_PATTERN
-from rbac.transaction_creation.user_transaction_creation import create_user
+
 
 LOGGER = logging.getLogger(__name__)
 

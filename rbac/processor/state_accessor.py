@@ -13,11 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-from rbac.common import addresser
-from rbac.processor import message_accessor
-
 from sawtooth_sdk.messaging.future import FutureTimeoutError
 from sawtooth_sdk.processor.exceptions import InternalError
+
+from rbac.common import addresser
+from rbac.processor import message_accessor
 
 TIMEOUT_SECONDS = 2
 ERROR_MESSAGE_TIMEOUT = "Timeout after %s seconds during get from state"

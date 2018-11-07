@@ -23,15 +23,12 @@ import sys
 from sanic import Sanic
 from sanic import Blueprint
 from sanic.response import text
+from zmq.asyncio import ZMQEventLoop
 
 from rbac.common.sawtooth.messaging import Connection
-
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import generate_aes_key
 from rbac.common.crypto.secrets import generate_secret_key
-
-from zmq.asyncio import ZMQEventLoop
-
 from rbac.server.db import db_utils
 from rbac.server.api.auth import AUTH_BP
 from rbac.server.api.blocks import BLOCKS_BP

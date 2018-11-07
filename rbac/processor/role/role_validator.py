@@ -13,11 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+from sawtooth_sdk.processor.exceptions import InvalidTransaction
+
 from rbac.common import addresser
 from rbac.processor import message_accessor, state_accessor, proposal_validator
 from rbac.common.protobuf import role_state_pb2
 from rbac.processor.user import user_validator
-from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 
 def validate_role_rel_proposal(header, propose, rel_address, state, is_remove=False):

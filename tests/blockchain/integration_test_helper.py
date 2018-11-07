@@ -16,13 +16,13 @@
 import sys
 import time
 import logging
-import sawtooth_signing
 from uuid import uuid4
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from urllib.error import URLError
-from rbac.transaction_creation.common import Key
+import sawtooth_signing
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
+from rbac.transaction_creation.common import Key
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
