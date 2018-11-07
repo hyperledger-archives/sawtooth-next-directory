@@ -59,6 +59,7 @@ class TestRoleMemberAddresser(AddressAssertions):
             addresser.address_is(rel_address1), addresser.AddressSpace.ROLES_MEMBERS
         )
 
+    @pytest.mark.skip("hash collision on legacy addressing scheme can cause match")
     def test_address_random(self):
         role_id1 = addresser.role.member.unique_id()
         user_id1 = addresser.user.unique_id()
