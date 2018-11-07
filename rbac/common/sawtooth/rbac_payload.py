@@ -30,6 +30,7 @@ def make_payload(message, message_type, inputs, outputs):
     )
 
 
+# pylint: disable=no-member
 def unmake_payload(payload):
     """Turn a payload back into a message given it's message type"""
     if isinstance(payload, bytes):

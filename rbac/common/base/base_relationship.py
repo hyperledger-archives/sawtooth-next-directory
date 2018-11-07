@@ -42,9 +42,9 @@ class BaseRelationship:
         address = self.address(object_id=object_id, target_id=target_id)
         container.ParseFromString(self.client.get_address(address=address))
         items = list(container.relationships)
-        if len(items) == 0:
+        if not items:
             return False
-        elif len(items) > 1:
+        if len(items) > 1:
             LOGGER.warning(
                 "%s %s relationship container for user %s at address %s has more than one record",
                 self.name,
@@ -54,7 +54,7 @@ class BaseRelationship:
             )
         item = items[0]
         identifiers = list(item.identifiers)
-        if len(identifiers) == 0:
+        if not identifiers:
             LOGGER.warning(
                 "%s %s relationship container for user %s at address %s has no identifiers",
                 self.name,

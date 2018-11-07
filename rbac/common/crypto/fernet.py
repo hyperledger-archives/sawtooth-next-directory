@@ -5,6 +5,8 @@
 # Copied here for reference
 # Source: https://github.com/pyca/cryptography/blob/master/src/cryptography/fernet.py
 
+# pylint: disable=invalid-name,missing-docstring
+
 from __future__ import absolute_import, division, print_function
 
 import base64
@@ -29,7 +31,7 @@ class InvalidToken(Exception):
 _MAX_CLOCK_SKEW = 60
 
 
-class Fernet(object):
+class Fernet:
     def __init__(self, key, backend=None):
         if backend is None:
             backend = default_backend()
@@ -137,7 +139,7 @@ class Fernet(object):
         return unpadded
 
 
-class MultiFernet(object):
+class MultiFernet:
     def __init__(self, fernets):
         fernets = list(fernets)
         if not fernets:

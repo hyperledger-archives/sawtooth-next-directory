@@ -16,7 +16,7 @@
 import logging
 from rbac.common import addresser
 from rbac.common import protobuf
-from rbac.common.manager.base_message import BaseMessage
+from rbac.common.base.base_message import BaseMessage
 
 LOGGER = logging.getLogger(__name__)
 
@@ -31,6 +31,7 @@ class RejectUpdateUserManager(BaseMessage):
 
     @property
     def message_type(self):
+        # pylint: disable=no-member
         return protobuf.rbac_payload_pb2.RBACPayload.REJECT_UPDATE_USER_MANAGER
 
     @property

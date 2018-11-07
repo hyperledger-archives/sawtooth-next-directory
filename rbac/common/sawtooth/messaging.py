@@ -18,6 +18,8 @@
 #
 # ------------------------------------------------------------------------------
 
+# pylint: disable=invalid-name,too-many-instance-attributes,too-few-public-methods,no-member,missing-docstring
+
 import asyncio
 from enum import Enum
 import logging

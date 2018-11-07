@@ -71,7 +71,6 @@ class ConfirmRoleAddTaskTest(RoleTestHelper):
             task_id=task.task_id,
             role_id=role.role_id,
             reason=reason,
-            metadata=None,
         )
         self.assertIsInstance(message, protobuf.role_transaction_pb2.ConfirmAddRoleTask)
         self.assertEqual(message.task_id, task.task_id)
@@ -143,7 +142,6 @@ class ConfirmRoleAddTaskTest(RoleTestHelper):
             role_id=proposal.object_id,
             task_id=proposal.target_id,
             reason=reason,
-            metadata=None,
         )
         got, status = self.role.task.confirm.create(
             signer_keypair=signer_keypair,

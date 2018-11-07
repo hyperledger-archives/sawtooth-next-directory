@@ -17,7 +17,7 @@ import logging
 
 from rbac.common import addresser
 from rbac.common import protobuf
-from rbac.common.manager.base_relationship import BaseRelationship
+from rbac.common.base.base_relationship import BaseRelationship
 from rbac.common.role.propose_owner import ProposeAddRoleOwner
 from rbac.common.role.confirm_owner import ConfirmAddRoleOwner
 from rbac.common.role.reject_owner import RejectAddRoleOwner

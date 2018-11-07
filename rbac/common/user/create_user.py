@@ -17,7 +17,7 @@ import logging
 from rbac.common.crypto.keys import Key
 from rbac.common import addresser
 from rbac.common import protobuf
-from rbac.common.manager.base_message import BaseMessage
+from rbac.common.base.base_message import BaseMessage
 
 LOGGER = logging.getLogger(__name__)
 
@@ -32,6 +32,7 @@ class CreateUser(BaseMessage):
 
     @property
     def message_type(self):
+        # pylint: disable=no-member
         return protobuf.rbac_payload_pb2.RBACPayload.CREATE_USER
 
     @property
@@ -50,7 +51,7 @@ class CreateUser(BaseMessage):
         """Make an address for the given user_id"""
         return addresser.user.address(object_id)
 
-    # pylint: disable=arguments-differ, not-callable
+    # pylint: disable=arguments-differ, not-callable, unused-argument
     def make(
         self, user_id, name, user_name=None, email=None, metadata=None, manager_id=None
     ):
@@ -136,6 +137,7 @@ class CreateUser(BaseMessage):
             manager_id=message.manager_id,
             metadata=message.metadata,
         )
+        # pylint: disable=no-member
         container.users.extend([item])
         self.state.set_address(state=state, address=address, container=container)
 
@@ -145,4 +147,6 @@ class CreateUser(BaseMessage):
         message.ParseFromString(payload.content)
 
         self.validate(message=message, signer=header.signer_public_key, state=state)
-        self.set_state(state=state, message=message, object_id=message.user_id)
+        self.set_state(
+            state=state, message=message, object_id=message.user_id
+        )  # pylint: disable=no-member

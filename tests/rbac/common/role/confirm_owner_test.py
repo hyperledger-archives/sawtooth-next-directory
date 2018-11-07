@@ -70,7 +70,6 @@ class ConfirmRoleAddOwnerTest(RoleTestHelper):
             user_id=user.user_id,
             role_id=role.role_id,
             reason=reason,
-            metadata=None,
         )
         self.assertIsInstance(
             message, protobuf.role_transaction_pb2.ConfirmAddRoleOwner
@@ -145,7 +144,6 @@ class ConfirmRoleAddOwnerTest(RoleTestHelper):
             role_id=proposal.object_id,
             user_id=proposal.target_id,
             reason=reason,
-            metadata=None,
         )
         got, status = self.role.owner.confirm.create(
             signer_keypair=owner_key,

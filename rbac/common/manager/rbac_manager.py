@@ -39,6 +39,7 @@ def getattr_or_none(value, attrib):
 
 def message_type_name(message_type):
     """returns the protobuf enum name from the value"""
+    # pylint: disable=no-member
     items = RBACPayload.MessageType.DESCRIPTOR.values_by_name.items()
     # return items[message_type][0] # breaks on OSX and/or Python 3.7
     for (key, value) in items:

@@ -31,6 +31,16 @@ lint() {
 
 }
 
+strict_lint() {
+
+    files="`find $1 -name \*.py | grep -v protobuf`"
+    echo "$1"
+    pycodestyle $files || error=1
+    python3 -m pylint --rcfile strict.cfg $files || error=1
+    return $error
+
+}
+
 export PYTHONPATH=$TOP_DIR
 
 opt="$1"
@@ -41,14 +51,14 @@ for var in "$@"
 do
     ARGS=1
     case "$var" in
-    "rbac/legacy"               ) lint rbac/legacy || ret_val=1;;
-    "rbac/common"               ) lint rbac/common || ret_val=1;;
-    "rbac/ledger_sync"          ) lint rbac/ledger_sync || ret_val=1;;
-    "rbac/processor"            ) lint rbac/processor || ret_val=1;;
-    "rbac/providers"            ) lint rbac/providers || ret_val=1;;
-    "rbac/server"               ) lint rbac/server || ret_val=1;;
-    "rbac/transaction_creation" ) lint rbac/transaction_creation || ret_val=1;;
-    "tests"                     ) lint tests || ret_val=1;;
+    "legacy"               ) lint rbac/legacy || ret_val=1;;
+    "common"               ) strict_lint rbac/common || ret_val=1;;
+    "ledger_sync"          ) lint rbac/ledger_sync || ret_val=1;;
+    "processor"            ) lint rbac/processor || ret_val=1;;
+    "providers"            ) lint rbac/providers || ret_val=1;;
+    "server"               ) lint rbac/server || ret_val=1;;
+    "transaction_creation" ) lint rbac/transaction_creation || ret_val=1;;
+    "tests"                ) lint tests || ret_val=1;;
     *                   ) echo "ERROR: Invalid option: \""$var"\"" >&2
     esac
 done

@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 from rbac.legacy import addresser as legacy
-from rbac.common.addresser.address_base import AddressBase
+from rbac.common.base.base_address import AddressBase
 from rbac.common.addresser.address_space import AddressSpace
 
 
@@ -32,6 +32,7 @@ class ProposalAddress(AddressBase):
         return legacy.make_proposal_address(object_id=object_id, related_id=target_id)
 
 
+# pylint: disable=invalid-name
 proposal = ProposalAddress()
 
 __all__ = ["proposal"]

@@ -17,7 +17,7 @@ import logging
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
-from rbac.common.manager.base_message import BaseMessage
+from rbac.common.base.base_message import BaseMessage
 
 LOGGER = logging.getLogger(__name__)
 
@@ -32,6 +32,7 @@ class RejectAddRoleMember(BaseMessage):
 
     @property
     def message_type(self):
+        # pylint: disable=no-member
         return protobuf.rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_MEMBERS
 
     @property
@@ -51,7 +52,7 @@ class RejectAddRoleMember(BaseMessage):
         return addresser.proposal.address(object_id=object_id, target_id=target_id)
 
     # pylint: disable=arguments-differ, not-callable
-    def make(self, proposal_id, role_id, user_id, reason=None, metadata=None):
+    def make(self, proposal_id, role_id, user_id, reason=None):
         """Make the message"""
         return self.message_proto(
             proposal_id=proposal_id, role_id=role_id, user_id=user_id, reason=reason

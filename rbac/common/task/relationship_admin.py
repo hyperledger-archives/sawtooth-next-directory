@@ -17,7 +17,7 @@ import logging
 
 from rbac.common import addresser
 from rbac.common import protobuf
-from rbac.common.manager.base_relationship import BaseRelationship
+from rbac.common.base.base_relationship import BaseRelationship
 from rbac.common.task.propose_admin import ProposeAddTaskAdmin
 from rbac.common.task.confirm_admin import ConfirmAddTaskAdmin
 from rbac.common.task.reject_admin import RejectAddTaskAdmin

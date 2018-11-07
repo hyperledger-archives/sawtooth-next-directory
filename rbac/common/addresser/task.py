@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 from rbac.legacy import addresser as legacy
-from rbac.common.addresser.address_base import AddressBase
+from rbac.common.base.base_address import AddressBase
 from rbac.common.addresser.address_space import AddressSpace
 
 
@@ -71,6 +71,7 @@ class TaskAddress(AddressBase):
         )
 
 
+# pylint: disable=invalid-name
 task = TaskAddress()
 
 __all__ = ["task"]
