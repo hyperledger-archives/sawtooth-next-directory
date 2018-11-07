@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/rbac.processor.Dockerfile
-    image: rbac-tp-dev
+    image: rbac-tp:${ISOLATION_ID-latest}
     volumes:
       - ".:/project/hyperledger-rbac"
     command: bin/rbac-tp -vv tcp://validator:4004
@@ -55,10 +55,10 @@ services:
     build:
       context: .
       dockerfile: ./docker/tests.Dockerfile
-    image: blockchain-test-env
+    image: rbac-shell:${ISOLATION_ID-latest}
     volumes:
       - ".:/project/hyperledger-rbac"
     command: pytest
     environment:
-      - PYTHONPATH=/project/hyperledger-rbac/addressing:/project/hyperledger-rbac/rbac/transaction_creation
+      - PYTHONPATH=/project/hyperledger-rbac/
       - HOST=${HOST:-localhost}

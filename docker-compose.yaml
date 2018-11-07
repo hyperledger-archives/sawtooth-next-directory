@@ -19,13 +19,14 @@ services:
   shell:
     build:
       context: .
-      dockerfile: ./docker/shell.Dockerfile
+      dockerfile: ./docker/tests.Dockerfile
     container_name: rbac-shell
-    image: hyperledger/sawtooth-shell:1.0
+    image: rbac-shell:${ISOLATION_ID-latest}
     volumes:
       - ".:/project/hyperledger-rbac"
     depends_on:
       - rest-api
+    command: tail -f /dev/null
     environment:
       - PYTHONPATH=/project/hyperledger-rbac/
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
