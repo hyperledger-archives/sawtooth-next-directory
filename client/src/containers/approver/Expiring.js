@@ -27,16 +27,16 @@ import './Expiring.css';
 
 
 /**
- * 
+ *
  * @class Expiring
  * Expiring component
- * 
+ *
  */
 class Expiring extends Component {
 
   render () {
     return (
-      <Grid id='next-approver-grid' celled='internally'>
+      <Grid id='next-approver-grid'>
 
         <Grid.Column
           id='next-approver-grid-track-column'

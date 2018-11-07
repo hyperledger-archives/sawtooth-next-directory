@@ -18,21 +18,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-
-
-import Login from '../login/Login';
-import Header from '../../components/layouts/Header';
-import Browse from '../browse/Browse';
-import './App.css';
-
-
-import AuthActions,{ AuthSelectors } from '../../redux/AuthRedux';
-import ChatActions, { ChatSelectors } from '../../redux/ChatRedux';
-import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
-import UserActions, { UserSelectors } from '../../redux/UserRedux';
-
-
 import PropTypes from 'prop-types';
+
+
+import './App.css';
+import Browse from '../browse/Browse';
+import Header from '../../components/layouts/Header';
+import Login from '../login/Login';
+
+
+import { appDispatch, appState } from './AppHelper';
 
 
 /**
@@ -149,41 +144,8 @@ App.proptypes = {
 };
 
 
-const logout = (dispatch) => {
-  return dispatch(AuthActions.logoutRequest()) &&
-         dispatch(UserActions.meReset())
-}
+const mapStateToProps = (state) => appState(state);
+const mapDispatchToProps = (dispatch) => appDispatch(dispatch);
 
-
-const mapStateToProps = (state) => {
-  return {
-    isAuthenticated:  AuthSelectors.isAuthenticated(state),
-    recommended:      RequesterSelectors.recommended(state),
-    activePack:       RequesterSelectors.activePack(state),
-    activeProposal:   RequesterSelectors.activeProposal(state),
-    me:               UserSelectors.me(state),
-    requests:         UserSelectors.requests(state),
-    messages:         ChatSelectors.messages(state),
-    users:            UserSelectors.users(state)
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getMe:           () => dispatch(UserActions.meRequest()),
-    getUser:         (id) => dispatch(UserActions.userRequest(id)),
-    getBase:         () => dispatch(RequesterActions.baseRequest()),
-    getPack:         (id) => dispatch(RequesterActions.packRequest(id)),
-    getProposal:     (id) => dispatch(RequesterActions.proposalRequest(id)),
-    requestAccess:   (id, userId, reason) => {
-      return dispatch(RequesterActions.accessRequest(id, userId, reason))
-    },
-
-    sendMessage:     (message) => dispatch(ChatActions.sendRequest(message)),
-    getConversation: (id) => dispatch(ChatActions.conversationRequest(id)),
-
-    logout:          () => logout(dispatch),
-  };
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

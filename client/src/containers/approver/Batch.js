@@ -27,16 +27,16 @@ import './Batch.css';
 
 
 /**
- * 
+ *
  * @class Batch
  * Batch component
- * 
+ *
  */
 class Batch extends Component {
 
   render () {
     return (
-      <Grid id='next-approver-grid' celled='internally'>
+      <Grid id='next-approver-grid'>
 
         <Grid.Column
           id='next-approver-grid-track-column'

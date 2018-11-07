@@ -24,18 +24,18 @@ import './ApproverNav.css';
 
 
 /**
- * 
+ *
  * @class ApproverNav
  * Component encapsulating the template for the sidebar displayed
  * on the approver landing page.
- * 
+ *
  */
 export default class ApproverNav extends Component {
 
   /**
-   * 
+   *
    * Render sidebar hierarchy
-   * 
+   *
    */
   renderLists () {
     return (

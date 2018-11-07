@@ -32,17 +32,21 @@ import './TrackHeader.css';
 export default class TrackHeader extends Component {
 
   render () {
-    const { title } = this.props;
+    const { title, waves } = this.props;
 
     return (
       <div id='next-requester-tracker-header-container'>
         <div id='next-requester-track-header'>
           <h1>{title}</h1>
         </div>
-        <div id='next-wave-container'>
-          <div id='next-wave'></div>
-          <div id='next-wave-alt'></div>
-        </div>
+
+        { waves &&
+          <div id='next-wave-container'>
+            <div id='next-wave'></div>
+            <div id='next-wave-alt'></div>
+          </div>
+        }
+
       </div>
     );
   }

@@ -25,16 +25,16 @@ import './ApproverHome.css';
 
 
 /**
- * 
+ *
  * @class Approver Home
  * Component encapsulating the approver landing page
- * 
+ *
  */
 export default class ApproverHome extends Component {
 
   render() {
     return (
-      <Grid id='next-approver-grid' celled='internally'>
+      <Grid id='next-approver-grid'>
         <Grid.Column
           id='next-approver-grid-track-column'
           width={16}>

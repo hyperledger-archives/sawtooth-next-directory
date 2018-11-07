@@ -31,9 +31,13 @@ const store = createCustomStore();
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
+  const props = {
+    getOpenProposals: () => {}
+  };
+
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Individuals/></BrowserRouter>
+      <BrowserRouter><Individuals {...props}/></BrowserRouter>
     </Provider>, div
   );
 

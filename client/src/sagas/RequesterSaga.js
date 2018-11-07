@@ -54,25 +54,25 @@ export function * getBase (api, action) {
 
 /**
  *
- * Execute pack API request
+ * Execute role API request
  *
- * The getPack generator function executes a request to the
+ * The getRole generator function executes a request to the
  * API and handles the response.
  *
  * @param action
  *
  */
-export function * getPack (api, action) {
+export function * getRole (api, action) {
   try {
     const { id } = action;
-    const res = yield call(api.getPack, id);
+    const res = yield call(api.getRole, id);
 
     if (res.ok) {
       console.log('Retrieved pack');
-      yield put(RequesterActions.packSuccess(res.data));
+      yield put(RequesterActions.roleSuccess(res.data));
     } else {
       alert(res.data.error);
-      yield put(RequesterActions.packFailure(res.data.error));
+      yield put(RequesterActions.roleFailure(res.data.error));
     }
   } catch (err) {
     console.error(err);

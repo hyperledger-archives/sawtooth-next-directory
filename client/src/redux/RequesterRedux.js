@@ -33,9 +33,9 @@ const { Types, Creators } = createActions({
   baseSuccess:       ['base'],
   baseFailure:       ['error'],
 
-  packRequest:       ['id'],
-  packSuccess:       ['activePack'],
-  packFailure:       ['error'],
+  roleRequest:       ['id'],
+  roleSuccess:       ['activeRole'],
+  roleFailure:       ['error'],
 
   proposalRequest:   ['id'],
   proposalSuccess:   ['activeProposal'],
@@ -58,7 +58,7 @@ export default Creators;
  * @property recommended
  * @property requests
  * @property fetching
- * @property activePack
+ * @property activeRole
  * @property error
  *
  * @todo Consider normalizing recommended, requests, and packs
@@ -66,11 +66,11 @@ export default Creators;
  *
  */
 export const INITIAL_STATE = Immutable({
-  recommended:      null,
-  fetching:         null,
-  activePack:       null,
   activeProposal:   null,
-  error:            null
+  activeRole:       null,
+  error:            null,
+  fetching:         null,
+  recommended:      null,
 });
 
 
@@ -81,29 +81,20 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const RequesterSelectors = {
-  activePack:      (state) => state.requester.activePack,
+  activeRole:      (state) => state.requester.activeRole,
   activeProposal:  (state) => state.requester.activeProposal,
   recommended:     (state) => state.requester.recommended,
 
-  idFromSlug: (collection, slug) => {
+  idFromSlug: (collection, slug, field) => {
     if (!collection) return null;
 
-    // ! Use name until slugs added
-    const pack = collection.find((item) => {
-      return utils.createSlug(item.name) === slug
-    });
-
-    return pack && pack.id;
-  },
-
-  proposalIdFromSlug: (collection, slug) => {
-    if (!collection) return null;
+    field = field || 'id';
 
     const entity = collection.find((item) => {
       return utils.createSlug(item.name) === slug
     });
 
-    return entity && entity['proposal_id'];
+    return entity && entity[field];
   }
 };
 
@@ -128,10 +119,10 @@ export const failure = (state, { error }) => {
  *
  *
  */
-export const packSuccess = (state, { activePack }) => {
+export const roleSuccess = (state, { activeRole }) => {
   return state.merge({
     fetching: false,
-    activePack: activePack.data
+    activeRole: activeRole.data
   });
 }
 
@@ -169,9 +160,9 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.BASE_SUCCESS]: baseSuccess,
   [Types.BASE_FAILURE]: failure,
 
-  [Types.PACK_REQUEST]: request,
-  [Types.PACK_SUCCESS]: packSuccess,
-  [Types.PACK_FAILURE]: failure,
+  [Types.ROLE_REQUEST]: request,
+  [Types.ROLE_SUCCESS]: roleSuccess,
+  [Types.ROLE_FAILURE]: failure,
 
   [Types.PROPOSAL_REQUEST]: request,
   [Types.PROPOSAL_SUCCESS]: proposalSuccess,

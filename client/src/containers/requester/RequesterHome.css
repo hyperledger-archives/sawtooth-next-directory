@@ -16,6 +16,7 @@ limitations under the License.
 
 #next-requester-grid {
   height: 100%;
+  margin: 0;
 }
 
 #next-requester-grid-track-column {

@@ -41,10 +41,10 @@ import './Requests.css';
 export class Requests extends Component {
 
   componentDidMount () {
-    const { getPack, getProposal, packId, proposalId } = this.props;
+    const { getRole, getProposal, roleId, proposalId } = this.props;
 
-    if (packId && proposalId) {
-      getPack(packId);
+    if (roleId && proposalId) {
+      getRole(roleId);
       getProposal(proposalId);
     }
   }
@@ -57,10 +57,10 @@ export class Requests extends Component {
    *
    */
   componentWillReceiveProps (newProps) {
-    const { getPack, getProposal, packId, proposalId } = this.props;
+    const { getRole, getProposal, roleId, proposalId } = this.props;
 
-    if (newProps.packId !== packId) {
-      getPack(newProps.packId);
+    if (newProps.roleId !== roleId) {
+      getRole(newProps.roleId);
     }
 
     if (newProps.proposalId !== proposalId) {
@@ -70,28 +70,30 @@ export class Requests extends Component {
 
 
   render () {
-    const { activePack, activeProposal } = this.props;
+    const { activeRole, activeProposal } = this.props;
 
-    if (!activePack || !activeProposal) {
+    if (!activeRole || !activeProposal) {
       return null;
     }
 
     return (
-      <Grid id='next-requester-grid' celled='internally'>
+      <Grid id='next-requester-grid'>
 
         <Grid.Column
           id='next-requester-grid-track-column'
           width={10}>
-          <TrackHeader title={activePack.name} {...this.props}/>
 
+          <TrackHeader waves title={activeRole.name} {...this.props}/>
           <div id='next-requester-requests-content'>
             <ApprovalCard {...this.props}/>
-            <Container id='next-requester-description'>Lorem ipsum dolor sit amet.</Container>
+            <Container id='next-requester-description'>
+              Lorem ipsum dolor sit amet.
+            </Container>
             <MemberList {...this.props}
-              members={activePack.members}
-              owners={activePack.owners}/>
+              members={activeRole.members}
+              owners={activeRole.owners}/>
           </div>
-          
+
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'
@@ -112,8 +114,8 @@ const mapStateToProps = (state, ownProps) => {
   const { requests } = state.user;
 
   return {
-    packId: RequesterSelectors.idFromSlug(requests, id),
-    proposalId: RequesterSelectors.proposalIdFromSlug(requests, id)
+    roleId: RequesterSelectors.idFromSlug(requests, id),
+    proposalId: RequesterSelectors.idFromSlug(requests, id, 'proposal_id')
   };
 }
 
@@ -125,9 +127,9 @@ export default connect(mapStateToProps, mapDispatchToProps)(Requests);
 
 
 Requests.proptypes = {
-  getPack: PropTypes.func,
+  getRole: PropTypes.func,
   getProposal: PropTypes.func,
-  activePack: PropTypes.arrayOf(PropTypes.shape(
+  activeRole: PropTypes.arrayOf(PropTypes.shape(
     {
       name: PropTypes.string
     }

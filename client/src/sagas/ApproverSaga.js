@@ -14,22 +14,27 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { combineReducers } from 'redux';
+import { call, put } from 'redux-saga/effects';
+import ApproverActions from '../redux/ApproverRedux';
 
 
-import { reducer as ApproverReducer } from './ApproverRedux';
-import { reducer as AuthReducer } from './AuthRedux';
-import { reducer as ChatReducer } from './ChatRedux';
-import { reducer as RequesterReducer } from './RequesterRedux';
-import { reducer as UserReducer } from './UserRedux';
+/**
+ *
+ * Execute open proposals API request
+ *
+ * The getOpenProposals generator function executes a request to the
+ * API to get open proposals.
+ *
+ * @param action
+ *
+ */
+export function * getOpenProposals (api, action) {
+  try {
 
+    const res = yield call(api.getOpenProposals);
+    yield put(ApproverActions.openProposalsSuccess(res.data));
 
-const reducers = combineReducers({
-  approver:   ApproverReducer,
-  auth:       AuthReducer,
-  chat:       ChatReducer,
-  requester:  RequesterReducer,
-  user:       UserReducer
-});
-
-export default reducers;
+  } catch (err) {
+    console.error(err);
+  }
+}

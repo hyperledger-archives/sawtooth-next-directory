@@ -42,7 +42,7 @@ export function * me (api, action) {
 
       for (let proposal of me.proposals) {
         const role = yield call(
-          api.getPack,
+          api.getRole,
           proposal['object_id']
         );
 
