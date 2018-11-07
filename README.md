@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/hyperledger/sawtooth-next-directory.svg?branch=master)](https://travis-ci.org/hyperledger/sawtooth-next-directory)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://github.com/hyperledger/sawtooth-next-directory/blob/master/LICENSE)
+[![Documentation Status](https://readthedocs.org/projects/sawtooth-next-directory/badge/?version=latest)](https://sawtooth-next-directory.readthedocs.io/?badge=latest)
 
 This repo contains multiple components which together with a
 _Hyperledger Sawtooth_ validator, will comprise the "blockchain" components
