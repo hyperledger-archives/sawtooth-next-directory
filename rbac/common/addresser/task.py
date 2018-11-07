@@ -16,6 +16,7 @@
 from rbac.legacy import addresser as legacy
 from rbac.common.base.base_address import AddressBase
 from rbac.common.addresser.address_space import AddressSpace
+from rbac.common.addresser.family import family
 
 
 class TaskOwnerAddress(AddressBase):
@@ -29,6 +30,9 @@ class TaskOwnerAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_task_owners_address(task_id=object_id, user_id=target_id)
+
         return legacy.make_task_owners_address(task_id=object_id, user_id=target_id)
 
 
@@ -43,6 +47,9 @@ class TaskAdminAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_task_admins_address(task_id=object_id, user_id=target_id)
+
         return legacy.make_task_admins_address(task_id=object_id, user_id=target_id)
 
 
@@ -59,6 +66,9 @@ class TaskAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_task_attributes_address(task_id=object_id)
+
         return legacy.make_task_attributes_address(task_id=object_id)
 
     def address_is(self, address):

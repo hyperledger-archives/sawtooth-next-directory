@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
+import time
 
 from rbac.common import addresser
 from rbac.ledger_sync.deltas.decoding import data_to_dicts
@@ -46,7 +47,7 @@ def _handle_delta(database, delta):
     # Parse changes and update database
     update = get_updater(database, delta.block_num)
     for change in delta.state_changes:
-        if addresser.namespace_ok(change.address):
+        if addresser.family.is_family(change.address):
             resources = data_to_dicts(change.address, change.value)
             for resource in resources:
                 update_results = update(change.address, resource)
@@ -56,7 +57,13 @@ def _handle_delta(database, delta):
                     )
 
     # Add new block to database
-    new_block = {"block_num": delta.block_num, "block_id": delta.block_id}
+    new_block = {
+        "block_num": delta.block_num,
+        "block_id": delta.block_id,
+        "previous_block_id": delta.previous_block_id,
+        "state_root_hash": delta.state_root_hash,
+        "block_datetime": time.time(),
+    }
     block_results = database.insert("blocks", new_block)
     if block_results["inserted"] == 0:
         LOGGER.warning(

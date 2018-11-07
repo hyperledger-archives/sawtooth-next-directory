@@ -23,6 +23,8 @@ import sawtooth_signing
 from sawtooth_signing import CryptoFactory
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
+from rbac.common import addresser
+
 
 def wrap_payload_in_txn_batch(txn_key, payload, header, batch_key):
     """Takes the serialized RBACPayload and creates a batch_list, batch
@@ -89,8 +91,8 @@ def make_header(inputs, outputs, payload_sha512, signer_pubkey, batcher_pubkey):
         outputs=outputs,
         batcher_public_key=batcher_pubkey,
         dependencies=[],
-        family_name="rbac",
-        family_version="1.0",
+        family_name=addresser.family.name,
+        family_version=addresser.family.version,
         nonce=uuid4().hex,
         signer_public_key=signer_pubkey,
         payload_sha512=payload_sha512,

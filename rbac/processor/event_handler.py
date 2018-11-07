@@ -26,6 +26,8 @@ from rbac.processor.user import users
 from rbac.processor.user.user_manager_proposal import apply_user_confirm
 from rbac.processor.user.user_manager_proposal import apply_user_propose
 from rbac.processor.user.user_manager_proposal import apply_user_reject
+from rbac.common.manager.rbac_manager import RBACManager
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -102,25 +104,40 @@ CREATE = [RBACPayload.CREATE_USER, RBACPayload.CREATE_ROLE, RBACPayload.CREATE_T
 
 
 class RBACTransactionHandler(object):
+    def __init__(self):
+        object.__init__(self)
+        self.rbac = RBACManager()
+
     @property
     def family_name(self):
-        return addresser.FAMILY_NAME
+        return addresser.family.name
 
     @property
     def family_versions(self):
-        return [addresser.FAMILY_VERSION]
+        return addresser.family.versions
 
     @property
     def encodings(self):
-        return ["application/protobuf"]
+        return addresser.family.encodings
 
     @property
     def namespaces(self):
-        return [addresser.NAMESPACE]
+        return addresser.family.namespaces
 
     def apply(self, transaction, state):
-        payload = RBACPayload()
-        payload.ParseFromString(transaction.payload)
+        try:
+            payload = RBACPayload()
+            payload.ParseFromString(transaction.payload)
+
+            if self.rbac.has_handler(message_type=payload.message_type):
+                return self.rbac.apply(
+                    header=transaction.header, payload=payload, state=state
+                )
+        except ValueError as err:
+            raise InvalidTransaction(err)
+        except Exception as err:  # pylint: disable=broad-except
+            LOGGER.exception("Unexpected processor error %s", err)
+            raise InvalidTransaction(err)
 
         if payload.message_type in CREATE:
             apply_create(transaction.header, payload, state)

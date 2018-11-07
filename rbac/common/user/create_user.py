@@ -147,6 +147,5 @@ class CreateUser(BaseMessage):
         message.ParseFromString(payload.content)
 
         self.validate(message=message, signer=header.signer_public_key, state=state)
-        self.set_state(
-            state=state, message=message, object_id=message.user_id
-        )  # pylint: disable=no-member
+        # pylint: disable=no-member
+        self.set_state(state=state, message=message, object_id=message.user_id)

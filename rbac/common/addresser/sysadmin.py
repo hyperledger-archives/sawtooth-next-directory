@@ -16,6 +16,7 @@
 from rbac.legacy import addresser as legacy
 from rbac.common.base.base_address import AddressBase
 from rbac.common.addresser.address_space import AddressSpace
+from rbac.common.addresser.family import family
 
 
 class SysAdminOwnerAddress(AddressBase):
@@ -29,6 +30,9 @@ class SysAdminOwnerAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_sysadmin_owners_address(user_id=object_id)
+
         return legacy.make_sysadmin_owners_address(user_id=object_id)
 
 
@@ -43,6 +47,9 @@ class SysAdminAdminAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_sysadmin_admins_address(user_id=object_id)
+
         return legacy.make_sysadmin_admins_address(user_id=object_id)
 
 
@@ -57,6 +64,9 @@ class SysAdminMemberAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_sysadmin_members_address(user_id=object_id)
+
         return legacy.make_sysadmin_members_address(user_id=object_id)
 
 
@@ -74,6 +84,9 @@ class SysAdminAddress(AddressBase):
 
     def address(self, object_id=None, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_sysadmin_attr_address()
+
         return legacy.make_sysadmin_attr_address()
 
     def address_is(self, address):

@@ -14,11 +14,13 @@
 # -----------------------------------------------------------------------------
 
 import logging
+import re
 from rbac.common import addresser
 from tests.rbac.common.assertions import CommonAssertions
 
 LOGGER = logging.getLogger(__name__)
 
+ADDRESS_PATTERN = re.compile(r"^[0-9a-f]{70}$")
 ADDRESS_CLASS_METHODS = ["address", "address_is", "hash", "unique_id"]
 ADDRESS_CLASS_PROPS = ["address_type"]
 
@@ -43,10 +45,10 @@ class AddressAssertions(CommonAssertions):
             ),
         )
         self.assertTrue(
-            addresser.ADDRESS_PATTERN.match(value),
+            ADDRESS_PATTERN.match(value),
             "Expected address to a lowercase hexadecimal string. Got {}".format(value),
         )
         self.assertTrue(
-            addresser.FAMILY_PATTERN.match(value),
+            addresser.family.is_family(value),
             "Expected address to be of the correct transaction family.",
         )

@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from rbac.common.manager.rbac_manager import RBACManager
+from rbac.common.user.user_manager import UserManager
 from rbac.common.role.role_manager import RoleManager
 from tests.rbac.common.manager.test_base import TestBase
 
@@ -32,6 +33,16 @@ class RBACManagerTest(TestBase):
     def test_interface(self):
         """Verify the expected interface"""
         self.assertIsInstance(self.rbac, RBACManager)
+
+        self.assertIsInstance(self.rbac.user, UserManager)
+        self.assertTrue(callable(self.rbac.user.address))
+        self.assertTrue(callable(self.rbac.user.make))
+        self.assertTrue(callable(self.rbac.user.make_addresses))
+        self.assertTrue(callable(self.rbac.user.make_payload))
+        self.assertTrue(callable(self.rbac.user.create))
+        self.assertTrue(callable(self.rbac.user.send))
+        self.assertTrue(callable(self.rbac.user.get))
+
         self.assertIsInstance(self.rbac.role, RoleManager)
         self.assertTrue(callable(self.rbac.role.address))
         self.assertTrue(callable(self.rbac.role.make))

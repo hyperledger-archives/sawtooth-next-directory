@@ -74,8 +74,8 @@ class TestUserTransactionCreation(unittest.TestCase):
                 header.ParseFromString(transaction.header)
 
                 self.assertEqual(type(header), transaction_pb2.TransactionHeader)
-                self.assertEqual(header.family_name, addresser.FAMILY_NAME)
-                self.assertEqual(header.family_version, addresser.FAMILY_VERSION)
+                self.assertEqual(header.family_name, addresser.family.name)
+                self.assertEqual(header.family_version, addresser.family.version)
                 self.assertEqual(header.batcher_public_key, batch_key.public_key)
                 self.assertEqual(header.signer_public_key, txn_key.public_key)
 
@@ -86,7 +86,6 @@ class TestUserTransactionCreation(unittest.TestCase):
                 for address in header.inputs:
                     input_count += 1
                     self.assertEqual(type(address), str)
-                    self.assertEqual(len(address), addresser.ADDRESS_LENGTH)
                     self.assertEqual(
                         addresser.address_is(address), addresser.AddressSpace.USER
                     )
@@ -97,7 +96,6 @@ class TestUserTransactionCreation(unittest.TestCase):
                 for address in header.outputs:
                     output_count += 1
                     self.assertEqual(type(address), str)
-                    self.assertEqual(len(address), addresser.ADDRESS_LENGTH)
                     self.assertEqual(
                         addresser.address_is(address), addresser.AddressSpace.USER
                     )

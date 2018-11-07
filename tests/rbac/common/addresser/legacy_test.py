@@ -29,8 +29,8 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.unit
 class TestAddressLegacyCompatibility(AddressAssertions):
     def test_legacy_attributes(self):
-        self.assertEqual(addresser.FAMILY_NAME, legacy.FAMILY_NAME)
-        self.assertEqual(addresser.FAMILY_VERSION, legacy.FAMILY_VERSION)
+        self.assertEqual(addresser.family.name, legacy.FAMILY_NAME)
+        self.assertEqual(addresser.family.version, legacy.FAMILY_VERSION)
 
     def test_legacy_address_space(self):
         self.assertEqual(

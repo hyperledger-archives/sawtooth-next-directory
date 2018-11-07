@@ -16,6 +16,7 @@
 from rbac.legacy import addresser as legacy
 from rbac.common.base.base_address import AddressBase
 from rbac.common.addresser.address_space import AddressSpace
+from rbac.common.addresser.family import family
 
 
 class RoleOwnerAddress(AddressBase):
@@ -29,6 +30,9 @@ class RoleOwnerAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_role_owners_address(role_id=object_id, user_id=target_id)
+
         return legacy.make_role_owners_address(role_id=object_id, user_id=target_id)
 
 
@@ -43,6 +47,9 @@ class RoleAdminAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_role_admins_address(role_id=object_id, user_id=target_id)
+
         return legacy.make_role_admins_address(role_id=object_id, user_id=target_id)
 
 
@@ -57,6 +64,11 @@ class RoleMemberAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_role_members_address(
+                role_id=object_id, user_id=target_id
+            )
+
         return legacy.make_role_members_address(role_id=object_id, user_id=target_id)
 
 
@@ -71,6 +83,9 @@ class RoleTaskAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_role_tasks_address(role_id=object_id, task_id=target_id)
+
         return legacy.make_role_tasks_address(role_id=object_id, task_id=target_id)
 
 
@@ -89,6 +104,9 @@ class RoleAddress(AddressBase):
 
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
+        if family.version == "1.0":
+            return legacy.make_role_attributes_address(role_id=object_id)
+
         return legacy.make_role_attributes_address(role_id=object_id)
 
     def address_is(self, address):

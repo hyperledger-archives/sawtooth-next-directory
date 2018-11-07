@@ -28,11 +28,10 @@ LOGGER = logging.getLogger(__name__)
 class TestAddresser(AddressAssertions):
     def test_import(self):
         self.assertEqual(addresser.AddressSpace, AddressSpace)
-        self.assertEqual(addresser.FAMILY_NAME, "rbac")
-        self.assertEqual(addresser.FAMILY_VERSION, "1.0")
-        self.assertEqual(addresser.ADDRESS_LENGTH, 70)
-        self.assertEqual(addresser.ADDRESS_PATTERN.pattern, r"^[0-9a-f]{70}$")
-        self.assertEqual(addresser.FAMILY_PATTERN.pattern, r"^9f4448[0-9a-f]{64}$")
+        self.assertEqual(addresser.family.name, "rbac")
+        self.assertEqual(addresser.family.version, "1.0")
+        self.assertEqual(addresser.family.pattern.pattern, r"^9f4448[0-9a-f]{64}$")
+        self.assertTrue(callable(addresser.family.is_family))
         self.assertTrue(callable(addresser.address_is))
 
     def test_unique_id(self):
