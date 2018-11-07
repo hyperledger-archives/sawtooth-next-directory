@@ -15,9 +15,8 @@
 
 import logging
 import json
-from google.protobuf import json_format
 from hashlib import sha512
-from tests.rbac.common.assertions import CommonAssertions
+from google.protobuf import json_format
 
 from sawtooth_sdk.protobuf import transaction_pb2
 from sawtooth_sdk.protobuf import batch_pb2
@@ -28,6 +27,7 @@ from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth.rbac_payload import unmake_payload
+from tests.rbac.common.assertions import CommonAssertions
 
 LOGGER = logging.getLogger(__name__)
 

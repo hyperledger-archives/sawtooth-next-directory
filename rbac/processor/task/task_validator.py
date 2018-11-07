@@ -13,10 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+from sawtooth_sdk.processor.exceptions import InvalidTransaction
+
 from rbac.common import addresser
 from rbac.processor import message_accessor, state_accessor, proposal_validator
 from rbac.processor.user import user_validator
-from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 
 def validate_identifier_is_task(state_entries, identifier, address):

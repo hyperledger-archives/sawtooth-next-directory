@@ -16,9 +16,10 @@
 import os
 import logging
 import time
+from datetime import datetime as dt
 import requests
 import rethinkdb as r
-from datetime import datetime as dt
+
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.inbound_filters import inbound_user_filter, inbound_group_filter
 

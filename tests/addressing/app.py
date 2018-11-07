@@ -13,10 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
-import unittest
 import logging
+import unittest
 from hashlib import sha512
+import pytest
+
 from rbac.legacy import addresser
 
 LOGGER = logging.getLogger(__name__)

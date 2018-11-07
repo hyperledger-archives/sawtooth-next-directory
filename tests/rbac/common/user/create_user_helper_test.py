@@ -13,13 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
 import logging
+import pytest
 
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common import protobuf
-
 from tests.rbac.common.manager.test_base import TestBase
 from tests.rbac.common.manager.helper import TestHelper
 from tests.rbac.common.user.user_helper import UserTestHelper

@@ -14,11 +14,9 @@
 # ------------------------------------------------------------------------------
 
 import logging
-
-from rbac.server.api.errors import ApiNotFound
-
 import rethinkdb as r
 
+from rbac.server.api.errors import ApiNotFound
 
 LOGGER = logging.getLogger(__name__)
 

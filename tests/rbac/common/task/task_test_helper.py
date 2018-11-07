@@ -13,10 +13,10 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
 import logging
 import random
 from uuid import uuid4
+import pytest
 
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key

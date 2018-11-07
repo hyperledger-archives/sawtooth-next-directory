@@ -19,8 +19,9 @@ import binascii
 import string
 import re
 import random
-from rbac.common.crypto.cipher import AES
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from rbac.common.crypto.cipher import AES
+
 
 LOGGER = logging.getLogger(__name__)
 

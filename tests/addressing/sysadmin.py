@@ -13,9 +13,9 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
-import unittest
 import logging
+import unittest
+import pytest
 from rbac.legacy import addresser
 from rbac.legacy.addresser import AddressSpace
 

@@ -14,14 +14,11 @@
 # ------------------------------------------------------------------------------
 
 import logging
-
-from rbac.server.api.errors import ApiNotFound
-
-from rbac.server.db.relationships_query import fetch_relationships_by_id
-from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
-
 import rethinkdb as r
 
+from rbac.server.api.errors import ApiNotFound
+from rbac.server.db.relationships_query import fetch_relationships_by_id
+from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 
 LOGGER = logging.getLogger(__name__)
 

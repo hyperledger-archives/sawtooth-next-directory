@@ -13,11 +13,10 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import pytest
 import logging
 import unittest
 from uuid import uuid4
-
+import pytest
 from rbac.legacy import addresser
 from rbac.legacy.addresser import AddressSpace
 
