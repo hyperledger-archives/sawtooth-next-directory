@@ -23,10 +23,10 @@ import json
 import logging
 from datetime import datetime, timezone
 from threading import Timer
-
 import ldap3
-import rethinkdb as r
 from ldap3 import ALL, Connection, Server
+import rethinkdb as r
+
 from rbac.providers import inbound_filters
 from rbac.providers.ldap import ldap_transformer
 
