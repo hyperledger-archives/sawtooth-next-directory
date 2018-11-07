@@ -31,9 +31,8 @@ from rbac.common.crypto.keys import SIGNATURE_LENGTH
 from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.crypto.keys import SIGNATURE_PATTERN
-
-from tests.rbac.common.crypto.key_assertions import KeyAssertions
 from rbac.common.crypto.secrets import generate_random_string
+from tests.rbac.common.crypto.key_assertions import KeyAssertions
 
 LOGGER = logging.getLogger(__name__)
 
