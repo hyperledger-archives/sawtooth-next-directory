@@ -30,10 +30,10 @@ import Toast from '../../components/toast/toast';
 
 
 /**
- * 
+ *
  * @class Login
  * Component encapsulating the login landing page.
- * 
+ *
  */
 class Login extends Component {
 
@@ -55,11 +55,11 @@ class Login extends Component {
   }
 
   /**
-   * 
+   *
    * Once the user is authenticated, redirect to landing page
-   * 
-   * @param {*} newProps 
-   * 
+   *
+   * @param {*} newProps
+   *
    */
   componentWillReceiveProps(newProps) {
     this.props = newProps;
@@ -71,7 +71,7 @@ class Login extends Component {
     if (newProps.error) {
       /**
        * Open toast to display the error response
-       * 
+       *
        */
       this.setState({
         isToastOpen: true,
@@ -91,7 +91,7 @@ class Login extends Component {
     const { attemptLogin, attemptSignup } = this.props;
     const { isToastOpen, toastMessage } = this.state;
 
-    let formDom = (this.props.location.pathname === '/sign-up' ? <SignupForm submit={attemptSignup} /> : <LoginForm submit={attemptLogin} />);
+    let formDom = (this.props.location.pathname === '/signup' ? <SignupForm submit={attemptSignup} /> : <LoginForm submit={attemptLogin} />);
 
     return (
       <Grid centered columns={2}>

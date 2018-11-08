@@ -15,13 +15,12 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-
-
+import { Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import './TrackHeader.css';
-
+import roleAvatar from '../../images/role-avatar.png';
 
 /**
  *
@@ -32,12 +31,19 @@ import './TrackHeader.css';
 export default class TrackHeader extends Component {
 
   render () {
-    const { title, waves } = this.props;
+    const { roleImage, title, waves } = this.props;
 
     return (
       <div id='next-requester-tracker-header-container'>
         <div id='next-requester-track-header'>
-          <h1>{title}</h1>
+          { title &&
+            <Header as='h1' inverted>
+              { roleImage &&
+                <Image circular size='large' src={roleAvatar}/>
+              }
+              {title}
+            </Header>
+          }
         </div>
 
         { waves &&

@@ -37,6 +37,8 @@ const { Types, Creators } = createActions({
   userRequest:   ['id'],
   userSuccess:   ['user'],
   userFailure:   ['error'],
+
+  usersRequest:  ['ids'],
 });
 
 
@@ -129,4 +131,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.USER_REQUEST]: request,
   [Types.USER_SUCCESS]: userSuccess,
   [Types.USER_FAILURE]: failure,
+
+  [Types.USERS_REQUEST]: request,
 });

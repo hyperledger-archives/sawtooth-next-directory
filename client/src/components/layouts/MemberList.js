@@ -22,10 +22,10 @@ import './MemberList.css';
 
 
 /**
- * 
+ *
  * @class MemberList
  * Component encapsulating the member list
- * 
+ *
  */
 export default class MemberList extends Component {
 
@@ -45,18 +45,18 @@ export default class MemberList extends Component {
   }
 
 
-  renderUserSegment (userId, index) {
+  renderUserSegment (userId) {
     const { users } = this.props;
-    
-    if (!users) { 
+
+    if (!users) {
       return null;
     }
 
     const user = users.find((user) => user.id === userId);
 
     return (
-      <Segment compact key={index}>
-        {user.name}
+      <Segment compact key={userId}>
+        {user && user.name}
       </Segment>
     );
   }
@@ -67,12 +67,12 @@ export default class MemberList extends Component {
 
     return (
       <div>
-        { owners && owners.map((owner, index) => (
-          this.renderUserSegment(owner, index)
+        { owners && owners.map((owner) => (
+          this.renderUserSegment(owner)
         )) }
 
-        { members && members.map((member, index) => (
-          this.renderUserSegment(member, index)
+        { members && members.map((member) => (
+          this.renderUserSegment(member)
         )) }
       </div>
     );

@@ -20,9 +20,12 @@ limitations under the License.
 }
 
 #next-requester-track-header {
+  align-items: center;
   background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
   color: var(--header-color);
-  padding: 30px 40px 15px 40px;
+  display: flex;
+  height: 96px;
+  padding: 0 20px;
 }
 
 #next-wave,

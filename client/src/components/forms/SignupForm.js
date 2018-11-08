@@ -24,10 +24,10 @@ import PropTypes from 'prop-types';
 
 
 /**
- * 
+ *
  * @class SignupForm
- * Component encapsulating sign-up form suitable for creating new users
- * 
+ * Component encapsulating signup form suitable for creating new users
+ *
  */
 export default class SignupForm extends Component {
 
@@ -40,17 +40,17 @@ export default class SignupForm extends Component {
 
 
   /**
-   * 
+   *
    * @param event   Event passed by Semantic UI
    * @param name    Name of form element derived from 'name' HTML attribute
    * @param value   Value of form field
-   * 
+   *
    */
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });
   }
 
-  
+
   render () {
     const { submit } = this.props;
     const { username, password, name, email  } = this.state;
@@ -87,7 +87,7 @@ export default class SignupForm extends Component {
       </Form>
     );
   }
-  
+
 }
 
 
