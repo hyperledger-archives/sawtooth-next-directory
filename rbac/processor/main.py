@@ -16,11 +16,16 @@
 import argparse
 import sys
 import os
+import logging
 
 from sawtooth_sdk.processor.core import TransactionProcessor
 from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac.processor.event_handler import RBACTransactionHandler
+
+LOGGER = logging.getLogger(__name__)
+LOGGER.level = logging.DEBUG
+LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def getenv(name, default):
@@ -63,7 +68,7 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     except Exception as exe:  # pylint: disable=broad-except
-        print("Error: {}".format(exe), file=sys.stderr)
+        LOGGER.error("Error: %s", exe, file=sys.stderr)
     finally:
         if processor is not None:
             processor.stop()

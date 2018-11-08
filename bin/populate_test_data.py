@@ -19,6 +19,12 @@
 
 import json
 import requests
+import logging
+import sys
+
+LOGGER = logging.getLogger(__name__)
+LOGGER.level = logging.DEBUG
+LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 HEADERS = {"Content-Type": "application/json"}
 
@@ -32,35 +38,36 @@ def insert_test_data():
     host = input("What is the hostname you would like to populate test "
                  "data to? Press enter for localhost: ")
     if host == "":
-        host = "localhost"
+       host = "localhost"
 
-    print("Inserting test data...")
+    LOGGER.info("Inserting test data...")
     
     response_create_current_manager = create_user('currentManager', host)
-    print('Created current manager:', response_create_current_manager)
+    LOGGER.info('Created current manager:%s', response_create_current_manager)
 
     id_current_manager = response_create_current_manager['data']['user']['id']
 
     response_create_other_manager = create_user('otherManager', host)
     id_other_manager = response_create_other_manager['data']['user']['id']
 
-    print('Created other manager:', response_create_other_manager)
+    LOGGER.info('Created other manager:%s', response_create_other_manager)
+
 
     additional_managers = 5
-    print('Adding an additional {} managers...'.format(additional_managers))
+    LOGGER.info('Adding an additional {} managers...'.format(additional_managers))
     for i in range(additional_managers):
         create_user('manager' + str(i), host)
 
     response_create_staff = create_user('staff', host, id_current_manager)
     id_staff = response_create_staff['data']['user']['id']
 
-    print('Created staff:', response_create_staff)
+    LOGGER.info('Created staff:%s', response_create_staff)
 
     auth_current_manager = response_create_current_manager['data']['authorization']
 
-    print('Creating roles...')
+    LOGGER.info('Creating roles...')
 
-    print('Creating role: Sharepoint Admins')
+    LOGGER.info('Creating role: Sharepoint Admins')
 
     response_create_role_admins = create_role(auth=auth_current_manager,
                                               name="Sharepoint Admins",
@@ -69,8 +76,8 @@ def insert_test_data():
                                               members=[id_staff],
                                               host=host)
 
-    print('Created role:', response_create_role_admins['data']['name'])
-    print('Creating role: Infosec Auditors')
+    LOGGER.info('Created role:%s', response_create_role_admins['data']['name'])
+    LOGGER.info('Creating role: Infosec Auditors')
 
     response_create_role_auditors = create_role(auth=auth_current_manager,
                                                 name="Infosec Auditors",
@@ -79,7 +86,7 @@ def insert_test_data():
                                                 members=[id_staff],
                                                 host=host)
 
-    print('Created role:', response_create_role_auditors['data']['name'])
+    LOGGER.info('Created role:%s', response_create_role_auditors['data']['name'])
 
     payload_propose_manager = {"id": id_other_manager}
 
@@ -88,7 +95,7 @@ def insert_test_data():
                                                        headers={"Content-Type": "application/json",
                                                                 "Authorization": auth_current_manager}).text)
 
-    print('Created proposal id: {} - Switch {}\'s manager from {} to {}'.format(
+    LOGGER.info('Created proposal id: {} - Switch {}\'s manager from {} to {}'.format(
         response_propose_manager['proposal_id'],
         'staff',
         'currentManager',

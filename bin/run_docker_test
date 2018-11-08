@@ -367,7 +367,7 @@ def _setup_environ(isolation_id):
             os.path.realpath(__file__)
         )
     )
-    print(os.environ['SAWTOOTH_CORE'])
+    LOGGER.debug(os.environ['SAWTOOTH_CORE'])
 
 
 def _get_compose_dir():
