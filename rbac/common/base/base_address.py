@@ -36,7 +36,7 @@ class AddressBase:
 
     def _address_is(self, address):
         """Returns the address type if the address is of the address type
-        implemented by this class, otherewise returns None"""
+        implemented by this class, otherwise returns None"""
         address_type = AddressSpace[legacy.address_is(address=address).name]
         if address_type == self.address_type:
             return self.address_type

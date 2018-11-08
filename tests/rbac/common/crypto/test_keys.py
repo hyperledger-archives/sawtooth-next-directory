@@ -24,7 +24,7 @@ from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
 # from sawtooth_signing.core import ParseError
 from rbac.common.crypto.keys import Key
-from rbac.common.crypto.keys import ALGORITHM
+from rbac.common.crypto.keys import ELLIPTIC_CURVE_ALGORITHM
 from rbac.common.crypto.keys import PRIVATE_KEY_LENGTH
 from rbac.common.crypto.keys import PUBLIC_KEY_LENGTH
 from rbac.common.crypto.keys import SIGNATURE_LENGTH
@@ -44,7 +44,7 @@ class TestKeys(KeyAssertions):
     def test_public_key_constants(self):
         """Tests the expected key class constants
         Used for for test sanity checks"""
-        self.assertEqual(ALGORITHM, "secp256k1")
+        self.assertEqual(ELLIPTIC_CURVE_ALGORITHM, "secp256k1")
         self.assertEqual(PUBLIC_KEY_LENGTH, 33)
         self.assertEqual(PRIVATE_KEY_LENGTH, 32)
         self.assertEqual(SIGNATURE_LENGTH, 64)
@@ -73,7 +73,7 @@ class TestKeys(KeyAssertions):
         """Derive a public key from a random private key using Sawtooth Signing
         and make sure it passes sanity checks"""
         self.assertTrue(callable(sawtooth_signing.create_context))
-        context = sawtooth_signing.create_context(ALGORITHM)
+        context = sawtooth_signing.create_context(ELLIPTIC_CURVE_ALGORITHM)
         private_key = Secp256k1PrivateKey.new_random()
         public_key = context.get_public_key(private_key)
         self.assertIsPublicKeySecp256k1(public_key)

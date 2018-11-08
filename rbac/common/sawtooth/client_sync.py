@@ -17,7 +17,7 @@ import logging
 from base64 import b64decode
 from rbac.common.sawtooth.rest_client import RestClient
 from rbac.common.sawtooth.rest_client import BaseMessage
-from rbac.common.sawtooth.batcher import Batcher
+from rbac.common.sawtooth import batcher
 from rbac.app.config import VALIDATOR_REST_ENDPOINT
 
 LOGGER = logging.getLogger(__name__)
@@ -28,10 +28,9 @@ _CLIENT = RestClient(base_url=VALIDATOR_REST_ENDPOINT)
 class ClientSync:
     def __init__(self):
         self._client = _CLIENT
-        self.batch = Batcher()
 
     def send_batches_get_status(self, batch_list):
-        batch_ids = self.batch.get_batch_ids(batch_list)
+        batch_ids = batcher.get_batch_ids(batch_list)
         self.send_batches(batch_list)
         return self.get_statuses(batch_ids, wait=10)
 
