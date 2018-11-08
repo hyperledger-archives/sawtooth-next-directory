@@ -62,7 +62,7 @@ async def fetch_all_users(request):
 
 @USERS_BP.post("api/users")
 async def create_new_user(request):
-    required_fields = ["name", "username", "password"]
+    required_fields = ["name", "username", "password", "email"]
     utils.validate_fields(required_fields, request.json)
 
     # Generate keys
@@ -186,6 +186,7 @@ def create_user_response(request, public_key):
         "id": public_key,
         "name": request.json.get("name"),
         "username": request.json.get("username"),
+        "email": request.json.get("email"),
         "ownerOf": [],
         "administratorOf": [],
         "memberOf": [],
