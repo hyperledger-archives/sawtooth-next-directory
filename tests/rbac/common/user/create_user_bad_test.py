@@ -18,6 +18,7 @@ import pytest
 
 from rbac.common.crypto.keys import Key
 from rbac.common import protobuf
+from rbac.common.sawtooth import batcher
 from tests.rbac.common.manager.test_base import TestBase
 
 LOGGER = logging.getLogger(__name__)
@@ -70,7 +71,7 @@ class CreateUserBadTest(TestBase):
         inputs, outputs = self.rbac.user.make_addresses(
             message=message, signer_keypair=user_key
         )
-        payload = self.rbac.user.batch.make_payload(
+        payload = batcher.make_payload(
             message=message,
             message_type=self.rbac.user.message_type,
             inputs=inputs,
@@ -94,7 +95,7 @@ class CreateUserBadTest(TestBase):
         inputs, outputs = self.rbac.user.make_addresses(
             message=message, signer_keypair=user_key
         )
-        payload = self.rbac.user.batch.make_payload(
+        payload = batcher.make_payload(
             message=message,
             message_type=self.rbac.user.message_type,
             inputs=inputs,
@@ -141,7 +142,7 @@ class CreateUserBadTest(TestBase):
         inputs, outputs = self.rbac.user.make_addresses(
             message=message, signer_keypair=other_key
         )
-        payload = self.rbac.user.batch.make_payload(
+        payload = batcher.make_payload(
             message=message,
             message_type=self.rbac.user.message_type,
             inputs=inputs,

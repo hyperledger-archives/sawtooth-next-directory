@@ -25,7 +25,7 @@ from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
 from rbac.transaction_creation.common import Key
 from rbac.common.crypto.secrets import decrypt_private_key
-from rbac.common.crypto.secrets import deserialize_apikey
+from rbac.common.crypto.secrets import deserialize_api_key
 
 LOGGER = logging.getLogger(__name__)
 
@@ -125,7 +125,7 @@ async def get_request_block(request):
 
 
 async def get_transactor_key(request):
-    id_dict = deserialize_apikey(request.app.config.SECRET_KEY, request.token)
+    id_dict = deserialize_api_key(request.app.config.SECRET_KEY, request.token)
     user_id = id_dict.get("id")
 
     auth_data = await auth_query.fetch_info_by_user_id(

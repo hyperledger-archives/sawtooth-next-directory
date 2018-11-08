@@ -21,6 +21,7 @@ from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.task.task_manager import TaskManager
+
 from tests.rbac.common.task.task_test_helper import TaskTestHelper
 
 LOGGER = logging.getLogger(__name__)
@@ -104,7 +105,6 @@ class CreateTaskTest(TaskTestHelper):
         self.assertIn(user_address, inputs)
         self.assertIn(owner_address, inputs)
         self.assertIn(admin_address, inputs)
-        # self.assertEqual(len(inputs), 5)
         self.assertEqual(inputs, outputs)
 
     @pytest.mark.unit
@@ -130,7 +130,6 @@ class CreateTaskTest(TaskTestHelper):
         self.assertIn(user_address, inputs)
         self.assertIn(owner_address, inputs)
         self.assertIn(admin_address, inputs)
-        # self.assertEqual(len(inputs), 5)
         self.assertEqual(inputs, outputs)
 
     @pytest.mark.integration
@@ -160,7 +159,4 @@ class CreateTaskTest(TaskTestHelper):
         self.assertTrue(
             self.task.admin.exists(object_id=task.task_id, target_id=user.user_id)
         )
-        # self.assertFalse(
-        #    self.task.member.exists(object_id=task.task_id, target_id=user.user_id)
-        # )
         return got, user, keypair

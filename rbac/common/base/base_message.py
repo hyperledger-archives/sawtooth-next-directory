@@ -17,7 +17,7 @@ import logging
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
-from rbac.common.sawtooth.batcher import Batcher
+from rbac.common.sawtooth import batcher
 from rbac.common.sawtooth.state_client import StateClient
 from rbac.common.sawtooth.client_sync import ClientSync
 
@@ -28,7 +28,6 @@ LOGGER = logging.getLogger(__name__)
 class BaseMessage:
     def __init__(self):
         """Objects and methods shared across message libraries"""
-        self.batch = Batcher()
         self.client = ClientSync()
         self.state = StateClient()
 
@@ -111,7 +110,7 @@ class BaseMessage:
         inputs, outputs = self.make_addresses(
             message=message, signer_keypair=signer_keypair
         )
-        return self.batch.make_payload(
+        return batcher.make_payload(
             message=message, message_type=message_type, inputs=inputs, outputs=outputs
         )
 
@@ -133,7 +132,7 @@ class BaseMessage:
         if not isinstance(payload, protobuf.rbac_payload_pb2.RBACPayload):
             raise TypeError("Expected payload to be an RBACPayload")
 
-        _, _, batch_list, _ = self.batch.make(
+        _, _, batch_list, _ = batcher.make(
             payload=payload, signer_keypair=signer_keypair
         )
         got = None

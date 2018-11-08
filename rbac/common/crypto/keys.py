@@ -23,13 +23,13 @@ from sawtooth_signing.secp256k1 import Secp256k1PublicKey
 
 LOGGER = logging.getLogger(__name__)
 
-ALGORITHM = "secp256k1"
-PRIVATE_KEY_LENGTH = 32
-PRIVATE_KEY_PATTERN = re.compile(r"^[0-9a-f]{64}$")
-PUBLIC_KEY_LENGTH = 33
-PUBLIC_KEY_PATTERN = re.compile(r"^[0-9a-f]{66}$")
 SIGNATURE_LENGTH = 64
+PUBLIC_KEY_LENGTH = 33
+PRIVATE_KEY_LENGTH = 32
 SIGNATURE_PATTERN = re.compile(r"^[0-9a-f]{128}$")
+PUBLIC_KEY_PATTERN = re.compile(r"^[0-9a-f]{66}$")
+PRIVATE_KEY_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+ELLIPTIC_CURVE_ALGORITHM = "secp256k1"
 
 
 class Key:
@@ -44,7 +44,7 @@ class Key:
         Key() -- generates a new key
         Key(private_key:str) -- Uses the private key passed
         """
-        self._context = create_context(ALGORITHM)
+        self._context = create_context(ELLIPTIC_CURVE_ALGORITHM)
 
         if private_key is None and public_key is None:
             private_key = Secp256k1PrivateKey.new_random()
@@ -57,10 +57,6 @@ class Key:
 
         self._public_key = public_key
         self._private_key = private_key
-
-    def get_algorithm_name(self):
-        """Algorithm used by this key"""
-        return ALGORITHM
 
     @property
     def public_key(self):

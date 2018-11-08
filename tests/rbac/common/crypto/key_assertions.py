@@ -23,16 +23,11 @@ from sawtooth_signing.core import ParseError
 
 from tests.rbac.common.assertions import CommonAssertions
 
-# from rbac.common.crypto.keys import Key
-from rbac.common.crypto.keys import ALGORITHM
+from rbac.common.crypto.keys import ELLIPTIC_CURVE_ALGORITHM
 from rbac.common.crypto.keys import PRIVATE_KEY_LENGTH
 from rbac.common.crypto.keys import PUBLIC_KEY_LENGTH
-
-# from rbac.common.crypto.keys import SIGNATURE_LENGTH
 from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
-
-# from rbac.common.crypto.keys import SIGNATURE_PATTERN
 
 LOGGER = logging.getLogger(__name__)
 
@@ -148,7 +143,7 @@ class KeyAssertions(CommonAssertions):
         a matched keypair"""
         self.assertIsPublicKeySecp256k1(public_key)
         self.assertIsPrivateKeySecp256k1(private_key)
-        context = sawtooth_signing.create_context(ALGORITHM)
+        context = sawtooth_signing.create_context(ELLIPTIC_CURVE_ALGORITHM)
         self.assertEqual(
             public_key.as_bytes(), context.get_public_key(private_key).as_bytes()
         )
@@ -158,7 +153,7 @@ class KeyAssertions(CommonAssertions):
         a matched keypair"""
         self.assertIsInstance(public_key, Secp256k1PublicKey)
         self.assertIsInstance(private_key, Secp256k1PrivateKey)
-        context = sawtooth_signing.create_context(ALGORITHM)
+        context = sawtooth_signing.create_context(ELLIPTIC_CURVE_ALGORITHM)
         self.assertEqual(
             public_key.as_bytes(), context.get_public_key(private_key).as_bytes()
         )

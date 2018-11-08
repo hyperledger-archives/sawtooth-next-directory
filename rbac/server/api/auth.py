@@ -26,8 +26,8 @@ from rbac.server.api.errors import ApiNotFound, ApiUnauthorized
 from rbac.server.api import utils
 
 from rbac.server.db import auth_query
-from rbac.common.crypto.secrets import generate_apikey
-from rbac.common.crypto.secrets import deserialize_apikey
+from rbac.common.crypto.secrets import generate_api_key
+from rbac.common.crypto.secrets import deserialize_api_key
 
 LOGGER = logging.getLogger(__name__)
 AUTH_BP = Blueprint("auth")
@@ -40,7 +40,7 @@ def authorized():
             if request.token is None:
                 raise ApiUnauthorized("Unauthorized: No bearer token provided")
             try:
-                id_dict = deserialize_apikey(
+                id_dict = deserialize_api_key(
                     request.app.config.SECRET_KEY, request.token
                 )
                 await auth_query.fetch_info_by_user_id(
@@ -68,5 +68,5 @@ async def authorize(request):
     )
     if auth_info is None or auth_info.get("hashed_password") != hashed_pwd:
         raise ApiUnauthorized("Unauthorized: Incorrect user id or password")
-    token = generate_apikey(request.app.config.SECRET_KEY, auth_info.get("user_id"))
+    token = generate_api_key(request.app.config.SECRET_KEY, auth_info.get("user_id"))
     return json({"data": {"authorization": token, "user_id": auth_info.get("user_id")}})
