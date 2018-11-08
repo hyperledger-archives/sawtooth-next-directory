@@ -32,7 +32,7 @@ LOGGER = logging.getLogger(__name__)
 def getenv(name, default):
     """Get the variable from environment of from default list"""
     value = os.getenv(name)
-    if value is None or value is "":
+    if value is None or not value:
         return default
     return value
 

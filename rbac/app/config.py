@@ -23,7 +23,7 @@ LOGGER = logging.getLogger(__name__)
 
 def getenv(name, default):
     value = os.getenv(name)
-    if value is None or value is "":
+    if value is None or not value:
         return default
     return value
 
@@ -33,7 +33,7 @@ DEFAULT_CONFIG = {
     "SERVER_PORT": "8000",
     "VALIDATOR_HOST": "validator",
     "VALIDATOR_PORT": "4004",
-    "VALIDATOR_TIMEOUT": 500,
+    "VALIDATOR_TIMEOUT": "500",
     "VALIDATOR_REST_HOST": "rest-api",
     "VALIDATOR_REST_PORT": "8008",
     "DB_HOST": "rethink",

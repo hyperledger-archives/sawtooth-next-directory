@@ -32,7 +32,7 @@ KNOWN_COUNT = 15
 
 def getenv(name, default):
     value = os.getenv(name)
-    if value is None or value is "":
+    if value is None or not value:
         return default
     return value
 

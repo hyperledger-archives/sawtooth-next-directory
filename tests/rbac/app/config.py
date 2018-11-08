@@ -50,7 +50,7 @@ class TestAppConfig(CommonAssertions):
         self.assertIsIntegerString(DEFAULT_CONFIG["SERVER_PORT"])
         self.assertIsString(DEFAULT_CONFIG["VALIDATOR_HOST"])
         self.assertIsIntegerString(DEFAULT_CONFIG["VALIDATOR_PORT"])
-        self.assertIsInstance(DEFAULT_CONFIG["VALIDATOR_TIMEOUT"], int)
+        self.assertIsIntegerString(DEFAULT_CONFIG["VALIDATOR_TIMEOUT"])
         self.assertIsString(DEFAULT_CONFIG["VALIDATOR_REST_HOST"])
         self.assertIsIntegerString(DEFAULT_CONFIG["VALIDATOR_REST_PORT"])
         self.assertIsString(DEFAULT_CONFIG["DB_HOST"])
