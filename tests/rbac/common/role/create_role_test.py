@@ -20,6 +20,7 @@ import pytest
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.role.role_manager import RoleManager
+
 # from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 # from rbac.common.sawtooth import batcher
 

@@ -83,6 +83,9 @@ def setup_db(host, port, name):
         LOGGER.info('Creating table: queue_outbound')
         r.db(name).table_create('queue_outbound').run(conn)
 
+        LOGGER.info('Creating table: queue_outbound_changelog')
+        r.db(name).table_create('queue_outbound_changelog').run(conn)
+
         LOGGER.info('Creating table: proposals')
         r.db(name).table_create('proposals').run(conn)
         r.db(name).table('proposals').index_create('proposal_id').run(conn)

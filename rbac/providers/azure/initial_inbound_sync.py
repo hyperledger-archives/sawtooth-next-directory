@@ -14,8 +14,8 @@
 # ------------------------------------------------------------------------------
 
 import os
-import logging
 import time
+import logging
 from datetime import datetime as dt
 import requests
 import rethinkdb as r
@@ -23,8 +23,9 @@ import rethinkdb as r
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.inbound_filters import inbound_user_filter, inbound_group_filter
 
+
 DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
 
@@ -37,18 +38,40 @@ def getenv(name, default):
     return value
 
 
+logging.basicConfig(level=logging.INFO)
+# LOGGER levels: info, debug, warning, exception, error
+LOGGER = logging.getLogger(__name__)
+
 DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
 DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
 DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
 GRAPH_URL = "https://graph.microsoft.com/beta/"
 TENANT_ID = os.environ.get("TENANT_ID")
 AUTH = AadAuth()
-AUTH_TYPE = os.environ.get("AUTH_TYPE")
+
+DELAY = 1
+
+
+def connect_to_db():
+    """Polls the database until it comes up and opens a connection."""
+    connected_to_db = False
+    while not connected_to_db:
+        try:
+            r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
+            connected_to_db = True
+        except r.ReqlDriverError as err:
+            LOGGER.debug(
+                "Could not connect to RethinkDB. Repolling after %s seconds...", DELAY
+            )
+            time.sleep(DELAY)
+        except Exception as err:
+            LOGGER.warning(type(err).__name__)
+            raise err
 
 
 def fetch_groups_with_members():
     """Call to get JSON payload for all Groups with membership in Azure Active Directory."""
-    headers = AUTH.check_token(AUTH_TYPE)
+    headers = AUTH.check_token("GET")
     if headers:
         groups_payload = requests.get(
             url=GRAPH_URL + "groups/?$expand=members", headers=headers
@@ -66,7 +89,7 @@ def fetch_groups_with_members():
 
 def fetch_group_owner(group_id):
     """Call to get JSON payload for a group's owner in Azure Active Directory."""
-    headers = AUTH.check_token(AUTH_TYPE)
+    headers = AUTH.check_token("GET")
     if headers:
         owner_payload = requests.get(
             url=GRAPH_URL + "groups/" + group_id + "/owners", headers=headers
@@ -84,7 +107,7 @@ def fetch_group_owner(group_id):
 
 def fetch_users():
     """Call to get JSON payload for all Users in Azure Active Directory."""
-    headers = AUTH.check_token(AUTH_TYPE)
+    headers = AUTH.check_token("GET")
     if headers:
         users_payload = requests.get(url=GRAPH_URL + "users", headers=headers)
         if users_payload.status_code == 429:
@@ -100,7 +123,7 @@ def fetch_users():
 
 def fetch_user_manager(user_id):
     """Call to get JSON payload for a user's manager in Azure Active Directory."""
-    headers = AUTH.check_token(AUTH_TYPE)
+    headers = AUTH.check_token("GET")
     if headers:
         manager_payload = requests.get(
             url=GRAPH_URL + "users/" + user_id + "/manager", headers=headers
@@ -120,7 +143,7 @@ def fetch_user_manager(user_id):
 
 def fetch_next_payload(next_url):
     """Get the next payload from the redirect url for large payload pagination"""
-    headers = AUTH.check_token(AUTH_TYPE)
+    headers = AUTH.check_token("GET")
     if headers:
         payload = requests.get(url=next_url, headers=headers)
         if payload.status_code == 429:
@@ -192,7 +215,10 @@ def insert_user_to_db(users_dict):
 
 def initialize_aad_sync():
     """Initialize a sync with Azure Active Directory."""
-    r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
+    LOGGER.info("connecting to RethinkDB...")
+    connect_to_db()
+    LOGGER.info("Successfully connected to RethinkDB!")
+
     LOGGER.info("Inserting AAD data...")
 
     LOGGER.info("Getting Users...")
