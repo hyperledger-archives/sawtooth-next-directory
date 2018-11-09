@@ -87,10 +87,10 @@ export default class RequesterNav extends Component {
 
         { this.renderLists() }
 
-        <Link to='/approval-home' id='next-switch-requester-link'>
+        <Link to='/approval-home/pending/individuals' id='next-switch-requester-link'>
           Switch to Approver
         </Link>
-        
+
         <Button onClick={() => logout()} animated secondary id="next-logout-button">
           <Button.Content visible>Logout</Button.Content>
           <Button.Content hidden><Icon name='log out'/></Button.Content>

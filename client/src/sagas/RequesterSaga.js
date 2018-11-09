@@ -30,22 +30,8 @@ import RequesterActions from '../redux/RequesterRedux';
  */
 export function * getBase (api, action) {
   try {
-    /*
-    const res = yield call(api.getRequesterBase);
-
-    if (res.ok) {
-      console.log('Retrieved base data');
-      yield put(RequesterActions.baseSuccess(res.data));
-    } else {
-      alert(res.data.error);
-      yield put(RequesterActions.baseFailure(res.data.error));
-    }
-    */
-
     const res = yield call(api.getRoles);
     yield put(RequesterActions.baseSuccess(res.data));
-
-
   } catch (err) {
     console.error(err);
   }
@@ -68,7 +54,6 @@ export function * getRole (api, action) {
     const res = yield call(api.getRole, id);
 
     if (res.ok) {
-      console.log('Retrieved pack');
       yield put(RequesterActions.roleSuccess(res.data));
     } else {
       alert(res.data.error);

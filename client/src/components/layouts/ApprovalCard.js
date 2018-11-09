@@ -51,12 +51,12 @@ export default class ApprovalCard extends Component {
   }
 
 
-  renderApprover (userId, index) {
+  renderApprover (userId) {
     const { users } = this.props;
 
     if (!users) return null;
     const user = users.find((user) => user.id === userId);
-    return (<div key={index}>{user.name}</div>);
+    return (<div key={userId}>{user.name}</div>);
   }
 
 
@@ -87,8 +87,8 @@ export default class ApprovalCard extends Component {
               <Grid.Column>
                 Approver(s)
                 { activeProposal.approvers &&
-                  activeProposal.approvers.map((approver, index) => (
-                  this.renderApprover(approver, index)
+                  activeProposal.approvers.map((approver) => (
+                  this.renderApprover(approver)
                 )) }
               </Grid.Column>
             </Grid>

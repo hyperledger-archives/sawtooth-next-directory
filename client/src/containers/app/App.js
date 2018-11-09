@@ -82,10 +82,10 @@ class App extends Component {
     return (
       <Grid id='next-outer-grid'>
         <Grid.Column id='next-outer-grid-nav' width={3} only='computer'>
-          { this.routes.map((route, index) => (
+          { this.routes.map((route) => (
             route.nav &&
             <Route
-              key={index}
+              key={route.path}
               path={route.path}
               exact={route.exact}
               render={route.nav}
@@ -93,9 +93,9 @@ class App extends Component {
           ))}
         </Grid.Column>
         <Grid.Column id='next-inner-grid-main' width={13}>
-          { this.routes.map((route, index) => (
+          { this.routes.map((route) => (
             <Route
-              key={index}
+              key={route.path}
               path={route.path}
               exact={route.exact}
               render={route.main}
@@ -117,13 +117,13 @@ class App extends Component {
           <Header {...this.props}/>
           <Switch>
             <Route exact path='/login' component={Login}/>
-            <Route exact path='/sign-up' component={Login}/>
+            <Route exact path='/signup' component={Login}/>
 
             { !isAuthenticated && <Redirect to='/login'/> }
 
             <Route exact path='/' render={() => (
               isAuthenticated ?
-                (<Redirect to="/home"/>) :
+                (<Redirect to='/home'/>) :
                 (<Redirect to='/login'/>)
             )}/>
 

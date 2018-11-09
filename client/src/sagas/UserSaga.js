@@ -14,7 +14,7 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
+import { all, call, put } from 'redux-saga/effects';
 import UserActions from '../redux/UserRedux';
 
 
@@ -53,8 +53,6 @@ export function * me (api, action) {
       }
 
       me.proposals = proposals;
-      console.log('Retrieved current user info');
-
       yield put(UserActions.meSuccess(me));
     } else {
       alert(res.data.message);
@@ -80,19 +78,47 @@ export function * me (api, action) {
 export function * getUser (api, action) {
   try {
     const { id } = action;
-    const res = yield call(api.getUser, id);
-
-    if (res.ok) {
-      let user = res.data.data;
-      console.log(`Retrieved user ${id}'s info`);
-
-      yield put(UserActions.userSuccess(user));
-    } else {
-      alert(res.data.message);
-      yield put(UserActions.userFailure(res.data.message));
-    }
-
+    yield get(api, id);
   } catch (err) {
     console.error(err);
+  }
+}
+
+
+/**
+ *
+ * Execute getUsers API request
+ *
+ * The getUsers generator function executes a request to the
+ * API and handles the response.
+ *
+ * @param action
+ *
+ */
+export function * getUsers (api, action) {
+  try {
+    const { ids } = action;
+    yield all(ids.map(id => get(api, id)));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ *
+ * Helpers
+ *
+ *
+ */
+function * get (api, id) {
+  const res = yield call(api.getUser, id);
+
+  if (res.ok) {
+    let user = res.data.data;
+    yield put(UserActions.userSuccess(user));
+  } else {
+    alert(res.data.message);
+    yield put(UserActions.userFailure(res.data.message));
   }
 }

@@ -14,8 +14,28 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-approver-individuals-content {
-  padding: 0 20px;
-  position: relative;
-  top: 150px;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+
+
+import PeopleList from './PeopleList';
+
+
+describe('PeopleList component', () => {
+
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    const props = {
+
+    };
+
+    ReactDOM.render(
+      <BrowserRouter><PeopleList {...props}/></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});

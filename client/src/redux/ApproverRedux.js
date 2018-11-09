@@ -16,6 +16,7 @@ limitations under the License.
 
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
+import * as utils from '../services/Utils';
 
 
 /**
@@ -60,7 +61,9 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const ApproverSelectors = {
-  openProposals: (state) => state.approver.openProposals
+  openProposals:         (state) => state.approver.openProposals,
+  openProposalsByUser:   (state) =>
+    utils.groupBy(state.approver.openProposals, 'opener')
 };
 
 
@@ -72,7 +75,7 @@ export const ApproverSelectors = {
  */
 export const request = (state) => state.merge({ fetching: true });
 export const success = (state, { openProposals }) => {
-  return state.merge({ fetching: false, openProposals });
+  return state.merge({ fetching: false, openProposals: openProposals.data });
 }
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });

@@ -16,12 +16,13 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
+import PeopleList from '../../components/layouts/proposals/PeopleList';
 
 
 import './Individuals.css';
@@ -45,15 +46,23 @@ class Individuals extends Component {
   render () {
     const { openProposals } = this.props;
 
-    console.log(openProposals);
-
     return (
       <Grid id='next-approver-grid'>
 
         <Grid.Column
           id='next-approver-grid-track-column'
           width={10}>
+
           <TrackHeader title='Individuals' {...this.props}/>
+          <div id='next-approver-individuals-content'>
+            { openProposals && openProposals.length !== 0 ?
+              <PeopleList {...this.props}/> :
+              <Header as='h2' textAlign='center' disabled>
+                <Header.Content>No items</Header.Content>
+              </Header>
+            }
+          </div>
+
         </Grid.Column>
         <Grid.Column
           id='next-approver-grid-converse-column'

@@ -70,11 +70,7 @@ export class Requests extends Component {
 
 
   render () {
-    const { activeRole, activeProposal } = this.props;
-
-    if (!activeRole || !activeProposal) {
-      return null;
-    }
+    const { activeRole } = this.props;
 
     return (
       <Grid id='next-requester-grid'>
@@ -83,15 +79,20 @@ export class Requests extends Component {
           id='next-requester-grid-track-column'
           width={10}>
 
-          <TrackHeader waves title={activeRole.name} {...this.props}/>
+          <TrackHeader
+            roleImage
+            waves
+            title={activeRole && activeRole.name}
+            {...this.props}/>
+
           <div id='next-requester-requests-content'>
             <ApprovalCard {...this.props}/>
             <Container id='next-requester-description'>
               Lorem ipsum dolor sit amet.
             </Container>
             <MemberList {...this.props}
-              members={activeRole.members}
-              owners={activeRole.owners}/>
+              members={activeRole && activeRole.members}
+              owners={activeRole && activeRole.owners}/>
           </div>
 
         </Grid.Column>

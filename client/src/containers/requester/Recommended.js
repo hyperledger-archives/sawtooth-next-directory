@@ -76,7 +76,12 @@ export class Recommended extends Component {
         <Grid.Column
           id='next-requester-grid-track-column'
           width={10}>
-          <TrackHeader waves title={activeRole.name} {...this.props}/>
+
+          <TrackHeader
+            roleImage
+            waves
+            title={activeRole.name}
+            {...this.props}/>
 
           <div id='next-requester-recommended-content'>
             <p>Lorem ipsum dolor sit amet.</p>
@@ -84,6 +89,7 @@ export class Recommended extends Component {
               members={activeRole.members}
               owners={activeRole.owners}/>
           </div>
+
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'

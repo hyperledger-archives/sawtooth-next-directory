@@ -24,11 +24,11 @@ import PropTypes from 'prop-types';
 
 
 /**
- * 
+ *
  * @class LoginForm
  * Component encapsulating a reusable login form suitable for
  * composing within containers where login functionality is required
- * 
+ *
  */
 export default class LoginForm extends Component {
 
@@ -41,17 +41,17 @@ export default class LoginForm extends Component {
 
 
   /**
-   * 
+   *
    * @param event   Event passed by Semantic UI
    * @param name    Name of form element derived from 'name' HTML attribute
    * @param value   Value of form field
-   * 
+   *
    */
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });
   }
 
-  
+
   render () {
     const { submit } = this.props;
     const { username, password } = this.state;
@@ -70,13 +70,13 @@ export default class LoginForm extends Component {
           type='password'
           onChange={this.handleChange}/>
         <Form.Button content='Login'/>
-        <Link to="/sign-up">
+        <Link to="/signup">
           <Button>Sign up</Button>
         </Link>
       </Form>
     );
   }
-  
+
 }
 
 

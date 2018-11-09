@@ -26,3 +26,12 @@ export const createSlug = (name) =>
     .toLowerCase()
     .replace(/ /g, '-')
     .replace(/[^\w-]+/g, '');
+
+
+export const groupBy = (array, key) => {
+  return array && array.reduce((prev, curr) => {
+    prev[curr[key]] = prev[curr[key]] || [];
+    prev[curr[key]].push(curr);
+    return prev;
+  }, Object.create(null));
+}

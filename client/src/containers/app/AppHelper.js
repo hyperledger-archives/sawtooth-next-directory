@@ -33,23 +33,24 @@ export const appState = (state) => {
   return {
 
     // Approver
-    openProposals:      ApproverSelectors.openProposals(state),
+    openProposals:       ApproverSelectors.openProposals(state),
+    openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
 
     // Auth
-    isAuthenticated:    AuthSelectors.isAuthenticated(state),
+    isAuthenticated:     AuthSelectors.isAuthenticated(state),
 
     // Chat
-    messages:           ChatSelectors.messages(state),
+    messages:            ChatSelectors.messages(state),
 
     // Requester
-    activeProposal:     RequesterSelectors.activeProposal(state),
-    activeRole:         RequesterSelectors.activeRole(state),
-    recommended:        RequesterSelectors.recommended(state),
+    activeProposal:      RequesterSelectors.activeProposal(state),
+    activeRole:          RequesterSelectors.activeRole(state),
+    recommended:         RequesterSelectors.recommended(state),
 
     // User
-    me:                 UserSelectors.me(state),
-    requests:           UserSelectors.requests(state),
-    users:              UserSelectors.users(state),
+    me:                  UserSelectors.me(state),
+    requests:            UserSelectors.requests(state),
+    users:               UserSelectors.users(state),
 
   };
 };
@@ -86,6 +87,7 @@ export const appDispatch = (dispatch) => {
     // User
     getMe:             ()    => dispatch(UserActions.meRequest()),
     getUser:           (id)  => dispatch(UserActions.userRequest(id)),
+    getUsers:          (ids) => dispatch(UserActions.usersRequest(ids)),
     logout:            ()    => logout(dispatch),
 
   };

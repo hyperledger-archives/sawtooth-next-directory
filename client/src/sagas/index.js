@@ -32,7 +32,7 @@ import { getOpenProposals } from './ApproverSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
 import { requestAccess, getBase, getRole, getProposal } from './RequesterSaga';
-import { me, getUser } from './UserSaga';
+import { me, getUser, getUsers } from './UserSaga';
 
 
 const api = API.create();
@@ -68,6 +68,7 @@ export default function * root() {
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),
     takeLatest(UserTypes.USER_REQUEST, getUser, api),
+    takeLatest(UserTypes.USERS_REQUEST, getUsers, api),
 
   ]);
 }
