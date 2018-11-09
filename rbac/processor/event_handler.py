@@ -104,19 +104,19 @@ CREATE = [RBACPayload.CREATE_USER, RBACPayload.CREATE_ROLE, RBACPayload.CREATE_T
 class RBACTransactionHandler(object):
     @property
     def family_name(self):
-        return addresser.FAMILY_NAME
+        return addresser.family.name
 
     @property
     def family_versions(self):
-        return [addresser.FAMILY_VERSION]
+        return addresser.family.versions
 
     @property
     def encodings(self):
-        return ["application/protobuf"]
+        return addresser.family.encodings
 
     @property
     def namespaces(self):
-        return [addresser.NAMESPACE]
+        return addresser.family.namespaces
 
     def apply(self, transaction, state):
         payload = RBACPayload()

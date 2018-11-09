@@ -116,8 +116,8 @@ class BatchAssertions(CommonAssertions):
             header = decoded
 
         self.assertIsInstance(header, transaction_pb2.TransactionHeader)
-        self.assertEqual(header.family_name, addresser.FAMILY_NAME)
-        self.assertEqual(header.family_version, addresser.FAMILY_VERSION)
+        self.assertEqual(header.family_name, addresser.family.name)
+        self.assertEqual(header.family_version, addresser.family.version)
         self.assertIsInstance(header.nonce, str)
         self.assertEqual(len(header.nonce), 32)
         self.assertEqual(header.signer_public_key, signer_public_key)

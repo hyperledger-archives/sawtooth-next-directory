@@ -57,7 +57,6 @@ class TestRoleOwnerAddresser(AddressAssertions):
             addresser.address_is(rel_address1), addresser.AddressSpace.ROLES_OWNERS
         )
 
-    @pytest.mark.skip("hash collision on legacy addressing scheme can cause match")
     def test_address_random(self):
         role_id1 = addresser.role.owner.unique_id()
         user_id1 = addresser.user.unique_id()
@@ -82,8 +81,9 @@ class TestRoleOwnerAddresser(AddressAssertions):
     def test_address_static(self):
         role_id = "99968acb8f1a48b3a4bc21e2cd252e67"
         user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = "9f444809326a1713a905b26359fc8d\
-a2817c1a5f67de6f464701f0c10042da345d2893"
+        expected_address = (
+            "bac00100005555326a1713a905b26359fc8da23333cce7570f3f6f7d2c1635f6deea00"
+        )
         rel_address = addresser.role.owner.address(object_id=role_id, target_id=user_id)
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)

@@ -66,8 +66,9 @@ class TestRoleAddresser(AddressAssertions):
 
     def test_address_static(self):
         role_id = "99968acb8f1a48b3a4bc21e2cd252e67"
-        expected_address = "9f444809326a1713a905b26359fc8d\
-a2817c1a5f67de6f464701f0c10042da345d2800"
+        expected_address = (
+            "bac00100005555326a1713a905b26359fc8da21111ff00000000000000000000000000"
+        )
         role_address = addresser.role.address(object_id=role_id)
         self.assertIsAddress(role_address)
         self.assertEqual(role_address, expected_address)

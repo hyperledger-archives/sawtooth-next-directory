@@ -16,20 +16,43 @@
 from rbac.legacy import addresser as legacy
 from rbac.common.base.base_address import AddressBase
 from rbac.common.addresser.address_space import AddressSpace
+from rbac.common.addresser.address_space import ObjectType
+from rbac.common.addresser.address_space import RelationshipType
+from rbac.common.addresser.family import family
 
 
 class ProposalAddress(AddressBase):
     def __init__(self):
-        AddressBase.__init__(self)
+        AddressBase.__init__(self, family=family)
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
         return AddressSpace.PROPOSALS
 
-    def address(self, object_id, target_id):
+    @property
+    def object_type(self):
+        """The object type from AddressSpace implemented by this class"""
+        return ObjectType.PROPOSAL
+
+    @property
+    def related_type(self):
+        """The related type from AddressSpace implemented by this class"""
+        return ObjectType.SELF
+
+    @property
+    def relationship_type(self):
+        """The related type from AddressSpace implemented by this class"""
+        return RelationshipType.ATTRIBUTES
+
+    def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
-        return legacy.make_proposal_address(object_id=object_id, related_id=target_id)
+        if family.version == "1.0":
+            return legacy.make_proposal_address(
+                object_id=object_id, related_id=target_id
+            )
+
+        return self._address(object_id=object_id, target_id=target_id)
 
 
 # pylint: disable=invalid-name

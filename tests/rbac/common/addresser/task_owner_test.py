@@ -57,7 +57,6 @@ class TestTaskOwnerAddresser(AddressAssertions):
             addresser.address_is(rel_address1), addresser.AddressSpace.TASKS_OWNERS
         )
 
-    @pytest.mark.skip("hash collision on legacy addressing scheme can cause match")
     def test_address_random(self):
         task_id1 = addresser.task.owner.unique_id()
         user_id1 = addresser.user.unique_id()
@@ -82,8 +81,9 @@ class TestTaskOwnerAddresser(AddressAssertions):
     def test_address_static(self):
         task_id = "99968acb8f1a48b3a4bc21e2cd252e67"
         user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = "9f44481e326a1713a905b26359fc8d\
-a2817c1a5f67de6f464701f0c10042da345d2808"
+        expected_address = (
+            "bac00100006666326a1713a905b26359fc8da23333cce7570f3f6f7d2c1635f6deea00"
+        )
         rel_address = addresser.task.owner.address(object_id=task_id, target_id=user_id)
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)

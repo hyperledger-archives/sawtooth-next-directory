@@ -14,17 +14,33 @@
 # -----------------------------------------------------------------------------
 
 from hashlib import sha512
-import re
+
+from rbac.common.base.base_family import BaseFamily
 
 
-FAMILY_NAME = "rbac"
-FAMILY_VERSION = "1.0"
-NAMESPACE = sha512(FAMILY_NAME.encode()).hexdigest()[:6]
-ADDRESS_LENGTH = 70
-ADDRESS_PATTERN = re.compile(r"^[0-9a-f]{70}$")
-FAMILY_PATTERN = re.compile(r"^9f4448[0-9a-f]{64}$")
+class Family(BaseFamily):
+    """The Role Based Access Control (RBAC) Transaction Family"""
+
+    @property
+    def name(self):
+        """The name of this transaction family"""
+        return "rbac"
+
+    @property
+    def version(self):
+        """The current version of the transaction processor"""
+        return "1.1"
+
+    @property
+    def namespace(self):
+        """The 3 byte (6 character) address prefix for this transaction family"""
+        if self.version == "1.0":
+            return sha512(self.name.encode()).hexdigest()[:6]
+
+        return r"bac001"
 
 
-def namespace_ok(address):
-    """Address belongs to this family namespace"""
-    return address[: len(NAMESPACE)] == NAMESPACE
+# pylint: disable=invalid-name
+family = Family()
+
+__all__ = ["family"]

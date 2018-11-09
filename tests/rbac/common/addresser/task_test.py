@@ -66,8 +66,9 @@ class TestTaskAddresser(AddressAssertions):
 
     def test_address_static(self):
         task_id = "99968acb8f1a48b3a4bc21e2cd252e67"
-        expected_address = "9f44481e326a1713a905b26359fc8d\
-a2817c1a5f67de6f464701f0c10042da345d2800"
+        expected_address = (
+            "bac00100006666326a1713a905b26359fc8da21111ff00000000000000000000000000"
+        )
         task_address = addresser.task.address(object_id=task_id)
         self.assertIsAddress(task_address)
         self.assertEqual(task_address, expected_address)
