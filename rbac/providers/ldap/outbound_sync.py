@@ -20,8 +20,7 @@ import sys
 
 import rethinkdb as r
 import ldap3
-from ldap3 import (ALL, MODIFY_ADD, MODIFY_DELETE, MODIFY_REPLACE, Connection,
-                   Server)
+from ldap3 import ALL, MODIFY_ADD, MODIFY_DELETE, MODIFY_REPLACE, Connection, Server
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
