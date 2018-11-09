@@ -86,7 +86,7 @@ export const AuthSelectors = {
  *
  *
  */
-export const request = (state) => state.merge({ fetching: true });
+export const request = (state) => state.merge({ fetching: true, error: false });
 
 export const success = (state, { isAuthenticated, payload }) => {
   storage.setToken(payload.authorization);

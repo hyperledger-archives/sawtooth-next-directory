@@ -15,7 +15,9 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Header, Image } from 'semantic-ui-react';
+
+import { Header, Image, Grid } from 'semantic-ui-react';
+
 import PropTypes from 'prop-types';
 
 
@@ -34,26 +36,30 @@ export default class TrackHeader extends Component {
     const { roleImage, title, waves } = this.props;
 
     return (
-      <div id='next-requester-tracker-header-container'>
-        <div id='next-requester-track-header'>
-          { title &&
-            <Header as='h1' inverted>
-              { roleImage &&
-                <Image circular size='large' src={roleAvatar}/>
+      <Grid>
+        <Grid.Column id='track-header-outer-grid' only='computer'>
+          <div id='next-requester-tracker-header-container'>
+            <div id='next-requester-track-header'>
+              { title &&
+                <Header as='h1' inverted>
+                  { roleImage &&
+                    <Image circular size='large' src={roleAvatar}/>
+                  }
+                  {title}
+                </Header>
               }
-              {title}
-            </Header>
-          }
-        </div>
+            </div>
 
-        { waves &&
-          <div id='next-wave-container'>
-            <div id='next-wave'></div>
-            <div id='next-wave-alt'></div>
+            { waves &&
+              <div id='next-wave-container'>
+                <div id='next-wave'></div>
+                <div id='next-wave-alt'></div>
+              </div>
+            }            
           </div>
-        }
-
-      </div>
+        </Grid.Column>
+      </Grid>
+        
     );
   }
 

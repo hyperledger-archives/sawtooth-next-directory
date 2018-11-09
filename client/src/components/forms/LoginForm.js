@@ -36,7 +36,7 @@ export default class LoginForm extends Component {
     super(props);
 
     // TODO: Consider moving to Redux
-    this.state = { username: '', password: '' };
+    this.state = { username: '', password: '', error: false };
   }
 
 
@@ -48,27 +48,60 @@ export default class LoginForm extends Component {
    *
    */
   handleChange = (event, { name, value }) => {
-    this.setState({ [name]: value });
+    this.setState({ [name]: value, error: false });
+  }
+
+  /**
+   * function returns true if any form field is empty
+   * 
+   */
+  isFormValidated(){
+    const { username, password } = this.state;
+
+    if(username.length<4 || password.length<4) {
+      this.setState({
+        error: true
+      });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * 
+   * @param username   value of username field of the form.
+   * @param password    value of password field of the form.
+   * 
+   */
+  submitForm(username, password) {
+    const { submit } = this.props;
+
+    if(this.isFormValidated()){
+      submit(username, password);
+    }
+
   }
 
 
   render () {
-    const { submit } = this.props;
-    const { username, password } = this.state;
+    const { username, password, error } = this.state;
 
     return (
-      <Form onSubmit={() => submit(username, password)}>
+      <Form onSubmit={() => this.submitForm(username, password)}>
         <Form.Input
           label='User ID'
           placeholder='User ID'
           name='username'
-          onChange={this.handleChange}/>
+          onChange={this.handleChange}
+          error={error}/>
         <Form.Input
           label='Password'
           placeholder='Password'
           name='password'
           type='password'
-          onChange={this.handleChange}/>
+          onChange={this.handleChange}
+          error={error}/>
         <Form.Button content='Login'/>
         <Link to="/signup">
           <Button>Sign up</Button>
