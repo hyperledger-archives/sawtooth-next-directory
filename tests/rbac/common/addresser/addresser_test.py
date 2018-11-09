@@ -28,11 +28,10 @@ LOGGER = logging.getLogger(__name__)
 class TestAddresser(AddressAssertions):
     def test_import(self):
         self.assertEqual(addresser.AddressSpace, AddressSpace)
-        self.assertEqual(addresser.FAMILY_NAME, "rbac")
-        self.assertEqual(addresser.FAMILY_VERSION, "1.0")
-        self.assertEqual(addresser.ADDRESS_LENGTH, 70)
-        self.assertEqual(addresser.ADDRESS_PATTERN.pattern, r"^[0-9a-f]{70}$")
-        self.assertEqual(addresser.FAMILY_PATTERN.pattern, r"^9f4448[0-9a-f]{64}$")
+        self.assertIsInstance(addresser.family.name, str)
+        self.assertIsInstance(addresser.family.version, str)
+        self.assertIsInstance(addresser.family.pattern.pattern, str)
+        self.assertTrue(callable(addresser.family.is_family))
         self.assertTrue(callable(addresser.address_is))
 
     def test_unique_id(self):
@@ -43,8 +42,8 @@ class TestAddresser(AddressAssertions):
 
         self.assertIsInstance(unique_id1, str)
         self.assertIsInstance(unique_id2, str)
-        self.assertEqual(len(unique_id1), 32)
-        self.assertEqual(len(unique_id2), 32)
+        self.assertEqual(len(unique_id1), 24)
+        self.assertEqual(len(unique_id2), 24)
         self.assertNotEqual(unique_id1, unique_id2)
 
     def test_hash(self):
@@ -55,6 +54,6 @@ class TestAddresser(AddressAssertions):
 
         self.assertIsInstance(hash1, str)
         self.assertIsInstance(hash2, str)
-        self.assertEqual(len(hash1), 60)
-        self.assertEqual(len(hash2), 60)
+        self.assertEqual(len(hash1), 24)
+        self.assertEqual(len(hash2), 24)
         self.assertNotEqual(hash1, hash2)

@@ -51,7 +51,6 @@ class TestSysAdminMemberAddresser(AddressAssertions):
             addresser.address_is(rel_address1), addresser.AddressSpace.SYSADMIN_MEMBERS
         )
 
-    @pytest.mark.skip("hash collision on legacy addressing scheme can cause match")
     def test_address_random(self):
         user_id1 = addresser.user.unique_id()
         user_id2 = addresser.user.unique_id()
@@ -69,8 +68,9 @@ class TestSysAdminMemberAddresser(AddressAssertions):
 
     def test_address_static(self):
         user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = "9f4448000000000000000000000000\
-0000000000000000000000000000000000000083"
+        expected_address = (
+            "bac00100002222e7570f3f6f7d2c1635f6deea3333bb00000000000000000000000000"
+        )
         rel_address = addresser.sysadmin.member.address(object_id=user_id)
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)

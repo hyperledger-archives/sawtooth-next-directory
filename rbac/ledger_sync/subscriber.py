@@ -66,7 +66,7 @@ class Subscriber(object):
                     filters=[
                         events_pb2.EventFilter(
                             key="address",
-                            match_string="^" + addresser.NAMESPACE + ".*",
+                            match_string="^" + addresser.family.namespace + ".*",
                             filter_type=events_pb2.EventFilter.REGEX_ANY,
                         )
                     ],

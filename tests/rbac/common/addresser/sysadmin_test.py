@@ -40,8 +40,9 @@ class TestSysAdminAddresser(AddressAssertions):
         )
 
     def test_address_static(self):
-        expected_address = "9f4448000000000000000000000000\
-0000000000000000000000000000000000000000"
+        expected_address = (
+            "bac001000022220000000000000000000000001111ff00000000000000000000000000"
+        )
         sysadmin_address = addresser.sysadmin.address()
         self.assertIsAddress(sysadmin_address)
         self.assertEqual(sysadmin_address, expected_address)

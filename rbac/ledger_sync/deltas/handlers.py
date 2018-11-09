@@ -46,7 +46,7 @@ def _handle_delta(database, delta):
     # Parse changes and update database
     update = get_updater(database, delta.block_num)
     for change in delta.state_changes:
-        if addresser.namespace_ok(change.address):
+        if addresser.family.is_family(change.address):
             resources = data_to_dicts(change.address, change.value)
             for resource in resources:
                 update_results = update(change.address, resource)

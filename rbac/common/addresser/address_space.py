@@ -17,6 +17,37 @@ import enum
 
 
 @enum.unique
+class ObjectType(enum.Enum):
+    """Enumerates all the different object types stored
+    in the blockchain addressing space
+
+    Two bytes (00000-FFFF) are available to use as needed.
+    Chosen enum values for address readability in hex
+    """
+
+    SELF = 4369  # 1111
+    SYSADMIN = 8738  # 2222
+    USER = 13107  # 3333
+    PROPOSAL = 17476  # 4444
+    ROLE = 21845  # 5555
+    TASK = 26214  # 6666
+
+
+class RelationshipType(enum.Enum):
+    """Enumerates all the different relationship types stored
+    in the blockchain addressing space
+
+    One byte (00-FF) available to use
+    Chosen enum values for address readability in hex
+    """
+
+    MEMBER = 187  # bb
+    OWNER = 204  # cc
+    ADMIN = 238  # ee
+    ATTRIBUTES = 255  # ff
+
+
+@enum.unique
 class AddressSpace(enum.Enum):
     """Enumerates the different types of addresses stored on the
     sawtooth blockchain by this application"""

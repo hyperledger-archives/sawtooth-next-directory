@@ -81,8 +81,9 @@ class TestProposalAddresser(AddressAssertions):
     def test_address_static(self):
         object_id = "cb048d507eec42a5845e20eed982d5d2"
         target_id = "f1e916b663164211a9ac34516324681a"
-        expected_address = "9f4448e3b874e90b2bcf58e65e0727\
-91ea499543ee52fc9d0449fc1e41f77d4d4f926e"
+        expected_address = (
+            "bac00100004444b874e90b2bcf58e65e0727911111ff3ee52fc9d0449fc1e41f77d400"
+        )
         proposal_address = addresser.proposal.address(
             object_id=object_id, target_id=target_id
         )

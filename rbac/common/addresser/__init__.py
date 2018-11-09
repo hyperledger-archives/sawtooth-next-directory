@@ -14,15 +14,8 @@
 # -----------------------------------------------------------------------------
 
 import logging
-from rbac.legacy import addresser as legacy
-from rbac.common.addresser.app import FAMILY_NAME
-from rbac.common.addresser.app import FAMILY_VERSION
-from rbac.common.addresser.app import NAMESPACE
-from rbac.common.addresser.app import ADDRESS_LENGTH
-from rbac.common.addresser.app import ADDRESS_PATTERN
-from rbac.common.addresser.app import FAMILY_PATTERN
-from rbac.common.addresser.app import namespace_ok
 from rbac.common.addresser.address_space import AddressSpace
+from rbac.common.addresser.family import family
 from rbac.common.addresser.user import user
 from rbac.common.addresser.role import role
 from rbac.common.addresser.task import task
@@ -45,14 +38,8 @@ def address_is(address):
 
 __all__ = [
     "AddressSpace",
-    "FAMILY_NAME",
-    "FAMILY_VERSION",
-    "NAMESPACE",
-    "ADDRESS_LENGTH",
-    "ADDRESS_PATTERN",
-    "FAMILY_PATTERN",
-    "namespace_ok",
     "address_is",
+    "family",
     "user",
     "role",
     "task",

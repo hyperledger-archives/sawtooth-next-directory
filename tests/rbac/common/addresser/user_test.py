@@ -23,6 +23,7 @@ from tests.rbac.common.addresser.address_assertions import AddressAssertions
 LOGGER = logging.getLogger(__name__)
 
 
+@pytest.mark.wip
 @pytest.mark.addressing
 @pytest.mark.unit
 class TestUserAddresser(AddressAssertions):
@@ -66,8 +67,9 @@ class TestUserAddresser(AddressAssertions):
 
     def test_address_static(self):
         user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = "9f444847e7570f3f6f7d2c1635f6de\
-eabc1f4d78d9d42b64b70e1819f244138c1e38d6"
+        expected_address = (
+            "bac00100003333e7570f3f6f7d2c1635f6deea1111ff00000000000000000000000000"
+        )
         user_address = addresser.user.address(object_id=user_id)
         self.assertIsAddress(user_address)
         self.assertEqual(user_address, expected_address)
