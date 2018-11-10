@@ -12,3 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+
+from rbac.common.manager.rbac_manager import RBACManager
+
+rbac = RBACManager()  # pylint: disable=invalid-name
+
+__all__ = ["rbac"]

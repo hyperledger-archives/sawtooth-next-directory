@@ -18,18 +18,19 @@ from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.sawtooth import batcher
-from rbac.common.sawtooth.state_client import StateClient
-from rbac.common.sawtooth.client_sync import ClientSync
-
+from rbac.common.sawtooth import client
+from rbac.common.sawtooth import state_client
+from rbac.common.base import base_processor as processor
 
 LOGGER = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-public-methods
 class BaseMessage:
     def __init__(self):
-        """Objects and methods shared across message libraries"""
-        self.client = ClientSync()
-        self.state = StateClient()
+        """Base class for all messages"""
+        self._message_type_name = batcher.get_message_type_name(self.message_type)
+        processor.register_message_handler(self)
 
     def getattr(self, item, attribute):
         """A version of getattr that will return None if attributes
@@ -40,27 +41,37 @@ class BaseMessage:
 
     @property
     def name(self):
+        """The name of this message type"""
         raise NotImplementedError("Class must implement this property")
 
     @property
     def names(self):
+        """The plural name of this message type"""
         return self.name + "s"
 
     @property
     def message_type(self):
-        raise NotImplementedError("Class must implement this method")
+        """The type of this message"""
+        raise NotImplementedError("Class must implement this property")
+
+    @property
+    def message_type_name(self):
+        return self._message_type_name
 
     @property
     def message_proto(self):
-        raise NotImplementedError("Class must implement this method")
+        """The protobuf used to serialize this message type"""
+        raise NotImplementedError("Class must implement this property")
 
     @property
     def container_proto(self):
-        raise NotImplementedError("Class must implement this method")
+        """The protobuf container used to serialize the values of the state"""
+        raise NotImplementedError("Class must implement this property")
 
     @property
     def state_proto(self):
-        raise NotImplementedError("Class must implement this method")
+        """The protobuf used to serialize the state this message produces"""
+        raise NotImplementedError("Class must implement this property")
 
     @property
     def message_fields_not_in_state(self):
@@ -137,7 +148,7 @@ class BaseMessage:
         )
         got = None
 
-        status = self.client.send_batches_get_status(batch_list=batch_list)
+        status = client.send_batches_get_status(batch_list=batch_list)
 
         if object_id is not None:
             got = self.get(object_id=object_id, target_id=target_id)
@@ -177,7 +188,7 @@ class BaseMessage:
         """Gets an address from the blockchain from the API"""
         address = self.address(object_id=object_id, target_id=target_id)
         container = self.container_proto()
-        container.ParseFromString(self.client.get_address(address=address))
+        container.ParseFromString(client.get_address(address=address))
         return self._find_in_container(
             container=container,
             address=address,
@@ -190,7 +201,7 @@ class BaseMessage:
         address = self.address(object_id=object_id, target_id=target_id)
         container = self.container_proto()
 
-        results = self.state.get_address(state=state, address=address)
+        results = state_client.get_address(state=state, address=address)
         if not list(results):
             return None
 
