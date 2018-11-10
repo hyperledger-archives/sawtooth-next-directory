@@ -18,6 +18,7 @@ from rbac.common.crypto.keys import Key
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.base.base_message import BaseMessage
+from rbac.common.sawtooth import state_client
 
 LOGGER = logging.getLogger(__name__)
 
@@ -139,7 +140,7 @@ class CreateUser(BaseMessage):
         )
         # pylint: disable=no-member
         container.users.extend([item])
-        self.state.set_address(state=state, address=address, container=container)
+        state_client.set_address(state=state, address=address, container=container)
 
     def apply(self, header, payload, state):
         """Handles a message in the transaction processor"""
@@ -147,6 +148,5 @@ class CreateUser(BaseMessage):
         message.ParseFromString(payload.content)
 
         self.validate(message=message, signer=header.signer_public_key, state=state)
-        self.set_state(
-            state=state, message=message, object_id=message.user_id
-        )  # pylint: disable=no-member
+        # pylint: disable=no-member
+        self.set_state(state=state, message=message, object_id=message.user_id)

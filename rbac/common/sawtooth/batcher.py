@@ -23,7 +23,13 @@ from rbac.common import addresser
 from rbac.app.config import BATCHER_KEY_PAIR
 from rbac.common.sawtooth import rbac_payload
 
+
 LOGGER = logging.getLogger(__name__)
+
+
+def get_message_type_name(message_type):
+    """Gets the name of the message type (from the protobuf enum)"""
+    return rbac_payload.get_message_type_name(message_type=message_type)
 
 
 def make_transaction_header(
@@ -97,6 +103,7 @@ def batch_to_list(batch):
 def make_batch_request(batch_list):
     """Make a batch request from a batch list"""
     batch_request = client_batch_submit_pb2.ClientBatchSubmitRequest()
+    # pylint: disable=no-member
     batch_request.batches.extend(list(batch_list.batches))
     return batch_request
 

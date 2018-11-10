@@ -13,11 +13,22 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+# pylint: disable=no-member
+
 import logging
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common import protobuf
 
 LOGGER = logging.getLogger(__name__)
+MESSAGE_NAMES = RBACPayload.MessageType.DESCRIPTOR.values_by_name.items()
+
+
+def get_message_type_name(message_type):
+    """returns the protobuf enum name from the value"""
+    for (key, descriptor) in MESSAGE_NAMES:
+        if descriptor.index == message_type:
+            return key
+    return None
 
 
 def make_payload(message, message_type, inputs, outputs):
@@ -30,7 +41,6 @@ def make_payload(message, message_type, inputs, outputs):
     )
 
 
-# pylint: disable=no-member
 def unmake_payload(payload):
     """Turn a payload back into a message given it's message type"""
     if isinstance(payload, bytes):

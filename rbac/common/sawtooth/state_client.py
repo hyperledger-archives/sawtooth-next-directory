@@ -24,18 +24,19 @@ ERROR_MESSAGE_TIMEOUT = "Timeout after %s seconds during get from state"
 LOGGER = logging.getLogger(__name__)
 
 
-class StateClient:
-    def get_address(self, state, address):
-        try:
-            return state.get_state(addresses=[address], timeout=TIMEOUT_SECONDS)
-        except FutureTimeoutError:
-            raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
+def get_address(state, address):
+    """Reads an address from the blockchain state"""
+    try:
+        return state.get_state(addresses=[address], timeout=TIMEOUT_SECONDS)
+    except FutureTimeoutError:
+        raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
 
-    def set_address(self, state, address, container):
-        try:
-            return state.set_state(
-                entries={address: container.SerializeToString()},
-                timeout=TIMEOUT_SECONDS,
-            )
-        except FutureTimeoutError:
-            raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
+
+def set_address(state, address, container):
+    """Writes an address to blockchain state"""
+    try:
+        return state.set_state(
+            entries={address: container.SerializeToString()}, timeout=TIMEOUT_SECONDS
+        )
+    except FutureTimeoutError:
+        raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
