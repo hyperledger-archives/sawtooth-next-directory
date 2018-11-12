@@ -96,11 +96,6 @@ export default class RequesterNav extends Component {
           <Button.Content hidden><Icon name='log out'/></Button.Content>
         </Button>
 
-        <Button onClick={() => logout()} animated secondary id="next-logout-button">
-          <Button.Content visible>Logout</Button.Content>
-          <Button.Content hidden><Icon name='log out'/></Button.Content>
-        </Button>
-
       </Container>
     );
   }

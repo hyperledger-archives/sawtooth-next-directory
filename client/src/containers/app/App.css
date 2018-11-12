@@ -27,8 +27,23 @@ limitations under the License.
 
 #next-outer-grid-nav {
   background: var(--nav-bg-color);
+  z-index: 5;
 }
 
 #next-inner-grid-main {
   padding: 0;
+}
+#next-hamburger-icon {
+  position: absolute;
+  top: 50px;
+  left: 15px;
+  padding: 0px;
+  cursor: pointer;
+  z-index: 3;
+}
+#next-hamburger-wrapper{
+  padding: 25px;
+}
+.pushable>.pusher {
+  height: 100%;
 }

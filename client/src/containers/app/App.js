@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Icon, Sidebar, Menu } from 'semantic-ui-react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -41,6 +41,11 @@ import { appDispatch, appState } from './AppHelper';
  *
  */
 class App extends Component {
+
+  state = { isSideBarVisible: false };
+
+  handleShowClick = () => this.setState({ isSideBarVisible: !this.state.isSideBarVisible });
+  handleSidebarHide = () => this.setState({ isSideBarVisible: false });
 
   /**
    *
@@ -70,6 +75,37 @@ class App extends Component {
 
 
   /**
+   * Return Navigation part of the grid system
+   * 
+   */
+  renderNav() {
+    return this.routes.map((route, index) => (
+      route.nav &&
+      <Route
+        key={index}
+        path={route.path}
+        exact={route.exact}
+        render={route.nav}
+      />
+    ));
+  }
+
+  /**
+   * Return Main part of the grid system
+   * 
+   */
+  renderMain() {
+    return this.routes.map((route, index) => (
+      <Route
+        key={index}
+        path={route.path}
+        exact={route.exact}
+        render={route.main}
+      />
+    ));
+  }
+
+  /**
    *
    * Render grid system
    *
@@ -79,29 +115,40 @@ class App extends Component {
    *
    */
   renderGrid () {
+    const { isSideBarVisible } = this.state;
+
     return (
       <Grid id='next-outer-grid'>
         <Grid.Column id='next-outer-grid-nav' width={3} only='computer'>
-          { this.routes.map((route) => (
-            route.nav &&
-            <Route
-              key={route.path}
-              path={route.path}
-              exact={route.exact}
-              render={route.nav}
-            />
-          ))}
+          { this.renderNav() }
         </Grid.Column>
-        <Grid.Column id='next-inner-grid-main' width={13}>
-          { this.routes.map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              exact={route.exact}
-              render={route.main}
-            />
-          ))}
+        <Grid.Column id='next-inner-grid-main' only='computer' computer={13}>
+            { this.renderMain() }
         </Grid.Column>
+        <Grid.Column id='next-inner-grid-main' mobile={16} tablet={16} only='tablet mobile'>
+          <Sidebar.Pushable>
+            <Sidebar
+              as={Menu}
+              animation='overlay'
+              inverted
+              onHide={this.handleSidebarHide}
+              vertical
+              visible={isSideBarVisible}
+              width='wide'
+            >
+              <div id='next-hamburger-wrapper'>
+                { this.renderNav() }
+              </div>
+            </Sidebar>
+            <Sidebar.Pusher dimmed={isSideBarVisible}>
+              { this.renderMain() }
+            </Sidebar.Pusher>
+          </Sidebar.Pushable>
+        </Grid.Column>
+        
+        <div id='next-hamburger-icon'>
+          <Icon onClick={this.handleShowClick} name='bars' />
+        </div>
       </Grid>
     )
   }
