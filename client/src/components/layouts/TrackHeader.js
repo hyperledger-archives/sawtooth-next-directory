@@ -31,8 +31,7 @@ import roleAvatar from '../../images/role-avatar.png';
  *
  */
 export default class TrackHeader extends Component {
-
-  render () {
+  render() {
     const { roleImage, title, waves } = this.props;
 
     return (
@@ -62,10 +61,4 @@ export default class TrackHeader extends Component {
         
     );
   }
-
 }
-
-
-TrackHeader.proptypes = {
-  title: PropTypes.string
-};

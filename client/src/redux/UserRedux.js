@@ -29,17 +29,17 @@ import * as utils from '../services/Utils';
  *
  */
 const { Types, Creators } = createActions({
-  meRequest:     null,
-  meSuccess:     ['me'],
-  meFailure:     ['error'],
+  meRequest: null,
+  meSuccess: ['me'],
+  meFailure: ['error'],
 
-  meReset:       null,
+  meReset: null,
 
-  userRequest:   ['id'],
-  userSuccess:   ['user'],
-  userFailure:   ['error'],
+  userRequest: ['id'],
+  userSuccess: ['user'],
+  userFailure: ['error'],
 
-  usersRequest:  ['ids'],
+  usersRequest: ['ids'],
 });
 
 
@@ -84,13 +84,11 @@ export const UserSelectors = {
  *
  *
  */
-export const request = (state) => state.merge({ fetching: true });
+export const request = state => state.merge({ fetching: true });
 
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-}
+export const failure = (state, { error }) => state.merge({ fetching: false, error });
 
-export const reset = (state) => INITIAL_STATE;
+export const reset = state => INITIAL_STATE;
 
 
 /**

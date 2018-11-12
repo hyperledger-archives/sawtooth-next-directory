@@ -30,12 +30,10 @@ import approvalConversation from '../mock_data/conversation_approval.json';
 
 export default {
 
-  getRequesterBase: () => {
-    return {
-      ok: true,
-      data: base
-    }
-  },
+  getRequesterBase: () => ({
+    ok: true,
+    data: base,
+  }),
 
   getRole: (id) => {
     let data;
@@ -68,8 +66,8 @@ export default {
 
     return {
       ok: true,
-      data: data
-    }
+      data,
+    };
   },
 
   getConversation: (id) => {
@@ -91,29 +89,23 @@ export default {
 
     return {
       ok: true,
-      data: data
-    }
+      data,
+    };
   },
 
-  sendMessage: (message) => {
-    return {
-      ok: true,
-      data: message
-    }
-  },
+  sendMessage: message => ({
+    ok: true,
+    data: message,
+  }),
 
-  login: (username, password) => {
-    return {
-      ok: true,
-      data: {}
-    }
-  },
+  login: (username, password) => ({
+    ok: true,
+    data: {},
+  }),
 
-  logout: () => {
-    return {
-      ok: true,
-      data: {}
-    }
-  }
+  logout: () => ({
+    ok: true,
+    data: {},
+  }),
 
-}
+};

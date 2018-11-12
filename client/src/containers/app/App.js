@@ -200,49 +200,58 @@ class App extends Component {
           <Icon onClick={this.handleShowClick} name='bars'/>
         </div>
       </Grid>
-    )
+    );
   }
 
 
-  render () {
+  render() {
     const { isAuthenticated, routes } = this.props;
     this.routes = routes(this.props);
 
     return (
       <Router>
-        <div id='next-global-container'>
-          <Header {...this.props}/>
+        <div id="next-global-container">
+          <Header {...this.props} />
           <Switch>
-            <Route exact path='/login' component={Login}/>
-            <Route exact path='/signup' component={Login}/>
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={Login} />
 
-            { !isAuthenticated && <Redirect to='/login'/> }
+            { !isAuthenticated && <Redirect to="/login" /> }
 
-            <Route exact path='/' render={() => (
-              isAuthenticated ?
-                (<Redirect to='/home'/>) :
-                (<Redirect to='/login'/>)
-            )}/>
+            <Route
+              exact
+              path="/"
+              render={() => (
+                isAuthenticated
+                  ? (<Redirect to="/home" />)
+                  : (<Redirect to="/login" />)
+              )}
+            />
 
-            <Route exact path='/browse' component={Browse}/>
-            <Route render={() => ( this.renderGrid() )}/>
+            <Route exact path="/browse" component={Browse} />
+            <Route render={() => (this.renderGrid())} />
           </Switch>
         </div>
       </Router>
     );
   }
-
 }
 
 
-App.proptypes = {
+App.propTypes = {
   isAuthenticated: PropTypes.bool,
-  routes: PropTypes.func
+  routes: PropTypes.func,
 };
 
 
-const mapStateToProps = (state) => appState(state);
-const mapDispatchToProps = (dispatch) => appDispatch(dispatch);
+App.defaultProps = {
+  isAuthenticated: '',
+  routes:'',
+};
+
+
+const mapStateToProps = state => appState(state);
+const mapDispatchToProps = dispatch => appDispatch(dispatch);
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

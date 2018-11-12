@@ -15,8 +15,13 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
-import { Button, Container, Search, Icon } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import {
+  Button, Container, Search, Icon,
+} from 'semantic-ui-react';
+
+
+import PropTypes from 'prop-types';
 
 
 import './RequesterNav.css';
@@ -31,7 +36,6 @@ import NavList from './NavList';
  *
  */
 export default class RequesterNav extends Component {
-
   /**
    *
    * Render sidebar hierarchy
@@ -41,7 +45,7 @@ export default class RequesterNav extends Component {
     const { recommended, memberOf, requests } = this.props;
 
     return (
-      <div id='next-requester-nav-lists-container'>
+      <div id="next-requester-nav-lists-container">
         <NavList
           dynamic
           listTitle='Your Packs / Roles'
@@ -49,19 +53,22 @@ export default class RequesterNav extends Component {
           list={memberOf}/>
         <NavList
           dynamic
-          listTitle='Your Requests'
-          route='/home/requests'
-          list={requests}/>
+          listTitle="Your Requests"
+          route="/home/requests"
+          list={requests}
+        />
         <NavList
           dynamic
-          listTitle='Recommended Packs'
-          route='/home/recommended-packs'
-          list={[]}/>
+          listTitle="Recommended Packs"
+          route="/home/recommended-packs"
+          list={[]}
+        />
         <NavList
           dynamic
-          listTitle='Recommended Roles'
-          route='/home/recommended-roles'
-          list={recommended}/>
+          listTitle="Recommended Roles"
+          route="/home/recommended-roles"
+          list={recommended}
+        />
       </div>
     );
   }
@@ -71,17 +78,18 @@ export default class RequesterNav extends Component {
     return (
       <Container>
 
-        <Link to='/browse'>
-          <Button animated secondary fluid id='next-browse-button'>
+        <Link to="/browse">
+          <Button animated secondary fluid id="next-browse-button">
             <Button.Content visible>BROWSE</Button.Content>
-            <Button.Content hidden><Icon name='arrow right'/></Button.Content>
+            <Button.Content hidden><Icon name="arrow right" /></Button.Content>
           </Button>
         </Link>
 
         <Search
-          className='next-requester-nav-search'
+          className="next-requester-nav-search"
           category
-          loading={false}/>
+          loading={false}
+        />
 
         { this.renderLists() }
 
@@ -94,5 +102,19 @@ export default class RequesterNav extends Component {
       </Container>
     );
   }
-
 }
+
+
+RequesterNav.propTypes = {
+  packs: PropTypes.arrayOf(PropTypes.string),
+  requests: PropTypes.arrayOf(PropTypes.string),
+  recommended: PropTypes.arrayOf(PropTypes.string),
+  logout: PropTypes.func.isRequired,
+};
+
+
+RequesterNav.defaultProps = {
+  packs: '',
+  requests:'',
+  recommended:'',
+};

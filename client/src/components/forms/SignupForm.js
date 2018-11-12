@@ -76,8 +76,8 @@ export default class SignupForm extends Component {
           onChange={this.handleChange}/>
         <Form.Button content='Sign Up'/>
 
-        <Link to = '/login'>
-            <Button>Return to Login</Button>
+        <Link to='/login'>
+          <Button>Return to Login</Button>
         </Link>
       </Form>
     );
@@ -86,6 +86,6 @@ export default class SignupForm extends Component {
 }
 
 
-SignupForm.proptypes = {
+SignupForm.propTypes = {
   submit: PropTypes.func.isRequired
 };

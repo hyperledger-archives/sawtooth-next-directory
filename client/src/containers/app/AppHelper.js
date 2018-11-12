@@ -29,18 +29,17 @@ import UserActions, { UserSelectors } from '../../redux/UserRedux';
  *
  *
  */
-export const appState = (state) => {
-  return {
+export const appState = state => ({
 
-    // Approver
-    openProposals:       ApproverSelectors.openProposals(state),
-    openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
+  // Approver
+  openProposals: ApproverSelectors.openProposals(state),
+  openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
 
-    // Auth
-    isAuthenticated:     AuthSelectors.isAuthenticated(state),
+  // Auth
+  isAuthenticated: AuthSelectors.isAuthenticated(state),
 
-    // Chat
-    messages:            ChatSelectors.messages(state),
+  // Chat
+  messages: ChatSelectors.messages(state),
 
     // Requester
     recommended:         RequesterSelectors.recommended(state),
@@ -54,8 +53,7 @@ export const appState = (state) => {
     users:               UserSelectors.users(state),
     memberOf:            UserSelectors.memberOf(state),
 
-  };
-};
+});
 
 
 /**
@@ -66,17 +64,14 @@ export const appState = (state) => {
  *
  *
  */
-export const appDispatch = (dispatch) => {
-  return {
+export const appDispatch = dispatch => ({
 
-    // Approver
-    getOpenProposals:  ()    => dispatch(ApproverActions.openProposalsRequest()),
+  // Approver
+  getOpenProposals: () => dispatch(ApproverActions.openProposalsRequest()),
 
-    // Chat
-    getConversation:   (id)  => dispatch(ChatActions.conversationRequest(id)),
-    sendMessage:       (message) => {
-      return dispatch(ChatActions.sendRequest(message))
-    },
+  // Chat
+  getConversation: id => dispatch(ChatActions.conversationRequest(id)),
+  sendMessage: message => dispatch(ChatActions.sendRequest(message)),
 
     // Requester
     getBase:           ()    => dispatch(RequesterActions.baseRequest()),
@@ -87,14 +82,13 @@ export const appDispatch = (dispatch) => {
       return dispatch(RequesterActions.accessRequest(id, userId, reason))
     },
 
-    // User
-    getMe:             ()    => dispatch(UserActions.meRequest()),
-    getUser:           (id)  => dispatch(UserActions.userRequest(id)),
-    getUsers:          (ids) => dispatch(UserActions.usersRequest(ids)),
-    logout:            ()    => logout(dispatch),
+  // User
+  getMe: () => dispatch(UserActions.meRequest()),
+  getUser: id => dispatch(UserActions.userRequest(id)),
+  getUsers: ids => dispatch(UserActions.usersRequest(ids)),
+  logout: () => logout(dispatch),
 
-  };
-}
+});
 
 
 /**
@@ -102,7 +96,5 @@ export const appDispatch = (dispatch) => {
  *
  *
  */
-const logout = (dispatch) => {
-  return dispatch(AuthActions.logoutRequest()) &&
-    dispatch(UserActions.meReset());
-}
+const logout = dispatch => dispatch(AuthActions.logoutRequest())
+    && dispatch(UserActions.meReset());

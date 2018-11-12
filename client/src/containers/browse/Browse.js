@@ -16,41 +16,42 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Menu, Search, Segment } from 'semantic-ui-react';
+import {
+  Container, Grid, Menu, Search, Segment,
+} from 'semantic-ui-react';
 import './Browse.css';
 
 
 /**
- * 
+ *
  * @class Browse
  * Browse component
- * 
+ *
  */
 class Browse extends Component {
-
-  render () {
+  render() {
     return (
       <div>
-        <Container id='next-browse-container'>
+        <Container id="next-browse-container">
           <Menu>
             <Menu.Item>Recommended</Menu.Item>
             <Menu.Item>All Groups</Menu.Item>
             <Menu.Item>All Roles</Menu.Item>
           </Menu>
-          <Search loading={false} className='next-browse-search'/>
-          <Grid stackable columns={3} id='next-browse-grid'>
+          <Search loading={false} className="next-browse-search" />
+          <Grid stackable columns={3} id="next-browse-grid">
             <Grid.Row stretched>
               <Grid.Column>
-                <Segment></Segment>
+                <Segment />
               </Grid.Column>
               <Grid.Column>
-                <Segment></Segment>
-                <Segment></Segment>
+                <Segment />
+                <Segment />
               </Grid.Column>
               <Grid.Column>
-                <Segment></Segment>
-                <Segment></Segment>
-                <Segment></Segment>
+                <Segment />
+                <Segment />
+                <Segment />
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -58,16 +59,11 @@ class Browse extends Component {
       </div>
     );
   }
-
 }
 
 
-const mapStateToProps = (state) => {
-  return {};
-}
+const mapStateToProps = state => ({});
 
-const mapDispatchToProps = (dispatch) => {
-  return {};
-}
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Browse);

@@ -24,11 +24,11 @@ limitations under the License.
 const tokenKey = 'auth_token';
 
 
-export const get = (key) => localStorage.getItem(key);
+export const get = key => localStorage.getItem(key);
 export const set = (key, value) => localStorage.setItem(key, value);
-export const remove = (key) => localStorage.removeItem(key);
+export const remove = key => localStorage.removeItem(key);
 
 
 export const getToken = () => localStorage.getItem(tokenKey);
-export const setToken = (value) => localStorage.setItem(tokenKey, value);
+export const setToken = value => localStorage.setItem(tokenKey, value);
 export const removeToken = () => localStorage.removeItem(tokenKey);

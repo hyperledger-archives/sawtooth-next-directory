@@ -23,15 +23,13 @@ import MemberList from './MemberList';
 
 
 describe('MemberList component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><MemberList/></BrowserRouter>, div
+      <BrowserRouter><MemberList /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
 });

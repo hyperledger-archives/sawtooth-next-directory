@@ -22,10 +22,10 @@ import { Provider } from 'react-redux';
 
 import createCustomStore from '../../createCustomStore';
 
-const store = createCustomStore();
-
 
 import Requests from './Requests';
+
+const store = createCustomStore();
 
 
 it('renders without crashing', () => {
@@ -36,13 +36,13 @@ it('renders without crashing', () => {
     roleFromId: () => {},
     proposalFromId: () => {},
     match: { params: {} },
-    requester: { requests: [] }
+    requester: { requests: [] },
   };
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Requests {...props}/></BrowserRouter>
-    </Provider>, div
+      <BrowserRouter><Requests {...props} /></BrowserRouter>
+    </Provider>, div,
   );
 
   ReactDOM.unmountComponentAtNode(div);

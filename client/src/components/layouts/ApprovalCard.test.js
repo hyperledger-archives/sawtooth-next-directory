@@ -23,15 +23,13 @@ import ApprovalCard from './ApprovalCard';
 
 
 describe('ApprovalCard component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><ApprovalCard/></BrowserRouter>, div
+      <BrowserRouter><ApprovalCard /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
 });

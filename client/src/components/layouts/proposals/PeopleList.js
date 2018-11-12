@@ -18,6 +18,9 @@ import React, { Component } from 'react';
 import { Checkbox, List, Icon } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './PeopleList.css';
 
 
@@ -28,13 +31,12 @@ import './PeopleList.css';
  *
  */
 export default class PeopleList extends Component {
-
   /**
    *
    * Hydrate data
    *
    */
-  componentDidMount () {
+  componentDidMount() {
     const { getUsers, openProposalsByUser } = this.props;
 
     if (!openProposalsByUser) return;
@@ -69,7 +71,7 @@ export default class PeopleList extends Component {
     const { handleChange, openProposalsByUser,  } = this.props;
 
     return (
-      openProposalsByUser[userId].map((proposal) => (
+      openProposalsByUser[userId].map(proposal => (
         <List.Item key={proposal.object}>
           <List.Header>
             <span className='next-people-list-proposal'>
@@ -96,11 +98,11 @@ export default class PeopleList extends Component {
    * @param {*} index
    *
    */
-  renderUserItem (userId) {
+  renderUserItem(userId) {
     const { users } = this.props;
 
     if (!users) return null;
-    const user = users.find((user) => user.id === userId);
+    const user = users.find(user => user.id === userId);
 
     return (
       <div className='next-people-list-item' key={userId}>
@@ -127,7 +129,7 @@ export default class PeopleList extends Component {
   }
 
 
-  render () {
+  render() {
     const { openProposalsByUser } = this.props;
 
     if (!openProposalsByUser) return null;
@@ -135,12 +137,25 @@ export default class PeopleList extends Component {
     return (
       <div>
         <List>
-          { Object.keys(openProposalsByUser).map((userId) => (
+          { Object.keys(openProposalsByUser).map(userId => (
             this.renderUserItem(userId)
           ))}
         </List>
       </div>
     );
   }
-
 }
+
+
+PeopleList.propTypes = {
+  getUsers: PropTypes.arrayOf(PropTypes.string),
+  openProposalsByUser: PropTypes.arrayOf(PropTypes.string),
+  users: PropTypes.arrayOf(PropTypes.string),
+};
+
+
+PeopleList.defaultProps = {
+  getUsers: '',
+  openProposalsByUser:'',
+  users:'',
+};

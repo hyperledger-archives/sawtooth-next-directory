@@ -28,13 +28,12 @@ import AuthActions from '../redux/AuthRedux';
  * @param action
  *
  */
-export function * login (api, action) {
+export function* login(api, action) {
   try {
-
     const { username, password } = action;
     const res = yield call(api.login, {
       id: username,
-      password: password
+      password,
     });
 
     if (res.ok) {
@@ -45,7 +44,6 @@ export function * login (api, action) {
       alert(res.data.message);
       yield put(AuthActions.loginFailure(res.data.message));
     }
-
   } catch (err) {
     console.error(err);
   }
@@ -62,15 +60,16 @@ export function * login (api, action) {
  *
  */
 
-export function * signup (api, action) {
+export function* signup(api, action) {
   try {
-
-    const { username, password, name, email } = action;
+    const {
+      username, password, name, email,
+    } = action;
     const res = yield call(api.signup, {
-      username: username,
-      password: password,
-      email: email,
-      name: name
+      username,
+      password,
+      email,
+      name,
     });
 
     if (res.ok) {
@@ -81,15 +80,13 @@ export function * signup (api, action) {
       alert(res.data.message);
       yield put(AuthActions.signupFailure(res.data.message));
     }
-
   } catch (err) {
     console.error(err);
   }
 }
 
-export function * logout (api, action) {
+export function* logout(api, action) {
   try {
-
     const res = yield call(api.logout);
     if (res.ok) {
       yield put(AuthActions.logoutSuccess());
@@ -97,7 +94,6 @@ export function * logout (api, action) {
       alert(res.data.message);
       yield put(AuthActions.logoutFailure(res.data.message));
     }
-
   } catch (err) {
     console.error(err);
   }

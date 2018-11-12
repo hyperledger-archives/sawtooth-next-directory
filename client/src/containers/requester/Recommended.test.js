@@ -35,13 +35,13 @@ it('renders without crashing', () => {
     getRole: () => {},
     roleFromId: () => {},
     match: { params: {} },
-    requester: { recommended: [] }
+    requester: { recommended: [] },
   };
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Recommended {...props}/></BrowserRouter>
-    </Provider>, div
+      <BrowserRouter><Recommended {...props} /></BrowserRouter>
+    </Provider>, div,
   );
 
   ReactDOM.unmountComponentAtNode(div);

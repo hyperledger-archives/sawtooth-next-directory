@@ -19,6 +19,9 @@ import { Link } from 'react-router-dom'
 import { Container, Search } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import NavList from './NavList';
 import './ApproverNav.css';
 
@@ -31,31 +34,30 @@ import './ApproverNav.css';
  *
  */
 export default class ApproverNav extends Component {
-
   /**
    *
    * Render sidebar hierarchy
    *
    */
-  renderLists () {
+  renderLists() {
     return (
-      <div id='next-approver-nav-lists-container'>
+      <div id="next-approver-nav-lists-container">
         <NavList
-          listTitle='Pending'
+          listTitle="Pending"
           list={[
             'Batch',
             'Roles',
             'Individuals',
             'Frequent',
-            'About to Expire'
+            'About to Expire',
           ]}
           route='/approval/pending'/>
         <NavList
-          listTitle='Approved'
+          listTitle="Approved"
           list={null}
           route='/approval/approved'/>
         <NavList
-          listTitle='Expired'
+          listTitle="Expired"
           list={null}
           route='/approval/expired'/>
         <h4>
@@ -78,9 +80,10 @@ export default class ApproverNav extends Component {
       <Container>
 
         <Search
-          className='next-approver-nav-search'
+          className="next-approver-nav-search"
           category
-          loading={false}/>
+          loading={false}
+        />
 
         { this.renderLists() }
 
@@ -93,5 +96,9 @@ export default class ApproverNav extends Component {
       </Container>
     );
   }
-
 }
+
+
+ApproverNav.propTypes = {
+  logout: PropTypes.func.isRequired
+};

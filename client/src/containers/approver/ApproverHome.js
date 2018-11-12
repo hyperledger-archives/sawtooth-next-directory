@@ -31,17 +31,16 @@ import './ApproverHome.css';
  *
  */
 export default class ApproverHome extends Component {
-
   render() {
     return (
-      <Grid id='next-approver-grid'>
+      <Grid id="next-approver-grid">
         <Grid.Column
-          id='next-approver-grid-track-column'
-          width={16}>
-          <TrackHeader title='Approval Home' {...this.props}/>
+          id="next-approver-grid-track-column"
+          width={16}
+        >
+          <TrackHeader title="Approval Home" {...this.props} />
         </Grid.Column>
       </Grid>
     );
   }
-
 }

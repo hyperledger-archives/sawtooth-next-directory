@@ -23,16 +23,15 @@ import LoginForm from './LoginForm';
 
 
 describe('LoginForm component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     const props = {
-      submit: (username, password) => {}
-    }
+      submit: (username, password) => {},
+    };
 
     ReactDOM.render(
-      <BrowserRouter><LoginForm {...props} /></BrowserRouter>, div
+      <BrowserRouter><LoginForm {...props} /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);

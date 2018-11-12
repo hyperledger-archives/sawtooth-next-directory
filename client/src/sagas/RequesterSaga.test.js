@@ -21,11 +21,10 @@ import FixtureAPI from '../services/FixtureApi';
 
 
 import RequesterActions from '../redux/RequesterRedux';
-import { getBase, getRole } from '../sagas/RequesterSaga';
+import { getBase, getRole } from './RequesterSaga';
 
 
-const stepper = (fn) => (mock) => fn.next(mock).value;
-
+const stepper = fn => mock => fn.next(mock).value;
 
 
 test.skip('getBase: first calls API', () => {
@@ -64,7 +63,7 @@ test.skip('getRole: first calls API', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
   const step = stepper(getRole(FixtureAPI, {
-    id: id
+    id,
   }));
 
   expect(step()).toEqual(call(FixtureAPI.getRole, id));
@@ -76,7 +75,7 @@ test.skip('getRole: success path', () => {
 
   const res = FixtureAPI.getRole(id);
   const step = stepper(getRole(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();
@@ -91,7 +90,7 @@ test.skip('getRole: failure path', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
   const step = stepper(getRole(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();
@@ -99,4 +98,3 @@ test.skip('getRole: failure path', () => {
   const stepRes = step(res);
   expect(stepRes).toEqual(put(RequesterActions.roleFailure(res.data.error)));
 });
-

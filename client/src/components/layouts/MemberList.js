@@ -18,6 +18,9 @@ import React, { Component } from 'react';
 import { Segment } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './MemberList.css';
 
 
@@ -28,31 +31,28 @@ import './MemberList.css';
  *
  */
 export default class MemberList extends Component {
-
   /**
    *
    * Hydrate data
    *
    */
-  componentDidMount () {
+  componentDidMount() {
     const { getUser, owners, users } = this.props;
 
-    owners && owners.map((userId) => {
-      return users && users.find((user) => user.id === userId) ?
-        undefined :
-        getUser(userId)
-    })
+    owners && owners.map(userId => (users && users.find(user => user.id === userId)
+      ? undefined
+      : getUser(userId)));
   }
 
 
-  renderUserSegment (userId) {
+  renderUserSegment(userId) {
     const { users } = this.props;
 
     if (!users) {
       return null;
     }
 
-    const user = users.find((user) => user.id === userId);
+    const user = users.find(user => user.id === userId);
 
     return (
       <Segment compact key={userId}>
@@ -62,20 +62,35 @@ export default class MemberList extends Component {
   }
 
 
-  render () {
+  render() {
     const { members, owners } = this.props;
 
     return (
       <div>
-        { owners && owners.map((owner) => (
+        { owners && owners.map(owner => (
           this.renderUserSegment(owner)
         )) }
 
-        { members && members.map((member) => (
+        { members && members.map(member => (
           this.renderUserSegment(member)
         )) }
       </div>
     );
   }
-
 }
+
+
+MemberList.propTypes = {
+  getUser: PropTypes.string,
+  owners: PropTypes.arrayOf(PropTypes.string),
+  users: PropTypes.arrayOf(PropTypes.string),
+  members: PropTypes.arrayOf(PropTypes.string),
+};
+
+
+MemberList.defaultProps = {
+  getUser: '',
+  owners:'',
+  users:'',
+  members:'',
+};

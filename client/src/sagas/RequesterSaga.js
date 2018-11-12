@@ -29,7 +29,7 @@ import UserActions from '../redux/UserRedux';
  * @param action
  *
  */
-export function * getBase (api, action) {
+export function* getBase(api, action) {
   try {
     const res = yield call(api.getRoles);
     yield put(RequesterActions.baseSuccess(res.data.data));
@@ -49,7 +49,7 @@ export function * getBase (api, action) {
  * @param action
  *
  */
-export function * getRole (api, action) {
+export function* getRole(api, action) {
   try {
     const { id } = action;
     yield get(api, id);
@@ -92,7 +92,7 @@ export function * getRoles (api, action) {
  * @param action
  *
  */
-export function * getProposal (api, action) {
+export function* getProposal(api, action) {
   try {
     const { id } = action;
     const res = yield call(api.getProposal, id);
@@ -119,12 +119,12 @@ export function * getProposal (api, action) {
  * @param action
  *
  */
-export function * requestAccess (api, action) {
+export function* requestAccess(api, action) {
   try {
     const { id, userId, reason } = action;
     const res = yield call(api.requestAccess, id, {
       id: userId,
-      reason: reason
+      reason,
     });
 
     if (res.ok) {

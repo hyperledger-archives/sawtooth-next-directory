@@ -44,7 +44,7 @@ const api = API.create();
  *
  *
  */
-export default function * root() {
+export default function* root() {
   yield all([
 
     // Approver

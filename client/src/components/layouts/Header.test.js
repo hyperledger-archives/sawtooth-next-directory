@@ -23,15 +23,13 @@ import Header from './Header';
 
 
 describe('Header component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><Header/></BrowserRouter>, div
+      <BrowserRouter><Header /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
 });

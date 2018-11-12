@@ -25,11 +25,11 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
 
   const props = {
-    getBase: () => {}
+    getBase: () => {},
   };
 
   ReactDOM.render(
-    <BrowserRouter><RequesterHome {...props}/></BrowserRouter>, div
+    <BrowserRouter><RequesterHome {...props} /></BrowserRouter>, div,
   );
 
   ReactDOM.unmountComponentAtNode(div);

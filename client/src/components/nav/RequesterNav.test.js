@@ -25,7 +25,6 @@ import RequesterNav from './RequesterNav';
 
 
 describe('RequesterNav component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
@@ -37,11 +36,11 @@ describe('RequesterNav component', () => {
       isAuthenticated: true,
       recommended: null,
       requests: null,
-      routes: () => {}
+      routes: () => {},
     };
 
     ReactDOM.render(
-      <BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
+      <BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);

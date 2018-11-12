@@ -28,12 +28,10 @@ import ApproverActions from '../redux/ApproverRedux';
  * @param action
  *
  */
-export function * getOpenProposals (api, action) {
+export function* getOpenProposals(api, action) {
   try {
-
     const res = yield call(api.getOpenProposals);
     yield put(ApproverActions.openProposalsSuccess(res.data));
-
   } catch (err) {
     console.error(err);
   }

@@ -18,6 +18,9 @@ import React, { Component } from 'react';
 import { Button, Form, Icon } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 /**
  *
  * @class ChatForm
@@ -35,9 +38,16 @@ export default class ChatForm extends Component {
     this.state = { message: '' };
   }
 
-
-  reset () {
-    this.setState({ message: '' });
+ 
+  /**
+   *
+   * @param event   Event passed by Semantic UI
+   * @param name    Name of form element derived from 'name' HTML attribute
+   * @param value   Value of form field
+   *
+   */
+  handleChange = (event, { name, value }) => {
+    this.setState({ [name]: value });
   }
 
 
@@ -50,15 +60,9 @@ export default class ChatForm extends Component {
   }
 
 
-  /**
-   *
-   * @param event   Event passed by Semantic UI
-   * @param name    Name of form element derived from 'name' HTML attribute
-   * @param value   Value of form field
-   *
-   */
-  handleChange = (event, { name, value }) => {
-    this.setState({ [name]: value });
+
+  reset () {
+    this.setState({ message: '' });
   }
 
 
@@ -72,9 +76,10 @@ export default class ChatForm extends Component {
             <Button
               key={index}
               icon
-              onClick={() => this.handleSubmit(action)}>
-              {action.type === 0 && <Icon name='check circle'></Icon> }
-              {action.type === 1 && <Icon name='x'></Icon> }
+              onClick={() => this.handleSubmit(action)}
+            >
+              {action.type === 0 && <Icon name='check circle' /> }
+              {action.type === 1 && <Icon name='x' /> }
               {action.action_text}
             </Button>
           ))
@@ -97,12 +102,14 @@ export default class ChatForm extends Component {
             placeholder='Say something...'
             name='message'
             value={this.state.message}
-            onChange={this.handleChange}>
-            <input/>
+            onChange={this.handleChange}
+          >
+            <input />
             <Icon
               link
               name='paper plane'
-              onClick={() => this.handleSubmit(message)}/>
+              onClick={() => this.handleSubmit(message)}
+            />
           </Form.Input>
         </Form>
 

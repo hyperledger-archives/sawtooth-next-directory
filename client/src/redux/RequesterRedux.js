@@ -29,9 +29,9 @@ import * as utils from '../services/Utils';
  *
  */
 const { Types, Creators } = createActions({
-  baseRequest:       null,
-  baseSuccess:       ['base'],
-  baseFailure:       ['error'],
+  baseRequest: null,
+  baseSuccess: ['base'],
+  baseFailure: ['error'],
 
   roleRequest:       ['id'],
   roleSuccess:       ['role'],
@@ -43,9 +43,9 @@ const { Types, Creators } = createActions({
   proposalSuccess:   ['proposal'],
   proposalFailure:   ['error'],
 
-  accessRequest:     ['id', 'userId', 'reason'],
-  accessSuccess:     null,
-  accessFailure:     null
+  accessRequest: ['id', 'userId', 'reason'],
+  accessSuccess: null,
+  accessFailure: null,
 });
 
 
@@ -162,12 +162,8 @@ export const RequesterSelectors = {
  *
  *
  */
-export const request = (state) => {
-  return state.merge({ fetching: true });
-}
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-}
+export const request = state => state.merge({ fetching: true });
+export const failure = (state, { error }) => state.merge({ fetching: false, error });
 
 
 /**
@@ -201,7 +197,6 @@ export const accessSuccess = (state) => {
   return state.merge({ fetching: false });
 }
 
-
 /**
  *
  * Hooks
@@ -226,5 +221,5 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.ACCESS_REQUEST]: request,
   [Types.ACCESS_SUCCESS]: accessSuccess,
-  [Types.ACCESS_FAILURE]: failure
+  [Types.ACCESS_FAILURE]: failure,
 });

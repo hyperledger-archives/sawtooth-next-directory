@@ -23,13 +23,12 @@ import './toast.css';
 
 
 /**
- * 
+ *
  * @class Toast
  * Component encapsulating the toast to display error message
- * 
+ *
  */
 export default class Toast extends Component {
-
   constructor(props) {
     super(props);
 
@@ -44,10 +43,10 @@ export default class Toast extends Component {
     if (open) {
       /**
        * auto close functionality
-       *  
+       *
        */
       clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => { this.hideToast() }, timeout || 30000);
+      this.timeout = setTimeout(() => { this.hideToast(); }, timeout || 30000);
     }
   }
 
@@ -65,12 +64,12 @@ export default class Toast extends Component {
     const { title, message, open } = this.props;
 
     return (
-      <div className={'next-toast-container' + (open ? '' : ' hide-toast')}>
-        <div className='toast-icon-wrapper'>
-          <div className='toast-title'>
-            {title ? title : 'Error'}
+      <div className={`next-toast-container${open ? '' : ' hide-toast'}`}>
+        <div className="toast-icon-wrapper">
+          <div className="toast-title">
+            {title || 'Error'}
           </div>
-          <Icon onClick={() => this.hideToast()} name='close' />
+          <Icon onClick={() => this.hideToast()} name="close" />
         </div>
         <p>
           {message || ' '}
@@ -80,10 +79,18 @@ export default class Toast extends Component {
   }
 }
 
-Toast.prototypes = {
+Toast.propTypes = {
   title: PropTypes.string,
   close: PropTypes.func.isRequired,
   open: PropTypes.bool,
   message: PropTypes.string,
-  timeout: PropTypes.number
+  timeout: PropTypes.number,
 };
+
+Toast.defaultProps = {
+  title: '',
+  open:'',
+  message: '',
+  timeout:'',
+};
+

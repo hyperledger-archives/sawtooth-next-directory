@@ -75,6 +75,6 @@ export default class LoginForm extends Component {
 }
 
 
-LoginForm.proptypes = {
+LoginForm.propTypes = {
   submit: PropTypes.func.isRequired
 };

@@ -52,9 +52,9 @@ export default Creators;
  *
  */
 export const INITIAL_STATE = Immutable({
-  fetching:         null,
-  error:            null,
-  openProposals:    null,
+  fetching: null,
+  error: null,
+  openProposals: null,
 });
 
 
@@ -65,9 +65,8 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const ApproverSelectors = {
-  openProposals:         (state) => state.approver.openProposals,
-  openProposalsByUser:   (state) =>
-    utils.groupBy(state.approver.openProposals, 'opener')
+  openProposals: state => state.approver.openProposals,
+  openProposalsByUser: state => utils.groupBy(state.approver.openProposals, 'opener'),
 };
 
 

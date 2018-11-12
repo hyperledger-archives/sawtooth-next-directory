@@ -21,10 +21,10 @@ import FixtureAPI from '../services/FixtureApi';
 
 
 import AuthActions from '../redux/AuthRedux';
-import { login } from '../sagas/AuthSaga';
+import { login } from './AuthSaga';
 
 
-const stepper = (fn) => (mock) => fn.next(mock).value;
+const stepper = fn => mock => fn.next(mock).value;
 
 
 test('first calls API', () => {
@@ -32,13 +32,13 @@ test('first calls API', () => {
   const password = 'world';
 
   const step = stepper(login(FixtureAPI, {
-    username: username,
-    password: password
+    username,
+    password,
   }));
-  
+
   expect(step()).toEqual(call(FixtureAPI.login, {
     id: username,
-    password: password
+    password,
   }));
 });
 
@@ -49,8 +49,8 @@ test('success path', () => {
 
   const res = FixtureAPI.login(username, password);
   const step = stepper(login(FixtureAPI, {
-    username: username,
-    password: password
+    username,
+    password,
   }));
 
   step();
@@ -67,8 +67,8 @@ test('failure path', () => {
   const password = 'world';
 
   const step = stepper(login(FixtureAPI, {
-    username: username,
-    password: password
+    username,
+    password,
   }));
 
   step();

@@ -23,7 +23,6 @@ import PeopleList from './PeopleList';
 
 
 describe('PeopleList component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
@@ -32,10 +31,9 @@ describe('PeopleList component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><PeopleList {...props}/></BrowserRouter>, div
+      <BrowserRouter><PeopleList {...props} /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
 });

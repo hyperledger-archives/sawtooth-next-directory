@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { Image, List } from 'semantic-ui-react';
 
 
@@ -34,7 +34,6 @@ import * as utils from '../../services/Utils';
  *
  */
 export default class NavList extends Component {
-
   /**
    *
    * Generate a sub-list of nav links
@@ -50,7 +49,7 @@ export default class NavList extends Component {
    * In cases where no slug is provided, one is generated.
    *
    */
-  renderList (list) {
+  renderList(list) {
     const { dynamic, route } = this.props;
 
     return (
@@ -58,11 +57,12 @@ export default class NavList extends Component {
         <List.Item
           key={index}
           as={Link}
-          to={item.slug ?
-            `${route}/${item.slug}` :
-            `${route}/${utils.createSlug(item.name || item)}`}>
+          to={item.slug
+            ? `${route}/${item.slug}`
+            : `${route}/${utils.createSlug(item.name || item)}`}
+        >
 
-          <Image src=''/>
+          <Image src="" />
 
           <List.Content id='next-nav-list-content'>
             { dynamic ?
@@ -72,36 +72,51 @@ export default class NavList extends Component {
           </List.Content>
         </List.Item>
       ))
-    )
+    );
   }
 
 
-  render () {
+  render() {
     const { list, listTitle } = this.props;
 
     return (
       <div className='next-nav-list-container'>
         <h4>{listTitle}</h4>
 
-        { list && list.length !== 0 ?
-          <List inverted link selection>
-            { this.renderList(list) }
-          </List> :
-          <span className='next-nav-list-label'>
+        { list && list.length !== 0
+          ? (
+            <List inverted link selection>
+              { this.renderList(list) }
+            </List>
+          )
+          : (
+            <span className="next-nav-list-label">
             No items
-          </span>
+            </span>
+          )
         }
 
       </div>
     );
   }
-
 }
 
 
-NavList.prototypes = {
+NavList.propTypes = {
   route: PropTypes.string,
   listTitle: PropTypes.string,
-  list: PropTypes.arrayOf(PropTypes.number),
-  dynamic: PropTypes.bool
+  list: PropTypes.arrayOf(PropTypes.shape(
+    {
+      length: PropTypes.string,
+    },
+  )),
+  dynamic: PropTypes.bool,
+};
+
+
+NavList.defaultProps = {
+  route: '',
+  listTitle:'',
+  list: '',
+  dynamic: '',
 };

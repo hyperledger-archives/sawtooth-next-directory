@@ -31,24 +31,23 @@ import './RequesterHome.css';
  *
  */
 export default class RequesterHome extends Component {
-
-  render () {
+  render() {
     return (
-      <Grid id='next-requester-grid'>
+      <Grid id="next-requester-grid">
         <Grid.Column
-          id='next-requester-grid-track-column'
-          width={16}>
-          <TrackHeader waves {...this.props}/>
-          <Container id='next-requester-landing-container'></Container>
+          id="next-requester-grid-track-column"
+          width={16}
+        >
+          <TrackHeader waves {...this.props} />
+          <Container id="next-requester-landing-container" />
         </Grid.Column>
       </Grid>
     );
   }
-
 }
 
 
-RequesterHome.proptypes = {
+RequesterHome.propTypes = {
   activeRole: PropTypes.arrayOf(PropTypes.shape(
     {
       id: PropTypes.string,
@@ -57,9 +56,14 @@ RequesterHome.proptypes = {
         {
           id: PropTypes.string,
           name: PropTypes.string,
-          email: PropTypes.email
-        }
-      ))
-    }
-  ))
+          email: PropTypes.email,
+        },
+      )),
+    },
+  )),
+};
+
+
+RequesterHome.defaultProps = {
+  activeRole: '',
 };

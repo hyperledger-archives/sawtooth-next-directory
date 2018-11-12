@@ -34,36 +34,32 @@ import './Roles.css';
  *
  */
 class Roles extends Component {
-
-  render () {
+  render() {
     return (
-      <Grid id='next-approver-grid'>
+      <Grid id="next-approver-grid">
 
         <Grid.Column
-          id='next-approver-grid-track-column'
-          width={10}>
-          <TrackHeader title='Roles' {...this.props}/>
-          <RolesList {...this.props}/>
+          id="next-approver-grid-track-column"
+          width={10}
+        >
+          <TrackHeader title="Roles" {...this.props} />
+          <RolesList {...this.props} />
         </Grid.Column>
         <Grid.Column
-          id='next-approver-grid-converse-column'
-          width={6}>
-          <Chat {...this.props}/>
+          id="next-approver-grid-converse-column"
+          width={6}
+        >
+          <Chat {...this.props} />
         </Grid.Column>
 
       </Grid>
     );
   }
-
 }
 
 
-const mapStateToProps = (state) => {
-  return {};
-}
+const mapStateToProps = state => ({});
 
-const mapDispatchToProps = (dispatch) => {
-  return {};
-}
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Roles);

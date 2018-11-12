@@ -25,11 +25,11 @@ import { reducer as UserReducer } from './UserRedux';
 
 
 const reducers = combineReducers({
-  approver:   ApproverReducer,
-  auth:       AuthReducer,
-  chat:       ChatReducer,
-  requester:  RequesterReducer,
-  user:       UserReducer
+  approver: ApproverReducer,
+  auth: AuthReducer,
+  chat: ChatReducer,
+  requester: RequesterReducer,
+  user: UserReducer,
 });
 
 export default reducers;

@@ -29,17 +29,17 @@ import * as storage from '../services/Storage';
  *
  */
 const { Types, Creators } = createActions({
-  loginRequest:     ['username', 'password'],
-  loginSuccess:     ['isAuthenticated', 'payload'],
-  loginFailure:     ['error'],
+  loginRequest: ['username', 'password'],
+  loginSuccess: ['isAuthenticated', 'payload'],
+  loginFailure: ['error'],
 
-  signupRequest:    ['name', 'username', 'password', 'email'],
-  signupSuccess:    ['isAuthenticated', 'payload'],
-  signupFailure:    ['error'],
+  signupRequest: ['name', 'username', 'password', 'email'],
+  signupSuccess: ['isAuthenticated', 'payload'],
+  signupFailure: ['error'],
 
-  logoutRequest:    null,
-  logoutSuccess:    null,
-  logoutFailure:    ['error']
+  logoutRequest: null,
+  logoutSuccess: null,
+  logoutFailure: ['error'],
 });
 
 
@@ -57,10 +57,10 @@ export default Creators;
  *
  */
 export const INITIAL_STATE = Immutable({
-  isAuthenticated:  null,
-  fetching:         null,
-  error:            null,
-  user:             null
+  isAuthenticated: null,
+  fetching: null,
+  error: null,
+  user: null,
 });
 
 
@@ -71,12 +71,8 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const AuthSelectors = {
-  isAuthenticated: (state) => {
-    return !!storage.getToken() || state.auth.isAuthenticated;
-  },
-  user: (state) => {
-    return state.auth.user || { id: storage.get('user_id') }
-  }
+  isAuthenticated: state => !!storage.getToken() || state.auth.isAuthenticated,
+  user: state => state.auth.user || { id: storage.get('user_id') },
 };
 
 
@@ -91,28 +87,26 @@ export const request = (state) => state.merge({ fetching: true, error: false });
 export const success = (state, { isAuthenticated, payload }) => {
   storage.setToken(payload.authorization);
 
-  payload.user ?
-    storage.set('user_id', payload.user.id) :
-    storage.set('user_id', payload.user_id);
+  payload.user
+    ? storage.set('user_id', payload.user.id)
+    : storage.set('user_id', payload.user_id);
 
   return state.merge({
     isAuthenticated,
     fetching: false,
     user: payload.user,
-    token: payload.authorization
+    token: payload.authorization,
   });
-}
+};
 
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-}
+export const failure = (state, { error }) => state.merge({ fetching: false, error });
 
 export const logout = (state) => {
   storage.removeToken();
   storage.remove('user_id');
 
   return INITIAL_STATE;
-}
+};
 
 
 /**

@@ -36,14 +36,13 @@ import Toast from '../../components/toast/toast';
  *
  */
 class Login extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
       isToastOpen: false,
-      toastMessage: ''
-    }
+      toastMessage: '',
+    };
     this.closeToast = this.closeToast.bind(this);
   }
 
@@ -64,7 +63,6 @@ class Login extends Component {
   componentWillReceiveProps(newProps) {
     this.props = newProps;
     if (newProps.isAuthenticated) {
-
       // TODO: Consider pulling from a user-saved cache
       this.props.history.push('/home');
     }
@@ -75,7 +73,7 @@ class Login extends Component {
        */
       this.setState({
         isToastOpen: true,
-        toastMessage: newProps.error
+        toastMessage: newProps.error,
       });
     }
   }
@@ -83,8 +81,8 @@ class Login extends Component {
   closeToast() {
     this.setState({
       isToastOpen: false,
-      toastMessage: ''
-    })
+      toastMessage: '',
+    });
   }
 
   render() {
@@ -97,7 +95,7 @@ class Login extends Component {
 
     return (
       <Grid centered columns={2}>
-        <Grid.Column className='next-login-column'>
+        <Grid.Column className="next-login-column">
           {formDom}
         </Grid.Column>
         <Toast
@@ -109,28 +107,40 @@ class Login extends Component {
       </Grid>
     );
   }
-
 }
 
 
-Login.prototypes = {
+Login.propTypes = {
   isAuthenticated: PropTypes.bool,
-  attemptLogin: PropTypes.func.isRequired
+  attemptLogin: PropTypes.func.isRequired,
+  attemptSignup: PropTypes.func.isRequired,
+  history: PropTypes.arrayOf(PropTypes.shape(
+    {
+      push: PropTypes.func,
+    },
+  )),
+  location: PropTypes.arrayOf(PropTypes.shape(
+    {
+      pathname: PropTypes.string,
+    },
+  )),
+};
+
+Login.defaultProps = {
+  isAuthenticated: '',
+  history:'',
+  location: '',
 };
 
 
-const mapStateToProps = (state) => {
-  return {
-    error: state.auth.error,
-    isAuthenticated: AuthSelectors.isAuthenticated(state)
-  };
-}
+const mapStateToProps = state => ({
+  error: state.auth.error,
+  isAuthenticated: AuthSelectors.isAuthenticated(state),
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    attemptLogin: (email, password) => dispatch(AuthActions.loginRequest(email, password)),
-    attemptSignup: (name, username, password, email) => dispatch(AuthActions.signupRequest(name, username, password, email))
-  };
-}
+const mapDispatchToProps = dispatch => ({
+  attemptLogin: (email, password) => dispatch(AuthActions.loginRequest(email, password)),
+  attemptSignup: (name, username, password, email) => dispatch(AuthActions.signupRequest(name, username, password, email)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

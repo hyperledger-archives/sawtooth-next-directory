@@ -25,7 +25,6 @@ import NavList from './NavList';
 
 
 describe('NavList component', () => {
-
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
@@ -33,11 +32,11 @@ describe('NavList component', () => {
       dynamic: false,
       list: ['List header'],
       listTitle: 'Title',
-      route: '/home/requests'
+      route: '/home/requests',
     };
 
     ReactDOM.render(
-      <BrowserRouter><NavList {...props}/></BrowserRouter>, div
+      <BrowserRouter><NavList {...props} /></BrowserRouter>, div,
     );
 
     ReactDOM.unmountComponentAtNode(div);

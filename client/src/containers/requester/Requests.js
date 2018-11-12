@@ -39,9 +39,10 @@ import './Requests.css';
  *
  */
 export class Requests extends Component {
-
-  componentDidMount () {
-    const { getRole, getProposal, roleId, proposalId } = this.props;
+  componentDidMount() {
+    const {
+      getRole, getProposal, roleId, proposalId,
+    } = this.props;
 
     roleId && !this.role && getRole(roleId);
     proposalId && !this.request && getProposal(proposalId);
@@ -54,8 +55,10 @@ export class Requests extends Component {
    *
    *
    */
-  componentWillReceiveProps (newProps) {
-    const { getRole, getProposal, roleId, proposalId } = this.props;
+  componentWillReceiveProps(newProps) {
+    const {
+      getRole, getProposal, roleId, proposalId,
+    } = this.props;
 
     if (newProps.roleId !== roleId) {
       !this.role && getRole(newProps.roleId);
@@ -80,11 +83,12 @@ export class Requests extends Component {
 
 
     return (
-      <Grid id='next-requester-grid'>
+      <Grid id="next-requester-grid">
 
         <Grid.Column
-          id='next-requester-grid-track-column'
-          width={10}>
+          id="next-requester-grid-track-column"
+          width={10}
+        >
 
           <TrackHeader
             roleImage
@@ -104,17 +108,16 @@ export class Requests extends Component {
 
         </Grid.Column>
         <Grid.Column
-          id='next-requester-grid-converse-column'
-          width={6}>
-          <Chat {...this.props}/>
+          id="next-requester-grid-converse-column"
+          width={6}
+        >
+          <Chat {...this.props} />
         </Grid.Column>
 
       </Grid>
     );
   }
-
 }
-
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -130,16 +133,14 @@ const mapStateToProps = (state, ownProps) => {
       'proposal_id'
     )
   };
-}
+};
 
-const mapDispatchToProps = (dispatch) => {
-  return {};
-}
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Requests);
 
 
-Requests.proptypes = {
+Requests.propTypes = {
   getRole: PropTypes.func,
   getProposal: PropTypes.func,
 };

@@ -36,17 +36,16 @@ import chatApprover from '../../mock_data/conversation_action.1.json';
  *
  */
 export default class Chat extends Component {
-
   /**
    *
    * Switch chat context when active pack changes
    *
    */
-  componentWillReceiveProps (newProps) {
+  componentWillReceiveProps(newProps) {
     const { activeRole, getConversation } = this.props;
 
     if (newProps.activeRole !== activeRole) {
-      getConversation(newProps.activeRole['conversation_id']);
+      getConversation(newProps.activeRole.conversation_id);
     }
   }
 
@@ -101,7 +100,7 @@ export default class Chat extends Component {
           <ChatMessage {...this.props}/>
         }
 
-        <div id='next-chat-conversation-dock'>
+        <div id="next-chat-conversation-dock">
           <ChatForm
             actions={actions}
             submit={(message, action) => this.send(message, action)}/>
@@ -109,5 +108,4 @@ export default class Chat extends Component {
       </div>
     );
   }
-
 }

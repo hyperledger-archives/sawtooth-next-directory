@@ -30,7 +30,7 @@ test('loginSuccess', () => {
   const isAuthenticated = true;
   const authData = {
     authorization: '',
-    user_id: ''
+    user_id: '',
   };
   const state = reducer(INITIAL_STATE, Actions.loginSuccess(isAuthenticated, authData));
 

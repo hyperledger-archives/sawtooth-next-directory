@@ -31,49 +31,53 @@ import './RolesList.css';
  *
  */
 export default class RolesList extends Component {
-
-
-  render () {
+  render() {
     const { activeRole } = this.props;
 
     return (
-      <div id='next-requester-track-body-container'>
+      <div id="next-requester-track-body-container">
 
-        { activeRole && activeRole.description &&
-          <p>{activeRole.description}</p>
+        { activeRole && activeRole.description
+          && <p>{activeRole.description}</p>
         }
 
-        { activeRole && activeRole.roles &&
-          <List selection verticalAlign='middle'>
+        { activeRole && activeRole.roles
+          && (
+          <List selection verticalAlign="middle">
             { activeRole.roles.map((role, index) => (
               <Segment key={index}>
                 {role.name}
               </Segment>
             )) }
           </List>
+          )
         }
 
-        { activeRole && activeRole.roles &&
-          activeRole.roles.length === 0 &&
-          <h3>No roles found.</h3>
+        { activeRole && activeRole.roles
+          && activeRole.roles.length === 0
+          && <h3>No roles found.</h3>
         }
 
       </div>
     );
   }
-
 }
 
 
-RolesList.proptypes = {
+RolesList.propTypes = {
   activeRole: PropTypes.arrayOf(PropTypes.shape(
     {
       description: PropTypes.string,
       roles: PropTypes.arrayOf(PropTypes.shape(
         {
-          name: PropTypes.string
-        }
-      ))
-    }
-  ))
+          name: PropTypes.string,
+        },
+      )),
+    },
+  )),
+};
+
+
+RolesList.defaultProps = {
+  activeRole: '',
 };

@@ -46,7 +46,7 @@ import People from './containers/approver/People';
  * components.
  *
  */
-const routes = (props) => [
+const routes = props => [
 
   /**
    *
@@ -57,34 +57,34 @@ const routes = (props) => [
    */
 
   {
-    path:   '/home',
-    main:   (rest) => <RequesterHome {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home',
+    main: rest => <RequesterHome {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/home/requests/:id',
-    main:   (rest) => <Requests {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home/requests/:id',
+    main: rest => <Requests {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/home/recommended-packs/:id',
-    main:   (rest) => <Recommended {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home/recommended-packs/:id',
+    main: rest => <Recommended {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/home/recommended-roles/:id',
-    main:   (rest) => <Recommended {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home/recommended-roles/:id',
+    main: rest => <Recommended {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
   {
-    path:   '/home/packs/:id',
-    main:   (rest) => <Packs {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    path: '/home/packs/:id',
+    main: rest => <Packs {...props} {...rest} />,
+    nav: () => <RequesterNav {...props} />,
+    exact: true,
   },
 
 

@@ -28,7 +28,6 @@ import './ApprovalCard.css';
  *
  */
 export default class ApprovalCard extends Component {
-
   /**
    *
    * Hydrate data
@@ -50,11 +49,11 @@ export default class ApprovalCard extends Component {
   }
 
 
-  renderApprover (userId) {
+  renderApprover(userId) {
     const { users } = this.props;
 
     if (!users) return null;
-    const user = users.find((user) => user.id === userId);
+    const user = users.find(user => user.id === userId);
     return (<div key={userId}>{user.name}</div>);
   }
 
@@ -67,16 +66,16 @@ export default class ApprovalCard extends Component {
     }
 
     return (
-      <div id='next-approval-container'>
+      <div id="next-approval-container">
         <Card fluid>
-          <Card.Header id='next-approval-status'>
-            <span id='next-approval-status-emoji' role='img' aria-label=''>
+          <Card.Header id="next-approval-status">
+            <span id="next-approval-status-emoji" role="img" aria-label="">
               🙇
             </span>
             <h3>Awaiting approval</h3>
           </Card.Header>
           <Card.Content extra>
-            <Grid columns={3} padded='vertically'>
+            <Grid columns={3} padded="vertically">
               <Grid.Column>
                 Request ID
               </Grid.Column>
@@ -96,5 +95,4 @@ export default class ApprovalCard extends Component {
       </div>
     );
   }
-
 }

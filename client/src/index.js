@@ -33,8 +33,8 @@ const store = createCustomStore();
 
 
 ReactDOM.render(
-  <Provider store={store}><App routes={routes}/></Provider>,
-  document.getElementById('root')
+  <Provider store={store}><App routes={routes} /></Provider>,
+  document.getElementById('root'),
 );
 
 registerServiceWorker();

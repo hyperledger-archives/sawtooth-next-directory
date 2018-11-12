@@ -31,9 +31,8 @@ import UserActions from '../redux/UserRedux';
  * @param action
  *
  */
-export function * me (api, action) {
+export function* me(api, action) {
   try {
-
     const res = yield call(api.me);
 
     if (res.ok) {
@@ -43,7 +42,6 @@ export function * me (api, action) {
       alert(res.data.message);
       yield put(UserActions.meFailure(res.data.message));
     }
-
   } catch (err) {
     console.error(err);
   }
@@ -60,7 +58,7 @@ export function * me (api, action) {
  * @param action
  *
  */
-export function * getUser (api, action) {
+export function* getUser(api, action) {
   try {
     const { id } = action;
     yield get(api, id);
@@ -80,7 +78,7 @@ export function * getUser (api, action) {
  * @param action
  *
  */
-export function * getUsers (api, action) {
+export function* getUsers(api, action) {
   try {
     const { ids } = action;
 
@@ -99,11 +97,11 @@ export function * getUsers (api, action) {
  *
  *
  */
-function * get (api, id) {
+function* get(api, id) {
   const res = yield call(api.getUser, id);
 
   if (res.ok) {
-    let user = res.data.data;
+    const user = res.data.data;
     yield put(UserActions.userSuccess(user));
   } else {
     alert(res.data.message);

@@ -38,8 +38,7 @@ import './Recommended.css';
  *
  */
 export class Recommended extends Component {
-
-  componentDidMount () {
+  componentDidMount() {
     const { getRole, roleId } = this.props;
     roleId && !this.role && getRole(roleId);
   }
@@ -51,7 +50,7 @@ export class Recommended extends Component {
    *
    *
    */
-  componentWillReceiveProps (newProps) {
+  componentWillReceiveProps(newProps) {
     const { getRole, roleId } = this.props;
 
     if (newProps.roleId !== roleId) {
@@ -67,11 +66,12 @@ export class Recommended extends Component {
     if (!this.role) return null;
 
     return (
-      <Grid id='next-requester-grid'>
+      <Grid id="next-requester-grid">
 
         <Grid.Column
-          id='next-requester-grid-track-column'
-          width={10}>
+          id="next-requester-grid-track-column"
+          width={10}
+        >
 
           <TrackHeader
             roleImage
@@ -98,7 +98,6 @@ export class Recommended extends Component {
       </Grid>
     );
   }
-
 }
 
 
@@ -114,11 +113,9 @@ const mapStateToProps = (state, ownProps) => {
   return {
     roleId: RequesterSelectors.idFromSlug(state, roles, params.id)
   };
-}
+};
 
-const mapDispatchToProps = (dispatch) => {
-  return {};
-}
+const mapDispatchToProps = dispatch => ({});
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Recommended);

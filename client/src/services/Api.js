@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import apisauce from 'apisauce';
-import * as storage from '../services/Storage';
+import * as storage from './Storage';
 import * as AuthActions from '../redux/AuthRedux';
 
 
@@ -36,7 +36,6 @@ import * as AuthActions from '../redux/AuthRedux';
  *
  */
 const create = (baseURL = 'http://localhost:8000/api/') => {
-
   /**
    *
    * Create and configure API object
@@ -44,7 +43,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    */
   const api = apisauce.create({
-    baseURL
+    baseURL,
   });
 
 
@@ -54,14 +53,14 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    *
    */
-  api.addResponseTransform(res => {
+  api.addResponseTransform((res) => {
     if (res.data.code === 401) {
       AuthActions.logout();
     }
   });
 
-  api.addRequestTransform(req => {
-    req.headers['Authorization'] = storage.getToken();
+  api.addRequestTransform((req) => {
+    req.headers.Authorization = storage.getToken();
   });
 
 
@@ -74,25 +73,25 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   const me = () => {
     const id = storage.get('user_id');
     return api.get(`users/${id}`);
-  }
+  };
 
   const getOpenProposals = () => {
     const id = storage.get('user_id');
     return api.get(`users/${id}/proposals/open`);
-  }
+  };
 
 
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRequesterBase = () => api.get('me/base');
-  const getRole = (id) => api.get(`roles/${id}`);
+  const getRole = id => api.get(`roles/${id}`);
   const getRoles = () => api.get('roles');
   const getRoot = () => api.get('');
-  const getUser = (id) => api.get(`users/${id}`);
+  const getUser = id => api.get(`users/${id}`);
   const requestAccess = (id, body) => api.post(`roles/${id}/members`, body);
-  const search = (query) => api.post('', { q: query });
-  const signup = (creds) => api.post('users', creds);
+  const search = query => api.post('', { q: query });
+  const signup = creds => api.post('users', creds);
 
 
   return {
@@ -108,11 +107,10 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     me,
     requestAccess,
     search,
-    signup
-  }
-
-}
+    signup,
+  };
+};
 
 export default {
-  create
-}
+  create,
+};

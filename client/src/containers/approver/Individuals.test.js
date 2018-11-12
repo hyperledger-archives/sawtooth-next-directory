@@ -32,13 +32,13 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
 
   const props = {
-    getOpenProposals: () => {}
+    getOpenProposals: () => {},
   };
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Individuals {...props}/></BrowserRouter>
-    </Provider>, div
+      <BrowserRouter><Individuals {...props} /></BrowserRouter>
+    </Provider>, div,
   );
 
   ReactDOM.unmountComponentAtNode(div);

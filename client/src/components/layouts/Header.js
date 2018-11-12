@@ -18,6 +18,9 @@ import React, { Component } from 'react';
 import { Icon, Image, Menu, Header as MenuHeader } from 'semantic-ui-react';
 
 
+import PropTypes from 'prop-types';
+
+
 import './Header.css';
 import logo from '../../images/next-logo-primary.png';
 
@@ -121,9 +124,10 @@ export default class Header extends Component {
         <div id='next-header-logo'>
           <Image
             src={logo}
-            as='a'
-            size='tiny'
-            href='/home'/>
+            as="a"
+            size="tiny"
+            href="/home"
+          />
         </div>
         <div id='next-header-actions'>
           <Icon inverted name='search'/>
@@ -138,5 +142,18 @@ export default class Header extends Component {
       </header>
     );
   }
-
 }
+
+
+Header.propTypes = {
+  me: PropTypes.arrayOf(PropTypes.shape(
+    {
+      name: PropTypes.string,
+    },
+  )),
+}
+
+
+Header.defaultProps = {
+  me: '',
+};

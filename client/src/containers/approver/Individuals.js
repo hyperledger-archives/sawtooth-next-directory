@@ -81,7 +81,7 @@ class Individuals extends Component {
     const { selectedRoles } = this.state;
 
     return (
-      <Grid id='next-approver-grid'>
+      <Grid id="next-approver-grid">
 
         <Grid.Column
           id='next-approver-grid-track-column'
@@ -114,21 +114,21 @@ class Individuals extends Component {
       </Grid>
     );
   }
-
 }
 
 
-const mapStateToProps = (state) => {
-  return {};
-}
+const mapStateToProps = state => ({});
 
-const mapDispatchToProps = (dispatch) => {
-  return {};
-}
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Individuals);
 
 
-Individuals.proptypes = {
-  getOpenProposals: PropTypes.func
+Individuals.propTypes = {
+  getOpenProposals: PropTypes.func,
+};
+
+
+Individuals.defaultProps = {
+  getOpenProposals: '',
 };
