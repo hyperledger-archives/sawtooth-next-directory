@@ -26,6 +26,7 @@ limitations under the License.
 
 #next-header-logo {
   flex: 1;
+  padding-left: 4px;
 }
 
 #next-header-username {
@@ -41,4 +42,14 @@ limitations under the License.
 #next-header-actions i {
   font-size: 1.3em;
   margin-right: 22px;
+}
+
+#next-header-actions img {
+  cursor: pointer;
+}
+
+#next-header-menu {
+  position: absolute;
+  top: 39px;
+  right: 12px;
 }

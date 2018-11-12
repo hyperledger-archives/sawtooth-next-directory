@@ -31,6 +31,10 @@ const { Types, Creators } = createActions({
   openProposalsRequest:   null,
   openProposalsSuccess:   ['openProposals'],
   openProposalsFailure:   ['error'],
+
+  createRoleRequest:      ['payload'],
+  createRoleSuccess:      ['success'],
+  createRoleFailure:      ['error'],
 });
 
 
@@ -69,16 +73,27 @@ export const ApproverSelectors = {
 
 /**
  *
- * Reducers
+ * Reducers - General
  *
  *
  */
 export const request = (state) => state.merge({ fetching: true });
-export const success = (state, { openProposals }) => {
-  return state.merge({ fetching: false, openProposals: openProposals.data });
-}
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
+}
+
+
+/**
+ *
+ * Reducers - Success
+ *
+ *
+ */
+export const openProposalsSuccess = (state, { openProposals }) => {
+  return state.merge({ fetching: false, openProposals: openProposals.data });
+}
+export const createRoleSuccess = (state) => {
+  return state.merge({ fetching: false });
 }
 
 
@@ -90,6 +105,10 @@ export const failure = (state, { error }) => {
  */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.OPEN_PROPOSALS_REQUEST]: request,
-  [Types.OPEN_PROPOSALS_SUCCESS]: success,
+  [Types.OPEN_PROPOSALS_SUCCESS]: openProposalsSuccess,
   [Types.OPEN_PROPOSALS_FAILURE]: failure,
+
+  [Types.CREATE_ROLE_REQUEST]: request,
+  [Types.CREATE_ROLE_SUCCESS]: createRoleSuccess,
+  [Types.CREATE_ROLE_FAILURE]: failure,
 });

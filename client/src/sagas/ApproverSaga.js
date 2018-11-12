@@ -38,3 +38,26 @@ export function * getOpenProposals (api, action) {
     console.error(err);
   }
 }
+
+
+/**
+ *
+ * Execute create role API request
+ *
+ * The createRole generator function executes a request to the
+ * API to create a new role.
+ *
+ * @param action
+ *
+ */
+export function * createRole (api, action) {
+  try {
+    const { payload } = action;
+
+    const res = yield call(api.createRole, payload);
+    yield put(ApproverActions.createRoleSuccess(res.data));
+
+  } catch (err) {
+    console.error(err);
+  }
+}

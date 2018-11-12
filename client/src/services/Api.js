@@ -82,6 +82,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   }
 
 
+  const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRequesterBase = () => api.get('me/base');
@@ -95,6 +96,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
 
 
   return {
+    createRole,
     login,
     getOpenProposals,
     getProposal,

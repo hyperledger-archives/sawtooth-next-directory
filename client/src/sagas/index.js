@@ -28,7 +28,7 @@ import { RequesterTypes } from '../redux/RequesterRedux';
 import { UserTypes } from '../redux/UserRedux';
 
 
-import { getOpenProposals } from './ApproverSaga';
+import { getOpenProposals, createRole } from './ApproverSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
 import { requestAccess, getBase, getRole, getProposal } from './RequesterSaga';
@@ -49,6 +49,7 @@ export default function * root() {
 
     // Approver
     takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
+    takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
 
     // Auth
     takeLatest(AuthTypes.LOGIN_REQUEST, login, api),

@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { Container, Search, Button, Icon } from 'semantic-ui-react';
+import { Container, Search } from 'semantic-ui-react';
 
 
 import NavList from './NavList';
@@ -49,31 +49,31 @@ export default class ApproverNav extends Component {
             'Frequent',
             'About to Expire'
           ]}
-          route='/approval-home/pending'/>
+          route='/approval/pending'/>
         <NavList
           listTitle='Approved'
           list={null}
-          route='/approval-home/approved'/>
+          route='/approval/approved'/>
         <NavList
           listTitle='Expired'
           list={null}
-          route='/approval-home/expired'/>
-        <NavList
-          listTitle='Manage Groups'
-          list={null}
-          route='/approval-home/manage-groups'/>
-        <NavList
-          listTitle='People'
-          list={null}
-          route='/approval-home/people'/>
+          route='/approval/expired'/>
+        <h4>
+          <Link to='/approval/people'>
+            People
+          </Link>
+        </h4>
+        <h4>
+          <Link to='/approval/manage'>
+            Manage
+          </Link>
+        </h4>
       </div>
     );
   }
 
 
   render () {
-    const { logout } = this.props;
-
     return (
       <Container>
 
@@ -84,14 +84,11 @@ export default class ApproverNav extends Component {
 
         { this.renderLists() }
 
-        <Link to='/home' id='next-switch-approver-link'>
-          Switch to Requester
-        </Link>
-
-        <Button onClick={() => logout()} animated secondary id="next-logout-button">
-          <Button.Content visible>Logout</Button.Content>
-          <Button.Content hidden><Icon name='log out'/></Button.Content>
-        </Button>
+        <h4 id='next-approver-switch-container'>
+          <Link to='/home'>
+            Switch to Requester
+          </Link>
+        </h4>
 
       </Container>
     );

@@ -73,7 +73,8 @@ export const INITIAL_STATE = Immutable({
 export const UserSelectors = {
   me: (state) => state.user.me,
   requests: (state) => state.user.me && state.user.me.proposals,
-  users: (state) => state.user.users
+  users: (state) => state.user.users,
+  id: (state) => state.user.me && state.user.me.id,
 };
 
 

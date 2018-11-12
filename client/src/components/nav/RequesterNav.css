@@ -20,11 +20,6 @@ limitations under the License.
   width: 100%;
 }
 
-#next-switch-requester-link {
-  bottom: 50px;
-  position: absolute;
-}
-
 #next-browse-button {
   margin-bottom: 18px;
 }
@@ -33,13 +28,14 @@ limitations under the License.
   margin-top: 40px;
 }
 
-#next-requester-nav-lists-container h3 {
-  color: var(--nav-heading-color);
+#next-requester-switch-container {
+  bottom: 25px;
+  left: -4px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
 }
 
-#next-logout-button {
-  position: absolute;
-  bottom: 10px;
-  background-color: #fff;
-  color: #e20074;
+#next-requester-switch-container a {
+  color: var(--nav-heading-color);
 }
