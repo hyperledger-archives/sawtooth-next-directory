@@ -31,7 +31,7 @@ import { UserTypes } from '../redux/UserRedux';
 import { getOpenProposals, createRole } from './ApproverSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
-import { requestAccess, getBase, getRole, getProposal } from './RequesterSaga';
+import { requestAccess, getBase, getRole, getRoles, getProposal } from './RequesterSaga';
 import { me, getUser, getUsers } from './UserSaga';
 
 
@@ -63,6 +63,7 @@ export default function * root() {
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
     takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),
+    takeLatest(RequesterTypes.ROLES_REQUEST, getRoles, api),
     takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
     takeLatest(RequesterTypes.ACCESS_REQUEST, requestAccess, api),
 

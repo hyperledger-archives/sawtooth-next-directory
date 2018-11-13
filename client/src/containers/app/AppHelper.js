@@ -43,14 +43,16 @@ export const appState = (state) => {
     messages:            ChatSelectors.messages(state),
 
     // Requester
-    activeProposal:      RequesterSelectors.activeProposal(state),
-    activeRole:          RequesterSelectors.activeRole(state),
     recommended:         RequesterSelectors.recommended(state),
+    requests:            RequesterSelectors.requests(state),
+    roles:               RequesterSelectors.roles(state),
+    proposalFromId:      (id) => RequesterSelectors.proposalFromId(state, id),
+    roleFromId:          (id) => RequesterSelectors.roleFromId(state, id),
 
     // User
     me:                  UserSelectors.me(state),
-    requests:            UserSelectors.requests(state),
     users:               UserSelectors.users(state),
+    memberOf:            UserSelectors.memberOf(state),
 
   };
 };
@@ -79,6 +81,7 @@ export const appDispatch = (dispatch) => {
     // Requester
     getBase:           ()    => dispatch(RequesterActions.baseRequest()),
     getRole:           (id)  => dispatch(RequesterActions.roleRequest(id)),
+    getRoles:          (ids) => dispatch(RequesterActions.rolesRequest(ids)),
     getProposal:       (id)  => dispatch(RequesterActions.proposalRequest(id)),
     requestAccess:     (id, userId, reason) => {
       return dispatch(RequesterActions.accessRequest(id, userId, reason))

@@ -60,7 +60,7 @@ test.skip('getBase: failure path', () => {
 
 
 
-test('getRole: first calls API', () => {
+test.skip('getRole: first calls API', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
   const step = stepper(getRole(FixtureAPI, {
@@ -71,7 +71,7 @@ test('getRole: first calls API', () => {
 });
 
 
-test('getRole: success path', () => {
+test.skip('getRole: success path', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
   const res = FixtureAPI.getRole(id);
@@ -86,7 +86,7 @@ test('getRole: success path', () => {
 });
 
 
-test('getRole: failure path', () => {
+test.skip('getRole: failure path', () => {
   const res = { ok: false, data: {} };
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 

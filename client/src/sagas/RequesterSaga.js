@@ -14,8 +14,9 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
+import { all, call, put } from 'redux-saga/effects';
 import RequesterActions from '../redux/RequesterRedux';
+import UserActions from '../redux/UserRedux';
 
 
 /**
@@ -31,7 +32,7 @@ import RequesterActions from '../redux/RequesterRedux';
 export function * getBase (api, action) {
   try {
     const res = yield call(api.getRoles);
-    yield put(RequesterActions.baseSuccess(res.data));
+    yield put(RequesterActions.baseSuccess(res.data.data));
   } catch (err) {
     console.error(err);
   }
@@ -51,13 +52,29 @@ export function * getBase (api, action) {
 export function * getRole (api, action) {
   try {
     const { id } = action;
-    const res = yield call(api.getRole, id);
+    yield get(api, id);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
-    if (res.ok) {
-      yield put(RequesterActions.roleSuccess(res.data));
-    } else {
-      alert(res.data.error);
-      yield put(RequesterActions.roleFailure(res.data.error));
+
+/**
+ *
+ * Execute roles API request
+ *
+ * The getRoles generator function executes a request to the
+ * API and handles the response.
+ *
+ * @param action
+ *
+ */
+export function * getRoles (api, action) {
+  try {
+    const { ids } = action;
+
+    if (ids.length > 0) {
+      yield all(ids.map(id => get(api, id)));
     }
   } catch (err) {
     console.error(err);
@@ -81,8 +98,7 @@ export function * getProposal (api, action) {
     const res = yield call(api.getProposal, id);
 
     if (res.ok) {
-      console.log('Retrieved proposal');
-      yield put(RequesterActions.proposalSuccess(res.data));
+      yield put(RequesterActions.proposalSuccess(res.data.data));
     } else {
       alert(res.data.error);
       yield put(RequesterActions.proposalFailure(res.data.error));
@@ -114,9 +130,32 @@ export function * requestAccess (api, action) {
     if (res.ok) {
       console.log('Requested access');
       yield put(RequesterActions.accessSuccess(res.data));
+      yield put(UserActions.meRequest());
     } else {
       alert(res.data.error);
       yield put(RequesterActions.accessFailure(res.data.error));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ *
+ * Helpers
+ *
+ *
+ */
+export function * get (api, id) {
+  try {
+    const res = yield call(api.getRole, id);
+
+    if (res.ok) {
+      yield put(RequesterActions.roleSuccess(res.data.data));
+    } else {
+      alert(res.data.error);
+      yield put(RequesterActions.roleFailure(res.data.error));
     }
   } catch (err) {
     console.error(err);

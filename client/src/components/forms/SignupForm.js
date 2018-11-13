@@ -31,19 +31,7 @@ import PropTypes from 'prop-types';
  */
 export default class SignupForm extends Component {
 
-  constructor (props) {
-    super(props);
-
-    // TODO: Consider moving to Redux
-    this.state = { 
-      username: { value: '', error: false }, 
-      password: { value: '', error: false }, 
-      name: { value: '', error: false }, 
-      email: { value: '', error: false } 
-    };
-
-    this.isFormValidated = this.isFormValidated.bind(this);
-  }
+  state = { username: '', password: '', name: '', email: '' };
 
 
   /**
@@ -54,70 +42,38 @@ export default class SignupForm extends Component {
    *
    */
   handleChange = (event, { name, value }) => {
-    this.setState({ [name]: {value: value, error: false} });
-  }
-
-  isFormValidated(){
-    let errorCount = 0;
-
-    Object.keys(this.state).map(field => {
-      if(this.state[field].value.length < 4) {
-        errorCount++;
-        this.setState({
-          [field]: {...this.state[field], error: true}
-        });
-      }
-    });
-
-    if(errorCount > 0){
-      return false
-    }else {
-      return true
-    }
-  }
-
-  submitForm() {
-    const { submit } = this.props;
-    const { username, password, name, email  } = this.state;
-
-    if(this.isFormValidated()){
-      submit(username.value, password.value, name.value, email.value);
-    }
+    this.setState({ [name]: value });
   }
 
 
   render () {
+    const { submit } = this.props;
     const { username, password, name, email  } = this.state;
 
     return (
-      <Form onSubmit={() => this.submitForm()}>
+      <Form onSubmit={() => submit(name, username, password, email)}>
         <Form.Input
           label='Name'
           placeholder='Name'
           name='name'
-          onChange={this.handleChange}
-          error={name.error}
-          />
+          onChange={this.handleChange}/>
         <Form.Input
           label='User Name'
           placeholder='user name'
           name='username'
-          onChange={this.handleChange}
-          error={username.error}/>
+          onChange={this.handleChange}/>
         <Form.Input
           label='Password'
           placeholder='Password'
           name='password'
           type='password'
-          onChange={this.handleChange}
-          error={password.error}/>
+          onChange={this.handleChange}/>
         <Form.Input
           label='Email'
           placeholder='email'
           name='email'
           type='email'
-          onChange={this.handleChange}
-          error={email.error}/>
+          onChange={this.handleChange}/>
         <Form.Button content='Sign Up'/>
 
         <Link to = '/login'>

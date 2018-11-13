@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Checkbox, List } from 'semantic-ui-react';
+import { Checkbox, List, Icon } from 'semantic-ui-react';
 
 
 import './PeopleList.css';
@@ -42,6 +42,20 @@ export default class PeopleList extends Component {
   }
 
 
+  roleName = (roleId) => {
+    const { roleFromId } = this.props;
+    const role = roleFromId(roleId);
+
+    return role && role.name;
+  };
+
+
+  isChecked = (roleId) => {
+    const { selectedRoles } = this.props;
+    return selectedRoles.indexOf(roleId) !== -1;
+  }
+
+
   /**
    *
    * Render role / pack proposals for a given user as a sub-List
@@ -52,17 +66,23 @@ export default class PeopleList extends Component {
    *
    */
   renderUserProposals (userId) {
-    const { openProposalsByUser } = this.props;
+    const { handleChange, openProposalsByUser,  } = this.props;
 
     return (
       openProposalsByUser[userId].map((proposal) => (
         <List.Item key={proposal.object}>
           <List.Header>
-            <Checkbox label={proposal.object}/>
+            <span className='next-people-list-proposal'>
+              <Checkbox
+                checked={this.isChecked(proposal.object)}
+                role={proposal.object}
+                label={this.roleName(proposal.object)}
+                onChange={handleChange}/>
+            </span>
           </List.Header>
         </List.Item>
       ))
-    )
+    );
   }
 
 
@@ -83,20 +103,33 @@ export default class PeopleList extends Component {
     const user = users.find((user) => user.id === userId);
 
     return (
-      <List.Item key={userId}>
-        <List.Header>
-          <Checkbox label={user && user.name}/>
-        </List.Header>
-        <List.List>
-          { this.renderUserProposals(userId) }
-        </List.List>
-      </List.Item>
+      <div className='next-people-list-item' key={userId}>
+        <List.Item>
+          <List.Header>
+            { user && user.name &&
+              <span className='next-people-list-name'>
+                <Checkbox label={user.name}/>
+              </span>
+            }
+            { user && user.email &&
+              <span className='next-people-list-email'>
+                {user.email}
+              </span>
+            }
+            <Icon name='info circle' color='grey'/>
+          </List.Header>
+          <List.List>
+            { this.renderUserProposals(userId) }
+          </List.List>
+        </List.Item>
+      </div>
     );
   }
 
 
   render () {
     const { openProposalsByUser } = this.props;
+
     if (!openProposalsByUser) return null;
 
     return (

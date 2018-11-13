@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -41,10 +41,7 @@ export class Recommended extends Component {
 
   componentDidMount () {
     const { getRole, roleId } = this.props;
-
-    if (roleId) {
-      getRole(roleId);
-    }
+    roleId && !this.role && getRole(roleId);
   }
 
 
@@ -58,17 +55,16 @@ export class Recommended extends Component {
     const { getRole, roleId } = this.props;
 
     if (newProps.roleId !== roleId) {
-      getRole(newProps.roleId);
+      !this.role && getRole(newProps.roleId);
     }
   }
 
 
   render () {
-    const { activeRole } = this.props;
+    const { roleId, roleFromId } = this.props;
 
-    if (!activeRole) {
-      return null;
-    }
+    this.role = roleFromId(roleId);
+    if (!this.role) return null;
 
     return (
       <Grid id='next-requester-grid'>
@@ -80,21 +76,23 @@ export class Recommended extends Component {
           <TrackHeader
             roleImage
             waves
-            title={activeRole.name}
+            title={this.role.name}
             {...this.props}/>
 
           <div id='next-requester-recommended-content'>
-            <p>Lorem ipsum dolor sit amet.</p>
+            <Container id='next-requester-recommended-description'>
+              Lorem ipsum dolor sit amet.
+            </Container>
             <MemberList {...this.props}
-              members={activeRole.members}
-              owners={activeRole.owners}/>
+              members={this.role.members}
+              owners={this.role.owners}/>
           </div>
 
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={6}>
-          <Chat {...this.props}/>
+          <Chat activeRole={this.role} {...this.props}/>
         </Grid.Column>
 
       </Grid>
@@ -105,27 +103,22 @@ export class Recommended extends Component {
 
 
 Recommended.proptypes = {
-  getRole: PropTypes.func,
-  activeRole: PropTypes.arrayOf(PropTypes.shape(
-    {
-      name: PropTypes.string
-    }
-  ))
-
+  getRole: PropTypes.func
 };
 
 
 const mapStateToProps = (state, ownProps) => {
   const { params } = ownProps.match;
-  const { recommended } = state.requester;
+  const { roles } = state.requester;
 
   return {
-    roleId: RequesterSelectors.idFromSlug(recommended, params.id)
+    roleId: RequesterSelectors.idFromSlug(state, roles, params.id)
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {};
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Recommended);

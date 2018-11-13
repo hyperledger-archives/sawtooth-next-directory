@@ -16,7 +16,6 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Card, Grid } from 'semantic-ui-react';
-import PropTypes from 'prop-types';
 
 
 import './ApprovalCard.css';
@@ -36,14 +35,14 @@ export default class ApprovalCard extends Component {
    *
    */
   componentDidMount () {
-    const { activeProposal, getUser, users } = this.props;
+    const { request, getUser, users } = this.props;
 
-    if (!activeProposal) {
+    if (!request) {
       return;
     }
 
-    activeProposal.appprovers &&
-    activeProposal.appprovers.map((userId) => {
+    request.appprovers &&
+    request.appprovers.map((userId) => {
       return users && users.find((user) => user.id === userId) ?
         undefined :
         getUser(userId)
@@ -61,9 +60,9 @@ export default class ApprovalCard extends Component {
 
 
   render () {
-    const { activeProposal } = this.props;
+    const { request } = this.props;
 
-    if (!activeProposal) {
+    if (!request) {
       return null;
     }
 
@@ -86,8 +85,8 @@ export default class ApprovalCard extends Component {
               </Grid.Column>
               <Grid.Column>
                 Approver(s)
-                { activeProposal.approvers &&
-                  activeProposal.approvers.map((approver) => (
+                { request.approvers &&
+                  request.approvers.map((approver) => (
                   this.renderApprover(approver)
                 )) }
               </Grid.Column>
@@ -99,17 +98,3 @@ export default class ApprovalCard extends Component {
   }
 
 }
-
-
-ApprovalCard.proptypes = {
-  activeRole: PropTypes.arrayOf(PropTypes.shape(
-    {
-      description: PropTypes.string,
-      roles: PropTypes.arrayOf(PropTypes.shape(
-        {
-          name: PropTypes.string
-        }
-      ))
-    }
-  ))
-};

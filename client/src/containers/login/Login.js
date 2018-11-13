@@ -91,7 +91,9 @@ class Login extends Component {
     const { attemptLogin, attemptSignup } = this.props;
     const { isToastOpen, toastMessage } = this.state;
 
-    let formDom = (this.props.location.pathname === '/signup' ? <SignupForm submit={attemptSignup} /> : <LoginForm submit={attemptLogin} />);
+    let formDom = (this.props.location.pathname === '/signup' ?
+      <SignupForm submit={attemptSignup}/> :
+      <LoginForm submit={attemptLogin}/>);
 
     return (
       <Grid centered columns={2}>
@@ -103,7 +105,7 @@ class Login extends Component {
           close={this.closeToast}
           message={toastMessage}
           timeout={10000}
-          title='Authentication Error' />
+          title='Authentication Error'/>
       </Grid>
     );
   }

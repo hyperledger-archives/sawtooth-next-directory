@@ -43,10 +43,8 @@ export class Requests extends Component {
   componentDidMount () {
     const { getRole, getProposal, roleId, proposalId } = this.props;
 
-    if (roleId && proposalId) {
-      getRole(roleId);
-      getProposal(proposalId);
-    }
+    roleId && !this.role && getRole(roleId);
+    proposalId && !this.request && getProposal(proposalId);
   }
 
 
@@ -60,17 +58,26 @@ export class Requests extends Component {
     const { getRole, getProposal, roleId, proposalId } = this.props;
 
     if (newProps.roleId !== roleId) {
-      getRole(newProps.roleId);
+      !this.role && getRole(newProps.roleId);
     }
 
     if (newProps.proposalId !== proposalId) {
-      getProposal(newProps.proposalId);
+      !this.request && getProposal(newProps.proposalId);
     }
   }
 
 
   render () {
-    const { activeRole } = this.props;
+    const {
+      proposalId,
+      proposalFromId,
+      roleId,
+      roleFromId } = this.props;
+
+    this.role = roleFromId(roleId);
+    this.request = proposalFromId(proposalId);
+    if (!this.role || !this.request) return null;
+
 
     return (
       <Grid id='next-requester-grid'>
@@ -82,17 +89,17 @@ export class Requests extends Component {
           <TrackHeader
             roleImage
             waves
-            title={activeRole && activeRole.name}
+            title={this.role && this.role.name}
             {...this.props}/>
 
           <div id='next-requester-requests-content'>
-            <ApprovalCard {...this.props}/>
-            <Container id='next-requester-description'>
+            <ApprovalCard request={this.request} {...this.props}/>
+            <Container id='next-requester-requests-description'>
               Lorem ipsum dolor sit amet.
             </Container>
             <MemberList {...this.props}
-              members={activeRole && activeRole.members}
-              owners={activeRole && activeRole.owners}/>
+              members={this.role && this.role.members}
+              owners={this.role && this.role.owners}/>
           </div>
 
         </Grid.Column>
@@ -112,11 +119,16 @@ export class Requests extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
-  const { requests } = state.user;
+  const { roles } = state.requester;
 
   return {
-    roleId: RequesterSelectors.idFromSlug(requests, id),
-    proposalId: RequesterSelectors.idFromSlug(requests, id, 'proposal_id')
+    roleId: RequesterSelectors.idFromSlug(state, roles, id),
+    proposalId: RequesterSelectors.idFromSlug(
+      state,
+      roles,
+      id,
+      'proposal_id'
+    )
   };
 }
 
@@ -130,9 +142,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(Requests);
 Requests.proptypes = {
   getRole: PropTypes.func,
   getProposal: PropTypes.func,
-  activeRole: PropTypes.arrayOf(PropTypes.shape(
-    {
-      name: PropTypes.string
-    }
-  ))
 };

@@ -12,3 +12,36 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+
+
+.next-people-list-item {
+  padding: 21px 30px;
+}
+
+.next-people-list-name {
+  border-right: 1px solid var(--nav-list-color);
+  padding-right: 20px;
+}
+
+.next-people-list-name .ui.checkbox label {
+  font-weight: bold;
+}
+
+.next-people-list-email {
+  color: var(--magenta);
+  padding: 0 20px;
+}
+
+.next-people-list-item .header,
+.next-people-list-item .ui.checkbox label {
+  font-size: 1.2em;
+}
+
+.next-people-list-proposal .ui.checkbox label {
+  font-size: 1em;
+  font-weight: normal;
+}
+
+.next-people-list-item:hover {
+  background: var(--selected-list-color);
+}

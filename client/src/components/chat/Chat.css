@@ -22,6 +22,7 @@ limitations under the License.
 #next-chat-conversation-dock {
   bottom: 0;
   position: absolute;
+  text-align: center;
   width: 100%;
 }
 
@@ -32,4 +33,9 @@ limitations under the License.
 
 #next-chat-actions {
   margin-top: 15px;
+}
+
+#next-chat-selection-container {
+  position: relative;
+  top: 100px;
 }
