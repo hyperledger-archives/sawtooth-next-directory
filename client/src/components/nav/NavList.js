@@ -64,7 +64,7 @@ export default class NavList extends Component {
 
           <Image src=''/>
 
-          <List.Content>
+          <List.Content id='next-nav-list-content'>
             { dynamic ?
               <List.Header>{item.name}</List.Header> :
               <List.Header>{item}</List.Header>
@@ -81,7 +81,7 @@ export default class NavList extends Component {
 
     return (
       <div className='next-nav-list-container'>
-        <h3>{listTitle}</h3>
+        <h4>{listTitle}</h4>
 
         { list && list.length !== 0 ?
           <List inverted link selection>

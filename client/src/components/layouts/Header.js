@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Icon, Image } from 'semantic-ui-react';
+import { Icon, Image, Menu, Header as MenuHeader } from 'semantic-ui-react';
 
 
 import './Header.css';
@@ -30,11 +30,94 @@ import logo from '../../images/next-logo-primary.png';
  */
 export default class Header extends Component {
 
-  render () {
+  state = { menuVisible: false };
+
+
+  componentDidMount() {
+    document.addEventListener(
+      'mousedown', this.handleClickOutside
+    );
+  }
+
+
+  componentWillUnmount() {
+    document.removeEventListener(
+      'mousedown', this.handleClickOutside
+    );
+  }
+
+
+  handleClickOutside = (event) => {
+    this.ref && !this.ref.contains(event.target) &&
+      this.setState({ menuVisible: false });
+  }
+
+
+  setRef = (node) => {
+    this.ref = node;
+  }
+
+
+  toggleMenu = () => {
+    const { menuVisible } = this.state;
+    this.setState({ menuVisible: !menuVisible });
+  }
+
+
+  logout = () => {
+    const { logout } = this.props;
+    this.toggleMenu();
+    logout();
+  }
+
+
+  renderMenu () {
     const { me } = this.props;
 
     return (
-      <header className='next-header'>
+      <div id='next-header-menu'>
+        <Menu vertical>
+          { me &&
+            <Menu.Item>
+              <MenuHeader as='h3'>
+                <Image
+                  avatar
+                  src='http://i.pravatar.cc/300'
+                  size='small'/>
+                <MenuHeader.Content>
+                  {me.name}
+                </MenuHeader.Content>
+              </MenuHeader>
+            </Menu.Item>
+          }
+          <Menu.Item>
+            <MenuHeader as='h5'>
+              <Icon name='setting'/>
+              <MenuHeader.Content>
+                Settings
+              </MenuHeader.Content>
+            </MenuHeader>
+          </Menu.Item>
+          <Menu.Item onClick={this.logout}>
+            <MenuHeader as='h5'>
+              <Icon name='sign out'/>
+              <MenuHeader.Content>
+                Sign out
+              </MenuHeader.Content>
+            </MenuHeader>
+          </Menu.Item>
+        </Menu>
+      </div>
+    );
+  }
+
+
+  render () {
+    const { me } = this.props;
+    const { menuVisible } = this.state;
+
+    return (
+      <header className='next-header' ref={this.setRef}>
         <div id='next-header-logo'>
           <Image
             src={logo}
@@ -45,9 +128,13 @@ export default class Header extends Component {
         <div id='next-header-actions'>
           <Icon inverted name='search'/>
           <Icon inverted name='bell'/>
-          <span id='next-header-username'>{ me && me.name }</span>
-          <Image src='http://i.pravatar.cc/300' avatar/>
+          { me &&
+            <Image
+              avatar
+              src='http://i.pravatar.cc/300'
+              onClick={this.toggleMenu}/> }
         </div>
+        { menuVisible && this.renderMenu() }
       </header>
     );
   }

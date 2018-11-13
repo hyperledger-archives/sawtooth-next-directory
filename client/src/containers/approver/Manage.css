@@ -14,20 +14,8 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-:root {
-  --header-bg-color: #000;
-  --header-color: #fff;
-  --nav-bg-color: #263645;
-  --nav-heading-color: #fff;
-  --nav-list-color: #727c85;
-  --chat-bg-color: #b0b0b01f;
-}
-
-body,
-#root {
-  height: 100%;
-}
-
-#next-wave {
-  position: absolute;
+#next-approver-manage-content {
+  padding: 0 20px;
+  position: relative;
+  top: 120px;
 }

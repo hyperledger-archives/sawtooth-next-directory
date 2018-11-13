@@ -18,7 +18,15 @@ limitations under the License.
   margin-top: 20px;
 }
 
-.next-nav-list-label {
+.next-nav-list-container h4 {
   color: var(--nav-heading-color);
+}
+
+.next-nav-list-label {
+  color: var(--nav-list-color);
   font-size: 12px;
+}
+
+#next-nav-list-content .header {
+  color: var(--nav-list-color);
 }

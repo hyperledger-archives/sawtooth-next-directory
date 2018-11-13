@@ -14,20 +14,27 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-:root {
-  --header-bg-color: #000;
-  --header-color: #fff;
-  --nav-bg-color: #263645;
-  --nav-heading-color: #fff;
-  --nav-list-color: #727c85;
-  --chat-bg-color: #b0b0b01f;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
-body,
-#root {
-  height: 100%;
-}
 
-#next-wave {
-  position: absolute;
-}
+import Manage from './Manage';
+import createCustomStore from '../../createCustomStore';
+
+
+const store = createCustomStore();
+
+
+it('renders without crashing', () => {
+  const div = document.createElement('div');
+
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Manage/></BrowserRouter>
+    </Provider>, div
+  );
+
+  ReactDOM.unmountComponentAtNode(div);
+});

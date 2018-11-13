@@ -25,6 +25,14 @@ limitations under the License.
   width: 100%;
 }
 
-#next-approver-nav-lists-container h3 {
+#next-approver-switch-container {
+  bottom: 25px;
+  left: -4px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+#next-approver-switch-container a {
   color: var(--nav-heading-color);
 }

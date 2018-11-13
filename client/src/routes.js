@@ -31,6 +31,8 @@ import Roles from './containers/approver/Roles';
 import Individuals from './containers/approver/Individuals';
 import Frequent from './containers/approver/Frequent';
 import Expiring from './containers/approver/Expiring';
+import Manage from './containers/approver/Manage';
+import People from './containers/approver/People';
 
 
 /**
@@ -95,38 +97,50 @@ const routes = (props) => [
    */
 
   {
-    path:   '/approval-home',
+    path:   '/approval',
     main:   (rest) => <ApproverHome {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true
   },
   {
-    path:   '/approval-home/pending/batch',
+    path:   '/approval/pending/batch',
     main:   (rest) => <Batch {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true
   },
   {
-    path:   '/approval-home/pending/roles',
+    path:   '/approval/pending/roles',
     main:   (rest) => <Roles {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true
   },
   {
-    path:   '/approval-home/pending/individuals',
+    path:   '/approval/pending/individuals',
     main:   (rest) => <Individuals {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true
   },
   {
-    path:   '/approval-home/pending/frequent',
+    path:   '/approval/pending/frequent',
     main:   (rest) => <Frequent {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true
   },
   {
-    path:   '/approval-home/pending/about-to-expire',
+    path:   '/approval/pending/about-to-expire',
     main:   (rest) => <Expiring {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true
+  },
+  {
+    path:   '/approval/manage',
+    main:   (rest) => <Manage {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true
+  },
+  {
+    path:   '/approval/people',
+    main:   (rest) => <People {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true
   }
