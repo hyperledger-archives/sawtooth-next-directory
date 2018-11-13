@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Segment } from 'semantic-ui-react';
+import { Checkbox, Segment } from 'semantic-ui-react';
 
 
 import ChatForm from '../forms/ChatForm';
@@ -23,7 +23,8 @@ import ChatMessage from './ChatMessage';
 import './Chat.css';
 
 
-import chatTest from '../../mock_data/conversation_action.json';
+import chatRequester from '../../mock_data/conversation_action.json';
+import chatApprover from '../../mock_data/conversation_action.1.json';
 
 
 /**
@@ -50,21 +51,18 @@ export default class Chat extends Component {
   }
 
 
+  roleName = (roleId) => {
+    const { roleFromId } = this.props;
+    const role = roleFromId(roleId);
+
+    return role && role.name;
+  };
+
+
   send (message, action) {
-    const { activeRole, me, requestAccess, sendMessage } = this.props;
+    const { activeRole, me, requestAccess } = this.props;
 
     if (action) {
-      const payload = {
-        body: action['response_text'],
-        from: { id: me.id, name: 'John Doe' }
-      };
-
-      console.log(action);
-      console.log(payload);
-      console.log(activeRole);
-
-      sendMessage(payload);
-
       switch (action.type) {
         case 0:
           requestAccess(activeRole.id, me.id, 'some reason');
@@ -78,23 +76,34 @@ export default class Chat extends Component {
 
 
   render () {
-    const { messages } = this.props;
+    const { handleChange, messages, selectedRoles, type } = this.props;
+
+    // ! Temporary
+    const actions = type ? chatApprover.actions :
+      chatRequester.actions;
 
     return (
       <div id='next-chat-container'>
+        { selectedRoles &&
+          <div id='next-chat-selection-container'>
+          { selectedRoles.map((role) => (
+            <Segment key={role}>
+              <Checkbox
+                checked={!!role}
+                role={role}
+                label={this.roleName(role)}
+                onChange={handleChange}/>
+            </Segment>
+          )) }
+          </div>
+        }
         { messages &&
-            <ChatMessage {...this.props}/>
-          }
-
-        { messages && messages.length === 0 &&
-          <Segment inverted color='violet'>
-            Would you like me to request access?
-          </Segment>
+          <ChatMessage {...this.props}/>
         }
 
         <div id='next-chat-conversation-dock'>
           <ChatForm
-            actions={chatTest.actions}
+            actions={actions}
             submit={(message, action) => this.send(message, action)}/>
         </div>
       </div>

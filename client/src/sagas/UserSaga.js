@@ -38,21 +38,6 @@ export function * me (api, action) {
 
     if (res.ok) {
       let me = res.data.data;
-      let proposals = [];
-
-      for (let proposal of me.proposals) {
-        const role = yield call(
-          api.getRole,
-          proposal['object_id']
-        );
-
-        proposals.push({
-          ...role.data.data,
-          ...proposal
-        });
-      }
-
-      me.proposals = proposals;
       yield put(UserActions.meSuccess(me));
     } else {
       alert(res.data.message);
@@ -98,7 +83,10 @@ export function * getUser (api, action) {
 export function * getUsers (api, action) {
   try {
     const { ids } = action;
-    yield all(ids.map(id => get(api, id)));
+
+    if (ids.length > 0) {
+      yield all(ids.map(id => get(api, id)));
+    }
   } catch (err) {
     console.error(err);
   }

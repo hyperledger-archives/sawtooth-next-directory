@@ -36,15 +36,49 @@ import './Individuals.css';
  */
 class Individuals extends Component {
 
+  state = { selectedRoles: [] }
+
+
   componentDidMount () {
     const { getOpenProposals } = this.props;
-
     getOpenProposals();
+  }
+
+
+  /**
+   *
+   * Sync checkbox selections by role
+   * TODO: Sync across people
+   *
+   *
+   */
+  handleChange = (event, data) => {
+    const { selectedRoles } = this.state;
+
+    let index = null;
+    let rolesCopy = [...selectedRoles];
+
+    if (data.checked) {
+      index = rolesCopy.indexOf(data.role);
+      if (index === -1) {
+        rolesCopy = [...rolesCopy, data.role];
+      }
+    }
+
+    if (!data.checked) {
+      index = rolesCopy.indexOf(data.role);
+      if (index !== -1) {
+        rolesCopy.splice(index, 1);
+      }
+    }
+
+    this.setState({ selectedRoles: rolesCopy });
   }
 
 
   render () {
     const { openProposals } = this.props;
+    const { selectedRoles } = this.state;
 
     return (
       <Grid id='next-approver-grid'>
@@ -56,18 +90,25 @@ class Individuals extends Component {
           <TrackHeader title='Individuals' {...this.props}/>
           <div id='next-approver-individuals-content'>
             { openProposals && openProposals.length !== 0 ?
-              <PeopleList {...this.props}/> :
+              <PeopleList
+                selectedRoles={selectedRoles}
+                handleChange={this.handleChange}
+                {...this.props}/> :
               <Header as='h2' textAlign='center' disabled>
                 <Header.Content>No items</Header.Content>
               </Header>
             }
           </div>
-
         </Grid.Column>
+
         <Grid.Column
           id='next-approver-grid-converse-column'
           width={6}>
-          <Chat {...this.props}/>
+          <Chat
+            type='1'
+            selectedRoles={selectedRoles}
+            handleChange={this.handleChange}
+            {...this.props}/>
         </Grid.Column>
 
       </Grid>

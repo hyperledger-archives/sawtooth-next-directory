@@ -33,6 +33,8 @@ it('renders without crashing', () => {
 
   const props = {
     getRole: () => {},
+    roleFromId: () => {},
+    proposalFromId: () => {},
     match: { params: {} },
     requester: { requests: [] }
   };

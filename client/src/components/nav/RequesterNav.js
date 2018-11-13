@@ -38,7 +38,7 @@ export default class RequesterNav extends Component {
    *
    */
   renderLists () {
-    const { recommended, packs, requests } = this.props;
+    const { recommended, memberOf, requests } = this.props;
 
     return (
       <div id='next-requester-nav-lists-container'>
@@ -46,7 +46,7 @@ export default class RequesterNav extends Component {
           dynamic
           listTitle='Your Packs / Roles'
           route='/home/packs'
-          list={packs}/>
+          list={memberOf}/>
         <NavList
           dynamic
           listTitle='Your Requests'

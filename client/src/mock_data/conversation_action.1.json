@@ -1,0 +1,21 @@
+{
+  "id": "58356555-a99e-403a-9738-5d29b956a9a9",
+  "body": "",
+  "created_date": "",
+  "is_bot": true,
+  "actions": {
+    "message_optional": false,
+    "action_types": [
+      {
+        "action_text": "Approve all",
+        "response_text": "",
+        "type": 0
+      },
+      {
+        "action_text": "Reject all",
+        "response_text": "",
+        "type": 1
+      }
+    ]
+  }
+}

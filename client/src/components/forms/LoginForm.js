@@ -32,12 +32,7 @@ import PropTypes from 'prop-types';
  */
 export default class LoginForm extends Component {
 
-  constructor (props) {
-    super(props);
-
-    // TODO: Consider moving to Redux
-    this.state = { username: '', password: '', error: false };
-  }
+  state = { username: '', password: '' };
 
 
   /**
@@ -48,60 +43,27 @@ export default class LoginForm extends Component {
    *
    */
   handleChange = (event, { name, value }) => {
-    this.setState({ [name]: value, error: false });
-  }
-
-  /**
-   * function returns true if any form field is empty
-   * 
-   */
-  isFormValidated(){
-    const { username, password } = this.state;
-
-    if(username.length<4 || password.length<4) {
-      this.setState({
-        error: true
-      });
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  /**
-   * 
-   * @param username   value of username field of the form.
-   * @param password    value of password field of the form.
-   * 
-   */
-  submitForm(username, password) {
-    const { submit } = this.props;
-
-    if(this.isFormValidated()){
-      submit(username, password);
-    }
-
+    this.setState({ [name]: value });
   }
 
 
   render () {
-    const { username, password, error } = this.state;
+    const { submit } = this.props;
+    const { username, password } = this.state;
 
     return (
-      <Form onSubmit={() => this.submitForm(username, password)}>
+      <Form onSubmit={() => submit(username, password)}>
         <Form.Input
           label='User ID'
           placeholder='User ID'
           name='username'
-          onChange={this.handleChange}
-          error={error}/>
+          onChange={this.handleChange}/>
         <Form.Input
           label='Password'
           placeholder='Password'
           name='password'
           type='password'
-          onChange={this.handleChange}
-          error={error}/>
+          onChange={this.handleChange}/>
         <Form.Button content='Login'/>
         <Link to="/signup">
           <Button>Sign up</Button>

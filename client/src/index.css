@@ -21,6 +21,8 @@ limitations under the License.
   --nav-heading-color: #fff;
   --nav-list-color: #727c85;
   --chat-bg-color: #b0b0b01f;
+  --selected-list-color: #fef2f8;
+  --magenta: e40073;
 }
 
 body,

@@ -21,11 +21,12 @@ limitations under the License.
  *
  *
  */
-export const createSlug = (name) =>
-  name && name
+export const createSlug = (name) => {
+  return name && name
     .toLowerCase()
     .replace(/ /g, '-')
     .replace(/[^\w-]+/g, '');
+}
 
 
 export const groupBy = (array, key) => {
@@ -34,4 +35,14 @@ export const groupBy = (array, key) => {
     prev[curr[key]].push(curr);
     return prev;
   }, Object.create(null));
+}
+
+
+export const merge = (array1, array2) => {
+  return [...new Set([
+    ...array1,
+    ...array2
+  ]
+  .map(object => JSON.stringify(object)))]
+  .map(string => JSON.parse(string));
 }

@@ -34,11 +34,13 @@ const { Types, Creators } = createActions({
   baseFailure:       ['error'],
 
   roleRequest:       ['id'],
-  roleSuccess:       ['activeRole'],
+  roleSuccess:       ['role'],
   roleFailure:       ['error'],
 
+  rolesRequest:      ['ids'],
+
   proposalRequest:   ['id'],
-  proposalSuccess:   ['activeProposal'],
+  proposalSuccess:   ['proposal'],
   proposalFailure:   ['error'],
 
   accessRequest:     ['id', 'userId', 'reason'],
@@ -71,6 +73,8 @@ export const INITIAL_STATE = Immutable({
   error:            null,
   fetching:         null,
   recommended:      null,
+  requests:         null,
+  roles:            null,
 });
 
 
@@ -81,20 +85,73 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const RequesterSelectors = {
-  activeRole:      (state) => state.requester.activeRole,
-  activeProposal:  (state) => state.requester.activeProposal,
-  recommended:     (state) => state.requester.recommended,
 
-  idFromSlug: (collection, slug, field) => {
+  roles: (state) => state.requester.roles,
+  recommended: (state) =>
+    state.requester.roles &&
+    state.user.me &&
+    state.requester.roles.filter(role =>
+      !state.user.me.proposals.find(proposal =>
+        proposal['object_id'] === role.id
+      )
+  ),
+
+  // Retrieve role by ID
+  roleFromId: (state, id) =>
+    state.requester.roles &&
+    state.requester.roles.find(role =>
+      role.id === id
+  ),
+
+  // Retrieve proposal by ID
+  proposalFromId: (state, id) =>
+    state.requester.requests &&
+    state.requester.requests.find(request =>
+      request.id === id
+  ),
+
+  // Retrieve user requests (proposals)
+  requests: (state) =>
+    state.requester.roles &&
+    state.user.me &&
+    state.requester.roles.filter(role =>
+      state.user.me.proposals.find(proposal =>
+        proposal['object_id'] === role.id
+      )
+  ),
+
+  /**
+   *
+   * Retrieve field ID from URL slug
+   *
+   * @param state       Redux state object
+   * @param collection  Collection to search
+   * @param slug        ID from URL
+   * @param field       ID to retrieve
+   *
+   */
+  idFromSlug: (state, collection, slug, field) => {
     if (!collection) return null;
 
+    let result = {};
     field = field || 'id';
 
-    const entity = collection.find((item) => {
-      return utils.createSlug(item.name) === slug
-    });
+    const entity = collection.find((item) =>
+      utils.createSlug(item.name) === slug);
 
-    return entity && entity[field];
+    switch (field) {
+      case 'proposal_id':
+        result = state.user.me && entity &&
+        state.user.me.proposals.find((item) =>
+          item['object_id'] === entity.id);
+        break;
+
+      default:
+        result = entity;
+        break;
+    }
+
+    return result && result[field];
   }
 };
 
@@ -119,28 +176,24 @@ export const failure = (state, { error }) => {
  *
  *
  */
-export const roleSuccess = (state, { activeRole }) => {
+export const roleSuccess = (state, { role }) => {
   return state.merge({
     fetching: false,
-    activeRole: activeRole.data
+    roles: utils.merge(state.roles || [], [role])
   });
 }
 
-export const proposalSuccess = (state, { activeProposal }) => {
+export const proposalSuccess = (state, { proposal }) => {
   return state.merge({
     fetching: false,
-    activeProposal: activeProposal.data
+    requests: utils.merge(state.requests || [], [proposal])
   });
 }
 
 export const baseSuccess = (state, { base }) => {
   return state.merge({
     fetching: false,
-    // recommended: base.recommended,
-
-    // ! Use existing endpoint for now
-    recommended: base.data,
-    requests: base.requests
+    roles: utils.merge(state.roles || [], base || [])
   });
 }
 
@@ -163,6 +216,9 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ROLE_REQUEST]: request,
   [Types.ROLE_SUCCESS]: roleSuccess,
   [Types.ROLE_FAILURE]: failure,
+
+  [Types.ROLES_REQUEST]: request,
+  [Types.ROLES_REQUEST]: request,
 
   [Types.PROPOSAL_REQUEST]: request,
   [Types.PROPOSAL_SUCCESS]: proposalSuccess,

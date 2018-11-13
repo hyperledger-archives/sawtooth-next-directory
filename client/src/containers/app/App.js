@@ -44,40 +44,81 @@ class App extends Component {
 
   state = { isSideBarVisible: false };
 
-  handleShowClick = () => this.setState({ isSideBarVisible: !this.state.isSideBarVisible });
-  handleSidebarHide = () => this.setState({ isSideBarVisible: false });
+
+  handleSidebarHide = () => {
+    this.setState({ isSideBarVisible: false });
+  }
+
+
+  handleShowClick = () => {
+    const { isSideBarVisible } = this.state;
+    this.setState({ isSideBarVisible: !isSideBarVisible });
+  }
+
 
   /**
    *
-   * Hydrate base data
+   * Hydrate user object
    *
    */
   componentDidMount () {
-    const { getBase, getMe, isAuthenticated } = this.props;
-
-    if (isAuthenticated) {
-      getMe();
-      getBase();
-    }
-
+    const { isAuthenticated } = this.props;
+    isAuthenticated && this.hydrate();
   }
 
 
   componentWillReceiveProps (newProps) {
-    const { getBase, getMe, isAuthenticated } = this.props;
+    const { me, isAuthenticated } = this.props;
 
-    if (newProps.isAuthenticated &&
-      newProps.isAuthenticated !== isAuthenticated) {
-      getMe();
-      getBase();
+    if (!newProps.isAuthenticated) return;
+
+    // On receiving new props, if user authentication
+    // state changes, we know that a user has logged in,
+    // so get hydrate user and recommended objects
+    if (newProps.isAuthenticated !== isAuthenticated) {
+      this.hydrate();
+    }
+
+    // After the user object is populated, the following
+    // will get the info required to display data in the
+    // sidebar.
+    //
+    // ! Note this will be outmoded after API changes
+    //
+    if (newProps.me !== me) {
+      this.hydrateSidebar(newProps);
     }
   }
 
 
-  /**
-   * Return Navigation part of the grid system
-   * 
-   */
+  hydrate () {
+    const { getBase, getMe } = this.props;
+
+    getMe();
+    getBase();
+  }
+
+
+  hydrateSidebar (newProps) {
+    const { getRoles, roles } = this.props;
+
+    let foo = [
+      ...newProps.me.proposals,
+      ...newProps.me.memberOf
+    ].map((item) =>
+      typeof item  === 'object' ?
+        item['object_id'] :
+        item)
+
+    if (roles) {
+      foo = foo.filter(item =>
+        roles.find(role => role.id === item));
+    }
+
+    getRoles(foo);
+  }
+
+
   renderNav() {
     return this.routes.map((route, index) => (
       route.nav &&
@@ -90,10 +131,7 @@ class App extends Component {
     ));
   }
 
-  /**
-   * Return Main part of the grid system
-   * 
-   */
+
   renderMain() {
     return this.routes.map((route, index) => (
       <Route
@@ -119,13 +157,26 @@ class App extends Component {
 
     return (
       <Grid id='next-outer-grid'>
-        <Grid.Column id='next-outer-grid-nav' width={3} only='computer'>
+
+        <Grid.Column
+          id='next-outer-grid-nav'
+          width={3}
+          only='computer'>
           { this.renderNav() }
         </Grid.Column>
-        <Grid.Column id='next-inner-grid-main' only='computer' computer={13}>
-            { this.renderMain() }
+
+        <Grid.Column
+          id='next-inner-grid-main'
+          only='computer'
+          computer={13}>
+          { this.renderMain() }
         </Grid.Column>
-        <Grid.Column id='next-inner-grid-main' mobile={16} tablet={16} only='tablet mobile'>
+
+        <Grid.Column
+          mobile={16}
+          tablet={16}
+          id='next-inner-grid-main'
+          only='tablet mobile'>
           <Sidebar.Pushable>
             <Sidebar
               as={Menu}
@@ -134,8 +185,7 @@ class App extends Component {
               onHide={this.handleSidebarHide}
               vertical
               visible={isSideBarVisible}
-              width='wide'
-            >
+              width='wide'>
               <div id='next-hamburger-wrapper'>
                 { this.renderNav() }
               </div>
@@ -145,9 +195,9 @@ class App extends Component {
             </Sidebar.Pusher>
           </Sidebar.Pushable>
         </Grid.Column>
-        
+
         <div id='next-hamburger-icon'>
-          <Icon onClick={this.handleShowClick} name='bars' />
+          <Icon onClick={this.handleShowClick} name='bars'/>
         </div>
       </Grid>
     )
