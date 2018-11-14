@@ -27,8 +27,8 @@ import rethinkdb as r
 import ldap3
 from ldap3 import ALL, Connection, Server
 
-
-from rbac.providers import inbound_filters
+from rbac.providers.common import inbound_filters
+from rbac.providers.common.common import save_sync_time
 from rbac.providers.ldap import ldap_transformer
 
 LOGGER = logging.getLogger(__name__)
@@ -114,10 +114,10 @@ def fetch_ldap_data(sync_type, data_type):
         attributes=ldap3.ALL_ATTRIBUTES,
     )
 
-    last_sync_time = datetime.now().replace(tzinfo=timezone.utc).isoformat()
-    save_sync_time(last_sync_time, data_type, sync_type)
-
     insert_to_db(data_dict=conn.entries, data_type=data_type)
+    last_sync_time = datetime.now().replace(tzinfo=timezone.utc).isoformat()
+    sync_source = "ldap-" + data_type
+    save_sync_time(last_sync_time, sync_source, sync_type)
 
 
 def insert_to_db(data_dict, data_type):
@@ -142,16 +142,6 @@ def insert_to_db(data_dict, data_type):
     Timer(
         DELTA_SYNC_INTERVAL_SECONDS, fetch_ldap_data, args=("delta", data_type)
     ).start()
-
-
-def save_sync_time(last_sync_time, data_type, sync_type):
-    """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
-
-    sync_source = "ldap-" + data_type
-    sync_entry = {"timestamp": last_sync_time, "source": sync_source, "sync_type": sync_type}
-
-    r.table("sync_tracker").filter({"source": sync_source}).delete().run()
-    r.table("sync_tracker").insert(sync_entry).run()
 
 
 def ldap_sync():

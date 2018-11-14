@@ -17,11 +17,13 @@ import os
 import time
 import logging
 from datetime import datetime as dt
+from datetime import timezone
 import requests
 import rethinkdb as r
 
 from rbac.providers.azure.aad_auth import AadAuth
-from rbac.providers.inbound_filters import inbound_user_filter, inbound_group_filter
+from rbac.providers.common.inbound_filters import inbound_user_filter, inbound_group_filter
+from rbac.providers.common.common import save_sync_time
 
 
 DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
@@ -231,6 +233,8 @@ def initialize_aad_sync():
                 insert_user_to_db(users)
             else:
                 break
+        last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
+        save_sync_time(last_sync_time, "azure-user", "initial")
         LOGGER.info("Initial user upload complete :)")
     else:
         LOGGER.info("An error occurred when uploading users.  Please check the logs.")
@@ -245,6 +249,8 @@ def initialize_aad_sync():
                 insert_group_to_db(groups)
             else:
                 break
+        last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
+        save_sync_time(last_sync_time, "azure-group", "initial")
         LOGGER.info("Initial group upload complete :)")
     else:
         LOGGER.info("An error occurred when uploading groups.  Please check the logs.")
