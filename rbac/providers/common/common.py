@@ -15,10 +15,27 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+from datetime import datetime as dt
+from datetime import timezone
 import rethinkdb as r
 
 
-def save_sync_time(last_sync_time, sync_source, sync_type):
+def save_sync_time(sync_source, sync_type):
     """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
-    sync_entry = {"timestamp": last_sync_time, "source": sync_source, "sync_type": sync_type}
+    last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
+    sync_entry = {
+        "timestamp": last_sync_time,
+        "source": sync_source,
+        "sync_type": sync_type,
+    }
     r.table("sync_tracker").insert(sync_entry).run()
+
+
+def check_for_sync(source, sync_type):
+    """Check to see if a sync has occurred and return payload."""
+    return (
+        r.table("sync_tracker")
+        .filter({"source": source, "sync_type": sync_type})
+        .coerce_to("array")
+        .run()
+    )

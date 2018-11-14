@@ -20,7 +20,10 @@ from datetime import datetime as dt
 import requests
 import rethinkdb as r
 from rbac.providers.azure.aad_auth import AadAuth
-from rbac.providers.common.outbound_filters import outbound_user_filter, outbound_group_filter
+from rbac.providers.common.outbound_filters import (
+    outbound_user_filter,
+    outbound_group_filter,
+)
 
 # LOGGER levels: info, debug, warning, exception, error
 logging.basicConfig(level=logging.INFO)

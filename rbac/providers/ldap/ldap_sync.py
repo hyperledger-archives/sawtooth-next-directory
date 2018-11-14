@@ -115,9 +115,8 @@ def fetch_ldap_data(sync_type, data_type):
     )
 
     insert_to_db(data_dict=conn.entries, data_type=data_type)
-    last_sync_time = datetime.now().replace(tzinfo=timezone.utc).isoformat()
     sync_source = "ldap-" + data_type
-    save_sync_time(last_sync_time, sync_source, sync_type)
+    save_sync_time(sync_source, sync_type)
 
 
 def insert_to_db(data_dict, data_type):

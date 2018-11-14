@@ -20,7 +20,10 @@ import pytest
 
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.azure.initial_inbound_sync import get_ids_from_list_of_dicts, getenv
-from rbac.providers.common.inbound_filters import inbound_group_filter, inbound_user_filter
+from rbac.providers.common.inbound_filters import (
+    inbound_group_filter,
+    inbound_user_filter,
+)
 from tests.unit.providers.azure_reponse_mocks import mock_requests_post
 
 # Tests are commented out until function level testing can occur.
