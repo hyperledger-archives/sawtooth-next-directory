@@ -93,6 +93,8 @@ services:
     environment:
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:
@@ -113,7 +115,9 @@ services:
       - ".:/project/hyperledger-rbac"
     environment:
       - HOST=${HOST:-localhost}
-    command: ./bin/rbac-tp -vv tcp://validator:4004
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
+    command: ./bin/rbac-tp tcp://validator:4004
 
   ledger-sync:
     build:
@@ -128,10 +132,12 @@ services:
       - validator
     environment:
       - HOST=${HOST:-localhost}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
     command: |
       bash -c "
         ./bin/setup_db --host rethink &&
-        ./bin/rbac-ledger-sync -vv --db-host rethink --validator tcp://validator:4004
+        ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
 
   rbac-ui:
@@ -169,14 +175,14 @@ services:
       - "8008:8008"
     depends_on:
       - validator
-    command: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
+    command: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008
 
   settings-tp:
     container_name: rbac-settings-tp
     image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
       - validator
-    command: settings-tp -v --connect tcp://validator:4004
+    command: settings-tp --connect tcp://validator:4004
 
   validator:
     container_name: rbac-validator-tp
@@ -189,7 +195,7 @@ services:
           sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
           sawadm genesis config-genesis.batch
         fi;
-        sawtooth-validator -vv \
+        sawtooth-validator \
           --endpoint tcp://validator:8800 \
           --bind component:tcp://eth0:4004 \
           --bind network:tcp://eth0:8800
