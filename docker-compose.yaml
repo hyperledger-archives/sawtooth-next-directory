@@ -73,7 +73,6 @@ services:
       - LDAP_PASS=${LDAP_PASS}
     depends_on:
       - ledger-sync
-      - rethink
     command: ./bin/rbac-providers-ldap
 
   rbac-server:

@@ -17,13 +17,15 @@ import os
 import time
 import logging
 from datetime import datetime as dt
-from datetime import timezone
 import requests
 import rethinkdb as r
 
 from rbac.providers.azure.aad_auth import AadAuth
-from rbac.providers.common.inbound_filters import inbound_user_filter, inbound_group_filter
-from rbac.providers.common.common import save_sync_time
+from rbac.providers.common.inbound_filters import (
+    inbound_user_filter,
+    inbound_group_filter,
+)
+from rbac.providers.common.common import save_sync_time, check_for_sync
 
 
 DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
@@ -221,36 +223,45 @@ def initialize_aad_sync():
     connect_to_db()
     LOGGER.info("Successfully connected to RethinkDB!")
 
-    LOGGER.info("Inserting AAD data...")
+    db_user_payload = check_for_sync("azure-user", "initial")
+    if not db_user_payload:
+        LOGGER.info("Inserting AAD data...")
 
-    LOGGER.info("Getting Users...")
-    users = fetch_users()
-    if users:
-        insert_user_to_db(users)
-        while "@odata.nextLink" in users:
-            users = fetch_next_payload(users["@odata.nextLink"])
-            if users:
-                insert_user_to_db(users)
-            else:
-                break
-        last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
-        save_sync_time(last_sync_time, "azure-user", "initial")
-        LOGGER.info("Initial user upload complete :)")
-    else:
-        LOGGER.info("An error occurred when uploading users.  Please check the logs.")
+        LOGGER.info("Getting Users...")
+        users = fetch_users()
+        if users:
+            insert_user_to_db(users)
+            while "@odata.nextLink" in users:
+                users = fetch_next_payload(users["@odata.nextLink"])
+                if users:
+                    insert_user_to_db(users)
+                else:
+                    break
+            save_sync_time("azure-user", "initial")
+            LOGGER.info("Initial user upload complete :)")
+        else:
+            LOGGER.info(
+                "An error occurred when uploading users.  Please check the logs."
+            )
 
-    LOGGER.info("Getting Groups with Members...")
-    groups = fetch_groups_with_members()
-    if groups:
-        insert_group_to_db(groups)
-        while "@odata.nextLink" in groups:
-            groups = fetch_next_payload(groups["@odata.nextLink"])
-            if groups:
-                insert_group_to_db(groups)
-            else:
-                break
-        last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
-        save_sync_time(last_sync_time, "azure-group", "initial")
-        LOGGER.info("Initial group upload complete :)")
-    else:
-        LOGGER.info("An error occurred when uploading groups.  Please check the logs.")
+    db_group_payload = check_for_sync("azure-group", "initial")
+    if not db_group_payload:
+        LOGGER.info("Getting Groups with Members...")
+        groups = fetch_groups_with_members()
+        if groups:
+            insert_group_to_db(groups)
+            while "@odata.nextLink" in groups:
+                groups = fetch_next_payload(groups["@odata.nextLink"])
+                if groups:
+                    insert_group_to_db(groups)
+                else:
+                    break
+            save_sync_time("azure-group", "initial")
+            LOGGER.info("Initial group upload complete :)")
+        else:
+            LOGGER.info(
+                "An error occurred when uploading groups.  Please check the logs."
+            )
+
+    if db_group_payload and db_user_payload:
+        LOGGER.info("The initial sync has already been run.")
