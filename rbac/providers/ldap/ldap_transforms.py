@@ -15,8 +15,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-# http://docs.python-requests.org/en/master/
-
 from datetime import datetime
 
 
