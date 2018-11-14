@@ -11,45 +11,104 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 version: "3"
 
 services:
+  rbac-server:
+    build:
+      context: .
+      dockerfile: ./docker/rbac.server.Dockerfile
+    container_name: rbac-server
+    image: rbac-server:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ledger-sync
+      - rethink
+      - validator
+    environment:
+      - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
+      - SERVER_PORT=${SERVER_PORT:-8000}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
+    command: ./bin/rbac-server --db-host rethink --validator-host validator
+
+  rethink:
+    container_name: rbac-rethink
+    image: rethinkdb:2.3
+    ports:
+      - "9090:8080"
+    expose:
+       - "28015"
 
   rbac-tp:
     build:
       context: .
       dockerfile: ./docker/rbac.processor.Dockerfile
+    container_name: rbac-tp
     image: rbac-tp:${ISOLATION_ID-latest}
     volumes:
       - ".:/project/hyperledger-rbac"
-    command: bin/rbac-tp -vv tcp://validator:4004
     environment:
       - HOST=${HOST:-localhost}
-      
-  settings-tp:
-    image: hyperledger/sawtooth-settings-tp:1.0
-    command: settings-tp -v --connect tcp://validator:4004
+    command: ./bin/rbac-tp tcp://validator:4004
 
-  validator:
-    image: hyperledger/sawtooth-validator:1.0
+  ledger-sync:
+    build:
+      context: .
+      dockerfile: ./docker/rbac.ledger_sync.Dockerfile
+    container_name: rbac-ledger-sync
+    image: rbac-ledger-sync:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    depends_on:
+      - rethink
+      - validator
+    environment:
+      - HOST=${HOST:-localhost}
     command: |
       bash -c "
-        sawadm keygen --force &&
-        sawtooth keygen my_key --force &&
-        sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
-        sawadm genesis config-genesis.batch &&
-        sawtooth-validator -vv \
-          --endpoint tcp://validator:8800 \
-          --bind component:tcp://*:4004 \
-          --bind network:tcp://*:8800 \
-          --scheduler parallel
+        ./bin/setup_db --host rethink &&
+        ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
 
   rest-api:
+    container_name: sawtooth-rest-api
     image: hyperledger/sawtooth-rest-api:1.0
-    entrypoint: sawtooth-rest-api -v --connect tcp://validator:4004 --bind rest-api:8008
+    ports:
+      - "8008:8008"
+    depends_on:
+      - validator
+    command: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008
+
+  settings-tp:
+    container_name: rbac-settings-tp
+    image: hyperledger/sawtooth-settings-tp:1.0
+    depends_on:
+      - validator
+    command: settings-tp --connect tcp://validator:4004
+
+  validator:
+    container_name: rbac-validator-tp
+    image: hyperledger/sawtooth-validator:1.0
+    entrypoint: |
+      bash -c "
+        if [ ! -f /etc/sawtooth/keys/validator.priv ]; then
+          sawadm keygen &&
+          sawtooth keygen my_key &&
+          sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+          sawadm genesis config-genesis.batch
+        fi;
+        sawtooth-validator \
+          --endpoint tcp://validator:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800
+          --scheduler parallel
+      \"\""
 
   test-runner:
     build:
