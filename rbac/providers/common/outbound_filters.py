@@ -13,7 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-from rbac.providers.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
+from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
 
 
 def outbound_user_filter(sawtooth_user, provider):
