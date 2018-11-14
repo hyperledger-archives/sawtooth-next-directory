@@ -59,6 +59,8 @@ class ExpectedError(Exception):
         error_message = "The outbound queue is not ready."
     elif Exception.__class__.__name__ == "ReqlDriverError":
         error_message = "Could not connect to RethinkDB."
+    else:
+        error_message = Exception
     LOGGER.debug("%s Repolling after %s seconds...", error_message, DELAY)
 
 
