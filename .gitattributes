@@ -41,3 +41,7 @@ MAINTAINERS text
 *.jpeg binary
 *.gif binary
 *.ico binary
+*.eot binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
