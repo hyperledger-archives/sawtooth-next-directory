@@ -16,21 +16,25 @@
 import time
 import os
 import logging
-from datetime import datetime as dt
 import requests
-import rethinkdb as r
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
     outbound_group_filter,
+)
+from rbac.providers.common.expected_errors import ExpectedError
+from rbac.providers.common.rethink_db import (
+    connect_to_db,
+    peek_at_queue,
+    put_entry_changelog,
+    delete_entry_queue,
 )
 
 # LOGGER levels: info, debug, warning, exception, error
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
-DELAY = 1
+DEFAULT_CONFIG = {"DELAY": 1, "OUTBOUND_QUEUE": "queue_outbound"}
 
 
 def getenv(name, default):
@@ -40,101 +44,36 @@ def getenv(name, default):
     return value
 
 
-CHANGELOG = "outbound_queue_changelog"
-OUTBOUND_QUEUE = "outbound_queue"
-DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+OUTBOUND_QUEUE = getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
+DELAY = getenv("DELAY", DEFAULT_CONFIG["DELAY"])
 GRAPH_URL = "https://graph.microsoft.com"
 TENANT_ID = os.environ.get("TENANT_ID")
 GRAPH_VERSION = "beta"
+PROVIDER_ID = "azure"
+DIRECTION = "outbound"
 AUTH = AadAuth()
 
 
-class ExpectedError(Exception):
-    """Custom Exception subclass. To be used for expected errors that can be
-    recovered from. i.e.: Dropped db connection, uninstantiated table, etc."""
-
-    LOGGER.debug(Exception)
-    if Exception.__class__.__name__ == "ReqlNonExistanceError":
-        error_message = "The outbound queue is empty."
-    elif Exception.__class__.__name__ == "ReqlOpFailedError":
-        error_message = "The outbound queue is not ready."
-    elif Exception.__class__.__name__ == "ReqlDriverError":
-        error_message = "Could not connect to RethinkDB."
-    else:
-        error_message = Exception
-    LOGGER.debug("%s Repolling after %s seconds...", error_message, DELAY)
-
-
-def connect_to_db():
-    """Polls the database until it comes up and opens a connection."""
-    connected_to_db = False
-    while not connected_to_db:
-        try:
-            r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
-            connected_to_db = True
-        except r.ReqlDriverError as err:
-            LOGGER.debug(
-                "Could not connect to RethinkDB. Repolling after %s seconds...", DELAY
-            )
-            time.sleep(DELAY)
-        except Exception as err:
-            LOGGER.warning(err.__class__.__name__)
-            raise err
-
-
-def peek_at_queue():
-    """Gets the oldest item from the queue without deleting it."""
-    try:
-        queue_entry = (
-            r.table(OUTBOUND_QUEUE)
-            .filter({"provider_id": "azure"})
-            .min("timestamp")
-            .run()
-        )
-        return queue_entry
-    except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError) as err:
-        raise ExpectedError(err)
-    except Exception as err:
-        LOGGER.warning(type(err).__name__)
-        raise err
-
-
-def check_entry_AAD(queue_entry):
-    """Routes the given query entry to the proper handler to check if it already
+def is_entry_in_aad(queue_entry):
+    """Routes the given queue entry to the proper handler to check if it already
     exists in Azure AD."""
     data_type = queue_entry["data_type"]
-    if data_type == "USER":
-        check_user_AAD(queue_entry)
-    elif data_type == "GROUP":
-        check_group_AAD(queue_entry)
+    if data_type == "user":
+        is_user_in_aad(queue_entry)
+    elif data_type == "group":
+        is_group_in_aad(queue_entry)
 
 
-def check_group_AAD(queue_entry):
-    """Takes in a queue entry containing a group object and checks if it exists
-    in azure AD."""
-    group = queue_entry["data"]
-    response = fetch_group_AAD(group["id"])
-    if response["status_code"] >= 200 and response["status_code"] < 300:
-        return True
-    elif response.status_code == 404:
-        return False
-    else:
-        raise Exception(
-            f"Error getting user in Azure AD: Status code {response.status_code}"
-        )
-
-
-def check_user_AAD(queue_entry):
+def is_user_in_aad(queue_entry):
     """Takes in a queue entry containing a user object and checks if it exists
-    in azure AD."""
+    in azure AD. Returns True if the user exists, False if the user doesn't exist.
+    """
     user = queue_entry["data"]
     if user["user_id"]:
         user_id = user["user_id"]
     else:
         user_id = user["user_principal_name"]
-    response = fetch_user_AAD(user_id)
+    response = fetch_user_aad(user_id)
     if response["status_code"] >= 200 and response["status_code"] < 300:
         return True
     elif response["status_code"] == 404:
@@ -145,15 +84,23 @@ def check_user_AAD(queue_entry):
         )
 
 
-def fetch_group_AAD(group_id):
-    headers = AUTH.check_token("GET")
-    if headers:
-        url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups/{group_id}"
-        response = requests.get(url=url, headers=headers)
-        return response
+def is_group_in_aad(queue_entry):
+    """Takes in a queue entry containing a group object and checks if it exists
+    in azure AD. Returns True if the group exists, False if the user doesn't exist.
+    """
+    group = queue_entry["data"]
+    response = fetch_group_aad(group["id"])
+    if response["status_code"] >= 200 and response["status_code"] < 300:
+        return True
+    elif response["status_code"] == 404:
+        return False
+    else:
+        raise Exception(
+            f"Error getting user in Azure AD: Status code {response.status_code}"
+        )
 
 
-def fetch_user_AAD(user_id):
+def fetch_user_aad(user_id):
     """This is an outbound request to get a single user from Azure AD."""
     headers = AUTH.check_token("GET")
     if headers:
@@ -162,28 +109,27 @@ def fetch_user_AAD(user_id):
         return response
 
 
-def update_entry_AAD(queue_entry):
-    """Routes the given query entry to the proper handler to update the queue
-    entry in Azure AD."""
-    data_type = queue_entry["data_type"]
-    if data_type == "USER":
-        update_user_AAD(queue_entry)
-    elif data_type == "GROUP":
-        update_group_AAD(queue_entry)
-
-
-def update_group_AAD(group):
-    """Updates a group in AAD."""
-    headers = AUTH.check_token("PATCH")
+def fetch_group_aad(group_id):
+    headers = AUTH.check_token("GET")
     if headers:
-        group_id = group["id"]
         url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups/{group_id}"
-        aad_group = outbound_group_filter(group, "azure")
-        requests.patch(url=url, headers=headers, data=aad_group)
+        response = requests.get(url=url, headers=headers)
+        return response
 
 
-def update_user_AAD(user):
-    """Updates a user in AAD."""
+def update_entry_aad(queue_entry):
+    """Routes the given queue entry to the proper handler to update the queue
+    entry in Azure AD."""
+    data = queue_entry["data"]
+    data_type = queue_entry["data_type"]
+    if data_type == "user":
+        update_user_aad(data)
+    elif data_type == "group":
+        update_group_aad(data)
+
+
+def update_user_aad(user):
+    """Updates a user in aad."""
     headers = AUTH.check_token("PATCH")
     if headers:
         if user["user_id"]:
@@ -195,53 +141,50 @@ def update_user_AAD(user):
         requests.patch(url=url, headers=headers, data=aad_user)
 
 
-def create_entry_AAD(queue_entry):
-    """Routes the given query entry to the proper handler to create the queue
+def update_group_aad(group):
+    """Updates a group in aad."""
+    headers = AUTH.check_token("PATCH")
+    if headers:
+        group_id = group["id"]
+        url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups/{group_id}"
+        aad_group = outbound_group_filter(group, "azure")
+        requests.patch(url=url, headers=headers, data=aad_group)
+
+
+def create_entry_aad(queue_entry):
+    """Routes the given queue entry to the proper handler to create the queue
     entry in Azure AD."""
     data_type = queue_entry["data_type"]
-    if data_type == "USER":
-        create_user_AAD(queue_entry)
-    elif data_type == "GROUP":
-        create_group_AAD(queue_entry)
+    if data_type == "user":
+        create_user_aad(queue_entry)
+    elif data_type == "group":
+        create_group_aad(queue_entry)
 
 
-def create_group_AAD(queue_entry):
-    """Creates a given group in AAD."""
-    # TODO: Implement group creation in Azure AD. Currently logs and deletes entry.
-    LOGGER.warning(
-        "Group not in Azure AD. Aborting sync for group and removing \
-        from queue_outbound: %s",
-        queue_entry,
-    )
-    delete_entry_outbound_queue(queue_entry["id"])
-    raise ExpectedError("Group not in Azure AD.")
-
-
-def create_user_AAD(queue_entry):
-    """Creates a given user in AAD."""
-    # TODO: Implement user creation in Azure AD. Currently logs and deletes entry.
+def create_user_aad(queue_entry):
+    """Creates a given user in aad."""
+    # TODO: Implement user creation in Azure AD. Currently logs and deletes
+    #   entry and throws an ExpectedError.
     LOGGER.warning(
         "User not in Azure AD. Aborting sync for user and removing \
         from queue_outbound: %s",
         queue_entry,
     )
-    delete_entry_outbound_queue(queue_entry["id"])
+    delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
     raise ExpectedError("User not in Azure AD.")
 
 
-def put_entry_changelog(document):
-    """Puts the referenced document in the outbound_queue.completed table."""
-    document["completion_timestamp"] = dt.now().isoformat()
-    result = (
-        r.table(CHANGELOG).insert(document, return_changes=True, conflict="error").run()
+def create_group_aad(queue_entry):
+    """Creates a given group in aad."""
+    # TODO: Implement group creation in Azure AD. Currently logs and deletes
+    #   entry and throws an ExpectedError.
+    LOGGER.warning(
+        "Group not in Azure AD. Aborting sync for group and removing \
+        from queue_outbound: %s",
+        queue_entry,
     )
-    LOGGER.debug(result)
-
-
-def delete_entry_outbound_queue(object_id):
-    """Delete a document from the outbound queue table."""
-    result = r.table(OUTBOUND_QUEUE).get(object_id).delete(return_changes=True).run()
-    LOGGER.debug(result)
+    delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
+    raise ExpectedError("Group not in Azure AD.")
 
 
 def outbound_sync_listener():
@@ -254,26 +197,27 @@ def outbound_sync_listener():
 
     while True:
         try:
-            queue_entry = peek_at_queue()
+            queue_entry = peek_at_queue(OUTBOUND_QUEUE, PROVIDER_ID)
             LOGGER.info(
                 "Received queue entry %s from outbound queue...", queue_entry.id
             )
             LOGGER.debug(queue_entry)
 
             datatype = queue_entry["data_type"]
-            LOGGER.info("Putting %s into AAD...", datatype)
-            if check_entry_AAD(queue_entry):
-                update_entry_AAD(queue_entry)
+            LOGGER.info("Putting %s into aad...", datatype)
+            if is_entry_in_aad(queue_entry):
+                update_entry_aad(queue_entry)
             else:
-                create_entry_AAD(queue_entry)
+                create_entry_aad(queue_entry)
 
             LOGGER.info("Putting queue entry into changelog...")
-            put_entry_changelog(queue_entry)
+            put_entry_changelog(queue_entry, DIRECTION)
 
             LOGGER.info("Deleting queue entry from outbound queue...")
             entry_id = queue_entry["id"]
-            delete_entry_outbound_queue(entry_id)
+            delete_entry_queue(entry_id, OUTBOUND_QUEUE)
         except ExpectedError as err:
+            LOGGER.debug(("%s Repolling after %s seconds...", err.__str__, DELAY))
             time.sleep(DELAY)
         except Exception as err:
             LOGGER.exception(err)

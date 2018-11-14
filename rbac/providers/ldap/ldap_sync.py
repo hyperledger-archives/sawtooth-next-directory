@@ -29,7 +29,7 @@ from ldap3 import ALL, Connection, Server
 
 from rbac.providers.common import inbound_filters
 from rbac.providers.common.common import save_sync_time
-from rbac.providers.ldap import ldap_transformer
+from rbac.providers.ldap import ldap_transforms
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
@@ -82,18 +82,18 @@ def fetch_ldap_data(sync_type, data_type):
             .coerce_to("array")
             .run()
         )
-        last_sync_time = ldap_transformer.to_ldap_datetime(
+        last_sync_time = ldap_transforms.to_ldap_datetime(
             rethink_timestamp=last_sync[0]["timestamp"]
         )
         if data_type == "user":
             search_filter = (
                 LDAP_FILTER_USER_DELTA
-                % ldap_transformer.time_to_query_format(last_sync_time)
+                % ldap_transforms.time_to_query_format(last_sync_time)
             )
         elif data_type == "group":
             search_filter = (
                 LDAP_FILTER_GROUP_DELTA
-                % ldap_transformer.time_to_query_format(last_sync_time)
+                % ldap_transforms.time_to_query_format(last_sync_time)
             )
 
     elif sync_type == "initial":
