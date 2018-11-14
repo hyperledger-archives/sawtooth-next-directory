@@ -73,7 +73,6 @@ def fetch_ldap_data(sync_type, data_type):
         Call to get entries for all (Users | Groups) in Active Directory, saves the time of the sync,
         and inserts data into RethinkDB.
     """
-
     r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
 
     if sync_type == "delta":
@@ -116,7 +115,7 @@ def fetch_ldap_data(sync_type, data_type):
     )
 
     last_sync_time = datetime.now().replace(tzinfo=timezone.utc).isoformat()
-    save_sync_time(last_sync_time, data_type)
+    save_sync_time(last_sync_time, data_type, sync_type)
 
     insert_to_db(data_dict=conn.entries, data_type=data_type)
 
@@ -145,11 +144,11 @@ def insert_to_db(data_dict, data_type):
     ).start()
 
 
-def save_sync_time(last_sync_time, data_type):
+def save_sync_time(last_sync_time, data_type, sync_type):
     """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
 
     sync_source = "ldap-" + data_type
-    sync_entry = {"timestamp": last_sync_time, "source": sync_source}
+    sync_entry = {"timestamp": last_sync_time, "source": sync_source, "sync_type": sync_type}
 
     r.table("sync_tracker").filter({"source": sync_source}).delete().run()
     r.table("sync_tracker").insert(sync_entry).run()
