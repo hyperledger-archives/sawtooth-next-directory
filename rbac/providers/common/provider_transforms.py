@@ -30,7 +30,7 @@ USER_TRANSFORM = {
     "given_name": {"azure": "givenName", "ldap": "givenName"},
     "job_title": {"azure": "jobTitle", "ldap": "title"},
     "email": {"azure": "mail", "ldap": "mail"},
-    "mail_nick_name": {"azure": "mailNickname", "ldap": "cn"},
+    "user_nickname": {"azure": "mailNickname", "ldap": "cn"},
     "manager": {"azure": "manager", "ldap": "manager"},
     "mobile_phone": {"azure": "mobilePhone", "ldap": "mobilePhone"},
     "distinguished_name": {
@@ -55,8 +55,10 @@ GROUP_TRANSFORM = {
     "description": {"azure": "description", "ldap": "description"},
     "name": {"azure": "displayName", "ldap": "name"},
     "group_types": {"azure": "groupTypes", "ldap": "groupType"},
+    "group_nickname": {"azure": "mailNickname", "ldap": None},
     "members": {"azure": "members", "ldap": "member"},
     "classification": {"azure": "classification", "ldap": None},
+    "mail_enabled": {"azure": "mailEnabled", "ldap": None},
     "security_enabled": {"azure": "securityEnabled", "ldap": None},
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
@@ -72,7 +74,7 @@ USER_CREATION_TRANSFORM = {
     "given_name": {"azure": "givenName", "ldap": "givenName"},
     "job_title": {"azure": "jobTitle", "ldap": "title"},
     "email": {"azure": "mail", "ldap": "mail"},
-    "mail_nick_name": {"azure": "mailNickname", "ldap": "cn"},
+    "user_nickname": {"azure": "mailNickname", "ldap": "cn"},
     "mobile_phone": {"azure": "mobilePhone", "ldap": "mobilePhone"},
     "office_location": {"azure": "officeLocation", "ldap": None},
     "postal_code": {"azure": "postalCode", "ldap": "postalCode"},
@@ -82,4 +84,17 @@ USER_CREATION_TRANSFORM = {
     "usage_location": {"azure": "usageLocation", "ldap": None},
     "user_principal_name": {"azure": "userPrincipalName", "ldap": "userPrincipalName"},
     "user_type": {"azure": "userType", "ldap": None},
+}
+
+GROUP_CREATION_TRANSFORM = {
+    "description": {"azure": "description", "ldap": "description"},
+    "name": {"azure": "displayName", "ldap": "name"},
+    "group_nickname": {"azure": "mailNickname", "ldap": None},
+    "group_types": {"azure": "groupTypes", "ldap": None},
+    "members": {"azure": "members", "ldap": "member"},
+    "classification": {"azure": "classification", "ldap": None},
+    "mail_enabled": {"azure": "mailEnabled", "ldap": None},
+    "security_enabled": {"azure": "securityEnabled", "ldap": None},
+    "owners": {"azure": "owners", "ldap": "managedBy"},
+    "visibility": {"azure": "visibility", "ldap": None},
 }

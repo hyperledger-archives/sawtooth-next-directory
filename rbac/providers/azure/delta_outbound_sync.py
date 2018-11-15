@@ -23,6 +23,7 @@ from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
     outbound_group_filter,
     outbound_user_creation_filter,
+    outbound_group_creation_filter,
 )
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.rethink_db import (
@@ -51,7 +52,6 @@ DELAY = getenv("DELAY", DEFAULT_CONFIG["DELAY"])
 GRAPH_URL = "https://graph.microsoft.com"
 TENANT_ID = os.environ.get("TENANT_ID")
 GRAPH_VERSION = "beta"
-PROVIDER_ID = "azure"
 DIRECTION = "outbound"
 AUTH = AadAuth()
 
@@ -91,10 +91,12 @@ def is_group_in_aad(queue_entry):
     in azure AD. Returns True if the group exists, False if the user doesn't exist.
     """
     group = queue_entry["data"]
-    response = fetch_group_aad(group["id"])
-    if response["status_code"] >= 200 and response["status_code"] < 300:
+    if "role_id" not in group:
+        return False
+    response = fetch_group_aad(group["role_id"])
+    if response.status_code >= 200 and response.status_code < 300:
         return True
-    elif response["status_code"] == 404:
+    elif response.status_code == 404:
         return False
     else:
         raise Exception(
@@ -141,17 +143,17 @@ def update_user_aad(user):
         url = f"{GRAPH_URL}/{GRAPH_VERSION}/users/{user_id}"
         aad_user = outbound_user_filter(user, "azure")
         aad_user.pop("mail", None)
-        response = requests.patch(url=url, headers=headers, json=aad_user)
+        requests.patch(url=url, headers=headers, json=aad_user)
 
 
 def update_group_aad(group):
     """Updates a group in aad."""
     headers = AUTH.check_token("PATCH")
     if headers:
-        group_id = group["id"]
+        group_id = group["role_id"]
         url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups/{group_id}"
         aad_group = outbound_group_filter(group, "azure")
-        requests.patch(url=url, headers=headers, data=aad_group)
+        response = requests.patch(url=url, headers=headers, json=aad_group)
 
 
 def create_entry_aad(queue_entry):
@@ -191,15 +193,24 @@ def create_user_aad(queue_entry):
 
 def create_group_aad(queue_entry):
     """Creates a given group in aad."""
-    # TODO: Implement group creation in Azure AD. Currently logs and deletes
-    #   entry and throws an ExpectedError.
-    LOGGER.warning(
-        "Group not in Azure AD. Aborting sync for group and removing \
-        from queue_outbound: %s",
-        queue_entry,
-    )
-    delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
-    raise ExpectedError("Group not in Azure AD.")
+    headers = AUTH.check_token("POST")
+    if headers:
+        url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups"
+        try:
+            aad_group = outbound_group_creation_filter(queue_entry["data"], "azure")
+        except ValueError:
+            LOGGER.warning(
+                "Unable to create group in AAD, mailNickname: %s", queue_entry
+            )
+            raise ExpectedError(
+                "Unable to create group without display name and email."
+            )
+        response = requests.post(url=url, headers=headers, json=aad_group)
+        if response.status_code == 201:
+            delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
+        else:
+            LOGGER.warning("Unable to create group in AAD: %s", queue_entry)
+            raise ExpectedError("Unable to create group.")
 
 
 def outbound_sync_listener():
@@ -212,7 +223,7 @@ def outbound_sync_listener():
 
     while True:
         try:
-            queue_entry = peek_at_queue(OUTBOUND_QUEUE, PROVIDER_ID)
+            queue_entry = peek_at_queue(OUTBOUND_QUEUE, TENANT_ID)
             LOGGER.info(
                 "Received queue entry %s from outbound queue...", queue_entry["id"]
             )
