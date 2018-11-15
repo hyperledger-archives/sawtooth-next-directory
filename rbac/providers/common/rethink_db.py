@@ -73,6 +73,7 @@ def peek_at_queue(table_name, provider_id):
             r.table(table_name)
             .filter({"provider_id": provider_id})
             .min("timestamp")
+            .coerce_to("object")
             .run()
         )
         return queue_entry
