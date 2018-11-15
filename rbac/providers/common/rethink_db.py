@@ -51,10 +51,12 @@ def connect_to_db():
             )
             time.sleep(DB_CONNECT_TIMEOUT)
         attempt += 1
-
-    raise DatabaseConnectionException(
-        "Failed to connect to RethinkDb after {} attempts".format(DB_CONNECT_TIMEOUT)
-    )
+    if attempt == DB_CONNECT_MAX_ATTEMPTS:
+        raise DatabaseConnectionException(
+            "Failed to connect to RethinkDb after {} attempts".format(
+                DB_CONNECT_MAX_ATTEMPTS
+            )
+        )
 
 
 def peek_at_queue(table_name, provider_id):

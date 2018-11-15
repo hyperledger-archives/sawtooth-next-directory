@@ -15,6 +15,7 @@
 
 from rbac.providers.common.provider_transforms import (
     GROUP_TRANSFORM,
+    GROUP_CREATION_TRANSFORM,
     USER_TRANSFORM,
     USER_CREATION_TRANSFORM,
 )
@@ -71,3 +72,21 @@ def outbound_user_creation_filter(sawtooth_user, provider):
         user["accountEnabled"] = True
     user["passwordPolicies"] = "None"
     return user
+
+
+def outbound_group_creation_filter(sawtooth_group, provider):
+    """Takes in a group dict from queue_outbound and formats it to a provider's specs
+    :param: group > dict > a dictionary representing a group
+    :param: provider > str > inbound provider type (azure, ldap)
+    """
+    if provider != "azure" and provider != "ldap":
+        raise TypeError("Provider must be specified with a valid option.")
+    group = {}
+    for key, value in GROUP_CREATION_TRANSFORM.items():
+        if key in sawtooth_group:
+            group[value[provider]] = sawtooth_group[key]
+    if "mailNickname" not in group:
+        raise ValueError("User entry does not contain appropriate data")
+    if "mailEnabled" not in group:
+        group["mailEnabled"] = False
+    return group
