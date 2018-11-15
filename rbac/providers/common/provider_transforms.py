@@ -30,6 +30,7 @@ USER_TRANSFORM = {
     "given_name": {"azure": "givenName", "ldap": None},
     "job_title": {"azure": "jobTitle", "ldap": None},
     "email": {"azure": "mail", "ldap": None},
+    "mail_nick_name": {"azure": "mailNickname", "ldap": None},
     "manager": {"azure": "manager", "ldap": "manager"},
     "mobile_phone": {"azure": "mobilePhone", "ldap": None},
     "distinguished_name": {
@@ -59,4 +60,26 @@ GROUP_TRANSFORM = {
     "security_enabled": {"azure": "securityEnabled", "ldap": None},
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
+}
+
+
+USER_CREATION_TRANSFORM = {
+    "account_enabled": {"azure": "accountEnabled", "ldap": None},
+    "city": {"azure": "city", "ldap": None},
+    "country": {"azure": "country", "ldap": None},
+    "department": {"azure": "department", "ldap": None},
+    "name": {"azure": "displayName", "ldap": "displayName"},
+    "given_name": {"azure": "givenName", "ldap": None},
+    "job_title": {"azure": "jobTitle", "ldap": None},
+    "email": {"azure": "mail", "ldap": None},
+    "mail_nick_name": {"azure": "mailNickname", "ldap": None},
+    "mobile_phone": {"azure": "mobilePhone", "ldap": None},
+    "office_location": {"azure": "officeLocation", "ldap": None},
+    "postal_code": {"azure": "postalCode", "ldap": None},
+    "preferred_language": {"azure": "preferredLanguage", "ldap": None},
+    "state": {"azure": "state", "ldap": None},
+    "street_address": {"azure": "streetAddress", "ldap": None},
+    "usage_location": {"azure": "usageLocation", "ldap": None},
+    "user_principal_name": {"azure": "userPrincipalName", "ldap": "userPrincipalName"},
+    "user_type": {"azure": "userType", "ldap": None},
 }

@@ -16,11 +16,13 @@
 import time
 import os
 import logging
+from uuid import uuid4
 import requests
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
     outbound_group_filter,
+    outbound_user_creation_filter,
 )
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.rethink_db import (
@@ -59,9 +61,9 @@ def is_entry_in_aad(queue_entry):
     exists in Azure AD."""
     data_type = queue_entry["data_type"]
     if data_type == "user":
-        is_user_in_aad(queue_entry)
+        return is_user_in_aad(queue_entry)
     elif data_type == "group":
-        is_group_in_aad(queue_entry)
+        return is_group_in_aad(queue_entry)
 
 
 def is_user_in_aad(queue_entry):
@@ -69,14 +71,14 @@ def is_user_in_aad(queue_entry):
     in azure AD. Returns True if the user exists, False if the user doesn't exist.
     """
     user = queue_entry["data"]
-    if user["user_id"]:
+    if "user_id" in user:
         user_id = user["user_id"]
     else:
         user_id = user["user_principal_name"]
     response = fetch_user_aad(user_id)
-    if response["status_code"] >= 200 and response["status_code"] < 300:
+    if response.status_code >= 200 and response.status_code < 300:
         return True
-    elif response["status_code"] == 404:
+    elif response.status_code == 404:
         return False
     else:
         raise Exception(
@@ -132,13 +134,14 @@ def update_user_aad(user):
     """Updates a user in aad."""
     headers = AUTH.check_token("PATCH")
     if headers:
-        if user["user_id"]:
+        if "user_id" in user:
             user_id = user["user_id"]
         else:
-            user_id = user["user_perincipal_name"]
+            user_id = user["user_principal_name"]
         url = f"{GRAPH_URL}/{GRAPH_VERSION}/users/{user_id}"
         aad_user = outbound_user_filter(user, "azure")
-        requests.patch(url=url, headers=headers, data=aad_user)
+        aad_user.pop("mail", None)
+        response = requests.patch(url=url, headers=headers, json=aad_user)
 
 
 def update_group_aad(group):
@@ -162,16 +165,28 @@ def create_entry_aad(queue_entry):
 
 
 def create_user_aad(queue_entry):
-    """Creates a given user in aad."""
-    # TODO: Implement user creation in Azure AD. Currently logs and deletes
-    #   entry and throws an ExpectedError.
-    LOGGER.warning(
-        "User not in Azure AD. Aborting sync for user and removing \
-        from queue_outbound: %s",
-        queue_entry,
-    )
-    delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
-    raise ExpectedError("User not in Azure AD.")
+    """Creates a given user in AAD."""
+    headers = AUTH.check_token("POST")
+    if headers:
+        url = f"{GRAPH_URL}/{GRAPH_VERSION}/users"
+        try:
+            aad_user = outbound_user_creation_filter(queue_entry["data"], "azure")
+        except ValueError:
+            LOGGER.warning(
+                "Unable to create user in AAD, displayName and email required: %s",
+                queue_entry,
+            )
+            raise ExpectedError("Unable to create user without display name and email.")
+        aad_user["passwordProfile"] = {
+            "password": str(uuid4())[:16],
+            "forceChangePasswordNextSignIn": True,
+        }
+        response = requests.post(url=url, headers=headers, json=aad_user)
+        if response.status_code == 201:
+            delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
+        else:
+            LOGGER.warning("Unable to create user in AAD: %s", queue_entry)
+            raise ExpectedError("Unable to create user.")
 
 
 def create_group_aad(queue_entry):
@@ -199,9 +214,8 @@ def outbound_sync_listener():
         try:
             queue_entry = peek_at_queue(OUTBOUND_QUEUE, PROVIDER_ID)
             LOGGER.info(
-                "Received queue entry %s from outbound queue...", queue_entry.id
+                "Received queue entry %s from outbound queue...", queue_entry["id"]
             )
-            LOGGER.debug(queue_entry)
 
             data_type = queue_entry["data_type"]
             LOGGER.info("Putting %s into aad...", data_type)
