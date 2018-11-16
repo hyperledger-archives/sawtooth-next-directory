@@ -1,0 +1,11 @@
+/*******************************
+        Global Overrides
+*******************************/
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+.clear {
+  clear: both;
+}
