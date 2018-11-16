@@ -38,7 +38,8 @@ import {
   getRole,
   getRoles,
   getProposal,
-  getProposals } from './RequesterSaga';
+  getProposals,
+  getAllRoles } from './RequesterSaga';
 
 
 import { login, signup, logout } from './AuthSaga';
@@ -76,6 +77,7 @@ export default function * root() {
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
     takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),
     takeLatest(RequesterTypes.ROLES_REQUEST, getRoles, api),
+    takeLatest(RequesterTypes.ALLROLES_REQUEST, getAllRoles, api),
     takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
     takeLatest(RequesterTypes.PROPOSALS_REQUEST, getProposals, api),
     takeLatest(RequesterTypes.ACCESS_REQUEST, requestAccess, api),

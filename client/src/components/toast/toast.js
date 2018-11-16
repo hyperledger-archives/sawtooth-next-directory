@@ -33,7 +33,6 @@ export default class Toast extends Component {
   constructor(props) {
     super(props);
 
-    this.hideToast = this.hideToast.bind(this);
     this.timeout = '';
   }
 
@@ -51,7 +50,7 @@ export default class Toast extends Component {
     }
   }
 
-  hideToast() {
+  hideToast = () => {
     const { close } = this.props;
 
     if (close) {

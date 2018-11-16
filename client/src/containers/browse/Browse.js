@@ -16,7 +16,11 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Menu, Search, Segment } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
+import BrowseCard from '../../components/cards/BrowseCard';
+
+import RequesterActions from '../../redux/RequesterRedux';
+
 import './Browse.css';
 
 
@@ -28,46 +32,91 @@ import './Browse.css';
  */
 class Browse extends Component {
 
+  state = { rolesData: null, dataStatus:'Fetching Data...' };
+
+
+  componentDidMount(){
+    const { getAllRoles } = this.props;
+    getAllRoles();
+  }
+
+
+  componentWillReceiveProps(nextProps) {
+    this.props = nextProps;
+    const{ allRoles, isFetching } = this.props;
+    
+    if(allRoles && allRoles.length !== 0){
+      this.formatData(allRoles);
+    }
+
+    !isFetching && this.setState({ dataStatus: 'No data found.'});
+    
+  }
+
+
+  formatData = (value) => {
+    let arr=[[],[],[],[]];
+
+    value.map((ele, index) => {
+      arr[index % 4].push(ele)
+    });
+
+    this.setState({ rolesData: arr });
+    
+  }
+
+  renderLayout() {
+    const { rolesData } = this.state;
+
+    return rolesData.map((column, index) => {
+        return (<Grid.Column key={index}>
+          {this.renderColumns(column)}
+        </Grid.Column>);
+    });
+
+  }
+
+
+  renderColumns = (columnData) => {
+    if(columnData) {
+      return columnData.map( (item,index) =>{
+        return <BrowseCard key={index} details={item}/> ;
+      });
+    }
+  }
+
+
   render () {
+    const { rolesData, dataStatus } = this.state;
+
     return (
-      <div>
+      <div id='next-browse-wrapper'>
         <Container id='next-browse-container'>
-          <Menu>
-            <Menu.Item>Recommended</Menu.Item>
-            <Menu.Item>All Groups</Menu.Item>
-            <Menu.Item>All Roles</Menu.Item>
-          </Menu>
-          <Search loading={false} className='next-browse-search'/>
-          <Grid stackable columns={3} id='next-browse-grid'>
-            <Grid.Row stretched>
-              <Grid.Column>
-                <Segment></Segment>
-              </Grid.Column>
-              <Grid.Column>
-                <Segment></Segment>
-                <Segment></Segment>
-              </Grid.Column>
-              <Grid.Column>
-                <Segment></Segment>
-                <Segment></Segment>
-                <Segment></Segment>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          {rolesData ?
+              <Grid relaxed stackable columns={4} id='next-browse-grid'>
+                {this.renderLayout()}
+            </Grid> :
+            <div className='no-data-container'>{dataStatus}</div>
+          }
         </Container>
       </div>
     );
   }
-
+  
 }
 
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    isFetching: state.requester.fetching,
+    allRoles: state.requester.roles
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    getAllRoles: () => dispatch(RequesterActions.allrolesRequest()),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Browse);

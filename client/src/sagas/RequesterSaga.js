@@ -75,6 +75,42 @@ export function * getRoles (api, action) {
 }
 
 
+/**
+ *
+ * Execute all roles API request
+ *
+ * The getAllRoles generator function executes a request to the
+ * API and handles the response.
+ *
+ * @param action
+ *
+ */
+export function * getAllRoles (api) {
+  try {
+    const res = yield call(api.getRoles);
+
+    if (res.ok) {
+      yield put(RequesterActions.allrolesSuccess(res.data.data));
+    } else {
+      alert(res.data.error);
+      yield put(RequesterActions.allrolesFailure(res.data.error));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ *
+ * Execute proposal API request
+ *
+ * The getProposal generator function executes a request to the
+ * API and handles the response.
+ *
+ * @param action
+ *
+ */
 export function * getProposal (api, action) {
   try {
     const { id } = action;

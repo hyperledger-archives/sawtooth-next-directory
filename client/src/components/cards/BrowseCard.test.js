@@ -14,27 +14,30 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid {
-  margin-top: 0;
-}
-#next-browse-grid > .column {
-  padding: 0.3rem;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-#next-browse-container {
-  margin-top: 25px;
-}
+import BrowseCard from './BrowseCard';
 
-.next-browse-search .ui {
-  width: 100%;
-}
 
-#next-browse-wrapper {
-  background: var(--browse-bg-color);
-  overflow-y: scroll;
-  min-height: calc(100vh  - 40px);
-}
+describe('BrowseCard component', () => {
 
-.no-data-container{
-  color: var(--text-light);
-}
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    const props = {
+      details: {
+        name:'',
+        category:'',
+        admins:[]
+      }
+    };
+
+    ReactDOM.render(
+      <BrowseCard {...props}/>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});
