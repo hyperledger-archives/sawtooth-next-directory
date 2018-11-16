@@ -14,9 +14,9 @@
 # -----------------------------------------------------------------------------
 
 import argparse
+import logging
 import sys
 import os
-import logging
 
 from sawtooth_sdk.processor.core import TransactionProcessor
 from sawtooth_sdk.processor.log import init_console_logging
@@ -27,16 +27,8 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-
-def getenv(name, default):
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
-
-
-VALIDATOR_HOST = getenv("VALIDATOR_HOST", "validator")
-VALIDATOR_PORT = getenv("VALIDATOR_PORT", "4004")
+VALIDATOR_HOST = os.getenv("VALIDATOR_HOST", "validator")
+VALIDATOR_PORT = os.getenv("VALIDATOR_PORT", "4004")
 
 
 def parse_args(args):

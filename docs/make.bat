@@ -13,6 +13,7 @@ set BUILDDIR=_build
 if "%1" == "" goto help
 
 %SPHINXBUILD% >NUL 2>NUL
+
 if errorlevel 9009 (
 	echo.
 	echo.The 'sphinx-build' command was not found. Make sure you have Sphinx

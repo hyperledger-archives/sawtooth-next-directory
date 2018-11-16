@@ -17,19 +17,18 @@ import argparse
 import asyncio
 import logging
 import os
-from signal import signal, SIGINT
 import sys
+from signal import signal, SIGINT
 
-from sanic import Sanic
 from sanic import Blueprint
+from sanic import Sanic
 from sanic.response import text
 from zmq.asyncio import ZMQEventLoop
 
-from rbac.common.sawtooth.messaging import Connection
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import generate_aes_key
 from rbac.common.crypto.secrets import generate_secret_key
-from rbac.server.db import db_utils
+from rbac.common.sawtooth.messaging import Connection
 from rbac.server.api.auth import AUTH_BP
 from rbac.server.api.blocks import BLOCKS_BP
 from rbac.server.api.errors import ERRORS_BP
@@ -37,6 +36,7 @@ from rbac.server.api.proposals import PROPOSALS_BP
 from rbac.server.api.roles import ROLES_BP
 from rbac.server.api.tasks import TASKS_BP
 from rbac.server.api.users import USERS_BP
+from rbac.server.db import db_utils
 
 APP_BP = Blueprint("utils")
 
@@ -54,23 +54,16 @@ DEFAULT_CONFIG = {
 }
 
 
-def getenv(name, default):
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
-
-
-SERVER_HOST = getenv("SERVER_HOST", DEFAULT_CONFIG["SERVER_HOST"])
-SERVER_PORT = getenv("SERVER_PORT", DEFAULT_CONFIG["SERVER_PORT"])
-VALIDATOR_HOST = getenv("VALIDATOR_HOST", DEFAULT_CONFIG["VALIDATOR_HOST"])
-VALIDATOR_PORT = getenv("VALIDATOR_PORT", DEFAULT_CONFIG["VALIDATOR_PORT"])
-VALIDATOR_TIMEOUT = getenv("VALIDATOR_TIMEOUT", DEFAULT_CONFIG["VALIDATOR_TIMEOUT"])
-DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
-AES_KEY = getenv("AES_KEY", DEFAULT_CONFIG["AES_KEY"])
-SECRET_KEY = getenv("SECRET_KEY", DEFAULT_CONFIG["SECRET_KEY"])
+SERVER_HOST = os.getenv("SERVER_HOST", DEFAULT_CONFIG["SERVER_HOST"])
+SERVER_PORT = os.getenv("SERVER_PORT", DEFAULT_CONFIG["SERVER_PORT"])
+VALIDATOR_HOST = os.getenv("VALIDATOR_HOST", DEFAULT_CONFIG["VALIDATOR_HOST"])
+VALIDATOR_PORT = os.getenv("VALIDATOR_PORT", DEFAULT_CONFIG["VALIDATOR_PORT"])
+VALIDATOR_TIMEOUT = os.getenv("VALIDATOR_TIMEOUT", DEFAULT_CONFIG["VALIDATOR_TIMEOUT"])
+DB_HOST = os.getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
+DB_PORT = os.getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
+DB_NAME = os.getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+AES_KEY = os.getenv("AES_KEY", DEFAULT_CONFIG["AES_KEY"])
+SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_CONFIG["SECRET_KEY"])
 
 LOGGER = logging.getLogger(__name__)
 warning_logger = logging.StreamHandler()

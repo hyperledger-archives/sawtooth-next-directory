@@ -12,20 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-import os
 import logging
+
+import os
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import generate_aes_key
 from rbac.common.crypto.secrets import generate_secret_key
 
 LOGGER = logging.getLogger(__name__)
-
-
-def getenv(name, default):
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
 
 
 DEFAULT_CONFIG = {
@@ -43,24 +37,24 @@ DEFAULT_CONFIG = {
     "AES_KEY": "1111111111111111111111111111111111111111111111111111111111111111",
 }
 
-SERVER_HOST = getenv("SERVER_HOST", DEFAULT_CONFIG["SERVER_HOST"])
-SERVER_PORT = getenv("SERVER_PORT", DEFAULT_CONFIG["SERVER_PORT"])
-VALIDATOR_HOST = getenv("VALIDATOR_HOST", DEFAULT_CONFIG["VALIDATOR_HOST"])
-VALIDATOR_PORT = getenv("VALIDATOR_PORT", DEFAULT_CONFIG["VALIDATOR_PORT"])
+SERVER_HOST = os.getenv("SERVER_HOST", DEFAULT_CONFIG["SERVER_HOST"])
+SERVER_PORT = os.getenv("SERVER_PORT", DEFAULT_CONFIG["SERVER_PORT"])
+VALIDATOR_HOST = os.getenv("VALIDATOR_HOST", DEFAULT_CONFIG["VALIDATOR_HOST"])
+VALIDATOR_PORT = os.getenv("VALIDATOR_PORT", DEFAULT_CONFIG["VALIDATOR_PORT"])
 VALIDATOR_TIMEOUT = int(
-    getenv("VALIDATOR_TIMEOUT", DEFAULT_CONFIG["VALIDATOR_TIMEOUT"])
+    os.getenv("VALIDATOR_TIMEOUT", DEFAULT_CONFIG["VALIDATOR_TIMEOUT"])
 )
-VALIDATOR_REST_HOST = getenv(
+VALIDATOR_REST_HOST = os.getenv(
     "VALIDATOR_REST_HOST", DEFAULT_CONFIG["VALIDATOR_REST_HOST"]
 )
-VALIDATOR_REST_PORT = getenv(
+VALIDATOR_REST_PORT = os.getenv(
     "VALIDATOR_REST_PORT", DEFAULT_CONFIG["VALIDATOR_REST_PORT"]
 )
-DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
-AES_KEY = getenv("AES_KEY", DEFAULT_CONFIG["AES_KEY"])
-SECRET_KEY = getenv("SECRET_KEY", DEFAULT_CONFIG["SECRET_KEY"])
+DB_HOST = os.getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
+DB_PORT = os.getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
+DB_NAME = os.getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+AES_KEY = os.getenv("AES_KEY", DEFAULT_CONFIG["AES_KEY"])
+SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_CONFIG["SECRET_KEY"])
 
 if SECRET_KEY is DEFAULT_CONFIG["SECRET_KEY"]:
     LOGGER.warning(
