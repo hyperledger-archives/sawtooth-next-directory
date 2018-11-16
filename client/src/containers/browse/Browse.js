@@ -16,7 +16,12 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Menu, Search, Segment } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
+import BrowseCard from '../../components/cards/BrowseCard';
+
+import API from '../../services/Api';
+import FixtureAPI from '../../services/FixtureApi';
+
 import './Browse.css';
 
 
@@ -28,37 +33,65 @@ import './Browse.css';
  */
 class Browse extends Component {
 
+  state = { rolesData: [] };
+
+
+  componentDidMount(){
+    /**
+     * TODO: Move to redux 
+     * 
+     */
+    // let api = API.create();
+    let data = FixtureAPI.getRoles();
+    this.formatData(data.data);
+  }
+
+
+  formatData = (value) => {
+    let arr=[[],[],[],[]];
+
+    value.map((ele, index) => {
+      arr[index % 4].push(ele)
+    });
+
+    this.setState({ rolesData: arr });
+  }
+
+
+  renderColumns = (columnData) => {
+    if(columnData) {
+      return columnData.map( (item,index) =>{
+        return <BrowseCard key={index} details={item}/> ;
+      });
+    }
+  }
+
+
   render () {
+    const { rolesData } = this.state;
+
     return (
-      <div>
+      <div id='next-browse-wrapper'>
         <Container id='next-browse-container'>
-          <Menu>
-            <Menu.Item>Recommended</Menu.Item>
-            <Menu.Item>All Groups</Menu.Item>
-            <Menu.Item>All Roles</Menu.Item>
-          </Menu>
-          <Search loading={false} className='next-browse-search'/>
-          <Grid stackable columns={3} id='next-browse-grid'>
-            <Grid.Row stretched>
+          <Grid relaxed stackable columns={4} id='next-browse-grid'>
               <Grid.Column>
-                <Segment></Segment>
+                {this.renderColumns(rolesData[0])}
               </Grid.Column>
               <Grid.Column>
-                <Segment></Segment>
-                <Segment></Segment>
+                {this.renderColumns(rolesData[1])}
               </Grid.Column>
               <Grid.Column>
-                <Segment></Segment>
-                <Segment></Segment>
-                <Segment></Segment>
+                {this.renderColumns(rolesData[2])}
               </Grid.Column>
-            </Grid.Row>
+              <Grid.Column>
+                {this.renderColumns(rolesData[3])}
+              </Grid.Column>
           </Grid>
         </Container>
       </div>
     );
   }
-
+  
 }
 
 

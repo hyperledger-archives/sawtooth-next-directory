@@ -17,11 +17,19 @@ limitations under the License.
 #next-browse-grid {
   margin-top: 0;
 }
+#next-browse-grid > .column {
+  padding: 0.3rem;
+}
 
 #next-browse-container {
-  margin-top: 13px;
+  margin-top: 25px;
 }
 
 .next-browse-search .ui {
   width: 100%;
+}
+
+#next-browse-wrapper {
+  background: var(--browse-bg-color);
+  overflow-y: scroll;
 }

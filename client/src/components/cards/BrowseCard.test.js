@@ -14,31 +14,30 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-:root {
-  --header-bg-color: #000;
-  --header-color: #fff;
-  --nav-bg-color: #212c3a;
-  --nav-heading-color: #fff;
-  --nav-list-color: #727c85;
-  --chat-bg-color: #b0b0b01f;
-  --selected-list-color: #fef2f8;
-  --divider-color: #cedbe6;
-  --nav-list-padding: 22px;
-  --page-content-padding: 30px;
-  --track-header-height: 113px;
-  --magenta: #e40073;
-  --magenta: e40073;
-  --avatar-count: #fff;
-  --browse-bg-color: #273544;
-  --browse-text-color: rgba(255, 255, 255, 0.5);
-  --background-dark: #000
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-body,
-#root {
-  height: 100%;
-}
+import BrowseCard from './BrowseCard';
 
-#next-wave {
-  position: absolute;
-}
+
+describe('BrowseCard component', () => {
+
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    const props = {
+      details: {
+        name:'',
+        category:'',
+        admins:[]
+      }
+    };
+
+    ReactDOM.render(
+      <BrowseCard {...props}/>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});

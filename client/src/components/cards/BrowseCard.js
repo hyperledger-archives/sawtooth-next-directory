@@ -1,0 +1,76 @@
+/* Copyright 2018 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+
+
+import React, { Component } from 'react';
+import StackedAvatar from '../avatar/StackedAvatar';
+import { Icon } from 'semantic-ui-react';
+
+import './BrowseCard.css';
+
+/**
+ *
+ * @class BrowseCard
+ * BrowseCard component
+ *
+ */
+export default class BrowseCard extends Component {
+  
+  state = { isPinned: false };
+
+  togglePinned = () => {
+    this.setState({
+      isPinned: !this.state.isPinned
+    });
+  }
+
+
+  render () {
+    const { details } = this.props;
+    const { isPinned } = this.state;
+
+    return (
+          details.description ?
+          <div className='browse-tile browse-tile-expanded'>
+            <div className='browse-tile-title'>
+              <div>{details.name}</div>
+              <div className='browse-tile-pinned-icon'>
+                <Icon disabled={!isPinned} onClick={this.togglePinned} inverted name='pin' size='small'/>
+              </div>
+            </div>
+            <div className='browse-tile-desc'>{details.description}</div>
+            <div className='browse-tile-likes'>
+              <Icon inverted name='smile' size='large' color={'yellow'}/>
+              2.5K
+            </div>
+          </div> :
+          <div className='browse-tile'>
+            <div className='browse-tile-title'>
+              <div>
+                <div>{details.name}</div>
+                <div className='browse-tile-category'>{details.category}</div>
+              </div>
+              <div className='browse-tile-pinned-icon'>
+                <Icon disabled={!isPinned} onClick={this.togglePinned} inverted name='pin' size='small'/>
+              </div>
+            </div>
+            <div className='browse-tile-members'>
+              <StackedAvatar list={details.admins}/>
+            </div>
+          </div>
+    );
+  }
+
+}
