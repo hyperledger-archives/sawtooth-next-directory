@@ -53,7 +53,7 @@ class Individuals extends Component {
 
   setFlow = (index) => {
     this.setState({ activeIndex: index });
-  }
+  };
 
 
   /**
@@ -72,6 +72,8 @@ class Individuals extends Component {
       selectedProposals,
       selectedUsers } = this.state;
 
+    const { openProposalsByUser } = this.props;
+
     const { roles, proposals } = selectRoles(
       data.checked,
       data.proposals,
@@ -82,7 +84,9 @@ class Individuals extends Component {
     const { users } = selectUser(
       data.checked,
       data.user,
-      proposals,
+      openProposalsByUser[data.user]
+        .filter(proposal => proposals
+          .includes(proposal.id)),
       selectedUsers
     ).next().value;
 
@@ -91,7 +95,7 @@ class Individuals extends Component {
       selectedProposals:  proposals,
       selectedUsers:      users,
     });
-  }
+  };
 
 
   render () {
