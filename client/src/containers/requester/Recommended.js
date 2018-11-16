@@ -71,7 +71,7 @@ export class Recommended extends Component {
 
         <Grid.Column
           id='next-requester-grid-track-column'
-          width={10}>
+          width={11}>
 
           <TrackHeader
             roleImage
@@ -91,7 +91,7 @@ export class Recommended extends Component {
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'
-          width={6}>
+          width={5}>
           <Chat activeRole={this.role} {...this.props}/>
         </Grid.Column>
 

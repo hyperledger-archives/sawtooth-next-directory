@@ -12,3 +12,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+
+
+#next-switch-approver-link {
+  bottom: 50px;
+  position: absolute;
+}
+
+.next-approver-nav-search,
+.next-approver-nav-search input,
+.next-approver-nav-search .ui {
+  width: 100%;
+}
+
+#next-approver-switch-container {
+  bottom: 25px;
+  left: -4px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+#next-approver-switch-container a {
+  color: var(--nav-heading-color);
+}

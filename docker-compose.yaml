@@ -151,6 +151,8 @@ services:
       context: .
       dockerfile: ./docker/client.Dockerfile
     container_name: rbac-client
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     image: rbac-client:${ISOLATION_ID-latest}
     volumes:
       - "./client/src:/client/src"

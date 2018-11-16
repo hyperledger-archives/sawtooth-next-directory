@@ -84,7 +84,7 @@ export class Requests extends Component {
 
         <Grid.Column
           id='next-requester-grid-track-column'
-          width={10}>
+          width={11}>
 
           <TrackHeader
             roleImage
@@ -105,7 +105,7 @@ export class Requests extends Component {
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'
-          width={6}>
+          width={5}>
           <Chat {...this.props}/>
         </Grid.Column>
 

@@ -44,9 +44,7 @@ export default class ApproverNav extends Component {
           listTitle='Pending'
           list={[
             'Batch',
-            'Roles',
             'Individuals',
-            'Frequent',
             'About to Expire'
           ]}
           route='/approval/pending'/>

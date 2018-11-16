@@ -26,10 +26,7 @@ import Packs from './containers/requester/Packs';
 
 import ApproverHome from './containers/approver/ApproverHome';
 import ApproverNav from './components/nav/ApproverNav';
-import Batch from './containers/approver/Batch';
-import Roles from './containers/approver/Roles';
 import Individuals from './containers/approver/Individuals';
-import Frequent from './containers/approver/Frequent';
 import Expiring from './containers/approver/Expiring';
 import Manage from './containers/approver/Manage';
 import People from './containers/approver/People';
@@ -103,26 +100,8 @@ const routes = (props) => [
     exact:  true
   },
   {
-    path:   '/approval/pending/batch',
-    main:   (rest) => <Batch {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
-  },
-  {
-    path:   '/approval/pending/roles',
-    main:   (rest) => <Roles {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
-  },
-  {
     path:   '/approval/pending/individuals',
     main:   (rest) => <Individuals {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true
-  },
-  {
-    path:   '/approval/pending/frequent',
-    main:   (rest) => <Frequent {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true
   },

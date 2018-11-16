@@ -46,13 +46,13 @@ class Packs extends Component {
 
         <Grid.Column
           id='next-requester-grid-track-column'
-          width={10}>
+          width={11}>
           <TrackHeader waves title={title} {...this.props}/>
           <RolesList {...this.props}/>
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'
-          width={6}>
+          width={5}>
           <Chat {...this.props}/>
         </Grid.Column>
 

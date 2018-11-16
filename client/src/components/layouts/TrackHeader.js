@@ -38,8 +38,9 @@ export default class TrackHeader extends Component {
     return (
       <Grid>
         <Grid.Column id='track-header-outer-grid' only='computer'>
-          <div id='next-requester-tracker-header-container'>
-            <div id='next-requester-track-header'>
+          <div id={waves ? 'next-track-header-waves-container' :
+            'next-track-header-container' }>
+            <div id='next-track-header'>
               { title &&
                 <Header as='h1' inverted>
                   { roleImage &&
@@ -55,11 +56,11 @@ export default class TrackHeader extends Component {
                 <div id='next-wave'></div>
                 <div id='next-wave-alt'></div>
               </div>
-            }            
+            }
           </div>
         </Grid.Column>
       </Grid>
-        
+
     );
   }
 
