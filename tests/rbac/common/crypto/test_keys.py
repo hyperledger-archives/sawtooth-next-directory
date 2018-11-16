@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test the crypto keypair library"""
 
+# pylint: disable=invalid-name
 
 import logging
 import pytest
@@ -32,15 +34,17 @@ from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.crypto.keys import SIGNATURE_PATTERN
 from rbac.common.crypto.secrets import generate_random_string
-from tests.rbac.common.crypto.key_assertions import KeyAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.unit
+@pytest.mark.library
 @pytest.mark.crypto
 @pytest.mark.keys
-class TestKeys(KeyAssertions):
+class TestKeys(TestAssertions):
+    """Test the crypto keypair library"""
+
     def test_public_key_constants(self):
         """Tests the expected key class constants
         Used for for test sanity checks"""
@@ -55,7 +59,6 @@ class TestKeys(KeyAssertions):
     def test_private_key_sawtooth(self):
         """Generates a random private key using Sawtooth Signing's
         Secp256k1PrivateKey class, and make sure it passes sanity checks"""
-        self.assertTrue(callable(Secp256k1PrivateKey.new_random))
         private_key = Secp256k1PrivateKey.new_random()
         self.assertIsPrivateKeySecp256k1(private_key)
         return private_key
@@ -72,7 +75,6 @@ class TestKeys(KeyAssertions):
     def test_public_key_sawtooth(self):
         """Derive a public key from a random private key using Sawtooth Signing
         and make sure it passes sanity checks"""
-        self.assertTrue(callable(sawtooth_signing.create_context))
         context = sawtooth_signing.create_context(ELLIPTIC_CURVE_ALGORITHM)
         private_key = Secp256k1PrivateKey.new_random()
         public_key = context.get_public_key(private_key)
@@ -81,24 +83,23 @@ class TestKeys(KeyAssertions):
         return public_key, private_key
 
     def test_key_class_no_constructor_inputs(self):
+        """Test making random keypair (no init values)"""
         txn_key = Key()
         self.assertEqual(len(txn_key.private_key), PRIVATE_KEY_LENGTH * 2)
         self.assertTrue(PRIVATE_KEY_PATTERN.match(txn_key.private_key))
 
-    def test_key_class_private_key(self):
+    def test_key_class_given_private_key(self):
+        """Test initializing the key class with a given private key"""
         private_key = Secp256k1PrivateKey.new_random()
         txn_key = Key(private_key.as_hex())
         self.assertEqual(len(txn_key.private_key), PRIVATE_KEY_LENGTH * 2)
         self.assertTrue(PRIVATE_KEY_PATTERN.match(txn_key.private_key))
         self.assertEqual(txn_key.private_key, private_key.as_hex())
-
-    def test_key_class_public_key(self):
-        private_key = Secp256k1PrivateKey.new_random()
-        txn_key = Key(private_key.as_hex())
         self.assertEqual(len(txn_key.public_key), PUBLIC_KEY_LENGTH * 2)
         self.assertTrue(PUBLIC_KEY_PATTERN.match(txn_key.public_key))
 
     def test_key_class_random_keys(self):
+        """Test the key class generates different keys each time initialized"""
         value1 = Key()
         value2 = Key()
         self.assertTrue(isinstance(value1, Key))
@@ -120,13 +121,14 @@ class TestKeys(KeyAssertions):
         self.assertNotEqual(value1.private_key, value2.private_key)
 
     def test_key_class_from_private_key(self):
+        """Test you can export the private key and import to another key instance"""
         value1 = Key()
         value2 = Key(private_key=value1.private_key)
         self.assertEqual(value1.private_key, value2.private_key)
         self.assertEqual(value1.public_key, value2.public_key)
 
     def test_key_signing(self):
-        self.assertTrue(callable(generate_random_string))
+        """Test that you can sign with a key"""
         signer_keypair = Key()
         message = generate_random_string(50)
         factory = CryptoFactory(sawtooth_signing.create_context("secp256k1"))
@@ -138,6 +140,7 @@ class TestKeys(KeyAssertions):
         return signature, message, signer_keypair.public_key
 
     def test_key_signature_validation(self):
+        """Test that you can validate a signature"""
         signature, message, pubkey = self.test_key_signing()
         public_key = Secp256k1PublicKey.from_hex(pubkey)
         context = sawtooth_signing.create_context("secp256k1")

@@ -12,14 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test Helper"""
 
-from rbac.common.manager.rbac_manager import RBACManager
-from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
-from tests.rbac.common.manager.helper import TestHelper
+from tests.rbac.common.assertions import TestAssertions
+from tests.rbac.common.user.user_helper import UserTestHelper
+from tests.rbac.common.role.role_helper import RoleTestHelper
+from tests.rbac.common.task.task_helper import TaskTestHelper
+from tests.rbac.common.proposal.proposal_helper import ProposalTestHelper
 
 
-class TestBase(BatchAssertions):
+class TestHelper(TestAssertions):
+    """Test Helper"""
+
     def __init__(self, *args, **kwargs):
-        BatchAssertions.__init__(self, *args, **kwargs)
-        self.test = TestHelper()
-        self.rbac = RBACManager()
+        TestAssertions.__init__(self, *args, **kwargs)
+        self.user = UserTestHelper()
+        self.role = RoleTestHelper()
+        self.task = TaskTestHelper()
+        self.proposal = ProposalTestHelper()
+
+
+# pylint: disable=invalid-name
+helper = TestHelper()
+
+__all__ = ["helper"]

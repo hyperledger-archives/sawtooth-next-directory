@@ -12,154 +12,140 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Confirm Task Add Owner Test"""
+# pylint: disable=no-member
 
 import logging
-from uuid import uuid4
 import pytest
 
-from rbac.common import addresser
+from rbac.common import rbac
 from rbac.common import protobuf
-from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
-from rbac.common.task.task_manager import TaskManager
-from rbac.common.task.relationship_owner import OwnerRelationship
-from rbac.common.task.confirm_owner import ConfirmAddTaskOwner
-from tests.rbac.common.task.task_test_helper import TaskTestHelper
+from tests.rbac.common import helper
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.task
-class ConfirmTaskAddOwnerTest(TaskTestHelper):
-    def __init__(self, *args, **kwargs):
-        TaskTestHelper.__init__(self, *args, **kwargs)
+class ConfirmTaskAddOwnerTest(TestAssertions):
+    """Confirm Task Add Owner Test"""
 
-    @pytest.mark.unit
-    def test_interface(self):
-        """Verify the expected interface"""
-        self.assertIsInstance(self.task, TaskManager)
-        self.assertIsInstance(self.task.owner, OwnerRelationship)
-        self.assertIsInstance(self.task.owner.confirm, ConfirmAddTaskOwner)
-        self.assertTrue(callable(self.task.owner.confirm.address))
-        self.assertTrue(callable(self.task.owner.confirm.make))
-        self.assertTrue(callable(self.task.owner.confirm.make_addresses))
-        self.assertTrue(callable(self.task.owner.confirm.make_payload))
-        self.assertTrue(callable(self.task.owner.confirm.create))
-        self.assertTrue(callable(self.task.owner.confirm.send))
-        self.assertTrue(callable(self.task.owner.confirm.get))
-
-    @pytest.mark.unit
-    def test_helper_interface(self):
-        """Verify the expected user test helper interface"""
-        self.assertTrue(callable(self.get_testdata_name))
-        self.assertTrue(callable(self.get_testdata_username))
-        self.assertTrue(callable(self.get_testdata_user))
-        self.assertTrue(callable(self.get_testdata_user_with_key))
-        self.assertTrue(callable(self.get_testdata_reason))
-        self.assertTrue(callable(self.get_testdata_user_created))
-        self.assertTrue(callable(self.get_testdata_user_created_with_manager))
-
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make(self):
         """Test making the message"""
-        self.assertTrue(callable(self.task.owner.confirm.make))
-        task, _, keypair = self.get_testunit_user_task()
-        user = self.get_testdata_user()
-        reason = self.get_testdata_reason()
-        message = self.task.owner.confirm.make(
-            proposal_id=uuid4().hex,
-            user_id=user.user_id,
-            task_id=task.task_id,
-            reason=reason,
+        user_id = helper.user.id()
+        task_id = helper.task.id()
+        proposal_id = helper.proposal.id()
+        reason = helper.proposal.reason()
+        message = rbac.task.owner.confirm.make(
+            proposal_id=proposal_id, user_id=user_id, task_id=task_id, reason=reason
         )
         self.assertIsInstance(
             message, protobuf.task_transaction_pb2.ConfirmAddTaskOwner
         )
-        self.assertEqual(message.user_id, user.user_id)
-        self.assertEqual(message.task_id, task.task_id)
+        self.assertEqual(message.proposal_id, proposal_id)
+        self.assertEqual(message.user_id, user_id)
+        self.assertEqual(message.task_id, task_id)
         self.assertEqual(message.reason, reason)
-        return message, keypair
 
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make_addresses(self):
         """Test making the message addresses"""
-        self.assertTrue(callable(self.task.owner.confirm.make_addresses))
-        message, owner_key = self.test_make()
-
-        inputs, outputs = self.task.owner.confirm.make_addresses(
-            message=message, signer_keypair=owner_key
+        user_id = helper.user.id()
+        task_id = helper.task.id()
+        proposal_id = helper.proposal.id()
+        proposal_address = rbac.task.owner.propose.address(task_id, user_id)
+        reason = helper.proposal.reason()
+        relationship_address = rbac.task.owner.address(task_id, user_id)
+        signer_keypair = helper.user.key()
+        signer_admin_address = rbac.task.admin.address(
+            task_id, signer_keypair.public_key
+        )
+        signer_owner_address = rbac.task.owner.address(
+            task_id, signer_keypair.public_key
+        )
+        message = rbac.task.owner.confirm.make(
+            proposal_id=proposal_id, user_id=user_id, task_id=task_id, reason=reason
         )
 
-        relationship_address = addresser.task.owner.address(
-            message.task_id, message.user_id
-        )
-        proposal_address = addresser.proposal.address(
-            object_id=message.task_id, target_id=message.user_id
+        inputs, outputs = rbac.task.owner.confirm.make_addresses(
+            message=message, signer_keypair=signer_keypair
         )
 
         self.assertIsInstance(inputs, list)
-        self.assertIsInstance(outputs, list)
+        self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_owner_address, inputs)
         self.assertIn(proposal_address, inputs)
         self.assertEqual(len(inputs), 3)
+
+        self.assertIsInstance(outputs, list)
         self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
         self.assertEqual(len(outputs), 2)
 
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make_payload(self):
         """Test making the message payload"""
-        self.assertTrue(callable(self.task.owner.confirm.make_payload))
-        message, owner_key = self.test_make()
-        payload = self.task.owner.confirm.make_payload(
-            message=message, signer_keypair=owner_key
+        user_id = helper.user.id()
+        task_id = helper.task.id()
+        proposal_id = helper.proposal.id()
+        proposal_address = rbac.task.owner.propose.address(task_id, user_id)
+        reason = helper.proposal.reason()
+        relationship_address = rbac.task.owner.address(task_id, user_id)
+        signer_keypair = helper.user.key()
+        signer_admin_address = rbac.task.admin.address(
+            task_id, signer_keypair.public_key
+        )
+        signer_owner_address = rbac.task.owner.address(
+            task_id, signer_keypair.public_key
+        )
+        message = rbac.task.owner.confirm.make(
+            proposal_id=proposal_id, user_id=user_id, task_id=task_id, reason=reason
         )
 
-        relationship_address = addresser.task.owner.address(
-            message.task_id, message.user_id
+        payload = rbac.task.owner.confirm.make_payload(
+            message=message, signer_keypair=signer_keypair
         )
-        proposal_address = self.task.owner.confirm.address(
-            object_id=message.task_id, target_id=message.user_id
-        )
-        self.assertIsInstance(payload, RBACPayload)
+        self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
+
         inputs = list(payload.inputs)
-        outputs = list(payload.outputs)
         self.assertIsInstance(inputs, list)
-        self.assertIsInstance(outputs, list)
+        self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_owner_address, inputs)
         self.assertIn(proposal_address, inputs)
         self.assertEqual(len(inputs), 3)
+
+        outputs = list(payload.outputs)
+        self.assertIsInstance(outputs, list)
         self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
         self.assertEqual(len(outputs), 2)
-        return payload
 
     @pytest.mark.integration
     def test_create(self):
         """Test executing the message on the blockchain"""
-        self.assertTrue(callable(self.task.owner.confirm.create))
-        self.assertTrue(callable(self.get_testdata_task_owner_proposal))
+        proposal, _, _, task_owner_key, _, _ = helper.task.owner.propose.create()
 
-        proposal, owner_key = self.get_testdata_task_owner_proposal()
-        reason = self.get_testdata_reason()
-        message = self.task.owner.confirm.make(
+        reason = helper.task.owner.propose.reason()
+        message = rbac.task.owner.confirm.make(
             proposal_id=proposal.proposal_id,
             task_id=proposal.object_id,
             user_id=proposal.target_id,
             reason=reason,
         )
-        got, status = self.task.owner.confirm.create(
-            signer_keypair=owner_key,
+        confirm, status = rbac.task.owner.confirm.create(
+            signer_keypair=task_owner_key,
             message=message,
             object_id=proposal.object_id,
             target_id=proposal.target_id,
         )
-
         self.assertStatusSuccess(status)
-        self.assertIsInstance(got, protobuf.proposal_state_pb2.Proposal)
+        self.assertIsInstance(confirm, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
-            got.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNERS
+            confirm.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNERS
         )
-        self.assertEqual(got.proposal_id, message.proposal_id)
-        self.assertEqual(got.object_id, message.task_id)
-        self.assertEqual(got.target_id, message.user_id)
-        self.assertEqual(got.close_reason, reason)
-        self.assertEqual(got.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
-        return got
+        self.assertEqual(confirm.proposal_id, proposal.proposal_id)
+        self.assertEqual(confirm.object_id, proposal.object_id)
+        self.assertEqual(confirm.target_id, proposal.target_id)
+        self.assertEqual(confirm.close_reason, reason)
+        self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)

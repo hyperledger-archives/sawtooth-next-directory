@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Key assertion helpers"""
+# pylint: disable=invalid-name,no-member
 
 import logging
 import binascii
@@ -21,20 +23,18 @@ from sawtooth_signing.secp256k1 import Secp256k1PublicKey
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 from sawtooth_signing.core import ParseError
 
-from tests.rbac.common.assertions import CommonAssertions
-
 from rbac.common.crypto.keys import ELLIPTIC_CURVE_ALGORITHM
 from rbac.common.crypto.keys import PRIVATE_KEY_LENGTH
 from rbac.common.crypto.keys import PUBLIC_KEY_LENGTH
 from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
+from tests.rbac.common.assertions.common import CommonAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 class KeyAssertions(CommonAssertions):
-    def __init__(self, *args, **kwargs):
-        CommonAssertions.__init__(self, *args, **kwargs)
+    """Key assertion helpers"""
 
     def assertIsPrivateKey(self, key):
         """Sanity checks a private key
@@ -44,12 +44,12 @@ class KeyAssertions(CommonAssertions):
         self.assertIsNotNone(key)
         if isinstance(key, Secp256k1PrivateKey):
             return self.assertIsPrivateKeySecp256k1(key)
-        elif isinstance(key, str):
+        if isinstance(key, str):
             return self.assertIsPrivateKeyHex(key)
-        elif isinstance(key, bytes):
+        if isinstance(key, bytes):
             return self.assertIsPrivateKeyBytes(key)
-        else:
-            raise ParseError("Unable to parse private key: {}".format(type(key)))
+
+        raise ParseError("Unable to parse private key: {}".format(type(key)))
 
     def assertIsPublicKey(self, key):
         """Sanity checks a public key
@@ -59,12 +59,12 @@ class KeyAssertions(CommonAssertions):
         self.assertIsNotNone(key)
         if isinstance(key, Secp256k1PublicKey):
             return self.assertIsPublicKeySecp256k1(key)
-        elif isinstance(key, str):
+        if isinstance(key, str):
             return self.assertIsPublicKeyHex(key)
-        elif isinstance(key, bytes):
+        if isinstance(key, bytes):
             return self.assertIsPublicKeyBytes(key)
-        else:
-            raise ParseError("Unable to parse public key: {}".format(type(key)))
+
+        raise ParseError("Unable to parse public key: {}".format(type(key)))
 
     def assertIsKeyPair(self, public_key, private_key):
         """Sanity checks public & private key and
@@ -81,8 +81,6 @@ class KeyAssertions(CommonAssertions):
     def assertIsPrivateKeySecp256k1(self, key):
         """Sanity checks a Secp256k1PrivateKey private key"""
         self.assertIsInstance(key, Secp256k1PrivateKey)
-        self.assertTrue(callable(key.as_hex))
-        self.assertTrue(callable(key.as_bytes))
         self.assertIsInstance(key.as_hex(), str)
         self.assertEqual(len(key.as_hex()), PRIVATE_KEY_LENGTH * 2)
         self.assertTrue(PRIVATE_KEY_PATTERN.match(key.as_hex()))
@@ -95,8 +93,6 @@ class KeyAssertions(CommonAssertions):
     def assertIsPublicKeySecp256k1(self, key):
         """Sanity checks a Secp256k1PublicKey public key"""
         self.assertIsInstance(key, Secp256k1PublicKey)
-        self.assertTrue(callable(key.as_hex))
-        self.assertTrue(callable(key.as_bytes))
         self.assertIsInstance(key.as_hex(), str)
         self.assertEqual(len(key.as_hex()), PUBLIC_KEY_LENGTH * 2)
         self.assertTrue(PUBLIC_KEY_PATTERN.match(key.as_hex()))

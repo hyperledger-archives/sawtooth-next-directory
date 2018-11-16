@@ -12,34 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test the Sawtooth REST client"""
+
+# pylint: disable=too-many-branches
 
 import logging
 from base64 import b64decode
 import pytest
 
 from rbac.common import addresser
-from rbac.common.sawtooth.client_sync import ClientSync
+from rbac.common.sawtooth import client
 from rbac.common.protobuf import proposal_state_pb2
 from rbac.common.protobuf import role_state_pb2
 from rbac.common.protobuf import task_state_pb2
 from rbac.common.protobuf import user_state_pb2
-from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.integration
 @pytest.mark.client_sync
-class TestRestClient(BatchAssertions):
-    def __init__(self, *args, **kwargs):
-        BatchAssertions.__init__(self, *args, **kwargs)
-        self.client = ClientSync()
+class TestRestClient(TestAssertions):
+    """Test the Sawtooth REST client"""
 
     @pytest.mark.state
     @pytest.mark.skip("too expensive if large chain, refactor elsewhere")
     def test_state(self):
+        """Grab the entire blockchain state and deserialize it"""
         subtree = addresser.family.namespace
-        for item in self.client.list_state(subtree=subtree)["data"]:
+        for item in client.list_state(subtree=subtree)["data"]:
             address_type = item["address_type"] = addresser.address_is(item["address"])
             if address_type == addresser.AddressSpace.USER:
                 content = user_state_pb2.UserContainer()

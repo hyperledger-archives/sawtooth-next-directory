@@ -32,7 +32,7 @@ from tests.transactions.common import SIGNATURE_PATTERN
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.unit
+@pytest.mark.library
 @pytest.mark.transaction_creation
 class TestUserTransactionCreation(unittest.TestCase):
     def create_user_transaction(self, name, username, metadata):

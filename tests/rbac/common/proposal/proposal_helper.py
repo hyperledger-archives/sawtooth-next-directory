@@ -12,3 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Proposal test helper"""
+# pylint: disable=no-member,too-few-public-methods,invalid-name
+
+import logging
+import random
+
+from rbac.common import rbac
+
+LOGGER = logging.getLogger(__name__)
+
+
+class ProposalTestHelper:
+    """Proposal test helper"""
+
+    def id(self):
+        """Get a test proposal_id (not created)"""
+        return rbac.addresser.proposal.unique_id()
+
+    def reason(self):
+        """Get a random reason"""
+        return "Because" + str(random.randint(10000, 100000))

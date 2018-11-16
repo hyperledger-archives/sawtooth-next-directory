@@ -12,25 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test Task Addresser"""
 import logging
 import pytest
 
 from rbac.common import addresser
-from rbac.common.addresser.task import TaskAddress
-from tests.rbac.common.addresser.address_assertions import AddressAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.addressing
-@pytest.mark.unit
-class TestTaskAddresser(AddressAssertions):
-    def test_import(self):
-        self.assertIsInstance(addresser.task, TaskAddress)
-        self.assertIsAddressClass(addresser.task)
+@pytest.mark.library
+class TestTaskAddresser(TestAssertions):
+    """Test Task Addresser"""
 
     def test_address(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         task_id = addresser.task.unique_id()
         task_address = addresser.task.address(object_id=task_id)
         self.assertIsAddress(task_address)
@@ -39,6 +37,7 @@ class TestTaskAddresser(AddressAssertions):
         )
 
     def test_address_deterministic(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         task_id1 = addresser.task.unique_id()
         task_address1 = addresser.task.address(object_id=task_id1)
         task_address2 = addresser.task.address(object_id=task_id1)
@@ -50,6 +49,7 @@ class TestTaskAddresser(AddressAssertions):
         )
 
     def test_address_random(self):
+        """Tests address makes a unique address given different inputs"""
         task_id1 = addresser.task.unique_id()
         task_id2 = addresser.task.unique_id()
         task_address1 = addresser.task.address(object_id=task_id1)
@@ -65,6 +65,7 @@ class TestTaskAddresser(AddressAssertions):
         )
 
     def test_address_static(self):
+        """Tests address makes the expected output given a specific input"""
         task_id = "99968acb8f1a48b3a4bc21e2cd252e67"
         expected_address = (
             "bac00100006666326a1713a905b26359fc8da21111ff00000000000000000000000000"

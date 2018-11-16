@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test the Sawtooth batch helper class"""
+
+# pylint: disable=no-member
 
 import logging
 import pytest
@@ -22,14 +25,16 @@ from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth import batcher
-from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.unit
+@pytest.mark.library
 @pytest.mark.batch
-class TestBatchClient(BatchAssertions):
+class TestBatchClient(TestAssertions):
+    """Test the Sawtooth batch helper class"""
+
     def get_test_inputs(self, message_type=RBACPayload.CREATE_USER):
         """Returns test data inputs for testing batcher functions"""
         if message_type == RBACPayload.CREATE_USER:
@@ -39,10 +44,10 @@ class TestBatchClient(BatchAssertions):
             inputs = [addresser.user.address(message.user_id)]
             outputs = inputs
             return message, message_type, inputs, outputs, signer
-        else:
-            raise Exception(
-                "batcher test doesn't support message_type: {}".format(message_type)
-            )
+
+        raise Exception(
+            "batcher test doesn't support message_type: {}".format(message_type)
+        )
 
     def get_test_payload(self):
         """Returns a test data payload for testing batcher functions"""
@@ -59,7 +64,6 @@ class TestBatchClient(BatchAssertions):
 
     def test_get_test_inputs(self):
         """Verifies the test data inputs function returns the expected test data"""
-        self.assertTrue(callable(self.get_test_inputs))
         message, message_type, inputs, outputs, signer = self.get_test_inputs()
         self.assertIsInstance(signer, Key)
         self.assertEqual(message_type, RBACPayload.CREATE_USER)
@@ -74,7 +78,6 @@ class TestBatchClient(BatchAssertions):
 
     def test_make_payload(self):
         """Test the make payload batch function"""
-        self.assertTrue(callable(batcher.make_payload))
         message, message_type, inputs, outputs, signer = self.get_test_inputs()
         payload = batcher.make_payload(
             message=message, message_type=message_type, inputs=inputs, outputs=outputs
@@ -90,14 +93,12 @@ class TestBatchClient(BatchAssertions):
 
     def test_get_test_payload(self):
         """Verifies the test data payload function returns the expected test data"""
-        self.assertTrue(callable(self.get_test_payload))
         payload, signer = self.get_test_payload()
         self.assertIsInstance(payload, RBACPayload)
         self.assertIsInstance(signer, Key)
 
     def test_make_transaction_header(self):
         """Test the make transaction header batch function"""
-        self.assertTrue(callable(batcher.make_transaction))
         payload, signer = self.get_test_payload()
 
         header, signature = batcher.make_transaction_header(
@@ -113,7 +114,6 @@ class TestBatchClient(BatchAssertions):
 
     def test_make_transaction(self):
         """Test the make transaction batch function"""
-        self.assertTrue(callable(batcher.make_transaction))
         payload, signer = self.get_test_payload()
 
         transaction = batcher.make_transaction(payload=payload, signer_keypair=signer)
@@ -141,8 +141,6 @@ class TestBatchClient(BatchAssertions):
 
     def test_batch_to_list(self):
         """Test the make batch to list batch function"""
-        self.assertTrue(callable(batcher.batch_to_list))
-        self.assertTrue(callable(batcher.make_batch))
         payload, signer = self.get_test_payload()
 
         transaction = batcher.make_transaction(payload=payload, signer_keypair=signer)
@@ -160,7 +158,6 @@ class TestBatchClient(BatchAssertions):
 
     def test_make_batch_list(self):
         """Test the make batch list batch function"""
-        self.assertTrue(callable(batcher.make_batch_list))
         payload, signer = self.get_test_payload()
 
         transaction = batcher.make_transaction(payload=payload, signer_keypair=signer)
@@ -176,7 +173,6 @@ class TestBatchClient(BatchAssertions):
 
     def test_make_batch_request(self):
         """Test the make batch request batch function"""
-        self.assertTrue(callable(batcher.make_batch_request))
         payload, signer = self.get_test_payload()
 
         transaction = batcher.make_transaction(payload=payload, signer_keypair=signer)
@@ -194,7 +190,6 @@ class TestBatchClient(BatchAssertions):
 
     def test_make(self):
         """Test the make batch function"""
-        self.assertTrue(callable(batcher.make_batch_request))
         payload, signer = self.get_test_payload()
 
         transaction, batch, batch_list, batch_request = batcher.make(

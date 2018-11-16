@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Common assertion helpers"""
+# pylint: disable=no-member,invalid-name
 
 import logging
 import re
@@ -22,8 +24,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CommonAssertions(TestCase):
-    def __init__(self, *args, **kwargs):
-        TestCase.__init__(self, *args, **kwargs)
+    """Common assertion helpers"""
 
     def assertIsString(self, value):
         """Value is a non-zero length string"""
@@ -42,20 +43,25 @@ class CommonAssertions(TestCase):
         self.assertTrue(HEX_PATTERN.match(value))
 
     def assertHasProp(self, item, name):
+        """Tests an object has the named property, and that
+        retrieving that property does not throw an exception"""
         self.assertIsInstance(item, object)
         self.assertIsInstance(name, str)
         self.assertTrue(
             hasattr(item, name), "Expected {}.{} to exist".format(item, name)
         )
-        prop = getattr(item, name)
+        getattr(item, name)
 
     def assertHasProps(self, item, names):
+        """Tests an object has the named properties, and that
+        retrieving those properties does not throw an exception"""
         self.assertIsInstance(item, object)
         self.assertIsInstance(names, list)
         for name in names:
             self.assertHasProp(item, name)
 
     def assertHasMethod(self, item, name):
+        """Tests an object has the named method"""
         self.assertIsInstance(item, object)
         self.assertIsInstance(name, str)
         self.assertTrue(
@@ -67,6 +73,7 @@ class CommonAssertions(TestCase):
         )
 
     def assertHasMethods(self, item, names):
+        """Tests an object has all the named methods"""
         self.assertIsInstance(item, object)
         self.assertIsInstance(names, list)
         for name in names:

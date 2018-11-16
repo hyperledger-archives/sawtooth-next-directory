@@ -13,7 +13,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import sys
 import time
 import logging
 from uuid import uuid4
@@ -24,9 +23,8 @@ import sawtooth_signing
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 from rbac.transaction_creation.common import Key
 
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 BATCHER_PRIVATE_KEY = Secp256k1PrivateKey.new_random().as_hex()
 BATCHER_KEY = Key(BATCHER_PRIVATE_KEY)
@@ -45,11 +43,11 @@ class IntegrationTestHelper:
 
         def __check_containers(self):
             if not self.__available:
-                LOGGER.debug("Waiting for containers to start")
+                LOGGER.info("Waiting for containers to start")
                 __wait_for_rest_apis__(["rest-api:8008"])
                 self.__available = True
             else:
-                LOGGER.debug("Containers already started. Proceeding...")
+                LOGGER.info("Containers already started. Proceeding...")
 
     __instance = None
 
@@ -117,12 +115,12 @@ def __wait_until_status__(url, status_code=200, tries=5):
             if err.code == status_code:
                 return
 
-            LOGGER.debug("failed to read url: %s", str(err))
+            LOGGER.warning("failed to read url: %s", str(err))
         except URLError as err:
-            LOGGER.debug("failed to read url: %s", str(err))
+            LOGGER.warning("failed to read url: %s", str(err))
 
         sleep_time = (tries - attempts + 1) * 2
-        LOGGER.debug("Retrying in %s secs", sleep_time)
+        LOGGER.warning("Retrying in %s secs", sleep_time)
         time.sleep(sleep_time)
 
         attempts -= 1

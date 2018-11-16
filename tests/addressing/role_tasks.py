@@ -23,7 +23,7 @@ from rbac.legacy.addresser import AddressSpace
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.unit
+@pytest.mark.library
 @pytest.mark.addressing
 class TestRoleTasksAddresser(unittest.TestCase):
     def test_determine_role_task_addr(self):

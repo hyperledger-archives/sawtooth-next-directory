@@ -12,26 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test SysAdmin Addresser"""
 import logging
 import pytest
 
 from rbac.common import addresser
-from rbac.common.addresser.sysadmin import SysAdminAddress
-from tests.rbac.common.addresser.address_assertions import AddressAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.addressing
-@pytest.mark.unit
-class TestSysAdminAddresser(AddressAssertions):
-    def test_import(self):
-        self.assertIsInstance(addresser.sysadmin, SysAdminAddress)
-        self.assertIsAddressClass(addresser.sysadmin)
+@pytest.mark.library
+class TestSysAdminAddresser(TestAssertions):
+    """Test SysAdmin Addresser"""
 
     def test_address(self):
-        sysadmin_id = addresser.sysadmin.unique_id()
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         sysadmin_address = addresser.sysadmin.address()
         self.assertIsAddress(sysadmin_address)
         self.assertEqual(
@@ -40,6 +37,7 @@ class TestSysAdminAddresser(AddressAssertions):
         )
 
     def test_address_static(self):
+        """Tests address makes the expected output given a specific input"""
         expected_address = (
             "bac001000022220000000000000000000000001111ff00000000000000000000000000"
         )

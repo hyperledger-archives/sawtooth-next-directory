@@ -12,12 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test Assertions"""
+from tests.rbac.common.assertions.batch import BatchAssertions
 
-from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
-from tests.rbac.common.user.user_helper import UserTestHelper
 
+class TestAssertions(BatchAssertions):
+    """Test Assertions"""
 
-class TestHelper(BatchAssertions):
     def __init__(self, *args, **kwargs):
+        """Common test assertion library
+        Sub libraries are chained together,
+        this will inherit from the last of the chain"""
         BatchAssertions.__init__(self, *args, **kwargs)
-        self.user = UserTestHelper()
+
+
+__all__ = ["TestAssertions"]

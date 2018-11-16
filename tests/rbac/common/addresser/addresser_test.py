@@ -12,48 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test Addresser"""
 import logging
 import pytest
 
 from rbac.common import addresser
-from rbac.common.addresser.address_space import AddressSpace
-from tests.rbac.common.addresser.address_assertions import AddressAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.addressing
-@pytest.mark.unit
-class TestAddresser(AddressAssertions):
-    def test_import(self):
-        self.assertEqual(addresser.AddressSpace, AddressSpace)
+@pytest.mark.library
+class TestAddresser(TestAssertions):
+    """Test Addresser"""
+
+    def test_family_props(self):
+        """Test the addresser family has the expected properties"""
         self.assertIsInstance(addresser.family.name, str)
         self.assertIsInstance(addresser.family.version, str)
         self.assertIsInstance(addresser.family.pattern.pattern, str)
-        self.assertTrue(callable(addresser.family.is_family))
-        self.assertTrue(callable(addresser.address_is))
 
     def test_unique_id(self):
-        self.assertTrue(callable(addresser.role.unique_id))
-
+        """Test unique_id returns unique identifiers"""
         unique_id1 = addresser.role.unique_id()
         unique_id2 = addresser.role.unique_id()
 
-        self.assertIsInstance(unique_id1, str)
-        self.assertIsInstance(unique_id2, str)
-        self.assertEqual(len(unique_id1), 24)
-        self.assertEqual(len(unique_id2), 24)
+        self.assertIsIdentifier(unique_id1)
+        self.assertIsIdentifier(unique_id2)
         self.assertNotEqual(unique_id1, unique_id2)
 
     def test_hash(self):
-        self.assertTrue(callable(addresser.role.hash))
-
+        """Test hash returns unique identifiers"""
         hash1 = addresser.role.hash(addresser.role.unique_id())
         hash2 = addresser.role.hash(addresser.role.unique_id())
 
-        self.assertIsInstance(hash1, str)
-        self.assertIsInstance(hash2, str)
-        self.assertEqual(len(hash1), 24)
-        self.assertEqual(len(hash2), 24)
+        self.assertIsIdentifier(hash1)
+        self.assertIsIdentifier(hash2)
         self.assertNotEqual(hash1, hash2)

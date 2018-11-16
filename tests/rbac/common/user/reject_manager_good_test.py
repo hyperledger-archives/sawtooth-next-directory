@@ -12,48 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Reject Manager Test"""
+# pylint: disable=no-member
 
 import logging
 import pytest
 
+from rbac.common import rbac
 from rbac.common import protobuf
-from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
-from rbac.common.user.user_manager import UserManager
-from rbac.common.user.manager import Manager
-from rbac.common.user.reject_manager import RejectUpdateUserManager
-from tests.rbac.common.manager.test_base import TestBase
+from tests.rbac.common import helper
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.user
-class RejectManagerTest(TestBase):
-    def __init__(self, *args, **kwargs):
-        TestBase.__init__(self, *args, **kwargs)
+class RejectManagerTest(TestAssertions):
+    """Reject Manager Test"""
 
-    @pytest.mark.unit
-    def test_interface(self):
-        """Verify the expected interface"""
-        self.assertIsInstance(self.rbac.user, UserManager)
-        self.assertIsInstance(self.rbac.user.manager, Manager)
-        self.assertIsInstance(self.rbac.user.manager.reject, RejectUpdateUserManager)
-        self.assertTrue(callable(self.rbac.user.manager.reject.address))
-        self.assertTrue(callable(self.rbac.user.manager.reject.make))
-        self.assertTrue(callable(self.rbac.user.manager.reject.make_addresses))
-        self.assertTrue(callable(self.rbac.user.manager.reject.make_payload))
-        self.assertTrue(callable(self.rbac.user.manager.reject.create))
-        self.assertTrue(callable(self.rbac.user.manager.reject.send))
-        self.assertTrue(callable(self.rbac.user.manager.reject.get))
-
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make(self):
         """Test making the message"""
-        self.assertTrue(callable(self.rbac.user.manager.reject.make))
-        user_id = self.test.user.id()
-        manager_id = self.test.user.id()
-        reason = self.test.user.manager.propose.reason()
-        proposal_id = self.test.user.manager.propose.id()
-        message = self.rbac.user.manager.reject.make(
+        user_id = helper.user.id()
+        manager_id = helper.user.id()
+        reason = helper.user.manager.propose.reason()
+        proposal_id = helper.user.manager.propose.id()
+        message = rbac.user.manager.reject.make(
             proposal_id=proposal_id,
             user_id=user_id,
             manager_id=manager_id,
@@ -67,50 +51,48 @@ class RejectManagerTest(TestBase):
         self.assertEqual(message.manager_id, manager_id)
         self.assertEqual(message.reason, reason)
 
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make_addresses(self):
         """Test making a propose manager message"""
-        self.assertTrue(callable(self.rbac.user.manager.reject.make_addresses))
-        user_id = self.test.user.id()
-        manager_id = self.test.user.id()
-        reason = self.test.user.manager.propose.reason()
-        proposal_id = self.test.user.manager.propose.id()
-        proposal_address = self.rbac.user.manager.reject.address(
+        user_id = helper.user.id()
+        manager_id = helper.user.id()
+        reason = helper.user.manager.propose.reason()
+        proposal_id = helper.user.manager.propose.id()
+        proposal_address = rbac.user.manager.reject.address(
             object_id=user_id, target_id=manager_id
         )
-        message = self.rbac.user.manager.reject.make(
+        message = rbac.user.manager.reject.make(
             proposal_id=proposal_id,
             user_id=user_id,
             manager_id=manager_id,
             reason=reason,
         )
 
-        inputs, outputs = self.rbac.user.manager.reject.make_addresses(message=message)
+        inputs, outputs = rbac.user.manager.reject.make_addresses(message=message)
 
         self.assertEqual(inputs, [proposal_address])
         self.assertEqual(outputs, [proposal_address])
 
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make_payload(self):
         """Test making a propose manager message"""
-        self.assertTrue(callable(self.rbac.user.manager.reject.make_payload))
-        user_id = self.test.user.id()
-        manager_id = self.test.user.id()
-        reason = self.test.user.manager.propose.reason()
-        proposal_id = self.test.user.manager.propose.id()
-        proposal_address = self.rbac.user.manager.reject.address(
+        user_id = helper.user.id()
+        manager_id = helper.user.id()
+        reason = helper.user.manager.propose.reason()
+        proposal_id = helper.user.manager.propose.id()
+        proposal_address = rbac.user.manager.reject.address(
             object_id=user_id, target_id=manager_id
         )
-        message = self.rbac.user.manager.reject.make(
+        message = rbac.user.manager.reject.make(
             proposal_id=proposal_id,
             user_id=user_id,
             manager_id=manager_id,
             reason=reason,
         )
 
-        payload = self.rbac.user.manager.reject.make_payload(message=message)
+        payload = rbac.user.manager.reject.make_payload(message=message)
 
-        self.assertIsInstance(payload, RBACPayload)
+        self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
         inputs = list(payload.inputs)
         outputs = list(payload.outputs)
         self.assertIsInstance(inputs, list)
@@ -122,19 +104,16 @@ class RejectManagerTest(TestBase):
     @pytest.mark.integration
     def test_create(self):
         """Test rejecting a manager proposal"""
-        self.assertTrue(callable(self.rbac.user.manager.reject.create))
-        proposal, user, user_key, manager, manager_key = (
-            self.test.user.manager.propose.create()
-        )
+        proposal, _, _, _, manager_key = helper.user.manager.propose.create()
 
-        reason = self.test.user.manager.propose.reason()
-        message = self.rbac.user.manager.reject.make(
+        reason = helper.user.manager.propose.reason()
+        message = rbac.user.manager.reject.make(
             proposal_id=proposal.proposal_id,
             user_id=proposal.object_id,
             manager_id=proposal.target_id,
             reason=reason,
         )
-        reject, status = self.rbac.user.manager.reject.create(
+        reject, status = rbac.user.manager.reject.create(
             signer_keypair=manager_key,
             message=message,
             object_id=proposal.object_id,

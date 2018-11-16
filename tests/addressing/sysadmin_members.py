@@ -23,7 +23,7 @@ from rbac.legacy.addresser import AddressSpace
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.unit
+@pytest.mark.library
 @pytest.mark.addressing
 class TestSysAdminMembersAddresser(unittest.TestCase):
     def test_det_sysadmin_member_addr(self):

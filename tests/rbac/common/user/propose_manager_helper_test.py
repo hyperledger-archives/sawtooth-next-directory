@@ -12,53 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test Propose Manager Test Helper"""
+# pylint: disable=no-member
 
 import logging
 import pytest
 
-from rbac.common.crypto.keys import Key
 from rbac.common import protobuf
-from tests.rbac.common.manager.test_base import TestBase
-from tests.rbac.common.manager.helper import TestHelper
-from tests.rbac.common.user.user_helper import UserTestHelper
-from tests.rbac.common.user.propose_manager_helper import ProposeManagerTestHelper
+from rbac.common.crypto.keys import Key
+from tests.rbac.common import helper
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.user
-class ProposeManagerTestHelperTest(TestBase):
-    def __init__(self, *args, **kwargs):
-        TestBase.__init__(self, *args, **kwargs)
+class ProposeManagerTestHelperTest(TestAssertions):
+    """Test Propose Manager Test Helper"""
 
-    @pytest.mark.unit
-    def test_helper_interface(self):
-        """Verify the expected user test helper interface"""
-        self.assertIsInstance(self.test, TestHelper)
-        self.assertIsInstance(self.test.user, UserTestHelper)
-        self.assertIsInstance(self.test.user.manager.propose, ProposeManagerTestHelper)
-        self.assertTrue(callable(self.test.user.manager.propose.id))
-        self.assertTrue(callable(self.test.user.manager.propose.reason))
-        self.assertTrue(callable(self.test.user.manager.propose.create))
-
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_id(self):
-        """Test get a random proposal id (guid)"""
-        self.assertTrue(callable(self.test.user.manager.propose.id))
-        id1 = self.test.user.manager.propose.id()
-        id2 = self.test.user.manager.propose.id()
+        """Test get a random proposal id"""
+        id1 = helper.user.manager.propose.id()
+        id2 = helper.user.manager.propose.id()
         self.assertIsInstance(id1, str)
         self.assertIsInstance(id2, str)
-        self.assertEqual(len(id1), 32)
-        self.assertEqual(len(id2), 32)
+        self.assertEqual(len(id1), 24)
+        self.assertEqual(len(id2), 24)
         self.assertNotEqual(id1, id2)
 
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_reason(self):
         """Test get a random reason"""
-        self.assertTrue(callable(self.test.user.manager.propose.reason))
-        reason1 = self.test.user.manager.propose.reason()
-        reason2 = self.test.user.manager.propose.reason()
+        reason1 = helper.user.manager.propose.reason()
+        reason2 = helper.user.manager.propose.reason()
         self.assertIsInstance(reason1, str)
         self.assertIsInstance(reason2, str)
         self.assertGreater(len(reason1), 4)
@@ -68,9 +55,8 @@ class ProposeManagerTestHelperTest(TestBase):
     @pytest.mark.integration
     def test_create(self):
         """Test creating a propose manager proposal for a user that has no manager"""
-        self.assertTrue(callable(self.test.user.manager.propose.create))
         proposal, user, user_key, manager, manager_key = (
-            self.test.user.manager.propose.create()
+            helper.user.manager.propose.create()
         )
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
         self.assertIsInstance(user, protobuf.user_state_pb2.User)
