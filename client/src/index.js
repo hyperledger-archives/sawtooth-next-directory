@@ -26,7 +26,7 @@ import createCustomStore from './createCustomStore';
 
 
 import './index.css';
-import './themes/semantic.min.css';
+import './semantic/semantic.css';
 
 
 const store = createCustomStore();

@@ -66,7 +66,7 @@ export default class PeopleList extends Component {
 
   /**
    *
-   * Proposal item is checked / unchedked based on its presence in
+   * Proposal item is checked / unchecked based on its presence in
    * selectedProposals state array
    *
    * @param proposal Selected proposal
@@ -82,7 +82,7 @@ export default class PeopleList extends Component {
 
   /**
    *
-   * User item is checked / unchedked based on its presence in
+   * User item is checked / unchecked based on its presence in
    * selectedUsers state array
    *
    * @param userId User ID of selected user

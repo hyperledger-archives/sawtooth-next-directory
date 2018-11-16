@@ -34,6 +34,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:semantic": "cd src/semantic && gulp build",
+    "watch:semantic": "cd src/semantic && gulp",
     "lint": "eslint --ext=js --ext==jsx .",
     "test": "react-scripts test --env=jsdom --coverage",
     "eject": "react-scripts eject"
@@ -44,7 +46,8 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "jest-localstorage-mock": "^2.3.0"
+    "jest-localstorage-mock": "^2.3.0",
+    "semui-onyx": "^2.4.2-onyx.7"
   },
   "browserslist": [
     ">0.2%",

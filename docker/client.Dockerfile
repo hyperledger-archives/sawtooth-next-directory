@@ -17,11 +17,12 @@
 FROM node:8
 
 WORKDIR /tmp
-COPY ./client/package*.json ./
-RUN npm install --no-optional
+COPY ./client/package.json ./client/yarn.lock ./client/.yarnrc ./
+RUN yarn
 
 WORKDIR /client
 RUN cp -a /tmp/node_modules .
 COPY ./client .
+RUN yarn build:semantic
 
 CMD ["./entrypoint.sh"]

@@ -1,0 +1,17 @@
+/*******************************
+         Site Overrides
+*******************************/
+
+.floated.segment.compact {
+    border-radius: 13px;
+    margin-bottom: 0;
+    padding: 9px 14px;
+}
+
+.floated.segment.compact.left {
+    border-bottom-left-radius: 0;
+}
+
+.floated.segment.compact.right {
+   border-bottom-right-radius: 0;
+}
