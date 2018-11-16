@@ -15,10 +15,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import os
-import sys
-import logging
 import argparse
+import logging
+import sys
+import os
+
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError
 
@@ -26,17 +27,9 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.INFO
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-
-def get_env_with_fallback(name, default):
-    value = os.getenv(name)
-    if value is None or value is "":
-        return default
-    return value
-
-
-DB_HOST = get_env_with_fallback('DB_HOST', 'localhost')
-DB_PORT = get_env_with_fallback('DB_PORT', '28015')
-DB_NAME = get_env_with_fallback('DB_NAME', 'rbac')
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '28015')
+DB_NAME = os.getenv('DB_NAME', 'rbac')
 
 
 def parse_args(args):

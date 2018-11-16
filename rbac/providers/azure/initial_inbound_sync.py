@@ -13,10 +13,11 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import logging
 import os
 import time
-import logging
 from datetime import datetime as dt
+
 import requests
 import rethinkdb as r
 
@@ -27,30 +28,17 @@ from rbac.providers.common.inbound_filters import (
 )
 from rbac.providers.common.common import save_sync_time, check_for_sync
 
-
-DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
 
-
-def getenv(name, default):
-    """Get the variable from environment of from default list"""
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
-
-
-logging.basicConfig(level=logging.INFO)
-# LOGGER levels: info, debug, warning, exception, error
-LOGGER = logging.getLogger(__name__)
-
-DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
+DB_HOST = os.getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
+DB_PORT = os.getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
+DB_NAME = os.getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
 GRAPH_URL = "https://graph.microsoft.com/beta/"
-TENANT_ID = os.environ.get("TENANT_ID")
+
+TENANT_ID = os.getenv("TENANT_ID")
 AUTH = AadAuth()
 
 DELAY = 1

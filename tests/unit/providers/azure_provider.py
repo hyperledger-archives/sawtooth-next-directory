@@ -19,7 +19,7 @@ from unittest import mock
 import pytest
 
 from rbac.providers.azure.aad_auth import AadAuth
-from rbac.providers.azure.initial_inbound_sync import get_ids_from_list_of_dicts, getenv
+from rbac.providers.azure.initial_inbound_sync import get_ids_from_list_of_dicts
 from rbac.providers.common.inbound_filters import (
     inbound_group_filter,
     inbound_user_filter,
@@ -40,18 +40,6 @@ def test_get_ids_from_list_of_dicts(input_list, expected):
     """Test to see if getting ids from a list of dicts returns list of ids"""
     result = get_ids_from_list_of_dicts(input_list)
     assert result == expected
-
-
-def test_get_env_valid():
-    """Test that get_env gets the correct variable"""
-    result = getenv("TENANT_ID", "rain")
-    assert result == "tenant_id"
-
-
-def test_get_env_default():
-    """Test that get env uses the default."""
-    result = getenv("POTATO", "rain")
-    assert result == "rain"
 
 
 def test_time_left_true():
