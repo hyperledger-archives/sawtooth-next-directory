@@ -38,6 +38,11 @@ EOM
 
 }
 
+if ! [ -e .env ] 
+then
+    echo ".env file not found. Creating one from .env.example ..."
+    cp ./.env.example ./.env
+fi
 
 info() {
     echo -e "\033[0;36m\n[--- $1 ---]\n\033[0m"
