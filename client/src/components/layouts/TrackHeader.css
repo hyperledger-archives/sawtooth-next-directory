@@ -14,12 +14,18 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-requester-tracker-header-container {
+#next-track-header-container {
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+}
+
+#next-track-header-waves-container {
   position: fixed;
   width: 100%;
 }
 
-#next-requester-track-header {
+#next-track-header {
   align-items: center;
   background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
   color: var(--header-color);

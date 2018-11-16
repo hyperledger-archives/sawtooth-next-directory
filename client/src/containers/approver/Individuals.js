@@ -16,27 +16,33 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid, Header } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
+import './Individuals.css';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
+import IndividualsNav from '../../components/nav/IndividualsNav';
 import PeopleList from '../../components/layouts/proposals/PeopleList';
-
-
-import './Individuals.css';
+import { selectRoles, selectUser } from './IndividualsHelper';
 
 
 /**
  *
- * @class Individuals
- * Individuals component
+ * @class       Individuals
+ * @description Individuals component
+ *
  *
  */
 class Individuals extends Component {
 
-  state = { selectedRoles: [] }
+  state = {
+    selectedRoles:      [],
+    selectedUsers:      [],
+    selectedProposals:  [],
+    activeIndex:        0,
+  };
 
 
   componentDidMount () {
@@ -45,68 +51,90 @@ class Individuals extends Component {
   }
 
 
+  setFlow = (index) => {
+    this.setState({ activeIndex: index });
+  }
+
+
   /**
    *
-   * Sync checkbox selections by role
-   * TODO: Sync across people
+   * Handle proposal change event
+   *
+   * When a proposal is checked or unchecked, select or deselect
+   * the parent user, taking into account the currently
+   * checked sibling proposals.
    *
    *
    */
   handleChange = (event, data) => {
-    const { selectedRoles } = this.state;
+    const {
+      selectedRoles,
+      selectedProposals,
+      selectedUsers } = this.state;
 
-    let index = null;
-    let rolesCopy = [...selectedRoles];
+    const { roles, proposals } = selectRoles(
+      data.checked,
+      data.proposals,
+      selectedProposals,
+      selectedRoles
+    ).next().value;
 
-    if (data.checked) {
-      index = rolesCopy.indexOf(data.role);
-      if (index === -1) {
-        rolesCopy = [...rolesCopy, data.role];
-      }
-    }
+    const { users } = selectUser(
+      data.checked,
+      data.user,
+      proposals,
+      selectedUsers
+    ).next().value;
 
-    if (!data.checked) {
-      index = rolesCopy.indexOf(data.role);
-      if (index !== -1) {
-        rolesCopy.splice(index, 1);
-      }
-    }
-
-    this.setState({ selectedRoles: rolesCopy });
+    this.setState({
+      selectedRoles:      roles,
+      selectedProposals:  proposals,
+      selectedUsers:      users,
+    });
   }
 
 
   render () {
     const { openProposals } = this.props;
-    const { selectedRoles } = this.state;
+    const {
+      activeIndex,
+      selectedProposals,
+      selectedRoles,
+      selectedUsers } = this.state;
 
     return (
       <Grid id='next-approver-grid'>
 
-        <Grid.Column
-          id='next-approver-grid-track-column'
-          width={10}>
-
+        <Grid.Column id='next-approver-grid-track-column' width={11}>
           <TrackHeader title='Individuals' {...this.props}/>
           <div id='next-approver-individuals-content'>
-            { openProposals && openProposals.length !== 0 ?
-              <PeopleList
-                selectedRoles={selectedRoles}
-                handleChange={this.handleChange}
-                {...this.props}/> :
-              <Header as='h2' textAlign='center' disabled>
-                <Header.Content>No items</Header.Content>
-              </Header>
+            <IndividualsNav
+              activeIndex={activeIndex}
+              setFlow={this.setFlow}/>
+            { openProposals && openProposals.length !== 0 &&
+              <div>
+                { activeIndex === 0 &&
+                  <div>Roles</div>
+                }
+                { activeIndex === 1 &&
+                  <PeopleList
+                    selectedProposals={selectedProposals}
+                    selectedUsers={selectedUsers}
+                    handleChange={this.handleChange}
+                    {...this.props}/>
+                }
+              </div>
             }
           </div>
         </Grid.Column>
 
         <Grid.Column
           id='next-approver-grid-converse-column'
-          width={6}>
+          width={5}>
           <Chat
             type='1'
             selectedRoles={selectedRoles}
+            selectedUsers={selectedUsers}
             handleChange={this.handleChange}
             {...this.props}/>
         </Grid.Column>

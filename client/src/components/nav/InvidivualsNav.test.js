@@ -15,26 +15,23 @@ limitations under the License.
 
 
 import React from 'react';
+
+
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import Frequent from './Frequent';
-import createCustomStore from '../../createCustomStore';
+import IndividualsNav from './IndividualsNav';
 
 
-const store = createCustomStore();
+describe('IndividualsNav component', () => {
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
+    ReactDOM.render(
+      <BrowserRouter><IndividualsNav/></BrowserRouter>, div
+    );
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><Frequent/></BrowserRouter>
-    </Provider>, div
-  );
-
-  ReactDOM.unmountComponentAtNode(div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
 });

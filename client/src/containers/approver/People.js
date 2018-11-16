@@ -40,12 +40,12 @@ class People extends Component {
 
         <Grid.Column
           id='next-approver-grid-track-column'
-          width={10}>
+          width={11}>
           <TrackHeader title='People' {...this.props}/>
         </Grid.Column>
         <Grid.Column
           id='next-approver-grid-converse-column'
-          width={6}>
+          width={5}>
           <Chat {...this.props}/>
         </Grid.Column>
 

@@ -33,27 +33,75 @@ export default class PeopleList extends Component {
    *
    * Hydrate data
    *
+   *
    */
   componentDidMount () {
-    const { getUsers, openProposalsByUser } = this.props;
+    const { getUsers, openProposalsByUser, users } = this.props;
 
     if (!openProposalsByUser) return;
-    getUsers(Object.keys(openProposalsByUser));
+    let collection;
+    const newUsers = Object.keys(openProposalsByUser);
+
+    users ?
+      collection = newUsers.filter(newUser =>
+        !users.find(user => newUser === user.id)) :
+      collection = newUsers;
+
+    getUsers(collection);
+  }
+
+
+  componentWillReceiveProps (newProps) {
+    const { getUsers, openProposalsByUser } = this.props;
+
+    const newUsers = Object.keys(newProps.openProposalsByUser);
+    const oldUsers = Object.keys(openProposalsByUser);
+
+    if (newUsers.length > oldUsers.length) {
+      const diff = newUsers.filter(user => !oldUsers.includes(user));
+      getUsers(diff);
+    }
+  }
+
+
+  /**
+   *
+   * Proposal item is checked / unchedked based on its presence in
+   * selectedProposals state array
+   *
+   * @param proposal Selected proposal
+   * @param userId   User ID of selected proposal
+   *
+   *
+   */
+  isRoleChecked = (proposal, userId) => {
+    const { selectedProposals } = this.props;
+    return selectedProposals.indexOf(proposal.id) !== -1;
+  }
+
+
+  /**
+   *
+   * User item is checked / unchedked based on its presence in
+   * selectedUsers state array
+   *
+   * @param userId User ID of selected user
+   *
+   *
+   */
+  isUserChecked = (userId) => {
+    const { selectedUsers } = this.props;
+    return selectedUsers.indexOf(userId) !== -1;
   }
 
 
   roleName = (roleId) => {
     const { roleFromId } = this.props;
-    const role = roleFromId(roleId);
 
+    const role = roleFromId(roleId);
     return role && role.name;
   };
 
-
-  isChecked = (roleId) => {
-    const { selectedRoles } = this.props;
-    return selectedRoles.indexOf(roleId) !== -1;
-  }
 
 
   /**
@@ -65,17 +113,18 @@ export default class PeopleList extends Component {
    *
    *
    */
-  renderUserProposals (userId) {
-    const { handleChange, openProposalsByUser,  } = this.props;
+  renderUserProposals (userId, proposals) {
+    const { handleChange } = this.props;
 
     return (
-      openProposalsByUser[userId].map((proposal) => (
-        <List.Item key={proposal.object}>
+      proposals.map((proposal) => (
+        <List.Item key={proposal.id}>
           <List.Header>
             <span className='next-people-list-proposal'>
               <Checkbox
-                checked={this.isChecked(proposal.object)}
-                role={proposal.object}
+                checked={this.isRoleChecked(proposal, userId)}
+                proposals={[proposal]}
+                user={userId}
                 label={this.roleName(proposal.object)}
                 onChange={handleChange}/>
             </span>
@@ -97,10 +146,13 @@ export default class PeopleList extends Component {
    *
    */
   renderUserItem (userId) {
-    const { users } = this.props;
+    const { handleChange, openProposalsByUser, users } = this.props;
 
     if (!users) return null;
+
     const user = users.find((user) => user.id === userId);
+    const proposals = openProposalsByUser[userId]
+      .map(proposal => proposal);
 
     return (
       <div className='next-people-list-item' key={userId}>
@@ -108,7 +160,12 @@ export default class PeopleList extends Component {
           <List.Header>
             { user && user.name &&
               <span className='next-people-list-name'>
-                <Checkbox label={user.name}/>
+                <Checkbox
+                  checked={this.isUserChecked(userId)}
+                  user={userId}
+                  proposals={proposals}
+                  label={user.name}
+                  onChange={handleChange}/>
               </span>
             }
             { user && user.email &&
@@ -119,7 +176,7 @@ export default class PeopleList extends Component {
             <Icon name='info circle' color='grey'/>
           </List.Header>
           <List.List>
-            { this.renderUserProposals(userId) }
+            { this.renderUserProposals(userId, proposals) }
           </List.List>
         </List.Item>
       </div>

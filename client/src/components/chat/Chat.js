@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Checkbox, Segment } from 'semantic-ui-react';
+import { Image, Segment } from 'semantic-ui-react';
 
 
 import ChatForm from '../forms/ChatForm';
@@ -76,7 +76,11 @@ export default class Chat extends Component {
 
 
   render () {
-    const { handleChange, messages, selectedRoles, type } = this.props;
+    const {
+      messages,
+      selectedRoles,
+      selectedUsers,
+      type } = this.props;
 
     // ! Temporary
     const actions = type ? chatApprover.actions :
@@ -84,15 +88,24 @@ export default class Chat extends Component {
 
     return (
       <div id='next-chat-container'>
+        {
+          selectedUsers &&
+          <div id='next-chat-users-selection-container'>
+          { selectedUsers.map(user => (
+            <Image key={user} src='http://i.pravatar.cc/300' avatar/>
+          )) }
+          </div>
+        }
         { selectedRoles &&
-          <div id='next-chat-selection-container'>
-          { selectedRoles.map((role) => (
+          <div id='next-chat-roles-selection-container'>
+          { selectedRoles.map(role => (
             <Segment key={role}>
-              <Checkbox
+              { this.roleName(role) }
+              {/* <Checkbox
                 checked={!!role}
                 role={role}
                 label={this.roleName(role)}
-                onChange={handleChange}/>
+                onChange={handleProposalChange}/> */}
             </Segment>
           )) }
           </div>
