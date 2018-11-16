@@ -12,26 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Create User Test Helper"""
+# pylint: disable=no-member
 
 import logging
 import random
 
-from rbac.common.crypto.keys import Key
+from rbac.common import rbac
 from rbac.common import protobuf
-from rbac.common.manager.rbac_manager import RBACManager
-from tests.rbac.common.sawtooth.batch_assertions import BatchAssertions
+from rbac.common.crypto.keys import Key
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
-class CreateUserTestHelper(BatchAssertions):
-    def __init__(self):
-        BatchAssertions.__init__(self)
-        self.rbac = RBACManager()
+class CreateUserTestHelper(TestAssertions):
+    """Create User Test Helper"""
 
     def id(self):
         """Get a test user_id (not created)"""
         return Key().public_key
+
+    def key(self):
+        """Get a test keypair (not created)"""
+        return Key()
 
     def name(self):
         """Get a random name"""
@@ -47,9 +51,8 @@ class CreateUserTestHelper(BatchAssertions):
 
     def message(self):
         """Get a test data CreateUser message with a new keypair"""
-        self.assertTrue(callable(self.rbac.user.make_with_key))
         name = self.name()
-        user, keypair = self.rbac.user.make_with_key(name=name)
+        user, keypair = rbac.user.make_with_key(name=name)
         self.assertIsInstance(user, protobuf.user_transaction_pb2.CreateUser)
         self.assertIsInstance(keypair, Key)
         self.assertEqual(user.user_id, keypair.public_key)
@@ -59,7 +62,7 @@ class CreateUserTestHelper(BatchAssertions):
     def message_with_manager(self):
         """Get a test data CreateUser message for user and manager"""
         manager, manager_key = self.message()
-        user, user_key = self.rbac.user.make_with_key(
+        user, user_key = rbac.user.make_with_key(
             name=self.name(), manager_id=manager.user_id
         )
         self.assertEqual(manager.user_id, user.manager_id)
@@ -67,10 +70,9 @@ class CreateUserTestHelper(BatchAssertions):
 
     def create(self):
         """Create a test user"""
-        self.assertTrue(callable(self.rbac.user.create))
         message, keypair = self.message()
 
-        user, status = self.rbac.user.create(
+        user, status = rbac.user.create(
             signer_keypair=keypair, message=message, object_id=message.user_id
         )
         self.assertStatusSuccess(status)
@@ -79,13 +81,12 @@ class CreateUserTestHelper(BatchAssertions):
 
     def create_with_manager(self):
         """Create a test user with manager"""
-        self.assertTrue(callable(self.rbac.user.create))
         manager, manager_key = self.create()
 
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        user, status = self.rbac.user.create(
+        user, status = rbac.user.create(
             signer_keypair=manager_key, message=message, object_id=message.user_id
         )
         self.assertStatusSuccess(status)
@@ -95,13 +96,12 @@ class CreateUserTestHelper(BatchAssertions):
 
     def create_with_grand_manager(self):
         """Create a test user with manager and their manager"""
-        self.assertTrue(callable(self.rbac.user.create))
         grandmgr, grandmgr_key = self.create()
 
         message, manager_key = self.message()
         message.manager_id = grandmgr.user_id
 
-        manager, status = self.rbac.user.create(
+        manager, status = rbac.user.create(
             signer_keypair=grandmgr_key, message=message, object_id=message.user_id
         )
         self.assertStatusSuccess(status)
@@ -111,7 +111,7 @@ class CreateUserTestHelper(BatchAssertions):
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        user, status = self.rbac.user.create(
+        user, status = rbac.user.create(
             signer_keypair=manager_key, message=message, object_id=message.user_id
         )
         self.assertStatusSuccess(status)

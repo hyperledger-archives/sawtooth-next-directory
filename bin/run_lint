@@ -53,6 +53,7 @@ do
     case "$var" in
     "legacy"               ) lint rbac/legacy || ret_val=1;;
     "common"               ) strict_lint rbac/common || ret_val=1;;
+    "common/tests"         ) strict_lint tests/rbac/common || ret_val=1;;
     "ledger_sync"          ) lint rbac/ledger_sync || ret_val=1;;
     "processor"            ) lint rbac/processor || ret_val=1;;
     "providers"            ) lint rbac/providers || ret_val=1;;

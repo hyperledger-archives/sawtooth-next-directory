@@ -12,26 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test User Addresser"""
 import logging
 import pytest
 
 from rbac.common import addresser
-from rbac.common.addresser.user import UserAddress
-from tests.rbac.common.addresser.address_assertions import AddressAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.wip
 @pytest.mark.addressing
-@pytest.mark.unit
-class TestUserAddresser(AddressAssertions):
-    def test_import(self):
-        self.assertIsInstance(addresser.user, UserAddress)
-        self.assertIsAddressClass(addresser.user)
+@pytest.mark.wip
+class TestUserAddresser(TestAssertions):
+    """Test User Addresser"""
 
     def test_address(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         user_id = addresser.user.unique_id()
         user_address = addresser.user.address(object_id=user_id)
         self.assertIsAddress(user_address)
@@ -40,6 +37,7 @@ class TestUserAddresser(AddressAssertions):
         )
 
     def test_address_deterministic(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         user_id1 = addresser.user.unique_id()
         user_address1 = addresser.user.address(object_id=user_id1)
         user_address2 = addresser.user.address(object_id=user_id1)
@@ -51,6 +49,7 @@ class TestUserAddresser(AddressAssertions):
         )
 
     def test_address_random(self):
+        """Tests address makes a unique address given different inputs"""
         user_id1 = addresser.user.unique_id()
         user_id2 = addresser.user.unique_id()
         user_address1 = addresser.user.address(object_id=user_id1)
@@ -66,6 +65,7 @@ class TestUserAddresser(AddressAssertions):
         )
 
     def test_address_static(self):
+        """Tests address makes the expected output given a specific input"""
         user_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = (
             "bac00100003333e7570f3f6f7d2c1635f6deea1111ff00000000000000000000000000"

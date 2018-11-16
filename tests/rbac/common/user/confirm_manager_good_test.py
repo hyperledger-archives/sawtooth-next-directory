@@ -12,49 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Confirm Manager Test"""
+# pylint: disable=no-member
 
 import logging
-from uuid import uuid4
 import pytest
 
+from rbac.common import rbac
 from rbac.common import protobuf
-from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
-from rbac.common.user.user_manager import UserManager
-from rbac.common.user.manager import Manager
-from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
-from tests.rbac.common.manager.test_base import TestBase
+from tests.rbac.common import helper
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.user
-class ConfirmManagerTest(TestBase):
-    def __init__(self, *args, **kwargs):
-        TestBase.__init__(self, *args, **kwargs)
+class ConfirmManagerTest(TestAssertions):
+    """Confirm Manager Test"""
 
-    @pytest.mark.unit
-    def test_interface(self):
-        """Verify the expected interface"""
-        self.assertIsInstance(self.rbac.user, UserManager)
-        self.assertIsInstance(self.rbac.user.manager, Manager)
-        self.assertIsInstance(self.rbac.user.manager.confirm, ConfirmUpdateUserManager)
-        self.assertTrue(callable(self.rbac.user.manager.confirm.address))
-        self.assertTrue(callable(self.rbac.user.manager.confirm.make))
-        self.assertTrue(callable(self.rbac.user.manager.confirm.make_addresses))
-        self.assertTrue(callable(self.rbac.user.manager.confirm.make_payload))
-        self.assertTrue(callable(self.rbac.user.manager.confirm.create))
-        self.assertTrue(callable(self.rbac.user.manager.confirm.send))
-        self.assertTrue(callable(self.rbac.user.manager.confirm.get))
-
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make(self):
         """Test making the message"""
-        self.assertTrue(callable(self.rbac.user.manager.confirm.make))
-        user_id = self.test.user.id()
-        manager_id = self.test.user.id()
-        reason = self.test.user.manager.propose.reason()
-        proposal_id = self.test.user.manager.propose.id()
-        message = self.rbac.user.manager.confirm.make(
+        user_id = helper.user.id()
+        manager_id = helper.user.id()
+        reason = helper.user.manager.propose.reason()
+        proposal_id = helper.user.manager.propose.id()
+        message = rbac.user.manager.confirm.make(
             proposal_id=proposal_id,
             user_id=user_id,
             manager_id=manager_id,
@@ -68,26 +51,25 @@ class ConfirmManagerTest(TestBase):
         self.assertEqual(message.manager_id, manager_id)
         self.assertEqual(message.reason, reason)
 
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make_addresses(self):
         """Test making the message addresses"""
-        self.assertTrue(callable(self.rbac.user.manager.confirm.make_addresses))
-        user_id = self.test.user.id()
-        user_address = self.rbac.user.address(object_id=user_id)
-        manager_id = self.test.user.id()
-        reason = self.test.user.manager.propose.reason()
-        proposal_id = uuid4().hex
-        proposal_address = self.rbac.user.manager.confirm.address(
+        user_id = helper.user.id()
+        user_address = rbac.user.address(object_id=user_id)
+        manager_id = helper.user.id()
+        reason = helper.user.manager.propose.reason()
+        proposal_id = helper.proposal.id()
+        proposal_address = rbac.user.manager.confirm.address(
             object_id=user_id, target_id=manager_id
         )
-        message = self.rbac.user.manager.confirm.make(
+        message = rbac.user.manager.confirm.make(
             proposal_id=proposal_id,
             user_id=user_id,
             manager_id=manager_id,
             reason=reason,
         )
 
-        inputs, outputs = self.rbac.user.manager.confirm.make_addresses(message=message)
+        inputs, outputs = rbac.user.manager.confirm.make_addresses(message=message)
 
         self.assertIsInstance(inputs, list)
         self.assertIsInstance(outputs, list)
@@ -96,28 +78,27 @@ class ConfirmManagerTest(TestBase):
         self.assertEqual(len(inputs), 2)
         self.assertEqual(outputs, inputs)
 
-    @pytest.mark.unit
+    @pytest.mark.library
     def test_make_payload(self):
         """Test making the message payload"""
-        self.assertTrue(callable(self.rbac.user.manager.confirm.make_payload))
-        user_id = self.test.user.id()
-        user_address = self.rbac.user.address(object_id=user_id)
-        manager_id = self.test.user.id()
-        reason = self.test.user.manager.propose.reason()
-        proposal_id = uuid4().hex
-        proposal_address = self.rbac.user.manager.confirm.address(
+        user_id = helper.user.id()
+        user_address = rbac.user.address(object_id=user_id)
+        manager_id = helper.user.id()
+        reason = helper.user.manager.propose.reason()
+        proposal_id = helper.proposal.id()
+        proposal_address = rbac.user.manager.confirm.address(
             object_id=user_id, target_id=manager_id
         )
-        message = self.rbac.user.manager.confirm.make(
+        message = rbac.user.manager.confirm.make(
             proposal_id=proposal_id,
             user_id=user_id,
             manager_id=manager_id,
             reason=reason,
         )
 
-        payload = self.rbac.user.manager.confirm.make_payload(message=message)
+        payload = rbac.user.manager.confirm.make_payload(message=message)
 
-        self.assertIsInstance(payload, RBACPayload)
+        self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
         inputs = list(payload.inputs)
         outputs = list(payload.outputs)
         self.assertIsInstance(inputs, list)
@@ -131,19 +112,16 @@ class ConfirmManagerTest(TestBase):
     @pytest.mark.integration
     def test_create(self):
         """Test confirming a manager proposal"""
-        self.assertTrue(callable(self.rbac.user.manager.confirm.create))
-        proposal, user, user_key, manager, manager_key = (
-            self.test.user.manager.propose.create()
-        )
+        proposal, _, _, _, manager_key = helper.user.manager.propose.create()
 
-        reason = self.test.user.manager.propose.reason()
-        message = self.rbac.user.manager.confirm.make(
+        reason = helper.user.manager.propose.reason()
+        message = rbac.user.manager.confirm.make(
             proposal_id=proposal.proposal_id,
             user_id=proposal.object_id,
             manager_id=proposal.target_id,
             reason=reason,
         )
-        confirm, status = self.rbac.user.manager.confirm.create(
+        confirm, status = rbac.user.manager.confirm.create(
             signer_keypair=manager_key,
             message=message,
             object_id=proposal.object_id,

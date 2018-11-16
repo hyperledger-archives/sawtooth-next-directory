@@ -12,25 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test Role Addresser"""
 import logging
 import pytest
 
 from rbac.common import addresser
-from rbac.common.addresser.role import RoleAddress
-from tests.rbac.common.addresser.address_assertions import AddressAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.addressing
-@pytest.mark.unit
-class TestRoleAddresser(AddressAssertions):
-    def test_import(self):
-        self.assertIsInstance(addresser.role, RoleAddress)
-        self.assertIsAddressClass(addresser.role)
+@pytest.mark.library
+class TestRoleAddresser(TestAssertions):
+    """Test Role Addresser"""
 
     def test_address(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id = addresser.role.unique_id()
         role_address = addresser.role.address(object_id=role_id)
         self.assertIsAddress(role_address)
@@ -39,6 +37,7 @@ class TestRoleAddresser(AddressAssertions):
         )
 
     def test_address_deterministic(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id1 = addresser.role.unique_id()
         role_address1 = addresser.role.address(object_id=role_id1)
         role_address2 = addresser.role.address(object_id=role_id1)
@@ -50,6 +49,7 @@ class TestRoleAddresser(AddressAssertions):
         )
 
     def test_address_random(self):
+        """Tests address makes a unique address given different inputs"""
         role_id1 = addresser.role.unique_id()
         role_id2 = addresser.role.unique_id()
         role_address1 = addresser.role.address(object_id=role_id1)
@@ -65,6 +65,7 @@ class TestRoleAddresser(AddressAssertions):
         )
 
     def test_address_static(self):
+        """Tests address makes the expected output given a specific input"""
         role_id = "99968acb8f1a48b3a4bc21e2cd252e67"
         expected_address = (
             "bac00100005555326a1713a905b26359fc8da21111ff00000000000000000000000000"

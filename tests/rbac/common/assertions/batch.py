@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Batch assertion helpers"""
+# pylint: disable=no-member,invalid-name
 
 import logging
 import json
@@ -27,14 +29,13 @@ from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth.rbac_payload import unmake_payload
-from tests.rbac.common.assertions import CommonAssertions
+from tests.rbac.common.assertions.address import AddressAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
-class BatchAssertions(CommonAssertions):
-    def __init__(self, *args, **kwargs):
-        CommonAssertions.__init__(self, *args, **kwargs)
+class BatchAssertions(AddressAssertions):
+    """Address assertion helpers"""
 
     def assertEqualMessage(self, message1, message2, ignored_fields=None):
         """A shallow comparison of the the json representation
@@ -81,7 +82,7 @@ class BatchAssertions(CommonAssertions):
                 )
             )
 
-    def assertValidInputs(self, inputs, outputs, message_type, message=None):
+    def assertValidInputs(self, inputs, outputs, message_type):
         """Check the inputs and outputs match the expected message type"""
         if inputs is not None and not isinstance(inputs, list):
             inputs = list(inputs)
@@ -236,7 +237,9 @@ class BatchAssertions(CommonAssertions):
     def assertStatusSuccess(self, status):
         """Check a status result is successful"""
         state, invalid = self.assertSingleStatus(status)
-        self.assertEqual(state, "COMMITTED")
+        self.assertEqual(
+            state, "COMMITTED", "Expected COMMITTED, got {}\n{}".format(state, status)
+        )
         self.assertEqual(len(invalid), 0)
         return state, invalid
 

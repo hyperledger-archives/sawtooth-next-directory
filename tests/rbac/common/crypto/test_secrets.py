@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test the symmetric encryption library"""
 
 import logging
 import pytest
@@ -25,16 +26,18 @@ from rbac.common.crypto.secrets import generate_aes_key
 from rbac.common.crypto.secrets import encrypt_private_key
 from rbac.common.crypto.secrets import decrypt_private_key
 from rbac.common.crypto.keys import Key
-from tests.rbac.common.crypto.key_assertions import KeyAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.unit
+@pytest.mark.library
 @pytest.mark.crypto
 @pytest.mark.secrets
-class TestCryptoSecrets(KeyAssertions):
-    def test_public_key_constants(self):
+class TestCryptoSecrets(TestAssertions):
+    """Test the symmetric encryption library"""
+
+    def test_key_constants(self):
         """Tests the expected constants
         Used for for test sanity checks"""
         self.assertEqual(AES_KEY_LENGTH, 32)
@@ -46,7 +49,6 @@ class TestCryptoSecrets(KeyAssertions):
         """Tests generate secret key generates
         a key that matches the expected pattern
         and generates distinct keys on subsquent calls"""
-        self.assertTrue(callable(generate_secret_key))
         value1 = generate_secret_key()
         value2 = generate_secret_key()
         self.assertTrue(isinstance(value1, str))
@@ -62,7 +64,6 @@ class TestCryptoSecrets(KeyAssertions):
         """Tests generate aes key generates
         a key that matches the expected pattern
         and generates distinct keys on subsquent calls"""
-        self.assertTrue(callable(generate_aes_key))
         value1 = generate_aes_key()
         value2 = generate_aes_key()
         self.assertTrue(isinstance(value1, str))
@@ -75,7 +76,7 @@ class TestCryptoSecrets(KeyAssertions):
         return value1
 
     def test_encrypt_private_key(self):
-        self.assertTrue(callable(encrypt_private_key))
+        """Test that we can encrypt an AES key using a keypair"""
         aes_key = self.test_generate_aes_key()
         user_key = Key()
         user_id = user_key.public_key
@@ -85,7 +86,7 @@ class TestCryptoSecrets(KeyAssertions):
         return encrypted, aes_key, user_key, user_id
 
     def test_decrypt_private_key(self):
-        self.assertTrue(callable(decrypt_private_key))
+        """Test that we can decrypt an AES key using a keypair"""
         encrypted, aes_key, user_key, user_id = self.test_encrypt_private_key()
         decrypted = decrypt_private_key(
             aes_key=aes_key, user_id=user_id, encrypted_private_key=encrypted

@@ -164,10 +164,10 @@ a rest client and create the objects through the application's rest api.
 
 #### Running Automated Tests
 
-Unit tests can be run using (pytest)[https://docs.pytest.org/en/latest/]:
+Library test can be run using (pytest)[https://docs.pytest.org/en/latest/]:
 
 ```bash
-pytest -m "unit"
+pytest -m "library"
 ```
 
 Integration tests can be run non-interactively via the `run_docker_test` script, 

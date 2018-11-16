@@ -12,22 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Address assertion helpers"""
+# pylint: disable=invalid-name
 
 import logging
 import re as regex
 from rbac.common import addresser
-from tests.rbac.common.assertions import CommonAssertions
+from tests.rbac.common.assertions.key import KeyAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 PATTERN_ADDRESS = regex.compile(r"^[0-9a-f]{70}$")
+PATTERN_IDENTIFIER = regex.compile(r"^[0-9a-f]{24}$")
 ADDRESS_CLASS_METHODS = ["address", "address_is", "hash", "unique_id"]
 ADDRESS_CLASS_PROPS = ["address_type"]
 
 
-class AddressAssertions(CommonAssertions):
-    def __init__(self, *args, **kwargs):
-        CommonAssertions.__init__(self, *args, **kwargs)
+class AddressAssertions(KeyAssertions):
+    """Address assertion helpers"""
 
     def assertIsAddressClass(self, value):
         """Has the properties and methods expected of an address class"""
@@ -53,6 +55,16 @@ class AddressAssertions(CommonAssertions):
         self.assertTrue(
             addresser.family.is_family(value),
             "Expected address to be of the correct transaction family. Got {}".format(
+                value
+            ),
+        )
+
+    def assertIsIdentifier(self, value):
+        """Tests the value id an identifier (24 character hexadecimal value)"""
+        self.assertIsInstance(value, str)
+        self.assertTrue(
+            PATTERN_IDENTIFIER.match(value),
+            "Expected id to a lowercase 24 characater hexadecimal string. Got {}".format(
                 value
             ),
         )

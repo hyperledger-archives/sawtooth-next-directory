@@ -12,27 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test SysAdmin Member Addresser"""
 import logging
 import pytest
 
 from rbac.common import addresser
-from rbac.common.addresser.sysadmin import SysAdminAddress
-from rbac.common.addresser.sysadmin import SysAdminMemberAddress
-from tests.rbac.common.addresser.address_assertions import AddressAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.addressing
-@pytest.mark.unit
-class TestSysAdminMemberAddresser(AddressAssertions):
-    def test_import(self):
-        self.assertIsInstance(addresser.sysadmin, SysAdminAddress)
-        self.assertIsInstance(addresser.sysadmin.member, SysAdminMemberAddress)
-        self.assertIsAddressClass(addresser.sysadmin.member)
+@pytest.mark.library
+class TestSysAdminMemberAddresser(TestAssertions):
+    """Test SysAdmin Admin Addresser"""
 
     def test_address(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         user_id = addresser.user.unique_id()
         rel_address = addresser.sysadmin.member.address(object_id=user_id)
         self.assertIsAddress(rel_address)
@@ -41,6 +37,7 @@ class TestSysAdminMemberAddresser(AddressAssertions):
         )
 
     def test_address_deterministic(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         user_id = addresser.user.unique_id()
         rel_address1 = addresser.sysadmin.member.address(object_id=user_id)
         rel_address2 = addresser.sysadmin.member.address(object_id=user_id)
@@ -52,6 +49,7 @@ class TestSysAdminMemberAddresser(AddressAssertions):
         )
 
     def test_address_random(self):
+        """Tests address makes a unique address given different inputs"""
         user_id1 = addresser.user.unique_id()
         user_id2 = addresser.user.unique_id()
         rel_address1 = addresser.sysadmin.member.address(object_id=user_id1)
@@ -67,6 +65,7 @@ class TestSysAdminMemberAddresser(AddressAssertions):
         )
 
     def test_address_static(self):
+        """Tests address makes the expected output given a specific input"""
         user_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = (
             "bac00100002222e7570f3f6f7d2c1635f6deea3333bb00000000000000000000000000"

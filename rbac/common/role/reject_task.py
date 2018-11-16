@@ -69,15 +69,11 @@ class RejectAddRoleTask(BaseMessage):
             message.task_id, signer_keypair.public_key
         )
 
-        relationship_address = addresser.role.task.address(
-            message.role_id, message.task_id
-        )
-
         proposal_address = self.address(
             object_id=message.role_id, target_id=message.task_id
         )
 
         inputs = [signer_address, proposal_address]
-        outputs = [proposal_address, relationship_address]
+        outputs = [proposal_address]
 
         return inputs, outputs

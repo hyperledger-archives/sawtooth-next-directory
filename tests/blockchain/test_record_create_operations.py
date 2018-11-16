@@ -13,7 +13,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import sys
 import logging
 import unittest
 import pytest
@@ -27,12 +26,11 @@ from rbac.transaction_creation.common import Key
 BATCHER_PRIVATE_KEY = Secp256k1PrivateKey.new_random().as_hex()
 BATCHER_KEY = Key(BATCHER_PRIVATE_KEY)
 
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 
-@pytest.mark.integration
+@pytest.mark.blockchain
 class TestUserOperations(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

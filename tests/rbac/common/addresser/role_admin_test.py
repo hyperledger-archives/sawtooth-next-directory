@@ -12,27 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test Role Admin Addresser"""
 import logging
 import pytest
 
 from rbac.common import addresser
-from rbac.common.addresser.role import RoleAddress
-from rbac.common.addresser.role import RoleAdminAddress
-from tests.rbac.common.addresser.address_assertions import AddressAssertions
+from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.addressing
-@pytest.mark.unit
-class TestRoleAdminAddresser(AddressAssertions):
-    def test_import(self):
-        self.assertIsInstance(addresser.role, RoleAddress)
-        self.assertIsInstance(addresser.role.admin, RoleAdminAddress)
-        self.assertIsAddressClass(addresser.role.admin)
+@pytest.mark.library
+class TestRoleAdminAddresser(TestAssertions):
+    """Test Role Admin Addresser"""
 
     def test_address(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id = addresser.role.admin.unique_id()
         user_id = addresser.user.unique_id()
         rel_address = addresser.role.admin.address(object_id=role_id, target_id=user_id)
@@ -42,6 +38,7 @@ class TestRoleAdminAddresser(AddressAssertions):
         )
 
     def test_address_deterministic(self):
+        """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id = addresser.role.admin.unique_id()
         user_id = addresser.user.unique_id()
         rel_address1 = addresser.role.admin.address(
@@ -58,6 +55,7 @@ class TestRoleAdminAddresser(AddressAssertions):
         )
 
     def test_address_random(self):
+        """Tests address makes a unique address given different inputs"""
         role_id1 = addresser.role.admin.unique_id()
         user_id1 = addresser.user.unique_id()
         role_id2 = addresser.role.admin.unique_id()
@@ -79,6 +77,7 @@ class TestRoleAdminAddresser(AddressAssertions):
         )
 
     def test_address_static(self):
+        """Tests address makes the expected output given a specific input"""
         role_id = "99968acb8f1a48b3a4bc21e2cd252e67"
         user_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = (
