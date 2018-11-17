@@ -25,3 +25,4 @@ rasa_nlu==0.13.8
 azure-eventhub==1.1.1
 sphinx==1.8.2
 sphinx_rtd_theme==0.4.2
+pytz==2018.7

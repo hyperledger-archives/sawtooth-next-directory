@@ -70,6 +70,9 @@ def setup_db(host, port, name):
         LOGGER.info('Creating table: sync_tracker')
         r.db(name).table_create('sync_tracker').run(conn)
 
+        LOGGER.info('Creating table: inbound_sync_event')
+        r.db(name).table_create('inbound_sync_event').run(conn)
+
         LOGGER.info('Creating table: queue_inbound')
         r.db(name).table_create('queue_inbound').run(conn)
 
