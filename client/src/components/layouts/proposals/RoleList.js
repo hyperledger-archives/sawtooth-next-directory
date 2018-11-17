@@ -16,6 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import './RoleList.css';
+import { Image, Segment } from 'semantic-ui-react';
 
 
 /**
@@ -26,10 +27,66 @@ import './RoleList.css';
  */
 export default class RoleList extends Component {
 
+  roleName = (roleId) => {
+    const { roleFromId } = this.props;
+
+    const role = roleFromId(roleId);
+    return role && role.name;
+  };
+
+
+  /**
+   *
+   * Render user avatars for a given role
+   *
+   *
+   *
+   */
+  renderUsers (roleId) {
+    const { openProposalsByRole } = this.props;
+
+    return (
+      <div className='pull-right'>
+        { openProposalsByRole[roleId].map(proposal => (
+          <Image key={proposal.id} src='http://i.pravatar.cc/300' avatar/>
+        ))}
+      </div>
+    );
+  }
+
+
+  /**
+   *
+   * Render role list item
+   *
+   * One list item per role with an open request.
+   *
+   * @param {*} roleId Role ID
+   *
+   *
+   */
+  renderRoleItem (roleId) {
+    return (
+      <div className='next-role-list-item' key={roleId}>
+        <Segment>
+          {this.roleName(roleId)}
+          {this.renderUsers(roleId)}
+        </Segment>
+      </div>
+    );
+  }
+
+
   render () {
+    const { openProposalsByRole } = this.props;
+
+    if (!openProposalsByRole) return null;
+
     return (
       <div id='next-roles-list-container'>
-        Roles
+        { Object.keys(openProposalsByRole).map(roleId => (
+          this.renderRoleItem(roleId)
+        ))}
       </div>
     );
   }

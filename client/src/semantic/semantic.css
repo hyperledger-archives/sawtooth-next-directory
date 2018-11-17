@@ -764,6 +764,14 @@ body {
   clear: both;
 }
 
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
 /*******************************
          Site Overrides
 *******************************/
@@ -17238,7 +17246,19 @@ ol.ui.horizontal.list li:before,
 }
 
 .ui.inverted.list a.active .content.right.floated .basic.label {
+  background: none;
   border-color: #FFFFFF;
+  color: #FFFFFF;
+  font-size: 0.8em;
+  line-height: 1.6em;
+  min-height: 1.65em;
+  padding: 0 10px !important;
+  text-indent: 0;
+}
+
+.ui.inverted.list a .content.right.floated .basic.label {
+  background: #767676;
+  border-color: #767676;
   color: #FFFFFF;
   font-size: 0.8em;
   line-height: 1.6em;

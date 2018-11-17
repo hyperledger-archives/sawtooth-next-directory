@@ -106,7 +106,7 @@ export default class PeopleList extends Component {
 
   /**
    *
-   * Render role / pack proposals for a given user as a sub-List
+   * Render role / pack proposals for a given user as a sub-list
    * of a parent user list item.
    *
    * @param {*} userId User ID
@@ -137,12 +137,12 @@ export default class PeopleList extends Component {
 
   /**
    *
-   * Render a list item
+   * Render user list item
    *
    * One list item per user with an open request.
    *
    * @param {*} userId User ID
-   * @param {*} index
+   *
    *
    */
   renderUserItem (userId) {

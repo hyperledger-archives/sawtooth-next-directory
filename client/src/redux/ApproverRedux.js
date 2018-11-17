@@ -68,6 +68,8 @@ export const ApproverSelectors = {
   openProposals:         (state) => state.approver.openProposals,
   openProposalsByUser:   (state) =>
     utils.groupBy(state.approver.openProposals, 'opener'),
+  openProposalsByRole:   (state) =>
+    utils.groupBy(state.approver.openProposals, 'object'),
   openProposalsCount:    (state) =>
     state.approver.openProposals && state.approver.openProposals.length
 };

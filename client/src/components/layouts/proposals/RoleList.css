@@ -17,3 +17,13 @@ limitations under the License.
 #next-roles-list-container {
   padding: 0 var(--page-content-padding);
 }
+
+.next-role-list-item {
+  margin-bottom: 20px;
+}
+
+.next-role-list-item .ui.segment {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}

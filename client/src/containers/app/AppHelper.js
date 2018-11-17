@@ -34,6 +34,7 @@ export const appState = (state) => {
 
     // Approver
     openProposals:       ApproverSelectors.openProposals(state),
+    openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
     openProposalsCount:  ApproverSelectors.openProposalsCount(state),
 
