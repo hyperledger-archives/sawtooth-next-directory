@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Image, Segment } from 'semantic-ui-react';
+import { Header, Icon, Image, Segment } from 'semantic-ui-react';
 
 
 import ChatForm from '../forms/ChatForm';
@@ -80,6 +80,7 @@ export default class Chat extends Component {
       messages,
       selectedRoles,
       selectedUsers,
+      title,
       type } = this.props;
 
     // ! Temporary
@@ -88,6 +89,12 @@ export default class Chat extends Component {
 
     return (
       <div id='next-chat-container'>
+        { title &&
+          <Header id='next-chat-header' size='small' inverted>
+            {title}
+            <Icon link name='pin' size='mini' className='pull-right'/>
+          </Header>
+        }
         {
           selectedUsers &&
           <div id='next-chat-users-selection-container'>

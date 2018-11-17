@@ -14,10 +14,8 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { all, call, put } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 import AuthActions from '../redux/AuthRedux';
-import ApproverActions from '../redux/ApproverRedux';
-import RequesterActions from '../redux/RequesterRedux';
 
 
 /**
@@ -55,7 +53,7 @@ export function * login (api, action) {
  *
  * Execute Signup API request
  *
- * The s=Signup generator function executes a request to the
+ * The signup generator function executes a request to the
  * API for creating new user and handles the response.
  *
  * @param action
@@ -90,11 +88,7 @@ export function * logout (api, action) {
 
     const res = yield call(api.logout);
     if (res.ok) {
-      yield all([
-        put(AuthActions.logoutSuccess()),
-        put(ApproverActions.resetAll()),
-        put(RequesterActions.resetAll()),
-      ]);
+      yield put(AuthActions.logoutSuccess());
     } else {
       alert(res.data.message);
       yield put(AuthActions.logoutFailure(res.data.message));

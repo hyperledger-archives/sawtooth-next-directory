@@ -68,7 +68,7 @@ export default class RoleList extends Component {
   renderRoleItem (roleId) {
     return (
       <div className='next-role-list-item' key={roleId}>
-        <Segment>
+        <Segment raised>
           {this.roleName(roleId)}
           {this.renderUsers(roleId)}
         </Segment>

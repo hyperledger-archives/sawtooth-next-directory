@@ -15,16 +15,15 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Segment } from 'semantic-ui-react';
-
-
+import { Grid, Header, Icon, Image, Segment } from 'semantic-ui-react';
 import './MemberList.css';
 
 
 /**
  *
- * @class MemberList
- * Component encapsulating the member list
+ * @class         MemberList
+ * @description   Component encapsulating the member list
+ *
  *
  */
 export default class MemberList extends Component {
@@ -33,31 +32,63 @@ export default class MemberList extends Component {
    *
    * Hydrate data
    *
+   *
    */
   componentDidMount () {
-    const { getUser, owners, users } = this.props;
+    const { getUsers, members, owners, users } = this.props;
+    if (!owners || !members) return;
 
-    owners && owners.map((userId) => {
-      return users && users.find((user) => user.id === userId) ?
-        undefined :
-        getUser(userId)
-    })
+    const join = [...owners, ...members];
+
+    const diff = users &&
+      join.filter(userId =>
+        users.find(user => user.id !== userId));
+
+    diff && getUsers(diff);
   }
 
 
-  renderUserSegment (userId) {
+  componentWillReceiveProps (newProps) {
+    const { getUsers, members, owners, users } = this.props;
+
+    if (newProps.members !== members || newProps.owners !== owners) {
+      const join = [...newProps.members, ...newProps.owners];
+      const diff = users &&
+        join.filter(userId =>
+          users.find(user => user.id !== userId));
+
+      diff && getUsers(diff);
+    }
+  }
+
+
+  renderUserSegment (userId, isOwner) {
     const { users } = this.props;
 
-    if (!users) {
-      return null;
-    }
-
+    if (!users) return null;
     const user = users.find((user) => user.id === userId);
 
     return (
-      <Segment compact key={userId}>
-        {user && user.name}
-      </Segment>
+      user &&
+        <Grid.Column key={userId} largeScreen={8} widescreen={5}>
+          <Segment padded raised>
+            <Icon
+              name='shield'
+              className='pull-right'
+              color={ isOwner ? 'red' : 'blue' }/>
+
+            <Header as='h4' className='next-member-list-user-info'>
+              <div>
+                <Image src='http://i.pravatar.cc/300' avatar/>
+              </div>
+              <div>
+                {user && user.name}
+                <Header.Subheader>{user && user.email}</Header.Subheader>
+              </div>
+            </Header>
+
+          </Segment>
+        </Grid.Column>
     );
   }
 
@@ -67,13 +98,16 @@ export default class MemberList extends Component {
 
     return (
       <div>
-        { owners && owners.map((owner) => (
-          this.renderUserSegment(owner)
-        )) }
+        <Grid columns={3} stackable>
+          { owners && owners.map((owner) => (
+            this.renderUserSegment(owner, true)
+          )) }
 
-        { members && members.map((member) => (
-          this.renderUserSegment(member)
-        )) }
+          { members && members.map((member) => (
+            this.renderUserSegment(member)
+          )) }
+        </Grid>
+
       </div>
     );
   }

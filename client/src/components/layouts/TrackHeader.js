@@ -48,7 +48,9 @@ export default class TrackHeader extends Component {
                   }
                   <Header.Content>
                     {title}
-                    <Header.Subheader>{subtitle}</Header.Subheader>
+                    <Header.Subheader id='next-track-header-subheader'>
+                      {subtitle}
+                    </Header.Subheader>
                   </Header.Content>
                 </Header>
               }

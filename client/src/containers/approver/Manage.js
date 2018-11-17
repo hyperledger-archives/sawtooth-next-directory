@@ -53,7 +53,7 @@ class Manage extends Component {
 
         <Grid.Column
           id='next-approver-grid-track-column'
-          width={10}>
+          width={11}>
           <TrackHeader title='Manage' {...this.props}/>
           <div id='next-approver-manage-content'>
             <CreateModal submit={this.createRole}/>
@@ -61,7 +61,7 @@ class Manage extends Component {
         </Grid.Column>
         <Grid.Column
           id='next-approver-grid-converse-column'
-          width={6}>
+          width={5}>
           <Chat {...this.props}/>
         </Grid.Column>
 

@@ -15,5 +15,5 @@ limitations under the License.
 
 
 #next-approver-individuals-content {
-  margin-top: 95px;
+  margin-top: var(--track-header-height);
 }

@@ -156,9 +156,10 @@ export default class PeopleList extends Component {
 
     return (
       <div className='next-people-list-item' key={userId}>
+        { user &&
         <List.Item>
           <List.Header>
-            { user && user.name &&
+            { user.name &&
               <span className='next-people-list-name'>
                 <Checkbox
                   checked={this.isUserChecked(userId)}
@@ -168,7 +169,7 @@ export default class PeopleList extends Component {
                   onChange={handleChange}/>
               </span>
             }
-            { user && user.email &&
+            { user.email &&
               <span className='next-people-list-email'>
                 {user.email}
               </span>
@@ -179,6 +180,7 @@ export default class PeopleList extends Component {
             { this.renderUserProposals(userId, proposals) }
           </List.List>
         </List.Item>
+        }
       </div>
     );
   }

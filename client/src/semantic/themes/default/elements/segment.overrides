@@ -1,3 +1,24 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+.ui.segment .ui.header  {
+  align-items: center;
+  display: flex;
+  margin-top: 0;
+  overflow: hidden;
+}
+
+.ui.segment .ui.header img {
+  height: 3em;
+  width: 3em;
+}
+
+.ui.segment .ui.header div:first-child {
+  flex: 0 0 4em;
+}
+
+.ui.segment .ui.header .sub.header {
+  color: @magenta;
+  margin-top: 5px;
+}

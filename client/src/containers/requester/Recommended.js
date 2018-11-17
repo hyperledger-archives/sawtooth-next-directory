@@ -64,7 +64,11 @@ export class Recommended extends Component {
     const { roleId, roleFromId } = this.props;
 
     this.role = roleFromId(roleId);
+
     if (!this.role) return null;
+
+    const membersCount = [...this.role.members, ...this.role.owners].length;
+    const subtitle = `${membersCount} ${membersCount > 1 ? 'members' : 'member'}`;
 
     return (
       <Grid id='next-requester-grid'>
@@ -77,6 +81,7 @@ export class Recommended extends Component {
             roleImage
             waves
             title={this.role.name}
+            subtitle={subtitle}
             {...this.props}/>
 
           <div id='next-requester-recommended-content'>
@@ -92,7 +97,7 @@ export class Recommended extends Component {
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={5}>
-          <Chat activeRole={this.role} {...this.props}/>
+          <Chat title={this.role.name + ' Conversations'} activeRole={this.role} {...this.props}/>
         </Grid.Column>
 
       </Grid>

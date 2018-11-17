@@ -96,7 +96,7 @@ export const appDispatch = (dispatch) => {
     logout:            ()    => logout(dispatch),
 
   };
-}
+};
 
 
 /**
@@ -106,5 +106,7 @@ export const appDispatch = (dispatch) => {
  */
 const logout = (dispatch) => {
   return dispatch(AuthActions.logoutRequest()) &&
-    dispatch(UserActions.meReset());
-}
+    dispatch(UserActions.resetAll()) &&
+    dispatch(ApproverActions.resetAll()) &&
+    dispatch(RequesterActions.resetAll());
+};
