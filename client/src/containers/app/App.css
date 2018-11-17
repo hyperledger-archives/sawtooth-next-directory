@@ -27,6 +27,7 @@ limitations under the License.
 
 #next-outer-grid-nav {
   background: var(--nav-bg-color);
+  padding: 0;
   z-index: 5;
 }
 

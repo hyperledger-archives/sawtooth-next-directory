@@ -16,7 +16,7 @@
 @fontWeight: @normal;
 @borderWidth: 1px;
 @border: @borderWidth solid @borderColor;
-@boxShadow: @subtleShadow;
+@boxShadow: none;
 @borderRadius: @defaultBorderRadius;
 @minHeight: (@itemVerticalPadding * 2) + 1em;
 
@@ -167,15 +167,15 @@
 
 
 /* Active Item */
-@activeItemBackground: @transparentBlack;
-@activeItemTextColor: @selectedTextColor;
-@activeItemFontWeight: @normal;
+@activeItemBackground: @magenta;
+@activeItemTextColor: @invertedTextColor;
+@activeItemFontWeight: @bold;
 @activeIconOpacity: 1;
 @activeItemBoxShadow: none;
 
 /* Active Hovered Item */
-@activeHoverItemBackground: @transparentBlack;
-@activeHoverItemColor: @selectedTextColor;
+@activeHoverItemBackground: @magentaHover;
+@activeHoverItemColor: @invertedTextColor;
 
 /* Selected Dropdown */
 @dropdownSelectedItemBackground: @transparentBlack;

@@ -19,7 +19,7 @@ limitations under the License.
 }
 
 .next-people-list-name {
-  border-right: 1px solid var(--nav-list-color);
+  border-right: 1px solid var(--divider-color);
   padding-right: 20px;
 }
 
@@ -29,6 +29,7 @@ limitations under the License.
 
 .next-people-list-email {
   color: var(--magenta);
+  font-size: .85em;
   padding: 0 20px;
 }
 

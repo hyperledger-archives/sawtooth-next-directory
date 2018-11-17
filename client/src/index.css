@@ -17,12 +17,15 @@ limitations under the License.
 :root {
   --header-bg-color: #000;
   --header-color: #fff;
-  --nav-bg-color: #263645;
+  --nav-bg-color: #212c3a;
   --nav-heading-color: #fff;
   --nav-list-color: #727c85;
   --chat-bg-color: #b0b0b01f;
   --selected-list-color: #fef2f8;
-  --magenta: e40073;
+  --divider-color: #cedbe6;
+  --nav-list-padding: 22px;
+  --page-content-padding: 30px;
+  --magenta: #e40073;
 }
 
 body,

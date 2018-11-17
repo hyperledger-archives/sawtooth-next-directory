@@ -14,42 +14,28 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.next-header {
-  align-items: center;
-  background: var(--header-bg-color);
-  display: flex;
-  height: 40px;
-  padding: 10px;
-  position: relative;
-  z-index: 999;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-#next-header-logo {
-  flex: 1;
-  padding-left: 4px;
-}
 
-#next-header-username {
-  color: var(--header-color);
-  margin-right: 10px;
-}
+import RoleList from './RoleList';
 
-#next-header-actions {
-  align-items: center;
-  display: flex;
-}
 
-#next-header-actions i {
-  font-size: 1.3em;
-  margin-right: 22px;
-}
+describe('RoleList component', () => {
 
-#next-header-actions img {
-  cursor: pointer;
-}
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
-#next-header-menu {
-  position: absolute;
-  top: 39px;
-  right: 4px;
-}
+    const props = {
+
+    };
+
+    ReactDOM.render(
+      <BrowserRouter><RoleList {...props}/></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});

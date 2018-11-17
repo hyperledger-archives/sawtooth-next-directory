@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import { Image, List } from 'semantic-ui-react';
 
 
@@ -33,7 +33,23 @@ import * as utils from '../../services/Utils';
  * for displaying options in navigation components
  *
  */
-export default class NavList extends Component {
+class NavList extends Component {
+
+  static prototypes = {
+    route:        PropTypes.string,
+    listTitle:    PropTypes.string,
+    list:         PropTypes.arrayOf(PropTypes.number),
+    dynamic:      PropTypes.bool,
+  };
+
+
+  isItemActive = (item) => {
+    const { location } = this.props;
+
+    const slug = utils.createSlug(item.name || item);
+    return location.pathname.includes(`/${slug}`);
+  };
+
 
   /**
    *
@@ -55,7 +71,7 @@ export default class NavList extends Component {
 
     return (
       list.map((item, index) => (
-        <List.Item
+        <List.Item active={this.isItemActive(item)}
           key={index}
           as={Link}
           to={item.slug ?
@@ -99,9 +115,4 @@ export default class NavList extends Component {
 }
 
 
-NavList.prototypes = {
-  route: PropTypes.string,
-  listTitle: PropTypes.string,
-  list: PropTypes.arrayOf(PropTypes.number),
-  dynamic: PropTypes.bool
-};
+export default withRouter(NavList);

@@ -2,18 +2,18 @@
             Checkbox
 *******************************/
 
-@checkboxSize: 17px;
+@checkboxSize: 22px;
 @checkboxColor: @textColor;
 @checkboxLineHeight: @checkboxSize;
 
 
 /* Label */
-@labelDistance: 1.85714em; /* 26px @ 14/em */
+@labelDistance: 36px; /* 26px @ 14/em */
 
 /* Checkbox */
 @checkboxBackground: @white;
-@checkboxBorder: 1px solid @solidBorderColor;
-@checkboxBorderRadius: @3px;
+@checkboxBorder: 1px solid @magenta;
+@checkboxBorderRadius: @4px;
 @checkboxTransition:
   border @defaultDuration @defaultEasing,
   opacity @defaultDuration @defaultEasing,

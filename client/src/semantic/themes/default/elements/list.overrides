@@ -1,3 +1,7 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+.ui.inverted.list a.active .content .header {
+  color: @white;
+}

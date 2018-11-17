@@ -45,7 +45,7 @@
    for explanation of @px variables
 */
 @relativeBorderRadius: @relative4px;
-@absoluteBorderRadius: @4px;
+@absoluteBorderRadius: @10px;
 
 @defaultBorderRadius: @absoluteBorderRadius;
 
@@ -235,6 +235,7 @@
 @brown            : #A5673F;
 @grey             : #767676;
 @black            : #1B1C1D;
+@magenta          : #E40073;
 
 /*---  Light Colors  ---*/
 @lightRed         : #FF695E;
@@ -753,6 +754,7 @@
 @purpleHover              : saturate(darken(@purple, 5), 10, relative);
 @pinkHover                : saturate(darken(@pink, 5), 10, relative);
 @brownHover               : saturate(darken(@brown, 5), 10, relative);
+@magentaHover             : saturate(darken(@magenta, 5), 10, relative);
 
 @lightRedHover            : saturate(darken(@lightRed, 5), 10, relative);
 @lightOrangeHover         : saturate(darken(@lightOrange, 5), 10, relative);

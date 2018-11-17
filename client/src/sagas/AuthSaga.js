@@ -38,8 +38,6 @@ export function * login (api, action) {
     });
 
     if (res.ok) {
-      console.log('Authentication successful.');
-
       yield put(AuthActions.loginSuccess(true, res.data.data));
     } else {
       alert(res.data.message);
@@ -74,8 +72,6 @@ export function * signup (api, action) {
     });
 
     if (res.ok) {
-      console.log('New user added');
-
       yield put(AuthActions.signupSuccess(true, res.data.data));
     } else {
       alert(res.data.message);

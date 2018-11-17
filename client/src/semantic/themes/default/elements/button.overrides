@@ -1,3 +1,10 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+button.ui.fluid.primary.animated.button {
+  background: #e80d98;
+  background: linear-gradient(to bottom, #e80d98 0%,#8d004d 100%);
+  background: -webkit-linear-gradient(top, #e80d98 0%,#8d004d 100%);
+  height: 44px;
+}

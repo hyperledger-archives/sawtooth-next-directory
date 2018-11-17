@@ -10,7 +10,7 @@
 @promptFontSize: @relativeMedium;
 @promptPadding: (@promptVerticalPadding + ((1em - @promptLineHeight) / 2)) @promptHorizontalPadding;
 @promptBorder: 1px solid @borderColor;
-@promptBorderRadius: @circularRadius;
+@promptBorderRadius: @defaultBorderRadius;
 @promptColor: @textColor;
 @promptTransition:
   background-color @defaultDuration @defaultEasing,

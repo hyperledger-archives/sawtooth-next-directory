@@ -14,15 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-switch-approver-link {
-  bottom: 50px;
-  position: absolute;
-}
-
 .next-approver-nav-search,
 .next-approver-nav-search input,
 .next-approver-nav-search .ui {
   width: 100%;
+}
+
+.next-approver-nav-search {
+  padding: var(--nav-list-padding);
+}
+
+#next-approver-nav-lists-container {
+  text-indent: var(--nav-list-padding);
+}
+
+.next-approver-nav-search .ui.input input {
+  background: #ffffff24;
+  border: none;
+  height: 44px;
 }
 
 #next-approver-switch-container {
@@ -35,4 +44,9 @@ limitations under the License.
 
 #next-approver-switch-container a {
   color: var(--nav-heading-color);
+}
+
+#next-switch-approver-link {
+  bottom: 50px;
+  position: absolute;
 }

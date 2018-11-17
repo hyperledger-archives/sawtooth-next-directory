@@ -14,42 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.next-header {
-  align-items: center;
-  background: var(--header-bg-color);
-  display: flex;
-  height: 40px;
-  padding: 10px;
-  position: relative;
-  z-index: 999;
-}
+import React, { Component } from 'react';
+import './RoleList.css';
 
-#next-header-logo {
-  flex: 1;
-  padding-left: 4px;
-}
 
-#next-header-username {
-  color: var(--header-color);
-  margin-right: 10px;
-}
+/**
+ *
+ * @class RoleList
+ *
+ *
+ */
+export default class RoleList extends Component {
 
-#next-header-actions {
-  align-items: center;
-  display: flex;
-}
+  render () {
+    return (
+      <div id='next-roles-list-container'>
+        Roles
+      </div>
+    );
+  }
 
-#next-header-actions i {
-  font-size: 1.3em;
-  margin-right: 22px;
-}
-
-#next-header-actions img {
-  cursor: pointer;
-}
-
-#next-header-menu {
-  position: absolute;
-  top: 39px;
-  right: 4px;
 }
