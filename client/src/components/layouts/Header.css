@@ -41,15 +41,21 @@ limitations under the License.
 
 #next-header-actions i {
   font-size: 1.3em;
-  margin-right: 22px;
+  margin-left: 22px;
 }
 
-#next-header-actions img {
+#next-header-actions img.avatar {
   cursor: pointer;
+  margin-left: 22px;
 }
 
 #next-header-menu {
   position: absolute;
   top: 39px;
   right: 4px;
+}
+
+#next-header-bell {
+  display: flex;
+  position: relative;
 }

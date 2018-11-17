@@ -22,8 +22,14 @@ limitations under the License.
   color: var(--nav-heading-color);
 }
 
-.next-nav-list-label {
+.next-nav-list-empty {
   color: var(--nav-list-color);
   font-size: 12px;
   margin-left: var(--nav-list-padding);
+}
+
+.next-nav-list-label {
+  position: relative;
+  right: 2px;
+  top: 1px;
 }

@@ -103,7 +103,7 @@
 --------------------*/
 
 /* Basic */
-@basicBackground: none @white;
+@basicBackground: none;
 @basicBorderWidth: 1px;
 @basicBorder: @basicBorderWidth solid @borderColor;
 @basicColor: @textColor;

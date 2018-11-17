@@ -1,3 +1,11 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+.ui.circular.floating.label.mini {
+  font-size: .7em;
+  min-height: 1em;
+  min-width: 1.6em;
+  padding: .3em .5em !important;
+  top: 1em;
+}

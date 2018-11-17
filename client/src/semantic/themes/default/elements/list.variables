@@ -16,10 +16,10 @@
 @horizontalPadding: 0em;
 
 /* List Item */
-@itemVerticalPadding: @relative3px;
+@itemVerticalPadding: @relative5px;
 @itemHorizontalPadding: 0em;
 @itemPadding: @itemVerticalPadding @itemHorizontalPadding;
-@itemLineHeight: @relativeLarge;
+@itemLineHeight: 1.5em;;
 
 /* Sub List */
 @childListPadding: 1em 0em 0.25em 2.6em;

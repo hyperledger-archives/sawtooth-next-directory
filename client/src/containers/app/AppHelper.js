@@ -35,6 +35,7 @@ export const appState = (state) => {
     // Approver
     openProposals:       ApproverSelectors.openProposals(state),
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
+    openProposalsCount:  ApproverSelectors.openProposalsCount(state),
 
     // Auth
     isAuthenticated:     AuthSelectors.isAuthenticated(state),

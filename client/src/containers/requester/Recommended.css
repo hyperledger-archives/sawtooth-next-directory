@@ -15,7 +15,7 @@ limitations under the License.
 
 
 #next-requester-recommended-content {
-  padding: 0 20px;
+  padding: 0 var(--page-content-padding);
   position: relative;
   top: 150px;
 }

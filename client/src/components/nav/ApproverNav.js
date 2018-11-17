@@ -38,13 +38,20 @@ export default class ApproverNav extends Component {
    *
    */
   renderLists () {
+    const { openProposalsCount } = this.props;
+
     return (
       <div id='next-approver-nav-lists-container'>
         <NavList
           listTitle='Pending'
+          labels={[
+            null,
+            openProposalsCount,
+            null
+          ]}
           list={[
             'Batch',
-            'Individuals',
+            'Individual',
             'About to Expire'
           ]}
           route='/approval/pending'/>
