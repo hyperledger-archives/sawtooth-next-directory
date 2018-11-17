@@ -100,7 +100,7 @@ const routes = (props) => [
     exact:  true
   },
   {
-    path:   '/approval/pending/individuals',
+    path:   '/approval/pending/individual',
     main:   (rest) => <Individuals {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true

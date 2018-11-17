@@ -28,6 +28,10 @@ limitations under the License.
   text-indent: var(--nav-list-padding);
 }
 
+#next-approver-nav-lists-container h4 a {
+  color: var(--nav-heading-color);
+}
+
 .next-approver-nav-search .ui.input input {
   background: #ffffff24;
   border: none;

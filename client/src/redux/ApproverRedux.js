@@ -67,7 +67,9 @@ export const INITIAL_STATE = Immutable({
 export const ApproverSelectors = {
   openProposals:         (state) => state.approver.openProposals,
   openProposalsByUser:   (state) =>
-    utils.groupBy(state.approver.openProposals, 'opener')
+    utils.groupBy(state.approver.openProposals, 'opener'),
+  openProposalsCount:    (state) =>
+    state.approver.openProposals && state.approver.openProposals.length
 };
 
 

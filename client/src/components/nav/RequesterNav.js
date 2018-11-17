@@ -87,7 +87,7 @@ export default class RequesterNav extends Component {
         { this.renderLists() }
 
         <h4 id='next-requester-switch-container'>
-          <Link to='/approval/pending/individuals'>
+          <Link to='/approval/pending/individual'>
             Switch to Approver
           </Link>
         </h4>

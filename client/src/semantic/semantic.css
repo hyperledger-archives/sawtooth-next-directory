@@ -15296,7 +15296,7 @@ a.ui.red.label:hover {
 /* Basic */
 
 .ui.basic.red.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #DB2828 !important;
   border-color: #DB2828 !important;
 }
@@ -15342,7 +15342,7 @@ a.ui.orange.label:hover {
 /* Basic */
 
 .ui.basic.orange.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #F2711C !important;
   border-color: #F2711C !important;
 }
@@ -15388,7 +15388,7 @@ a.ui.yellow.label:hover {
 /* Basic */
 
 .ui.basic.yellow.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #FBBD08 !important;
   border-color: #FBBD08 !important;
 }
@@ -15434,7 +15434,7 @@ a.ui.olive.label:hover {
 /* Basic */
 
 .ui.basic.olive.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #B5CC18 !important;
   border-color: #B5CC18 !important;
 }
@@ -15480,7 +15480,7 @@ a.ui.green.label:hover {
 /* Basic */
 
 .ui.basic.green.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #21BA45 !important;
   border-color: #21BA45 !important;
 }
@@ -15526,7 +15526,7 @@ a.ui.teal.label:hover {
 /* Basic */
 
 .ui.basic.teal.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #00B5AD !important;
   border-color: #00B5AD !important;
 }
@@ -15572,7 +15572,7 @@ a.ui.blue.label:hover {
 /* Basic */
 
 .ui.basic.blue.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #2185D0 !important;
   border-color: #2185D0 !important;
 }
@@ -15618,7 +15618,7 @@ a.ui.violet.label:hover {
 /* Basic */
 
 .ui.basic.violet.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #6435C9 !important;
   border-color: #6435C9 !important;
 }
@@ -15664,7 +15664,7 @@ a.ui.purple.label:hover {
 /* Basic */
 
 .ui.basic.purple.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #A333C8 !important;
   border-color: #A333C8 !important;
 }
@@ -15710,7 +15710,7 @@ a.ui.pink.label:hover {
 /* Basic */
 
 .ui.basic.pink.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #E03997 !important;
   border-color: #E03997 !important;
 }
@@ -15756,7 +15756,7 @@ a.ui.brown.label:hover {
 /* Basic */
 
 .ui.basic.brown.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #A5673F !important;
   border-color: #A5673F !important;
 }
@@ -15802,7 +15802,7 @@ a.ui.grey.label:hover {
 /* Basic */
 
 .ui.basic.grey.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #767676 !important;
   border-color: #767676 !important;
 }
@@ -15848,7 +15848,7 @@ a.ui.black.label:hover {
 /* Basic */
 
 .ui.basic.black.label {
-  background: none #FFFFFF !important;
+  background: none !important;
   color: #1B1C1D !important;
   border-color: #1B1C1D !important;
 }
@@ -15865,7 +15865,7 @@ a.ui.basic.black.label:hover {
 --------------------*/
 
 .ui.basic.label {
-  background: none #FFFFFF;
+  background: none;
   border: 1px solid rgba(34, 36, 38, 0.15);
   color: rgba(0, 0, 0, 0.87);
   -webkit-box-shadow: none;
@@ -15876,7 +15876,7 @@ a.ui.basic.black.label:hover {
 
 a.ui.basic.label:hover {
   text-decoration: none;
-  background: none #FFFFFF;
+  background: none;
   color: #1e70bf;
   -webkit-box-shadow: 1px solid rgba(34, 36, 38, 0.15);
   box-shadow: 1px solid rgba(34, 36, 38, 0.15);
@@ -16142,6 +16142,14 @@ a.ui.basic.label:hover {
          Theme Overrides
 *******************************/
 
+.ui.circular.floating.label.mini {
+  font-size: 0.7em;
+  min-height: 1em;
+  min-width: 1.6em;
+  padding: 0.3em 0.5em !important;
+  top: 1em;
+}
+
 /*******************************
          Site Overrides
 *******************************/
@@ -16195,8 +16203,8 @@ ol.ui.list li,
   table-layout: fixed;
   list-style-type: none;
   list-style-position: outside;
-  padding: 0.21428571em 0em;
-  line-height: 1.14285714em;
+  padding: 0.35714286em 0em;
+  line-height: 1.5em;
 }
 
 ul.ui.list > li:first-child:after,
@@ -16293,7 +16301,7 @@ ol.ui.list ol li,
 
 .ui.list .list > .item > .content,
 .ui.list > .item > .content {
-  line-height: 1.14285714em;
+  line-height: 1.5em;
 }
 
 .ui.list .list > .item > .image + .content,
@@ -16410,8 +16418,8 @@ ol.ui.list ol li,
   background-color: transparent;
   list-style-type: none;
   list-style-position: outside;
-  padding: 0.21428571em 0em;
-  line-height: 1.14285714em;
+  padding: 0.35714286em 0em;
+  line-height: 1.5em;
 }
 
 .ui.menu .ui.list .list > .item:before,
@@ -16472,8 +16480,8 @@ ol.ui.list ol li,
 
 .ui.horizontal.list > .item:first-child,
 .ui.horizontal.list > .item:last-child {
-  padding-top: 0.21428571em;
-  padding-bottom: 0.21428571em;
+  padding-top: 0.35714286em;
+  padding-bottom: 0.35714286em;
 }
 
 /* Horizontal List */
@@ -16946,7 +16954,7 @@ ol.ui.horizontal.list li:before,
 .ui.divided.ordered.list .item .list {
   margin-left: 0em;
   margin-right: 0em;
-  padding-bottom: 0.21428571em;
+  padding-bottom: 0.35714286em;
 }
 
 .ui.divided.ordered.list .item .list > .item {
@@ -17013,8 +17021,8 @@ ol.ui.horizontal.list li:before,
 
 .ui.celled.list > .item:first-child,
 .ui.celled.list > .item:last-child {
-  padding-top: 0.21428571em;
-  padding-bottom: 0.21428571em;
+  padding-top: 0.35714286em;
+  padding-bottom: 0.35714286em;
 }
 
 /* Sub Menu */
@@ -17041,7 +17049,7 @@ ol.ui.horizontal.list li:before,
 .ui.celled.bulleted.list .item .list {
   margin-left: -1.25rem;
   margin-right: -1.25rem;
-  padding-bottom: 0.21428571em;
+  padding-bottom: 0.35714286em;
 }
 
 /* Celled Ordered */
@@ -17058,7 +17066,7 @@ ol.ui.horizontal.list li:before,
 .ui.celled.ordered.list .item .list {
   margin-left: 0em;
   margin-right: 0em;
-  padding-bottom: 0.21428571em;
+  padding-bottom: 0.35714286em;
 }
 
 .ui.celled.ordered.list .list > .item {
@@ -17223,6 +17231,20 @@ ol.ui.horizontal.list li:before,
 
 .ui.inverted.list a.active .content .header {
   color: #FFFFFF;
+}
+
+.ui.inverted.list a.item .content.right.floated {
+  line-height: 0em;
+}
+
+.ui.inverted.list a.active .content.right.floated .basic.label {
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  font-size: 0.8em;
+  line-height: 1.6em;
+  min-height: 1.65em;
+  padding: 0 10px !important;
+  text-indent: 0;
 }
 
 /*******************************

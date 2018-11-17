@@ -31,7 +31,7 @@ limitations under the License.
   color: var(--header-color);
   display: flex;
   height: 96px;
-  padding: 0 20px;
+  padding: 0 var(--page-content-padding);
 }
 
 #next-wave,

@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Icon, Image, Menu, Header as MenuHeader } from 'semantic-ui-react';
+import { Icon, Image, Label, Menu, Header as MenuHeader } from 'semantic-ui-react';
 
 
 import './Header.css';
@@ -113,7 +113,7 @@ export default class Header extends Component {
 
 
   render () {
-    const { me } = this.props;
+    const { me, openProposalsCount } = this.props;
     const { menuVisible } = this.state;
 
     return (
@@ -127,7 +127,14 @@ export default class Header extends Component {
         </div>
         <div id='next-header-actions'>
           <Icon inverted name='search'/>
-          <Icon inverted name='bell'/>
+          <div id='next-header-bell'>
+            <Icon inverted name='bell'/>
+            { me && openProposalsCount &&
+              <Label circular color='blue' floating size='mini'>
+                {openProposalsCount}
+              </Label>
+            }
+          </div>
           { me &&
             <Image
               avatar

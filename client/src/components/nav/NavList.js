@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom'
-import { Image, List } from 'semantic-ui-react';
+import { Image, Label, List } from 'semantic-ui-react';
 
 
 import PropTypes from 'prop-types';
@@ -67,7 +67,7 @@ class NavList extends Component {
    *
    */
   renderList (list) {
-    const { dynamic, route } = this.props;
+    const { dynamic, labels, route } = this.props;
 
     return (
       list.map((item, index) => (
@@ -86,6 +86,14 @@ class NavList extends Component {
               <List.Header>{item}</List.Header>
             }
           </List.Content>
+
+          { labels && labels[index] &&
+            <List.Content floated='right' className='next-nav-list-label'>
+              <Label circular size='mini' basic>
+                {labels[index]}
+              </Label>
+            </List.Content>
+          }
         </List.Item>
       ))
     )
@@ -103,7 +111,7 @@ class NavList extends Component {
           <List inverted link selection>
             { this.renderList(list) }
           </List> :
-          <span className='next-nav-list-label'>
+          <span className='next-nav-list-empty'>
             No items
           </span>
         }

@@ -5,3 +5,17 @@
 .ui.inverted.list a.active .content .header {
   color: @white;
 }
+
+.ui.inverted.list a.item .content.right.floated {
+  line-height: 0em;
+}
+
+.ui.inverted.list a.active .content.right.floated .basic.label {
+  border-color: @white;
+  color: @white;
+  font-size: .8em;
+  line-height: 1.6em;
+  min-height: 1.65em;
+  padding: 0 10px !important;
+  text-indent: 0;
+}

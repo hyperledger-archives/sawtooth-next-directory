@@ -160,15 +160,13 @@ class App extends Component {
 
         <Grid.Column
           id='next-outer-grid-nav'
-          width={3}
           only='computer'>
           { this.renderNav() }
         </Grid.Column>
 
         <Grid.Column
           id='next-inner-grid-main'
-          only='computer'
-          computer={13}>
+          only='computer'>
           { this.renderMain() }
         </Grid.Column>
 
