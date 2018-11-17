@@ -1,3 +1,17 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+.ui.huge.inverted.vertical.menu {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.ui.huge.inverted.vertical.menu .item {
+  padding-bottom: .65em;
+}
+
+.ui.huge.inverted.vertical.menu .ui.header .content {
+  color: @white;
+  max-width: 12em;
+}

@@ -76,23 +76,23 @@ export default class Header extends Component {
 
     return (
       <div id='next-header-menu'>
-        <Menu vertical>
+        <Menu inverted size='huge' vertical>
           { me &&
             <Menu.Item>
               <MenuHeader as='h3'>
                 <Image
                   avatar
                   src='http://i.pravatar.cc/300'
-                  size='small'/>
+                  size='large'/>
                 <MenuHeader.Content>
                   {me.name}
                 </MenuHeader.Content>
               </MenuHeader>
             </Menu.Item>
           }
-          <Menu.Item>
+          <Menu.Item onClick={() => {}}>
             <MenuHeader as='h5'>
-              <Icon name='setting'/>
+              <Icon name='setting' color='grey'/>
               <MenuHeader.Content>
                 Settings
               </MenuHeader.Content>
@@ -100,7 +100,7 @@ export default class Header extends Component {
           </Menu.Item>
           <Menu.Item onClick={this.logout}>
             <MenuHeader as='h5'>
-              <Icon name='sign out'/>
+              <Icon name='sign out' color='grey'/>
               <MenuHeader.Content>
                 Sign out
               </MenuHeader.Content>

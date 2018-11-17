@@ -26,6 +26,7 @@
       "src/**/*.{js,jsx}",
       "!**/e2e/**",
       "!**/mock_data/**",
+      "!**/semantic/**",
       "!src/index.js",
       "!src/routes.js",
       "!src/registerServiceWorker.js"

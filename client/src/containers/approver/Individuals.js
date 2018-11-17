@@ -25,6 +25,7 @@ import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import IndividualsNav from '../../components/nav/IndividualsNav';
 import PeopleList from '../../components/layouts/proposals/PeopleList';
+import RoleList from '../../components/layouts/proposals/RoleList';
 import { selectRoles, selectUser } from './IndividualsHelper';
 
 
@@ -52,7 +53,12 @@ class Individuals extends Component {
 
 
   setFlow = (index) => {
-    this.setState({ activeIndex: index });
+    this.setState({
+      selectedRoles:      [],
+      selectedUsers:      [],
+      selectedProposals:  [],
+      activeIndex:        index,
+    });
   };
 
 
@@ -110,7 +116,10 @@ class Individuals extends Component {
       <Grid id='next-approver-grid'>
 
         <Grid.Column id='next-approver-grid-track-column' width={11}>
-          <TrackHeader title='Individuals' {...this.props}/>
+          <TrackHeader
+            title='Individual Requests'
+            subtitle={openProposals && openProposals.length + ' pending'}
+            {...this.props}/>
           <div id='next-approver-individuals-content'>
             <IndividualsNav
               activeIndex={activeIndex}
@@ -118,7 +127,7 @@ class Individuals extends Component {
             { openProposals && openProposals.length !== 0 &&
               <div>
                 { activeIndex === 0 &&
-                  <div>Roles</div>
+                  <RoleList {...this.props}/>
                 }
                 { activeIndex === 1 &&
                   <PeopleList

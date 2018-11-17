@@ -74,7 +74,7 @@
 @downBoxShadow: none;
 
 /* Focus */
-@focusBorderColor: @focusedFormBorderColor;
+@focusBorderColor: @magenta;
 @focusBackground: @background;
 @focusColor: @hoveredTextColor;
 @focusBoxShadow: none;

@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { Button, Container, Search, Icon } from 'semantic-ui-react';
+import { Button, Icon, Input, Container, Search } from 'semantic-ui-react';
 
 
 import './RequesterNav.css';
@@ -71,14 +71,15 @@ export default class RequesterNav extends Component {
     return (
       <Container>
 
-        <Link to='/browse'>
-          <Button animated secondary fluid id='next-browse-button'>
+        <Link to='/browse' id='next-requester-nav-browse'>
+          <Button animated primary fluid>
             <Button.Content visible>BROWSE</Button.Content>
             <Button.Content hidden><Icon name='arrow right'/></Button.Content>
           </Button>
         </Link>
 
         <Search
+          input={() => <Input icon='search' placeholder='Search...'/>}
           className='next-requester-nav-search'
           category
           loading={false}/>

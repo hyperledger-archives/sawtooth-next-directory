@@ -33,8 +33,8 @@ export default class IndividualsNav extends Component {
     const { activeIndex, setFlow } = this.props;
 
     return (
-      <div>
-        <Menu compact icon='labeled'>
+      <div id='next-individuals-nav'>
+        <Menu compact>
           <Menu.Item
             name='roles'
             active={activeIndex === 0}

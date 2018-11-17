@@ -25,8 +25,5 @@ limitations under the License.
 .next-nav-list-label {
   color: var(--nav-list-color);
   font-size: 12px;
-}
-
-#next-nav-list-content .header {
-  color: var(--nav-list-color);
+  margin-left: var(--nav-list-padding);
 }

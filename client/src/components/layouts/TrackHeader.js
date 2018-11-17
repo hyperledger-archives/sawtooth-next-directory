@@ -15,25 +15,25 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-
 import { Header, Image, Grid } from 'semantic-ui-react';
-
 import PropTypes from 'prop-types';
 
 
 import './TrackHeader.css';
 import roleAvatar from '../../images/role-avatar.png';
 
+
 /**
  *
- * @class TrackHeader
- * Component encapsulating the track pane header
+ * @class         TrackHeader
+ * @description   Component encapsulating the track pane header
+ *
  *
  */
 export default class TrackHeader extends Component {
 
   render () {
-    const { roleImage, title, waves } = this.props;
+    const { roleImage, subtitle, title, waves } = this.props;
 
     return (
       <Grid>
@@ -46,7 +46,10 @@ export default class TrackHeader extends Component {
                   { roleImage &&
                     <Image circular size='large' src={roleAvatar}/>
                   }
-                  {title}
+                  <Header.Content>
+                    {title}
+                    <Header.Subheader>{subtitle}</Header.Subheader>
+                  </Header.Content>
                 </Header>
               }
             </div>

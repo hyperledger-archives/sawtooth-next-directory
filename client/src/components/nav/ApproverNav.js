@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { Container, Search } from 'semantic-ui-react';
+import { Container, Input, Search } from 'semantic-ui-react';
 
 
 import NavList from './NavList';
@@ -76,6 +76,7 @@ export default class ApproverNav extends Component {
       <Container>
 
         <Search
+          input={() => <Input icon='search' placeholder='Search...'/>}
           className='next-approver-nav-search'
           category
           loading={false}/>
