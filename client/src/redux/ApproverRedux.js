@@ -35,6 +35,8 @@ const { Types, Creators } = createActions({
   createRoleRequest:      ['payload'],
   createRoleSuccess:      ['success'],
   createRoleFailure:      ['error'],
+
+  resetAll:               null,
 });
 
 
@@ -81,10 +83,15 @@ export const ApproverSelectors = {
  *
  *
  */
-export const request = (state) => state.merge({ fetching: true });
+export const request = (state) => {
+  return state.merge({ fetching: true });
+}
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
+export const resetAll = () => {
+  return INITIAL_STATE;
+};
 
 
 /**
@@ -108,6 +115,8 @@ export const createRoleSuccess = (state) => {
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
+  [Types.RESET_ALL]: resetAll,
+
   [Types.OPEN_PROPOSALS_REQUEST]: request,
   [Types.OPEN_PROPOSALS_SUCCESS]: openProposalsSuccess,
   [Types.OPEN_PROPOSALS_FAILURE]: failure,

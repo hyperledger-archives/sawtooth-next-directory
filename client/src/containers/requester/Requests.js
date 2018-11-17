@@ -51,6 +51,7 @@ export class Requests extends Component {
   /**
    *
    * Switch pack on ID change
+   * TODO: Fix double request
    *
    *
    */
@@ -58,11 +59,11 @@ export class Requests extends Component {
     const { getRole, getProposal, roleId, proposalId } = this.props;
 
     if (newProps.roleId !== roleId) {
-      !this.role && getRole(newProps.roleId);
+      getRole(newProps.roleId);
     }
 
     if (newProps.proposalId !== proposalId) {
-      !this.request && getProposal(newProps.proposalId);
+      getProposal(newProps.proposalId);
     }
   }
 

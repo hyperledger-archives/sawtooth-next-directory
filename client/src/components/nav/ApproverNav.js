@@ -46,7 +46,7 @@ export default class ApproverNav extends Component {
           listTitle='Pending'
           labels={[
             null,
-            openProposalsCount,
+            openProposalsCount || null,
             null
           ]}
           list={[

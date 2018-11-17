@@ -92,10 +92,11 @@ class App extends Component {
 
 
   hydrate () {
-    const { getBase, getMe } = this.props;
+    const { getBase, getMe, getOpenProposals } = this.props;
 
     getMe();
     getBase();
+    getOpenProposals();
   }
 
 

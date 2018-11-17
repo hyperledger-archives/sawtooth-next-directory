@@ -47,8 +47,8 @@ class Individuals extends Component {
 
 
   componentDidMount () {
-    const { getOpenProposals } = this.props;
-    getOpenProposals();
+    const { getOpenProposals, openProposals } = this.props;
+    !openProposals && getOpenProposals();
   }
 
 
