@@ -55,14 +55,21 @@ export default class ApproverNav extends Component {
             'About to Expire'
           ]}
           route='/approval/pending'/>
-        <NavList
-          listTitle='Approved'
-          list={null}
-          route='/approval/approved'/>
-        <NavList
-          listTitle='Expired'
-          list={null}
-          route='/approval/expired'/>
+        <h4>
+          <Link to='/approval/delegated'>
+            Delegated
+          </Link>
+        </h4>
+        <h4>
+          <Link to='/approval/approved'>
+            Approved
+          </Link>
+        </h4>
+        <h4>
+          <Link to='/approval/expired'>
+            Expired
+          </Link>
+        </h4>
         <h4>
           <Link to='/approval/people'>
             People
