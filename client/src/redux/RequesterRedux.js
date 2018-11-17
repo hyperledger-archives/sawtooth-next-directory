@@ -45,7 +45,9 @@ const { Types, Creators } = createActions({
 
   accessRequest:     ['id', 'userId', 'reason'],
   accessSuccess:     null,
-  accessFailure:     null
+  accessFailure:     null,
+
+  resetAll:          null,
 });
 
 
@@ -168,6 +170,9 @@ export const request = (state) => {
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
+export const resetAll = () => {
+  return INITIAL_STATE;
+};
 
 
 /**
@@ -209,6 +214,8 @@ export const accessSuccess = (state) => {
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
+  [Types.RESET_ALL]: resetAll,
+
   [Types.BASE_REQUEST]: request,
   [Types.BASE_SUCCESS]: baseSuccess,
   [Types.BASE_FAILURE]: failure,

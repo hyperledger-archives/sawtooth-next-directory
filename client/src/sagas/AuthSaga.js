@@ -14,8 +14,10 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
+import { all, call, put } from 'redux-saga/effects';
 import AuthActions from '../redux/AuthRedux';
+import ApproverActions from '../redux/ApproverRedux';
+import RequesterActions from '../redux/RequesterRedux';
 
 
 /**
@@ -88,7 +90,11 @@ export function * logout (api, action) {
 
     const res = yield call(api.logout);
     if (res.ok) {
-      yield put(AuthActions.logoutSuccess());
+      yield all([
+        put(AuthActions.logoutSuccess()),
+        put(ApproverActions.resetAll()),
+        put(RequesterActions.resetAll()),
+      ]);
     } else {
       alert(res.data.message);
       yield put(AuthActions.logoutFailure(res.data.message));
