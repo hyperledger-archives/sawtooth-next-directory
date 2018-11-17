@@ -37,18 +37,11 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_CONFIG = {"OUTBOUND_QUEUE": "queue_outbound"}
 
 
-def getenv(name, default):
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
-
-
-OUTBOUND_QUEUE = getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
-LDAP_DC = os.environ.get("LDAP_DC")
-LDAP_SERVER = os.environ.get("LDAP_SERVER")
-LDAP_USER = os.environ.get("LDAP_USER")
-LDAP_PASS = os.environ.get("LDAP_PASS")
+OUTBOUND_QUEUE = os.getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
+LDAP_DC = os.getenv("LDAP_DC")
+LDAP_SERVER = os.getenv("LDAP_SERVER")
+LDAP_USER = os.getenv("LDAP_USER")
+LDAP_PASS = os.getenv("LDAP_PASS")
 DIRECTION = "outbound"
 
 USER_SEARCH_FILTER = "(&(objectClass=person)(distinguishedName={}))"

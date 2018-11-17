@@ -20,49 +20,41 @@ import logging
 from datetime import datetime as dt
 import rethinkdb as r
 from rbac.providers.common.expected_errors import ExpectedError
+from rbac.providers.error.unrecoverable_errors import DatabaseConnectionException
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-DEFAULT_CONFIG = {
-    "DB_HOST": "rethink",
-    "DB_PORT": "28015",
-    "DB_NAME": "rbac",
-    "DELAY": 1,
-    "CHANGELOG": "changelog",
-}
+CHANGELOG = os.getenv("CHANGELOG", "changelog")
+DB_HOST = os.getenv("DB_HOST", "rethink")
+DB_PORT = os.getenv("DB_PORT", "28015")
+DB_NAME = os.getenv("DB_NAME", "rbac")
+DB_CONNECT_TIMEOUT = int(float(os.getenv("DB_CONNECT_TIMEOUT", "1")))
 
-
-def getenv(name, default):
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
-
-
-CHANGELOG = getenv("CHANGELOG", DEFAULT_CONFIG["CHANGELOG"])
-DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
-DELAY = getenv("DELAY", DEFAULT_CONFIG["DELAY"])
+DB_CONNECT_MAX_ATTEMPTS = 5
 
 
 def connect_to_db():
     """Polls the database until it comes up and opens a connection."""
     connected_to_db = False
-    while not connected_to_db:
+    attempt = 0
+
+    while not connected_to_db and attempt < DB_CONNECT_MAX_ATTEMPTS:
         try:
             r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
             connected_to_db = True
-        except r.ReqlDriverError as err:
+        except r.ReqlDriverError:
             LOGGER.debug(
-                "Could not connect to RethinkDB. Repolling after %s seconds...", DELAY
+                "Could not connect to RethinkDB. Retrying in %s seconds...",
+                DB_CONNECT_TIMEOUT,
             )
-            time.sleep(DELAY)
-        except Exception as err:
-            LOGGER.warning(err.__class__.__name__)
-            raise err
+            time.sleep(DB_CONNECT_TIMEOUT)
+        attempt += 1
+
+    raise DatabaseConnectionException(
+        "Failed to connect to RethinkDb after {} attempts".format(DB_CONNECT_TIMEOUT)
+    )
 
 
 def peek_at_queue(table_name, provider_id):
