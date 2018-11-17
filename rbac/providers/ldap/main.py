@@ -20,7 +20,7 @@ import sys
 
 from tornado import ioloop
 
-from rbac.providers.ldap.outbound_queue_listener import print_feed_change_data
+from rbac.providers.ldap.outbound_queue_listener import export_feed_change_to_ldap
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
@@ -31,7 +31,9 @@ def start_listener():
 
     try:
         LOGGER.debug("Starting outbound queue listener")
-        ioloop.IOLoop.current().run_sync(print_feed_change_data)
+        # TODO: This only processes feed change data. We also need to process pre-existing records keeping in mind
+        # the risk of horizontal scaling (multinode) race conditions
+        ioloop.IOLoop.current().run_sync(export_feed_change_to_ldap)
 
     except KeyboardInterrupt:
         pass

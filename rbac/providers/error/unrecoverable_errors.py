@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,21 +13,14 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import os
-import sys
-import logging
-import tornado.ioloop
 
-TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, TOP_DIR)
+class DatabaseConnectionException(Exception):
+    """Thrown when all attempts to connect to the database have failed"""
 
-from rbac.providers.ldap.main import start_listener
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+class LdapValidationException(Exception):
+    """Thrown when an ldap message is missing required fields"""
 
-if __name__ == '__main__':
-    io_loop = tornado.ioloop.IOLoop.instance().current()
-    start_listener()
-    io_loop.start()
+
+class MissingLdapDestinationException(Exception):
+    """Thrown when an environment variable for ldap target is missing"""
