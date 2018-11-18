@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Icon, Image, Label, Menu, Header as MenuHeader } from 'semantic-ui-react';
-
+import { Link } from 'react-router-dom';
 
 import './Header.css';
 import logo from '../../images/next-logo-primary.png';
@@ -119,21 +119,19 @@ export default class Header extends Component {
     return (
       <header className='next-header' ref={this.setRef}>
         <div id='next-header-logo'>
-          <Image
-            src={logo}
-            as='a'
-            size='tiny'
-            href='/home'/>
+          <Image as={Link} to='/home' src={logo} size='tiny'/>
         </div>
         <div id='next-header-actions'>
           <Icon inverted name='search'/>
           <div id='next-header-bell'>
-            <Icon inverted name='bell'/>
-            { me && openProposalsCount &&
-              <Label circular color='blue' floating size='mini'>
-                {openProposalsCount}
-              </Label>
-            }
+            <Link to='/approval/pending/individual'>
+              <Icon inverted name='bell'/>
+              { me && openProposalsCount &&
+                <Label circular color='blue' floating size='mini'>
+                  {openProposalsCount}
+                </Label>
+              }
+            </Link>
           </div>
           { me &&
             <Image

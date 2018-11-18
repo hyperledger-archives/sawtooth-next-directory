@@ -29,11 +29,11 @@ import * as utils from '../services/Utils';
  *
  */
 const { Types, Creators } = createActions({
+  resetAll:      null,
+
   meRequest:     null,
   meSuccess:     ['me'],
   meFailure:     ['error'],
-
-  meReset:       null,
 
   userRequest:   ['id'],
   userSuccess:   ['user'],
@@ -84,13 +84,15 @@ export const UserSelectors = {
  *
  *
  */
-export const request = (state) => state.merge({ fetching: true });
-
+export const request = (state) => {
+  return state.merge({ fetching: true });
+};
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
-}
-
-export const reset = (state) => INITIAL_STATE;
+};
+export const resetAll = (state) => {
+  return INITIAL_STATE;
+};
 
 
 /**
@@ -100,15 +102,19 @@ export const reset = (state) => INITIAL_STATE;
  *
  */
 export const meSuccess = (state, { me }) => {
-  return state.merge({ fetching: false, me: me });
-}
+  return state.merge({
+    fetching: false,
+    me: me,
+    users: utils.merge(state.users || [], [me])
+  });
+};
 
 export const userSuccess = (state, { user }) => {
   return state.merge({
     fetching: false,
     users: utils.merge(state.users || [], [user])
   });
-}
+};
 
 
 /**
@@ -118,11 +124,11 @@ export const userSuccess = (state, { user }) => {
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
+  [Types.RESET_ALL]: resetAll,
+
   [Types.ME_REQUEST]: request,
   [Types.ME_SUCCESS]: meSuccess,
   [Types.ME_FAILURE]: failure,
-
-  [Types.ME_RESET]: reset,
 
   [Types.USER_REQUEST]: request,
   [Types.USER_SUCCESS]: userSuccess,

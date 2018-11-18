@@ -40,3 +40,12 @@ limitations under the License.
   position: relative;
   top: 100px;
 }
+
+#next-chat-header {
+  padding: 10px;
+}
+
+#next-chat-header i.mini {
+  font-size: 1.1em;
+  margin: 0;
+}

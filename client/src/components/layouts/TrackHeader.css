@@ -30,8 +30,17 @@ limitations under the License.
   background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
   color: var(--header-color);
   display: flex;
-  height: 96px;
+  height: var(--track-header-height);
   padding: 0 var(--page-content-padding);
+}
+
+#next-track-header .ui.header {
+  align-items: end;
+  display: flex;
+}
+
+#next-track-header .ui.header .content {
+  margin: 4px;
 }
 
 #next-wave,
@@ -54,4 +63,9 @@ limitations under the License.
   height: 41px;
   position: relative;
   top: -3px;
+}
+
+#next-track-header-subheader {
+  font-size: .45em;
+  margin-top: 7px;
 }
