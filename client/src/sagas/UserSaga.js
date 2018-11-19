@@ -14,78 +14,58 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { all, call, put } from 'redux-saga/effects';
+import { all, call, fork, put } from 'redux-saga/effects';
 import UserActions from '../redux/UserRedux';
 
 
 /**
  *
- * Execute me API request
+ * User generators
  *
- * The me generator function executes a request to the
- * API and handles the response.
+ * Each generator function executes a request to the
+ * API to retrieve data required to hydrate the UI.
  *
- * TODO: limit iterator to 3 proposals. UI will never display
- * TODO cont'd: more than 3 proposals in nav.
+ * @param api     API object
+ * @param action  Redux action
  *
- * @param action
+ * @generator me(...)
+ *            Get detailed info on the currently logged in user
+ * @generator getUser(...)
+ *            Get detailed info for a specific user or group of
+ *            users
+ *
  *
  */
 export function * me (api, action) {
   try {
-
     const res = yield call(api.me);
-
-    if (res.ok) {
-      let me = res.data.data;
-      yield put(UserActions.meSuccess(me));
-    } else {
-      alert(res.data.message);
+    res.ok ?
+      yield put(UserActions.meSuccess(res.data.data)) :
       yield put(UserActions.meFailure(res.data.message));
-    }
-
   } catch (err) {
     console.error(err);
   }
 }
 
 
-/**
- *
- * Execute getUser API request
- *
- * The getUser generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
- */
 export function * getUser (api, action) {
   try {
     const { id } = action;
-    yield get(api, id);
+    const res = yield call(api.getUser, id);
+    res.ok ?
+      yield put(UserActions.userSuccess(res.data.data)) :
+      yield put(UserActions.userFailure(res.data.message));
   } catch (err) {
     console.error(err);
   }
 }
 
 
-/**
- *
- * Execute getUsers API request
- *
- * The getUsers generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
- */
 export function * getUsers (api, action) {
   try {
     const { ids } = action;
-
     if (ids.length > 0) {
-      yield all(ids.map(id => get(api, id)));
+      yield all(ids.map(id => fork(getUser, api, { id })));
     }
   } catch (err) {
     console.error(err);
@@ -93,20 +73,11 @@ export function * getUsers (api, action) {
 }
 
 
-/**
- *
- * Helpers
- *
- *
- */
-function * get (api, id) {
-  const res = yield call(api.getUser, id);
+// // Helpers
 
-  if (res.ok) {
-    let user = res.data.data;
-    yield put(UserActions.userSuccess(user));
-  } else {
-    alert(res.data.message);
-    yield put(UserActions.userFailure(res.data.message));
-  }
-}
+// function * fetchUser (api, id) {
+//   const res = yield call(api.getUser, id);
+//   res.ok ?
+//     yield put(UserActions.userSuccess(res.data.data)) :
+//     yield put(UserActions.userFailure(res.data.message));
+// }

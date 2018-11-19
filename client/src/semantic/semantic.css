@@ -25246,7 +25246,7 @@ Floated Menu / Item
 
 .ui.inverted.menu {
   border: 0px solid transparent;
-  background: #1B1C1D;
+  background: #212C3A;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
@@ -26021,6 +26021,16 @@ Floated Menu / Item
 
 .ui.huge.inverted.vertical.menu .item {
   padding-bottom: 0.65em;
+}
+
+.ui.huge.inverted.vertical.menu .item:first-child {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  min-height: 70px;
 }
 
 .ui.huge.inverted.vertical.menu .ui.header .content {

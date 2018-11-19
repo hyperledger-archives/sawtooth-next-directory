@@ -14,19 +14,32 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { all, call, put } from 'redux-saga/effects';
+import { all, call, fork, put } from 'redux-saga/effects';
 import RequesterActions from '../redux/RequesterRedux';
 import UserActions from '../redux/UserRedux';
 
 
 /**
  *
- * Execute base API request
+ * Requester generators
  *
- * The getBase generator function executes a request to the
- * API to retrieve base data required to hydrate the landing screen.
+ * Each generator function executes a request to the
+ * API to retrieve data required to hydrate the UI.
  *
- * @param action
+ * @param api     API object
+ * @param action  Redux action
+ *
+ * @generator getBase(...)
+ *            Get the base data needed to hydrate the UI
+ * @generator getRole(s)(...)
+ *            Get detailed info for a specific role or group
+ *            of roles
+ * @generator getProposal(s)(...)
+ *            Get detailed info for a specific proposal or
+ *            group of proposals
+ * @generator requestAccess
+ *            Exectute a request to become a member of a role
+ *
  *
  */
 export function * getBase (api, action) {
@@ -39,42 +52,22 @@ export function * getBase (api, action) {
 }
 
 
-/**
- *
- * Execute role API request
- *
- * The getRole generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
- */
 export function * getRole (api, action) {
   try {
     const { id } = action;
-    yield get(api, id);
+    yield fetchRole(api, id);
   } catch (err) {
     console.error(err);
   }
 }
 
 
-/**
- *
- * Execute roles API request
- *
- * The getRoles generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
- */
 export function * getRoles (api, action) {
   try {
     const { ids } = action;
 
     if (ids.length > 0) {
-      yield all(ids.map(id => get(api, id)));
+      yield all(ids.map(id => fork(fetchRole, api, id)));
     }
   } catch (err) {
     console.error(err);
@@ -82,26 +75,21 @@ export function * getRoles (api, action) {
 }
 
 
-/**
- *
- * Execute proposal API request
- *
- * The getProposal generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
- */
 export function * getProposal (api, action) {
   try {
     const { id } = action;
-    const res = yield call(api.getProposal, id);
+    yield fetchProposal(api, id);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
-    if (res.ok) {
-      yield put(RequesterActions.proposalSuccess(res.data.data));
-    } else {
-      alert(res.data.error);
-      yield put(RequesterActions.proposalFailure(res.data.error));
+
+export function * getProposals (api, action) {
+  try {
+    const { ids } = action;
+    if (ids.length > 0) {
+      yield all(ids.map(id => fork(fetchProposal, api, id)));
     }
   } catch (err) {
     console.error(err);
@@ -109,16 +97,6 @@ export function * getProposal (api, action) {
 }
 
 
-/**
- *
- * Execute request access API request
- *
- * The requestAccess generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
- */
 export function * requestAccess (api, action) {
   try {
     const { id, userId, reason } = action;
@@ -128,11 +106,9 @@ export function * requestAccess (api, action) {
     });
 
     if (res.ok) {
-      console.log('Requested access');
       yield put(RequesterActions.accessSuccess(res.data));
       yield put(UserActions.meRequest());
     } else {
-      alert(res.data.error);
       yield put(RequesterActions.accessFailure(res.data.error));
     }
   } catch (err) {
@@ -141,22 +117,26 @@ export function * requestAccess (api, action) {
 }
 
 
-/**
- *
- * Helpers
- *
- *
- */
-export function * get (api, id) {
+// Helpers
+
+export function * fetchRole (api, id) {
   try {
     const res = yield call(api.getRole, id);
-
-    if (res.ok) {
-      yield put(RequesterActions.roleSuccess(res.data.data));
-    } else {
-      alert(res.data.error);
+    res.ok ?
+      yield put(RequesterActions.roleSuccess(res.data.data)) :
       yield put(RequesterActions.roleFailure(res.data.error));
-    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+export function * fetchProposal (api, id) {
+  try {
+    const res = yield call(api.getProposal, id);
+    res.ok ?
+      yield put(RequesterActions.proposalSuccess(res.data.data)) :
+      yield put(RequesterActions.proposalFailure(res.data.error))
   } catch (err) {
     console.error(err);
   }

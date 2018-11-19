@@ -54,19 +54,19 @@ const routes = (props) => [
    */
 
   {
-    path:   '/home',
+    path:   '/',
     main:   (rest) => <RequesterHome {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true
   },
   {
-    path:   '/home/requests/:id',
+    path:   '/requests/:id',
     main:   (rest) => <Requests {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true
   },
   {
-    path:   '/home/recommended-packs/:id',
+    path:   '/browse/roles/:id',
     main:   (rest) => <Recommended {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true
@@ -78,7 +78,7 @@ const routes = (props) => [
     exact:  true
   },
   {
-    path:   '/home/packs/:id',
+    path:   '/roles/:id',
     main:   (rest) => <Packs {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true

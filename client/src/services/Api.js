@@ -55,8 +55,29 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    */
   api.addResponseTransform(res => {
-    if (res.data.code === 401) {
-      AuthActions.logout();
+    switch (res.problem) {
+      case 'TIMEOUT_ERROR':
+        alert('Server is not responding. Please try again later.');
+        return;
+      case 'NETWORK_ERROR':
+        alert('Server currently unavailable. Please try again later.');
+        return;
+      case 'CONNECTION_ERROR':
+        alert('Cannot connect to server. Please try again later.');
+        return;
+      default:
+        break;
+    }
+
+    switch (res.status) {
+      case 200:
+        break;
+      case 401:
+        AuthActions.logout();
+        break;
+      default:
+        alert(res.data.message);
+        break;
     }
   });
 
@@ -82,6 +103,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   }
 
 
+  const approveProposals = (id, body) => api.patch(`proposals/${id}`, body);
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
@@ -96,6 +118,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
 
 
   return {
+    approveProposals,
     createRole,
     login,
     getOpenProposals,

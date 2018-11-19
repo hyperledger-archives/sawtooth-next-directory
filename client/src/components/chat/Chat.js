@@ -18,9 +18,10 @@ import React, { Component } from 'react';
 import { Header, Icon, Image, Segment } from 'semantic-ui-react';
 
 
+import './Chat.css';
 import ChatForm from '../forms/ChatForm';
 import ChatMessage from './ChatMessage';
-import './Chat.css';
+import * as utils from '../../services/Utils';
 
 
 import chatRequester from '../../mock_data/conversation_action.json';
@@ -60,12 +61,30 @@ export default class Chat extends Component {
 
 
   send (message, action) {
-    const { activeRole, me, requestAccess } = this.props;
+    const {
+      activeRole,
+      approveProposals,
+      history,
+      me,
+      requestAccess,
+      selectedProposals,
+      type } = this.props;
 
     if (action) {
       switch (action.type) {
         case 0:
-          requestAccess(activeRole.id, me.id, 'some reason');
+          if (type === 0) {
+            requestAccess(activeRole.id, me.id, 'some reason');
+            const slug = utils.createSlug(activeRole.name);
+            history.push(`/requests/${slug}`);
+          }
+          if (type === 1) {
+            approveProposals(selectedProposals);
+          }
+          break;
+
+        case 1:
+          alert('Cancel');
           break;
 
         default:
@@ -81,6 +100,7 @@ export default class Chat extends Component {
       selectedRoles,
       selectedUsers,
       title,
+      disabled,
       type } = this.props;
 
     // ! Temporary
@@ -123,6 +143,7 @@ export default class Chat extends Component {
 
         <div id='next-chat-conversation-dock'>
           <ChatForm
+            disabled={disabled}
             actions={actions}
             submit={(message, action) => this.send(message, action)}/>
         </div>

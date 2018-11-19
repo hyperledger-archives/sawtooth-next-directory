@@ -43,6 +43,8 @@ const { Types, Creators } = createActions({
   proposalSuccess:   ['proposal'],
   proposalFailure:   ['error'],
 
+  proposalsRequest:  ['ids'],
+
   accessRequest:     ['id', 'userId', 'reason'],
   accessSuccess:     null,
   accessFailure:     null,
@@ -114,12 +116,18 @@ export const RequesterSelectors = {
 
   // Retrieve user requests (proposals)
   requests: (state) =>
-    state.requester.roles &&
     state.user.me &&
-    state.requester.roles.filter(role =>
-      state.user.me.proposals.find(proposal =>
-        proposal['object_id'] === role.id
-      )
+    state.requester.roles &&
+    state.requester.requests &&
+    state.requester.requests
+      .filter(request => request.status === 'OPEN')
+      .map(request => {
+        return {
+          ...request,
+          ...state.requester.roles
+            .find(role => role.id === request['object'])
+        }
+      }
   ),
 
   /**
@@ -225,11 +233,12 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ROLE_FAILURE]: failure,
 
   [Types.ROLES_REQUEST]: request,
-  [Types.ROLES_REQUEST]: request,
 
   [Types.PROPOSAL_REQUEST]: request,
   [Types.PROPOSAL_SUCCESS]: proposalSuccess,
   [Types.PROPOSAL_FAILURE]: failure,
+
+  [Types.PROPOSALS_REQUEST]: request,
 
   [Types.ACCESS_REQUEST]: request,
   [Types.ACCESS_SUCCESS]: accessSuccess,

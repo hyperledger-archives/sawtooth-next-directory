@@ -71,6 +71,7 @@ class NavList extends Component {
 
     return (
       list.map((item, index) => (
+        item &&
         <List.Item active={this.isItemActive(item)}
           key={index}
           as={Link}

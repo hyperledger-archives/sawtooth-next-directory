@@ -72,6 +72,7 @@ export const appDispatch = (dispatch) => {
   return {
 
     // Approver
+    approveProposals:  (ids) => dispatch(ApproverActions.approveProposalsRequest(ids)),
     getOpenProposals:  ()    => dispatch(ApproverActions.openProposalsRequest()),
 
     // Chat
@@ -85,6 +86,7 @@ export const appDispatch = (dispatch) => {
     getRole:           (id)  => dispatch(RequesterActions.roleRequest(id)),
     getRoles:          (ids) => dispatch(RequesterActions.rolesRequest(ids)),
     getProposal:       (id)  => dispatch(RequesterActions.proposalRequest(id)),
+    getProposals:      (ids) => dispatch(RequesterActions.proposalsRequest(ids)),
     requestAccess:     (id, userId, reason) => {
       return dispatch(RequesterActions.accessRequest(id, userId, reason))
     },

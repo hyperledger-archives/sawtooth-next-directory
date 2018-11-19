@@ -14,49 +14,72 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
+import { all, call, fork, put } from 'redux-saga/effects';
 import ApproverActions from '../redux/ApproverRedux';
 
 
 /**
  *
- * Execute open proposals API request
+ * Approver generators
  *
- * The getOpenProposals generator function executes a request to the
- * API to get open proposals.
+ * Each generator function executes a request to the
+ * API to retrieve data required to hydrate the UI.
  *
- * @param action
+ * @param api     API object
+ * @param action  Redux action
+ *
+ * @generator getOpenProposals(...)
+ *            Get currently open proposals assigned to
+ *            logged in user
+ * @generator createRole(...)
+ *            Create a role
+ *
  *
  */
 export function * getOpenProposals (api, action) {
   try {
-
     const res = yield call(api.getOpenProposals);
     yield put(ApproverActions.openProposalsSuccess(res.data));
-
   } catch (err) {
     console.error(err);
   }
 }
 
 
-/**
- *
- * Execute create role API request
- *
- * The createRole generator function executes a request to the
- * API to create a new role.
- *
- * @param action
- *
- */
 export function * createRole (api, action) {
   try {
     const { payload } = action;
-
     const res = yield call(api.createRole, payload);
     yield put(ApproverActions.createRoleSuccess(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}
 
+
+export function * approveProposals (api, action) {
+  try {
+    const { ids } = action;
+    if (ids.length > 0) {
+      yield all(ids.map(id => fork(approveProposal, api, id)));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+// Helpers
+
+export function * approveProposal (api, id) {
+  try {
+    const res = yield call(api.approveProposals, id, {
+      status: 'APPROVED',
+      reason: ''
+    });
+    res.ok ?
+      yield put(ApproverActions.approveProposalsSuccess(res.data)) :
+      yield put(ApproverActions.approveProposalsFailure(res.data.error))
   } catch (err) {
     console.error(err);
   }

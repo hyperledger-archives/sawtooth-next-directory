@@ -16,14 +16,16 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
+
+import { RequesterSelectors } from '../../redux/RequesterRedux';
 
 
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
-import RolesList from '../../components/layouts/RolesList';
+import MemberList from '../../components/layouts/MemberList';
 
 
 import './Packs.css';
@@ -32,28 +34,76 @@ import './Packs.css';
 /**
  *
  * @class Packs
- * *Your Packs* component
+ * *Packs* component
+ * TODO: Merge Packs.js and Recommended.js in Roles.js
  *
  */
-class Packs extends Component {
+export class Packs extends Component {
+
+  componentDidMount () {
+    const { getRole, roleId } = this.props;
+    roleId && !this.role && getRole(roleId);
+  }
+
+
+  /**
+   *
+   * Switch pack on ID change
+   *
+   *
+   */
+  componentWillReceiveProps (newProps) {
+    const { getRole, roleId } = this.props;
+
+    if (newProps.roleId !== roleId) {
+      !this.role && getRole(newProps.roleId);
+    }
+  }
+
 
   render () {
-    const { activeRole } = this.props;
-    const title = activeRole && activeRole.name;
+    const { roleId, roleFromId, me } = this.props;
+
+    this.role = roleFromId(roleId);
+
+    if (!this.role) return null;
+
+    const membersCount = [...this.role.members, ...this.role.owners].length;
+    const subtitle = `${membersCount} ${membersCount > 1 ? 'members' : 'member'}`;
+    const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
 
     return (
       <Grid id='next-requester-grid'>
 
+        {/* Left pane */}
         <Grid.Column
           id='next-requester-grid-track-column'
           width={11}>
-          <TrackHeader waves title={title} {...this.props}/>
-          <RolesList {...this.props}/>
+          <TrackHeader
+            roleImage
+            waves
+            title={this.role.name}
+            subtitle={subtitle}
+            {...this.props}/>
+          <div id='next-requester-recommended-content'>
+            <Container id='next-requester-recommended-description'>
+              Lorem ipsum dolor sit amet.
+            </Container>
+            <MemberList {...this.props}
+              members={this.role.members}
+              owners={this.role.owners}/>
+          </div>
         </Grid.Column>
+
+        {/* Right pane */}
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={5}>
-          <Chat {...this.props}/>
+          <Chat
+            type={0}
+            disabled={isOwner}
+            title={this.role.name + ' Conversations'}
+            activeRole={this.role} {...this.props}/>
         </Grid.Column>
 
       </Grid>
@@ -64,20 +114,22 @@ class Packs extends Component {
 
 
 Packs.proptypes = {
-  activeRole: PropTypes.arrayOf(PropTypes.shape(
-    {
-      name: PropTypes.string
-    }
-  ))
+  getRole: PropTypes.func
 };
 
 
-const mapStateToProps = (state) => {
-  return {};
+const mapStateToProps = (state, ownProps) => {
+  const { params } = ownProps.match;
+  const { roles } = state.requester;
+
+  return {
+    roleId: RequesterSelectors.idFromSlug(state, roles, params.id)
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {};
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Packs);

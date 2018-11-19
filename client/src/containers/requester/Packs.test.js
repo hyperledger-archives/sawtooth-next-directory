@@ -27,9 +27,16 @@ const store = createCustomStore();
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
+  const props = {
+    getRole: () => {},
+    roleFromId: () => {},
+    match: { params: {} },
+    requester: { recommended: [] }
+  };
+
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Packs/></BrowserRouter>
+      <BrowserRouter><Packs {...props}/></BrowserRouter>
     </Provider>, div
   );
 

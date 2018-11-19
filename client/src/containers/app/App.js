@@ -25,6 +25,7 @@ import './App.css';
 import Browse from '../browse/Browse';
 import Header from '../../components/layouts/Header';
 import Login from '../login/Login';
+import * as utils from '../../services/Utils';
 
 
 import { appDispatch, appState } from './AppHelper';
@@ -100,9 +101,11 @@ class App extends Component {
   }
 
 
+  // proposals is array of objects of form { object_id, proposal_id }
   hydrateSidebar (newProps) {
-    const { getRoles, roles } = this.props;
+    const { getProposals, getRoles, roles } = this.props;
 
+    // * (1) Map proposals and memberOf to ID array
     let foo = [
       ...newProps.me.proposals,
       ...newProps.me.memberOf
@@ -111,11 +114,17 @@ class App extends Component {
         item['object_id'] :
         item)
 
+    // * (2) Find roles we don't already have loaded in
     if (roles) {
       foo = foo.filter(item =>
         roles.find(role => role.id === item));
     }
 
+    let bar = newProps.me.proposals.map(item =>
+        item['proposal_id']);
+
+    // * (3) Load roles not in
+    getProposals(bar);
     getRoles(foo);
   }
 
@@ -204,7 +213,12 @@ class App extends Component {
 
 
   render () {
-    const { isAuthenticated, routes } = this.props;
+    const { isAuthenticated, recommended, routes } = this.props;
+
+    const homeLink = recommended && recommended[0] ?
+      `/roles/${utils.createSlug(recommended[0].name)}` :
+      undefined;
+
     this.routes = routes(this.props);
 
     return (
@@ -214,15 +228,11 @@ class App extends Component {
           <Switch>
             <Route exact path='/login' component={Login}/>
             <Route exact path='/signup' component={Login}/>
-
             { !isAuthenticated && <Redirect to='/login'/> }
-
-            <Route exact path='/' render={() => (
-              isAuthenticated ?
-                (<Redirect to='/home'/>) :
-                (<Redirect to='/login'/>)
-            )}/>
-
+            { homeLink &&
+              <Route exact path='/' render={() => (
+                <Redirect to={homeLink}/>)}/>
+            }
             <Route exact path='/browse' component={Browse}/>
             <Route render={() => ( this.renderGrid() )}/>
           </Switch>
