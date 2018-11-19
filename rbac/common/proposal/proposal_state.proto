@@ -27,18 +27,18 @@ message Proposal {
 
     enum ProposalType {
 
-        ADD_ROLE_TASKS = 0;
-        ADD_ROLE_MEMBERS = 1;
-        ADD_ROLE_OWNERS = 2;
-        ADD_ROLE_ADMINS = 3;
-        REMOVE_ROLE_TASKS = 4;
-        REMOVE_ROLE_MEMBERS = 5;
-        REMOVE_ROLE_OWNERS = 6;
-        REMOVE_ROLE_ADMINS = 7;
-        ADD_TASK_OWNERS = 8;
-        ADD_TASK_ADMINS = 9;
-        REMOVE_TASK_OWNERS = 10;
-        REMOVE_TASK_ADMINS = 11;
+        ADD_ROLE_TASK = 0;
+        ADD_ROLE_MEMBER = 1;
+        ADD_ROLE_OWNER = 2;
+        ADD_ROLE_ADMIN = 3;
+        REMOVE_ROLE_TASK = 4;
+        REMOVE_ROLE_MEMBER = 5;
+        REMOVE_ROLE_OWNER = 6;
+        REMOVE_ROLE_ADMIN = 7;
+        ADD_TASK_OWNER = 8;
+        ADD_TASK_ADMIN = 9;
+        REMOVE_TASK_OWNER = 10;
+        REMOVE_TASK_ADMIN = 11;
         UPDATE_USER_MANAGER = 12;
 
     }
@@ -55,12 +55,12 @@ message Proposal {
 
 
     // The id of the Role, Task, User that the 'target_id' is being added or
-    // removed from. For example, for an ADD_ROLE_MEMBERS Proposal, the
+    // removed from. For example, for an ADD_ROLE_MEMBER Proposal, the
     // object_id is the Role id.
     string object_id = 3;
 
     // The id of the Task, or User that is being added or removed from the
-    // 'object_id'. For example, for an ADD_TASK_OWNERS Proposal, the
+    // 'object_id'. For example, for an ADD_TASK_OWNER Proposal, the
     // target_id is the User id of the proposed new Owner.
     string target_id = 4;
 

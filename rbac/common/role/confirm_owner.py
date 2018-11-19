@@ -33,7 +33,7 @@ class ConfirmAddRoleOwner(BaseMessage):
     @property
     def message_type(self):
         # pylint: disable=no-member
-        return protobuf.rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_OWNERS
+        return protobuf.rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_OWNER
 
     @property
     def message_proto(self):

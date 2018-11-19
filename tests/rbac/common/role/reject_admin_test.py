@@ -128,7 +128,7 @@ class RejectRoleAddAdminTest(TestAssertions):
         self.assertStatusSuccess(status)
         self.assertIsInstance(reject, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
-            reject.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_ADMINS
+            reject.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_ADMIN
         )
         self.assertEqual(reject.proposal_id, proposal.proposal_id)
         self.assertEqual(reject.object_id, proposal.object_id)

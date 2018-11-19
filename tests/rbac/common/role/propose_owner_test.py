@@ -125,7 +125,7 @@ class ProposeRoleAddOwnerTest(TestAssertions):
         self.assertStatusSuccess(status)
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
-            proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_OWNERS
+            proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_OWNER
         )
         self.assertEqual(proposal.proposal_id, message.proposal_id)
         self.assertEqual(proposal.object_id, role.role_id)

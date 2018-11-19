@@ -101,7 +101,7 @@ def propose_add_role_admins(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_add_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_ADMINS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_ADMIN,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -137,7 +137,7 @@ def confirm_add_role_admins(txn_key, batch_key, proposal_id, role_id, user_id, r
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_add_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_ADMINS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_ADMIN,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -156,7 +156,7 @@ def reject_add_role_admins(txn_key, batch_key, proposal_id, role_id, user_id, re
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_add_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_ADMINS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_ADMIN,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -184,7 +184,7 @@ def propose_remove_role_admins(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_ADMINS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_ADMIN,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -208,7 +208,7 @@ def confirm_remove_role_admins(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_add_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_ADMINS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_ADMIN,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -229,7 +229,7 @@ def reject_remove_role_admins(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_add_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_ADMINS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_ADMIN,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -254,7 +254,7 @@ def propose_add_role_owners(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_OWNERS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_OWNER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -278,7 +278,7 @@ def confirm_add_role_owners(txn_key, batch_key, proposal_id, role_id, user_id, r
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_OWNERS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_OWNER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -298,7 +298,7 @@ def reject_add_role_owners(txn_key, batch_key, proposal_id, role_id, user_id, re
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_OWNERS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_OWNER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -326,7 +326,7 @@ def propose_remove_role_owners(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_OWNERS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_OWNER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -352,7 +352,7 @@ def confirm_remove_role_owners(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_OWNERS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_OWNER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -374,7 +374,7 @@ def reject_remove_role_owners(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_OWNERS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_OWNER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -399,7 +399,7 @@ def propose_add_role_members(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_MEMBERS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_MEMBER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -423,7 +423,7 @@ def confirm_add_role_members(txn_key, batch_key, proposal_id, role_id, user_id, 
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_MEMBER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -443,7 +443,7 @@ def reject_add_role_members(txn_key, batch_key, proposal_id, role_id, user_id, r
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_MEMBERS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_MEMBER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -471,7 +471,7 @@ def propose_remove_role_members(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_MEMBERS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_MEMBER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -497,7 +497,7 @@ def confirm_remove_role_members(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_MEMBERS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_MEMBER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -519,7 +519,7 @@ def reject_remove_role_members(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_MEMBERS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_MEMBER,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -548,7 +548,7 @@ def propose_add_role_tasks(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_TASKS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_TASK,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -572,7 +572,7 @@ def confirm_add_role_tasks(txn_key, batch_key, proposal_id, role_id, task_id, re
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_TASKS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_TASK,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -593,7 +593,7 @@ def reject_add_role_tasks(txn_key, batch_key, proposal_id, role_id, task_id, rea
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_TASKS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_ROLE_TASK,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -621,7 +621,7 @@ def propose_remove_role_tasks(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_TASKS,
+        message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_ROLE_TASK,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -647,7 +647,7 @@ def confirm_remove_role_tasks(
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_TASKS,
+        message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_ROLE_TASK,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -668,7 +668,7 @@ def reject_remove_role_tasks(txn_key, batch_key, proposal_id, role_id, task_id, 
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
-        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_TASKS,
+        message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_ROLE_TASK,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)

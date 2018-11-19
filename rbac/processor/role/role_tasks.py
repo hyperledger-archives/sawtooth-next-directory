@@ -35,7 +35,7 @@ def apply_propose(header, payload, state):
         header=header,
         payload=propose,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_TASKS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_TASK,
         state=state,
         related_type="task_id",
     )
@@ -56,7 +56,7 @@ def apply_propose_remove(header, payload, state):
         header=header,
         payload=propose,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_TASKS,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_TASK,
         state=state,
         related_type="task_id",
     )

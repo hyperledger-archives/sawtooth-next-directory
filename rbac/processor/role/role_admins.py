@@ -50,10 +50,10 @@ def apply_propose(header, payload, state):
         object_id=role_admins_payload.role_id,
         related_id=role_admins_payload.user_id,
         proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_ADMINS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_ADMIN,
     ):
         raise InvalidTransaction(
-            "There is already an open proposal for ADD_ROLE_ADMINS "
+            "There is already an open proposal for ADD_ROLE_ADMIN "
             "with role id {} and user id {}".format(
                 role_admins_payload.role_id, role_admins_payload.user_id
             )
@@ -64,7 +64,7 @@ def apply_propose(header, payload, state):
         header=header,
         payload=role_admins_payload,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_ADMINS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_ADMIN,
         state=state,
     )
 
@@ -90,10 +90,10 @@ def apply_propose_remove(header, payload, state):
         object_id=role_admins_payload.role_id,
         related_id=role_admins_payload.user_id,
         proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_ADMINS,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_ADMIN,
     ):
         raise InvalidTransaction(
-            "There is already an open proposal for REMOVE_ROLE_ADMINS "
+            "There is already an open proposal for REMOVE_ROLE_ADMIN "
             "with role id {} and user id {}".format(
                 role_admins_payload.role_id, role_admins_payload.user_id
             )
@@ -104,7 +104,7 @@ def apply_propose_remove(header, payload, state):
         header=header,
         payload=role_admins_payload,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_ADMINS,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_ADMIN,
         state=state,
     )
 

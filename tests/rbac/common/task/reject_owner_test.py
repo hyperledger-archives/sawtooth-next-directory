@@ -136,7 +136,7 @@ class RejectTaskAddOwnerTest(TestAssertions):
         self.assertStatusSuccess(status)
         self.assertIsInstance(reject, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
-            reject.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNERS
+            reject.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNER
         )
         self.assertEqual(reject.proposal_id, proposal.proposal_id)
         self.assertEqual(reject.object_id, proposal.object_id)
