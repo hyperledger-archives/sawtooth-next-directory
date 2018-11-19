@@ -16,29 +16,28 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Container, Grid, Header, Image } from 'semantic-ui-react';
+import { Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import './Login.css';
+import './Signup.css';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
-import LoginForm from '../../components/forms/LoginForm';
+import SignupForm from '../../components/forms/SignupForm';
 import * as utils from '../../services/Utils';
 import logo from '../../images/next-logo-billboard.png';
 
 
 /**
  *
- * @class         Login
- * @description   Component encapsulating the login landing page
+ * @class         Signup
+ * @description   Component encapsulating the signup landing page
  *
  */
-class Login extends Component {
+class Signup extends Component {
 
   static propTypes = {
     isAuthenticated: PropTypes.bool,
-    login: PropTypes.func.isRequired
+    signup: PropTypes.func.isRequired
   };
 
 
@@ -65,7 +64,7 @@ class Login extends Component {
 
 
   render() {
-    const { login } = this.props;
+    const { signup } = this.props;
 
     return (
       <div id='next-login-container'>
@@ -73,13 +72,9 @@ class Login extends Component {
           <Grid.Column id='next-login-column'>
             <Header color='grey' textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
-              <h1>Sign in to NEXT Directory</h1>
+              <h1>Create an account</h1>
             </Header>
-            <LoginForm submit={login}/>
-            <Container id='next-login-new-account-container' textAlign='center'>
-              <span>New to NEXT Directory?</span>
-              <Link to='/signup'>Create an account</Link>
-            </Container>
+            <SignupForm submit={signup}/>
           </Grid.Column>
         </Grid>
       </div>
@@ -98,12 +93,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    login: (email, password) =>
-      dispatch(AuthActions.loginRequest(email, password)),
-    attemptSignup: (name, username, password, email) =>
+    signup: (name, username, password, email) =>
       dispatch(AuthActions.signupRequest(name, username, password, email))
   };
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);

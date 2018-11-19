@@ -25,6 +25,7 @@ import './App.css';
 import Browse from '../browse/Browse';
 import Header from '../../components/layouts/Header';
 import Login from '../login/Login';
+import Signup from '../signup/Signup';
 import * as utils from '../../services/Utils';
 
 
@@ -42,6 +43,12 @@ import { appDispatch, appState } from './AppHelper';
  *
  */
 class App extends Component {
+
+  static propTypes = {
+    isAuthenticated: PropTypes.bool,
+    routes: PropTypes.func
+  };
+
 
   state = { isSideBarVisible: false };
 
@@ -227,7 +234,7 @@ class App extends Component {
           <Header {...this.props}/>
           <Switch>
             <Route exact path='/login' component={Login}/>
-            <Route exact path='/signup' component={Login}/>
+            <Route exact path='/signup' component={Signup}/>
             { !isAuthenticated && <Redirect to='/login'/> }
             { homeLink &&
               <Route exact path='/' render={() => (
@@ -242,12 +249,6 @@ class App extends Component {
   }
 
 }
-
-
-App.proptypes = {
-  isAuthenticated: PropTypes.bool,
-  routes: PropTypes.func
-};
 
 
 const mapStateToProps = (state) => appState(state);

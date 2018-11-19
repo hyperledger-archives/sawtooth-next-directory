@@ -14,7 +14,45 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.next-login-column {
+#next-login-column {
   margin-top: 100px;
   max-width: 450px;
+}
+
+#next-login-column a,
+#next-login-column input {
+  color: var(--nav-heading-color);
+}
+
+#next-login-container {
+  background: var(--auth-fg-color);
+  height: 100%;
+}
+
+#next-login-logo {
+  margin-bottom: 25px;
+  height: 100px;
+  width: 100px;
+}
+
+#next-login-container h1 {
+  font-size: 1.2em;
+  margin-bottom: 60px;
+}
+
+#next-login-container .ui.form .field.field input:-webkit-autofill {
+  box-shadow: 0px 0px 0px 100px var(--auth-fg-color) inset !important;
+}
+
+#next-login-new-account-container {
+  color: var(--inverted-text-color);
+  margin-top: 64px;
+}
+
+#next-login-new-account-container span {
+  margin-right: 10px;
+}
+
+#next-login-form-password {
+  margin-top: 30px;
 }

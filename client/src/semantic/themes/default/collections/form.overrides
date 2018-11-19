@@ -1,3 +1,30 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+.form-inverted .ui.form .field input[type="email"],
+.form-inverted .ui.form .field input[type="password"],
+.form-inverted .ui.form .field input[type="text"] {
+  border-bottom: 1px solid @inputBorderColor;
+}
+
+.form-inverted .ui.form .field input::placeholder,
+.form-inverted .ui.form .field input:focus::placeholder {
+  color: @grey;
+}
+
+.form-inverted .ui.form .field > .ui.label {
+  background: none;
+  font-weight: normal;
+  margin: 8px 0 0 11px;
+}
+
+.form-inverted  .ui.form .field input:-webkit-autofill {
+  -webkit-text-fill-color: @inputAutoFillBorder;
+}
+
+.form-inverted .ui.form .field .error input[type="password"],
+.form-inverted .ui.form .field .error input[type="text"] ,
+.form-inverted .ui.form .field .error input[type="email"] {
+  border-color: @formErrorBorder;
+}

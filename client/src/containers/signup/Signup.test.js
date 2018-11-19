@@ -14,29 +14,27 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-:root {
-  --header-bg-color: #000;
-  --header-color: #fff;
-  --nav-bg-color: #212c3a;
-  --auth-bg-color: #fff;
-  --auth-fg-color: #212c3a;
-  --nav-heading-color: #fff;
-  --nav-list-color: #727c85;
-  --inverted-text-color: #727c85;
-  --chat-bg-color: #b0b0b01f;
-  --selected-list-color: #fef2f8;
-  --divider-color: #cedbe6;
-  --nav-list-padding: 22px;
-  --page-content-padding: 30px;
-  --track-header-height: 113px;
-  --magenta: #e40073;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import Signup from './Signup';
+import createCustomStore from '../../createCustomStore';
 
-body,
-#root {
-  height: 100%;
-}
 
-#next-wave {
-  position: absolute;
-}
+const store = createCustomStore();
+
+
+it('renders without crashing', () => {
+  const div = document.createElement('div');
+
+  const props = {};
+
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Signup {...props}/></BrowserRouter>
+    </Provider>, div
+  );
+
+  ReactDOM.unmountComponentAtNode(div);
+});

@@ -77,7 +77,7 @@
 ---------------*/
 
 /* This adjusts the default form input across all elements */
-@inputBackground        : @white;
+@inputBackground        : transparent;
 @inputVerticalPadding   : @relative11px;
 @inputHorizontalPadding : @relative14px;
 @inputPadding           : @inputVerticalPadding @inputHorizontalPadding;
