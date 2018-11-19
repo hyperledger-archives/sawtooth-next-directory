@@ -11,6 +11,7 @@ jobs:
       install:
         - pip3 install -r requirements.txt
       script:
+        - bin/run_python_formatter_check
         - bin/run_lint
         - bin/build -t
     - stage: frontend
