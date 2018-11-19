@@ -68,4 +68,5 @@ limitations under the License.
 #next-track-header-subheader {
   font-size: .45em;
   margin-top: 7px;
+  min-height: 15px;
 }

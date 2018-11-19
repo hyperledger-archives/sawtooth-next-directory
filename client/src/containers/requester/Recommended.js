@@ -61,7 +61,7 @@ export class Recommended extends Component {
 
 
   render () {
-    const { roleId, roleFromId } = this.props;
+    const { roleId, roleFromId, me } = this.props;
 
     this.role = roleFromId(roleId);
 
@@ -69,21 +69,21 @@ export class Recommended extends Component {
 
     const membersCount = [...this.role.members, ...this.role.owners].length;
     const subtitle = `${membersCount} ${membersCount > 1 ? 'members' : 'member'}`;
+    const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
 
     return (
       <Grid id='next-requester-grid'>
 
+        {/* Left pane */}
         <Grid.Column
           id='next-requester-grid-track-column'
           width={11}>
-
           <TrackHeader
             roleImage
             waves
             title={this.role.name}
             subtitle={subtitle}
             {...this.props}/>
-
           <div id='next-requester-recommended-content'>
             <Container id='next-requester-recommended-description'>
               Lorem ipsum dolor sit amet.
@@ -92,12 +92,17 @@ export class Recommended extends Component {
               members={this.role.members}
               owners={this.role.owners}/>
           </div>
-
         </Grid.Column>
+
+        {/* Right pane */}
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={5}>
-          <Chat title={this.role.name + ' Conversations'} activeRole={this.role} {...this.props}/>
+          <Chat
+            type={0}
+            disabled={isOwner}
+            title={this.role.name + ' Conversations'}
+            activeRole={this.role} {...this.props}/>
         </Grid.Column>
 
       </Grid>

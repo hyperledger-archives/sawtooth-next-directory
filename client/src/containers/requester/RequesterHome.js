@@ -32,6 +32,18 @@ import './RequesterHome.css';
  */
 export default class RequesterHome extends Component {
 
+  componentWillMount () {
+    // const { history, recommended } = this.props;
+
+    // if (recommended && recommended[0]) {
+    //   const slug = utils.createSlug(recommended[0].name);
+    //   history.push(`/roles/${slug}`)
+    // }
+    // console.log(recommended)
+    // alert();
+  }
+
+
   render () {
     return (
       <Grid id='next-requester-grid'>

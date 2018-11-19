@@ -20,49 +20,42 @@ import AuthActions from '../redux/AuthRedux';
 
 /**
  *
- * Execute login API request
+ * Auth generators
  *
- * The login generator function executes a request to the
- * API and handles the response.
+ * Each generator function executes a request to the
+ * API to retrieve data required to hydrate the UI.
  *
- * @param action
+ * @param api     API object
+ * @param action  Redux action
+ *
+ * @generator login(...)
+ *            Authenticate a user
+ * @generator signup(...)
+ *            Create a new user account
+ * @generator logout(...)
+ *            Logout of current session
+ *
  *
  */
 export function * login (api, action) {
   try {
-
     const { username, password } = action;
     const res = yield call(api.login, {
       id: username,
       password: password
     });
 
-    if (res.ok) {
-      yield put(AuthActions.loginSuccess(true, res.data.data));
-    } else {
-      alert(res.data.message);
+    res.ok ?
+      yield put(AuthActions.loginSuccess(true, res.data.data)) :
       yield put(AuthActions.loginFailure(res.data.message));
-    }
-
   } catch (err) {
     console.error(err);
   }
 }
 
-/**
- *
- * Execute Signup API request
- *
- * The signup generator function executes a request to the
- * API for creating new user and handles the response.
- *
- * @param action
- *
- */
 
 export function * signup (api, action) {
   try {
-
     const { username, password, name, email } = action;
     const res = yield call(api.signup, {
       username: username,
@@ -71,29 +64,21 @@ export function * signup (api, action) {
       name: name
     });
 
-    if (res.ok) {
-      yield put(AuthActions.signupSuccess(true, res.data.data));
-    } else {
-      alert(res.data.message);
+    res.ok ?
+      yield put(AuthActions.signupSuccess(true, res.data.data)) :
       yield put(AuthActions.signupFailure(res.data.message));
-    }
-
   } catch (err) {
     console.error(err);
   }
 }
 
+
 export function * logout (api, action) {
   try {
-
     const res = yield call(api.logout);
-    if (res.ok) {
-      yield put(AuthActions.logoutSuccess());
-    } else {
-      alert(res.data.message);
+    res.ok ?
+      yield put(AuthActions.logoutSuccess()) :
       yield put(AuthActions.logoutFailure(res.data.message));
-    }
-
   } catch (err) {
     console.error(err);
   }

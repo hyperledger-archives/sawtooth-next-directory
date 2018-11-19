@@ -63,7 +63,7 @@ export default class ChatForm extends Component {
 
 
   renderActions () {
-    const { actions } = this.props;
+    const { actions, disabled } = this.props;
 
     return (
       <div id='next-chat-actions'>
@@ -72,10 +72,18 @@ export default class ChatForm extends Component {
             <Button
               key={index}
               icon
+              disabled={disabled}
               onClick={() => this.handleSubmit(action)}>
-              {action.type === 0 && <Icon name='check circle'></Icon> }
-              {action.type === 1 && <Icon name='x'></Icon> }
-              {action.action_text}
+              { !disabled &&
+                <span>
+                  {action.type === 0 && <Icon name='check circle'></Icon> }
+                  {action.type === 1 && <Icon name='x'></Icon> }
+                  {action.action_text}
+                </span>
+              }
+              { disabled &&
+                <span></span>
+              }
             </Button>
           ))
         }

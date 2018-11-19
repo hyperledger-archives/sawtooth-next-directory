@@ -19,8 +19,9 @@ import { Link } from 'react-router-dom'
 import { Container, Input, Search } from 'semantic-ui-react';
 
 
-import NavList from './NavList';
 import './ApproverNav.css';
+import NavList from './NavList';
+import * as utils from '../../services/Utils';
 
 
 /**
@@ -46,7 +47,7 @@ export default class ApproverNav extends Component {
           listTitle='Pending'
           labels={[
             null,
-            openProposalsCount || null,
+            openProposalsCount,
             null
           ]}
           list={[
@@ -86,6 +87,12 @@ export default class ApproverNav extends Component {
 
 
   render () {
+    const { recommended } = this.props;
+
+    const homeLink = recommended && recommended[0] ?
+      `/roles/${utils.createSlug(recommended[0].name)}` :
+      '/';
+
     return (
       <Container>
 
@@ -98,7 +105,7 @@ export default class ApproverNav extends Component {
         { this.renderLists() }
 
         <h4 id='next-approver-switch-container'>
-          <Link to='/home'>
+          <Link to={homeLink}>
             Switch to Requester
           </Link>
         </h4>

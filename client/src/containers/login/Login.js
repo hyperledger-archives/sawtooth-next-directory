@@ -17,8 +17,6 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
-
-
 import PropTypes from 'prop-types';
 
 
@@ -26,7 +24,7 @@ import './Login.css';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import LoginForm from '../../components/forms/LoginForm';
 import SignupForm from '../../components/forms/SignupForm';
-import Toast from '../../components/toast/toast';
+import * as utils from '../../services/Utils';
 
 
 /**
@@ -37,86 +35,50 @@ import Toast from '../../components/toast/toast';
  */
 class Login extends Component {
 
-  constructor(props) {
-    super(props);
+  static prototypes = {
+    isAuthenticated: PropTypes.bool,
+    attemptLogin: PropTypes.func.isRequired
+  };
 
-    this.state = {
-      isToastOpen: false,
-      toastMessage: ''
-    }
-    this.closeToast = this.closeToast.bind(this);
-  }
 
   componentWillMount() {
-    const { isAuthenticated } = this.props;
-    if (isAuthenticated) {
-      this.props.history.push('/home');
-    }
+    const { history, isAuthenticated, recommended } = this.props;
+
+    const homeLink = recommended && recommended[0] ?
+      `/roles/${utils.createSlug(recommended[0].name)}` :
+      '/';
+
+    isAuthenticated && history.push(homeLink);
   }
 
-  /**
-   *
-   * Once the user is authenticated, redirect to landing page
-   *
-   * @param {*} newProps
-   *
-   */
+
   componentWillReceiveProps(newProps) {
-    this.props = newProps;
-    if (newProps.isAuthenticated) {
+    const { history, recommended } = this.props;
 
-      // TODO: Consider pulling from a user-saved cache
-      this.props.history.push('/home');
-    }
-    if (newProps.error) {
-      /**
-       * Open toast to display the error response
-       *
-       */
-      this.setState({
-        isToastOpen: true,
-        toastMessage: newProps.error
-      });
-    }
+    const homeLink = recommended && recommended[0] ?
+    `/roles/${utils.createSlug(recommended[0].name)}` :
+    '/';
+
+    newProps.isAuthenticated && history.push(homeLink);
   }
 
-  closeToast() {
-    this.setState({
-      isToastOpen: false,
-      toastMessage: ''
-    })
-  }
 
   render() {
-    const { attemptLogin, attemptSignup } = this.props;
-    const { isToastOpen, toastMessage } = this.state;
-
-    let formDom = (this.props.location.pathname === '/signup' ?
-      <SignupForm submit={attemptSignup}/> :
-      <LoginForm submit={attemptLogin}/>);
+    const { attemptLogin, attemptSignup, location } = this.props;
 
     return (
       <Grid centered columns={2}>
         <Grid.Column className='next-login-column'>
-          {formDom}
+          { location.pathname === '/signup' ?
+            <SignupForm submit={attemptSignup}/> :
+            <LoginForm submit={attemptLogin}/>
+          }
         </Grid.Column>
-        <Toast
-          open={isToastOpen}
-          close={this.closeToast}
-          message={toastMessage}
-          timeout={10000}
-          title='Authentication Error'/>
       </Grid>
     );
   }
 
 }
-
-
-Login.prototypes = {
-  isAuthenticated: PropTypes.bool,
-  attemptLogin: PropTypes.func.isRequired
-};
 
 
 const mapStateToProps = (state) => {
@@ -128,9 +90,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    attemptLogin: (email, password) => dispatch(AuthActions.loginRequest(email, password)),
-    attemptSignup: (name, username, password, email) => dispatch(AuthActions.signupRequest(name, username, password, email))
+    attemptLogin: (email, password) =>
+      dispatch(AuthActions.loginRequest(email, password)),
+    attemptSignup: (name, username, password, email) =>
+      dispatch(AuthActions.signupRequest(name, username, password, email))
   };
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

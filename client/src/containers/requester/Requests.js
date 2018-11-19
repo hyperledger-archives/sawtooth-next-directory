@@ -107,7 +107,7 @@ export class Requests extends Component {
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={5}>
-          <Chat {...this.props}/>
+          <Chat disabled {...this.props}/>
         </Grid.Column>
 
       </Grid>

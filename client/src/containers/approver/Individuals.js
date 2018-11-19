@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -138,6 +138,11 @@ class Individuals extends Component {
                 }
               </div>
             }
+            { openProposals && openProposals.length === 0 &&
+              <Header as='h3' textAlign='center'>
+                <Header.Content>No pending items</Header.Content>
+              </Header>
+            }
           </div>
         </Grid.Column>
 
@@ -145,7 +150,8 @@ class Individuals extends Component {
           id='next-approver-grid-converse-column'
           width={5}>
           <Chat
-            type='1'
+            type={1}
+            selectedProposals={selectedProposals}
             selectedRoles={selectedRoles}
             selectedUsers={selectedUsers}
             handleChange={this.handleChange}
