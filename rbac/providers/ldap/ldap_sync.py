@@ -28,8 +28,9 @@ import ldap3
 from ldap3 import ALL, Connection, Server
 
 from rbac.providers.common import inbound_filters
-from rbac.providers.common.common import save_sync_time
+from rbac.providers.common.common import save_sync_time, check_for_sync
 from rbac.providers.ldap import ldap_transforms
+
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
@@ -147,17 +148,32 @@ def ldap_sync():
     """Fetches (Users | Groups) from Active Directory and inserts them into RethinkDB."""
 
     if LDAP_DC:
-        LOGGER.debug("Inserting AD data...")
+        db_user_payload = check_for_sync("ldap-user", "initial")
+        if not db_user_payload:
+            LOGGER.debug("Inserting AD data...")
 
-        LOGGER.debug("Getting Users...")
-        fetch_ldap_data(sync_type="initial", data_type="user")
+            LOGGER.debug("Getting Users...")
+            fetch_ldap_data(sync_type="initial", data_type="user")
+            save_sync_time("ldap-user", "initial")
 
-        LOGGER.debug("Getting Groups with Members...")
-        fetch_ldap_data(sync_type="initial", data_type="group")
+            LOGGER.debug(
+                "Initial AD user upload completed. User delta sync will occur in %s seconds.",
+                str(int(DELTA_SYNC_INTERVAL_SECONDS)),
+            )
 
-        LOGGER.debug(
-            "Initial AD inbound sync completed. Delta sync will occur in %s seconds.",
-            str(int(DELTA_SYNC_INTERVAL_SECONDS)),
-        )
+        db_group_payload = check_for_sync("ldap-group", "initial")
+        if not db_group_payload:
+            LOGGER.debug("Getting Groups with Members...")
+            fetch_ldap_data(sync_type="initial", data_type="group")
+            save_sync_time("ldap-group", "initial")
+
+            LOGGER.debug(
+                "Initial AD group upload completed. Group delta sync will occur in %s seconds.",
+                str(int(DELTA_SYNC_INTERVAL_SECONDS)),
+            )
+
+        if db_user_payload and db_group_payload:
+            LOGGER.info("The initial sync has already been run.")
+
     else:
         LOGGER.debug("LDAP Domain Controller is not provided, skipping LDAP sync.")
