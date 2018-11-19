@@ -14190,7 +14190,7 @@ img.ui.bordered.image {
   line-height: 1.21428571em;
   font-family: 'Rubik', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   padding: 0.67857143em 1em;
-  background: #FFFFFF;
+  background: transparent;
   border: 1px solid rgba(34, 36, 38, 0.15);
   color: rgba(0, 0, 0, 0.87);
   border-radius: 0.71428571rem;
@@ -14293,8 +14293,8 @@ img.ui.bordered.image {
 
 .ui.input.focus > input,
 .ui.input > input:focus {
-  border-color: #E40073;
-  background: #FFFFFF;
+  border-color: #85B7D9;
+  background: transparent;
   color: rgba(0, 0, 0, 0.8);
   -webkit-box-shadow: none;
   box-shadow: none;
@@ -14514,7 +14514,7 @@ img.ui.bordered.image {
 }
 
 .ui.labeled.input:not([class*="corner labeled"]) .label:first-child + input:focus {
-  border-left-color: #E40073;
+  border-left-color: #85B7D9;
 }
 
 /* Regular Label on Right */
@@ -14531,7 +14531,7 @@ img.ui.bordered.image {
 }
 
 .ui[class*="right labeled"].input > input:focus {
-  border-right-color: #E40073 !important;
+  border-right-color: #85B7D9 !important;
 }
 
 /* Corner Label */
@@ -14630,7 +14630,7 @@ img.ui.bordered.image {
 /* Input Focus */
 
 .ui.action.input:not([class*="left action"]) > input:focus {
-  border-right-color: #E40073 !important;
+  border-right-color: #85B7D9 !important;
 }
 
 /* Button on Left */
@@ -14656,7 +14656,7 @@ img.ui.bordered.image {
 /* Input Focus */
 
 .ui[class*="left action"].input > input:focus {
-  border-left-color: #E40073 !important;
+  border-left-color: #85B7D9 !important;
 }
 
 /*--------------------
@@ -20262,7 +20262,7 @@ ol.ui.horizontal.list li:before,
 ---------------------*/
 
 .ui.form > p {
-  margin: 1em 0em;
+  margin: 1.5em 0em;
 }
 
 /*--------------------
@@ -20271,7 +20271,7 @@ ol.ui.horizontal.list li:before,
 
 .ui.form .field {
   clear: both;
-  margin: 0em 0em 1em;
+  margin: 0em 0em 1.5em;
 }
 
 .ui.form .field:last-child,
@@ -20291,9 +20291,9 @@ ol.ui.horizontal.list li:before,
 .ui.form .field > label {
   display: block;
   margin: 0em 0em 0.28571429rem 0em;
-  color: rgba(0, 0, 0, 0.87);
+  color: rgba(0, 0, 0, 0.6);
   font-size: 0.92857143em;
-  font-weight: bold;
+  font-weight: normal;
   text-transform: none;
 }
 
@@ -20344,11 +20344,11 @@ ol.ui.horizontal.list li:before,
   tap-highlight-color: rgba(255, 255, 255, 0);
   line-height: 1.21428571em;
   padding: 0.67857143em 1em;
-  font-size: 1em;
-  background: #FFFFFF;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  font-size: 1.6em;
+  background: transparent;
+  border: 0 solid rgba(34, 36, 38, 0.15);
   color: rgba(0, 0, 0, 0.87);
-  border-radius: 0.71428571rem;
+  border-radius: 0;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
   box-shadow: 0em 0em 0em 0em transparent inset;
   -webkit-transition: color 0.1s ease, border-color 0.1s ease;
@@ -20362,16 +20362,16 @@ ol.ui.horizontal.list li:before,
   -webkit-appearance: none;
   tap-highlight-color: rgba(255, 255, 255, 0);
   padding: 0.78571429em 1em;
-  background: #FFFFFF;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  background: transparent;
+  border: 0 solid rgba(34, 36, 38, 0.15);
   outline: none;
   color: rgba(0, 0, 0, 0.87);
-  border-radius: 0.71428571rem;
+  border-radius: 0;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
   box-shadow: 0em 0em 0em 0em transparent inset;
   -webkit-transition: color 0.1s ease, border-color 0.1s ease;
   transition: color 0.1s ease, border-color 0.1s ease;
-  font-size: 1em;
+  font-size: 1.6em;
   line-height: 1.2857;
   resize: vertical;
 }
@@ -20404,8 +20404,8 @@ ol.ui.horizontal.list li:before,
   height: auto;
   width: 100%;
   background: #FFFFFF;
-  border: 1px solid rgba(34, 36, 38, 0.15);
-  border-radius: 0.71428571rem;
+  border: 0 solid rgba(34, 36, 38, 0.15);
+  border-radius: 0;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
   box-shadow: 0em 0em 0em 0em transparent inset;
   padding: 0.62em 1em;
@@ -20631,8 +20631,8 @@ ol.ui.horizontal.list li:before,
 .ui.form input[type="url"]:focus {
   color: rgba(0, 0, 0, 0.95);
   border-color: #85B7D9;
-  border-radius: 0.71428571rem;
-  background: #FFFFFF;
+  border-radius: 0;
+  background: transparent;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
   box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
 }
@@ -20640,8 +20640,8 @@ ol.ui.horizontal.list li:before,
 .ui.form textarea:focus {
   color: rgba(0, 0, 0, 0.95);
   border-color: #85B7D9;
-  border-radius: 0.71428571rem;
-  background: #FFFFFF;
+  border-radius: 0;
+  background: transparent;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
   box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
   -webkit-appearance: none;
@@ -20750,7 +20750,7 @@ ol.ui.horizontal.list li:before,
 .ui.form .field.error input[type="text"],
 .ui.form .field.error input[type="file"],
 .ui.form .field.error input[type="url"] {
-  background: #FFF6F6;
+  background: none;
   border-color: #E0B4B4;
   color: #9F3A38;
   border-radius: '';
@@ -20772,7 +20772,7 @@ ol.ui.horizontal.list li:before,
 .ui.form .field.error input[type="text"]:focus,
 .ui.form .field.error input[type="file"]:focus,
 .ui.form .field.error input[type="url"]:focus {
-  background: #FFF6F6;
+  background: none;
   border-color: #E0B4B4;
   color: #9F3A38;
   -webkit-appearance: none;
@@ -20795,7 +20795,7 @@ ol.ui.horizontal.list li:before,
 .ui.form .field.error .ui.dropdown,
 .ui.form .field.error .ui.dropdown .text,
 .ui.form .field.error .ui.dropdown .item {
-  background: #FFF6F6;
+  background: none;
   color: #9F3A38;
 }
 
@@ -20856,7 +20856,7 @@ ol.ui.horizontal.list li:before,
 .ui.form .field.error .checkbox:not(.toggle):not(.slider) label:before,
 .ui.form .fields.error .field .checkbox:not(.toggle):not(.slider) .box:before,
 .ui.form .field.error .checkbox:not(.toggle):not(.slider) .box:before {
-  background: #FFF6F6;
+  background: none;
   border-color: #E0B4B4;
 }
 
@@ -21022,7 +21022,7 @@ ol.ui.horizontal.list li:before,
 .ui.inverted.form input[type="text"],
 .ui.inverted.form input[type="file"],
 .ui.inverted.form input[type="url"] {
-  background: #FFFFFF;
+  background: transparent;
   border-color: rgba(255, 255, 255, 0.1);
   color: rgba(0, 0, 0, 0.87);
   -webkit-box-shadow: none;
@@ -21037,7 +21037,7 @@ ol.ui.horizontal.list li:before,
 
 .ui.form .grouped.fields {
   display: block;
-  margin: 0em 0em 1em;
+  margin: 0em 0em 1.5em;
 }
 
 .ui.form .grouped.fields:last-child {
@@ -21046,9 +21046,9 @@ ol.ui.horizontal.list li:before,
 
 .ui.form .grouped.fields > label {
   margin: 0em 0em 0.28571429rem 0em;
-  color: rgba(0, 0, 0, 0.87);
+  color: rgba(0, 0, 0, 0.6);
   font-size: 0.92857143em;
-  font-weight: bold;
+  font-weight: normal;
   text-transform: none;
 }
 
@@ -21073,7 +21073,7 @@ ol.ui.horizontal.list li:before,
   -webkit-box-direction: normal;
   -ms-flex-direction: row;
   flex-direction: row;
-  margin: 0em -0.5em 1em;
+  margin: 0em -0.5em 1.5em;
 }
 
 .ui.form .fields > .field {
@@ -21166,7 +21166,7 @@ ol.ui.horizontal.list li:before,
   .ui.form:not(.unstackable) .ten.fields:not(.unstackable) > .fields,
   .ui.form:not(.unstackable) .ten.fields:not(.unstackable) > .field {
     width: 100% !important;
-    margin: 0em 0em 1em;
+    margin: 0em 0em 1.5em;
   }
 }
 
@@ -21293,7 +21293,7 @@ ol.ui.horizontal.list li:before,
 ---------------------*/
 
 .ui.form .inline.fields {
-  margin: 0em 0em 1em;
+  margin: 0em 0em 1.5em;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -21317,8 +21317,8 @@ ol.ui.horizontal.list li:before,
   margin-bottom: 0em;
   vertical-align: baseline;
   font-size: 0.92857143em;
-  font-weight: bold;
-  color: rgba(0, 0, 0, 0.87);
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.6);
   text-transform: none;
 }
 
@@ -21409,6 +21409,48 @@ ol.ui.horizontal.list li:before,
 /*******************************
          Theme Overrides
 *******************************/
+
+.form-inverted .ui.form .field input[type="email"],
+.form-inverted .ui.form .field input[type="password"],
+.form-inverted .ui.form .field input[type="text"] {
+  border-bottom: 1px solid #5b676f;
+}
+
+.form-inverted .ui.form .field input::-webkit-input-placeholder,
+.form-inverted .ui.form .field input:focus::-webkit-input-placeholder {
+  color: #767676;
+}
+
+.form-inverted .ui.form .field input:-ms-input-placeholder,
+.form-inverted .ui.form .field input:focus:-ms-input-placeholder {
+  color: #767676;
+}
+
+.form-inverted .ui.form .field input::-ms-input-placeholder,
+.form-inverted .ui.form .field input:focus::-ms-input-placeholder {
+  color: #767676;
+}
+
+.form-inverted .ui.form .field input::placeholder,
+.form-inverted .ui.form .field input:focus::placeholder {
+  color: #767676;
+}
+
+.form-inverted .ui.form .field > .ui.label {
+  background: none;
+  font-weight: normal;
+  margin: 8px 0 0 11px;
+}
+
+.form-inverted .ui.form .field input:-webkit-autofill {
+  -webkit-text-fill-color: #E5DFA1;
+}
+
+.form-inverted .ui.form .field .error input[type="password"],
+.form-inverted .ui.form .field .error input[type="text"],
+.form-inverted .ui.form .field .error input[type="email"] {
+  border-color: #E0B4B4;
+}
 
 /*******************************
          Site Overrides
@@ -32626,7 +32668,7 @@ body.dimmable > .dimmer {
   transform: rotateZ(0deg);
   min-width: 14em;
   min-height: 2.71428571em;
-  background: #FFFFFF;
+  background: transparent;
   display: inline-block;
   padding: 0.78571429em 2.1em 0.78571429em 1em;
   color: rgba(0, 0, 0, 0.87);
@@ -36625,7 +36667,7 @@ a.ui.nag {
   line-height: 1.21428571em;
   padding: 0.67857143em 1em;
   font-size: 1em;
-  background: #FFFFFF;
+  background: transparent;
   border: 1px solid rgba(34, 36, 38, 0.15);
   color: rgba(0, 0, 0, 0.87);
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
@@ -36786,7 +36828,7 @@ a.ui.nag {
 
 .ui.search > .prompt:focus {
   border-color: rgba(34, 36, 38, 0.35);
-  background: #FFFFFF;
+  background: transparent;
   color: rgba(0, 0, 0, 0.95);
 }
 

@@ -8,10 +8,11 @@
 
 /* Form */
 @gutterWidth: 1em;
-@rowDistance: 1em;
+@rowDistance: 1.5em;
 
 /* Text */
 @paragraphMargin: @rowDistance 0em;
+@inputTextColor: @textColor;
 
 /* Field */
 @fieldMargin: 0em 0em @rowDistance;
@@ -23,18 +24,19 @@
 @labelDistance: @4px;
 @labelMargin: 0em 0em @labelDistance 0em;
 @labelFontSize: @relativeSmall;
-@labelFontWeight: @bold;
+@labelFontWeight: @normal;
 @labelTextTransform: none;
-@labelColor: @textColor;
+@labelColor: @mutedTextColor;
 
 /* Input */
 @inputFont: @pageFont;
 @inputWidth: 100%;
-@inputFontSize: 1em;
+@inputFontSize: 1.6em;
 @inputPadding: (@inputVerticalPadding + ((1em - @inputLineHeight) / 2)) @inputHorizontalPadding;
-@inputBorder: 1px solid @borderColor;
-@inputBorderRadius: @absoluteBorderRadius;
-@inputColor: @textColor;
+@inputBorder: 0 solid @borderColor;
+@inputBorderColor: #5b676f;
+@inputBorderRadius: 0;
+@inputColor: @inputTextColor;
 @inputTransition:
   color @defaultDuration @defaultEasing,
   border-color @defaultDuration @defaultEasing
@@ -102,7 +104,7 @@
 /* Errored Input */
 @formErrorColor: @negativeTextColor;
 @formErrorBorder: @negativeBorderColor;
-@formErrorBackground: @negativeBackgroundColor;
+@formErrorBackground: none;
 
 /* AutoFill */
 @inputAutoFillBackground: #FFFFF0;
@@ -125,7 +127,7 @@
 @dropdownErrorLabelColor: @errorTextColor;
 
 /* Focused Error */
-@inputErrorFocusBackground: @negativeBackgroundColor;
+@inputErrorFocusBackground: none;
 @inputErrorFocusColor: @negativeTextColor;
 @inputErrorFocusBorder: @negativeBorderColor;
 @inputErrorFocusBoxShadow: none;

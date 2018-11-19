@@ -119,14 +119,15 @@ export default class Header extends Component {
     return (
       <header className='next-header' ref={this.setRef}>
         <div id='next-header-logo'>
-          <Image as={Link} to='/home' src={logo} size='tiny'/>
+          <Image as={Link} to='/' src={logo} size='tiny'/>
         </div>
+        { me &&
         <div id='next-header-actions'>
           <Icon inverted name='search'/>
           <div id='next-header-bell'>
             <Link to='/approval/pending/individual'>
               <Icon inverted name='bell'/>
-              { me && openProposalsCount &&
+              { openProposalsCount &&
                 <Label circular color='blue' floating size='mini'>
                   {openProposalsCount}
                 </Label>
@@ -139,6 +140,7 @@ export default class Header extends Component {
               src='http://i.pravatar.cc/300'
               onClick={this.toggleMenu}/> }
         </div>
+        }
         { menuVisible && this.renderMenu() }
       </header>
     );

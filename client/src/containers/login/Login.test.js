@@ -21,16 +21,14 @@ import { BrowserRouter } from 'react-router-dom';
 import Login from './Login';
 import createCustomStore from '../../createCustomStore';
 
+
 const store = createCustomStore();
+
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
-  const props = {
-    location: {
-      pathname: ''
-    }
-  }
+  const props = {};
 
   ReactDOM.render(
     <Provider store={store}>

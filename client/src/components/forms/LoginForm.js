@@ -15,24 +15,32 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Form, Button } from 'semantic-ui-react';
-
 import { Link } from 'react-router-dom';
-
-
+import { Container, Form, Label, Image, Input } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+
 
 
 /**
  *
- * @class LoginForm
- * Component encapsulating a reusable login form suitable for
- * composing within containers where login functionality is required
+ * @class       LoginForm
+ * @description Component encapsulating the login flow
+ *
+ *
  *
  */
 export default class LoginForm extends Component {
 
-  state = { username: '', password: '' };
+  static propTypes = {
+    submit: PropTypes.func.isRequired
+  };
+
+
+  state = {
+    activeIndex: 0, username: '', password: '',
+    validUsername:  null,
+    validPassword:  null,
+  };
 
 
   /**
@@ -44,37 +52,101 @@ export default class LoginForm extends Component {
    */
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });
+    this.validate(name, value);
+  }
+
+
+  setFlow = (index) => {
+    this.setState({ activeIndex: index });
+  }
+
+
+  validate = (name, value) => {
+    name === 'username' &&
+      this.setState({ validUsername: value.length > 0 });
+    name === 'password' &&
+      this.setState({ validPassword: value.length > 0 });
   }
 
 
   render () {
     const { submit } = this.props;
-    const { username, password } = this.state;
+    const {
+      activeIndex,
+      username,
+      password,
+      validUsername,
+      validPassword } = this.state;
 
     return (
-      <Form onSubmit={() => submit(username, password)}>
-        <Form.Input
-          label='User ID'
-          placeholder='User ID'
-          name='username'
-          onChange={this.handleChange}/>
-        <Form.Input
-          label='Password'
-          placeholder='Password'
-          name='password'
-          type='password'
-          onChange={this.handleChange}/>
-        <Form.Button content='Login'/>
-        <Link to="/signup">
-          <Button>Sign up</Button>
-        </Link>
-      </Form>
+      <div className='form-inverted'>
+      { activeIndex === 0 &&
+        <div>
+          <Form onSubmit={() => this.setFlow(1)}>
+            <Form.Field>
+              <Input
+                autoFocus
+                placeholder='User ID'
+                error={validUsername === false}
+                name='username'
+                type='text'
+                value={username}
+                onChange={this.handleChange} />
+              <Label>
+                <Link to='/'>Forgot User ID?</Link>
+              </Label>
+            </Form.Field>
+            <Container textAlign='center'>
+              <Form.Button
+                content='Next'
+                disabled={!validUsername}
+                icon='right arrow'
+                labelPosition='right' />
+            </Container>
+          </Form>
+        </div>
+      }
+      { activeIndex === 1 &&
+        <div>
+          <Form onSubmit={() => submit(username, password)}>
+            <Container textAlign='center'>
+              <Image
+                avatar
+                src='http://i.pravatar.cc/150?img=31'
+                size='tiny' />
+            </Container>
+            <Form.Button
+              id='next-login-form-back-button'
+              content='Back'
+              type='button'
+              icon='left arrow'
+              labelPosition='left'
+              onClick={() => this.setFlow(0)} />
+            <Form.Field id='next-login-form-password'>
+              <Input
+                autoFocus
+                error={validPassword === false}
+                name='password'
+                type='password'
+                placeholder='Password'
+                value={password}
+                onChange={this.handleChange} />
+              <Label>
+                <Link to='/'>Forgot Password?</Link>
+              </Label>
+            </Form.Field>
+            <Container textAlign='center'>
+              <Form.Button
+                content='Login'
+                disabled={!validPassword}
+                icon='right arrow'
+                labelPosition='right' />
+            </Container>
+          </Form>
+        </div>
+      }
+      </div>
     );
   }
 
 }
-
-
-LoginForm.proptypes = {
-  submit: PropTypes.func.isRequired
-};
