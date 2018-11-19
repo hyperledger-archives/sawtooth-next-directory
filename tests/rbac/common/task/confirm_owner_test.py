@@ -142,7 +142,7 @@ class ConfirmTaskAddOwnerTest(TestAssertions):
         self.assertStatusSuccess(status)
         self.assertIsInstance(confirm, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
-            confirm.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNERS
+            confirm.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNER
         )
         self.assertEqual(confirm.proposal_id, proposal.proposal_id)
         self.assertEqual(confirm.object_id, proposal.object_id)

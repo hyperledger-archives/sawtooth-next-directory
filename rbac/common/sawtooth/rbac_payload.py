@@ -59,11 +59,11 @@ def unmake_payload(payload):
         message = protobuf.user_transaction_pb2.CreateUser()
     elif message_type == RBACPayload.CREATE_ROLE:
         message = protobuf.role_transaction_pb2.CreateRole()
-    elif message_type == RBACPayload.PROPOSE_ADD_ROLE_MEMBERS:
+    elif message_type == RBACPayload.PROPOSE_ADD_ROLE_MEMBER:
         message = protobuf.role_transaction_pb2.ProposeAddRoleMember()
-    elif message_type == RBACPayload.PROPOSE_ADD_ROLE_OWNERS:
+    elif message_type == RBACPayload.PROPOSE_ADD_ROLE_OWNER:
         message = protobuf.role_transaction_pb2.ProposeAddRoleOwner()
-    elif message_type == RBACPayload.PROPOSE_ADD_ROLE_ADMINS:
+    elif message_type == RBACPayload.PROPOSE_ADD_ROLE_ADMIN:
         message = protobuf.role_transaction_pb2.ProposeAddRoleAdmin()
     else:
         raise Exception(

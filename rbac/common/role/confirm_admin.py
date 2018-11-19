@@ -33,7 +33,7 @@ class ConfirmAddRoleAdmin(BaseMessage):
     @property
     def message_type(self):
         # pylint: disable=no-member
-        return protobuf.rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_ADMINS
+        return protobuf.rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_ADMIN
 
     @property
     def message_proto(self):

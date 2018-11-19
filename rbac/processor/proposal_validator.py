@@ -150,7 +150,7 @@ def validate_role_task_proposal(header, propose, state):
         object_id=propose.role_id,
         related_id=propose.task_id,
         proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_TASKS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_TASK,
     ):
         raise InvalidTransaction(
             "There is already an open proposal to add task {} to "

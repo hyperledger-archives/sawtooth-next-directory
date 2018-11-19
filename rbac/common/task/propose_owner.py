@@ -33,7 +33,7 @@ class ProposeAddTaskOwner(BaseMessage):
     @property
     def message_type(self):
         # pylint: disable=no-member
-        return protobuf.rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_OWNERS
+        return protobuf.rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_OWNER
 
     @property
     def message_proto(self):

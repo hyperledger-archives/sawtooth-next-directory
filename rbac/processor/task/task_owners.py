@@ -42,10 +42,10 @@ def apply_propose(header, payload, state):
         object_id=propose.task_id,
         related_id=propose.user_id,
         proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_TASK_OWNERS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_TASK_OWNER,
     ):
         raise InvalidTransaction(
-            "There is already an open proposal for ADD_TASK_OWNERS "
+            "There is already an open proposal for ADD_TASK_OWNER "
             "with task id {} and user id {}".format(propose.task_id, propose.user_id)
         )
 
@@ -54,7 +54,7 @@ def apply_propose(header, payload, state):
         header=header,
         payload=propose,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_TASK_OWNERS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_TASK_OWNER,
         state=state,
     )
 
@@ -78,10 +78,10 @@ def apply_propose_remove(header, payload, state):
         object_id=propose.task_id,
         related_id=propose.user_id,
         proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_TASK_OWNERS,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_TASK_OWNER,
     ):
         raise InvalidTransaction(
-            "There is already an open proposal for REMOVE_TASK_OWNERS "
+            "There is already an open proposal for REMOVE_TASK_OWNER "
             "with task id {} and user id {}".format(propose.task_id, propose.user_id)
         )
 
@@ -90,7 +90,7 @@ def apply_propose_remove(header, payload, state):
         header=header,
         payload=propose,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_TASK_OWNERS,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_TASK_OWNER,
         state=state,
     )
 

@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -19,9 +18,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='task_state.proto',
   package='',
   syntax='proto3',
+  serialized_options=None,
   serialized_pb=_b('\n\x10task_state.proto\"C\n\x17TaskAttributesContainer\x12(\n\x0ftask_attributes\x18\x01 \x03(\x0b\x32\x0f.TaskAttributes\"A\n\x0eTaskAttributes\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08metadata\x18\x03 \x01(\t\"E\n\x19TaskRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.TaskRelationship\"8\n\x10TaskRelationship\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\tb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -39,14 +38,14 @@ _TASKATTRIBUTESCONTAINER = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -70,28 +69,28 @@ _TASKATTRIBUTES = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='name', full_name='TaskAttributes.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='TaskAttributes.metadata', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -115,14 +114,14 @@ _TASKRELATIONSHIPCONTAINER = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -146,21 +145,21 @@ _TASKRELATIONSHIP = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='identifiers', full_name='TaskRelationship.identifiers', index=1,
       number=2, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -176,6 +175,7 @@ DESCRIPTOR.message_types_by_name['TaskAttributesContainer'] = _TASKATTRIBUTESCON
 DESCRIPTOR.message_types_by_name['TaskAttributes'] = _TASKATTRIBUTES
 DESCRIPTOR.message_types_by_name['TaskRelationshipContainer'] = _TASKRELATIONSHIPCONTAINER
 DESCRIPTOR.message_types_by_name['TaskRelationship'] = _TASKRELATIONSHIP
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 TaskAttributesContainer = _reflection.GeneratedProtocolMessageType('TaskAttributesContainer', (_message.Message,), dict(
   DESCRIPTOR = _TASKATTRIBUTESCONTAINER,

@@ -1856,18 +1856,18 @@ definitions:
         type: string
         description: The type of the proposal
         enum:
-          - ADD_ROLE_TASKS
-          - ADD_ROLE_MEMBERS
-          - ADD_ROLE_OWNERS
-          - ADD_ROLE_ADMINS
-          - REMOVE_ROLE_TASKS
-          - REMOVE_ROLE_MEMBERS
-          - REMOVE_ROLE_OWNERS
-          - REMOVE_ROLE_ADMINS
-          - ADD_TASK_OWNERS
-          - ADD_TASK_ADMINS
-          - REMOVE_TASK_OWNERS
-          - REMOVE_TASK_ADMINS
+          - ADD_ROLE_TASK
+          - ADD_ROLE_MEMBER
+          - ADD_ROLE_OWNER
+          - ADD_ROLE_ADMIN
+          - REMOVE_ROLE_TASK
+          - REMOVE_ROLE_MEMBER
+          - REMOVE_ROLE_OWNER
+          - REMOVE_ROLE_ADMIN
+          - ADD_TASK_OWNER
+          - ADD_TASK_ADMIN
+          - REMOVE_TASK_OWNER
+          - REMOVE_TASK_ADMIN
           - UPDATE_USER_MANAGER
   proposalUpdate:
     description: Details provided to update a proposal

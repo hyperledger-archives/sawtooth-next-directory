@@ -33,7 +33,7 @@ class ProposeAddRoleMember(BaseMessage):
     @property
     def message_type(self):
         # pylint: disable=no-member
-        return protobuf.rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_MEMBERS
+        return protobuf.rbac_payload_pb2.RBACPayload.PROPOSE_ADD_ROLE_MEMBER
 
     @property
     def message_proto(self):

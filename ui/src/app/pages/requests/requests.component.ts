@@ -53,7 +53,7 @@ export class RequestsComponent {
                 private pageLoader: PageLoaderService,
                 private utils: UtilsService) {
         this.requestsReceived = this.activatedRoute.snapshot.data['requestsReceived'];
-        var role_actions = ['ADD_ROLE_MEMBERS', 'REMOVE_ROLE_MEMBERS', 'ADD_ROLE_OWNERS', 'REMOVE_ROLE_OWNERS', 'ADD_ROLE_ADMINS', 'REMOVE_ROLE_ADMINS']
+        var role_actions = ['ADD_ROLE_MEMBER', 'REMOVE_ROLE_MEMBER', 'ADD_ROLE_OWNER', 'REMOVE_ROLE_OWNER', 'ADD_ROLE_ADMIN', 'REMOVE_ROLE_ADMIN']
 
         this.groupRequestsReceived = _.filter(this.requestsReceived, function(request) {return role_actions.indexOf(request.type) > -1 });
         this.updateManagerRequestsReceived = _.filter(this.requestsReceived, {type : 'UPDATE_USER_MANAGER'});
@@ -70,17 +70,17 @@ export class RequestsComponent {
                     return this.groupUtils.getGroup(element.object).name;
                 }),
                 new TableHeader('Join / Remove', '', 'function', (element) => {
-                    if (element.type == 'ADD_ROLE_MEMBERS') {
+                    if (element.type == 'ADD_ROLE_MEMBER') {
                         return "Join as member";
-                    } else if (element.type == 'REMOVE_ROLE_MEMBERS') {
+                    } else if (element.type == 'REMOVE_ROLE_MEMBER') {
                         return "Remove member";
-                    } else if (element.type == 'ADD_ROLE_OWNERS') {
+                    } else if (element.type == 'ADD_ROLE_OWNER') {
                         return "Join as owner";
-                    } else if (element.type == 'REMOVE_ROLE_OWNERS') {
+                    } else if (element.type == 'REMOVE_ROLE_OWNER') {
                         return "Remove owner";
-                    } else if (element.type == 'ADD_ROLE_ADMINS') {
+                    } else if (element.type == 'ADD_ROLE_ADMIN') {
                         return "Join as admin";
-                    } else if (element.type == 'REMOVE_ROLE_ADMINS') {
+                    } else if (element.type == 'REMOVE_ROLE_ADMIN') {
                         return "Remove admin";
                     }
                 }),

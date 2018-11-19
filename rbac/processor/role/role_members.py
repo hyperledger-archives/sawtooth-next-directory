@@ -47,10 +47,10 @@ def apply_propose(header, payload, state):
         object_id=proposal_payload.role_id,
         related_id=proposal_payload.user_id,
         proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBERS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBER,
     ):
         raise InvalidTransaction(
-            "There is already an open proposal for ADD_ROLE_MEMBERS "
+            "There is already an open proposal for ADD_ROLE_MEMBER "
             "with role id {} and user id {}".format(
                 proposal_payload.role_id, proposal_payload.user_id
             )
@@ -61,7 +61,7 @@ def apply_propose(header, payload, state):
         header=header,
         payload=proposal_payload,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBERS,
+        proposal_type=proposal_state_pb2.Proposal.ADD_ROLE_MEMBER,
         state=state,
     )
 
@@ -87,10 +87,10 @@ def apply_propose_remove(header, payload, state):
         object_id=proposal_payload.role_id,
         related_id=proposal_payload.user_id,
         proposal_address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_MEMBERS,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_MEMBER,
     ):
         raise InvalidTransaction(
-            "There is already an open proposal for REMOVE_ROLE_MEMBERS "
+            "There is already an open proposal for REMOVE_ROLE_MEMBER "
             "with role id {} and user id {}".format(
                 proposal_payload.role_id, proposal_payload.user_id
             )
@@ -101,7 +101,7 @@ def apply_propose_remove(header, payload, state):
         header=header,
         payload=proposal_payload,
         address=proposal_address,
-        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_MEMBERS,
+        proposal_type=proposal_state_pb2.Proposal.REMOVE_ROLE_MEMBER,
         state=state,
     )
 

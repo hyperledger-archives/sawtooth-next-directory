@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -19,9 +18,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='proposal_state.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n\x14proposal_state.proto\"2\n\x12ProposalsContainer\x12\x1c\n\tproposals\x18\x01 \x03(\x0b\x32\t.Proposal\"\x9a\x05\n\x08Proposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12-\n\rproposal_type\x18\x02 \x01(\x0e\x32\x16.Proposal.ProposalType\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x11\n\ttarget_id\x18\x04 \x01(\t\x12\x0e\n\x06opener\x18\x05 \x01(\t\x12\x0e\n\x06\x63loser\x18\x06 \x01(\t\x12 \n\x06status\x18\x07 \x01(\x0e\x32\x10.Proposal.Status\x12\x13\n\x0bopen_reason\x18\x08 \x01(\t\x12\x14\n\x0c\x63lose_reason\x18\t \x01(\t\x12\x10\n\x08metadata\x18\n \x01(\t\x12\x1c\n\tapprovals\x18\x0b \x03(\x0b\x32\t.Approval\x12\x1e\n\nrejections\x18\x0c \x03(\x0b\x32\n.Rejection\"\xb5\x02\n\x0cProposalType\x12\x12\n\x0e\x41\x44\x44_ROLE_TASKS\x10\x00\x12\x14\n\x10\x41\x44\x44_ROLE_MEMBERS\x10\x01\x12\x13\n\x0f\x41\x44\x44_ROLE_OWNERS\x10\x02\x12\x13\n\x0f\x41\x44\x44_ROLE_ADMINS\x10\x03\x12\x15\n\x11REMOVE_ROLE_TASKS\x10\x04\x12\x17\n\x13REMOVE_ROLE_MEMBERS\x10\x05\x12\x16\n\x12REMOVE_ROLE_OWNERS\x10\x06\x12\x16\n\x12REMOVE_ROLE_ADMINS\x10\x07\x12\x13\n\x0f\x41\x44\x44_TASK_OWNERS\x10\x08\x12\x13\n\x0f\x41\x44\x44_TASK_ADMINS\x10\t\x12\x16\n\x12REMOVE_TASK_OWNERS\x10\n\x12\x16\n\x12REMOVE_TASK_ADMINS\x10\x0b\x12\x17\n\x13UPDATE_USER_MANAGER\x10\x0c\"/\n\x06Status\x12\x08\n\x04OPEN\x10\x00\x12\x0c\n\x08REJECTED\x10\x01\x12\r\n\tCONFIRMED\x10\x02\"/\n\x08\x41pproval\x12\x10\n\x08\x61pprover\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\t\"0\n\tRejection\x12\x10\n\x08rejector\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\tb\x06proto3')
+  serialized_options=None,
+  serialized_pb=_b('\n\x14proposal_state.proto\"2\n\x12ProposalsContainer\x12\x1c\n\tproposals\x18\x01 \x03(\x0b\x32\t.Proposal\"\x8e\x05\n\x08Proposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12-\n\rproposal_type\x18\x02 \x01(\x0e\x32\x16.Proposal.ProposalType\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x11\n\ttarget_id\x18\x04 \x01(\t\x12\x0e\n\x06opener\x18\x05 \x01(\t\x12\x0e\n\x06\x63loser\x18\x06 \x01(\t\x12 \n\x06status\x18\x07 \x01(\x0e\x32\x10.Proposal.Status\x12\x13\n\x0bopen_reason\x18\x08 \x01(\t\x12\x14\n\x0c\x63lose_reason\x18\t \x01(\t\x12\x10\n\x08metadata\x18\n \x01(\t\x12\x1c\n\tapprovals\x18\x0b \x03(\x0b\x32\t.Approval\x12\x1e\n\nrejections\x18\x0c \x03(\x0b\x32\n.Rejection\"\xa9\x02\n\x0cProposalType\x12\x11\n\rADD_ROLE_TASK\x10\x00\x12\x13\n\x0f\x41\x44\x44_ROLE_MEMBER\x10\x01\x12\x12\n\x0e\x41\x44\x44_ROLE_OWNER\x10\x02\x12\x12\n\x0e\x41\x44\x44_ROLE_ADMIN\x10\x03\x12\x14\n\x10REMOVE_ROLE_TASK\x10\x04\x12\x16\n\x12REMOVE_ROLE_MEMBER\x10\x05\x12\x15\n\x11REMOVE_ROLE_OWNER\x10\x06\x12\x15\n\x11REMOVE_ROLE_ADMIN\x10\x07\x12\x12\n\x0e\x41\x44\x44_TASK_OWNER\x10\x08\x12\x12\n\x0e\x41\x44\x44_TASK_ADMIN\x10\t\x12\x15\n\x11REMOVE_TASK_OWNER\x10\n\x12\x15\n\x11REMOVE_TASK_ADMIN\x10\x0b\x12\x17\n\x13UPDATE_USER_MANAGER\x10\x0c\"/\n\x06Status\x12\x08\n\x04OPEN\x10\x00\x12\x0c\n\x08REJECTED\x10\x01\x12\r\n\tCONFIRMED\x10\x02\"/\n\x08\x41pproval\x12\x10\n\x08\x61pprover\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\t\"0\n\tRejection\x12\x10\n\x08rejector\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\tb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -32,62 +31,62 @@ _PROPOSAL_PROPOSALTYPE = _descriptor.EnumDescriptor(
   file=DESCRIPTOR,
   values=[
     _descriptor.EnumValueDescriptor(
-      name='ADD_ROLE_TASKS', index=0, number=0,
-      options=None,
+      name='ADD_ROLE_TASK', index=0, number=0,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='ADD_ROLE_MEMBERS', index=1, number=1,
-      options=None,
+      name='ADD_ROLE_MEMBER', index=1, number=1,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='ADD_ROLE_OWNERS', index=2, number=2,
-      options=None,
+      name='ADD_ROLE_OWNER', index=2, number=2,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='ADD_ROLE_ADMINS', index=3, number=3,
-      options=None,
+      name='ADD_ROLE_ADMIN', index=3, number=3,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='REMOVE_ROLE_TASKS', index=4, number=4,
-      options=None,
+      name='REMOVE_ROLE_TASK', index=4, number=4,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='REMOVE_ROLE_MEMBERS', index=5, number=5,
-      options=None,
+      name='REMOVE_ROLE_MEMBER', index=5, number=5,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='REMOVE_ROLE_OWNERS', index=6, number=6,
-      options=None,
+      name='REMOVE_ROLE_OWNER', index=6, number=6,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='REMOVE_ROLE_ADMINS', index=7, number=7,
-      options=None,
+      name='REMOVE_ROLE_ADMIN', index=7, number=7,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='ADD_TASK_OWNERS', index=8, number=8,
-      options=None,
+      name='ADD_TASK_OWNER', index=8, number=8,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='ADD_TASK_ADMINS', index=9, number=9,
-      options=None,
+      name='ADD_TASK_ADMIN', index=9, number=9,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='REMOVE_TASK_OWNERS', index=10, number=10,
-      options=None,
+      name='REMOVE_TASK_OWNER', index=10, number=10,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='REMOVE_TASK_ADMINS', index=11, number=11,
-      options=None,
+      name='REMOVE_TASK_ADMIN', index=11, number=11,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='UPDATE_USER_MANAGER', index=12, number=12,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
+  serialized_options=None,
   serialized_start=385,
-  serialized_end=694,
+  serialized_end=682,
 )
 _sym_db.RegisterEnumDescriptor(_PROPOSAL_PROPOSALTYPE)
 
@@ -99,21 +98,21 @@ _PROPOSAL_STATUS = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='OPEN', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='REJECTED', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='CONFIRMED', index=2, number=2,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
-  serialized_start=696,
-  serialized_end=743,
+  serialized_options=None,
+  serialized_start=684,
+  serialized_end=731,
 )
 _sym_db.RegisterEnumDescriptor(_PROPOSAL_STATUS)
 
@@ -131,14 +130,14 @@ _PROPOSALSCONTAINER = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -162,84 +161,84 @@ _PROPOSAL = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='proposal_type', full_name='Proposal.proposal_type', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='object_id', full_name='Proposal.object_id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='target_id', full_name='Proposal.target_id', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='opener', full_name='Proposal.opener', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='closer', full_name='Proposal.closer', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='status', full_name='Proposal.status', index=6,
       number=7, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='open_reason', full_name='Proposal.open_reason', index=7,
       number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='close_reason', full_name='Proposal.close_reason', index=8,
       number=9, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='Proposal.metadata', index=9,
       number=10, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='approvals', full_name='Proposal.approvals', index=10,
       number=11, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='rejections', full_name='Proposal.rejections', index=11,
       number=12, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -248,14 +247,14 @@ _PROPOSAL = _descriptor.Descriptor(
     _PROPOSAL_PROPOSALTYPE,
     _PROPOSAL_STATUS,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
   serialized_start=77,
-  serialized_end=743,
+  serialized_end=731,
 )
 
 
@@ -272,28 +271,28 @@ _APPROVAL = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='on_behalf', full_name='Approval.on_behalf', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=745,
-  serialized_end=792,
+  serialized_start=733,
+  serialized_end=780,
 )
 
 
@@ -310,28 +309,28 @@ _REJECTION = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='on_behalf', full_name='Rejection.on_behalf', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=794,
-  serialized_end=842,
+  serialized_start=782,
+  serialized_end=830,
 )
 
 _PROPOSALSCONTAINER.fields_by_name['proposals'].message_type = _PROPOSAL
@@ -345,6 +344,7 @@ DESCRIPTOR.message_types_by_name['ProposalsContainer'] = _PROPOSALSCONTAINER
 DESCRIPTOR.message_types_by_name['Proposal'] = _PROPOSAL
 DESCRIPTOR.message_types_by_name['Approval'] = _APPROVAL
 DESCRIPTOR.message_types_by_name['Rejection'] = _REJECTION
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ProposalsContainer = _reflection.GeneratedProtocolMessageType('ProposalsContainer', (_message.Message,), dict(
   DESCRIPTOR = _PROPOSALSCONTAINER,

@@ -32,62 +32,62 @@ from rbac.common.base.base_processor import BaseTransactionProcessor
 LOGGER = logging.getLogger(__name__)
 
 ROLE_PROPOSE = [
-    RBACPayload.PROPOSE_ADD_ROLE_TASKS,
-    RBACPayload.PROPOSE_ADD_ROLE_MEMBERS,
-    RBACPayload.PROPOSE_ADD_ROLE_OWNERS,
-    RBACPayload.PROPOSE_ADD_ROLE_ADMINS,
-    RBACPayload.PROPOSE_REMOVE_ROLE_TASKS,
-    RBACPayload.PROPOSE_REMOVE_ROLE_MEMBERS,
-    RBACPayload.PROPOSE_REMOVE_ROLE_OWNERS,
-    RBACPayload.PROPOSE_REMOVE_ROLE_ADMINS,
+    RBACPayload.PROPOSE_ADD_ROLE_TASK,
+    RBACPayload.PROPOSE_ADD_ROLE_MEMBER,
+    RBACPayload.PROPOSE_ADD_ROLE_OWNER,
+    RBACPayload.PROPOSE_ADD_ROLE_ADMIN,
+    RBACPayload.PROPOSE_REMOVE_ROLE_TASK,
+    RBACPayload.PROPOSE_REMOVE_ROLE_MEMBER,
+    RBACPayload.PROPOSE_REMOVE_ROLE_OWNER,
+    RBACPayload.PROPOSE_REMOVE_ROLE_ADMIN,
 ]
 
 
 ROLE_CONFIRM = [
-    RBACPayload.CONFIRM_ADD_ROLE_TASKS,
-    RBACPayload.CONFIRM_ADD_ROLE_MEMBERS,
-    RBACPayload.CONFIRM_ADD_ROLE_OWNERS,
-    RBACPayload.CONFIRM_ADD_ROLE_ADMINS,
-    RBACPayload.CONFIRM_REMOVE_ROLE_TASKS,
-    RBACPayload.CONFIRM_REMOVE_ROLE_MEMBERS,
-    RBACPayload.CONFIRM_REMOVE_ROLE_OWNERS,
-    RBACPayload.CONFIRM_REMOVE_ROLE_ADMINS,
+    RBACPayload.CONFIRM_ADD_ROLE_TASK,
+    RBACPayload.CONFIRM_ADD_ROLE_MEMBER,
+    RBACPayload.CONFIRM_ADD_ROLE_OWNER,
+    RBACPayload.CONFIRM_ADD_ROLE_ADMIN,
+    RBACPayload.CONFIRM_REMOVE_ROLE_TASK,
+    RBACPayload.CONFIRM_REMOVE_ROLE_MEMBER,
+    RBACPayload.CONFIRM_REMOVE_ROLE_OWNER,
+    RBACPayload.CONFIRM_REMOVE_ROLE_ADMIN,
 ]
 
 
 ROLE_REJECT = [
-    RBACPayload.REJECT_ADD_ROLE_TASKS,
-    RBACPayload.REJECT_ADD_ROLE_MEMBERS,
-    RBACPayload.REJECT_ADD_ROLE_OWNERS,
-    RBACPayload.REJECT_ADD_ROLE_ADMINS,
-    RBACPayload.REJECT_REMOVE_ROLE_TASKS,
-    RBACPayload.REJECT_REMOVE_ROLE_MEMBERS,
-    RBACPayload.REJECT_REMOVE_ROLE_OWNERS,
-    RBACPayload.REJECT_REMOVE_ROLE_ADMINS,
+    RBACPayload.REJECT_ADD_ROLE_TASK,
+    RBACPayload.REJECT_ADD_ROLE_MEMBER,
+    RBACPayload.REJECT_ADD_ROLE_OWNER,
+    RBACPayload.REJECT_ADD_ROLE_ADMIN,
+    RBACPayload.REJECT_REMOVE_ROLE_TASK,
+    RBACPayload.REJECT_REMOVE_ROLE_MEMBER,
+    RBACPayload.REJECT_REMOVE_ROLE_OWNER,
+    RBACPayload.REJECT_REMOVE_ROLE_ADMIN,
 ]
 
 
 TASK_PROPOSE = [
-    RBACPayload.PROPOSE_ADD_TASK_ADMINS,
-    RBACPayload.PROPOSE_ADD_TASK_OWNERS,
-    RBACPayload.PROPOSE_REMOVE_TASK_OWNERS,
-    RBACPayload.PROPOSE_REMOVE_TASK_ADMINS,
+    RBACPayload.PROPOSE_ADD_TASK_ADMIN,
+    RBACPayload.PROPOSE_ADD_TASK_OWNER,
+    RBACPayload.PROPOSE_REMOVE_TASK_OWNER,
+    RBACPayload.PROPOSE_REMOVE_TASK_ADMIN,
 ]
 
 
 TASK_CONFIRM = [
-    RBACPayload.CONFIRM_ADD_TASK_ADMINS,
-    RBACPayload.CONFIRM_ADD_TASK_OWNERS,
-    RBACPayload.CONFIRM_REMOVE_TASK_OWNERS,
-    RBACPayload.CONFIRM_REMOVE_TASK_ADMINS,
+    RBACPayload.CONFIRM_ADD_TASK_ADMIN,
+    RBACPayload.CONFIRM_ADD_TASK_OWNER,
+    RBACPayload.CONFIRM_REMOVE_TASK_OWNER,
+    RBACPayload.CONFIRM_REMOVE_TASK_ADMIN,
 ]
 
 
 TASK_REJECT = [
-    RBACPayload.REJECT_ADD_TASK_ADMINS,
-    RBACPayload.REJECT_ADD_TASK_OWNERS,
-    RBACPayload.REJECT_REMOVE_TASK_OWNERS,
-    RBACPayload.REJECT_REMOVE_TASK_ADMINS,
+    RBACPayload.REJECT_ADD_TASK_ADMIN,
+    RBACPayload.REJECT_ADD_TASK_OWNER,
+    RBACPayload.REJECT_REMOVE_TASK_OWNER,
+    RBACPayload.REJECT_REMOVE_TASK_ADMIN,
 ]
 
 
@@ -188,28 +188,28 @@ def apply_create(header, payload, state):
 
 
 def apply_role_propose(header, payload, state):
-    if payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_ADMINS:
+    if payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_ADMIN:
         role_admins.apply_propose(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_OWNERS:
+    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_OWNER:
         role_owners.apply_propose(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_MEMBERS:
+    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_MEMBER:
         role_members.apply_propose(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_TASKS:
+    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_TASK:
         role_tasks.apply_propose(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_ADMINS:
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_ADMIN:
         role_admins.apply_propose_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_OWNERS:
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_OWNER:
         role_owners.apply_propose_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_MEMBERS:
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_MEMBER:
         role_members.apply_propose_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_TASKS:
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_TASK:
         role_tasks.apply_propose_remove(header, payload, state)
 
     else:
@@ -217,28 +217,28 @@ def apply_role_propose(header, payload, state):
 
 
 def apply_role_confirm(header, payload, state):
-    if payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_ADMINS:
+    if payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_ADMIN:
         role_admins.apply_confirm(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_OWNERS:
+    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_OWNER:
         role_owners.apply_confirm(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_MEMBERS:
+    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_MEMBER:
         role_members.apply_confirm(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_TASKS:
+    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_TASK:
         role_tasks.apply_confirm(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_ADMINS:
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_ADMIN:
         role_admins.apply_confirm_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_OWNERS:
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_OWNER:
         role_owners.apply_confirm_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_MEMBERS:
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_MEMBER:
         role_members.apply_confirm_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_TASKS:
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_TASK:
         role_tasks.apply_confirm_remove(header, payload, state)
 
     else:
@@ -246,28 +246,28 @@ def apply_role_confirm(header, payload, state):
 
 
 def apply_role_reject(header, payload, state):
-    if payload.message_type == RBACPayload.REJECT_ADD_ROLE_ADMINS:
+    if payload.message_type == RBACPayload.REJECT_ADD_ROLE_ADMIN:
         role_admins.apply_reject(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_OWNERS:
+    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_OWNER:
         role_owners.apply_reject(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_MEMBERS:
+    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_MEMBER:
         role_members.apply_reject(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_TASKS:
+    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_TASK:
         role_tasks.apply_reject(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_ADMINS:
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_ADMIN:
         role_admins.apply_reject_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_OWNERS:
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_OWNER:
         role_owners.apply_reject_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_MEMBERS:
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_MEMBER:
         role_members.apply_reject_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_TASKS:
+    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_TASK:
         role_tasks.apply_reject_remove(header, payload, state)
 
     else:
@@ -275,16 +275,16 @@ def apply_role_reject(header, payload, state):
 
 
 def apply_task_propose(header, payload, state):
-    if payload.message_type == RBACPayload.PROPOSE_ADD_TASK_ADMINS:
+    if payload.message_type == RBACPayload.PROPOSE_ADD_TASK_ADMIN:
         task_admins.apply_propose(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_TASK_OWNERS:
+    elif payload.message_type == RBACPayload.PROPOSE_ADD_TASK_OWNER:
         task_owners.apply_propose(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_ADMINS:
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_ADMIN:
         task_admins.apply_propose_remove(header, payload, state)
 
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_OWNERS:
+    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_OWNER:
         task_owners.apply_propose_remove(header, payload, state)
 
     else:
@@ -292,16 +292,16 @@ def apply_task_propose(header, payload, state):
 
 
 def apply_task_confirm(header, payload, state):
-    if payload.message_type == RBACPayload.CONFIRM_ADD_TASK_ADMINS:
+    if payload.message_type == RBACPayload.CONFIRM_ADD_TASK_ADMIN:
         task_admins.apply_confirm(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_TASK_OWNERS:
+    elif payload.message_type == RBACPayload.CONFIRM_ADD_TASK_OWNER:
         task_owners.apply_confirm(header, payload, state)
 
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_ADMINS:
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_ADMIN:
         task_admins.apply_confirm(header, payload, state, True)
 
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_OWNERS:
+    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_OWNER:
         task_owners.apply_confirm(header, payload, state, True)
 
     else:
@@ -309,10 +309,10 @@ def apply_task_confirm(header, payload, state):
 
 
 def apply_task_reject(header, payload, state):
-    if payload.message_type == RBACPayload.REJECT_ADD_TASK_ADMINS:
+    if payload.message_type == RBACPayload.REJECT_ADD_TASK_ADMIN:
         task_admins.apply_reject(header, payload, state)
 
-    elif payload.message_type == RBACPayload.REJECT_ADD_TASK_OWNERS:
+    elif payload.message_type == RBACPayload.REJECT_ADD_TASK_OWNER:
         task_owners.apply_reject(header, payload, state)
 
     else:

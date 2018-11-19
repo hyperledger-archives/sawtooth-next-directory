@@ -34,18 +34,18 @@ PROPOSALS_BP = Blueprint("proposals")
 
 
 TABLES = {
-    "ADD_ROLE_TASKS": "task_owners",
-    "ADD_ROLE_MEMBERS": "role_owners",
-    "ADD_ROLE_OWNERS": "role_admins",
-    "ADD_ROLE_ADMINS": "role_admins",
-    "REMOVE_ROLE_TASKS": "task_owners",
-    "REMOVE_ROLE_MEMBERS": "role_owners",
-    "REMOVE_ROLE_OWNERS": "role_admins",
-    "REMOVE_ROLE_ADMINS": "role_admins",
-    "ADD_TASK_OWNERS": "task_admins",
-    "ADD_TASK_ADMINS": "task_admins",
-    "REMOVE_TASK_OWNERS": "task_admins",
-    "REMOVE_TASK_ADMINS": "task_admins",
+    "ADD_ROLE_TASK": "task_owners",
+    "ADD_ROLE_MEMBER": "role_owners",
+    "ADD_ROLE_OWNER": "role_admins",
+    "ADD_ROLE_ADMIN": "role_admins",
+    "REMOVE_ROLE_TASK": "task_owners",
+    "REMOVE_ROLE_MEMBER": "role_owners",
+    "REMOVE_ROLE_OWNER": "role_admins",
+    "REMOVE_ROLE_ADMIN": "role_admins",
+    "ADD_TASK_OWNER": "task_admins",
+    "ADD_TASK_ADMIN": "task_admins",
+    "REMOVE_TASK_OWNER": "task_admins",
+    "REMOVE_TASK_ADMIN": "task_admins",
     "UPDATE_USER_MANAGER": "users",
 }
 
@@ -56,71 +56,71 @@ class Status(object):  # pylint: disable=too-few-public-methods
 
 
 class ProposalType(object):  # pylint: disable=too-few-public-methods
-    ADD_ROLE_TASKS = "ADD_ROLE_TASKS"
-    ADD_ROLE_MEMBERS = "ADD_ROLE_MEMBERS"
-    ADD_ROLE_OWNERS = "ADD_ROLE_OWNERS"
-    ADD_ROLE_ADMINS = "ADD_ROLE_ADMINS"
+    ADD_ROLE_TASK = "ADD_ROLE_TASK"
+    ADD_ROLE_MEMBER = "ADD_ROLE_MEMBER"
+    ADD_ROLE_OWNER = "ADD_ROLE_OWNER"
+    ADD_ROLE_ADMIN = "ADD_ROLE_ADMIN"
 
-    REMOVE_ROLE_TASKS = "REMOVE_ROLE_TASKS"
-    REMOVE_ROLE_MEMBERS = "REMOVE_ROLE_MEMBERS"
-    REMOVE_ROLE_OWNERS = "REMOVE_ROLE_OWNERS"
-    REMOVE_ROLE_ADMINS = "REMOVE_ROLE_ADMINS"
+    REMOVE_ROLE_TASK = "REMOVE_ROLE_TASK"
+    REMOVE_ROLE_MEMBER = "REMOVE_ROLE_MEMBER"
+    REMOVE_ROLE_OWNER = "REMOVE_ROLE_OWNER"
+    REMOVE_ROLE_ADMIN = "REMOVE_ROLE_ADMIN"
 
-    ADD_TASK_OWNERS = "ADD_TASK_OWNERS"
-    ADD_TASK_ADMINS = "ADD_TASK_ADMINS"
+    ADD_TASK_OWNER = "ADD_TASK_OWNER"
+    ADD_TASK_ADMIN = "ADD_TASK_ADMIN"
 
-    REMOVE_TASK_OWNERS = "REMOVE_TASK_OWNERS"
-    REMOVE_TASK_ADMINS = "REMOVE_TASK_ADMINS"
+    REMOVE_TASK_OWNER = "REMOVE_TASK_OWNER"
+    REMOVE_TASK_ADMIN = "REMOVE_TASK_ADMIN"
 
     UPDATE_USER_MANAGER = "UPDATE_USER_MANAGER"
 
 
 PROPOSAL_TRANSACTION = {
-    ProposalType.ADD_ROLE_TASKS: {
+    ProposalType.ADD_ROLE_TASK: {
         Status.REJECTED: role_transaction_creation.reject_add_role_tasks,
         Status.APPROVED: role_transaction_creation.confirm_add_role_tasks,
     },
-    ProposalType.ADD_ROLE_MEMBERS: {
+    ProposalType.ADD_ROLE_MEMBER: {
         Status.REJECTED: role_transaction_creation.reject_add_role_members,
         Status.APPROVED: role_transaction_creation.confirm_add_role_members,
     },
-    ProposalType.ADD_ROLE_OWNERS: {
+    ProposalType.ADD_ROLE_OWNER: {
         Status.REJECTED: role_transaction_creation.reject_add_role_owners,
         Status.APPROVED: role_transaction_creation.confirm_add_role_owners,
     },
-    ProposalType.ADD_ROLE_ADMINS: {
+    ProposalType.ADD_ROLE_ADMIN: {
         Status.REJECTED: role_transaction_creation.reject_add_role_admins,
         Status.APPROVED: role_transaction_creation.confirm_add_role_admins,
     },
-    ProposalType.REMOVE_ROLE_TASKS: {
+    ProposalType.REMOVE_ROLE_TASK: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_tasks,
         Status.APPROVED: role_transaction_creation.confirm_remove_role_tasks,
     },
-    ProposalType.REMOVE_ROLE_MEMBERS: {
+    ProposalType.REMOVE_ROLE_MEMBER: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_members,
         Status.APPROVED: role_transaction_creation.confirm_remove_role_members,
     },
-    ProposalType.REMOVE_ROLE_OWNERS: {
+    ProposalType.REMOVE_ROLE_OWNER: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_owners,
         Status.APPROVED: role_transaction_creation.confirm_remove_role_owners,
     },
-    ProposalType.REMOVE_ROLE_ADMINS: {
+    ProposalType.REMOVE_ROLE_ADMIN: {
         Status.REJECTED: role_transaction_creation.reject_remove_role_admins,
         Status.APPROVED: role_transaction_creation.confirm_remove_role_admins,
     },
-    ProposalType.ADD_TASK_OWNERS: {
+    ProposalType.ADD_TASK_OWNER: {
         Status.REJECTED: task_transaction_creation.reject_add_task_owners,
         Status.APPROVED: task_transaction_creation.confirm_add_task_owners,
     },
-    ProposalType.ADD_TASK_ADMINS: {
+    ProposalType.ADD_TASK_ADMIN: {
         Status.REJECTED: task_transaction_creation.reject_add_task_admins,
         Status.APPROVED: task_transaction_creation.confirm_add_task_admins,
     },
-    ProposalType.REMOVE_TASK_OWNERS: {
+    ProposalType.REMOVE_TASK_OWNER: {
         Status.REJECTED: task_transaction_creation.reject_remove_task_owners,
         Status.APPROVED: task_transaction_creation.confirm_remove_task_owners,
     },
-    ProposalType.REMOVE_TASK_ADMINS: {
+    ProposalType.REMOVE_TASK_ADMIN: {
         Status.REJECTED: task_transaction_creation.reject_remove_task_admins,
         Status.APPROVED: task_transaction_creation.confirm_remove_task_admins,
     },
