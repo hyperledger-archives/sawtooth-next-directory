@@ -12,48 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-from rbac.legacy import addresser as legacy
+"""Addresses and accesses user objects on the blockchain"""
+from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
-from rbac.common.addresser.address_space import AddressSpace
-from rbac.common.addresser.address_space import ObjectType
-from rbac.common.addresser.address_space import RelationshipType
-from rbac.common.addresser.family import family
 
 
 class UserAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses user objects on the blockchain"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.USER
+        return addresser.AddressSpace.USER
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.SELF
+        return addresser.ObjectType.SELF
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ATTRIBUTES
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_user_address(user_id=object_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.ATTRIBUTES
 
 
-# pylint: disable=invalid-name
-user = UserAddress()
+USER_ADDRESS = UserAddress()
 
-__all__ = ["user"]
+__all__ = ["USER_ADDRESS"]

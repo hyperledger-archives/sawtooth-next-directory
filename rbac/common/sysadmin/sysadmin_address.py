@@ -12,114 +12,88 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-from rbac.legacy import addresser as legacy
+"""Addresses and accesses sysadmin objects on the blockchain"""
+from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
-from rbac.common.addresser.address_space import AddressSpace
-from rbac.common.addresser.address_space import ObjectType
-from rbac.common.addresser.address_space import RelationshipType
-from rbac.common.addresser.family import family
 
 
 class SysAdminOwnerAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the sysadmin owner relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.SYSADMIN_OWNERS
+        return addresser.AddressSpace.SYSADMIN_OWNERS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.SYSADMIN
+        return addresser.ObjectType.SYSADMIN
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.OWNER
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_sysadmin_owners_address(user_id=object_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.OWNER
 
 
 class SysAdminAdminAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the sysadmin admin relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.SYSADMIN_ADMINS
+        return addresser.AddressSpace.SYSADMIN_ADMINS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.SYSADMIN
+        return addresser.ObjectType.SYSADMIN
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ADMIN
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_sysadmin_admins_address(user_id=object_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.ADMIN
 
 
 class SysAdminMemberAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the sysadmin member relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.SYSADMIN_MEMBERS
+        return addresser.AddressSpace.SYSADMIN_MEMBERS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.SYSADMIN
+        return addresser.ObjectType.SYSADMIN
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.MEMBER
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_sysadmin_members_address(user_id=object_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.MEMBER
 
 
 class SysAdminAddress(AddressBase):
+    """Addresses and accesses sysadmin objects on the blockchain"""
+
     def __init__(self):
-        AddressBase.__init__(self, family=family)
+        AddressBase.__init__(self)
         self.owner = SysAdminOwnerAddress()
         self.admin = SysAdminAdminAddress()
         self.member = SysAdminMemberAddress()
@@ -127,42 +101,39 @@ class SysAdminAddress(AddressBase):
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.SYSADMIN_ATTRIBUTES
+        return addresser.AddressSpace.SYSADMIN_ATTRIBUTES
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.SYSADMIN
+        return addresser.ObjectType.SYSADMIN
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.SELF
+        return addresser.ObjectType.SELF
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ATTRIBUTES
+        return addresser.RelationshipType.ATTRIBUTES
 
     def address(self, object_id=None, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_sysadmin_attr_address()
-
+        """Makes a blockchain address of this address type
+        (sysadmin has no object_id, there is only one sysadmin role)"""
         return self._address(object_id=object_id, target_id=target_id)
 
-    def address_is(self, address):
+    def get_address_type(self, address):
         """Returns the address type if the address is of the address type
         implemented by this class or a child class, otherewise returns None"""
         return (
-            self._address_is(address=address)
-            or self.owner.address_is(address=address)
-            or self.admin.address_is(address=address)
-            or self.member.address_is(address=address)
+            self.address_is(address=address)
+            or self.owner.get_address_type(address=address)
+            or self.admin.get_address_type(address=address)
+            or self.member.get_address_type(address=address)
         )
 
 
-# pylint: disable=invalid-name
-sysadmin = SysAdminAddress()
+SYSADMIN_ADDRESS = SysAdminAddress()
 
-__all__ = ["sysadmin"]
+__all__ = ["SYSADMIN_ADDRESS"]

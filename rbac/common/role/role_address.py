@@ -12,148 +12,112 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-from rbac.legacy import addresser as legacy
+"""Addresses and accesses role objects on the blockchain"""
+from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
-from rbac.common.addresser.address_space import AddressSpace
-from rbac.common.addresser.address_space import ObjectType
-from rbac.common.addresser.address_space import RelationshipType
-from rbac.common.addresser.family import family
 
 
 class RoleOwnerAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the role owner relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.ROLES_OWNERS
+        return addresser.AddressSpace.ROLES_OWNERS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.ROLE
+        return addresser.ObjectType.ROLE
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.OWNER
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_role_owners_address(role_id=object_id, user_id=target_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.OWNER
 
 
 class RoleAdminAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the role admin relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.ROLES_ADMINS
+        return addresser.AddressSpace.ROLES_ADMINS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.ROLE
+        return addresser.ObjectType.ROLE
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ADMIN
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_role_admins_address(role_id=object_id, user_id=target_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.ADMIN
 
 
 class RoleMemberAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the role member relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.ROLES_MEMBERS
+        return addresser.AddressSpace.ROLES_MEMBERS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.ROLE
+        return addresser.ObjectType.ROLE
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.MEMBER
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_role_members_address(
-                role_id=object_id, user_id=target_id
-            )
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.MEMBER
 
 
 class RoleTaskAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the role task relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.ROLES_TASKS
+        return addresser.AddressSpace.ROLES_TASKS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.ROLE
+        return addresser.ObjectType.ROLE
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.TASK
+        return addresser.ObjectType.TASK
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.MEMBER
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_role_tasks_address(role_id=object_id, task_id=target_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.MEMBER
 
 
 class RoleAddress(AddressBase):
+    """Addresses and accesses role objects on the blockchain"""
+
     def __init__(self):
-        AddressBase.__init__(self, family=family)
+        AddressBase.__init__(self)
         self.owner = RoleOwnerAddress()
         self.admin = RoleAdminAddress()
         self.member = RoleMemberAddress()
@@ -162,43 +126,35 @@ class RoleAddress(AddressBase):
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.ROLES_ATTRIBUTES
+        return addresser.AddressSpace.ROLES_ATTRIBUTES
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.ROLE
+        return addresser.ObjectType.ROLE
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.SELF
+        return addresser.ObjectType.SELF
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ATTRIBUTES
+        return addresser.RelationshipType.ATTRIBUTES
 
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_role_attributes_address(role_id=object_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
-
-    def address_is(self, address):
+    def get_address_type(self, address):
         """Returns the address type if the address is of the address type
         implemented by this class or a child class, otherewise returns None"""
         return (
-            self._address_is(address=address)
-            or self.owner.address_is(address=address)
-            or self.admin.address_is(address=address)
-            or self.member.address_is(address=address)
-            or self.task.address_is(address=address)
+            self.address_is(address=address)
+            or self.owner.get_address_type(address=address)
+            or self.admin.get_address_type(address=address)
+            or self.member.get_address_type(address=address)
+            or self.task.get_address_type(address=address)
         )
 
 
-# pylint: disable=invalid-name
-role = RoleAddress()
+ROLE_ADDRESS = RoleAddress()
 
-__all__ = ["role"]
+__all__ = ["ROLE_ADDRESS"]

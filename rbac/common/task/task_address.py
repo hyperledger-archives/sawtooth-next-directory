@@ -12,123 +12,102 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-from rbac.legacy import addresser as legacy
+"""Addresses and accesses task objects on the blockchain"""
+from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
-from rbac.common.addresser.address_space import AddressSpace
-from rbac.common.addresser.address_space import ObjectType
-from rbac.common.addresser.address_space import RelationshipType
-from rbac.common.addresser.family import family
 
 
 class TaskOwnerAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the role owner relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.TASKS_OWNERS
+        return addresser.AddressSpace.TASKS_OWNERS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.TASK
+        return addresser.ObjectType.TASK
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.OWNER
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_task_owners_address(task_id=object_id, user_id=target_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.OWNER
 
 
 class TaskAdminAddress(AddressBase):
-    def __init__(self):
-        AddressBase.__init__(self, family=family)
+    """Addresses and accesses the role admin relationship"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.TASKS_ADMINS
+        return addresser.AddressSpace.TASKS_ADMINS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.TASK
+        return addresser.ObjectType.TASK
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.USER
+        return addresser.ObjectType.USER
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ADMIN
-
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_task_admins_address(task_id=object_id, user_id=target_id)
-
-        return self._address(object_id=object_id, target_id=target_id)
+        return addresser.RelationshipType.ADMIN
 
 
 class TaskAddress(AddressBase):
+    """Addresses and accesses task objects on the blockchain"""
+
     def __init__(self):
-        AddressBase.__init__(self, family=family)
+        AddressBase.__init__(self)
         self.owner = TaskOwnerAddress()
         self.admin = TaskAdminAddress()
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.TASKS_ATTRIBUTES
+        return addresser.AddressSpace.TASKS_ATTRIBUTES
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.TASK
+        return addresser.ObjectType.TASK
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.SELF
+        return addresser.ObjectType.SELF
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ATTRIBUTES
+        return addresser.RelationshipType.ATTRIBUTES
 
-    def address(self, object_id, target_id=None):
-        """Makes a blockchain address of this address type"""
-        if family.version == "1.0":
-            return legacy.make_task_attributes_address(task_id=object_id)
+    @property
+    def _state_container_prefix(self):
+        """Tasks state container name contains Attributes (TaskAttributesContainer)"""
+        return self._name_camel + "Attributes"
 
-        return self._address(object_id=object_id, target_id=target_id)
-
-    def address_is(self, address):
+    def get_address_type(self, address):
         """Returns the address type if the address is of the address type
         implemented by this class or a child class, otherewise returns None"""
         return (
-            self._address_is(address=address)
-            or self.owner.address_is(address=address)
-            or self.admin.address_is(address=address)
+            self.address_is(address=address)
+            or self.owner.get_address_type(address=address)
+            or self.admin.get_address_type(address=address)
         )
 
 
-# pylint: disable=invalid-name
-task = TaskAddress()
+TASK_ADDRESS = TaskAddress()
 
-__all__ = ["task"]
+__all__ = ["TASK_ADDRESS"]

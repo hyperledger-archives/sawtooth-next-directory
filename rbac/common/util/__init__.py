@@ -12,22 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-import logging
-
-from rbac.common import addresser
-
-from rbac.common.user.user_manager import UserManager
-from rbac.common.role.role_manager import RoleManager
-from rbac.common.task.task_manager import TaskManager
-
-LOGGER = logging.getLogger(__name__)
+"""Common utility functions"""
+import os
 
 
-# pylint: disable=too-few-public-methods
-class RBACManager:
-    def __init__(self):
-        self.addresser = addresser
-        self.user = UserManager()
-        self.role = RoleManager()
-        self.task = TaskManager()
+def get_attribute(item, attribute):
+    """A version of getattr that will return None if attribute
+    is not found on the item"""
+    if hasattr(item, attribute):
+        return getattr(item, attribute)
+    return None
+
+
+def get_environment(name, default):
+    """A version of os.getenv that will use the default value
+    if the environment variable is not found or a blank string"""
+    value = os.getenv(name)
+    if value is None or not value:
+        return default
+    return value
