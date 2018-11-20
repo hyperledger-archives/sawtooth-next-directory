@@ -54,6 +54,11 @@ services:
       - CLIENT_ASSERTION=${CLIENT_ASSERTION}
       - TENANT_ID=${TENANT_ID}
       - AUTH_TYPE=${AUTH_TYPE}
+      - AAD_EH_SAS_POLICY=${AAD_EH_SAS_POLICY}
+      - AAD_EH_SAS_KEY=${AAD_EH_SAS_KEY}
+      - AAD_EH_CONSUMER_GROUP=${AAD_EH_CONSUMER_GROUP}
+      - AAD_EH_NAMESPACE=${AAD_EH_NAMESPACE}
+      - AAD_EH_NAME=${AAD_EH_NAME}
     depends_on:
       - ledger-sync
     command: ./bin/rbac-providers-azure

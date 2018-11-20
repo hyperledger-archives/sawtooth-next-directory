@@ -23,7 +23,9 @@ sys.path.insert(0, TOP_DIR)
 
 from rbac.providers.azure.initial_inbound_sync import initialize_aad_sync
 from rbac.providers.azure.delta_outbound_sync import outbound_sync_listener
+from rbac.providers.azure.delta_inbound_sync import inbound_sync_listener
 
 if __name__ == "__main__":
     initialize_aad_sync()
+    inbound_sync_listener()
     outbound_sync_listener()

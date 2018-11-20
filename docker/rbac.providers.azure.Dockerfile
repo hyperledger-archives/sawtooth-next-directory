@@ -16,7 +16,8 @@ FROM python:3.7
 
 RUN pip install \
     requests    \
-    rethinkdb
+    rethinkdb   \
+    azure-eventhub
 
 WORKDIR /project/hyperledger-rbac
 
