@@ -25,20 +25,20 @@ message_handlers = {}  # pylint: disable=invalid-name
 
 
 def register_message_handler(message):
-    """Register a transaction processor handler for a given message class"""
-    if not hasattr(message, "apply"):
-        return
+    """Register a transaction message handler for a given message class"""
     if message.message_type in message_handlers:
         existing = message_handlers[message.message_type]
-        if not isinstance(message, type(existing)):
-            raise KeyError(
-                "Class {} tried to register message type {} already registered by {}".format(
-                    type(message),
-                    get_message_type_name(message.message_type),
-                    type(existing),
-                )
-            )
     message_handlers[message.message_type] = message
+
+
+def unregister_message_handler(message):
+    """Unregister a transaction message handler for a given message class"""
+    if message.message_type in message_handlers:
+        LOGGER.debug(
+            "removing message handler for %s",
+            get_message_type_name(message.message_type),
+        )
+        del message_handlers[message.message_type]
 
 
 def has_message_handler(message_type):

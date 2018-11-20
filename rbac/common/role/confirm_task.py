@@ -12,51 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Implements the CONFIRM_ADD_ROLE_TASK message
+usage: rbac.role.task.confirm.create()"""
 import logging
 from rbac.common import addresser
-from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
-from rbac.common.base.base_message import BaseMessage
+from rbac.common.proposal.proposal_message import ProposalMessage
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ConfirmAddRoleTask(BaseMessage):
-    def __init__(self):
-        BaseMessage.__init__(self)
+class ConfirmAddRoleTask(ProposalMessage):
+    """Implements the CONFIRM_ADD_ROLE_OWNER message
+    usage: rbac.role.task.confirm.create()"""
 
     @property
-    def name(self):
-        return "proposal"
+    def message_action_type(self):
+        """The action type performed by this message"""
+        return addresser.MessageActionType.CONFIRM
 
     @property
-    def message_type(self):
-        # pylint: disable=no-member
-        return protobuf.rbac_payload_pb2.RBACPayload.CONFIRM_ADD_ROLE_TASK
+    def message_subaction_type(self):
+        """The subsequent action performed or proposed by this message"""
+        return addresser.MessageActionType.ADD
 
     @property
-    def message_proto(self):
-        return protobuf.role_transaction_pb2.ConfirmAddRoleTask
+    def message_object_type(self):
+        """The object type this message acts upon"""
+        return addresser.ObjectType.ROLE
 
     @property
-    def container_proto(self):
-        return protobuf.proposal_state_pb2.ProposalsContainer
+    def message_relationship_type(self):
+        """The relationship type this message acts upon"""
+        return addresser.RelationshipType.MEMBER
 
     @property
-    def state_proto(self):
-        return protobuf.proposal_state_pb2.Proposal
-
-    def address(self, object_id, target_id):
-        """Make the blockchain address for the given message"""
-        return addresser.proposal.address(object_id=object_id, target_id=target_id)
-
-    # pylint: disable=arguments-differ, not-callable
-    def make(self, proposal_id, role_id, task_id, reason=None):
-        """Make the message"""
-        return self.message_proto(
-            proposal_id=proposal_id, role_id=role_id, task_id=task_id, reason=reason
-        )
+    def message_type_name(self):
+        """A TASK membership rather than a USER membership"""
+        return "CONFIRM_ADD_ROLE_TASK"
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""

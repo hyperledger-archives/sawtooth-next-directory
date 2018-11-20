@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Implementation of the Role-Member relationship
+Usage: rbac.role.member.exists(role_id, user_id)
+"""
 import logging
 
 from rbac.common import addresser
-from rbac.common import protobuf
 from rbac.common.base.base_relationship import BaseRelationship
 from rbac.common.role.propose_member import ProposeAddRoleMember
 from rbac.common.role.confirm_member import ConfirmAddRoleMember
@@ -26,6 +27,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 class MemberRelationship(BaseRelationship):
+    """Implementation of the Role-Member relationship
+    Usage: rbac.role.member.exists(role_id, user_id)
+    """
+
     def __init__(self):
         BaseRelationship.__init__(self)
         self.propose = ProposeAddRoleMember()
@@ -33,12 +38,21 @@ class MemberRelationship(BaseRelationship):
         self.reject = RejectAddRoleMember()
 
     @property
-    def name(self):
-        return "role"
+    def address_type(self):
+        """The address type from AddressSpace implemented by this class"""
+        return addresser.AddressSpace.ROLES_MEMBERS
 
     @property
-    def container_proto(self):
-        return protobuf.role_state_pb2.RoleRelationshipContainer
+    def object_type(self):
+        """The object type from AddressSpace implemented by this class"""
+        return addresser.ObjectType.ROLE
 
-    def address(self, object_id, target_id):
-        return addresser.role.member.address(object_id, target_id)
+    @property
+    def related_type(self):
+        """The related type from AddressSpace implemented by this class"""
+        return addresser.ObjectType.USER
+
+    @property
+    def relationship_type(self):
+        """The related type from AddressSpace implemented by this class"""
+        return addresser.RelationshipType.MEMBER

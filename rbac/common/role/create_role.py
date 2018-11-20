@@ -12,61 +12,62 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Implements the CREATE_ROLE message
+usage: rbac.role.create()"""
 
 import logging
 from rbac.common import addresser
-from rbac.common import protobuf
-from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac.common.addresser.address_space import AddressSpace
+from rbac.common.addresser.address_space import ObjectType
+from rbac.common.addresser.address_space import RelationshipType
 from rbac.common.base.base_message import BaseMessage
 
 LOGGER = logging.getLogger(__name__)
 
 
 class CreateRole(BaseMessage):
-    def __init__(self):
-        BaseMessage.__init__(self)
+    """Implements the CREATE_ROLE message
+    usage: rbac.role.create()"""
 
     @property
-    def name(self):
-        return "role"
+    def message_action_type(self):
+        """The action type from AddressSpace performed by this message"""
+        return addresser.MessageActionType.CREATE
 
     @property
-    def names(self):
-        return self.name + "_attributes"
+    def address_type(self):
+        """The address type from AddressSpace implemented by this class"""
+        return AddressSpace.ROLE
 
     @property
-    def message_type(self):
-        # pylint: disable=no-member
-        return RBACPayload.CREATE_ROLE
+    def object_type(self):
+        """The object type from AddressSpace implemented by this class"""
+        return ObjectType.ROLE
 
     @property
-    def message_proto(self):
-        return protobuf.role_transaction_pb2.CreateRole
+    def related_type(self):
+        """The related type from AddressSpace implemented by this class"""
+        return ObjectType.SELF
 
     @property
-    def container_proto(self):
-        return protobuf.role_state_pb2.RoleAttributesContainer
+    def relationship_type(self):
+        """The related type from AddressSpace implemented by this class"""
+        return RelationshipType.ATTRIBUTES
 
     @property
-    def state_proto(self):
-        # pylint: disable=no-member
-        return protobuf.role_state_pb2.Role
+    def _state_container_prefix(self):
+        """Roles state container name contains Attributes (RoleAttributesContainer)"""
+        return self._name_camel + "Attributes"
+
+    @property
+    def _state_container_list_name(self):
+        """Roles state container collection name contains _attributes (role_attributes)"""
+        return self._name_lower + "_attributes"
 
     @property
     def message_fields_not_in_state(self):
         """Fields that are on the message but not stored on the state object"""
         return ["owners", "admins"]
-
-    def address(self, object_id, target_id=None):
-        """Make an address for the given role_id"""
-        return addresser.role.address(object_id)
-
-    # pylint: disable=arguments-differ, not-callable
-    def make(self, role_id, name, metadata=None, owners=None, admins=None):
-        """Make a message"""
-        return self.message_proto(
-            role_id=role_id, name=name, metadata=metadata, owners=owners, admins=admins
-        )
 
     def make_addresses(self, message, signer_keypair=None):
         """Makes the appropriate inputs & output addresses for the message type"""

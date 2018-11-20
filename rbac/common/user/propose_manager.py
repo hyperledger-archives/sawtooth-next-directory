@@ -12,55 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Implements the PROPOSE_UPDATE_USER_MANAGER message
+usage: rbac.user.manager.propose.create()"""
 import logging
-from uuid import uuid4
 from rbac.common import addresser
-from rbac.common import protobuf
-from rbac.common.base.base_message import BaseMessage
+from rbac.common.proposal.proposal_message import ProposalMessage
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ProposeUpdateUserManager(BaseMessage):
-    def __init__(self):
-        BaseMessage.__init__(self)
+class ProposeUpdateUserManager(ProposalMessage):
+    """Implements the PROPOSE_UPDATE_USER_MANAGER message
+    usage: rbac.user.manager.propose.create()"""
 
     @property
-    def name(self):
-        return "proposal"
+    def message_action_type(self):
+        """The action type performed by this message"""
+        return addresser.MessageActionType.PROPOSE
 
     @property
-    def message_type(self):
-        # pylint: disable=no-member
-        return protobuf.rbac_payload_pb2.RBACPayload.PROPOSE_UPDATE_USER_MANAGER
+    def message_subaction_type(self):
+        """The subsequent action performed or proposed by this message"""
+        return addresser.MessageActionType.UPDATE
 
     @property
-    def message_proto(self):
-        return protobuf.user_transaction_pb2.ProposeUpdateUserManager
+    def message_object_type(self):
+        """The object type this message acts upon"""
+        return addresser.ObjectType.USER
 
     @property
-    def container_proto(self):
-        return protobuf.proposal_state_pb2.ProposalsContainer
-
-    @property
-    def state_proto(self):
-        return protobuf.proposal_state_pb2.Proposal
-
-    def address(self, object_id, target_id):
-        """Make the blockchain address for the given message"""
-        return addresser.proposal.address(object_id=object_id, target_id=target_id)
-
-    # pylint: disable=arguments-differ, not-callable
-    def make(self, user_id, new_manager_id, reason=None, metadata=None):
-        """Make the message"""
-        return self.message_proto(
-            proposal_id=uuid4().hex,
-            user_id=user_id,
-            new_manager_id=new_manager_id,
-            reason=reason,
-            metadata=metadata,
-        )
+    def message_relationship_type(self):
+        """The relationship type this message acts upon"""
+        return addresser.RelationshipType.MANAGER
 
     def make_addresses(self, message, signer_keypair=None):
         """Makes the appropriate inputs & output addresses for the message"""
@@ -77,3 +60,18 @@ class ProposeUpdateUserManager(BaseMessage):
         outputs = [proposal_address]
 
         return inputs, outputs
+
+    def new_state(self, state, message, object_id, target_id=None):
+        """Creates a new address in the blockchain state"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        # pylint: disable=not-callable
+        container = self._state_container()
+        item = self._state_object(
+            user_id=message.user_id,
+            name=message.name,
+            manager_id=message.manager_id,
+            metadata=message.metadata,
+        )
+        # pylint: disable=no-member
+        container.users.extend([item])
+        self.state.set_address(state=state, address=address, container=container)
