@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Helper functions for creating the Sawtooth protobufs used
+to pass messages to and from the Sawtooth validator"""
 
 import logging
 from hashlib import sha512
@@ -128,3 +130,55 @@ def make(payload, signer_keypair, batcher_keypair=BATCHER_KEY_PAIR):
     batch_request = make_batch_request(batch_list=batch_list)
 
     return transaction, batch, batch_list, batch_request
+
+
+def dict_to_protobuf(message, message_name, dictionary):
+    """Makes a message from dictionary
+    Shallow copy; supports primitive data types and lists (arrays)
+    Add depth and/or additional datatypes when needed (TODO: add json support)"""
+    for key, value in dictionary.items():
+        if value is not None:
+            if hasattr(message, key):
+                try:
+                    if isinstance(value, list):
+                        getattr(message, key).extend(value)
+                    else:
+                        setattr(message, key, value)
+                except Exception:
+                    raise AttributeError(
+                        "Unable to set attribute {} on {} to value {}".format(
+                            key, message_name, value
+                        )
+                    )
+            else:
+                raise AttributeError(
+                    "{} does not contain a {} property".format(message_name, key)
+                )
+    return message
+
+
+def message_to_message(message_to, message_name, message_from):
+    """Makes a message from another message
+    Shallow copy; supports primitive data types and lists (arrays)
+    Add depth and/or additional datatypes when needed (TODO: add json support)"""
+    for key, value in message_from.ListFields():
+        if hasattr(message_to, key.name):
+            try:
+                if isinstance(value, list):
+                    getattr(message_to, key.name).extend(value)
+                else:
+                    setattr(message_to, key.name, value)
+            except Exception:
+                raise AttributeError(
+                    "Unable to set attribute {} on {} to value {}".format(
+                        key.name, message_name, value
+                    )
+                )
+        else:
+            LOGGER.warning("%s has no property %s", message_name, key.name)
+    return message_to
+
+
+def make_message(message, message_type, **kwargs):
+    """Makes a message from named parameters"""
+    return dict_to_protobuf(message, get_message_type_name(message_type), kwargs)

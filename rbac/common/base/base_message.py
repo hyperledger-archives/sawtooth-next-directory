@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+# pylint: disable=too-many-public-methods,cyclic-import
+"""Base class for all message classes, abstracting out
+common functionality and facilitating differences via
+property and method overrides"""
 import logging
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
@@ -21,73 +24,129 @@ from rbac.common.sawtooth import batcher
 from rbac.common.sawtooth import client
 from rbac.common.sawtooth import state_client
 from rbac.common.base import base_processor as processor
+from rbac.common.base.base_address import AddressBase
 
 LOGGER = logging.getLogger(__name__)
 
 
-# pylint: disable=too-many-public-methods
-class BaseMessage:
-    def __init__(self):
-        """Base class for all messages"""
-        self._message_type_name = batcher.get_message_type_name(self.message_type)
-        processor.register_message_handler(self)
+class BaseMessage(AddressBase):
+    """Base class for all message classes, abstracting out
+    common functionality and facilitating differences via
+    property and method overrides"""
 
-    def getattr(self, item, attribute):
-        """A version of getattr that will return None if attributes
-        is not found on the item"""
-        if hasattr(item, attribute):
-            return getattr(item, attribute)
+    def __init__(self):
+        AddressBase.__init__(self)
+        self._message_type_name = batcher.get_message_type_name(self.message_type)
+        if self.register_message:
+            processor.register_message_handler(self)
+        else:
+            processor.unregister_message_handler(self)
+
+    @property
+    def message_action_type(self):
+        """The action type performed by this message"""
+        return None
+        # raise NotImplementedError("Class must implement this property")
+
+    @property
+    def message_subaction_type(self):
+        """The subsequent action performed or proposed by this message"""
         return None
 
     @property
-    def name(self):
-        """The name of this message type"""
-        raise NotImplementedError("Class must implement this property")
+    def message_object_type(self):
+        """The object type this message acts upon"""
+        return self.object_type
 
     @property
-    def names(self):
-        """The plural name of this message type"""
-        return self.name + "s"
+    def message_related_type(self):
+        """The related object type this message acts upon"""
+        return self.related_type
 
     @property
-    def message_type(self):
-        """The type of this message"""
-        raise NotImplementedError("Class must implement this property")
+    def message_relationship_type(self):
+        """The relationship type this message acts upon"""
+        return self.relationship_type
 
     @property
     def message_type_name(self):
+        """The name of the message type, derives from the message properties
+        Example: ObjectType.USER  MessageActionType.CREATE -> CREATE_USER
+        -or- ActionType.PROPOSE, SubActionType.ADD, MessageObjectType.USER,
+        RelationshipType.MANAGER -> PROPOSE_ADD_USER_MANAGER
+        Override where behavior differs"""
+        if (
+            self.message_action_type
+            and self.message_subaction_type
+            and self.message_relationship_type
+        ):
+            return (
+                self.message_action_type.name
+                + "_"
+                + self.message_subaction_type.name
+                + "_"
+                + self.message_object_type.name
+                + "_"
+                + self.message_relationship_type.name
+            )
+        if self.message_action_type.name:
+            return self.message_action_type.name + "_" + self.message_object_type.name
         return self._message_type_name
 
     @property
+    def message_type(self):
+        """The message type of this message, an atrribute enum of RBACPayload
+        Defaults to protobuf.rbac_payload_pb2.{message_type_name}
+        (see message_type_name) Override message_type_name where behavior differs"""
+        if not self.message_action_type:
+            raise NotImplementedError("Class must implement this property")
+        return getattr(protobuf.rbac_payload_pb2.RBACPayload, self.message_type_name)
+
+    @property
     def message_proto(self):
-        """The protobuf used to serialize this message type"""
-        raise NotImplementedError("Class must implement this property")
-
-    @property
-    def container_proto(self):
-        """The protobuf container used to serialize the values of the state"""
-        raise NotImplementedError("Class must implement this property")
-
-    @property
-    def state_proto(self):
-        """The protobuf used to serialize the state this message produces"""
-        raise NotImplementedError("Class must implement this property")
+        """The protobuf used to serialize this message type
+        Derives name form the object type and message action type names.
+        Example: ObjectType.USER  MessageActionType.CREATE
+        -> protobuf.user_transaction_pb2.CreateUser
+        (see message_type_name) Override where behavior differs"""
+        if not self.message_action_type:
+            raise NotImplementedError("Class must implement this property")
+        return getattr(
+            getattr(
+                protobuf, self.message_object_type.name.lower() + "_transaction_pb2"
+            ),
+            self._camel_case(self.message_type_name),
+        )
 
     @property
     def message_fields_not_in_state(self):
-        """Fields that are on the message but not stored on the state object"""
+        """Fields that are on the message but not stored on its state object"""
         return []
 
-    def address(self, object_id, target_id):
-        raise NotImplementedError("Class must implement this method")
+    @property
+    def register_message(self):
+        """Whether to register this message handler with the transaction processor"""
+        return False  # TODO: default will flip to True after TP refactor
 
-    def make(self, object_id):
-        raise NotImplementedError("Class must implement this method")
+    def make(self, **kwargs):
+        """Makes the message (protobuf) from the named arguments passed to make"""
+        # pylint: disable=not-callable
+        message = self.message_proto()
+        batcher.make_message(message, self.message_type, **kwargs)
+        if hasattr(message, self._name_id) and getattr(message, self._name_id) == "":
+            # sets the unique identifier field of the message to a unique_id if no identifier is provided
+            setattr(message, self._name_id, self.unique_id())
+        self.validate(message=message)
+        return message
 
     def make_addresses(self, message, signer_keypair):
+        """Make addresses returns the inputs (read) and output (write)
+        addresses that may be required in order to validate the message
+        and store the resulting data of a successful or failed execution"""
         raise NotImplementedError("Class must implement this method")
 
-    def base_validate(self, message, signer=None):
+    def validate(self, message, signer=None):
+        """Commmon validation for all messages"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
         if (
@@ -100,7 +159,8 @@ class BaseMessage:
             signer = signer.public_key
         return signer
 
-    def base_validate_state(self, state, message, signer):
+    def validate_state(self, state, message, signer):
+        """Common state validation for all messages"""
         if signer is None:
             raise ValueError("Signer is required")
         if message is None:
@@ -109,9 +169,6 @@ class BaseMessage:
             raise TypeError("Expected signer to be a public key")
         if state is None:
             raise ValueError("State is required")
-
-    def validate(self, message, signer=None):
-        signer = self.base_validate(message=message, signer=signer)
 
     def make_payload(self, message, signer_keypair=None):
         """Make a payload for the given message type"""
@@ -137,7 +194,7 @@ class BaseMessage:
         )
 
     def send(self, signer_keypair, payload, object_id=None, target_id=None):
-        """Sends a payload to the transaction processor"""
+        """Sends a payload to the validator API"""
         if not isinstance(signer_keypair, Key):
             raise TypeError("Expected signer_keypair to be a Key")
         if not isinstance(payload, protobuf.rbac_payload_pb2.RBACPayload):
@@ -155,65 +212,41 @@ class BaseMessage:
 
         return got, status
 
-    def _find_in_container(self, container, address, object_id, target_id=None):
-        items = list(getattr(container, self.names))
-        if not items:
-            return None
-        if len(items) > 1:
-            LOGGER.warning(
-                "%s container for %s target %s has more than one record at address %s",
-                self.name,
-                object_id,
-                target_id,
-                address,
-            )
-        for item in items:
-            if (
-                self.getattr(item, "object_id") == object_id
-                and self.getattr(item, "target_id") == target_id
-            ):
-                return item
-            if self.getattr(item, self.name + "_id") == object_id and target_id is None:
-                return item
-        LOGGER.warning(
-            "%s not found in container for %s target %s at address %s",
-            self.name,
-            object_id,
-            target_id,
-            address,
-        )
-        return None
-
     def get(self, object_id, target_id=None):
-        """Gets an address from the blockchain from the API"""
+        """Gets an address from the blockchain from the validator API"""
         address = self.address(object_id=object_id, target_id=target_id)
-        container = self.container_proto()
+        # pylint: disable=not-callable
+        container = self._state_container()
         container.ParseFromString(client.get_address(address=address))
-        return self._find_in_container(
+        return self._find_in_state_container(
             container=container,
             address=address,
             object_id=object_id,
             target_id=target_id,
         )
 
-    def get_state(self, state, object_id, target_id=None):
-        """Gets an address from the blockchain state from the state object"""
+    def message_to_storage(self, message):
+        """Transforms the message into the state (storage) object"""
+        # pylint: disable=not-callable
+        return batcher.message_to_message(
+            self._state_object(), self._name_camel, message
+        )
+
+    def set_state(self, state, message, object_id, target_id=None):
+        """Creates a new address in the blockchain state"""
+        store = self.message_to_storage(message=message)
+        # pylint: disable=no-member,not-callable
+        container = self._state_container()
+        container.users.extend([store])
         address = self.address(object_id=object_id, target_id=target_id)
-        container = self.container_proto()
+        state_client.set_address(state=state, address=address, container=container)
 
-        results = state_client.get_address(state=state, address=address)
-        if not list(results):
-            return None
-
-        container.ParseFromString(results[0].data)
-        return self._find_in_container(
-            container=container,
-            address=address,
-            object_id=object_id,
-            target_id=target_id,
-        )
-
-    def exists_state(self, state, object_id, target_id=None):
-        """Checks an object exists in the blockchain"""
-        got = self.get_state(state=state, object_id=object_id, target_id=target_id)
-        return bool(got is not None)
+    def apply(self, header, payload, state):
+        """Handles a message in the transaction processor"""
+        # pylint: disable=not-callable
+        message = self.message_proto()
+        message.ParseFromString(payload.content)
+        signer = header.signer_public_key
+        self.validate(message=message, signer=signer)
+        self.validate_state(state=state, message=message, signer=signer)
+        self.set_state(state=state, message=message, object_id=message.user_id)

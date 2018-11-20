@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+# pylint: disable=cyclic-import
 """Addresser class used by message classes to address and access blockchain state"""
 import logging
 from rbac.common.addresser.address_space import AddressSpace

@@ -12,47 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Implementation of the Role-Task relationship
-Usage: rbac.role.task.exists(role_id, task_id)
-"""
+"""A base for all proposal message types"""
 import logging
-
-from rbac.common import addresser
-from rbac.common.base.base_relationship import BaseRelationship
-from rbac.common.role.propose_task import ProposeAddRoleTask
-from rbac.common.role.confirm_task import ConfirmAddRoleTask
-from rbac.common.role.reject_task import RejectAddRoleTask
+from rbac.common.addresser.address_space import AddressSpace
+from rbac.common.addresser.address_space import ObjectType
+from rbac.common.addresser.address_space import RelationshipType
+from rbac.common.base.base_message import BaseMessage
 
 LOGGER = logging.getLogger(__name__)
 
 
-class TaskRelationship(BaseRelationship):
-    """Implementation of the Role-Task relationship
-    Usage: rbac.role.task.exists(role_id, task_id)
-    """
-
-    def __init__(self):
-        BaseRelationship.__init__(self)
-        self.propose = ProposeAddRoleTask()
-        self.confirm = ConfirmAddRoleTask()
-        self.reject = RejectAddRoleTask()
+class ProposalMessage(BaseMessage):
+    """A base for all proposal message types"""
 
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return addresser.AddressSpace.ROLES_TASKS
+        return AddressSpace.PROPOSALS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.ROLE
+        return ObjectType.PROPOSAL
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.TASK
+        return ObjectType.SELF
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.RelationshipType.MEMBER
+        return RelationshipType.ATTRIBUTES
+
+    @property
+    def _state_container_prefix(self):
+        """Proposal state container name is plural (ProposalsContainer)"""
+        return self._name_camel_plural
+
+    def make_addresses(self, message, signer_keypair):
+        """Make addresses returns the inputs (read) and output (write)
+        addresses that may be required in order to validate the message
+        and store the resulting data of a successful or failed execution"""
+        raise NotImplementedError("Class must implement this method")
