@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Enumerations that define the blockchain address space and message addressing"""
 import enum
 
 
@@ -25,6 +25,7 @@ class ObjectType(enum.Enum):
     Chosen enum values for address readability in hex
     """
 
+    NONE = 0  # 0000
     SELF = 4369  # 1111
     SYSADMIN = 8738  # 2222
     USER = 13107  # 3333
@@ -33,6 +34,7 @@ class ObjectType(enum.Enum):
     TASK = 26214  # 6666
 
 
+@enum.unique
 class RelationshipType(enum.Enum):
     """Enumerates all the different relationship types stored
     in the blockchain addressing space
@@ -41,10 +43,30 @@ class RelationshipType(enum.Enum):
     Chosen enum values for address readability in hex
     """
 
+    SELF = 0  # 00
+    MANAGER = 136  # 88
     MEMBER = 187  # bb
     OWNER = 204  # cc
     ADMIN = 238  # ee
     ATTRIBUTES = 255  # ff
+
+
+@enum.unique
+class MessageActionType(enum.Enum):
+    """Enumerates all the different action types performed
+    by messages sent to the sawtooth validator by this application"""
+
+    NONE = 0
+
+    CREATE = 1
+    UPDATE = 2
+    DELETE = 3
+    ADD = 4
+    REMOVE = 5
+
+    PROPOSE = 10
+    CONFIRM = 11
+    REJECT = 12
 
 
 @enum.unique

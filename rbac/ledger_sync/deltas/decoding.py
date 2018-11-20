@@ -73,7 +73,7 @@ def data_to_dicts(address, data):
     """Deserializes a protobuf binary based on its address. Returns a list of
     the decoded objects which were stored at that address.
     """
-    data_type = addresser.address_is(address)
+    data_type = addresser.get_address_type(address)
 
     try:
         deserializer = DESERIALIZERS[data_type]

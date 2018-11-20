@@ -12,16 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Implements the Task library: rbac.task.*"""
 # pylint: disable=too-few-public-methods
 
-from rbac.common.user.propose_manager import ProposeUpdateUserManager
-from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
-from rbac.common.user.reject_manager import RejectUpdateUserManager
+import logging
+from rbac.common.task.create_task import CreateTask
+
+from rbac.common.task.relationship_owner import OwnerRelationship
+from rbac.common.task.relationship_admin import AdminRelationship
+
+LOGGER = logging.getLogger(__name__)
 
 
-class Manager:
+class Task(CreateTask):
+    """Implements the Task library: rbac.task.*"""
+
     def __init__(self):
-        self.propose = ProposeUpdateUserManager()
-        self.confirm = ConfirmUpdateUserManager()
-        self.reject = RejectUpdateUserManager()
+        CreateTask.__init__(self)
+        self.owner = OwnerRelationship()
+        self.admin = AdminRelationship()
+
+
+TASK = Task()
+
+__all__ = ["TASK"]

@@ -12,15 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-import logging
-from rbac.common.user.create_user import CreateUser
-from rbac.common.user.manager import Manager
-
-LOGGER = logging.getLogger(__name__)
+"""The Role Based Access Control (RBAC) Transaction Family"""
+from rbac.common.base.base_family import BaseFamily
 
 
-class UserManager(CreateUser):
-    def __init__(self):
-        CreateUser.__init__(self)
-        self.manager = Manager()
+class Family(BaseFamily):
+    """The Role Based Access Control (RBAC) Transaction Family"""
+
+    @property
+    def name(self):
+        """The name of this transaction family"""
+        return "rbac"
+
+    @property
+    def version(self):
+        """The current version of the transaction processor"""
+        return "1.1"
+
+    @property
+    def namespace(self):
+        """The 3 byte (6 character) address prefix for this transaction family"""
+        return r"bac001"
+
+
+# pylint: disable=invalid-name
+family = Family()
+
+__all__ = ["family"]
