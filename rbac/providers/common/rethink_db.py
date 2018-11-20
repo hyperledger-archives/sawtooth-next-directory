@@ -34,7 +34,6 @@ DB_CONNECT_TIMEOUT = int(float(os.getenv("DB_CONNECT_TIMEOUT", "1")))
 
 DB_CONNECT_MAX_ATTEMPTS = 5
 
-
 def connect_to_db():
     """Polls the database until it comes up and opens a connection."""
     connected_to_db = False
@@ -44,6 +43,7 @@ def connect_to_db():
         try:
             r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
             connected_to_db = True
+            return
         except r.ReqlDriverError:
             LOGGER.debug(
                 "Could not connect to RethinkDB. Retrying in %s seconds...",
