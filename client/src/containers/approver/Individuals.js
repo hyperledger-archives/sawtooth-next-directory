@@ -27,6 +27,7 @@ import IndividualsNav from '../../components/nav/IndividualsNav';
 import PeopleList from '../../components/layouts/proposals/PeopleList';
 import RoleList from '../../components/layouts/proposals/RoleList';
 import { selectRoles, selectUser } from './IndividualsHelper';
+import Loader from '../../components/loader/Loader';
 
 
 /**
@@ -43,12 +44,30 @@ class Individuals extends Component {
     selectedUsers:      [],
     selectedProposals:  [],
     activeIndex:        0,
+    showloader:         false,
   };
 
 
   componentDidMount () {
     const { getOpenProposals, openProposals } = this.props;
     !openProposals && getOpenProposals();
+  }
+
+
+  componentWillReceiveProps(nextProps) {
+    this.props = nextProps;
+    const { isFetching } = this.props;
+
+    if (!isFetching) {
+      this.setState({
+        showloader: false
+      });
+    }else{
+      this.setState({
+        showloader: true
+      });
+    }
+
   }
 
 
@@ -110,8 +129,13 @@ class Individuals extends Component {
       activeIndex,
       selectedProposals,
       selectedRoles,
-      selectedUsers } = this.state;
+      selectedUsers,
+      showloader } = this.state;
 
+      if (showloader) {
+        return <Loader />
+      }
+else {
     return (
       <Grid id='next-approver-grid'>
 
@@ -160,13 +184,16 @@ class Individuals extends Component {
 
       </Grid>
     );
+          }
   }
 
 }
 
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    isFetching: state.approver.fetching
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {

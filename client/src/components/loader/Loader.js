@@ -14,30 +14,29 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-:root {
-  --header-bg-color: #000;
-  --header-color: #fff;
-  --nav-bg-color: #212c3a;
-  --auth-bg-color: #fff;
-  --auth-fg-color: #212c3a;
-  --nav-heading-color: #fff;
-  --nav-list-color: #727c85;
-  --inverted-text-color: #727c85;
-  --chat-bg-color: #b0b0b01f;
-  --selected-list-color: #fef2f8;
-  --divider-color: #cedbe6;
-  --nav-list-padding: 22px;
-  --page-content-padding: 30px;
-  --track-header-height: 113px;
-  --magenta: #e40073;
-  --loader-bg-color: #727c85;
-}
+import React, { Component } from 'react';
 
-body,
-#root {
-  height: 100%;
-}
 
-#next-wave {
-  position: absolute;
+import './Loader.css';
+
+
+/**
+ *
+ * @class Toast
+ * Component encapsulating the toast to display error message
+ *
+ */
+export default class Loader extends Component {
+  render() {
+    return (
+      <div className="loader-container">
+        <div className="lds-ellipsis">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    );
+  }
 }
