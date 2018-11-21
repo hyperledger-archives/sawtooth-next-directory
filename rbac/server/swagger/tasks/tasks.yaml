@@ -1,0 +1,82 @@
+ /tasks:
+    get:
+      security:
+        - Bearer: []
+      description: Fetches the details of all tasks in state
+      parameters:
+        - $ref: '#/parameters/head'
+        - $ref: '#/parameters/start'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: Response with a list of tasks
+          schema:
+            properties:
+              link:
+                $ref: '#/definitions/getAllTasksLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/task'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '#/definitions/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'
+    post:
+      security:
+        - Bearer: []
+      description: Creates a new task in the system
+      parameters:
+        - name: task
+          in: body
+          description: Task to add to the system
+          required: true
+          schema:
+            $ref: '#/definitions/newTask'
+      responses:
+        '200':
+          description: Success response with task resource
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/newTaskResponse'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '#/definitions/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

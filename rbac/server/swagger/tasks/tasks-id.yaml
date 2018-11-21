@@ -1,0 +1,43 @@
+ parameters:
+      - $ref: '#/parameters/taskId'
+    get:
+      security:
+        - Bearer: []
+      description: Fetches the complete details of a task
+      parameters:
+        - $ref: '#/parameters/head'
+      responses:
+        '200':
+          description: Response with the fetched task
+          schema:
+            properties:
+              link:
+                $ref: '#/definitions/getTaskLink'
+              head:
+                $ref: '#/definitions/head'
+              data:
+                $ref: '#/definitions/task'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '#/definitions/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '#/definitions/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

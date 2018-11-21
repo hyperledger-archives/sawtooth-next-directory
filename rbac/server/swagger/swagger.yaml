@@ -1,0 +1,791 @@
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: T-Mobile Hyper Directory APIs
+  description: T-Mobile Hyper Directory APIs
+host: api.hyper-directory.t-mobile.com
+basePath: /api
+schemes:
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /authorization:
+        - $ref: '../server/swagger/authorization/authorization.yaml'
+  /proposals:
+        - $ref: '../server/swagger/proposals/proposals.yaml'
+  '/proposals/{id}':
+        - $ref: '../server/swagger/proposals/proposals-id.yaml'
+  /roles:
+        - $ref: '../server/swagger/roles/roles.yaml'
+  '/roles/{id}/admins':
+       - $ref: '../server/swagger/roles/roles-id-admins.yaml'
+  '/roles/{id}/members':
+      - $ref: '../server/swagger/roles/roles-id-members.yaml'
+  '/roles/{id}/owners':
+      - $ref: '../server/swagger/roles/roles-id-owners.yaml'
+  '/roles/{id}/tasks':
+      - $ref: '../sever/swagger/roles/roles-id-tasks.yaml'
+  /tasks:
+      - $ref: '../server/swagger/tasks/tasks.yaml' 
+  '/tasks/{id}':
+      - $ref: '../server/swagger/tasks/tasks-id.yaml'
+  '/tasks/{id}/admins':
+      - $ref: '../servers/swagger/tasks/tasks-id-admins.yaml'
+  '/tasks/{id}/owners':
+      - $ref: '../servers/swagger/tasks/tasks-id-owners.yaml'
+  /users:
+      - $ref: '../servers/swagger/users/users.yaml'
+  '/users/{id}':
+      - $ref: '../servers/swagger/users/users-id.yaml'
+  '/users/{id}/manager':
+      - $ref: '../servers/swagger/users/users-id-manager.yaml'
+  '/users/{id}/proposals/open':
+      - $ref: '../servers/swagger/users/users-id-proposals-open'
+  /blocks:
+      - $ref: '../servers/swagger/blocks/blocks.yaml'
+  /blocks/latest:
+      - $ref: '../servers/swagger/blocks/blocks-latest.yaml'
+  '/blocks/{id}':
+      - $ref: '../servers/swagger/blocks/blocks-id.yaml'
+parameters:
+  head:
+    name: head
+    in: query
+    type: string
+    default: latest
+    description: The id of the block to use as the chain head
+    x-example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+  start:
+    name: start
+    in: query
+    type: integer
+    default: 0
+    description: The index of the resource to start a page with
+  limit:
+    name: limit
+    in: query
+    type: integer
+    default: 100
+    description: The maximum number of resources to return per page
+  proposalId:
+    name: id
+    in: path
+    description: Id of a particular proposal in state
+    required: true
+    type: string
+    x-example: 63467642-6067-4c82-a096-1a1972d776b3
+  roleId:
+    name: id
+    in: path
+    description: Id of a particular role in state
+    required: true
+    type: string
+    x-example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+  taskId:
+    name: id
+    in: path
+    description: Id of a particular task in state
+    required: true
+    type: string
+    x-example: 7303e601-a596-4561-94f2-84ad716c4089
+  userId:
+    name: id
+    in: path
+    description: Id of a particular user in state
+    required: true
+    type: string
+    x-example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+definitions:
+  head:
+    type: string
+    example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+  getAllProposalsLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/proposals?head=8d322d1d64fe9cd031bd67168333f4a89b3c8d8d9579c720dea0b2b53a6c073e265dcb2f427a3b83e377e204a6a65b5389529acf17ab4f52b069fd75429a3d78&start=0&limit=100
+  getProposalLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/proposals/63467642-6067-4c82-a096-1a1972d776b3?head=8d322d1d64fe9cd031bd67168333f4a89b3c8d8d9579c720dea0b2b53a6c073e265dcb2f427a3b83e377e204a6a65b5389529acf17ab4f52b069fd75429a3d78&start=None&limit=None
+  getAllRolesLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/roles?head=0b3de8da47809b9e788e5a4e8769fa1c66866e1182656c66f22ff974bc7bee3c37037cb3f8ccf3d0900dfbfa7449cbe79bc8896571ea13be61bb32d988a145e4&start=0&limit=100
+  getRoleLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/roles/1f68397b-5b38-4aec-9913-4541c7e1d4c4?head=0b3de8da47809b9e788e5a4e8769fa1c66866e1182656c66f22ff974bc7bee3c37037cb3f8ccf3d0900dfbfa7449cbe79bc8896571ea13be61bb32d988a145e4&start=None&limit=None
+  getAllTasksLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/tasks?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=0&limit=100
+  getTaskLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/tasks/7303e601-a596-4561-94f2-84ad716c4089?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=None&limit=None
+  getAllUsersLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/users?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=0&limit=100
+  getUserLink:
+    type: string
+    example: https://api.hyper-directory.t-mobile.com/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=None&limit=None
+  getOpenProposalsLink:
+    type: string
+    example: http://localhost:8000/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a/proposals/open?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=0&limit=100
+  getAllBlocksLink:
+    type: string
+    example: http://localhost:8000/api/blocks?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=0&limit=100
+  getBlockLink:
+    type: string
+    example: http://localhost:8000/api/blocks/65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+  paging:
+    properties:
+      limit:
+        type: integer
+        example: 100
+      first:
+        type: string
+        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=0&limit=100
+      last:
+        type: string
+        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=54300&limit=100
+      next:
+        type: string
+        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=300&count=100
+      start:
+        type: integer
+        example: 200
+      prev:
+        type: string
+        example: https://api.hyper-directory.t-mobile.com/tasks?head=65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd&start=100&limit=100
+      total:
+        type: integer
+        example: 54321
+  role:
+    description: A collection of tasks and members authorized for those tasks
+    type: object
+    required:
+      - id
+      - name
+      - owners
+    properties:
+      tasks:
+        type: array
+        description: List of ids for tasks grouped by this role
+        items:
+          type: string
+          example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+      start_block_num:
+        type: integer
+        description: The first block in which the role object was valid
+        example: 3
+      end_block_num:
+        description: The block at which the role object was replaced
+        example: 9223372036854775807
+      proposals:
+        type: array
+        description: List of ids for open proposals for this role
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      id:
+        type: string
+        description: Id of the role
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      name:
+        type: string
+        description: Name of the role
+        example: Payroll Administrator
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: for internal use only
+      members:
+        type: array
+        description: List of users ids authorized by this role
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      administrators:
+        type: array
+        description: List of role administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of role owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+  newRole:
+    type: object
+    description: Details provided to create a new role
+    required:
+      - name
+      - owners
+      - administrators
+    properties:
+      name:
+        type: string
+        description: Name of the role
+        example: Payroll Administrator
+      owners:
+        type: array
+        description: List of owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      administrators:
+        type: array
+        description: List of administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: for internal use only
+  newRoleResponse:
+    description: Response containing role object after role has been created
+    type: object
+    required:
+      - id
+      - name
+      - owners
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this role
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: for internal use only
+      id:
+        type: string
+        description: Id of the role
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      tasks:
+        type: array
+        description: List of ids for tasks grouped by this role
+        items:
+          type: string
+          example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+      name:
+        type: string
+        description: Name of the role
+        example: Payroll Administrator
+      members:
+        type: array
+        description: List of users ids authorized by this role
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      administrators:
+        type: array
+        description: List of role administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of role owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+  task:
+    description: A specific permission in the system
+    type: object
+    required:
+      - id
+      - name
+      - administrators
+      - owners
+    properties:
+      start_block_num:
+        description: The first block in which the task object was valid
+        type: integer
+        example: 25
+      proposals:
+        type: array
+        description: List of ids for open proposals for this task
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      id:
+        type: string
+        description: Id of the task
+        example: 7303e601-a596-4561-94f2-84ad716c4089
+      name:
+        type: string
+        description: Name of the task
+        example: issue-paycheck
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: ISPCA compliant
+      end_block_num:
+        type: integer
+        description: The block at which the task object was replaced
+        example: 9223372036854775807
+      administrators:
+        type: array
+        description: List of administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      roles:
+        type: array
+        description: List of ids for roles which include this task
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+  taskId:
+    description: Id of a task
+    type: string
+    example: 7303e601-a596-4561-94f2-84ad716c4089
+  newTask:
+    description: Details provided to create a new task
+    type: object
+    required:
+      - name
+      - owners
+      - administrators
+    properties:
+      name:
+        type: string
+        description: Name of the task
+        example: issue-paycheck
+      owners:
+        type: array
+        description: List of owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      administrators:
+        type: array
+        description: List of administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: ISPCA compliant
+  newTaskResponse:
+    type: object
+    description: Response after new task has been created
+    required:
+      - id
+      - name
+      - administrators
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this task
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      id:
+        type: string
+        description: Id of the task
+        example: 7ea843aa-1650-4530-94b1-a445d2a8193a
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: ISPCA Compliant
+      name:
+        type: string
+        description: Name of the task
+        example: issue-paycheck
+      administrators:
+        type: array
+        description: List of administrator ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      owners:
+        type: array
+        description: List of owner ids
+        items:
+          type: string
+          example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      roles:
+        type: array
+        description: List of ids for roles which include this task
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+  user:
+    description: An actor in the system who can take various authorizations
+    type: object
+    required:
+      - id
+      - name
+    # User object properties is missing manager currently as users cannot be
+    #   assigned a manager at the moment.
+    properties:
+      subordinates:
+        type: array
+        description: List of users reporting directly to this user
+        items:
+          type: string
+          example: 0368acfa552f9e1c7cd5c4cc85b6a5e3714d6421c562a08a1efb122424680dd8b0
+      ownerOf:
+        type: array
+        description: List of ids for roles and tasks this user is an owner of
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      id:
+        type: string
+        description: Id of the user
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      name:
+        type: string
+        description: Name of the user
+        example: Susan Susanson
+      proposals:
+        type: array
+        description: List of ids for open proposals for this user
+        items:
+          type: string
+          example: 63467642-6067-4c82-a096-1a1972d776b3
+      memberOf:
+        type: array
+        description: List of ids for roles this user is a member of
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      administratorOf:
+        type: array
+        description: >-
+          List of ids for roles and tasks this user is an administrator of
+        items:
+          type: string
+          example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: hire-date:2009-07-17
+  newUser:
+    description: Details provided to create a new user
+    type: object
+    required:
+      - name
+      - username
+      - password
+    properties:
+      name:
+        type: string
+        description: Name of the user
+        example: Susan Susanson
+      username:
+        type: string
+        description: Username of the new user
+        example: susan20
+      manager:
+        type: string
+        description: Id of the user's manager
+        example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
+      password:
+        type: string
+        description: Password to associate with the user's account
+        example: '12345'
+      email:
+        type: string
+        description: Email address to associate with the user's account
+        example: susan@biz.co
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: hire-date:2009-07-17
+  newUserResponse:
+    description: Response after new user has been created
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this user
+        items:
+          type: string
+          example: 
+      ownerOf:
+        type: array
+        description: List of ids for roles and tasks this user is an owner of
+        items:
+          type: string
+          example: 
+      id:
+        type: string
+        description: Id of the user
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      name:
+        type: string
+        description: Name of the user
+        example: Susan Susanson
+      username:
+        type: string
+        description: Username of the user
+        example: susan20
+      memberOf:
+        type: array
+        description: List of ids for roles this user is a member of
+        items:
+          type: string
+          example: 
+      administratorOf:
+        type: array
+        description: >-
+          List of ids for roles and tasks this user is an administrator of
+        items:
+          type: string
+          example: 
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: hire-date:2009-07-17
+  userId:
+    description: Id of the user created from a request
+    type: string
+    example: 0250de681732ca6618b0c84677e06a02da8a1f540e498acad10839dbe279ffc1c7
+  proposal:
+    description: >-
+      A request to change the state of a role, task, or user, which requires
+      authorization from another party
+    type: object
+    required:
+      - id
+      - object
+      - target
+      - opener
+      - status
+      - approvers
+    properties:
+      approvers:
+        type: array
+        description: List of user ids that can approve this proposal
+        items:
+          type: string
+          example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
+      open_reason:
+        type: string
+        description: >-
+          A user supplied message explaining why the proposal was created
+        example: Please add me as a Payroll Administator
+      closer:
+        type: string
+        description: Id of the user who accepted or rejected the proposal
+        example: 02a06f344c6074e4bd0ca8a2abe45ee6ec92bf9cdd7b7a67c804350bfff4d4a8c0
+      object:
+        type: string
+        description: >-
+          Id of the role, task, or user that the target resource is being
+          added or removed from
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      id:
+        type: string
+        description: Id of the proposal
+        example: 63467642-6067-4c82-a096-1a1972d776b3
+      target:
+        type: string
+        description: >-
+          Id of the role, task, or user that is being added or removed from
+          the object resource
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      opener:
+        type: string
+        description: Id of the user who created the proposal
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      status:
+        type: string
+        description: Status of the proposal
+        enum:
+          - OPEN
+          - APPROVED
+          - REJECTED
+          - CONFIRMED
+      close_reason:
+        type: string
+        description: >-
+          A user supplied (upon accepting or rejecting proposal) message
+          explaining why the proposal was closed
+        example: Added new HR hire
+      type:
+        type: string
+        description: The type of the proposal
+        enum:
+          - ADD_ROLE_TASKS
+          - ADD_ROLE_MEMBERS
+          - ADD_ROLE_OWNERS
+          - ADD_ROLE_ADMINS
+          - REMOVE_ROLE_TASKS
+          - REMOVE_ROLE_MEMBERS
+          - REMOVE_ROLE_OWNERS
+          - REMOVE_ROLE_ADMINS
+          - ADD_TASK_OWNERS
+          - ADD_TASK_ADMINS
+          - REMOVE_TASK_OWNERS
+          - REMOVE_TASK_ADMINS
+          - UPDATE_USER_MANAGER
+  proposalUpdate:
+    description: Details provided to update a proposal
+    type: object
+    properties:
+      status:
+        type: string
+        description: Status of the proposal
+        enum:
+          - APPROVED
+          - REJECTED
+      reason:
+        type: string
+        description: >-
+          A user supplied message explaining why the proposal was updated
+        example: Added new HR hire
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: "approval-date:2018-08-12"
+  proposalId:
+    description: Id of the proposal created from a request
+    type: object
+    properties:
+      proposal_id:
+        type: string
+        description: Id of the proposal that was created
+        example: 63467642-6067-4c82-a096-1a1972d776b3
+  block:
+    properties:
+      num:
+        type: string
+        example: 123
+      id:
+        type: string
+        example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+  authInfo:
+    description: Info required to authenticate a user
+    type: object
+    properties:
+      id:
+        description: Username of user attempting to authenticate
+        type: string
+        example: susan20
+      password:
+        type: string
+        description: Password of user attempting to authenticate
+        example: '12345'
+  authToken:
+    description: An token used to authorize later requests
+    type: string
+    example: eyJpYXQiOjE1MTA4NjM5NzksImV4cCI6MTUxMDg2NzU3OSwiYWxnIjoiSFMyNTYifQ.eyJpZCI6IjAyYTA2ZjM0NGM2MDc0ZTRiZDBjYThhMmFiZTQ1ZWU2ZWM5MmJmOWNkZDdiN2E2N2M4MDQzNTBiZmZmNGQ0YThjMCJ9.mM_uwZ1wrdag5PoCNThn_0gzZpsIhC_xSsa8xIFxggs
+  400Error:
+    description: Error definition for bad request
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        default: 400
+      message:
+        type: string
+        default: Bad Request
+  401Error:
+    description: Error definition for unauthorized request
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        default: 403
+      message:
+        type: string
+        default: Unauthorized
+  403Error:
+    description: Error definition for forbidden request
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        default: 403
+      message:
+        type: string
+        default: Forbidden
+  404Error:
+    description: Error definition for object not found error
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        default: 404
+      message:
+        type: string
+        default: Not Found
+  503Error:
+    description: Error definition for internal server error
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        default: 503
+      message:
+        type: string
+        default: Internal Error
+  error:
+    description: Generic error response with a code and message
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  success:
+    description: Success response with proposal id with a code and message
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        default: 200
+      message:
+        type: string
+        default: success

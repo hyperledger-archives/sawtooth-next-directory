@@ -1,0 +1,27 @@
+get:
+      security:
+        - Bearer: []
+      description: Fetches info for all blocks in the current chain
+      parameters:
+        - $ref: '#/parameters/head'
+        - $ref: '#/parameters/start'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: Response with a list of block info
+          schema:
+            properties:
+              link:
+                $ref: '#/definitions/getAllBlocksLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/block'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

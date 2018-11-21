@@ -1,0 +1,24 @@
+parameters:
+      - name: id
+        in: path
+        description: Id of the block being fetched
+        required: true
+        type: string
+        x-example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+    get:
+      security:
+        - Bearer: []
+      description: Fetches info for a particular block
+      responses:
+        '200':
+          description: Response with the fetched block info
+          schema:
+            properties:
+              link:
+                $ref: '#/definitions/getBlockLink'
+              data:
+                $ref: '#/definitions/block'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

@@ -1,0 +1,17 @@
+ get:
+      security:
+        - Bearer: []
+      description: Fetches info for the latest block in the chain
+      responses:
+        '200':
+          description: Response with the latest block info
+          schema:
+            properties:
+              link:
+                $ref: '#/definitions/getBlockLink'
+              data:
+                $ref: '#/definitions/block'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

@@ -1,0 +1,41 @@
+post:
+      description: >-
+        Obtains an authorization token from the server for a registered user
+      parameters:
+        - name: authInfo
+          in: body
+          description: Authorization info to be authenticated by the server
+          required: true
+          schema:
+            $ref: '#/definitions/authInfo'
+      responses:
+        '200':
+          description: Success response with authorization token
+          schema:
+            properties:
+              data:
+                properties:
+                  user_id:
+                    $ref: '#/definitions/userId'
+                  authorization:
+                    $ref: '#/definitions/authToken'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '#/definitions/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

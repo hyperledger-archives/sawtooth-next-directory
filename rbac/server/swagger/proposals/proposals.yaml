@@ -1,0 +1,43 @@
+get:
+      security:
+        - Bearer: []
+      description: Fetches complete details of all proposals in state
+      parameters:
+        - $ref: '#/parameters/head'
+        - $ref: '#/parameters/start'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: Response with a list of proposals
+          schema:
+            properties:
+              link:
+                $ref: '#/definitions/getAllProposalsLink'
+              paging:
+                $ref: '#/definitions/paging'
+              head:
+                $ref: '#/definitions/head'
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/proposal'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '#/definitions/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

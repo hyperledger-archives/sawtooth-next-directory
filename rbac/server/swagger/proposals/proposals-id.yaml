@@ -1,0 +1,83 @@
+parameters:
+      - $ref: '#/parameters/proposalId'
+    get:
+      security:
+        - Bearer: []
+      description: Fetches the complete details of a proposal
+      parameters:
+        - $ref: '#/parameters/head'
+      responses:
+        '200':
+          description: Response with the fetched proposal
+          schema:
+            properties:
+              link:
+                $ref: '#/definitions/getProposalLink'
+              head:
+                $ref: '#/definitions/head'
+              data:
+                $ref: '#/definitions/proposal'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '#/definitions/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '#/definitions/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'
+    patch:
+      security:
+        - Bearer: []
+      description: Updates the status of a proposal
+      parameters:
+        - name: update
+          in: body
+          description: Update information for the proposal
+          required: true
+          schema:
+            $ref: '#/definitions/proposalUpdate'
+      responses:
+        '200':
+          description: Success response with proposal id
+          schema:
+            $ref: '#/definitions/proposalId'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '#/definitions/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '#/definitions/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'

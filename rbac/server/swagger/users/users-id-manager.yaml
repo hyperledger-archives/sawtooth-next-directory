@@ -1,0 +1,47 @@
+ parameters:
+      - $ref: '#/parameters/userId'
+    put:
+      security:
+        - Bearer: []
+      description: Update a user with the new manager
+      parameters:
+        - name: manager
+          in: body
+          description: Id of the new manager for this user
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Id of the new manager for this user
+                example: 021606ba6e296954239187c2fa78797bf6ea1f1c6371859bef2377bd33f0d0ba85
+      responses:
+        '200':
+          description: Success response with proposal id
+          schema:
+            $ref: '#/definitions/proposalId'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '#/definitions/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '#/definitions/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '#/definitions/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '#/definitions/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '#/definitions/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '#/definitions/error'
