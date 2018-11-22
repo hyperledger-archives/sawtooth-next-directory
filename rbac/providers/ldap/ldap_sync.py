@@ -28,7 +28,7 @@ import ldap3
 from ldap3 import ALL, Connection, Server
 
 from rbac.providers.common import inbound_filters
-from rbac.providers.common.common import save_sync_time, check_for_sync
+from rbac.providers.common.common import save_sync_time, check_last_sync
 from rbac.providers.ldap import ldap_transforms
 
 
@@ -148,8 +148,11 @@ def ldap_sync():
     """Fetches (Users | Groups) from Active Directory and inserts them into RethinkDB."""
 
     if LDAP_DC:
-        db_user_payload = check_for_sync("ldap-user", "initial")
+        db_user_payload = check_last_sync("ldap-user", "initial")
         if not db_user_payload:
+            LOGGER.info(
+                "No initial AD user sync was found. Starting initial AD user sync now."
+            )
             LOGGER.debug("Inserting AD data...")
 
             LOGGER.debug("Getting Users...")
@@ -161,8 +164,11 @@ def ldap_sync():
                 str(int(DELTA_SYNC_INTERVAL_SECONDS)),
             )
 
-        db_group_payload = check_for_sync("ldap-group", "initial")
+        db_group_payload = check_last_sync("ldap-group", "initial")
         if not db_group_payload:
+            LOGGER.info(
+                "No initial AD group sync was found. Starting initial AD group sync now."
+            )
             LOGGER.debug("Getting Groups with Members...")
             fetch_ldap_data(sync_type="initial", data_type="group")
             save_sync_time("ldap-group", "initial")

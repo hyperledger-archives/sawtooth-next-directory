@@ -27,11 +27,14 @@ class ExpectedError(Exception):
     recovered from. i.e.: Dropped db connection, uninstantiated table, etc."""
 
     def __init__(self, exception):
-        if exception.__class__.__name__ == r.ReqlNonExistenceError.__class__.__name__:
+        if (
+            exception.__class__.__name__
+            == r.ReqlNonExistenceError("").__class__.__name__
+        ):
             error_message = "The table is empty."
-        elif exception.__class__.__name__ == r.ReqlOpFailedError.__class__.__name__:
+        elif exception.__class__.__name__ == r.ReqlOpFailedError("").__class__.__name__:
             error_message = "The table is not initialized."
-        elif exception.__class__.__name__ == r.ReqlDriverError.__class__.__name__:
+        elif exception.__class__.__name__ == r.ReqlDriverError("").__class__.__name__:
             error_message = "Could not connect to RethinkDB."
         else:
             error_message = exception
