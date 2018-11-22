@@ -26,7 +26,8 @@ from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
 )
-from rbac.providers.common.common import save_sync_time, check_for_sync
+from rbac.providers.common.common import save_sync_time, check_last_sync
+
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -211,9 +212,11 @@ def initialize_aad_sync():
     connect_to_db()
     LOGGER.info("Successfully connected to RethinkDB!")
 
-    db_user_payload = check_for_sync("azure-user", "initial")
+    db_user_payload = check_last_sync("azure-user", "initial")
     if not db_user_payload:
-        LOGGER.info("Inserting AAD data...")
+        LOGGER.info(
+            "No initial AAD user sync was found. Starting initial AAD user sync now."
+        )
 
         LOGGER.info("Getting Users...")
         users = fetch_users()
@@ -232,8 +235,11 @@ def initialize_aad_sync():
                 "An error occurred when uploading users.  Please check the logs."
             )
 
-    db_group_payload = check_for_sync("azure-group", "initial")
+    db_group_payload = check_last_sync("azure-group", "initial")
     if not db_group_payload:
+        LOGGER.info(
+            "No initial AAD group sync was found. Starting initial AAD group sync now."
+        )
         LOGGER.info("Getting Groups with Members...")
         groups = fetch_groups_with_members()
         if groups:
