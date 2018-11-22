@@ -19,3 +19,21 @@ limitations under the License.
   position: relative;
   top: 130px;
 }
+
+.next-approver-manage-roles {
+  margin: 6px;
+  padding: 4px;
+}
+
+.next-approver-manage-card{
+  display: flex;
+  align-items: center;
+  box-shadow: 0 3px 6px 0 rgba(34, 36, 38, 0.06), 0 4px 32px 0 rgba(34, 36, 38, 0.1);
+  margin: 0.85em;
+  border-radius: 0.8em;
+  padding: 1.25em;
+}
+
+.next-approver-roles-wrapper{
+  padding: 0.85em 0em;
+}

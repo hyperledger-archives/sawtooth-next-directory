@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
+import { Grid ,Image} from 'semantic-ui-react';
 
 
 import ApproverActions from '../../redux/ApproverRedux';
@@ -36,6 +36,10 @@ import CreateModal from '../../components/modals/manage/Create';
  *
  */
 class Manage extends Component {
+  
+  state = { 
+    myRoles:   []
+  };
 
   createRole = (name) => {
     const { createRole, userId } = this.props;
@@ -45,6 +49,41 @@ class Manage extends Component {
       owners:         [userId],
       administrators: [userId]
     });
+  }
+
+  componentDidMount() {
+    this.fetchMyRoles();
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.props = nextProps;
+    this.fetchMyRoles();
+  }
+
+  fetchMyRoles () {
+    const { roles, userId } = this.props;
+    
+    if(roles){
+      let myRoles = roles.filter(role=>{
+        return role.owners[0] === userId ;
+      });
+
+      this.setState({ myRoles });
+    }
+  }
+
+  renderRoles(){
+    const{ myRoles } = this.state;
+
+    return(
+      myRoles.map(ele=>{
+        return <div className="next-approver-manage-card">
+        <Image src='http://i.pravatar.cc/300' avatar/>
+        <p className="next-approver-manage-roles">{ele.name}</p>
+      </div>
+      })
+    );
+  
   }
 
   render () {
@@ -57,6 +96,10 @@ class Manage extends Component {
           <TrackHeader title='Manage' {...this.props}/>
           <div id='next-approver-manage-content'>
             <CreateModal submit={this.createRole}/>
+           <div className="next-approver-roles-wrapper">
+             {this.renderRoles()}
+           </div>
+          
           </div>
         </Grid.Column>
         <Grid.Column
