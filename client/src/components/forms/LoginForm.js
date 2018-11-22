@@ -40,6 +40,9 @@ export default class LoginForm extends Component {
     activeIndex: 0, username: '', password: '',
     validUsername:  null,
     validPassword:  null,
+    newPasswordIsSet:  null,
+    oldPassword: '',
+    newPassword: '',
   };
 
 
@@ -66,6 +69,10 @@ export default class LoginForm extends Component {
       this.setState({ validUsername: value.length > 0 });
     name === 'password' &&
       this.setState({ validPassword: value.length > 0 });
+    name === 'oldPassword' &&
+      this.setState({ oldPasswordIsCorrect: value.length > 0 && value === this.state.password });
+    name === 'newPassword' &&
+      this.setState({ newPasswordIsSet: value.length > 0 && value !== this.state.oldPassword });
   }
 
 
@@ -76,7 +83,10 @@ export default class LoginForm extends Component {
       username,
       password,
       validUsername,
-      validPassword } = this.state;
+      validPassword,
+      newPasswordIsSet,
+      oldPassword,
+      newPassword } = this.state;
 
     return (
       <div className='form-inverted'>
@@ -134,11 +144,53 @@ export default class LoginForm extends Component {
               <Label>
                 <Link to='/'>Forgot Password?</Link>
               </Label>
+              <Label>
+                <a
+                onClick={() => this.setFlow(2)} >
+                Reset Password
+                </a>
+              </Label>
             </Form.Field>
             <Container textAlign='center'>
               <Form.Button
                 content='Login'
                 disabled={!validPassword}
+                icon='right arrow'
+                labelPosition='right' />
+            </Container>
+          </Form>
+        </div>
+      }
+      { activeIndex === 2 &&
+        <div>
+          <Form onSubmit={() => this.setFlow(0)}>
+            <Form.Field id='next-login-form-reset-password'>
+              <Form.Button
+                id='next-login-form-back-button'
+                content='Back'
+                type='button'
+                icon='left arrow'
+                labelPosition='left'
+                onClick={() => this.setFlow(1)} />
+              <Input
+                autoFocus
+
+                name='oldPassword'
+                type='password'
+                placeholder='Enter your old Password'
+                value={oldPassword}
+                onChange={this.handleChange} />
+              <Input
+                name='newPassword'
+                type='password'
+                placeholder='Enter a new Password'
+                value={newPassword}
+                onChange={this.handleChange} />
+            </Form.Field>
+            <Container textAlign='center'>
+              <Form.Button
+                content='Reset Password'
+                disabled={!newPasswordIsSet}
                 icon='right arrow'
                 labelPosition='right' />
             </Container>
