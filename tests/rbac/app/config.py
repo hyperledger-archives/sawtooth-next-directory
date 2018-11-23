@@ -31,11 +31,14 @@ from rbac.app.config import VALIDATOR_REST_PORT
 from rbac.app.config import DB_HOST
 from rbac.app.config import DB_PORT
 from rbac.app.config import DB_NAME
+from rbac.app.config import CHATBOT_HOST
+from rbac.app.config import CHATBOT_PORT
 from rbac.app.config import AES_KEY
 from rbac.app.config import SECRET_KEY
 from rbac.app.config import BATCHER_KEY_PAIR
 from rbac.app.config import VALIDATOR_ENDPOINT
 from rbac.app.config import VALIDATOR_REST_ENDPOINT
+from rbac.app.config import CHATBOT_REST_ENDPOINT
 
 
 @pytest.mark.library
@@ -56,6 +59,8 @@ class TestAppConfig(TestAssertions):
         self.assertIsString(DEFAULT_CONFIG["DB_HOST"])
         self.assertIsIntegerString(DEFAULT_CONFIG["DB_PORT"])
         self.assertIsString(DEFAULT_CONFIG["DB_NAME"])
+        self.assertIsString(DEFAULT_CONFIG["CHATBOT_HOST"])
+        self.assertIsString(DEFAULT_CONFIG["CHATBOT_PORT"])
         self.assertIsString(DEFAULT_CONFIG["AES_KEY"])
         self.assertTrue(AES_KEY_PATTERN.match(DEFAULT_CONFIG["AES_KEY"]))
         self.assertIsString(DEFAULT_CONFIG["SECRET_KEY"])
@@ -75,6 +80,8 @@ class TestAppConfig(TestAssertions):
         self.assertIsString(DB_HOST)
         self.assertIsIntegerString(DB_PORT)
         self.assertIsString(DB_NAME)
+        self.assertIsString(CHATBOT_HOST)
+        self.assertIsString(CHATBOT_PORT)
         self.assertIsString(AES_KEY)
         self.assertTrue(AES_KEY_PATTERN.match(AES_KEY))
         self.assertIsString(SECRET_KEY)
@@ -94,6 +101,12 @@ class TestAppConfig(TestAssertions):
             "http://{VALIDATOR_REST_HOST}:{VALIDATOR_REST_PORT}".format(
                 VALIDATOR_REST_HOST=VALIDATOR_REST_HOST,
                 VALIDATOR_REST_PORT=VALIDATOR_REST_PORT,
+            ),
+        )
+        self.assertEqual(
+            CHATBOT_REST_ENDPOINT,
+            "http://{CHATBOT_HOST}:{CHATBOT_PORT}".format(
+                CHATBOT_HOST=CHATBOT_HOST, CHATBOT_PORT=CHATBOT_PORT
             ),
         )
 

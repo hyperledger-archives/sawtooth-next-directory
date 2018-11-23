@@ -30,6 +30,7 @@ from rbac.common.crypto.secrets import generate_aes_key
 from rbac.common.crypto.secrets import generate_secret_key
 from rbac.common.sawtooth.messaging import Connection
 from rbac.server.api.auth import AUTH_BP
+from rbac.server.api.chatbot import CHATBOT_BP
 from rbac.server.api.blocks import BLOCKS_BP
 from rbac.server.api.errors import ERRORS_BP
 from rbac.server.api.proposals import PROPOSALS_BP
@@ -49,6 +50,8 @@ DEFAULT_CONFIG = {
     "DB_HOST": "rethink",
     "DB_PORT": "28015",
     "DB_NAME": "rbac",
+    "CHATBOT_HOST": "chatbot",
+    "CHATBOT_PORT": "5005",
     "SECRET_KEY": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
     "AES_KEY": "1111111111111111111111111111111111111111111111111111111111111111",
 }
@@ -62,15 +65,18 @@ VALIDATOR_TIMEOUT = os.getenv("VALIDATOR_TIMEOUT", DEFAULT_CONFIG["VALIDATOR_TIM
 DB_HOST = os.getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
 DB_PORT = os.getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
 DB_NAME = os.getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+CHATBOT_HOST = os.getenv("CHATBOT_HOST", DEFAULT_CONFIG["CHATBOT_HOST"])
+CHATBOT_PORT = os.getenv("CHATBOT_PORT", DEFAULT_CONFIG["CHATBOT_PORT"])
 AES_KEY = os.getenv("AES_KEY", DEFAULT_CONFIG["AES_KEY"])
 SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_CONFIG["SECRET_KEY"])
 
 LOGGER = logging.getLogger(__name__)
-warning_logger = logging.StreamHandler()
-warning_logger.setLevel(logging.WARNING)
-log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-warning_logger.setFormatter(log_formatter)
-LOGGER.addHandler(warning_logger)
+LOGGER_FORMAT = "[%(asctime)s] [%(levelname)s] %(message)s"
+
+log_formatter = logging.Formatter(LOGGER_FORMAT)
+log_handler = logging.StreamHandler()
+log_handler.setFormatter(log_formatter)
+LOGGER.addHandler(log_handler)
 
 
 async def open_connections(app):
@@ -129,6 +135,16 @@ def parse_args(args):
         "--db-name", help="The name of the database to use", default=DB_NAME
     )
     parser.add_argument(
+        "--chatbot-host",
+        help="The host of the chatbot engine to query",
+        default=CHATBOT_HOST,
+    )
+    parser.add_argument(
+        "--chatbot-port",
+        help="The port of the chatbot engine to query",
+        default=CHATBOT_PORT,
+    )
+    parser.add_argument(
         "--debug", help="Option to run Sanic in debug mode", default=False
     )
     parser.add_argument("--secret_key", help="The API secret key", default=SECRET_KEY)
@@ -150,6 +166,8 @@ def load_config(app):  # pylint: disable=too-many-branches
     app.config.DB_HOST = opts.db_host
     app.config.DB_PORT = opts.db_port
     app.config.DB_NAME = opts.db_name
+    app.config.CHATBOT_HOST = opts.chatbot_host
+    app.config.CHATBOT_PORT = opts.chatbot_port
     app.config.DEBUG = bool(opts.debug)
     app.config.SECRET_KEY = opts.secret_key
     app.config.AES_KEY = opts.aes_key
@@ -190,6 +208,7 @@ def main():
 
     app.blueprint(AUTH_BP)
     app.blueprint(BLOCKS_BP)
+    app.blueprint(CHATBOT_BP)
     app.blueprint(ERRORS_BP)
     app.blueprint(PROPOSALS_BP)
     app.blueprint(ROLES_BP)

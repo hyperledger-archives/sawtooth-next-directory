@@ -21,3 +21,5 @@ grpcio-tools==1.15.0
 cryptography==2.3.1
 ldap3==2.5.1
 tornado==4.5.3
+rasa_core==0.12.2
+rasa_nlu==0.13.8
