@@ -40,6 +40,9 @@ WORKDIR /project/hyperledger-rbac
 # End base docker image config for Hyperledger RBAC Next Directory
 # -----------------------------------------------------------------------------
 
+RUN pip3 install \
+        websockets==5.0.1
+
 EXPOSE 8000/tcp
 
 CMD ["./bin/rbac-server"]

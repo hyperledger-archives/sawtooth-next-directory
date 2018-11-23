@@ -102,7 +102,7 @@ services:
     ports:
       - "9090:8080"
     expose:
-       - "28015"
+      - "28015"
 
   rbac-tp:
     build:
@@ -139,19 +139,6 @@ services:
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
 
-  rbac-ui:
-    build:
-      context: .
-      dockerfile: ./docker/ui.Dockerfile
-    container_name: rbac-ui
-    image: rbac-ui:${ISOLATION_ID-latest}
-    ports:
-      - "4200:4200"
-    depends_on:
-      - rbac-server
-    environment:
-      - HOST=${HOST:-localhost}
-
   rbac-client:
     build:
       context: .
@@ -168,6 +155,17 @@ services:
       - "35729:35729"
     depends_on:
       - rbac-server
+
+  chatbot:
+    build:
+      context: .
+      dockerfile: ./docker/chatbot.Dockerfile
+    container_name: rbac-chatbot
+    image: rbac-chatbot:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    ports:
+      - "5005:5005"
 
   rest-api:
     container_name: sawtooth-rest-api
@@ -203,3 +201,15 @@ services:
           --scheduler parallel
       \"\""
 
+  # rbac-ui:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/ui.Dockerfile
+  #   container_name: rbac-ui
+  #   image: rbac-ui:${ISOLATION_ID-latest}
+  #   ports:
+  #     - "4200:4200"
+  #   depends_on:
+  #     - rbac-server
+  #   environment:
+  #     - HOST=${HOST:-localhost}
