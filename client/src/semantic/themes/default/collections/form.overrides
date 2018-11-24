@@ -5,6 +5,7 @@
 .form-inverted .ui.form .field input[type="email"],
 .form-inverted .ui.form .field input[type="password"],
 .form-inverted .ui.form .field input[type="text"] {
+  background: transparent;
   border-bottom: 1px solid @inputBorderColor;
 }
 
@@ -19,7 +20,7 @@
   margin: 8px 0 0 11px;
 }
 
-.form-inverted  .ui.form .field input:-webkit-autofill {
+.form-inverted .ui.form .field input:-webkit-autofill {
   -webkit-text-fill-color: @inputAutoFillBorder;
 }
 

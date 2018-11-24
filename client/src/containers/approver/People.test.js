@@ -20,11 +20,11 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
+import * as customStore from '../../customStore';
 import People from './People';
-import createCustomStore from '../../createCustomStore';
 
 
-const store = createCustomStore();
+const store = customStore.create();
 
 
 it('renders without crashing', () => {

@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom'
-import { Image, Label, List } from 'semantic-ui-react';
+import { Image, Label, List, Transition } from 'semantic-ui-react';
 
 
 import PropTypes from 'prop-types';
@@ -109,9 +109,14 @@ class NavList extends Component {
         <h4>{listTitle}</h4>
 
         { list && list.length !== 0 ?
-          <List inverted link selection>
+          <Transition.Group
+            as={List}
+            duration={500}
+            inverted
+            link
+            selection>
             { this.renderList(list) }
-          </List> :
+          </Transition.Group> :
           <span className='next-nav-list-empty'>
             No items
           </span>

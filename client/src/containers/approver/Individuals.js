@@ -20,13 +20,17 @@ import { Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import './Individuals.css';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import IndividualsNav from '../../components/nav/IndividualsNav';
 import PeopleList from '../../components/layouts/proposals/PeopleList';
 import RoleList from '../../components/layouts/proposals/RoleList';
-import { selectRoles, selectUser } from './IndividualsHelper';
+import { syncAll } from './IndividualsHelper';
+
+
+import './Individuals.css';
+import glyph from '../../images/header-glyph-individual.png';
+
 
 
 /**
@@ -37,6 +41,11 @@ import { selectRoles, selectUser } from './IndividualsHelper';
  *
  */
 class Individuals extends Component {
+
+  static propTypes = {
+    getOpenProposals: PropTypes.func,
+  };
+
 
   state = {
     selectedRoles:      [],
@@ -52,14 +61,18 @@ class Individuals extends Component {
   }
 
 
-  setFlow = (index) => {
+  setFlow = (activeIndex) => {
+    this.setState({ activeIndex });
+  };
+
+
+  reset = () => {
     this.setState({
       selectedRoles:      [],
       selectedUsers:      [],
       selectedProposals:  [],
-      activeIndex:        index,
     });
-  };
+  }
 
 
   /**
@@ -73,28 +86,16 @@ class Individuals extends Component {
    *
    */
   handleChange = (event, data) => {
-    const {
-      selectedRoles,
-      selectedProposals,
-      selectedUsers } = this.state;
-
-    const { openProposalsByUser } = this.props;
-
-    const { roles, proposals } = selectRoles(
+    const sync = syncAll.call(
+      this,
       data.checked,
-      data.proposals,
-      selectedProposals,
-      selectedRoles
-    ).next().value;
-
-    const { users } = selectUser(
-      data.checked,
+      data.role,
+      data.proposal,
       data.user,
-      openProposalsByUser[data.user]
-        .filter(proposal => proposals
-          .includes(proposal.id)),
-      selectedUsers
-    ).next().value;
+    );
+
+    const { roles, proposals } = sync.next().value;
+    const { users } = sync.next().value;
 
     this.setState({
       selectedRoles:      roles,
@@ -105,18 +106,25 @@ class Individuals extends Component {
 
 
   render () {
-    const { openProposals } = this.props;
+    const { openProposals, userFromId } = this.props;
     const {
       activeIndex,
       selectedProposals,
       selectedRoles,
       selectedUsers } = this.state;
 
+    const user = selectedUsers && userFromId(selectedUsers[0]);
+    const title = user && user.name;
+    const subtitle = `${selectedProposals.length}
+      ${selectedProposals.length > 1 ? 'requests' : 'request'}
+      selected`;
+
     return (
       <Grid id='next-approver-grid'>
 
         <Grid.Column id='next-approver-grid-track-column' width={11}>
           <TrackHeader
+            glyph={glyph}
             title='Individual Requests'
             subtitle={openProposals && openProposals.length + ' pending'}
             {...this.props}/>
@@ -127,7 +135,11 @@ class Individuals extends Component {
             { openProposals && openProposals.length !== 0 &&
               <div>
                 { activeIndex === 0 &&
-                  <RoleList {...this.props}/>
+                  <RoleList
+                    selectedProposals={selectedProposals}
+                    selectedRoles={selectedRoles}
+                    handleChange={this.handleChange}
+                    {...this.props}/>
                 }
                 { activeIndex === 1 &&
                   <PeopleList
@@ -139,7 +151,7 @@ class Individuals extends Component {
               </div>
             }
             { openProposals && openProposals.length === 0 &&
-              <Header as='h3' textAlign='center'>
+              <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>No pending items</Header.Content>
               </Header>
             }
@@ -151,10 +163,15 @@ class Individuals extends Component {
           width={5}>
           <Chat
             type={1}
+            title={title}
+            subtitle={subtitle}
+            groupBy={activeIndex}
+            disabled={!openProposals || (openProposals && openProposals.length === 0)}
             selectedProposals={selectedProposals}
             selectedRoles={selectedRoles}
             selectedUsers={selectedUsers}
             handleChange={this.handleChange}
+            reset={this.reset}
             {...this.props}/>
         </Grid.Column>
 
@@ -175,7 +192,3 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Individuals);
 
-
-Individuals.proptypes = {
-  getOpenProposals: PropTypes.func
-};

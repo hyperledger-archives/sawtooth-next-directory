@@ -38,8 +38,8 @@
 @subHeaderColor: @mutedTextColor;
 
 /* Icon */
-@iconOpacity: 1;
-@iconSize: 1.5em;
+@iconOpacity: .7;
+@iconSize: 1.1em;
 @iconOffset: 0em;
 @iconMargin: 0.75rem;
 @iconAlignment: middle;

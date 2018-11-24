@@ -37,11 +37,13 @@ export const appState = (state) => {
     openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
     openProposalsCount:  ApproverSelectors.openProposalsCount(state),
+    openProposalFromId:  (id) => ApproverSelectors.openProposalFromId(state, id),
 
     // Auth
     isAuthenticated:     AuthSelectors.isAuthenticated(state),
 
     // Chat
+    isSocketOpen:        ChatSelectors.isSocketOpen(state),
     messages:            ChatSelectors.messages(state),
 
     // Requester
@@ -52,9 +54,11 @@ export const appState = (state) => {
     roleFromId:          (id) => RequesterSelectors.roleFromId(state, id),
 
     // User
+    id:                  UserSelectors.id(state),
     me:                  UserSelectors.me(state),
     users:               UserSelectors.users(state),
     memberOf:            UserSelectors.memberOf(state),
+    userFromId:          (id) => UserSelectors.userFromId(state, id),
 
   };
 };
@@ -76,10 +80,10 @@ export const appDispatch = (dispatch) => {
     getOpenProposals:  ()    => dispatch(ApproverActions.openProposalsRequest()),
 
     // Chat
+    resetChat:         ()    => dispatch(ChatActions.clearMessages()),
     getConversation:   (id)  => dispatch(ChatActions.conversationRequest(id)),
-    sendMessage:       (message) => {
-      return dispatch(ChatActions.sendRequest(message))
-    },
+    sendMessage:       (message) =>
+      dispatch(ChatActions.sendRequest(message)),
 
     // Requester
     getBase:           ()    => dispatch(RequesterActions.baseRequest()),
@@ -108,7 +112,7 @@ export const appDispatch = (dispatch) => {
  */
 const logout = (dispatch) => {
   return dispatch(AuthActions.logoutRequest()) &&
-    dispatch(UserActions.resetAll()) &&
-    dispatch(ApproverActions.resetAll()) &&
-    dispatch(RequesterActions.resetAll());
+    dispatch(ChatActions.clearMessages()) &&
+    dispatch(ChatActions.socketClose()) &&
+    dispatch(UserActions.resetAll())
 };

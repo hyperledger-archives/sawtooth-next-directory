@@ -17,10 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Header, Image, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-
 import './TrackHeader.css';
-import roleAvatar from '../../images/role-avatar.png';
 
 
 /**
@@ -32,8 +29,13 @@ import roleAvatar from '../../images/role-avatar.png';
  */
 export default class TrackHeader extends Component {
 
+  static propTypes = {
+    subtitle: PropTypes.string,
+    title: PropTypes.string,
+  }
+
   render () {
-    const { roleImage, subtitle, title, waves } = this.props;
+    const { glyph, subtitle, title, waves } = this.props;
 
     return (
       <Grid>
@@ -43,8 +45,8 @@ export default class TrackHeader extends Component {
             <div id='next-track-header'>
               { title &&
                 <Header as='h1' inverted>
-                  { roleImage &&
-                    <Image circular size='large' src={roleAvatar}/>
+                  { glyph &&
+                    <Image size='large' src={glyph}/>
                   }
                   <Header.Content>
                     {title}
@@ -70,8 +72,3 @@ export default class TrackHeader extends Component {
   }
 
 }
-
-
-TrackHeader.proptypes = {
-  title: PropTypes.string
-};

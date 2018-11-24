@@ -97,7 +97,6 @@ export default class PeopleList extends Component {
 
   roleName = (roleId) => {
     const { roleFromId } = this.props;
-
     const role = roleFromId(roleId);
     return role && role.name;
   };
@@ -123,7 +122,7 @@ export default class PeopleList extends Component {
             <span className='next-people-list-proposal'>
               <Checkbox
                 checked={this.isRoleChecked(proposal, userId)}
-                proposals={[proposal]}
+                proposal={proposal.id}
                 user={userId}
                 label={this.roleName(proposal.object)}
                 onChange={handleChange}/>
@@ -149,10 +148,7 @@ export default class PeopleList extends Component {
     const { handleChange, openProposalsByUser, users } = this.props;
 
     if (!users) return null;
-
     const user = users.find((user) => user.id === userId);
-    const proposals = openProposalsByUser[userId]
-      .map(proposal => proposal);
 
     return (
       <div className='next-people-list-item' key={userId}>
@@ -163,9 +159,8 @@ export default class PeopleList extends Component {
               <span className='next-people-list-name'>
                 <Checkbox
                   checked={this.isUserChecked(userId)}
-                  user={userId}
-                  proposals={proposals}
                   label={user.name}
+                  user={userId}
                   onChange={handleChange}/>
               </span>
             }
@@ -177,7 +172,11 @@ export default class PeopleList extends Component {
             <Icon name='info circle' color='grey'/>
           </List.Header>
           <List.List>
-            { this.renderUserProposals(userId, proposals) }
+            { this.renderUserProposals(
+                userId,
+                openProposalsByUser[userId].map(proposal => proposal)
+              )
+            }
           </List.List>
         </List.Item>
         }

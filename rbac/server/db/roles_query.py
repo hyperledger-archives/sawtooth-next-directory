@@ -95,3 +95,22 @@ async def fetch_role_resource(conn, role_id, head_block_num):
         return resource[0]
     except IndexError:
         raise ApiNotFound("Not Found: No role with the id {} exists".format(role_id))
+
+
+async def fetch_recommended_resources(conn, identifier, head_block_num, start, limit):
+    resource = (
+        await r.table("role_members")
+        .filter(
+            lambda doc: doc["identifiers"].contains(identifier).not_()
+            & (head_block_num >= doc["start_block_num"])
+            & (head_block_num < doc["end_block_num"])
+        )
+        .slice(start, start + limit)
+        .get_field("role_id")
+        .coerce_to("array")
+        .run(conn)
+    )
+    try:
+        return resource[0]
+    except IndexError:
+        raise ApiNotFound("Not Found: No role without identifier {}".format(identifier))

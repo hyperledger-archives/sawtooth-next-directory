@@ -17,6 +17,7 @@ limitations under the License.
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
 import * as utils from '../services/Utils';
+import * as storage from '../services/Storage';
 
 
 /**
@@ -72,9 +73,13 @@ export const INITIAL_STATE = Immutable({
  */
 export const UserSelectors = {
   me:         (state) => state.user.me,
-  id:         (state) => state.user.me && state.user.me.id,
+  id:         (state) =>
+    (state.user.me && state.user.me.id) || storage.getUserId(),
   users:      (state) => state.user.users,
   memberOf:   (state) => state.user.me && state.user.me.memberOf,
+  userFromId:   (state, id) =>
+    state.user.users &&
+    state.user.users.find(user => user.id === id)
 };
 
 

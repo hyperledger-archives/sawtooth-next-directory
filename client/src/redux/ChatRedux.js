@@ -36,7 +36,11 @@ const { Types, Creators } = createActions({
   sendSuccess:            ['message'],
   sendFailure:            ['error'],
 
-  actionSet:              ['action']
+  actionSet:              ['action'],
+  socketOpenSuccess:      null,
+  socketClose:            null,
+
+  clearMessages:          null,
 });
 
 
@@ -56,7 +60,8 @@ export const INITIAL_STATE = Immutable({
   fetching:         null,
   error:            null,
   messages:         null,
-  action:           null
+  action:           null,
+  isSocketOpen:     null,
 });
 
 
@@ -67,6 +72,7 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const ChatSelectors = {
+  isSocketOpen: (state) => state.chat.isSocketOpen,
   messages: (state) => state.chat.messages,
   action: (state) => state.chat.action
 };
@@ -78,11 +84,15 @@ export const ChatSelectors = {
  *
  *
  */
-export const request = (state) => state.merge({ fetching: true });
-
+export const request = (state) => {
+  return state.merge({ fetching: true });
+}
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
+export const clearMessages = (state) => {
+  return state.merge({ messages: [] });
+};
 
 
 /**
@@ -95,9 +105,20 @@ export const conversationSuccess = (state, { conversation }) => {
   return state.merge({ fetching: false, messages: conversation.messages });
 }
 
+export const socketOpenSuccess = (state) => {
+  return state.merge({ fetching: false, isSocketOpen: true });
+}
+
 export const sendSuccess = (state, { message }) => {
-  const messages = state.messages.concat([ message ]);
-  return state.merge({ fetching: false, messages });
+  console.log(message)
+
+  const foo = JSON.parse(message)
+  return state.merge({
+    fetching: false,
+    messages: foo.length !== 0 ?
+      (state.messages || []).concat([JSON.parse(message)[0]]) :
+      state.messages
+  });
 }
 
 
@@ -111,6 +132,10 @@ export const actionSet = (state, { action }) => {
   return state.merge({ fetching: false, action });
 }
 
+export const socketClose = (state) => {
+  return state.merge({ fetching: false, isSocketOpen: false });
+}
+
 
 /**
  *
@@ -119,6 +144,8 @@ export const actionSet = (state, { action }) => {
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
+  [Types.CLEAR_MESSAGES]: clearMessages,
+
   [Types.CONVERSATION_REQUEST]: request,
   [Types.CONVERSATION_SUCCESS]: conversationSuccess,
   [Types.CONVERSATION_FAILURE]: failure,
@@ -128,4 +155,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SEND_FAILURE]: failure,
 
   [Types.ACTION_SET]: actionSet,
+  [Types.SOCKET_OPEN_SUCCESS]: socketOpenSuccess,
+  [Types.SOCKET_CLOSE]: socketClose,
 });

@@ -15,7 +15,7 @@ limitations under the License.
 
 
 #next-login-column {
-  margin-top: 100px;
+  margin-top: 85px;
   max-width: 450px;
 }
 
@@ -37,7 +37,14 @@ limitations under the License.
 
 #next-login-container h1 {
   font-size: 1.2em;
-  margin-bottom: 60px;
+}
+
+#next-login-form-1 {
+  margin-top: 70px;
+}
+
+#next-login-form-2 {
+  margin-top: 40px;
 }
 
 #next-login-container .ui.form .field.field input:-webkit-autofill {
@@ -45,8 +52,15 @@ limitations under the License.
 }
 
 #next-login-new-account-container {
+  bottom: 30px;
   color: var(--inverted-text-color);
-  margin-top: 64px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+#next-login-new-account-container a {
+  color: var(--nav-heading-color);
 }
 
 #next-login-new-account-container span {
@@ -55,4 +69,8 @@ limitations under the License.
 
 #next-login-form-password {
   margin-top: 30px;
+}
+
+#next-login-form-avatar-container {
+  min-height: 80px;
 }

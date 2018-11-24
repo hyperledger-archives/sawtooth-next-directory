@@ -16,7 +16,13 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Form, Label, Image, Input } from 'semantic-ui-react';
+import {
+  Container,
+  Form,
+  Label,
+  Image,
+  Input,
+  Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -78,41 +84,52 @@ export default class LoginForm extends Component {
       validUsername,
       validPassword } = this.state;
 
+    const hide = 0;
+    const show = 300;
+
     return (
       <div className='form-inverted'>
-      { activeIndex === 0 &&
-        <div>
-          <Form onSubmit={() => this.setFlow(1)}>
-            <Form.Field>
-              <Input
-                autoFocus
-                placeholder='User ID'
-                error={validUsername === false}
-                name='username'
-                type='text'
-                value={username}
-                onChange={this.handleChange} />
-              <Label>
-                <Link to='/'>Forgot User ID?</Link>
-              </Label>
-            </Form.Field>
-            <Container textAlign='center'>
-              <Form.Button
-                content='Next'
-                disabled={!validUsername}
-                icon='right arrow'
-                labelPosition='right' />
-            </Container>
-          </Form>
-        </div>
-      }
-      { activeIndex === 1 &&
-        <div>
+        <Transition
+          visible={activeIndex === 0}
+          animation='fade up'
+          duration={{ hide, show }}>
+          <div id='next-login-form-1'>
+            <Form onSubmit={() => this.setFlow(1)}>
+              <Form.Field>
+                <Input
+                  autoFocus
+                  placeholder='User ID'
+                  error={validUsername === false}
+                  name='username'
+                  type='text'
+                  value={username}
+                  onChange={this.handleChange} />
+                <Label>
+                  <Link to='/'>Forgot User ID?</Link>
+                </Label>
+              </Form.Field>
+              <Container textAlign='center'>
+                <Form.Button
+                  content='Next'
+                  disabled={!validUsername}
+                  icon='right arrow'
+                  labelPosition='right' />
+              </Container>
+            </Form>
+          </div>
+        </Transition>
+      <Transition
+        visible={activeIndex === 1}
+        animation='fade down'
+        duration={{ hide, show }}>
+        <div id='next-login-form-2'>
           <Form onSubmit={() => submit(username, password)}>
-            <Container textAlign='center'>
+            <Container
+              textAlign='center'
+              id='next-login-form-avatar-container'>
               <Image
                 avatar
-                src='http://i.pravatar.cc/150?img=31'
+                src='http://i.pravatar.cc/150'
                 size='tiny' />
             </Container>
             <Form.Button
@@ -144,7 +161,7 @@ export default class LoginForm extends Component {
             </Container>
           </Form>
         </div>
-      }
+        </Transition>
       </div>
     );
   }

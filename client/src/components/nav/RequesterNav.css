@@ -27,6 +27,7 @@ limitations under the License.
 .next-requester-nav-search .ui.input input {
   background: #ffffff24;
   border: none;
+  font-size: 1.15em;
   height: 44px;
 }
 

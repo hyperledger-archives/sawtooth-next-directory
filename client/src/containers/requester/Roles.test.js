@@ -21,11 +21,11 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 
-import Recommended from './Recommended';
-import createCustomStore from '../../createCustomStore';
+import * as customStore from '../../customStore';
+import Roles from './Roles';
 
 
-const store = createCustomStore();
+const store = customStore.create();
 
 
 it('renders without crashing', () => {
@@ -34,13 +34,14 @@ it('renders without crashing', () => {
   const props = {
     getRole: () => {},
     roleFromId: () => {},
+    proposalFromId: () => {},
     match: { params: {} },
-    requester: { recommended: [] }
+    requester: { requests: [] }
   };
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Recommended {...props}/></BrowserRouter>
+      <BrowserRouter><Roles {...props}/></BrowserRouter>
     </Provider>, div
   );
 

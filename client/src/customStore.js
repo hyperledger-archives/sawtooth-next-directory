@@ -14,12 +14,18 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-requester-requests-content {
-  padding: 0 var(--page-content-padding);
-  position: relative;
-  top: 190px;
-}
+import { applyMiddleware, compose, createStore } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
-#next-requester-requests-description {
-  margin: 30px 0;
+
+import sagas from './sagas';
+import reducers from './redux';
+
+
+export const create = () => {
+  const sagaMiddleware = createSagaMiddleware();
+  const store = createStore(reducers, compose(applyMiddleware(sagaMiddleware)));
+
+  sagaMiddleware.run(sagas);
+  return store;
 }

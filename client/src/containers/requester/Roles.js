@@ -29,20 +29,27 @@ import ApprovalCard from '../../components/layouts/ApprovalCard';
 import MemberList from '../../components/layouts/MemberList';
 
 
-import './Requests.css';
+import './Roles.css';
+import glyph from '../../images/header-glyph-role.png';
 
 
 /**
  *
- * @class Requests
- * *Your Requests* component
+ * @class         Roles
+ * @description   Roles component
+ *
  *
  */
-export class Requests extends Component {
+export class Roles extends Component {
+
+  static propTypes = {
+    getProposal: PropTypes.func,
+    getRole: PropTypes.func,
+  };
+
 
   componentDidMount () {
-    const { getRole, getProposal, roleId, proposalId } = this.props;
-
+    const { getProposal, getRole, proposalId, roleId } = this.props;
     roleId && !this.role && getRole(roleId);
     proposalId && !this.request && getProposal(proposalId);
   }
@@ -51,34 +58,38 @@ export class Requests extends Component {
   /**
    *
    * Switch pack on ID change
-   * TODO: Fix double request
    *
    *
    */
   componentWillReceiveProps (newProps) {
-    const { getRole, getProposal, roleId, proposalId } = this.props;
+    const { getProposal, getRole, proposalId, roleId } = this.props;
 
     if (newProps.roleId !== roleId) {
-      getRole(newProps.roleId);
+      !this.role && getRole(newProps.roleId);
     }
 
     if (newProps.proposalId !== proposalId) {
-      getProposal(newProps.proposalId);
+      proposalId && !this.request && getProposal(newProps.proposalId);
     }
   }
 
 
   render () {
     const {
-      proposalId,
+      me,
       proposalFromId,
+      proposalId,
       roleId,
       roleFromId } = this.props;
 
     this.role = roleFromId(roleId);
     this.request = proposalFromId(proposalId);
-    if (!this.role || !this.request) return null;
 
+    if (!this.role) return null;
+
+    const membersCount = [...this.role.members, ...this.role.owners].length;
+    const subtitle = `${membersCount} ${membersCount > 1 ? 'members' : 'member'}`;
+    const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
 
     return (
       <Grid id='next-requester-grid'>
@@ -86,28 +97,36 @@ export class Requests extends Component {
         <Grid.Column
           id='next-requester-grid-track-column'
           width={11}>
-
           <TrackHeader
-            roleImage
+            glyph={glyph}
             waves
-            title={this.role && this.role.name}
+            title={this.role.name}
+            subtitle={subtitle}
             {...this.props}/>
-
-          <div id='next-requester-requests-content'>
-            <ApprovalCard request={this.request} {...this.props}/>
-            <Container id='next-requester-requests-description'>
+          <div id='next-requester-roles-content'>
+            { this.request &&
+              this.request.status === 'OPEN' &&
+              <ApprovalCard
+                request={this.request}
+                {...this.props}/>
+            }
+            <Container id='next-requester-roles-description'>
               Lorem ipsum dolor sit amet.
             </Container>
             <MemberList {...this.props}
-              members={this.role && this.role.members}
-              owners={this.role && this.role.owners}/>
+              members={this.role.members}
+              owners={this.role.owners}/>
           </div>
-
         </Grid.Column>
+
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={5}>
-          <Chat disabled {...this.props}/>
+          <Chat
+            type={0}
+            disabled={isOwner}
+            title={this.role.name + ' Conversations'}
+            activeRole={this.role} {...this.props}/>
         </Grid.Column>
 
       </Grid>
@@ -115,7 +134,6 @@ export class Requests extends Component {
   }
 
 }
-
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -137,10 +155,5 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Requests);
 
-
-Requests.proptypes = {
-  getRole: PropTypes.func,
-  getProposal: PropTypes.func,
-};
+export default connect(mapStateToProps, mapDispatchToProps)(Roles);

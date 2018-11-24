@@ -14,16 +14,18 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { all, takeLatest } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
+import { all, call, put, take, takeLatest } from 'redux-saga/effects';
 
 
 import API from '../services/Api';
 import FixtureAPI from '../services/FixtureApi';
+import Socket from '../services/Socket'
 
 
 import { ApproverTypes } from '../redux/ApproverRedux';
 import { AuthTypes } from '../redux/AuthRedux';
-import { ChatTypes } from '../redux/ChatRedux';
+import ChatActions, { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
 import { UserTypes } from '../redux/UserRedux';
 
@@ -47,15 +49,45 @@ import { me, getUser, getUsers } from './UserSaga';
 
 
 const api = API.create();
+const ws = Socket.create();
 
 
 /**
  *
- * Construct sagas
+ * Construct API sagas
  *
  *
  */
-export default function * root() {
+export default function * root () {
+  yield all([
+    sagas(),
+    channels(),
+  ]);
+}
+
+
+/**
+ *
+ *
+ *
+ *
+ */
+function * channels () {
+  const channel = yield call(createChannel);
+  while (true) {
+    const action = yield take(channel);
+    yield put(action);
+  }
+}
+
+
+/**
+ *
+ *
+ *
+ *
+ */
+function * sagas () {
   yield all([
 
     // Approver
@@ -70,7 +102,7 @@ export default function * root() {
 
     // Chat
     takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, FixtureAPI),
-    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, FixtureAPI),
+    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, ws),
 
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
@@ -87,3 +119,17 @@ export default function * root() {
 
   ]);
 }
+
+
+/**
+ *
+ *
+ *
+ *
+ */
+const createChannel = () =>
+  eventChannel(emitter => {
+    ws.onopen = (event) => emitter(ChatActions.socketOpenSuccess())
+    ws.onmessage = (event) => emitter(ChatActions.sendSuccess(event.data))
+    return () => ws.close();
+  });

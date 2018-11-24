@@ -19,46 +19,49 @@ import { Segment } from 'semantic-ui-react';
 
 
 /**
- * 
+ *
  * @class ChatMessage
  * Component encapsulating the chat message
- * 
+ *
  */
 export default class ChatMessage extends Component {
 
   /**
-   * 
+   *
    * @todo Retrieve from auth session
-   * 
-   * 
+   *
+   *
    */
   isMe (message) {
-    return message.from.id === '519909ec-f0c8-4be9-ac62-d340161507b3';
+    // return messsage.from.id === '519909ec-f0c8-4be9-ac62-d340161507b3';
+    return false;
   }
 
 
   render () {
     const { messages } = this.props;
 
+    if (!messages) return null;
+
     return (
+      messages &&
       messages.map((message, index) => (
         this.isMe(message) ?
-        
-         <Segment compact inverted
-           floated='right'
-           color='blue'
-           className='clear next-chat-message-right'
-           size='small'
-           key={index}>
-           <div>{message.body}</div>
-         </Segment> :      
-         <Segment compact raised
-           floated='left'
-           className='clear next-chat-message-left'
-           size='small'
-           key={index}>
-           <div>{message.body}</div>
-         </Segment>
+        <Segment compact inverted
+          floated='right'
+          color='blue'
+          className='clear next-chat-message-right'
+          size='small'
+          key={index}>
+          <div>{message.text}</div>
+        </Segment> :
+        <Segment compact
+          floated='left'
+          className='clear next-chat-message-left'
+          size='small'
+          key={index}>
+          <div>{message.text}</div>
+        </Segment>
       ))
     );
   }

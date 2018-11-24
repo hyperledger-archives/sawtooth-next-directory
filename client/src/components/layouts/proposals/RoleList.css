@@ -25,5 +25,6 @@ limitations under the License.
 .next-role-list-item .ui.segment {
   align-items: center;
   display: flex;
+  min-height: 74px;
   justify-content: space-between;
 }

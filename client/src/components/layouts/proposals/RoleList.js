@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import './RoleList.css';
-import { Image, Segment } from 'semantic-ui-react';
+import { Checkbox, Image, Segment } from 'semantic-ui-react';
 
 
 /**
@@ -26,6 +26,41 @@ import { Image, Segment } from 'semantic-ui-react';
  *
  */
 export default class RoleList extends Component {
+
+  /**
+   *
+   * Hydrate data
+   *
+   *
+   */
+  componentDidMount () {
+    const { getUsers, openProposalsByUser, users } = this.props;
+
+    if (!openProposalsByUser) return;
+    let collection;
+    const newUsers = Object.keys(openProposalsByUser);
+
+    users ?
+      collection = newUsers.filter(newUser =>
+        !users.find(user => newUser === user.id)) :
+      collection = newUsers;
+
+    getUsers(collection);
+  }
+
+
+  componentWillReceiveProps (newProps) {
+    const { getUsers, openProposalsByUser } = this.props;
+
+    const newUsers = Object.keys(newProps.openProposalsByUser);
+    const oldUsers = Object.keys(openProposalsByUser);
+
+    if (newUsers.length > oldUsers.length) {
+      const diff = newUsers.filter(user => !oldUsers.includes(user));
+      getUsers(diff);
+    }
+  }
+
 
   roleName = (roleId) => {
     const { roleFromId } = this.props;
@@ -48,10 +83,31 @@ export default class RoleList extends Component {
     return (
       <div className='pull-right'>
         { openProposalsByRole[roleId].map(proposal => (
-          <Image key={proposal.id} src='http://i.pravatar.cc/300' avatar/>
+          <Image
+            key={proposal.id}
+            src={'http://i.pravatar.cc/150?' + proposal.id}
+            size='mini'
+            avatar/>
         ))}
       </div>
     );
+  }
+
+
+  isRoleChecked = (roleId) => {
+    const { selectedRoles } = this.props;
+    return selectedRoles.indexOf(roleId) !== -1;
+  }
+
+
+  // TODO: Indeterminate state not adding class to UI in one scenario
+  isIndeterminate = (roleId) => {
+    const { selectedProposals, openProposalsByRole } = this.props;
+    const selected = openProposalsByRole[roleId].filter(proposal =>
+        selectedProposals.includes(proposal.id))
+
+    return selected.length > 0 &&
+      selected.length < openProposalsByRole[roleId].length;
   }
 
 
@@ -66,10 +122,16 @@ export default class RoleList extends Component {
    *
    */
   renderRoleItem (roleId) {
+    const { handleChange} = this.props;
     return (
       <div className='next-role-list-item' key={roleId}>
-        <Segment raised>
-          {this.roleName(roleId)}
+        <Segment className='light' padded>
+          <Checkbox
+            defaultIndeterminate={this.isIndeterminate(roleId)}
+            checked={this.isRoleChecked(roleId)}
+            role={roleId}
+            label={this.roleName(roleId)}
+            onChange={handleChange}/>
           {this.renderUsers(roleId)}
         </Segment>
       </div>
@@ -79,7 +141,6 @@ export default class RoleList extends Component {
 
   render () {
     const { openProposalsByRole } = this.props;
-
     if (!openProposalsByRole) return null;
 
     return (
