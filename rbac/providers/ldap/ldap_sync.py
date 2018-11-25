@@ -117,7 +117,8 @@ def fetch_ldap_data(sync_type, data_type):
 
     insert_to_db(data_dict=conn.entries, data_type=data_type)
     sync_source = "ldap-" + data_type
-    save_sync_time(sync_source, sync_type)
+    provider_id = LDAP_DC
+    save_sync_time(provider_id, sync_source, sync_type)
 
 
 def insert_to_db(data_dict, data_type):
@@ -148,6 +149,7 @@ def ldap_sync():
     """Fetches (Users | Groups) from Active Directory and inserts them into RethinkDB."""
 
     if LDAP_DC:
+        provider_id = LDAP_DC
         db_user_payload = check_last_sync("ldap-user", "initial")
         if not db_user_payload:
             LOGGER.info(
@@ -157,7 +159,7 @@ def ldap_sync():
 
             LOGGER.debug("Getting Users...")
             fetch_ldap_data(sync_type="initial", data_type="user")
-            save_sync_time("ldap-user", "initial")
+            save_sync_time(provider_id, "ldap-user", "initial")
 
             LOGGER.debug(
                 "Initial AD user upload completed. User delta sync will occur in %s seconds.",
@@ -171,7 +173,7 @@ def ldap_sync():
             )
             LOGGER.debug("Getting Groups with Members...")
             fetch_ldap_data(sync_type="initial", data_type="group")
-            save_sync_time("ldap-group", "initial")
+            save_sync_time(provider_id, "ldap-group", "initial")
 
             LOGGER.debug(
                 "Initial AD group upload completed. Group delta sync will occur in %s seconds.",

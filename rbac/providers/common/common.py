@@ -31,10 +31,14 @@ LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 DELAY = 1
 
 
-def save_sync_time(sync_source, sync_type):
+def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
     """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
-    last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
+    if timestamp:
+        last_sync_time = timestamp
+    else:
+        last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
     sync_entry = {
+        "provider_id": provider_id,
         "timestamp": last_sync_time,
         "source": sync_source,
         "sync_type": sync_type,
