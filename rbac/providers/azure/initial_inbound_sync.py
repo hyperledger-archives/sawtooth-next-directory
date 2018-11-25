@@ -27,6 +27,7 @@ from rbac.providers.common.inbound_filters import (
     inbound_group_filter,
 )
 from rbac.providers.common.common import save_sync_time, check_last_sync
+from rbac.providers.common.rethink_db import connect_to_db
 
 
 logging.basicConfig(level=logging.INFO)
@@ -43,23 +44,6 @@ TENANT_ID = os.getenv("TENANT_ID")
 AUTH = AadAuth()
 
 DELAY = 1
-
-
-def connect_to_db():
-    """Polls the database until it comes up and opens a connection."""
-    connected_to_db = False
-    while not connected_to_db:
-        try:
-            r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
-            connected_to_db = True
-        except r.ReqlDriverError as err:
-            LOGGER.debug(
-                "Could not connect to RethinkDB. Repolling after %s seconds...", DELAY
-            )
-            time.sleep(DELAY)
-        except Exception as err:
-            LOGGER.warning(type(err).__name__)
-            raise err
 
 
 def fetch_groups_with_members():
@@ -182,6 +166,7 @@ def insert_group_to_db(groups_dict):
         inbound_entry = {
             "data": standardized_group,
             "data_type": "group",
+            "sync_type": "initial",
             "timestamp": dt.now().isoformat(),
             "provider_id": TENANT_ID,
         }
@@ -200,6 +185,7 @@ def insert_user_to_db(users_dict):
         inbound_entry = {
             "data": standardized_user,
             "data_type": "user",
+            "sync_type": "initial",
             "timestamp": dt.now().isoformat(),
             "provider_id": TENANT_ID,
         }
@@ -211,6 +197,7 @@ def initialize_aad_sync():
     LOGGER.info("connecting to RethinkDB...")
     connect_to_db()
     LOGGER.info("Successfully connected to RethinkDB!")
+    provider_id = TENANT_ID
 
     db_user_payload = check_last_sync("azure-user", "initial")
     if not db_user_payload:
@@ -228,7 +215,7 @@ def initialize_aad_sync():
                     insert_user_to_db(users)
                 else:
                     break
-            save_sync_time("azure-user", "initial")
+            save_sync_time(provider_id, "azure-user", "initial")
             LOGGER.info("Initial user upload complete :)")
         else:
             LOGGER.info(
@@ -250,7 +237,7 @@ def initialize_aad_sync():
                     insert_group_to_db(groups)
                 else:
                     break
-            save_sync_time("azure-group", "initial")
+            save_sync_time(provider_id, "azure-group", "initial")
             LOGGER.info("Initial group upload complete :)")
         else:
             LOGGER.info(

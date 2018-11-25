@@ -14,26 +14,17 @@
 # ------------------------------------------------------------------------------
 
 """
-A receiver module that pulls entries from the Azure EventHub to be used by the 
+A receiver module that pulls entries from the Azure EventHub to be used by the
 Inbound AAD Delta Sync.
 """
 import os
-import sys
 import logging
-import time
 from datetime import datetime
+import rethinkdb as r
+from azure.eventhub import EventHubClient, Offset
+
 from rbac.providers.common.expected_errors import ExpectedError
-from azure.eventhub import EventHubClient, Receiver, Offset
-
-from rbac.providers.common.inbound_filters import (
-    inbound_user_filter,
-    inbound_group_filter,
-)
-
-from rbac.providers.common.rethink_db import (
-    connect_to_db
-)
-
+from rbac.providers.common.rethink_db import connect_to_db
 from rbac.providers.common.common import save_sync_time, check_last_sync
 
 DELAY = os.environ.get("DELAY")
@@ -42,6 +33,7 @@ DELAY = os.environ.get("DELAY")
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
+TENANT_ID = os.getenv("TENANT_ID")
 NAMESPACE = os.environ.get("AAD_EH_NAMESPACE")
 EVENTHUB_NAME = os.environ.get("AAD_EH_NAME")
 
@@ -57,37 +49,48 @@ CONSUMER_GROUP = os.environ.get("AAD_EH_CONSUMER_GROUP")
 OFFSET = Offset("-1")
 PARTITION = "0"
 
-VALID_OPERATIONS = [
-    "Add user",
-    "Add group",
-    "Update user",
-    "Update group",
-    "Delete user",
-    "Delete group",
-    "Hard Delete user",
-    "Add member to group",
-    "Update user attribute",
-    "Remove member from group",
-]
+VALID_OPERATIONS = {
+    "Add user": "user",
+    "Add group": "group",
+    "Update user": "user",
+    "Update group": "group",
+    "Delete user": "user",
+    "Delete group": "group",
+    "Hard Delete user": "user",
+    "Add member to group": "group",
+    "Update user attribute": "user",
+    "Remove member from group": "group",
+}
+
 
 def inbound_sync_listener():
-    while True:
+    while True:  # pylint: disable=too-many-nested-blocks
+        provider_id = TENANT_ID
         try:
             LOGGER.info("Connecting to RethinkDB...")
             connect_to_db()
             LOGGER.info("Successfully connected to RethinkDB!")
 
-            previous_sync_time = check_last_sync("azure-user", "initial")[0]['timestamp'][:26]
-            previous_sync_datetime = datetime.strptime(previous_sync_time, "%Y-%m-%dT%H:%M:%S.%f")
-            
-            LOGGER.info("Previous sync time: %s", previous_sync_datetime)
-
+            initial_sync_time = check_last_sync("azure-user", "initial")
+            initial_sync_time = initial_sync_time[0]["timestamp"][:26]
+            latest_delta_sync_time = get_last_delta_sync(provider_id, "delta")
+            if latest_delta_sync_time:
+                latest_delta_sync_time = latest_delta_sync_time["timestamp"][:26]
+                previous_sync_datetime = datetime.strptime(
+                    latest_delta_sync_time, "%Y-%m-%dT%H:%M:%S.%f"
+                )
+            else:
+                previous_sync_datetime = datetime.strptime(
+                    initial_sync_time, "%Y-%m-%dT%H:%M:%S.%f"
+                )
             # Create an eventhub client.
             client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
             try:
                 LOGGER.info("Opening connection to EventHub...")
                 # Set prefetch to 1, we only want one event at a time.
-                receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=1, offset=OFFSET)
+                receiver = client.add_receiver(
+                    CONSUMER_GROUP, PARTITION, prefetch=1, offset=OFFSET
+                )
                 # Open the connection to the EventHub.
                 client.run()
                 # Get one event from EventHub.
@@ -96,19 +99,37 @@ def inbound_sync_listener():
                     for event_data in batch:
                         # Get the event as a json record from the batch of events.
                         event_json = event_data.body_as_json()
-                        record = event_json['records'][0]
-                        operation_name = record['operationName']
-                        time = record['time'][:26]
-                        date_time = datetime.strptime(time, "%Y-%m-%dT%H:%M:%S.%f")
+                        record = event_json["records"][0]
+                        operation_name = record["operationName"]
+                        time = record["time"][:26]
+                        record_timestamp = datetime.strptime(
+                            time, "%Y-%m-%dT%H:%M:%S.%f"
+                        )
                         # Only process events logged after the previous initial/delta sync.
                         # Only grab events concerning User or Group objects.
-                        if operation_name in VALID_OPERATIONS and date_time <= previous_sync_datetime:
-                            for resource in record['properties']['targetResources']:
-                                # TODO: Put User or Group object into the inbound queue.
-                                # TODO: Update previous sync time.
-                                LOGGER.info("Operation name: %s", operation_name)
-                                LOGGER.info("Resource: %s", resource)
-                    batch = receiver.receive(timeout=5000)
+                        if (
+                            operation_name in VALID_OPERATIONS
+                            and record_timestamp > previous_sync_datetime
+                        ):
+                            data = {
+                                "initated_by": record["properties"]["initiatedBy"],
+                                "target_resources": record["properties"][
+                                    "targetResources"
+                                ],
+                                "operation_name": operation_name,
+                                "resultType": record["resultType"],
+                            }
+                            LOGGER.info("Operation name: %s", operation_name)
+                            LOGGER.info("Record to Change: %s", record)
+                            record_timestamp_utc = record_timestamp.isoformat()
+                            insert_change_to_db(data, record_timestamp_utc)
+                            sync_source = "azure-" + VALID_OPERATIONS[operation_name]
+                            provider_id = TENANT_ID
+                            save_sync_time(
+                                provider_id, sync_source, "delta", record_timestamp_utc
+                            )
+                            previous_sync_datetime = record_timestamp
+                    batch = receiver.receive(timeout=50)
                 LOGGER.info("Closing connection to EventHub...")
                 # Close the connection to the EventHub.
                 client.stop()
@@ -117,8 +138,40 @@ def inbound_sync_listener():
             finally:
                 client.stop()
         except ExpectedError as err:
-                LOGGER.debug(("%s Repolling after %s seconds...", err.__str__, DELAY))
-                time.sleep(DELAY)
+            LOGGER.debug(("%s Repolling after %s seconds...", err.__str__, DELAY))
+            time.sleep(DELAY)
         except Exception as err:
             LOGGER.exception(err)
             raise err
+
+
+def insert_change_to_db(data, record_timestamp):
+    """Insert change individually to rethinkdb from changelog eventhub of azure"""
+    inbound_entry = {
+        "data": data,
+        "data_type": VALID_OPERATIONS[data["operation_name"]],
+        "sync_type": "delta",
+        "timestamp": record_timestamp,
+        "provider_id": TENANT_ID,
+    }
+    response = r.table("queue_inbound").insert(inbound_entry).run()
+
+
+def get_last_delta_sync(provider_id, sync_type):
+    """Search and get last delta sync entry from the specified provider."""
+    try:
+        last_sync = (
+            r.table("sync_tracker")
+            .filter({"provider_id": provider_id, "sync_type": sync_type})
+            .max("timestamp")
+            .coerce_to("object")
+            .run()
+        )
+        return last_sync
+    except r.ReqlNonExistenceError:
+        return None
+    except (r.ReqlOpFailedError, r.ReqlDriverError) as err:
+        raise ExpectedError(err)
+    except Exception as err:
+        LOGGER.warning(type(err).__name__)
+        raise err
