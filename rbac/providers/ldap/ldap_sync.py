@@ -31,6 +31,7 @@ from rbac.providers.common import inbound_filters
 from rbac.providers.common.common import save_sync_time, check_last_sync
 from rbac.providers.ldap import ldap_transforms
 
+from rbac.providers.common.rethink_db import connect_to_db
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
@@ -74,7 +75,7 @@ def fetch_ldap_data(sync_type, data_type):
         Call to get entries for all (Users | Groups) in Active Directory, saves the time of the sync,
         and inserts data into RethinkDB.
     """
-    r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
+    connect_to_db()
 
     if sync_type == "delta":
         last_sync = (
@@ -139,7 +140,9 @@ def insert_to_db(data_dict, data_type):
         }
         r.table("queue_inbound").insert(inbound_entry).run()
 
-    LOGGER.info("Inserted %s records into inbound_queue.", str(len(data_dict)))
+    LOGGER.info(
+        "Inserted %s %s records into inbound_queue.", str(len(data_dict)), data_type
+    )
     Timer(
         DELTA_SYNC_INTERVAL_SECONDS, fetch_ldap_data, args=("delta", data_type)
     ).start()
@@ -149,7 +152,8 @@ def ldap_sync():
     """Fetches (Users | Groups) from Active Directory and inserts them into RethinkDB."""
 
     if LDAP_DC:
-        provider_id = LDAP_DC
+        connect_to_db()
+
         db_user_payload = check_last_sync("ldap-user", "initial")
         if not db_user_payload:
             LOGGER.info(
@@ -159,7 +163,6 @@ def ldap_sync():
 
             LOGGER.debug("Getting Users...")
             fetch_ldap_data(sync_type="initial", data_type="user")
-            save_sync_time(provider_id, "ldap-user", "initial")
 
             LOGGER.debug(
                 "Initial AD user upload completed. User delta sync will occur in %s seconds.",
@@ -173,7 +176,6 @@ def ldap_sync():
             )
             LOGGER.debug("Getting Groups with Members...")
             fetch_ldap_data(sync_type="initial", data_type="group")
-            save_sync_time(provider_id, "ldap-group", "initial")
 
             LOGGER.debug(
                 "Initial AD group upload completed. Group delta sync will occur in %s seconds.",
@@ -182,6 +184,6 @@ def ldap_sync():
 
         if db_user_payload and db_group_payload:
             LOGGER.info("The initial sync has already been run.")
-
+            # TODO: Recreate threads for delta syncs
     else:
         LOGGER.debug("LDAP Domain Controller is not provided, skipping LDAP sync.")
