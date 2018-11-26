@@ -46,6 +46,8 @@ export default class LoginForm extends Component {
     activeIndex: 0, username: '', password: '',
     validUsername:  null,
     validPassword:  null,
+    validEmail:     null,
+    resetEmail:     '',
   };
 
 
@@ -72,6 +74,8 @@ export default class LoginForm extends Component {
       this.setState({ validUsername: value.length > 0 });
     name === 'password' &&
       this.setState({ validPassword: value.length > 0 });
+      name === 'resetEmail' &&
+      this.setState({ validEmail: /\S+@\S+\.\S+/.test(value) });
   }
 
 
@@ -81,8 +85,10 @@ export default class LoginForm extends Component {
       activeIndex,
       username,
       password,
+      resetEmail,
       validUsername,
-      validPassword } = this.state;
+      validPassword,
+      validEmail } = this.state;
 
     const hide = 0;
     const show = 300;
@@ -149,7 +155,7 @@ export default class LoginForm extends Component {
                 value={password}
                 onChange={this.handleChange} />
               <Label>
-                <Link to='/'>Forgot Password?</Link>
+                <a onClick={() => this.setFlow(2)}>Forgot Password?</a>
               </Label>
             </Form.Field>
             <Container textAlign='center'>
@@ -161,6 +167,38 @@ export default class LoginForm extends Component {
             </Container>
           </Form>
         </div>
+        </Transition>
+        <Transition
+          visible={activeIndex === 2}
+          animation='fade up'
+          duration={{ hide, show }}>
+          <div>
+            <Form onSubmit={() => this.setFlow(0)}>
+              <Form.Field id='next-login-form-reset-password'>
+                <Form.Button
+                  id='next-login-form-back-button'
+                  content='Back'
+                  type='button'
+                  icon='left arrow'
+                  labelPosition='left'
+                  onClick={() => this.setFlow(1)} />
+                <Input
+                  autoFocus
+                  name='resetEmail'
+                  type='text'
+                  placeholder='Email'
+                  value={resetEmail}
+                  onChange={this.handleChange} />
+              </Form.Field>
+              <Container textAlign='center'>
+                <Form.Button
+                  content='Reset Password'
+                  disabled={!validEmail}
+                  icon='right arrow'
+                  labelPosition='right' />
+              </Container>
+            </Form>
+          </div>
         </Transition>
       </div>
     );
