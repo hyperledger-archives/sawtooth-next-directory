@@ -14,35 +14,42 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-:root {
-  --header-bg-color: #1d1e27;
-  --header-color: #fff;
-  --nav-bg-color: #212c3a;
-  --auth-bg-color: #fff;
-  --auth-fg-color: #212c3a;
-  --nav-heading-color: #fff;
-  --nav-list-color: #727c85;
-  --inverted-text-color: #727c85;
-  --chat-bg-color: #b9c0ca1f;
-  --selection-list-active-color: #e6e8ea;
-  --divider-color: #cedbe6;
-  --nav-list-padding: 22px;
-  --page-content-padding: 30px;
-  --track-header-height: 113px;
-  --magenta: #e40073;
-  --black: #000;
-  --avatar-count: #fff;
-  --browse-bg-color: #273544;
-  --browse-text-color: rgba(255, 255, 255, 0.5);
-  --background-dark: #000;
-  --text-light: #fff;
-}
-
-body,
-#root {
+#next-avatar {
   height: 100%;
+  position: relative;
 }
 
-#next-wave {
+.next-avatar-count {
+  color: var(--avatar-count);
+  font-size: 0.75em;
+}
+
+#next-avatar-container {
+  height: 75%;
+}
+
+.next-avatar-element{
+  height: max-content;
   position: absolute;
+  bottom: 0px;
+}
+
+.next-avatar-element:nth-child(1) {
+  left: 0px;
+  z-index: 2;
+}
+
+.next-avatar-element:nth-child(2) {
+  left: 10px;
+  z-index: 1;
+}
+
+.next-avatar-element:nth-child(3) {
+  left: 20px;
+  z-index: 0;
+}
+
+.next-avatar-element:nth-child(4) {
+  left: 50px;
+  bottom: 5px;
 }

@@ -16,6 +16,8 @@ limitations under the License.
 
 import base from '../mock_data/base.json';
 
+import roles from '../mock_data/all_roles.json';
+
 
 import cloudOnboardingPack from '../mock_data/pack_cloud_onboarding.json';
 import rebellionAccessPack from '../mock_data/pack_rebellion_access.json';
@@ -113,6 +115,13 @@ export default {
     return {
       ok: true,
       data: {}
+    }
+  },
+   
+  getRoles: () => {
+    return {
+      ok: true,
+      data: roles
     }
   }
 

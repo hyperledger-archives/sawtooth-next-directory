@@ -39,6 +39,10 @@ const { Types, Creators } = createActions({
 
   rolesRequest:      ['ids'],
 
+  allrolesRequest:   null,
+  allrolesSuccess:   ['roles'],
+  allrolesFailure:   ['error'],
+
   proposalRequest:   ['id'],
   proposalSuccess:   ['proposal'],
   proposalFailure:   ['error'],
@@ -196,6 +200,13 @@ export const roleSuccess = (state, { role }) => {
   });
 }
 
+export const allrolesSuccess = (state, { roles }) => {
+  return state.merge({
+    fetching: false,
+    roles: roles
+  });
+}
+
 export const proposalSuccess = (state, { proposal }) => {
   return state.merge({
     fetching: false,
@@ -233,6 +244,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ROLE_FAILURE]: failure,
 
   [Types.ROLES_REQUEST]: request,
+  
+  [Types.ALLROLES_REQUEST]: request,
+  [Types.ALLROLES_SUCCESS]: allrolesSuccess,
+  [Types.ALLROLES_FAILURE]: failure,
 
   [Types.PROPOSAL_REQUEST]: request,
   [Types.PROPOSAL_SUCCESS]: proposalSuccess,
