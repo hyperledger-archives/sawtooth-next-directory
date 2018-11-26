@@ -16,24 +16,26 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Card, Grid } from 'semantic-ui-react';
-
-
+import PropTypes from 'prop-types';
 import './ApprovalCard.css';
 
 
 /**
  *
- * @class ApprovalCard
- * Component encapsulating the approval card
+ * @class         ApprovalCard
+ * @description   Component encapsulating the approval card
+ *
  *
  */
 export default class ApprovalCard extends Component {
 
-  /**
-   *
-   * Hydrate data
-   *
-   */
+  static propTypes = {
+    getUser:            PropTypes.func,
+    request:            PropTypes.object,
+    users:              PropTypes.array,
+  }
+
+
   componentDidMount () {
     const { request, getUser, users } = this.props;
 

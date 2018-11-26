@@ -35,11 +35,13 @@ import * as utils from '../../services/Utils';
  */
 class NavList extends Component {
 
-  static prototypes = {
-    route:        PropTypes.string,
-    listTitle:    PropTypes.string,
-    list:         PropTypes.arrayOf(PropTypes.number),
-    dynamic:      PropTypes.bool,
+  static propTypes = {
+    dynamic:          PropTypes.bool,
+    labels:           PropTypes.array,
+    location:         PropTypes.object,
+    list:             PropTypes.array,
+    listTitle:        PropTypes.string,
+    route:            PropTypes.string,
   };
 
 

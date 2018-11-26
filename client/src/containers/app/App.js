@@ -62,19 +62,19 @@ class App extends Component {
   }
 
 
-  componentWillReceiveProps (newProps) {
+  componentDidUpdate (prevProps) {
     const { me, id, isAuthenticated, isSocketOpen, sendMessage } = this.props;
 
-    if (!newProps.isAuthenticated) return;
+    if (!isAuthenticated) return;
 
     // On receiving new props, if user authentication
     // state changes, we know that a user has logged in,
     // so get hydrate user and recommended objects
-    if (newProps.isAuthenticated !== isAuthenticated) {
+    if (prevProps.isAuthenticated !== isAuthenticated) {
       this.hydrate();
     }
 
-    if (newProps.isSocketOpen !== isSocketOpen) {
+    if (prevProps.isSocketOpen !== isSocketOpen) {
       sendMessage({do: "CREATE", user_id: id, message: "hi"});
     }
 
@@ -84,8 +84,8 @@ class App extends Component {
     //
     // ! Note this will be outmoded after API changes
     //
-    if (newProps.me !== me) {
-      this.hydrateSidebar(newProps);
+    if (prevProps.me !== me) {
+      this.hydrateSidebar();
     }
   }
 
@@ -100,13 +100,13 @@ class App extends Component {
 
 
   // proposals is array of objects of form { object_id, proposal_id }
-  hydrateSidebar (newProps) {
-    const { getProposals, getRoles, roles } = this.props;
+  hydrateSidebar () {
+    const { getProposals, getRoles, me, roles } = this.props;
 
     // * (1) Map proposals and memberOf to ID array
     let foo = [
-      ...newProps.me.proposals,
-      ...newProps.me.memberOf
+      ...me.proposals,
+      ...me.memberOf
     ].map((item) =>
       typeof item  === 'object' ?
         item['object_id'] :
@@ -118,7 +118,7 @@ class App extends Component {
         roles.find(role => role.id === item));
     }
 
-    let bar = newProps.me.proposals.map(item =>
+    let bar = me.proposals.map(item =>
         item['proposal_id']);
 
     // * (3) Load roles not in

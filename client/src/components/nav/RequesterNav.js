@@ -17,6 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import { Button, Icon, Input, Container, Search } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 
 
 import './RequesterNav.css';
@@ -25,16 +26,26 @@ import NavList from './NavList';
 
 /**
  *
- * @class RequesterNav
- * Component encapsulating the template for the sidebar displayed
- * on the requester landing page.
+ * @class         RequesterNav
+ * @description   Component encapsulating the template for
+ *                the sidebar displayed on the requester landing page
+ *
  *
  */
 export default class RequesterNav extends Component {
 
+  static propTypes = {
+    memberOf:           PropTypes.array,
+    recommended:        PropTypes.array,
+    requests:           PropTypes.array,
+    roleFromId:         PropTypes.func,
+  };
+
+
   /**
    *
    * Render sidebar hierarchy
+   *
    *
    */
   renderLists () {

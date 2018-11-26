@@ -16,6 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Button, Form, Icon } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -28,6 +29,13 @@ import { Button, Form, Icon } from 'semantic-ui-react';
  *
  */
 export default class ChatForm extends Component {
+
+  static propTypes = {
+    actions:          PropTypes.object.isRequired,
+    disabled:         PropTypes.bool,
+    submit:           PropTypes.func.isRequired,
+  };
+
 
   constructor (props) {
     super(props);

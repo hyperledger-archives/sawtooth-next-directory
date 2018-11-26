@@ -16,8 +16,6 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { List, Segment } from 'semantic-ui-react';
-
-
 import PropTypes from 'prop-types';
 
 
@@ -26,11 +24,25 @@ import './RolesList.css';
 
 /**
  *
- * @class RolesList
- * Component encapsulating the track pane body
+ * @class         RolesList
+ * @description   Component encapsulating the track pane body
+ *
  *
  */
 export default class RolesList extends Component {
+
+  static propTypes = {
+    activeRole: PropTypes.arrayOf(PropTypes.shape(
+      {
+        description: PropTypes.string,
+        roles: PropTypes.arrayOf(PropTypes.shape(
+          {
+            name: PropTypes.string
+          }
+        ))
+      }
+    ))
+  };
 
 
   render () {
@@ -63,17 +75,3 @@ export default class RolesList extends Component {
   }
 
 }
-
-
-RolesList.proptypes = {
-  activeRole: PropTypes.arrayOf(PropTypes.shape(
-    {
-      description: PropTypes.string,
-      roles: PropTypes.arrayOf(PropTypes.shape(
-        {
-          name: PropTypes.string
-        }
-      ))
-    }
-  ))
-};

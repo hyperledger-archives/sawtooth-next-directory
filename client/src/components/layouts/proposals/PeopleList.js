@@ -16,8 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Checkbox, List, Icon } from 'semantic-ui-react';
-
-
+import PropTypes from 'prop-types';
 import './PeopleList.css';
 
 
@@ -28,6 +27,17 @@ import './PeopleList.css';
  *
  */
 export default class PeopleList extends Component {
+
+  static propTypes = {
+    getUsers:                 PropTypes.func,
+    handleChange:             PropTypes.func,
+    openProposalsByUser:      PropTypes.object,
+    roleFromId:               PropTypes.func,
+    selectedProposals:        PropTypes.array,
+    selectedUsers:            PropTypes.array,
+    users:                    PropTypes.array,
+  };
+
 
   /**
    *
@@ -51,11 +61,11 @@ export default class PeopleList extends Component {
   }
 
 
-  componentWillReceiveProps (newProps) {
+  componentDidUpdate (prevProps) {
     const { getUsers, openProposalsByUser } = this.props;
 
-    const newUsers = Object.keys(newProps.openProposalsByUser);
-    const oldUsers = Object.keys(openProposalsByUser);
+    const newUsers = Object.keys(openProposalsByUser);
+    const oldUsers = Object.keys(prevProps.openProposalsByUser);
 
     if (newUsers.length > oldUsers.length) {
       const diff = newUsers.filter(user => !oldUsers.includes(user));
@@ -108,7 +118,7 @@ export default class PeopleList extends Component {
    * Render role / pack proposals for a given user as a sub-list
    * of a parent user list item.
    *
-   * @param {*} userId User ID
+   * @param userId User ID
    *
    *
    */

@@ -27,6 +27,7 @@ jobs:
       install:
         - yarn
       script:
+        - yarn lint
         - yarn test
 
     # The deploy stage will deploy the master branch to a remote server once a

@@ -16,6 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 import './Create.css';
 
 
@@ -26,6 +27,11 @@ import './Create.css';
  *
  */
 export default class Create extends Component {
+
+  static propTypes = {
+    submit: PropTypes.func,
+  };
+
 
   state = { name: '', validName: null, open: false };
 

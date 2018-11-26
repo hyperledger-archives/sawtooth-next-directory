@@ -16,6 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Menu, Input, Search } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 import './IndividualsNav.css';
 
 
@@ -28,6 +29,12 @@ import './IndividualsNav.css';
  *
  */
 export default class IndividualsNav extends Component {
+
+  static propTypes = {
+    activeIndex:        PropTypes.number,
+    setFlow:            PropTypes.func,
+  };
+
 
   render () {
     const { activeIndex, setFlow } = this.props;

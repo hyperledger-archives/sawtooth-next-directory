@@ -36,12 +36,14 @@ import logo from '../../images/next-logo-billboard.png';
 class Signup extends Component {
 
   static propTypes = {
-    isAuthenticated: PropTypes.bool,
-    signup: PropTypes.func.isRequired
+    history:              PropTypes.object,
+    isAuthenticated:      PropTypes.bool,
+    recommended:          PropTypes.array,
+    signup:               PropTypes.func.isRequired
   };
 
 
-  componentWillMount() {
+  componendDidMount () {
     const { history, isAuthenticated, recommended } = this.props;
 
     const homeLink = recommended && recommended[0] ?
@@ -52,14 +54,14 @@ class Signup extends Component {
   }
 
 
-  componentWillReceiveProps(newProps) {
-    const { history, recommended } = this.props;
+  componentDidUpdate (prevProps) {
+    const { history, isAuthenticated, recommended } = this.props;
 
     const homeLink = recommended && recommended[0] ?
     `/roles/${utils.createSlug(recommended[0].name)}` :
     '/';
 
-    newProps.isAuthenticated && history.push(homeLink);
+    isAuthenticated && history.push(homeLink);
   }
 
 
