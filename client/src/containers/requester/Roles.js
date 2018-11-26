@@ -61,15 +61,15 @@ export class Roles extends Component {
    *
    *
    */
-  componentWillReceiveProps (newProps) {
+  componentDidUpdate (prevProps) {
     const { getProposal, getRole, proposalId, roleId } = this.props;
 
-    if (newProps.roleId !== roleId) {
-      !this.role && getRole(newProps.roleId);
+    if (prevProps.roleId !== roleId) {
+      !this.role && getRole(roleId);
     }
 
-    if (newProps.proposalId !== proposalId) {
-      proposalId && !this.request && getProposal(newProps.proposalId);
+    if (prevProps.proposalId !== proposalId) {
+      proposalId && !this.request && getProposal(proposalId);
     }
   }
 

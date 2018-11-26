@@ -30,9 +30,12 @@ import './TrackHeader.css';
 export default class TrackHeader extends Component {
 
   static propTypes = {
-    subtitle: PropTypes.string,
-    title: PropTypes.string,
+    glyph:              PropTypes.string,
+    subtitle:           PropTypes.string,
+    title:              PropTypes.string,
+    waves:              PropTypes.bool,
   }
+
 
   render () {
     const { glyph, subtitle, title, waves } = this.props;

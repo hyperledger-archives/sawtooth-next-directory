@@ -16,6 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Grid, Header, Icon, Image, Segment } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 import './MemberList.css';
 
 
@@ -27,6 +28,13 @@ import './MemberList.css';
  *
  */
 export default class MemberList extends Component {
+
+  static propTypes = {
+    getUsers:           PropTypes.func,
+    members:            PropTypes.array,
+    owners:             PropTypes.array,
+    users:              PropTypes.array,
+  }
 
   /**
    *
@@ -48,11 +56,11 @@ export default class MemberList extends Component {
   }
 
 
-  componentWillReceiveProps (newProps) {
+  componentDidUpdate (prevProps) {
     const { getUsers, members, owners, users } = this.props;
 
-    if (newProps.members !== members || newProps.owners !== owners) {
-      const join = [...newProps.members, ...newProps.owners];
+    if (prevProps.members !== members || prevProps.owners !== owners) {
+      const join = [...members, ...owners];
       const diff = users &&
         join.filter(userId =>
           users.find(user => user.id !== userId));

@@ -16,26 +16,26 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Segment } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 
 
 /**
  *
- * @class ChatMessage
- * Component encapsulating the chat message
+ * @class         ChatMessage
+ * @description   Component encapsulating the chat message
+ *
  *
  */
 export default class ChatMessage extends Component {
 
-  /**
-   *
-   * @todo Retrieve from auth session
-   *
-   *
-   */
-  isMe (message) {
-    // return messsage.from.id === '519909ec-f0c8-4be9-ac62-d340161507b3';
-    return false;
+  static propTypes = {
+    messages: PropTypes.array,
   }
+
+
+  isMe = (message) => {
+    return false;
+  };
 
 
   render () {

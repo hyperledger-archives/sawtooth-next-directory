@@ -33,12 +33,17 @@ import './Packs.css';
 
 /**
  *
- * @class Packs
- * *Packs* component
- * TODO: Merge Packs.js and Recommended.js in Roles.js
+ * @class         Packs
+ * @description   Packs component
+ *
  *
  */
 export class Packs extends Component {
+
+  static propTypes = {
+    getRole: PropTypes.func,
+  };
+
 
   componentDidMount () {
     const { getRole, roleId } = this.props;
@@ -52,11 +57,11 @@ export class Packs extends Component {
    *
    *
    */
-  componentWillReceiveProps (newProps) {
+  componentDidUpdate (prevProps) {
     const { getRole, roleId } = this.props;
 
-    if (newProps.roleId !== roleId) {
-      !this.role && getRole(newProps.roleId);
+    if (prevProps.roleId !== roleId) {
+      !this.role && getRole(roleId);
     }
   }
 
@@ -111,11 +116,6 @@ export class Packs extends Component {
   }
 
 }
-
-
-Packs.proptypes = {
-  getRole: PropTypes.func
-};
 
 
 const mapStateToProps = (state, ownProps) => {

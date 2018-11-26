@@ -17,6 +17,8 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Icon, Image, Label, Menu, Header as MenuHeader } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 
 import './Header.css';
 import logo from '../../images/next-logo-primary.png';
@@ -30,17 +32,26 @@ import logo from '../../images/next-logo-primary.png';
  */
 export default class Header extends Component {
 
+  static propTypes = {
+    glyph:                  PropTypes.string,
+    logout:                 PropTypes.func,
+    me:                     PropTypes.object,
+    openProposalsCount:     PropTypes.number,
+    recommended:            PropTypes.array,
+  }
+
+
   state = { menuVisible: false };
 
 
-  componentDidMount() {
+  componentDidMount () {
     document.addEventListener(
       'mousedown', this.handleClickOutside
     );
   }
 
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     document.removeEventListener(
       'mousedown', this.handleClickOutside
     );

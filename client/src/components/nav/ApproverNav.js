@@ -17,6 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import { Button, Icon, Container, Input, Search } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 
 
 import './ApproverNav.css';
@@ -26,16 +27,25 @@ import * as utils from '../../services/Utils';
 
 /**
  *
- * @class ApproverNav
- * Component encapsulating the template for the sidebar displayed
- * on the approver landing page.
+ * @class         ApproverNav
+ * @description   Component encapsulating the template for
+ *                the sidebar displayed on the approver landing page
+ *
  *
  */
 export default class ApproverNav extends Component {
 
+  static propTypes = {
+    openProposalsCount:     PropTypes.number,
+    recommended:            PropTypes.array,
+  };
+
+
   /**
    *
    * Render sidebar hierarchy
+   *
+   *
    *
    */
   renderLists () {

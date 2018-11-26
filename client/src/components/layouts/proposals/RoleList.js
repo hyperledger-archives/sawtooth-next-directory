@@ -15,8 +15,9 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import './RoleList.css';
 import { Checkbox, Image, Segment } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
+import './RoleList.css';
 
 
 /**
@@ -27,9 +28,22 @@ import { Checkbox, Image, Segment } from 'semantic-ui-react';
  */
 export default class RoleList extends Component {
 
+  static propTypes = {
+    getUsers:               PropTypes.func,
+    handleChange:           PropTypes.func,
+    openProposalsByRole:    PropTypes.object,
+    openProposalsByUser:    PropTypes.object,
+    roleFromId:             PropTypes.func,
+    selectedRoles:          PropTypes.array,
+    selectedProposals:      PropTypes.array,
+    users:                  PropTypes.array,
+  };
+
+
   /**
    *
    * Hydrate data
+   *
    *
    *
    */
@@ -49,13 +63,13 @@ export default class RoleList extends Component {
   }
 
 
-  componentWillReceiveProps (newProps) {
+  componentDidUpdate (prevProps) {
     const { getUsers, openProposalsByUser } = this.props;
 
-    const newUsers = Object.keys(newProps.openProposalsByUser);
-    const oldUsers = Object.keys(openProposalsByUser);
+    const newUsers = Object.keys(openProposalsByUser);
+    const oldUsers = Object.keys(prevProps.openProposalsByUser);
 
-    if (newUsers.length > oldUsers.length) {
+    if (newUsers.length > prevProps.length) {
       const diff = newUsers.filter(user => !oldUsers.includes(user));
       getUsers(diff);
     }

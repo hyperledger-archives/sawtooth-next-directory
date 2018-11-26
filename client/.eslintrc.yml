@@ -1,0 +1,17 @@
+extends:
+  - plugin:react/recommended
+
+parser: babel-eslint
+
+parserOptions:
+  ecmaFeatures:
+    jsx: true
+  ecmaVersion: 7
+  sourceType: module
+
+settings:
+  react:
+    version: 16.6
+
+rules:
+  react/display-name: false

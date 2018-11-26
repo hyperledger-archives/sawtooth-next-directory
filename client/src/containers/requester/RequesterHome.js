@@ -25,23 +25,29 @@ import './RequesterHome.css';
 
 /**
  *
- * @class RequesterHome
- * Component encapsulating the requester home, which serves as the
- * default landing page after login.
+ * @class         RequesterHome
+ * @description   Component encapsulating the requester
+ *                home, the default landing page after login
+ *
  *
  */
 export default class RequesterHome extends Component {
 
-  componentWillMount () {
-    // const { history, recommended } = this.props;
-
-    // if (recommended && recommended[0]) {
-    //   const slug = utils.createSlug(recommended[0].name);
-    //   history.push(`/roles/${slug}`)
-    // }
-    // console.log(recommended)
-    // alert();
-  }
+  static propTypes = {
+    activeRole: PropTypes.arrayOf(PropTypes.shape(
+      {
+        id: PropTypes.string,
+        description: PropTypes.string,
+        roles: PropTypes.arrayOf(PropTypes.shape(
+          {
+            id: PropTypes.string,
+            name: PropTypes.string,
+            email: PropTypes.email
+          }
+        ))
+      }
+    ))
+  };
 
 
   render () {
@@ -58,20 +64,3 @@ export default class RequesterHome extends Component {
   }
 
 }
-
-
-RequesterHome.proptypes = {
-  activeRole: PropTypes.arrayOf(PropTypes.shape(
-    {
-      id: PropTypes.string,
-      description: PropTypes.string,
-      roles: PropTypes.arrayOf(PropTypes.shape(
-        {
-          id: PropTypes.string,
-          name: PropTypes.string,
-          email: PropTypes.email
-        }
-      ))
-    }
-  ))
-};

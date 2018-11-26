@@ -21,10 +21,12 @@ import { Container, Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import './Login.css';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import LoginForm from '../../components/forms/LoginForm';
 import * as utils from '../../services/Utils';
+
+
+import './Login.css';
 import logo from '../../images/next-logo-billboard.png';
 
 
@@ -33,16 +35,19 @@ import logo from '../../images/next-logo-billboard.png';
  * @class         Login
  * @description   Component encapsulating the login landing page
  *
+ *
  */
 class Login extends Component {
 
   static propTypes = {
-    isAuthenticated: PropTypes.bool,
-    login: PropTypes.func.isRequired
+    history:              PropTypes.object,
+    isAuthenticated:      PropTypes.bool,
+    login:                PropTypes.func.isRequired,
+    recommended:          PropTypes.array,
   };
 
 
-  componentWillMount() {
+  componentDidMount () {
     const { history, isAuthenticated, recommended } = this.props;
 
     const homeLink = recommended && recommended[0] ?
@@ -53,14 +58,14 @@ class Login extends Component {
   }
 
 
-  componentWillReceiveProps(newProps) {
-    const { history, recommended } = this.props;
+  componentDidUpdate (prevProps) {
+    const { history, isAuthenticated, recommended } = this.props;
 
     const homeLink = recommended && recommended[0] ?
     `/roles/${utils.createSlug(recommended[0].name)}` :
     '/';
 
-    newProps.isAuthenticated && history.push(homeLink);
+    isAuthenticated && history.push(homeLink);
   }
 
 
