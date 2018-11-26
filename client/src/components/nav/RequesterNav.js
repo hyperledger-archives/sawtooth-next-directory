@@ -50,17 +50,17 @@ export default class RequesterNav extends Component {
         <NavList
           dynamic
           listTitle='Your Requests'
-          route='/requests'
+          route='/roles'
           list={requests}/>
         <NavList
           dynamic
           listTitle='Recommended Packs'
-          route='/home/recommended-packs'
+          route='/packs'
           list={[]}/>
         <NavList
           dynamic
           listTitle='Recommended Roles'
-          route='/browse/roles'
+          route='/roles'
           list={recommended}/>
       </div>
     );
@@ -86,11 +86,12 @@ export default class RequesterNav extends Component {
 
         { this.renderLists() }
 
-        <h4 id='next-requester-switch-container'>
-          <Link to='/approval/pending/individual'>
+        <div id='next-requester-switch-container'>
+          <Button icon labelPosition='right' as={Link} to='/approval/pending/individual'>
             Switch to Approver
-          </Link>
-        </h4>
+            <Icon name='right arrow'/>
+          </Button>
+        </div>
 
       </Container>
     );

@@ -18,10 +18,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import Browse from './Browse';
-import createCustomStore from '../../createCustomStore';
 
-const store = createCustomStore();
+
+import * as customStore from '../../customStore';
+import Browse from './Browse';
+
+
+const store = customStore.create();
+
 
 it('renders without crashing', () => {
   const div = document.createElement('div');

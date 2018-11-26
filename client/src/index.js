@@ -22,14 +22,14 @@ import { Provider } from 'react-redux';
 import routes from './routes';
 import App from './containers/app/App';
 import registerServiceWorker from './registerServiceWorker';
-import createCustomStore from './createCustomStore';
+import * as customStore from './customStore';
 
 
 import './index.css';
 import './semantic/semantic.css';
 
 
-const store = createCustomStore();
+const store = customStore.create();
 
 
 ReactDOM.render(

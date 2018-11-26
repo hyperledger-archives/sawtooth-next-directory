@@ -14,12 +14,12 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-requester-recommended-content {
+#next-requester-roles-content {
   padding: 0 var(--page-content-padding);
   position: relative;
-  top: 150px;
+  top: 170px;
 }
 
-#next-requester-recommended-description {
+#next-requester-roles-description {
   margin: 30px 0;
 }

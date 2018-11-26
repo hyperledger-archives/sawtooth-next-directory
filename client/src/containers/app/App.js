@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid, Icon, Sidebar, Menu } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -34,12 +34,13 @@ import { appDispatch, appState } from './AppHelper';
 
 /**
  *
- * @class App
- * Component encapsulating the navigation implementation based on
- * React Router. Routes pathways are composed from two top-level components
- * to provide one navigation container and one main area.
+ * @class         App
+ * @description   Component encapsulating navigation. Route pathways
+ *                are composed from two top-level components, creating
+ *                one nav and one main area per component.
  *
- * Component communication should be synced only through the Redux store.
+ *                Component communication should be done only using
+ *                the Redux store.
  *
  */
 class App extends Component {
@@ -48,20 +49,6 @@ class App extends Component {
     isAuthenticated: PropTypes.bool,
     routes: PropTypes.func
   };
-
-
-  state = { isSideBarVisible: false };
-
-
-  handleSidebarHide = () => {
-    this.setState({ isSideBarVisible: false });
-  }
-
-
-  handleShowClick = () => {
-    const { isSideBarVisible } = this.state;
-    this.setState({ isSideBarVisible: !isSideBarVisible });
-  }
 
 
   /**
@@ -76,7 +63,7 @@ class App extends Component {
 
 
   componentWillReceiveProps (newProps) {
-    const { me, isAuthenticated } = this.props;
+    const { me, id, isAuthenticated, isSocketOpen, sendMessage } = this.props;
 
     if (!newProps.isAuthenticated) return;
 
@@ -85,6 +72,10 @@ class App extends Component {
     // so get hydrate user and recommended objects
     if (newProps.isAuthenticated !== isAuthenticated) {
       this.hydrate();
+    }
+
+    if (newProps.isSocketOpen !== isSocketOpen) {
+      sendMessage({do: "CREATE", user_id: id, message: "hi"});
     }
 
     // After the user object is populated, the following
@@ -170,50 +161,16 @@ class App extends Component {
    *
    */
   renderGrid () {
-    const { isSideBarVisible } = this.state;
+    // const { isSideBarVisible } = this.state;
 
     return (
       <Grid id='next-outer-grid'>
-
-        <Grid.Column
-          id='next-outer-grid-nav'
-          only='computer'>
+        <Grid.Column id='next-outer-grid-nav'>
           { this.renderNav() }
         </Grid.Column>
-
-        <Grid.Column
-          id='next-inner-grid-main'
-          only='computer'>
+        <Grid.Column id='next-inner-grid-main'>
           { this.renderMain() }
         </Grid.Column>
-
-        <Grid.Column
-          mobile={16}
-          tablet={16}
-          id='next-inner-grid-main'
-          only='tablet mobile'>
-          <Sidebar.Pushable>
-            <Sidebar
-              as={Menu}
-              animation='overlay'
-              inverted
-              onHide={this.handleSidebarHide}
-              vertical
-              visible={isSideBarVisible}
-              width='wide'>
-              <div id='next-hamburger-wrapper'>
-                { this.renderNav() }
-              </div>
-            </Sidebar>
-            <Sidebar.Pusher dimmed={isSideBarVisible}>
-              { this.renderMain() }
-            </Sidebar.Pusher>
-          </Sidebar.Pushable>
-        </Grid.Column>
-
-        <div id='next-hamburger-icon'>
-          <Icon onClick={this.handleShowClick} name='bars'/>
-        </div>
       </Grid>
     )
   }

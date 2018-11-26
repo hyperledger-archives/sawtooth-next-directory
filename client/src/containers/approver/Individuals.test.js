@@ -21,18 +21,19 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
+import * as customStore from '../../customStore';
 import Individuals from './Individuals';
-import createCustomStore from '../../createCustomStore';
 
 
-const store = createCustomStore();
+const store = customStore.create();
 
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
   const props = {
-    getOpenProposals: () => {}
+    getOpenProposals: () => {},
+    userFromId: () => {},
   };
 
   ReactDOM.render(

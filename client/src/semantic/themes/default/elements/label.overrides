@@ -3,9 +3,10 @@
 *******************************/
 
 .ui.circular.floating.label.mini {
-  font-size: .7em;
+  font-size: 0.7em;
+  line-height: .7em;
   min-height: 1em;
-  min-width: 1.6em;
-  padding: .3em .5em !important;
-  top: 1em;
+  min-width: 1em;
+  padding: 0.4em 0.45em !important;
+  top: .9em;
 }

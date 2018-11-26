@@ -55,7 +55,11 @@ export default class ApprovalCard extends Component {
 
     if (!users) return null;
     const user = users.find((user) => user.id === userId);
-    return (<div key={userId}>{user && user.name}</div>);
+    return (
+      <div id='next-approval-approver' key={userId}>
+        {user && user.name}
+      </div>
+    );
   }
 
 

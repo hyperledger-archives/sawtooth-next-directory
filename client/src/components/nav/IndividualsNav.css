@@ -15,5 +15,15 @@ limitations under the License.
 
 
 #next-individuals-nav {
+  display: flex;
   padding: var(--page-content-padding);
+}
+
+.next-individual-search {
+  flex: 1;
+  margin-left: 27px;
+}
+
+.next-individual-search .fluid.search {
+  height: 100%;
 }

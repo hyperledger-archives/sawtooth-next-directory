@@ -46,7 +46,7 @@ class Expiring extends Component {
         <Grid.Column
           id='next-approver-grid-converse-column'
           width={5}>
-          <Chat {...this.props}/>
+          <Chat type={0} {...this.props}/>
         </Grid.Column>
 
       </Grid>

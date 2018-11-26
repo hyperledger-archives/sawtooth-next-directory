@@ -15,7 +15,7 @@ limitations under the License.
 
 
 :root {
-  --header-bg-color: #000;
+  --header-bg-color: #1d1e27;
   --header-color: #fff;
   --nav-bg-color: #212c3a;
   --auth-bg-color: #fff;
@@ -23,13 +23,14 @@ limitations under the License.
   --nav-heading-color: #fff;
   --nav-list-color: #727c85;
   --inverted-text-color: #727c85;
-  --chat-bg-color: #b0b0b01f;
-  --selected-list-color: #fef2f8;
+  --chat-bg-color: #b9c0ca1f;
+  --selection-list-active-color: #e6e8ea;
   --divider-color: #cedbe6;
   --nav-list-padding: 22px;
   --page-content-padding: 30px;
   --track-header-height: 113px;
   --magenta: #e40073;
+  --black: #000;
 }
 
 body,

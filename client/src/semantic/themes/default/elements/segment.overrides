@@ -22,3 +22,12 @@
   color: @magenta;
   margin-top: 5px;
 }
+
+.ui.segment.minimal {
+  box-shadow: none;
+}
+
+.ui.segment.light {
+  background: #f7f7f7;
+  box-shadow: none;
+}

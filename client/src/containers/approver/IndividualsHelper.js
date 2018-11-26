@@ -16,20 +16,88 @@ limitations under the License.
 
 /**
  *
- * Sync selections by proposal generator
+ * Sync selections
  *
+ * @param checked     Checkbox state
+ * @param roleId      Role ID
+ * @param userId      User ID
  *
  *
  */
-export function * selectRoles (checked, collection, proposals, roles) {
-  collection.forEach(proposal => {
+export function * syncAll (checked, roleId, proposalId, userId) {
+  const sync1 = syncFromCategory.call(this, checked, roleId);
+  const sync2 = syncFromItem.call(this, checked, proposalId, userId);
+
+  // Return updated roles / proposals selections
+  const { roles, proposals, changedUsers } = roleId ?
+    sync1.next().value :
+    sync2.next().value;
+  yield { roles, proposals };
+
+  const sync3 = syncUsers.call(this, checked, changedUsers, proposals);
+
+  // Return updated user selectinos
+  const { users } = sync3.next().value;
+  yield { users };
+};
+
+
+/**
+ *
+ * Update selections on role checkbox selection
+ *
+ * @param checked     Checkbox state
+ * @param role
+ *
+ *
+ */
+export function * syncFromCategory (checked, roleId) {
+  const { openProposalsByRole} = this.props;
+  let { selectedProposals: proposals, selectedRoles: roles } = this.state;
+  let changedUsers = [];
+
+  openProposalsByRole[roleId].forEach(proposal => {
+    let index = proposals.indexOf(proposal.id);
+    changedUsers.push(proposal.opener);
+    checked ?
+      (proposals = index === -1 ? [...proposals, proposal.id] : proposals) :
+      index !== -1 && proposals.splice(index, 1);
+  })
+
+  roles = checked ?
+    [...roles, roleId] :
+    roles.indexOf(roleId) !== -1 ? roles.filter(a => a !== roleId) : roles;
+
+  yield { roles, proposals, changedUsers }
+}
+
+
+/**
+ *
+ * Update selections on proposal / user checkbox selection
+ *
+ * @param checked     Checkbox state
+ * @param group
+ * @param user
+ *
+ *
+ */
+export function * syncFromItem (checked, proposalId, userId) {
+  const { openProposalsByUser, openProposalFromId } = this.props;
+  let { selectedProposals: proposals, selectedRoles: roles } = this.state;
+
+  let scope = proposalId ? [openProposalFromId(proposalId)] :
+    openProposalsByUser[userId]
+
+  scope.forEach(proposal => {
     const indices = [
       roles.indexOf(proposal.object),
       proposals.indexOf(proposal.id),
     ];
 
     if (checked) {
-      roles = indices[0] === -1 ? [...roles, proposal.object] : roles;
+      // Add to selected roles / proposals
+      roles = [...roles, proposal.object];
       proposals = indices[1] === -1 ? [...proposals, proposal.id] : proposals;
     } else {
       indices[0] !== -1 && roles.splice(indices[0], 1);
@@ -37,32 +105,40 @@ export function * selectRoles (checked, collection, proposals, roles) {
     }
   });
 
-  yield { roles, proposals };
-};
+  yield { roles, proposals, changedUsers: [userId] };
+}
 
 
 /**
  *
- * Sync selections by user generator
+ * Update selected users
  *
+ * @param checked        Checkbox state
+ * @param changedUsers   Changed users
+ * @param proposals
  *
  *
  */
-export function * selectUser (checked, userId, proposals, users) {
-  const index = users.indexOf(userId);
+export function * syncUsers (checked, changedUsers, proposals) {
+  const { openProposalsByUser } = this.props;
+  let { selectedUsers: users } = this.state;
 
-  if (checked) {
-    users = (index === -1) ? [...users, userId] : users;
-  } else {
-    const userProposals = proposals.filter(proposal => {
-      return proposal.opener === userId;
-    });
+  changedUsers.forEach(user => {
+    const index = users.indexOf(user);
 
-    // Remove user if and only if it has previously been
-    // selected and it has no selected children
-    index !== -1 && userProposals.length === 0 &&
-      users.splice(index, 1);
-  }
+    if (checked) {
+      users = (index === -1) ? [...users, user] : users;
+    } else {
+      const userProposals = openProposalsByUser[user]
+        .filter(proposal => proposals
+          .includes(proposal.id))
+
+      // Remove user if and only if it has previously been
+      // selected and it has no selected children
+      index !== -1 && userProposals.length === 0 &&
+        users.splice(index, 1);
+    }
+  })
 
   yield { users };
 };

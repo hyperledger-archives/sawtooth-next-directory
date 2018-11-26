@@ -21,3 +21,8 @@
   color: @white;
   max-width: 12em;
 }
+
+.ui.compact.menu {
+  border-color: @magenta;
+  border-radius: 1em;
+}

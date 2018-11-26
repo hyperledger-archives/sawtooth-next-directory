@@ -44,5 +44,5 @@ limitations under the License.
 }
 
 .next-people-list-item:hover {
-  background: var(--selected-list-color);
+  background: var(--selection-list-active-color);
 }

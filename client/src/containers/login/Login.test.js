@@ -18,11 +18,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+
+
+import * as customStore from '../../customStore';
 import Login from './Login';
-import createCustomStore from '../../createCustomStore';
 
 
-const store = createCustomStore();
+const store = customStore.create();
 
 
 it('renders without crashing', () => {

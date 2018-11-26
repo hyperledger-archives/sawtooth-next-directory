@@ -22,6 +22,7 @@ limitations under the License.
  *
  */
 const tokenKey = 'auth_token';
+const userIdKey = 'user_id';
 
 
 export const get = (key) => localStorage.getItem(key);
@@ -32,3 +33,8 @@ export const remove = (key) => localStorage.removeItem(key);
 export const getToken = () => localStorage.getItem(tokenKey);
 export const setToken = (value) => localStorage.setItem(tokenKey, value);
 export const removeToken = () => localStorage.removeItem(tokenKey);
+
+
+export const getUserId = () => localStorage.getItem(userIdKey);
+export const setUserId = (value) => localStorage.setItem(userIdKey, value);
+export const removeUserId = () => localStorage.removeItem(userIdKey);

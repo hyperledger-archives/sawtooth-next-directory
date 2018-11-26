@@ -15,16 +15,20 @@ limitations under the License.
 
 
 #next-chat-container {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  position: relative;
-  z-index: 99;
 }
 
 #next-chat-conversation-dock {
-  bottom: 0;
-  position: absolute;
+  flex: 0 0 100px;
   text-align: center;
-  width: 100%;
+}
+
+#next-chat-conversation-dock input {
+  border-radius: 30px;
+  font-size: 1.2em;
+  height: 2.7em;
 }
 
 .next-chat-message-left,
@@ -33,19 +37,58 @@ limitations under the License.
 }
 
 #next-chat-actions {
+  display: flex;
   margin-top: 15px;
 }
 
-#next-chat-roles-selection-container {
-  position: relative;
-  top: 100px;
+#next-chat-selection-heading-container {
+  align-items: center;
+  display: flex;
+  flex: 0 0 85px;
+  margin-bottom: 30px;
+  padding-left: calc(5% + 21px);
+}
+
+#next-chat-selection-heading-container img {
+  margin-left: -24px;
+  max-width: 44px;
+}
+
+#next-chat-selection-heading-container h3 {
+  margin: 0 0 0 10px;
 }
 
 #next-chat-header {
   padding: 10px;
+  flex: 0 0 70px;
 }
 
 #next-chat-header i.mini {
   font-size: 1.1em;
   margin: 0;
+}
+
+#next-chat-messages-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  padding-bottom: 26px;
+}
+
+#next-chat-roles-selection-container,
+#next-chat-users-selection-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 5%;
+}
+
+#next-chat-roles-selection-container .ui.segment.minimal {
+  margin-bottom: 2px;
+}
+
+.next-chat-action-button {
+  flex: 1
 }

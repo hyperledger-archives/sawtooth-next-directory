@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { Container, Input, Search } from 'semantic-ui-react';
+import { Button, Icon, Container, Input, Search } from 'semantic-ui-react';
 
 
 import './ApproverNav.css';
@@ -46,14 +46,12 @@ export default class ApproverNav extends Component {
         <NavList
           listTitle='Pending'
           labels={[
-            null,
             openProposalsCount,
-            null
+            null,
           ]}
           list={[
-            'Batch',
             'Individual',
-            'About to Expire'
+            'About to Expire',
           ]}
           route='/approval/pending'/>
         <h4>
@@ -105,9 +103,10 @@ export default class ApproverNav extends Component {
         { this.renderLists() }
 
         <h4 id='next-approver-switch-container'>
-          <Link to={homeLink}>
+          <Button icon labelPosition='left' as={Link} to={homeLink}>
             Switch to Requester
-          </Link>
+            <Icon name='left arrow'/>
+          </Button>
         </h4>
 
       </Container>

@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Menu } from 'semantic-ui-react';
+import { Menu, Input, Search } from 'semantic-ui-react';
 import './IndividualsNav.css';
 
 
@@ -48,6 +48,16 @@ export default class IndividualsNav extends Component {
             People
           </Menu.Item>
         </Menu>
+        <Search
+          fluid
+          input={() => <Input
+                          fluid
+                          size='large'
+                          icon='search'
+                          placeholder='Search...'/>}
+          className='next-individual-search'
+          category
+          loading={false}/>
       </div>
     );
   }

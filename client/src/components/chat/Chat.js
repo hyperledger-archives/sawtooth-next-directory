@@ -15,13 +15,12 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Header, Icon, Image, Segment } from 'semantic-ui-react';
+import { Checkbox, Header, List, Icon, Image, Segment, Transition } from 'semantic-ui-react';
 
 
 import './Chat.css';
 import ChatForm from '../forms/ChatForm';
 import ChatMessage from './ChatMessage';
-import * as utils from '../../services/Utils';
 
 
 import chatRequester from '../../mock_data/conversation_action.json';
@@ -34,29 +33,22 @@ import chatApprover from '../../mock_data/conversation_action.1.json';
  * Component encapsulating the chat widget
  *
  * TODO: Normalize all JSON objects behind a schema
+ * TODO: Break out into child components
  *
  */
 export default class Chat extends Component {
 
-  /**
-   *
-   * Switch chat context when active pack changes
-   *
-   */
-  componentWillReceiveProps (newProps) {
-    const { activeRole, getConversation } = this.props;
-
-    if (newProps.activeRole !== activeRole) {
-      getConversation(newProps.activeRole['conversation_id']);
-    }
-  }
-
-
   roleName = (roleId) => {
     const { roleFromId } = this.props;
     const role = roleFromId(roleId);
-
     return role && role.name;
+  };
+
+
+  userName = (userId) => {
+    const { userFromId } = this.props;
+    const user = userFromId(userId);
+    return user && user.name;
   };
 
 
@@ -64,22 +56,22 @@ export default class Chat extends Component {
     const {
       activeRole,
       approveProposals,
-      history,
       me,
       requestAccess,
+      reset,
       selectedProposals,
+      sendMessage,
       type } = this.props;
 
     if (action) {
       switch (action.type) {
         case 0:
           if (type === 0) {
+            sendMessage('foobar');
             requestAccess(activeRole.id, me.id, 'some reason');
-            const slug = utils.createSlug(activeRole.name);
-            history.push(`/requests/${slug}`);
-          }
-          if (type === 1) {
+          } else if (type === 1) {
             approveProposals(selectedProposals);
+            reset();
           }
           break;
 
@@ -96,11 +88,13 @@ export default class Chat extends Component {
 
   render () {
     const {
-      messages,
+      disabled,
+      handleChange,
       selectedRoles,
       selectedUsers,
+      subtitle,
       title,
-      disabled,
+      groupBy,
       type } = this.props;
 
     // ! Temporary
@@ -109,36 +103,84 @@ export default class Chat extends Component {
 
     return (
       <div id='next-chat-container'>
-        { title &&
+
+        { type === 0 && title &&
           <Header id='next-chat-header' size='small' inverted>
             {title}
             <Icon link name='pin' size='mini' className='pull-right'/>
           </Header>
         }
-        {
-          selectedUsers &&
+
+        { type === 1 && selectedUsers &&
+          <div id='next-chat-selection-heading-container'>
+            <Transition.Group
+              as={List}
+              horizontal
+              animation='fade right'
+              duration={{hide: 0, show: 1000}}>
+              { selectedUsers.map(user => (
+                <Image
+                  key={user}
+                  size='tiny'
+                  className='pull-left'
+                  src='http://i.pravatar.cc/150'
+                  avatar/>
+              )) }
+            </Transition.Group>
+            <Transition
+              visible={selectedUsers.length > 0}
+              animation='fade left'
+              duration={{hide: 0, show: 300}}>
+              <Header as='h3' inverted>
+                {selectedUsers.length === 1 && title}
+                <Header.Subheader>{subtitle}</Header.Subheader>
+              </Header>
+            </Transition>
+          </div>
+        }
+
+        { type === 1 && groupBy === 0 && selectedUsers &&
           <div id='next-chat-users-selection-container'>
-          { selectedUsers.map(user => (
-            <Image key={user} src='http://i.pravatar.cc/300' avatar/>
-          )) }
+            <Transition.Group
+              as={List}
+              animation='fade down'
+              duration={{hide: 300, show: 300}}>
+              { selectedUsers.map(user => (
+                <Segment className='minimal' padded='very' key={user}>
+                  <Checkbox
+                    checked={!!user}
+                    user={user}
+                    label={this.userName(user)}
+                    onChange={handleChange}/>
+                </Segment>
+              )) }
+            </Transition.Group>
           </div>
         }
-        { selectedRoles &&
+
+        { type === 1 && groupBy === 1 && selectedRoles &&
           <div id='next-chat-roles-selection-container'>
-          { selectedRoles.map(role => (
-            <Segment key={role}>
-              { this.roleName(role) }
-              {/* <Checkbox
-                checked={!!role}
-                role={role}
-                label={this.roleName(role)}
-                onChange={handleProposalChange}/> */}
-            </Segment>
-          )) }
+            <Transition.Group
+              as={List}
+              animation='fade down'
+              duration={{hide: 300, show: 300}}>
+              { [...new Set(selectedRoles)].map(role => (
+                <Segment className='minimal' padded='very' key={role}>
+                  <Checkbox
+                    checked={!!role}
+                    role={role}
+                    label={this.roleName(role)}
+                    onChange={handleChange}/>
+                </Segment>
+              )) }
+            </Transition.Group>
           </div>
         }
-        { messages &&
-          <ChatMessage {...this.props}/>
+
+        { type === 0 &&
+          <div id='next-chat-messages-container'>
+            <ChatMessage {...this.props}/>
+          </div>
         }
 
         <div id='next-chat-conversation-dock'>

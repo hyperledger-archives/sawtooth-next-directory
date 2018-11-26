@@ -71,14 +71,29 @@ export default class ChatForm extends Component {
           actions.action_types.map((action, index) => (
             <Button
               key={index}
-              icon
+              animated='fade'
+              className='next-chat-action-button'
+              circular
+              size='large'
+              positive={action.type === 0}
               disabled={disabled}
               onClick={() => this.handleSubmit(action)}>
+
               { !disabled &&
                 <span>
-                  {action.type === 0 && <Icon name='check circle'></Icon> }
-                  {action.type === 1 && <Icon name='x'></Icon> }
-                  {action.action_text}
+                  {action.type === 0 &&
+                    <Button.Content hidden>
+                      <Icon name='check'/>
+                    </Button.Content>
+                  }
+                  {action.type === 1 &&
+                    <Button.Content hidden>
+                      <Icon name='x'/>
+                    </Button.Content>
+                  }
+                  <Button.Content visible>
+                    {action.action_text}
+                  </Button.Content>
                 </span>
               }
               { disabled &&

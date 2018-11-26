@@ -19,8 +19,7 @@ import React from 'react';
 
 import RequesterHome from './containers/requester/RequesterHome';
 import RequesterNav from './components/nav/RequesterNav';
-import Requests from './containers/requester/Requests';
-import Recommended from './containers/requester/Recommended';
+import Roles from './containers/requester/Roles';
 import Packs from './containers/requester/Packs';
 
 
@@ -60,26 +59,14 @@ const routes = (props) => [
     exact:  true
   },
   {
-    path:   '/requests/:id',
-    main:   (rest) => <Requests {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
-  },
-  {
-    path:   '/browse/roles/:id',
-    main:   (rest) => <Recommended {...props} {...rest}/>,
-    nav:    () => <RequesterNav {...props}/>,
-    exact:  true
-  },
-  {
-    path:   '/home/recommended-roles/:id',
-    main:   (rest) => <Recommended {...props} {...rest}/>,
+    path:   '/packs/:id',
+    main:   (rest) => <Packs {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true
   },
   {
     path:   '/roles/:id',
-    main:   (rest) => <Packs {...props} {...rest}/>,
+    main:   (rest) => <Roles {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true
   },

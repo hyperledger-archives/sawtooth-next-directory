@@ -71,7 +71,7 @@ export default class MemberList extends Component {
     return (
       user &&
         <Grid.Column key={userId} largeScreen={8} widescreen={5}>
-          <Segment padded raised>
+          <Segment padded className='minimal'>
             <Icon
               name='shield'
               className='pull-right'

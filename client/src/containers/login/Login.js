@@ -69,19 +69,19 @@ class Login extends Component {
 
     return (
       <div id='next-login-container'>
-        <Grid container centered columns={2}>
+        <Grid container centered columns={1}>
           <Grid.Column id='next-login-column'>
             <Header color='grey' textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
               <h1>Sign in to NEXT Directory</h1>
             </Header>
             <LoginForm submit={login}/>
-            <Container id='next-login-new-account-container' textAlign='center'>
-              <span>New to NEXT Directory?</span>
-              <Link to='/signup'>Create an account</Link>
-            </Container>
           </Grid.Column>
         </Grid>
+        <Container id='next-login-new-account-container' textAlign='center'>
+          <span>New to NEXT Directory?</span>
+          <Link to='/signup'>Create an account</Link>
+        </Container>
       </div>
     );
   }

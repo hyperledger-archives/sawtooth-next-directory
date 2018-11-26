@@ -8,3 +8,24 @@ button.ui.fluid.primary.animated.button {
   background: -webkit-linear-gradient(top, #e80d98 0%,#8d004d 100%);
   height: 44px;
 }
+
+button.ui.icon.left.labeled.button,
+a.ui.icon.left.labeled.button {
+  background: none;
+  color: @white;
+  padding-left: 3em !important;
+}
+
+button.ui.icon.right.labeled.button,
+a.ui.icon.right.labeled.button {
+  background: none;
+  color: @white;
+  padding-right: 3em !important;
+}
+
+button.ui.icon.left.labeled.button i,
+button.ui.icon.right.labeled.button i,
+a.ui.icon.left.labeled.button i,
+a.ui.icon.right.labeled.button i {
+  background: none;
+}
