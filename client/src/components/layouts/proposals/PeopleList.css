@@ -19,7 +19,7 @@ limitations under the License.
 }
 
 .next-people-list-name {
-  border-right: 1px solid var(--divider-color);
+  flex: 0 0 40%;
   padding-right: 20px;
 }
 
@@ -29,17 +29,19 @@ limitations under the License.
 
 .next-people-list-email {
   color: var(--magenta);
-  font-size: .85em;
+  flex: 1;
+  font-size: .9em;
   padding: 0 20px;
 }
 
 .next-people-list-item .header,
 .next-people-list-item .ui.checkbox label {
+  display: flex;
   font-size: 1.2em;
 }
 
 .next-people-list-proposal .ui.checkbox label {
-  font-size: 1em;
+  font-size: 1.1em;
   font-weight: normal;
 }
 

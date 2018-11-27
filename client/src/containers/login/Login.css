@@ -71,6 +71,10 @@ limitations under the License.
   margin-top: 30px;
 }
 
+#next-login-form-reset-password {
+  margin-top: 40px;
+}
+
 #next-login-form-avatar-container {
   min-height: 80px;
 }

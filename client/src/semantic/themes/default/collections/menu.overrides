@@ -26,3 +26,7 @@
   border-color: @magenta;
   border-radius: 1em;
 }
+
+.ui.compact.menu a.item:not(.active) {
+  color: @magenta;
+}
