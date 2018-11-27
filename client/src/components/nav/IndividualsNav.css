@@ -27,3 +27,8 @@ limitations under the License.
 .next-individual-search .fluid.search {
   height: 100%;
 }
+
+.next-individual-search .ui.large.fluid.icon.input input {
+  background: #eceef1;
+  border: 2px solid #eceef1;
+}

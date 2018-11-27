@@ -26,19 +26,32 @@ limitations under the License.
 
 #next-track-header {
   align-items: center;
-  background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
+  background: -webkit-linear-gradient(top, #870bcc 0%,#e51e96 100%);
+  color: var(--header-color);
+  display: flex;
+  height: 140px;
+  padding: 0 var(--page-content-padding);
+}
+
+#next-track-header-waves {
+  align-items: center;
+  background: -webkit-linear-gradient(top, #870bcc 0%,#e51e96 100%);
   color: var(--header-color);
   display: flex;
   height: var(--track-header-height);
   padding: 0 var(--page-content-padding);
 }
 
-#next-track-header .ui.header {
+#next-track-header .ui.header,
+#next-track-header-waves .ui.header {
   align-items: end;
   display: flex;
+  position: absolute;
+  top: 25px;
 }
 
-#next-track-header .ui.header .content {
+#next-track-header .ui.header .content,
+#next-track-header-waves .ui.header .content {
   margin: 4px;
 }
 

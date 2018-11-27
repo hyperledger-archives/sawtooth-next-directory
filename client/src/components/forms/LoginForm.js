@@ -15,8 +15,8 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import {
+  Button,
   Container,
   Form,
   Label,
@@ -111,7 +111,11 @@ export default class LoginForm extends Component {
                   value={username}
                   onChange={this.handleChange} />
                 <Label>
-                  <Link to='/'>Forgot User ID?</Link>
+                  <Button
+                    className='link'
+                    type='button'>
+                    Forgot User ID?
+                  </Button>
                 </Label>
               </Form.Field>
               <Container textAlign='center'>
@@ -155,7 +159,12 @@ export default class LoginForm extends Component {
                 value={password}
                 onChange={this.handleChange} />
               <Label>
-                <a onClick={() => this.setFlow(2)}>Forgot Password?</a>
+                <Button
+                  className='link'
+                  type='button'
+                  onClick={() => this.setFlow(2)}>
+                  Forgot Password?
+                </Button>
               </Label>
             </Form.Field>
             <Container textAlign='center'>

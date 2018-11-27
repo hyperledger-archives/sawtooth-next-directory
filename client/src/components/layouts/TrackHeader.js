@@ -45,7 +45,7 @@ export default class TrackHeader extends Component {
         <Grid.Column id='track-header-outer-grid' only='computer'>
           <div id={waves ? 'next-track-header-waves-container' :
             'next-track-header-container' }>
-            <div id='next-track-header'>
+            <div id={waves ? 'next-track-header-waves' : 'next-track-header'}>
               { title &&
                 <Header as='h1' inverted>
                   { glyph &&

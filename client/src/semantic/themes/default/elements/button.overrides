@@ -29,3 +29,22 @@ a.ui.icon.left.labeled.button i,
 a.ui.icon.right.labeled.button i {
   background: none;
 }
+
+button.ui.link {
+  background: none;
+  color: @white;
+  opacity: 0.5;
+  font-size: 1em;
+  font-weight: normal;
+  padding: 0;
+  transition: 0.1s opacity ease;
+  -webkit-transition: 0.1s opacity ease;
+}
+
+button.ui.link:active,
+button.ui.link:hover,
+button.ui.link:focus {
+  color: @white;
+  background: none;
+  opacity: 1;
+}
