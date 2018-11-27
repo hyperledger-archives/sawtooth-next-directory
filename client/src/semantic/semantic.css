@@ -675,11 +675,6 @@ a:hover {
   color: rgba(0, 0, 0, 0.87);
 }
 
-::-moz-selection {
-  background-color: #CCE2FF;
-  color: rgba(0, 0, 0, 0.87);
-}
-
 ::selection {
   background-color: #CCE2FF;
   color: rgba(0, 0, 0, 0.87);
@@ -689,12 +684,6 @@ a:hover {
 
 textarea::-webkit-selection,
 input::-webkit-selection {
-  background-color: rgba(100, 100, 100, 0.4);
-  color: rgba(0, 0, 0, 0.87);
-}
-
-textarea::-moz-selection,
-input::-moz-selection {
   background-color: rgba(100, 100, 100, 0.4);
   color: rgba(0, 0, 0, 0.87);
 }
@@ -16192,11 +16181,11 @@ a.ui.basic.label:hover {
 
 .ui.circular.floating.label.mini {
   font-size: 0.7em;
+  line-height: 0.7em;
   min-height: 1em;
   min-width: 1em;
   padding: 0.4em 0.45em !important;
   top: 0.9em;
-  line-height: 0.7em;
 }
 
 /*******************************
@@ -19443,9 +19432,9 @@ ol.ui.horizontal.list li:before,
 }
 
 .ui.segment.light {
+  background: #f7f7f7;
   -webkit-box-shadow: none;
   box-shadow: none;
-  background: #f7f7f7;
 }
 
 /*******************************
@@ -21465,8 +21454,8 @@ ol.ui.horizontal.list li:before,
 .form-inverted .ui.form .field input[type="email"],
 .form-inverted .ui.form .field input[type="password"],
 .form-inverted .ui.form .field input[type="text"] {
-  border-bottom: 1px solid #5b676f;
   background: transparent;
+  border-bottom: 1px solid #5b676f;
 }
 
 .form-inverted .ui.form .field input::-webkit-input-placeholder,

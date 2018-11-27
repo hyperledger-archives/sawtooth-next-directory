@@ -110,12 +110,10 @@ export const socketOpenSuccess = (state) => {
 }
 
 export const sendSuccess = (state, { message }) => {
-  console.log(message)
-
-  const foo = JSON.parse(message)
+  const parsed = JSON.parse(message)
   return state.merge({
     fetching: false,
-    messages: foo.length !== 0 ?
+    messages: parsed.length !== 0 ?
       (state.messages || []).concat([JSON.parse(message)[0]]) :
       state.messages
   });

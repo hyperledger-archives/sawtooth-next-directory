@@ -32,16 +32,7 @@ import './RolesList.css';
 export default class RolesList extends Component {
 
   static propTypes = {
-    activeRole: PropTypes.arrayOf(PropTypes.shape(
-      {
-        description: PropTypes.string,
-        roles: PropTypes.arrayOf(PropTypes.shape(
-          {
-            name: PropTypes.string
-          }
-        ))
-      }
-    ))
+    activeRole: PropTypes.object,
   };
 
 
