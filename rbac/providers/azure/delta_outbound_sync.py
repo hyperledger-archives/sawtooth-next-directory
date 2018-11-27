@@ -37,20 +37,12 @@ from rbac.providers.common.rethink_db import (
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_CONFIG = {"DELAY": 1, "OUTBOUND_QUEUE": "queue_outbound"}
+DEFAULT_CONFIG = {"DELAY": "1", "OUTBOUND_QUEUE": "queue_outbound"}
 
-
-def getenv(name, default):
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
-
-
-OUTBOUND_QUEUE = getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
-DELAY = getenv("DELAY", DEFAULT_CONFIG["DELAY"])
+OUTBOUND_QUEUE = os.getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
+DELAY = int(float(os.getenv("DELAY", DEFAULT_CONFIG["DELAY"])))
+TENANT_ID = os.getenv("TENANT_ID")
 GRAPH_URL = "https://graph.microsoft.com"
-TENANT_ID = os.environ.get("TENANT_ID")
 GRAPH_VERSION = "beta"
 DIRECTION = "outbound"
 AUTH = AadAuth()

@@ -18,6 +18,10 @@ class DatabaseConnectionException(Exception):
     """Thrown when all attempts to connect to the database have failed"""
 
 
+class LdapConnectionException(Exception):
+    """Thrown when all attempts to connect to active directory have failed"""
+
+
 class LdapValidationException(Exception):
     """Thrown when an ldap message is missing required fields"""
 
