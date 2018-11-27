@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-from rbac.providers.error.unrecoverable_errors import LdapValidationException
+from rbac.providers.error.unrecoverable_error import LdapValidationException
 
 
-def validate(ldap_payload):
-    """Confirms the payload has the fields required for ldap"""
+def validate_next_payload(payload):
+    """Confirms the payload has the fields required for ldap message transformation"""
 
     # TODO: Move these into an enum, share with outbound_sync
     required_field_data = "data"
     required_field_data_type = "data_type"
+    required_field_provider_id = "provider_id"
     required_value_data_type = ["user", "group"]
     required_field_dn = "distinguished_name"
 
@@ -34,13 +35,17 @@ def validate(ldap_payload):
 
     # TODO: Parse the distinguished name (dn), identify the min mappings, validate they are present. Include tests!
 
-    for required_field in [required_field_data_type, required_field_data]:
-        if required_field not in ldap_payload:
+    for required_field in [
+        required_field_data_type,
+        required_field_data,
+        required_field_provider_id,
+    ]:
+        if required_field not in payload:
             raise LdapValidationException(
                 "Required field: '{0}' is missing".format(required_field)
             )
 
-    data_node = ldap_payload[required_field_data]
+    data_node = payload[required_field_data]
     if required_field_dn not in data_node:
         raise LdapValidationException(
             "'{0}' is missing an entry for: '{1}'".format(
@@ -53,7 +58,7 @@ def validate(ldap_payload):
         )
 
     if not any(
-        ldap_payload[required_field_data_type] in s for s in required_value_data_type
+        payload[required_field_data_type] in s for s in required_value_data_type
     ):
         raise LdapValidationException(
             "Invalid value for '{0}'. '{0}' must be in: {1}".format(

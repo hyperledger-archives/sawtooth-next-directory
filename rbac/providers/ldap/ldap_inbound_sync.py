@@ -29,40 +29,23 @@ from ldap3 import ALL, Connection, Server
 
 from rbac.providers.common import inbound_filters
 from rbac.providers.common.common import save_sync_time, check_last_sync
-from rbac.providers.ldap import ldap_transforms
-
+from rbac.providers.ldap import ldap_payload_transformer
 from rbac.providers.common.rethink_db import connect_to_db
+
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-DEFAULT_CONFIG = {
-    "DB_HOST": "rethink",
-    "DB_PORT": 28015,
-    "DB_NAME": "rbac",
-    "DELTA_SYNC_INTERVAL_SECONDS": 3600.0,
-}
+DB_HOST = os.getenv("DB_HOST", "rethink")
+DB_PORT = int(float(os.getenv("DB_PORT", "28015")))
+DB_NAME = os.getenv("DB_NAME", "rbac")
 
-
-def getenv(name, default):
-    value = os.getenv(name)
-    if value is None or not value:
-        return default
-    return value
-
-
-DB_HOST = getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
-
-LDAP_DC = os.environ.get("LDAP_DC")
-LDAP_SERVER = os.environ.get("LDAP_SERVER")
-LDAP_USER = os.environ.get("LDAP_USER")
-LDAP_PASS = os.environ.get("LDAP_PASS")
-DELTA_SYNC_INTERVAL_SECONDS = getenv(
-    "DELTA_SYNC_INTERVAL_SECONDS", DEFAULT_CONFIG["DELTA_SYNC_INTERVAL_SECONDS"]
-)
+LDAP_DC = os.getenv("LDAP_DC")
+LDAP_SERVER = os.getenv("LDAP_SERVER")
+LDAP_USER = os.getenv("LDAP_USER")
+LDAP_PASS = os.getenv("LDAP_PASS")
+DELTA_SYNC_INTERVAL_SECONDS = float(os.getenv("DELTA_SYNC_INTERVAL_SECONDS", "3600.0"))
 
 LDAP_FILTER_USER = "(objectClass=person)"
 LDAP_FILTER_USER_DELTA = "(&(objectClass=person)(whenChanged>=%s))"
@@ -84,19 +67,13 @@ def fetch_ldap_data(sync_type, data_type):
             .coerce_to("array")
             .run()
         )
-        last_sync_time = ldap_transforms.to_ldap_datetime(
+        last_sync_time = ldap_payload_transformer.to_date_ldap_query(
             rethink_timestamp=last_sync[0]["timestamp"]
         )
         if data_type == "user":
-            search_filter = (
-                LDAP_FILTER_USER_DELTA
-                % ldap_transforms.time_to_query_format(last_sync_time)
-            )
+            search_filter = LDAP_FILTER_USER_DELTA % last_sync_time
         elif data_type == "group":
-            search_filter = (
-                LDAP_FILTER_GROUP_DELTA
-                % ldap_transforms.time_to_query_format(last_sync_time)
-            )
+            search_filter = LDAP_FILTER_GROUP_DELTA % last_sync_time
 
     elif sync_type == "initial":
         if data_type == "user":

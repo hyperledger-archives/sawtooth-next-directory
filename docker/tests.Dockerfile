@@ -47,7 +47,6 @@ RUN apt-get install -y --allow-unauthenticated -q \
     pytest \
     dredd_hooks \
     pytest-cov \
-    pytest-env \
-    tornado==4.5.3
+    pytest-env
 
 WORKDIR /project/hyperledger-rbac

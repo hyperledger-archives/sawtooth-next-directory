@@ -36,7 +36,6 @@ LOGGER = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = {"OUTBOUND_QUEUE": "queue_outbound"}
 
-
 OUTBOUND_QUEUE = os.getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
 LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")

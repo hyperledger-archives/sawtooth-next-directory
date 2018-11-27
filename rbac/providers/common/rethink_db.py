@@ -20,7 +20,7 @@ import logging
 from datetime import datetime as dt
 import rethinkdb as r
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.error.unrecoverable_errors import DatabaseConnectionException
+from rbac.providers.error.unrecoverable_error import DatabaseConnectionException
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
@@ -51,6 +51,7 @@ def connect_to_db():
             )
             time.sleep(DB_CONNECT_TIMEOUT)
         attempt += 1
+
     if attempt == DB_CONNECT_MAX_ATTEMPTS:
         raise DatabaseConnectionException(
             "Failed to connect to RethinkDb after {} attempts".format(

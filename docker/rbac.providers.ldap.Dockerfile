@@ -41,7 +41,6 @@ WORKDIR /project/hyperledger-rbac
 RUN pip3 install \
         rethinkdb \
         ldap3 \
-        pyasn1==0.4.4 \
-        tornado==4.5.3
+        pyasn1==0.4.4
 
 CMD [ "./bin/rbac-providers-ldap" ]
