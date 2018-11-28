@@ -9,5 +9,6 @@
    :caption: Contents:
 
    introduction
+   providers
    support
 
