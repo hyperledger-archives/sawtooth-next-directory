@@ -14,6 +14,7 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+import AppActions, { AppSelectors } from '../../redux/AppRedux';
 import ApproverActions, { ApproverSelectors } from '../../redux/ApproverRedux';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import ChatActions, { ChatSelectors } from '../../redux/ChatRedux';
@@ -31,6 +32,9 @@ import UserActions, { UserSelectors } from '../../redux/UserRedux';
  */
 export const appState = (state) => {
   return {
+
+    // App
+    isAnimating:         AppSelectors.isAnimating(state),
 
     // Approver
     openProposals:       ApproverSelectors.openProposals(state),
@@ -74,6 +78,10 @@ export const appState = (state) => {
  */
 export const appDispatch = (dispatch) => {
   return {
+
+    // App
+    startAnimation:    ()    => dispatch(AppActions.animationBegin()),
+    stopAnimation:     ()    => dispatch(AppActions.animationEnd()),
 
     // Approver
     approveProposals:  (ids) => dispatch(ApproverActions.approveProposalsRequest(ids)),

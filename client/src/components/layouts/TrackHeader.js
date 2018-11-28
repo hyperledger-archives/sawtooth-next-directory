@@ -33,19 +33,17 @@ export default class TrackHeader extends Component {
     glyph:              PropTypes.string,
     subtitle:           PropTypes.string,
     title:              PropTypes.string,
-    waves:              PropTypes.bool,
   }
 
 
   render () {
-    const { glyph, subtitle, title, waves } = this.props;
+    const { glyph, subtitle, title } = this.props;
 
     return (
       <Grid>
-        <Grid.Column id='track-header-outer-grid' only='computer'>
-          <div id={waves ? 'next-track-header-waves-container' :
-            'next-track-header-container' }>
-            <div id={waves ? 'next-track-header-waves' : 'next-track-header'}>
+        <Grid.Column id='track-header-outer-grid'>
+          <div id='next-track-header-container'>
+            <div id='next-track-header'>
               { title &&
                 <Header as='h1' inverted>
                   { glyph &&
@@ -60,17 +58,9 @@ export default class TrackHeader extends Component {
                 </Header>
               }
             </div>
-
-            { waves &&
-              <div id='next-wave-container'>
-                <div id='next-wave'></div>
-                <div id='next-wave-alt'></div>
-              </div>
-            }
           </div>
         </Grid.Column>
       </Grid>
-
     );
   }
 

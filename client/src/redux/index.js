@@ -17,6 +17,7 @@ limitations under the License.
 import { combineReducers } from 'redux';
 
 
+import { reducer as AppReducer } from './AppRedux';
 import { reducer as ApproverReducer } from './ApproverRedux';
 import { reducer as AuthReducer } from './AuthRedux';
 import { reducer as ChatReducer } from './ChatRedux';
@@ -25,6 +26,7 @@ import { reducer as UserReducer } from './UserRedux';
 
 
 const reducers = combineReducers({
+  app:        AppReducer,
   approver:   ApproverReducer,
   auth:       AuthReducer,
   chat:       ChatReducer,

@@ -25,10 +25,11 @@ limitations under the License.
 
 #next-requester-grid-converse-column {
   background: var(--chat-bg-color);
+  z-index: 10;
 }
 
 #next-requester-landing-container {
-  background: url('../../images/next-logo-landing.gif') 50% 45% / 250px no-repeat;
+  background: url('../../images/next-logo-landing.gif') 50% 33% / 250px no-repeat;
   height: 100%;
-  opacity: 0.25;
+  opacity: 0.8;
 }

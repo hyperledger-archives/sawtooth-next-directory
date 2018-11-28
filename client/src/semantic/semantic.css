@@ -749,6 +749,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body,
+#root {
+  height: 100%;
+}
+
 .clear {
   clear: both;
 }

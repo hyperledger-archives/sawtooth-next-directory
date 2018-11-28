@@ -39,6 +39,7 @@ export default class RequesterNav extends Component {
     recommended:        PropTypes.array,
     requests:           PropTypes.array,
     roleFromId:         PropTypes.func,
+    startAnimation:     PropTypes.func,
   };
 
 
@@ -79,6 +80,7 @@ export default class RequesterNav extends Component {
 
 
   render () {
+    const { startAnimation } = this.props;
     return (
       <Container>
 
@@ -98,7 +100,12 @@ export default class RequesterNav extends Component {
         { this.renderLists() }
 
         <div id='next-requester-switch-container'>
-          <Button icon labelPosition='right' as={Link} to='/approval/pending/individual'>
+          <Button
+            icon
+            as={Link}
+            labelPosition='right'
+            onClick={startAnimation}
+            to='/approval/pending/individual'>
             Switch to Approver
             <Icon name='right arrow'/>
           </Button>

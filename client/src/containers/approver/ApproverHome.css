@@ -27,4 +27,5 @@ limitations under the License.
 
 #next-approver-grid-converse-column {
   background: var(--chat-bg-color);
+  z-index: 10;
 }

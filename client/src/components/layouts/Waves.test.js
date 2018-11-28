@@ -14,26 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-:root {
-  --header-bg-color: #1d1e27;
-  --header-color: #fff;
-  --nav-bg-color: #212c3a;
-  --auth-bg-color: #fff;
-  --auth-fg-color: #212c3a;
-  --nav-heading-color: #fff;
-  --nav-list-color: #727c85;
-  --inverted-text-color: #727c85;
-  --chat-bg-color: #b9c0ca1f;
-  --selection-list-active-color: #e6e8ea;
-  --divider-color: #cedbe6;
-  --nav-list-padding: 22px;
-  --page-content-padding: 30px;
-  --track-header-height: 113px;
-  --magenta: #e40073;
-  --black: #000;
-  --avatar-count: #fff;
-  --browse-bg-color: #273544;
-  --browse-text-color: rgba(255, 255, 255, 0.5);
-  --background-dark: #000;
-  --text-light: #fff;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+
+
+import Waves from './Waves';
+
+
+describe('Waves component', () => {
+
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    ReactDOM.render(
+      <BrowserRouter><Waves/></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});
