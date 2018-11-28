@@ -24,3 +24,5 @@ tornado==4.5.3
 rasa_core==0.12.2
 rasa_nlu==0.13.8
 azure-eventhub==1.1.1
+sphinx==1.8.2
+sphinx_rtd_theme==0.4.2
