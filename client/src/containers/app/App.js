@@ -26,7 +26,7 @@ import Browse from '../browse/Browse';
 import Header from '../../components/layouts/Header';
 import Login from '../login/Login';
 import Signup from '../signup/Signup';
-import * as utils from '../../services/Utils';
+import Waves from '../../components/layouts/Waves';
 
 
 import { appDispatch, appState } from './AppHelper';
@@ -63,7 +63,12 @@ class App extends Component {
 
 
   componentDidUpdate (prevProps) {
-    const { me, id, isAuthenticated, isSocketOpen, sendMessage } = this.props;
+    const {
+      me,
+      id,
+      isAuthenticated,
+      isSocketOpen,
+      sendMessage } = this.props;
 
     if (!isAuthenticated) return;
 
@@ -161,14 +166,13 @@ class App extends Component {
    *
    */
   renderGrid () {
-    // const { isSideBarVisible } = this.state;
-
     return (
       <Grid id='next-outer-grid'>
         <Grid.Column id='next-outer-grid-nav'>
           { this.renderNav() }
         </Grid.Column>
         <Grid.Column id='next-inner-grid-main'>
+          <Waves {...this.props}/>
           { this.renderMain() }
         </Grid.Column>
       </Grid>
@@ -177,12 +181,7 @@ class App extends Component {
 
 
   render () {
-    const { isAuthenticated, recommended, routes } = this.props;
-
-    const homeLink = recommended && recommended[0] ?
-      `/roles/${utils.createSlug(recommended[0].name)}` :
-      undefined;
-
+    const { isAuthenticated, routes } = this.props;
     this.routes = routes(this.props);
 
     return (
@@ -193,10 +192,6 @@ class App extends Component {
             <Route exact path='/login' component={Login}/>
             <Route exact path='/signup' component={Signup}/>
             { !isAuthenticated && <Redirect to='/login'/> }
-            { homeLink &&
-              <Route exact path='/' render={() => (
-                <Redirect to={homeLink}/>)}/>
-            }
             <Route exact path='/browse' component={Browse}/>
             <Route render={() => ( this.renderGrid() )}/>
           </Switch>

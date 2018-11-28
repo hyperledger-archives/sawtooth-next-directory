@@ -19,8 +19,8 @@ import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import TrackHeader from '../../components/layouts/TrackHeader';
 import './RequesterHome.css';
+import * as utils from '../../services/Utils';
 
 
 /**
@@ -34,20 +34,20 @@ import './RequesterHome.css';
 export default class RequesterHome extends Component {
 
   static propTypes = {
-    activeRole: PropTypes.arrayOf(PropTypes.shape(
-      {
-        id: PropTypes.string,
-        description: PropTypes.string,
-        roles: PropTypes.arrayOf(PropTypes.shape(
-          {
-            id: PropTypes.string,
-            name: PropTypes.string,
-            email: PropTypes.email
-          }
-        ))
-      }
-    ))
+    activeRole:           PropTypes.object,
+    history:              PropTypes.object,
+    recommended:          PropTypes.array,
   };
+
+
+  componentDidUpdate (prevProps) {
+    const { history, recommended } = this.props;
+    const homeLink = recommended && recommended[0] ?
+      `/roles/${utils.createSlug(recommended[0].name)}` :
+      undefined;
+
+    homeLink && history.push(homeLink);
+  }
 
 
   render () {
@@ -56,7 +56,6 @@ export default class RequesterHome extends Component {
         <Grid.Column
           id='next-requester-grid-track-column'
           width={16}>
-          <TrackHeader waves {...this.props}/>
           <Container id='next-requester-landing-container'></Container>
         </Grid.Column>
       </Grid>

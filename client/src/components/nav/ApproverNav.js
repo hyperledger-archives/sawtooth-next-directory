@@ -38,6 +38,7 @@ export default class ApproverNav extends Component {
   static propTypes = {
     openProposalsCount:     PropTypes.number,
     recommended:            PropTypes.array,
+    startAnimation:         PropTypes.func,
   };
 
 
@@ -95,7 +96,7 @@ export default class ApproverNav extends Component {
 
 
   render () {
-    const { recommended } = this.props;
+    const { recommended, startAnimation } = this.props;
 
     const homeLink = recommended && recommended[0] ?
       `/roles/${utils.createSlug(recommended[0].name)}` :
@@ -113,7 +114,12 @@ export default class ApproverNav extends Component {
         { this.renderLists() }
 
         <h4 id='next-approver-switch-container'>
-          <Button icon labelPosition='left' as={Link} to={homeLink}>
+          <Button
+            icon
+            as={Link}
+            labelPosition='left'
+            onClick={startAnimation}
+            to={homeLink}>
             Switch to Requester
             <Icon name='left arrow'/>
           </Button>

@@ -28,12 +28,14 @@ limitations under the License.
 #next-outer-grid-nav {
   background: var(--nav-bg-color);
   flex: 0 0 245px;
+  min-width: 0;
   padding: 0;
   z-index: 5;
 }
 
 #next-inner-grid-main {
   flex: 1;
+  min-width: 0;
   padding: 0;
 }
 
