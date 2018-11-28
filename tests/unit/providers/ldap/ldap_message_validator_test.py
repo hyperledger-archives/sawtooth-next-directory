@@ -17,6 +17,14 @@ import pytest
 from rbac.providers.ldap import ldap_message_validator
 from rbac.providers.error.unrecoverable_error import LdapValidationException
 
+# TODO: These are also required given the current outbound_sync mappings. Include tests!
+# Enforce or remove from outbound_sync
+# required_field_user_name = "data.user_name"
+# required_field_cn = "data.cn"
+# required_field_given_name = "data.given_name"
+# required_field_name = "data.name"
+# required_field_manager = "data.manager
+
 
 def test_validate_missing_data_type():
     """ensures a failure occurs when 'data_type' field is missing"""
@@ -59,3 +67,83 @@ def test_validate_empty_distinguished_name():
         next_payload = {"data": {"distinguished_name": ""}, "data_type": "user"}
         ldap_message_validator.validate_next_payload(next_payload)
         assert response == "'data'.'distinguished_name' cannot be empty"
+
+
+def test_validate_missing_user_name():
+    """ensures a failure occurs when 'user_name' field is missing"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data' is missing an entry for: 'user_name'"
+
+
+def test_validate_empty_user_name():
+    """ensures a failure occurs when 'user_name' field is empty"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {"user_name": ""}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data'.'user_name' cannot be empty"
+
+
+def test_validate_missing_cn():
+    """ensures a failure occurs when 'cn' field is missing"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data' is missing an entry for: 'cn'"
+
+
+def test_validate_empty_cn():
+    """ensures a failure occurs when 'cn' field is empty"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {"cn": ""}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data'.'cn' cannot be empty"
+
+
+def test_validate_missing_given_name():
+    """ensures a failure occurs when 'given_name' field is missing"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data' is missing an entry for: 'given_name'"
+
+
+def test_validate_empty_given_name():
+    """ensures a failure occurs when 'given_name' field is empty"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {"given_name": ""}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data'.'given_name' cannot be empty"
+
+
+def test_validate_missing_name():
+    """ensures a failure occurs when 'name' field is missing"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data' is missing an entry for: 'name'"
+
+
+def test_validate_empty_name():
+    """ensures a failure occurs when 'name' field is empty"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {"name": ""}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data'.'name' cannot be empty"
+
+
+def test_validate_missing_manager():
+    """ensures a failure occurs when 'manager' field is missing"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data' is missing an entry for: 'manager'"
+
+
+def test_validate_empty_manager():
+    """ensures a failure occurs when 'manager' field is empty"""
+    with pytest.raises(LdapValidationException) as response:
+        ldap_payload = {"data": {"manager": ""}, "data_type": "user"}
+        ldap_message_validator.validate_next_payload(ldap_payload)
+        assert response == "'data'.'manager' cannot be empty"
