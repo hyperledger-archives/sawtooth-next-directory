@@ -41,6 +41,8 @@ WORKDIR /project/hyperledger-rbac
 # -----------------------------------------------------------------------------
 
 RUN pip3 install \
+        aiohttp \
+        sanic-cors==0.9.7 \
         websockets==5.0.1
 
 EXPOSE 8000/tcp

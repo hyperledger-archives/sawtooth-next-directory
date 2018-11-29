@@ -33,6 +33,7 @@ export default class ChatForm extends Component {
   static propTypes = {
     actions:          PropTypes.object.isRequired,
     disabled:         PropTypes.bool,
+    messages:         PropTypes.array,
     submit:           PropTypes.func.isRequired,
   };
 
@@ -49,11 +50,9 @@ export default class ChatForm extends Component {
   }
 
 
-  handleSubmit (action) {
+  handleSubmit (message) {
     const { submit } = this.props;
-    const { message } = this.state;
-
-    submit(message, action);
+    submit(message);
     this.reset();
   }
 
@@ -71,36 +70,25 @@ export default class ChatForm extends Component {
 
 
   renderActions () {
-    const { actions, disabled } = this.props;
+    const { disabled, messages } = this.props;
 
     return (
       <div id='next-chat-actions'>
-        { actions &&
-          actions.action_types.map((action, index) => (
+        { messages && messages[0] && messages[0].buttons &&
+          messages[0].buttons.map((button, index) => (
             <Button
               key={index}
               animated='fade'
               className='next-chat-action-button'
               circular
-              size='large'
-              positive={action.type === 0}
+              size='medium'
               disabled={disabled}
-              onClick={() => this.handleSubmit(action)}>
+              onClick={() => this.handleSubmit(button.payload)}>
 
               { !disabled &&
                 <span>
-                  {action.type === 0 &&
-                    <Button.Content hidden>
-                      <Icon name='check'/>
-                    </Button.Content>
-                  }
-                  {action.type === 1 &&
-                    <Button.Content hidden>
-                      <Icon name='x'/>
-                    </Button.Content>
-                  }
                   <Button.Content visible>
-                    {action.action_text}
+                    {button.title}
                   </Button.Content>
                 </span>
               }
@@ -129,7 +117,7 @@ export default class ChatForm extends Component {
             name='message'
             value={this.state.message}
             onChange={this.handleChange}>
-            <input/>
+            <input autoComplete='off'/>
             <Icon
               link
               name='paper plane'

@@ -13,14 +13,13 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import sys
-import logging
 import json
-import requests
+import logging
+import sys
 
 from sanic import Blueprint
 
-# from rbac.server.api.auth import authorized
+from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 
 from rbac.server.db import roles_query
@@ -34,26 +33,24 @@ CHATBOT_BP = Blueprint("chatbot")
 
 
 @CHATBOT_BP.websocket("api/chatbot")
-# @authorized()
+@authorized()
 async def chatbot(request, ws):
     while True:
-        required_fields = ["user_id", "do"]
+        required_fields = ["do", "message", "user_id"]
         recv = json.loads(await ws.recv())
 
         utils.validate_fields(required_fields, recv)
-        res = await create_response(request, recv)
-        await ws.send(res)
+        response = await create_response(request, recv)
+        await ws.send(response)
 
 
 async def create_response(request, recv):
     if recv["do"] == "CREATE":
         LOGGER.info("[Chatbot] %s: Creating conversation", recv.get("user_id"))
-        res = await create_conversation(request, recv)
-        return json.dumps(res.json()["messages"])
-    else:
-        LOGGER.info("[Chatbot] %s: Sending generated reply", recv.get("user_id"))
-        res = generate_chatbot_reply(request, recv)
-        return json.dumps(res.json())
+        await create_conversation(request, recv)
+    LOGGER.info("[Chatbot] %s: Sending generated reply", recv.get("user_id"))
+    response = await generate_chatbot_reply(request, recv)
+    return json.dumps(response)
 
 
 async def create_conversation(request, recv):
@@ -61,24 +58,21 @@ async def create_conversation(request, recv):
     recommended_resource = await roles_query.fetch_recommended_resources(
         request.app.config.DB_CONN, recv.get("user_id"), head_block.get("num"), 0, 1
     )
-
-    create_event(recv, "resource_name", recommended_resource)
-    url = CHATBOT_REST_ENDPOINT + "/conversations/{}/execute".format(
-        recv.get("user_id")
-    )
-    data = {"action": "utter_default"}
-    return requests.post(url=url, json=data)
+    await create_event(request, recv, "token", utils.extract_request_token(request))
+    await create_event(request, recv, "resource_id", recommended_resource)
 
 
-def generate_chatbot_reply(request, recv):
-    url = CHATBOT_REST_ENDPOINT + "/webhooks/rest/webhook"
-    data = {"sender": recv.get("user_id"), "message": recv.get("message")}
-    return requests.post(url=url, json=data)
-
-
-def create_event(recv, name, value):
+async def create_event(request, recv, name, value):
     url = CHATBOT_REST_ENDPOINT + "/conversations/{}/tracker/events".format(
         recv.get("user_id")
     )
     data = {"event": "slot", "name": name, "value": value}
-    return requests.post(url=url, json=data)
+    async with request.app.config.HTTP_SESSION.post(url=url, json=data) as response:
+        return await response.json()
+
+
+async def generate_chatbot_reply(request, recv):
+    url = CHATBOT_REST_ENDPOINT + "/webhooks/rest/webhook"
+    data = {"sender": recv.get("user_id"), "message": recv.get("message")}
+    async with request.app.config.HTTP_SESSION.post(url=url, json=data) as response:
+        return await response.json()

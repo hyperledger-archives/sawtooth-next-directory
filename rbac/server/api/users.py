@@ -196,4 +196,6 @@ def create_user_response(request, public_key):
         user_resource["manager"] = request.json.get("manager")
     if request.json.get("metadata"):
         user_resource["metadata"] = request.json.get("metadata")
-    return json({"data": {"authorization": token, "user": user_resource}})
+    return utils.create_authorization_response(
+        token, {"message": "Authorization successful", "user": user_resource}
+    )

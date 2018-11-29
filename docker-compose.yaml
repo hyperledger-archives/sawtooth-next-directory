@@ -144,7 +144,7 @@ services:
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
 
-  rbac-client:
+  client:
     build:
       context: .
       dockerfile: ./docker/client.Dockerfile

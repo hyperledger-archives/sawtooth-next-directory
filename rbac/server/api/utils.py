@@ -20,7 +20,7 @@ from sanic.response import json
 
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import validator_pb2
-from rbac.server.api.errors import ApiBadRequest, ApiInternalError
+from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthorized
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
 from rbac.transaction_creation.common import Key
@@ -28,6 +28,9 @@ from rbac.common.crypto.secrets import decrypt_private_key
 from rbac.common.crypto.secrets import deserialize_api_key
 
 LOGGER = logging.getLogger(__name__)
+
+SIGNATURE_KEY = "RBAC_AUTH_SIGNATURE"
+PAYLOAD_KEY = "RBAC_AUTH_HEADER_PAYLOAD"
 
 
 def validate_fields(required_fields, body):
@@ -37,6 +40,34 @@ def validate_fields(required_fields, body):
                 raise ApiBadRequest("Bad Request: {} field is required".format(field))
     except ValueError:
         raise ApiBadRequest("Bad Request: Improper JSON format")
+
+
+def create_authorization_response(token, data):
+    """Create destructured token response payload, splitting a
+    token into its signature and payload components"""
+    response = json({"data": data})
+    response.cookies[SIGNATURE_KEY] = ".".join(token.split(".")[0:2])
+    response.cookies[PAYLOAD_KEY] = token.split(".")[2]
+
+    response.cookies[SIGNATURE_KEY]["httponly"] = True
+    return response
+
+
+def extract_request_token(request):
+    """Given a request was initiated by the chatbot engine, retrieve
+    the auth token directly from the slot field, otherwise construct
+    the token by concatenating the the supplied credentials (cookies)"""
+    try:
+        return request.json["tracker"]["slots"]["token"]
+    except (KeyError, TypeError):
+        pass
+    if request.cookies.get(SIGNATURE_KEY) is None:
+        raise ApiUnauthorized("Unauthorized: No token signature provided")
+    if request.cookies.get(PAYLOAD_KEY) is None:
+        raise ApiUnauthorized("Unauthorized: No token payload provided")
+    return ".".join(
+        [request.cookies.get(SIGNATURE_KEY), request.cookies.get(PAYLOAD_KEY)]
+    )
 
 
 async def create_response(conn, request_url, data, head_block, start=None, limit=None):
@@ -125,7 +156,9 @@ async def get_request_block(request):
 
 
 async def get_transactor_key(request):
-    id_dict = deserialize_api_key(request.app.config.SECRET_KEY, request.token)
+    id_dict = deserialize_api_key(
+        request.app.config.SECRET_KEY, extract_request_token(request)
+    )
     user_id = id_dict.get("id")
 
     auth_data = await auth_query.fetch_info_by_user_id(

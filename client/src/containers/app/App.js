@@ -80,7 +80,7 @@ class App extends Component {
     }
 
     if (prevProps.isSocketOpen !== isSocketOpen) {
-      sendMessage({do: "CREATE", user_id: id, message: "hi"});
+      sendMessage({do: 'CREATE', message: 'recommend', user_id: id});
     }
 
     // After the user object is populated, the following

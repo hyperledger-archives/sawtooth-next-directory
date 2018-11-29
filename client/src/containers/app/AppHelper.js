@@ -122,5 +122,7 @@ const logout = (dispatch) => {
   return dispatch(AuthActions.logoutRequest()) &&
     dispatch(ChatActions.clearMessages()) &&
     dispatch(ChatActions.socketClose()) &&
-    dispatch(UserActions.resetAll())
+    dispatch(UserActions.resetAll()) &&
+    dispatch(RequesterActions.resetAll()) &&
+    dispatch(ApproverActions.resetAll())
 };

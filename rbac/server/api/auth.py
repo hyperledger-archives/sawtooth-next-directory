@@ -20,7 +20,6 @@ import logging
 from itsdangerous import BadSignature
 
 from sanic import Blueprint
-from sanic.response import json
 
 from rbac.server.api.errors import ApiNotFound, ApiUnauthorized
 from rbac.server.api import utils
@@ -37,11 +36,9 @@ def authorized():
     def decorator(func):
         @wraps(func)
         async def decorated_function(request, *args, **kwargs):
-            if request.token is None:
-                raise ApiUnauthorized("Unauthorized: No bearer token provided")
             try:
                 id_dict = deserialize_api_key(
-                    request.app.config.SECRET_KEY, request.token
+                    request.app.config.SECRET_KEY, utils.extract_request_token(request)
                 )
                 await auth_query.fetch_info_by_user_id(
                     request.app.config.DB_CONN, id_dict.get("id")
@@ -67,6 +64,9 @@ async def authorize(request):
         request.app.config.DB_CONN, request.json.get("id")
     )
     if auth_info is None or auth_info.get("hashed_password") != hashed_pwd:
-        raise ApiUnauthorized("Unauthorized: Incorrect user id or password")
+        raise ApiUnauthorized("Unauthorized: Incorrect user ID or password")
     token = generate_api_key(request.app.config.SECRET_KEY, auth_info.get("user_id"))
-    return json({"data": {"authorization": token, "user_id": auth_info.get("user_id")}})
+    return utils.create_authorization_response(
+        token,
+        {"message": "Authorization successful", "user_id": auth_info.get("user_id")},
+    )
