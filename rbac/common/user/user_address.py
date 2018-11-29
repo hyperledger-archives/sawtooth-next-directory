@@ -20,6 +20,10 @@ from rbac.common.base.base_address import AddressBase
 class UserAddress(AddressBase):
     """Addresses and accesses user objects on the blockchain"""
 
+    def __init__(self):
+        AddressBase.__init__(self)
+        self._register()
+
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""

@@ -64,30 +64,74 @@ class TestUserAddresser(TestAssertions):
         """Tests that get_address_type returns AddressSpace.USER if it is a user
         address, and None if it is of another address type"""
         user_address = addresser.user.address(addresser.user.unique_id())
-        role_address = addresser.role.address(addresser.role.unique_id())
+        other_address = addresser.role.address(addresser.role.unique_id())
         self.assertEqual(
             addresser.get_address_type(user_address), addresser.AddressSpace.USER
         )
         self.assertEqual(
             addresser.user.get_address_type(user_address), addresser.AddressSpace.USER
         )
-        self.assertIsNone(addresser.user.get_address_type(role_address))
-        self.assertEqual(
-            addresser.get_address_type(role_address),
-            addresser.AddressSpace.ROLES_ATTRIBUTES,
+        self.assertIsNone(addresser.user.get_address_type(other_address))
+
+    def test_get_addresser(self):
+        """Test that get_addresser returns the addresser class if it is a
+        user address, and None if it is of another address type"""
+        user_address = addresser.user.address(addresser.user.unique_id())
+        other_address = addresser.role.address(addresser.role.unique_id())
+        self.assertIsInstance(
+            addresser.get_addresser(user_address), type(addresser.user)
         )
+        self.assertIsInstance(
+            addresser.user.get_addresser(user_address), type(addresser.user)
+        )
+        self.assertIsNone(addresser.user.get_addresser(other_address))
+
+    def test_user_parse(self):
+        """Test addresser.user.parse returns a parsed address if it is a user address"""
+        user_id = addresser.user.unique_id()
+        user_address = addresser.user.address(user_id)
+        parsed = addresser.user.parse(user_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.USER)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.SELF)
+        self.assertEqual(
+            parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
+        )
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.USER)
+        self.assertEqual(parsed.object_id, user_id)
+        self.assertEqual(parsed.target_id, None)
+
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        user_id = addresser.user.unique_id()
+        user_address = addresser.user.address(user_id)
+        parsed = addresser.parse(user_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.USER)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.SELF)
+        self.assertEqual(
+            parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
+        )
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.USER)
+        self.assertEqual(parsed.object_id, user_id)
+        self.assertEqual(parsed.target_id, None)
+
+    def test_parse_other(self):
+        """Test that parse returns None if it is not a user address"""
+        other_address = addresser.role.address(addresser.role.unique_id())
+        self.assertIsNone(addresser.user.parse(other_address))
 
     def test_addresses_are(self):
         """Test that addresses_are returns True if all addresses are a user
         addresses, and False if any addresses are if a different address type"""
         user_address1 = addresser.user.address(addresser.user.unique_id())
         user_address2 = addresser.user.address(addresser.user.unique_id())
-        role_address = addresser.role.address(addresser.role.unique_id())
+        other_address = addresser.role.address(addresser.role.unique_id())
         self.assertTrue(addresser.user.addresses_are([user_address1]))
         self.assertTrue(addresser.user.addresses_are([user_address1, user_address2]))
-        self.assertFalse(addresser.user.addresses_are([role_address]))
-        self.assertFalse(addresser.user.addresses_are([user_address1, role_address]))
-        self.assertFalse(addresser.user.addresses_are([role_address, user_address1]))
+        self.assertFalse(addresser.user.addresses_are([other_address]))
+        self.assertFalse(addresser.user.addresses_are([user_address1, other_address]))
+        self.assertFalse(addresser.user.addresses_are([other_address, user_address1]))
         self.assertTrue(addresser.user.addresses_are([]))
 
     def test_address_deterministic(self):

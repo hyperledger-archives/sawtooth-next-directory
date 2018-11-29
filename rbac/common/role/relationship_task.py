@@ -32,7 +32,7 @@ class TaskRelationship(BaseRelationship):
     """
 
     def __init__(self):
-        BaseRelationship.__init__(self)
+        super().__init__()
         self.propose = ProposeAddRoleTask()
         self.confirm = ConfirmAddRoleTask()
         self.reject = RejectAddRoleTask()

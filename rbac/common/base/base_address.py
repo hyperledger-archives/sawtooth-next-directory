@@ -20,12 +20,87 @@ import logging
 import re as regex
 from rbac.common.addresser.family_address import family
 from rbac.common.base.base_state import StateBase
+from rbac.common.addresser.addressers import register_addresser
 
 LOGGER = logging.getLogger(__name__)
 
 PATTERN_ZERO_BYTE = r"00"
 PATTERN_12_HEX_BYTES = r"[0-9a-f]{24}"
 PATTERN_12_BYTE_HASH = regex.compile(r"^" + PATTERN_12_HEX_BYTES + r"$")
+
+
+class Address:
+    """The values of a specific address"""
+
+    def __init__(
+        self,
+        address,
+        address_type,
+        object_type,
+        object_id,
+        related_type,
+        relationship_type,
+        target_id,
+    ):
+        self._address = address
+        self._address_type = address_type
+        self._object_type = object_type
+        self._object_id = object_id
+        self._related_type = related_type
+        self._relationship_type = relationship_type
+        self._target_id = target_id
+
+    @property
+    def address(self):
+        """The address"""
+        return self._address
+
+    @property
+    def address_type(self):
+        """The address type of this address"""
+        return self._address_type
+
+    @property
+    def object_type(self):
+        """The object type of this address"""
+        return self._object_type
+
+    @property
+    def object_id(self):
+        """The hash of an object_id (or the object_id itself
+        if it is a 12-byte unique identifier)"""
+        return self._object_id
+
+    @property
+    def related_type(self):
+        """The related type of this address"""
+        return self._related_type
+
+    @property
+    def relationship_type(self):
+        """The relationship type of this address"""
+        return self._relationship_type
+
+    @property
+    def target_id(self):
+        """The hash of a target_id (the target_id
+        itself if it is a 12-byte unique identifier)
+        None if no target_id."""
+        return self._target_id
+
+    def __repr__(self):
+        """Return a string representation of the object"""
+        return str(
+            {
+                "address": self.address,
+                "address_type": self.address_type.name,
+                "object_type": self.object_type.name,
+                "object_id": self.object_id,
+                "related_type": self.related_type.name,
+                "relationship_type": self.relationship_type.name,
+                "target_id": self.target_id,
+            }
+        )
 
 
 class AddressBase(StateBase):
@@ -71,6 +146,25 @@ class AddressBase(StateBase):
         )
         return address
 
+    def parse(self, address):
+        """Returns the components of an address if the address if of the address type
+        implemented by this class or a child class, otherwise returns None"""
+        if self._pattern.match(address):
+            return Address(
+                address=address,
+                address_type=self.address_type,
+                object_type=self.object_type,
+                object_id=self.get_object_id(address=address),
+                related_type=self.related_type,
+                relationship_type=self.relationship_type,
+                target_id=self.get_target_id(address=address),
+            )
+        return None
+
+    def _register(self):
+        """Registers the class as the authoritative addresser for this address type"""
+        register_addresser(self)
+
     @property
     def _family(self):
         """The transaction family implemented by this class"""
@@ -98,14 +192,21 @@ class AddressBase(StateBase):
         if it is an address type that stores relationships"""
         raise NotImplementedError("Class must implement this property")
 
+    @property
+    def address_type_name(self):
+        """Returns a unique name for this addresser based on the combination
+        of the properties object_type + related_type + relationship_type"""
+        return (
+            self.object_type.name
+            + "_"
+            + self.related_type.name
+            + "_"
+            + self.relationship_type.name
+        )
+
     def address(self, object_id, target_id=None):
         """Makes a blockchain address of this address type"""
         return self._address(object_id=object_id, target_id=target_id)
-
-    def get_address_type(self, address):
-        """Returns the address type if the address is of the address type
-        implemented by this class or a child class, otherewise returns None"""
-        return self.address_is(address=address)
 
     def address_is(self, address):
         """Returns the address type if the address is of the address type
@@ -116,5 +217,38 @@ class AddressBase(StateBase):
 
     def addresses_are(self, addresses):
         """Determines if all addresses given are of the classes' address type"""
-        # pylint: disable=unnecessary-lambda
-        return all(map(lambda a: self.address_is(a), addresses))
+        return all([self.address_is(a) for a in addresses])
+
+    def get_address_type(self, address):
+        """Returns the address type if the address is of the address type
+        implemented by this class, otherewise returns None"""
+        if self._pattern.match(address):
+            return self.address_type
+        return None
+
+    def get_addresser(self, address):
+        """Returns the self if the address is of the address type
+        implemented by this class, otherewise returns None"""
+        if self._pattern.match(address):
+            return self
+        return None
+
+    def get_object_id(self, address):
+        """Returns the hash of an object_id (or the object_id itself if it
+        is a 12-byte unique identifier), as encoded in a given address"""
+        return address[14:38]
+
+    def get_target_id(self, address):
+        """Returns the hash of a target_id (or the target_id itself if it
+        is a 12-byte unique identifier), as encoded in a given address"""
+        value = address[44:68]
+        if value == PATTERN_ZERO_BYTE * 12:
+            return None
+        return value
+
+    def deserialize(self, address, data):
+        """Returns the deserialized content if the address is of the address type
+        implemented by this class or a child class, otherewise returns None"""
+        if self._pattern.match(address):
+            return super().deserialize(address=address, data=data)
+        return None

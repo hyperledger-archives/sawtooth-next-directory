@@ -15,10 +15,15 @@
 """Addresses and accesses task objects on the blockchain"""
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
+from rbac.common.base.base_relationship import BaseRelationship
 
 
-class TaskOwnerAddress(AddressBase):
+class TaskOwnerAddress(BaseRelationship):
     """Addresses and accesses the role owner relationship"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def address_type(self):
@@ -41,8 +46,12 @@ class TaskOwnerAddress(AddressBase):
         return addresser.RelationshipType.OWNER
 
 
-class TaskAdminAddress(AddressBase):
+class TaskAdminAddress(BaseRelationship):
     """Addresses and accesses the role admin relationship"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def address_type(self):
@@ -69,7 +78,8 @@ class TaskAddress(AddressBase):
     """Addresses and accesses task objects on the blockchain"""
 
     def __init__(self):
-        AddressBase.__init__(self)
+        super().__init__()
+        self._register()
         self.owner = TaskOwnerAddress()
         self.admin = TaskAdminAddress()
 
@@ -94,18 +104,14 @@ class TaskAddress(AddressBase):
         return addresser.RelationshipType.ATTRIBUTES
 
     @property
-    def _state_container_prefix(self):
-        """Tasks state container name contains Attributes (TaskAttributesContainer)"""
+    def _state_object_name(self):
+        """Tasks state object name ends with Attributes (TaskAttributes)"""
         return self._name_camel + "Attributes"
 
-    def get_address_type(self, address):
-        """Returns the address type if the address is of the address type
-        implemented by this class or a child class, otherewise returns None"""
-        return (
-            self.address_is(address=address)
-            or self.owner.get_address_type(address=address)
-            or self.admin.get_address_type(address=address)
-        )
+    @property
+    def _state_container_list_name(self):
+        """Tasks state container collection name contains _attributes (task_attributes)"""
+        return self._name_lower + "_attributes"
 
 
 TASK_ADDRESS = TaskAddress()

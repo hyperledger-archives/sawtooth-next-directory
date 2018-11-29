@@ -15,10 +15,15 @@
 """Addresses and accesses role objects on the blockchain"""
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
+from rbac.common.base.base_relationship import BaseRelationship
 
 
-class RoleOwnerAddress(AddressBase):
+class RoleOwnerAddress(BaseRelationship):
     """Addresses and accesses the role owner relationship"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def address_type(self):
@@ -41,8 +46,12 @@ class RoleOwnerAddress(AddressBase):
         return addresser.RelationshipType.OWNER
 
 
-class RoleAdminAddress(AddressBase):
+class RoleAdminAddress(BaseRelationship):
     """Addresses and accesses the role admin relationship"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def address_type(self):
@@ -65,8 +74,12 @@ class RoleAdminAddress(AddressBase):
         return addresser.RelationshipType.ADMIN
 
 
-class RoleMemberAddress(AddressBase):
+class RoleMemberAddress(BaseRelationship):
     """Addresses and accesses the role member relationship"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def address_type(self):
@@ -89,8 +102,12 @@ class RoleMemberAddress(AddressBase):
         return addresser.RelationshipType.MEMBER
 
 
-class RoleTaskAddress(AddressBase):
+class RoleTaskAddress(BaseRelationship):
     """Addresses and accesses the role task relationship"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def address_type(self):
@@ -117,7 +134,8 @@ class RoleAddress(AddressBase):
     """Addresses and accesses role objects on the blockchain"""
 
     def __init__(self):
-        AddressBase.__init__(self)
+        super().__init__()
+        self._register()
         self.owner = RoleOwnerAddress()
         self.admin = RoleAdminAddress()
         self.member = RoleMemberAddress()
@@ -143,16 +161,15 @@ class RoleAddress(AddressBase):
         """The related type from AddressSpace implemented by this class"""
         return addresser.RelationshipType.ATTRIBUTES
 
-    def get_address_type(self, address):
-        """Returns the address type if the address is of the address type
-        implemented by this class or a child class, otherewise returns None"""
-        return (
-            self.address_is(address=address)
-            or self.owner.get_address_type(address=address)
-            or self.admin.get_address_type(address=address)
-            or self.member.get_address_type(address=address)
-            or self.task.get_address_type(address=address)
-        )
+    @property
+    def _state_object_name(self):
+        """Tasks state object name ends with Attributes (TaskAttributes)"""
+        return self._name_camel + "Attributes"
+
+    @property
+    def _state_container_list_name(self):
+        """Tasks state container collection name contains _attributes (task_attributes)"""
+        return self._name_lower + "_attributes"
 
 
 ROLE_ADDRESS = RoleAddress()
