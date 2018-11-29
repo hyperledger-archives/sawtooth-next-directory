@@ -23,22 +23,23 @@ usage() {
 
     cat << EOM
         Usage:
-            $0 [-t] [-l] [-f] [-p] [-a]
+            $0 [-t] [-l] [-f] [-p] [-c] [-a]
 
         Options:
             -t           run unit and integration tests
             -l           lint source code
             -f           format python source (black)
             -p           build protobuf modules using docker containers
+            -c           train chatbot nlu and core
             -a           lint, tests in order
             -h           print help text
-            
-            
+
+
 EOM
 
 }
 
-if ! [ -e .env ] 
+if ! [ -e .env ]
 then
     echo ".env file not found. Creating one from .env.example ..."
     cp ./.env.example ./.env
@@ -49,7 +50,7 @@ info() {
 }
 
 
-while getopts hpltiaf opt;
+while getopts hpltiafc opt;
 do
     case $opt in
         h)
@@ -64,6 +65,11 @@ do
         t)
             info "Running tests"
             $TOP_DIR/bin/run_docker_test $TOP_DIR/docker-test.yaml
+            ;;
+        c)
+            info "Training chatbot"
+            docker build . -f docker/chatbot.Dockerfile -t rbac-chatbot
+            docker run --rm -v $(pwd):/project/hyperledger-rbac rbac-chatbot bin/train --core --nlu
             ;;
         l)
             info "Running lint"
