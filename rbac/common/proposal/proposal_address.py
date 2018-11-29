@@ -20,6 +20,10 @@ from rbac.common.base.base_address import AddressBase
 class ProposalAddress(AddressBase):
     """Addresses and accesses proposal objects on the blockchain"""
 
+    def __init__(self):
+        AddressBase.__init__(self)
+        self._register()
+
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
@@ -39,6 +43,11 @@ class ProposalAddress(AddressBase):
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
         return addresser.RelationshipType.ATTRIBUTES
+
+    @property
+    def _state_container_prefix(self):
+        """Proposal container is plural (ProposalsContainer)"""
+        return self._state_object_name + "s"
 
 
 PROPOSAL_ADDRESS = ProposalAddress()

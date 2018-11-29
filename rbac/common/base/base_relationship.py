@@ -46,6 +46,16 @@ class BaseRelationship(AddressBase):
         raise NotImplementedError("Class must implement this property")
 
     @property
+    def _state_object_name(self):
+        """Task relationship state object name ends with Relationship (TaskRelationship)"""
+        return self._name_camel + "Relationship"
+
+    @property
+    def _state_container_list_name(self):
+        """Tasks relationship state container collection name is relationships"""
+        return "relationships"
+
+    @property
     def _state_container(self):
         """The state container (protobuf) used by this object type
         Derives name of the protobuf class from the object type name

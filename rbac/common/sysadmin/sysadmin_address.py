@@ -20,6 +20,10 @@ from rbac.common.base.base_address import AddressBase
 class SysAdminOwnerAddress(AddressBase):
     """Addresses and accesses the sysadmin owner relationship"""
 
+    def __init__(self):
+        AddressBase.__init__(self)
+        self._register()
+
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
@@ -44,6 +48,10 @@ class SysAdminOwnerAddress(AddressBase):
 class SysAdminAdminAddress(AddressBase):
     """Addresses and accesses the sysadmin admin relationship"""
 
+    def __init__(self):
+        AddressBase.__init__(self)
+        self._register()
+
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
@@ -67,6 +75,10 @@ class SysAdminAdminAddress(AddressBase):
 
 class SysAdminMemberAddress(AddressBase):
     """Addresses and accesses the sysadmin member relationship"""
+
+    def __init__(self):
+        AddressBase.__init__(self)
+        self._register()
 
     @property
     def address_type(self):
@@ -94,6 +106,7 @@ class SysAdminAddress(AddressBase):
 
     def __init__(self):
         AddressBase.__init__(self)
+        self._register()
         self.owner = SysAdminOwnerAddress()
         self.admin = SysAdminAdminAddress()
         self.member = SysAdminMemberAddress()
@@ -122,16 +135,6 @@ class SysAdminAddress(AddressBase):
         """Makes a blockchain address of this address type
         (sysadmin has no object_id, there is only one sysadmin role)"""
         return self._address(object_id=object_id, target_id=target_id)
-
-    def get_address_type(self, address):
-        """Returns the address type if the address is of the address type
-        implemented by this class or a child class, otherewise returns None"""
-        return (
-            self.address_is(address=address)
-            or self.owner.get_address_type(address=address)
-            or self.admin.get_address_type(address=address)
-            or self.member.get_address_type(address=address)
-        )
 
 
 SYSADMIN_ADDRESS = SysAdminAddress()

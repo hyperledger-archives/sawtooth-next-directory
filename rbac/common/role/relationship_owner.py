@@ -32,7 +32,7 @@ class OwnerRelationship(BaseRelationship):
     """
 
     def __init__(self):
-        BaseRelationship.__init__(self)
+        super().__init__()
         self.propose = ProposeAddRoleOwner()
         self.confirm = ConfirmAddRoleOwner()
         self.reject = RejectAddRoleOwner()

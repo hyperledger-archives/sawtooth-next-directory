@@ -36,6 +36,34 @@ class TestRoleAddresser(TestAssertions):
             addresser.address_is(role_address), addresser.AddressSpace.ROLES_ATTRIBUTES
         )
 
+    def test_get_address_type(self):
+        """Tests that get_address_type returns AddressSpace.USER if it is a role
+        address, and None if it is of another address type"""
+        role_address = addresser.role.address(addresser.role.unique_id())
+        other_address = addresser.user.address(addresser.user.unique_id())
+        self.assertEqual(
+            addresser.get_address_type(role_address),
+            addresser.AddressSpace.ROLES_ATTRIBUTES,
+        )
+        self.assertEqual(
+            addresser.role.get_address_type(role_address),
+            addresser.AddressSpace.ROLES_ATTRIBUTES,
+        )
+        self.assertIsNone(addresser.role.get_address_type(other_address))
+
+    def test_addresses_are(self):
+        """Test that addresses_are returns True if all addresses are a role
+        addresses, and False if any addresses are if a different address type"""
+        role_address1 = addresser.role.address(addresser.role.unique_id())
+        role_address2 = addresser.role.address(addresser.role.unique_id())
+        other_address = addresser.user.address(addresser.user.unique_id())
+        self.assertTrue(addresser.role.addresses_are([role_address1]))
+        self.assertTrue(addresser.role.addresses_are([role_address1, role_address2]))
+        self.assertFalse(addresser.role.addresses_are([other_address]))
+        self.assertFalse(addresser.role.addresses_are([role_address1, other_address]))
+        self.assertFalse(addresser.role.addresses_are([other_address, role_address1]))
+        self.assertTrue(addresser.role.addresses_are([]))
+
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id1 = addresser.role.unique_id()

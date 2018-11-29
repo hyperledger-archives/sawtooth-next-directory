@@ -19,6 +19,11 @@ from rbac.common.addresser.address_space import AddressSpace
 from rbac.common.addresser.address_space import ObjectType
 from rbac.common.addresser.address_space import RelationshipType
 from rbac.common.addresser.address_space import MessageActionType
+from rbac.common.addresser.addressers import get_address_type
+from rbac.common.addresser.addressers import get_addresser
+from rbac.common.addresser.addressers import deserialize
+from rbac.common.addresser.addressers import parse
+from rbac.common.addresser.addressers import parse_addresses
 from rbac.common.addresser.family_address import family
 from rbac.common.user.user_address import USER_ADDRESS as user
 from rbac.common.role.role_address import ROLE_ADDRESS as role
@@ -35,17 +40,6 @@ def address_is(address):
     return get_address_type(address=address)
 
 
-def get_address_type(address):
-    """Returns the address type of the address from AddressSpace"""
-    return (
-        user.get_address_type(address=address)
-        or role.get_address_type(address=address)
-        or task.get_address_type(address=address)
-        or proposal.get_address_type(address=address)
-        or sysadmin.get_address_type(address=address)
-    )
-
-
 __all__ = [
     "AddressSpace",
     "ObjectType",
@@ -53,6 +47,10 @@ __all__ = [
     "MessageActionType",
     "address_is",
     "get_address_type",
+    "get_addresser",
+    "deserialize",
+    "parse",
+    "parse_addresses",
     "family",
     "user",
     "role",

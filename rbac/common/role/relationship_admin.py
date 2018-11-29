@@ -32,7 +32,7 @@ class AdminRelationship(BaseRelationship):
     """
 
     def __init__(self):
-        BaseRelationship.__init__(self)
+        super().__init__()
         self.propose = ProposeAddRoleAdmin()
         self.confirm = ConfirmAddRoleAdmin()
         self.reject = RejectAddRoleAdmin()
