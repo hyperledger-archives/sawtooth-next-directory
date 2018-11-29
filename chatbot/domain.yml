@@ -14,18 +14,99 @@
 # -----------------------------------------------------------------------------
 
 intents:
-  - default
+  - recommend
+  - affirm
+  - greet
+  - send
+  - bye
+  - thank
+  - feeling
 
 slots:
+  resource_id:
+    type: text
   resource_name:
+    type: text
+  approver_name:
+    type: text
+  reason:
     type: text
 
 actions:
   - utter_default
+  - utter_recommendation
+  - utter_greet
+  - utter_draft
+  - utter_exclame
+  - utter_fanfare_sent
+  - utter_request_bye
+  - utter_thank
+  - utter_feeling
+  - utter_bye
+  - action_request_access
 
 templates:
   utter_default:
-  - text: >
-      Hi! Based on your role, I bet having access
-      to {resource_name} would make it easier for you
-      to function. Would you like me to request access?
+    - text: Sorry, I didn't get that. Can you clarify?
+    - text: I don't understand what you mean.
+
+  utter_recommendation:
+    - text: >-
+        Hi! Based on your role, I bet having access
+        to {resource_name} would make it easier for you
+        to function. Would you like me to request access?
+      buttons:
+        - title: Yes, please
+          payload: Yes, please
+        - title: No, thanks
+          payload: No, thanks
+
+  utter_greet:
+    - text: Bonjour! How can I help you?
+    - text: Hola!
+    - text: Sup?
+    - text: Howdy partner.
+    - text: Oh hi there.
+    - text: What's up?
+    - text: How may I serve you?
+
+  utter_draft:
+    - text: >-
+        Great. All you need to do is draft a note for
+        {approver_name} and I'll take care of the rest.
+      buttons:
+        - title: Send request
+          payload: /send
+        - title: Nevermind
+          payload: /cancel
+
+  utter_exclame:
+    - text: Awesome!
+
+  utter_fanfare_sent:
+    - text: Ta-da! Request sent
+
+  utter_request_bye:
+    - text: >-
+        Feel free to ping me anytime. I will notify you
+        once I hear from {approver_name}. Au revoir!
+
+  utter_bye:
+    - text: Talk to you later.
+    - text: Later gater.
+    - text: Until next time.
+    - text: Bye. I will always be here for you.
+
+  utter_thank:
+    - text: You're most welcome.
+    - text: No problem.
+    - text: My pleasure.
+    - text: You got it.
+    - text: Anytime.
+    - text: Sure thing.
+
+  utter_feeling:
+    - text: I'm okay.
+    - text: I'm just hanging around.
+    - text: Eh. Could be better I guess.
+    - text: Do you actually care?

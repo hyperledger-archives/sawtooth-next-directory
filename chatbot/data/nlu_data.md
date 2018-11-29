@@ -1,3 +1,13 @@
+## intent:recommend
+- recommend
+- help
+- help me
+- help me out
+- recommend something
+- i need help
+- please help me
+- i don't know what to do
+
 ## intent:bye
 - Bye
 - Goodbye
@@ -31,6 +41,13 @@
 - hello everybody
 - hello is anybody there
 - hello robot
+- what's happening
+- what's good?
+- howdy
+- ayyy
+- hola
+- guten tag
+- bonjour
 
 ## intent:thank
 - Thanks
@@ -48,6 +65,11 @@
 - amazing, thanks
 - cool, thanks
 - cool thank you
+- thx
+- thx much
+- gracias
+- merci
+- nice
 
 ## intent:affirm
 - yes
@@ -56,6 +78,22 @@
 - for sure
 - yes yes yes
 - definitely
+- yep
+- uh huh
+- you bet
+- ok
+- k
+- okay
+- that's cool
+- cool
+- cool with me
+- sounds good
+- that works
+- sure whatever
+- eh fine
+- why not
+- positively
+- 100%
 
 ## intent:name
 - My name is [Juste](name)
@@ -85,6 +123,16 @@
 - Can you tell jokes?
 - Please tell me a joke
 - I need to hear a joke
+
+## intent:feeling
+- How are you?
+- how are you
+- how are you feeling
+- Everything okay?
+- How's it going?
+- what are you feeling?
+- whatcha thinking about
+- what does it feel like being a bot?
 
 ## synonym:role
 - item
