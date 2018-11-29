@@ -64,6 +64,7 @@ VALID_OPERATIONS = {
 
 
 def inbound_sync_listener():
+    """Initialize a delta inbound sync with Azure Active Directory."""
     while True:  # pylint: disable=too-many-nested-blocks
         provider_id = TENANT_ID
         try:
@@ -154,7 +155,7 @@ def insert_change_to_db(data, record_timestamp):
         "timestamp": record_timestamp,
         "provider_id": TENANT_ID,
     }
-    response = r.table("queue_inbound").insert(inbound_entry).run()
+    r.table("queue_inbound").insert(inbound_entry).run()
 
 
 def get_last_delta_sync(provider_id, sync_type):
