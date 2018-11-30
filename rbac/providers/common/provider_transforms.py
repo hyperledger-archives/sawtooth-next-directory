@@ -18,7 +18,6 @@ USER_TRANSFORM = {
     "deleted_date": {"azure": "deletedDateTime", "ldap": None},
     "account_enabled": {"azure": "accountEnabled", "ldap": None},
     "business_phones": {"azure": "businessPhones", "ldap": "telephoneNumber"},
-    "changed_date": {"azure": None, "ldap": "whenChanged"},
     "city": {"azure": "city", "ldap": None},
     "created_date": {"azure": "createdDateTime", "ldap": "whenCreated"},
     "company_name": {"azure": "companyName", "ldap": "company"},
