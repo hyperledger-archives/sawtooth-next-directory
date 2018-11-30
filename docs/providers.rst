@@ -7,7 +7,7 @@ NEXT Directory Platform has the ability to incorporate various identity provider
 
 Here are the providers that we currently support:
 
-- :ref:`ad-provider`
+- :ref:`ldap-provider`
 - :ref:`aad-provider`
 
 
