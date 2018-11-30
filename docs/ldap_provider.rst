@@ -69,8 +69,6 @@ User Fields
 +---------------------+----------------------+
 | telephoneNumber     | business_phones      |
 +---------------------+----------------------+
-| whenChanged         | changed_date         |
-+---------------------+----------------------+
 | whenCreated         | created_date         |
 +---------------------+----------------------+
 | company             | company_name         |
