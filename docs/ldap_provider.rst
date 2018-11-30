@@ -99,6 +99,14 @@ User Fields
 +---------------------+----------------------+
 | distinguishedName   | distinguished_name   |
 +---------------------+----------------------+
+| postalCode          | postal_code          |
++---------------------+----------------------+
+| preferredLanguage   | preferred_language   |
++---------------------+----------------------+
+| streetAddress       | street_address       |
++---------------------+----------------------+
+| userPrincipalName   | user_principal_name  |
++---------------------+----------------------+
 
 
 Group Fields
