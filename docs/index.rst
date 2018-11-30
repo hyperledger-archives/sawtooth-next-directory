@@ -11,4 +11,5 @@
    introduction
    providers
    support
+   developer-setup
 
