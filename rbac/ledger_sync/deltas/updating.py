@@ -15,9 +15,12 @@
 
 import sys
 import logging
+from rethinkdb import r
 
 from rbac.common import addresser
 from rbac.common.addresser import AddressSpace
+from rbac.common.util import bytes_from_hex
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -75,11 +78,69 @@ def get_updater(database, block_num):
     return lambda adr, rsc: _update(database, block_num, adr, rsc)
 
 
+def _update_state(database, block_num, address, resource):
+    try:
+        # update state table
+        state = dict(resource)
+        address_parts = addresser.parse(address)
+        address_binary = bytes_from_hex(address)
+        key = address_binary
+        keys = {"address": address_binary}
+        data = {
+            "block_updated": int(block_num),
+            "updated_at": r.now(),
+            "object_type": address_parts.object_type.value,
+            "object_id": bytes_from_hex(address_parts.object_id),
+            "related_type": address_parts.related_type.value,
+            "relationship_type": address_parts.relationship_type.value,
+            "related_id": bytes_from_hex(address_parts.target_id),
+            "data": resource,
+        }
+        table_query = database.get_table("state")
+        query = table_query.get(key).replace(
+            lambda doc: r.branch(
+                (doc is None),
+                r.expr(data).merge(
+                    {
+                        "address": key,
+                        "block_created": int(block_num),
+                        "created_at": r.now(),
+                    }
+                ),
+                doc.merge(data),
+            )
+        )
+        result = database.run_query(query)
+        if not result["inserted"] == 1 and not result["replaced"]:
+            LOGGER.warning("error updating state table:\n%s\n%s", result, query)
+
+        key = [address_binary, int(block_num)]
+        data["address"] = key
+        if result["inserted"] == 1:
+            data["block_created"] = int(block_num)
+            data["created_at"] = r.now()
+        elif result["replaced"] == 1:
+            LOGGER.warning(result)
+
+        table_query = database.get_table("state_history")
+        query = table_query.get(key).replace(data)
+        result = database.run_query(query)
+        if not result["inserted"] == 1 and not result["replaced"]:
+            LOGGER.warning("error updating state_history table:\n%s\n%s", result, query)
+
+    except Exception as err:  # pylint: disable=broad-except
+        LOGGER.warning("update_state %s error:", type(err))
+        LOGGER.warning(err)
+
+
 def _update(database, block_num, address, resource):
     data_type = addresser.address_is(address)
 
+    _update_state(database, block_num, address, resource)
+
     resource["start_block_num"] = block_num
     resource["end_block_num"] = str(sys.maxsize)
+
     if ADD_SUFFIX.get(data_type, False):
         resource["suffix"] = int(address[-2:], 16)
 

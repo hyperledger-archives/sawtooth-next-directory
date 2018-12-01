@@ -21,7 +21,7 @@ import sys
 import os
 
 import rethinkdb as r
-from rethinkdb.errors import RqlRuntimeError
+from rethinkdb.errors import ReqlRuntimeError
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.INFO
@@ -62,6 +62,11 @@ def setup_db(host, port, name):
 
         LOGGER.info('Creating table: state')
         r.db(name).table_create('state', primary_key='address').run(conn)
+        r.db(name).table("state").index_create("object", [r.row["object_type"], r.row["object_id"]]).run(conn)
+
+        LOGGER.info('Creating table: state_history')
+        r.db(name).table_create('state_history', primary_key='address').run(conn)
+        r.db(name).table("state_history").index_create("object", [r.row["object_type"], r.row["object_id"]]).run(conn)
 
         LOGGER.info('Creating table: users')
         r.db(name).table_create('users').run(conn)
@@ -94,8 +99,8 @@ def setup_db(host, port, name):
         role_tables.for_each(r.db(name).table_create(r.row)).run(conn)
         role_tables.for_each(r.db(name).table(r.row).index_create('role_id')).run(conn)
 
-    except RqlRuntimeError:
-        LOGGER.info('Database already exists: %s', name)
+    except ReqlRuntimeError as err:
+        LOGGER.info('Rethink exception %s', err)
 
     finally:
         conn.close()
