@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 """Confirm Role Add Owner Test"""
 
-# pylint: disable=no-member
+# pylint: disable=no-member,too-many-locals
 
 import logging
 import pytest
@@ -59,12 +59,15 @@ class ConfirmRoleAddOwnerTest(TestAssertions):
         reason = helper.proposal.reason()
         relationship_address = rbac.role.owner.address(role_id, user_id)
         signer_keypair = helper.user.key()
+
+        user_address = rbac.user.address(user_id)
         signer_admin_address = rbac.role.admin.address(
             role_id, signer_keypair.public_key
         )
         signer_owner_address = rbac.role.owner.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.role.owner.confirm.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -74,14 +77,17 @@ class ConfirmRoleAddOwnerTest(TestAssertions):
         )
 
         self.assertIsInstance(inputs, list)
+        self.assertIn(user_address, inputs)
         self.assertIn(signer_owner_address, inputs)
         self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 3)
+        self.assertIn(relationship_address, inputs)
+        self.assertEqual(len(inputs), 6)
 
         self.assertIsInstance(outputs, list)
-        self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
+        self.assertIn(relationship_address, outputs)
         self.assertEqual(len(outputs), 2)
 
     @pytest.mark.library
@@ -94,12 +100,16 @@ class ConfirmRoleAddOwnerTest(TestAssertions):
         reason = helper.proposal.reason()
         relationship_address = rbac.role.owner.address(role_id, user_id)
         signer_keypair = helper.user.key()
+
+        user_address = rbac.user.address(user_id)
         signer_admin_address = rbac.role.admin.address(
             role_id, signer_keypair.public_key
         )
         signer_owner_address = rbac.role.owner.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
+
         message = rbac.role.owner.confirm.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -108,21 +118,24 @@ class ConfirmRoleAddOwnerTest(TestAssertions):
             message=message, signer_keypair=signer_keypair
         )
         self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
-
         inputs = list(payload.inputs)
+        outputs = list(payload.outputs)
+
         self.assertIsInstance(inputs, list)
+        self.assertIn(user_address, inputs)
         self.assertIn(signer_owner_address, inputs)
         self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 3)
+        self.assertIn(relationship_address, inputs)
+        self.assertEqual(len(inputs), 6)
 
-        outputs = list(payload.outputs)
         self.assertIsInstance(outputs, list)
-        self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
+        self.assertIn(relationship_address, outputs)
         self.assertEqual(len(outputs), 2)
 
-    @pytest.mark.integration
+    @pytest.mark.confirm_role_owner
     def test_create(self):
         """Test executing the message on the blockchain"""
         proposal, _, _, role_owner_key, _, _ = helper.role.owner.propose.create()
@@ -150,3 +163,8 @@ class ConfirmRoleAddOwnerTest(TestAssertions):
         self.assertEqual(confirm.target_id, proposal.target_id)
         self.assertEqual(confirm.close_reason, reason)
         self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
+        self.assertTrue(
+            rbac.role.owner.exists(
+                object_id=proposal.object_id, target_id=proposal.target_id
+            )
+        )

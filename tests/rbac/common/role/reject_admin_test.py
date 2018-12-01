@@ -58,6 +58,7 @@ class RejectRoleAddAdminTest(TestAssertions):
         signer_admin_address = rbac.role.admin.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.role.admin.reject.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -68,8 +69,9 @@ class RejectRoleAddAdminTest(TestAssertions):
 
         self.assertIsInstance(inputs, list)
         self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 2)
+        self.assertEqual(len(inputs), 3)
 
         self.assertIsInstance(outputs, list)
         self.assertIn(proposal_address, outputs)
@@ -87,6 +89,7 @@ class RejectRoleAddAdminTest(TestAssertions):
         signer_admin_address = rbac.role.admin.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.role.admin.reject.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -94,20 +97,22 @@ class RejectRoleAddAdminTest(TestAssertions):
         payload = rbac.role.admin.reject.make_payload(
             message=message, signer_keypair=signer_keypair
         )
+        inputs = list(payload.inputs)
+        outputs = list(payload.outputs)
+
         self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
 
-        inputs = list(payload.inputs)
         self.assertIsInstance(inputs, list)
         self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 2)
+        self.assertEqual(len(inputs), 3)
 
-        outputs = list(payload.outputs)
         self.assertIsInstance(outputs, list)
         self.assertIn(proposal_address, outputs)
         self.assertEqual(len(outputs), 1)
 
-    @pytest.mark.integration
+    @pytest.mark.reject_role_admin
     def test_create(self):
         """Test executing the message on the blockchain"""
         proposal, _, _, role_admin_key, _, _ = helper.role.admin.propose.create()
@@ -134,4 +139,5 @@ class RejectRoleAddAdminTest(TestAssertions):
         self.assertEqual(reject.object_id, proposal.object_id)
         self.assertEqual(reject.target_id, proposal.target_id)
         self.assertEqual(reject.close_reason, reason)
+        self.assertEqual(reject.closer, role_admin_key.public_key)
         self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)

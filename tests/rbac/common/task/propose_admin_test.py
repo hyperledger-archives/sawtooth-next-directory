@@ -35,9 +35,14 @@ class ProposeTaskAddAdminTest(TestAssertions):
         """Test making the message"""
         user_id = helper.user.id()
         task_id = helper.task.id()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         message = rbac.task.admin.propose.make(
-            user_id=user_id, task_id=task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            task_id=task_id,
+            reason=reason,
+            metadata=None,
         )
         self.assertIsInstance(
             message, protobuf.task_transaction_pb2.ProposeAddTaskAdmin
@@ -53,12 +58,17 @@ class ProposeTaskAddAdminTest(TestAssertions):
         user_address = rbac.user.address(user_id)
         task_id = helper.task.id()
         task_address = rbac.task.address(task_id)
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         relationship_address = rbac.task.admin.address(task_id, user_id)
         proposal_address = rbac.task.admin.propose.address(task_id, user_id)
         signer_keypair = helper.user.key()
         message = rbac.task.admin.propose.make(
-            user_id=user_id, task_id=task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            task_id=task_id,
+            reason=reason,
+            metadata=None,
         )
 
         inputs, outputs = rbac.task.admin.propose.make_addresses(
@@ -82,12 +92,17 @@ class ProposeTaskAddAdminTest(TestAssertions):
         user_address = rbac.user.address(user_id)
         task_id = helper.task.id()
         task_address = rbac.task.address(task_id)
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         relationship_address = rbac.task.admin.address(task_id, user_id)
         proposal_address = rbac.task.admin.propose.address(task_id, user_id)
         signer_keypair = helper.user.key()
         message = rbac.task.admin.propose.make(
-            user_id=user_id, task_id=task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            task_id=task_id,
+            reason=reason,
+            metadata=None,
         )
 
         payload = rbac.task.admin.propose.make_payload(
@@ -107,27 +122,32 @@ class ProposeTaskAddAdminTest(TestAssertions):
         self.assertIsInstance(outputs, list)
         self.assertEqual(outputs, [proposal_address])
 
+    @pytest.mark.propose_task_admin
     def test_create(self):
         """Test executing the message on the blockchain"""
         task, _, _ = helper.task.create()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         user, signer_keypair = helper.user.create()
-
         message = rbac.task.admin.propose.make(
-            user_id=user.user_id, task_id=task.task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user.user_id,
+            task_id=task.task_id,
+            reason=reason,
+            metadata=None,
         )
-        proposal, status = rbac.task.admin.propose.create(
-            signer_keypair=signer_keypair,
-            message=message,
-            object_id=task.task_id,
-            target_id=user.user_id,
+        _, status = rbac.task.admin.propose.create(
+            signer_keypair=signer_keypair, message=message
         )
         self.assertStatusSuccess(status)
+        proposal = rbac.task.admin.propose.get(
+            object_id=task.task_id, target_id=user.user_id
+        )
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_ADMIN
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, task.task_id)
         self.assertEqual(proposal.target_id, user.user_id)
         self.assertEqual(proposal.opener, signer_keypair.public_key)

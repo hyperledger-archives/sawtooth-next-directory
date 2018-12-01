@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Functions for reading and manipulating blockchain state
+given the state context object available from the transaction processor"""
 
 import logging
 
@@ -24,19 +26,53 @@ ERROR_MESSAGE_TIMEOUT = "Timeout after %s seconds during get from state"
 LOGGER = logging.getLogger(__name__)
 
 
-def get_address(state, address):
+def get_address(context, address):
     """Reads an address from the blockchain state"""
     try:
-        return state.get_state(addresses=[address], timeout=TIMEOUT_SECONDS)
+        state_entries = list(
+            context.get_state(addresses=[address], timeout=TIMEOUT_SECONDS)
+        )
+        if not state_entries:
+            return None
+        if len(state_entries) > 1:
+            LOGGER.warning(
+                "Expected one state entry for address %s and got more than one:\n%s",
+                address,
+                state_entries,
+            )
+        state_entry = state_entries[0]
+        if not hasattr(state_entry, "data"):
+            raise InternalError(
+                "Expected state entry for address {} to have a data property and got {}".format(
+                    address, state_entry
+                )
+            )
+        return state_entries[0].data
     except FutureTimeoutError:
         raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
 
 
-def set_address(state, address, container):
+def get_addresses(context, addresses):
+    """Reads a list of addresses from the blockchain state"""
+    try:
+        return list(context.get_state(addresses=addresses, timeout=TIMEOUT_SECONDS))
+    except FutureTimeoutError:
+        raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
+
+
+def set_address(context, address, container):
     """Writes an address to blockchain state"""
     try:
-        return state.set_state(
+        return context.set_state(
             entries={address: container.SerializeToString()}, timeout=TIMEOUT_SECONDS
         )
+    except FutureTimeoutError:
+        raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
+
+
+def set_state(context, entries):
+    """Writes an address to blockchain state"""
+    try:
+        return context.set_state(entries=entries, timeout=TIMEOUT_SECONDS)
     except FutureTimeoutError:
         raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)

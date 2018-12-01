@@ -57,7 +57,10 @@ class CreateTaskTestHelper(TestAssertions):
         """Get a test data CreateTask message"""
         task_id = self.id()
         name = self.name()
-        message = rbac.task.make(task_id=task_id, name=name)
+        user_id = helper.user.id()
+        message = rbac.task.make(
+            task_id=task_id, name=name, owners=[user_id], admins=[user_id]
+        )
         self.assertIsInstance(message, protobuf.task_transaction_pb2.CreateTask)
         self.assertEqual(message.task_id, task_id)
         self.assertEqual(message.name, name)
@@ -65,15 +68,17 @@ class CreateTaskTestHelper(TestAssertions):
 
     def create(self):
         """Create a test task"""
+        task_id = self.id()
+        name = self.name()
         user, keypair = helper.user.create()
-        message = self.message()
-        message.admins.extend([user.user_id])
-        message.owners.extend([user.user_id])
-
-        task, status = rbac.task.create(
+        message = rbac.task.make(
+            task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
+        )
+        _, status = rbac.task.create(
             signer_keypair=keypair, message=message, object_id=message.task_id
         )
         self.assertStatusSuccess(status)
+        task = rbac.task.get(object_id=message.task_id)
         self.assertEqualMessage(task, message, rbac.task.message_fields_not_in_state)
         self.assertTrue(
             rbac.task.owner.exists(object_id=task.task_id, target_id=user.user_id)

@@ -61,6 +61,7 @@ class RejectRoleAddOwnerTest(TestAssertions):
         signer_owner_address = rbac.role.owner.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.role.owner.reject.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -72,8 +73,9 @@ class RejectRoleAddOwnerTest(TestAssertions):
         self.assertIsInstance(inputs, list)
         self.assertIn(signer_owner_address, inputs)
         self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 3)
+        self.assertEqual(len(inputs), 4)
 
         self.assertIsInstance(outputs, list)
         self.assertIn(proposal_address, outputs)
@@ -94,6 +96,7 @@ class RejectRoleAddOwnerTest(TestAssertions):
         signer_owner_address = rbac.role.owner.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.role.owner.reject.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -101,21 +104,28 @@ class RejectRoleAddOwnerTest(TestAssertions):
         payload = rbac.role.owner.reject.make_payload(
             message=message, signer_keypair=signer_keypair
         )
+        inputs = list(payload.inputs)
+        outputs = list(payload.outputs)
+
         self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
 
         inputs = list(payload.inputs)
         self.assertIsInstance(inputs, list)
         self.assertIn(signer_owner_address, inputs)
         self.assertIn(signer_admin_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 3)
 
-        outputs = list(payload.outputs)
+        self.assertIsInstance(inputs, list)
+        self.assertIn(signer_owner_address, inputs)
+        self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
+        self.assertIn(proposal_address, inputs)
+        self.assertEqual(len(inputs), 4)
+
         self.assertIsInstance(outputs, list)
         self.assertIn(proposal_address, outputs)
         self.assertEqual(len(outputs), 1)
 
-    @pytest.mark.integration
+    @pytest.mark.reject_role_owner
     def test_create(self):
         """Test executing the message on the blockchain"""
         proposal, _, _, role_owner_key, _, _ = helper.role.owner.propose.create()
@@ -142,4 +152,5 @@ class RejectRoleAddOwnerTest(TestAssertions):
         self.assertEqual(reject.object_id, proposal.object_id)
         self.assertEqual(reject.target_id, proposal.target_id)
         self.assertEqual(reject.close_reason, reason)
+        self.assertEqual(reject.closer, role_owner_key.public_key)
         self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)

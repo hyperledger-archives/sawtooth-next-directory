@@ -56,9 +56,14 @@ class ProposeRoleOwnerTestHelper(TestAssertions):
         to add themselves as an owner to a role"""
         role, role_owner, role_owner_key = helper.role.create()
         user, user_key = helper.user.create()
+        proposal_id = self.id()
         reason = helper.user.reason()
         message = rbac.role.owner.propose.make(
-            role_id=role.role_id, user_id=user.user_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            role_id=role.role_id,
+            user_id=user.user_id,
+            reason=reason,
+            metadata=None,
         )
         proposal, status = rbac.role.owner.propose.create(
             signer_keypair=user_key,
@@ -71,7 +76,7 @@ class ProposeRoleOwnerTestHelper(TestAssertions):
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_OWNER
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, role.role_id)
         self.assertEqual(proposal.target_id, user.user_id)
         self.assertEqual(proposal.opener, user.user_id)

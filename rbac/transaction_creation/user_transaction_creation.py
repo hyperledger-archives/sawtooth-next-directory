@@ -13,10 +13,14 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+import logging
+
 from rbac.common import addresser
 
 from rbac.transaction_creation.common import make_header_and_batch
 from rbac.common.protobuf import user_transaction_pb2, rbac_payload_pb2
+
+LOGGER = logging.getLogger(__name__)
 
 
 def create_user(
@@ -42,7 +46,10 @@ def create_user(
     create_user_payload = user_transaction_pb2.CreateUser(
         name=name, user_name=user_name, user_id=user_id, metadata=metadata
     )
-    inputs = [addresser.user.address(user_id)]
+    inputs = [
+        addresser.user.address(user_id),
+        addresser.user.address(txn_key.public_key),
+    ]
     outputs = [addresser.user.address(user_id)]
     if manager_id:
         create_user_payload.manager_id = manager_id
@@ -52,6 +59,8 @@ def create_user(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_user_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CREATE_USER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)

@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Confirm Role Add Admin Test"""
-# pylint: disable=no-member
+# pylint: disable=no-member,too-many-locals
 
 import logging
 import pytest
@@ -58,9 +58,12 @@ class ConfirmRoleAddAdminTest(TestAssertions):
         reason = helper.proposal.reason()
         relationship_address = rbac.role.admin.address(role_id, user_id)
         signer_keypair = helper.user.key()
+
+        user_address = rbac.user.address(user_id)
         signer_admin_address = rbac.role.admin.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.role.admin.confirm.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -70,13 +73,16 @@ class ConfirmRoleAddAdminTest(TestAssertions):
         )
 
         self.assertIsInstance(inputs, list)
+        self.assertIn(user_address, inputs)
         self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 2)
+        self.assertIn(relationship_address, inputs)
+        self.assertEqual(len(inputs), 5)
 
         self.assertIsInstance(outputs, list)
-        self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
+        self.assertIn(relationship_address, outputs)
         self.assertEqual(len(outputs), 2)
 
     @pytest.mark.library
@@ -89,9 +95,13 @@ class ConfirmRoleAddAdminTest(TestAssertions):
         reason = helper.proposal.reason()
         relationship_address = rbac.role.admin.address(role_id, user_id)
         signer_keypair = helper.user.key()
+
+        user_address = rbac.user.address(user_id)
         signer_admin_address = rbac.role.admin.address(
             role_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
+
         message = rbac.role.admin.confirm.make(
             proposal_id=proposal_id, user_id=user_id, role_id=role_id, reason=reason
         )
@@ -100,20 +110,23 @@ class ConfirmRoleAddAdminTest(TestAssertions):
             message=message, signer_keypair=signer_keypair
         )
         self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
-
         inputs = list(payload.inputs)
-        self.assertIsInstance(inputs, list)
-        self.assertIn(signer_admin_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 2)
-
         outputs = list(payload.outputs)
+
+        self.assertIsInstance(inputs, list)
+        self.assertIn(user_address, inputs)
+        self.assertIn(signer_admin_address, inputs)
+        self.assertIn(signer_user_address, inputs)
+        self.assertIn(proposal_address, inputs)
+        self.assertIn(relationship_address, inputs)
+        self.assertEqual(len(inputs), 5)
+
         self.assertIsInstance(outputs, list)
-        self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
+        self.assertIn(relationship_address, outputs)
         self.assertEqual(len(outputs), 2)
 
-    @pytest.mark.integration
+    @pytest.mark.confirm_role_admin
     def test_create(self):
         """Test executing the message on the blockchain"""
         proposal, _, _, role_admin_key, _, _ = helper.role.admin.propose.create()
@@ -141,3 +154,8 @@ class ConfirmRoleAddAdminTest(TestAssertions):
         self.assertEqual(confirm.target_id, proposal.target_id)
         self.assertEqual(confirm.close_reason, reason)
         self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
+        self.assertTrue(
+            rbac.role.admin.exists(
+                object_id=proposal.object_id, target_id=proposal.target_id
+            )
+        )

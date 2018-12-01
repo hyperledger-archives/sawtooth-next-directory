@@ -18,6 +18,7 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac.common.base.base_processor import BaseTransactionProcessor
 from rbac.processor.role import role_admins, roles, role_members, role_owners
 from rbac.processor.role import role_tasks
 from rbac.processor.task import task_admins
@@ -26,7 +27,6 @@ from rbac.processor.user import users
 from rbac.processor.user.user_manager_proposal import apply_user_confirm
 from rbac.processor.user.user_manager_proposal import apply_user_propose
 from rbac.processor.user.user_manager_proposal import apply_user_reject
-from rbac.common.base.base_processor import BaseTransactionProcessor
 
 
 LOGGER = logging.getLogger(__name__)
@@ -131,12 +131,13 @@ class RBACTransactionHandler(object):
 
             if self._processor.has_message_handler(message_type=payload.message_type):
                 return self._processor.handle_message(
-                    header=transaction.header, payload=payload, state=state
+                    header=transaction.header, payload=payload, context=state
                 )
-        except ValueError as err:
+        except (ValueError, KeyError) as err:
             raise InvalidTransaction(err)
         except Exception as err:  # pylint: disable=broad-except
-            LOGGER.exception("Unexpected processor error %s", err)
+            LOGGER.exception("Unexpected processor %s exception", type(err))
+            LOGGER.exception(err)
             raise InvalidTransaction(err)
 
         if payload.message_type in CREATE:

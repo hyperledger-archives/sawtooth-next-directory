@@ -16,14 +16,18 @@
 usage: rbac.user.manager.reject.create()"""
 import logging
 from rbac.common import addresser
-from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.proposal.proposal_reject import ProposalReject
 
 LOGGER = logging.getLogger(__name__)
 
 
-class RejectUpdateUserManager(ProposalMessage):
+class RejectUpdateUserManager(ProposalReject):
     """Implements the REJECT_UPDATE_USER_MANAGER message
     usage: rbac.user.manager.reject.create()"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_action_type(self):
@@ -41,11 +45,16 @@ class RejectUpdateUserManager(ProposalMessage):
         return addresser.ObjectType.USER
 
     @property
+    def message_related_type(self):
+        """the object type of the related object this message acts upon"""
+        return addresser.ObjectType.USER
+
+    @property
     def message_relationship_type(self):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.MANAGER
 
-    def make_addresses(self, message, signer_keypair=None):
+    def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
@@ -53,8 +62,27 @@ class RejectUpdateUserManager(ProposalMessage):
         proposal_address = addresser.proposal.address(
             object_id=message.user_id, target_id=message.manager_id
         )
+        signer_user_address = addresser.user.address(signer_keypair.public_key)
 
-        inputs = [proposal_address]
+        inputs = [signer_user_address, proposal_address]
         outputs = [proposal_address]
 
         return inputs, outputs
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. The proposed new manager is the signer of the transaction"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if message.manager_id != signer:
+            raise ValueError(
+                "Proposed manager {} is not the transaction signer {}".format(
+                    message.manager_id, signer
+                )
+            )

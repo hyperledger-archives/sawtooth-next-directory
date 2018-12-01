@@ -16,19 +16,18 @@
 usage: rbac.user.manager.confirm.create()"""
 import logging
 from rbac.common import addresser
-from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.proposal.proposal_confirm import ProposalConfirm
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ConfirmUpdateUserManager(ProposalMessage):
+class ConfirmUpdateUserManager(ProposalConfirm):
     """Implements the CONFIRM_UPDATE_USER_MANAGER message
     usage: rbac.user.manager.confirm.create()"""
 
-    @property
-    def message_action_type(self):
-        """The action type performed by this message"""
-        return addresser.MessageActionType.CONFIRM
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_subaction_type(self):
@@ -41,11 +40,16 @@ class ConfirmUpdateUserManager(ProposalMessage):
         return addresser.ObjectType.USER
 
     @property
+    def message_related_type(self):
+        """the object type of the related object this message acts upon"""
+        return addresser.ObjectType.USER
+
+    @property
     def message_relationship_type(self):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.MANAGER
 
-    def make_addresses(self, message, signer_keypair=None):
+    def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
@@ -54,8 +58,55 @@ class ConfirmUpdateUserManager(ProposalMessage):
             object_id=message.user_id, target_id=message.manager_id
         )
         user_address = addresser.user.address(message.user_id)
+        signer_user_address = addresser.user.address(signer_keypair.public_key)
 
         inputs = [proposal_address, user_address]
-        outputs = inputs
+        if signer_user_address != user_address:
+            inputs.append(signer_user_address)
+
+        outputs = [proposal_address, user_address]
 
         return inputs, outputs
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the proposed manager is a User that exists in state
+        2. The proposed manager is the signer of the transaction"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if message.manager_id and not addresser.user.exists_in_state_inputs(
+            inputs=inputs, input_state=input_state, object_id=message.manager_id
+        ):
+            raise ValueError(
+                "Manager with id {} does not exist in state".format(message.manager_id)
+            )
+        user = addresser.user.get_from_input_state(
+            inputs=inputs, input_state=input_state, object_id=message.user_id
+        )
+        if message.manager_id != signer:
+            raise ValueError(
+                "Proposed manager {} is not the transaction signer".format(
+                    user.manager_id
+                )
+            )
+
+    def store_message(
+        self, object_id, target_id, store, message, outputs, output_state, signer
+    ):
+        super().store_message(
+            object_id, target_id, store, message, outputs, output_state, signer
+        )
+        addresser.user.set_output_state_attribute(
+            name="manager_id",
+            value=message.manager_id,
+            outputs=outputs,
+            output_state=output_state,
+            object_id=message.user_id,
+            target_id=None,
+        )

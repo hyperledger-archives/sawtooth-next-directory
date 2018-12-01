@@ -25,6 +25,10 @@ class CreateTask(BaseMessage):
     """Implements the CREATE_TASK message
     usage: rbac.task.create()"""
 
+    def __init__(self):
+        super().__init__()
+        self._register()
+
     @property
     def message_action_type(self):
         """The action type from AddressSpace performed by this message"""
@@ -33,7 +37,7 @@ class CreateTask(BaseMessage):
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return addresser.AddressSpace.TASK
+        return addresser.AddressSpace.TASKS_ATTRIBUTES
 
     @property
     def object_type(self):
@@ -51,13 +55,13 @@ class CreateTask(BaseMessage):
         return addresser.RelationshipType.ATTRIBUTES
 
     @property
-    def _state_container_prefix(self):
-        """Tasks state container name contains Attributes (TaskAttributesContainer)"""
+    def _state_object_name(self):
+        """Task state object name ends with Attributes (TaskAttributes)"""
         return self._name_camel + "Attributes"
 
     @property
     def _state_container_list_name(self):
-        """Tasks state container collection name contains _attributes (task_attributes)"""
+        """Task state container collection name contains _attributes (task_attributes)"""
         return self._name_lower + "_attributes"
 
     @property
@@ -65,7 +69,7 @@ class CreateTask(BaseMessage):
         """Fields that are on the message but not stored on the state object"""
         return ["owners", "admins"]
 
-    def make_addresses(self, message, signer_keypair=None):
+    def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
@@ -75,7 +79,13 @@ class CreateTask(BaseMessage):
             addresser.task.address(message.task_id)
         ]
         inputs.extend([addresser.user.address(u) for u in message.admins])
-        inputs.extend([addresser.user.address(u) for u in message.owners])
+        inputs.extend(
+            [
+                addresser.user.address(u)
+                for u in message.owners
+                if u not in message.admins
+            ]
+        )
         inputs.extend(
             [addresser.task.admin.address(message.task_id, a) for a in message.admins]
         )
@@ -85,21 +95,50 @@ class CreateTask(BaseMessage):
         outputs = inputs
         return inputs, outputs
 
+    def validate(self, message, signer=None):
+        """Validates the message values"""
+        signer = super().validate(message=message, signer=signer)
+        if not message.admins:
+            raise ValueError("New tasks must have administrators.")
+        if not message.owners:
+            raise ValueError("New tasks must have owners.")
 
-#    def validate(self, message, signer=None, state=None):
-#        """Validates the message values"""
-#        signer = self.base_validate(message=message, signer=signer)
-#        if not message.admins:
-#            raise ValueError("New tasks must have administrators.")
-#        if not message.owners:
-#            raise ValueError("New tasks must have owners.")
-#
-#    def validate_state(self, state, message, signer):
-#        """Validates the message against state"""
-#        self.base_validate_state(state=state, message=message, signer=signer)
-#        if self.exists_in_state(state=state, object_id=message.user_id):
-#            raise ValueError("Task with id {} already exists".format(message.task_id))
-#        if message.manager_id and not self.exists_state(
-#            state=state, object_id=message.manager_id
-#        ):
-#            raise ValueError("Manager does not exist")
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates the message against state"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if addresser.task.exists_in_state_inputs(
+            inputs=inputs, input_state=input_state, object_id=message.task_id
+        ):
+            raise ValueError("Task with id {} already exists".format(message.task_id))
+        users = list(set(list(message.admins) + list(message.owners)))
+        all_users_exist, users_not_found = addresser.user.exist_in_state(
+            context=context, object_ids=users
+        )
+        if not all_users_exist:
+            raise ValueError("The users {} were not found".format(users_not_found))
+
+    def apply_update(
+        self, message, object_id, target_id, outputs, output_state, signer
+    ):
+        """Create admin and owner addresses"""
+        for admin in message.admins:
+            addresser.task.admin.create_relationship(
+                object_id=object_id,
+                target_id=admin,
+                outputs=outputs,
+                output_state=output_state,
+            )
+        for admin in message.owners:
+            addresser.task.owner.create_relationship(
+                object_id=object_id,
+                target_id=admin,
+                outputs=outputs,
+                output_state=output_state,
+            )

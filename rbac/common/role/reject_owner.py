@@ -17,14 +17,18 @@ usage: rbac.role.owner.reject.create()"""
 import logging
 from rbac.common import addresser
 from rbac.common.crypto.keys import Key
-from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.proposal.proposal_reject import ProposalReject
 
 LOGGER = logging.getLogger(__name__)
 
 
-class RejectAddRoleOwner(ProposalMessage):
+class RejectAddRoleOwner(ProposalReject):
     """Implements the REJECT_ADD_ROLE_OWNER message
     usage: rbac.role.owner.reject.create()"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_action_type(self):
@@ -40,6 +44,11 @@ class RejectAddRoleOwner(ProposalMessage):
     def message_object_type(self):
         """The object type this message acts upon"""
         return addresser.ObjectType.ROLE
+
+    @property
+    def message_related_type(self):
+        """the object type of the related object this message acts upon"""
+        return addresser.ObjectType.USER
 
     @property
     def message_relationship_type(self):
@@ -60,12 +69,42 @@ class RejectAddRoleOwner(ProposalMessage):
         signer_owner_address = addresser.role.owner.address(
             message.role_id, signer_keypair.public_key
         )
+        signer_user_address = addresser.user.address(signer_keypair.public_key)
 
         proposal_address = self.address(
             object_id=message.role_id, target_id=message.user_id
         )
 
-        inputs = [signer_admin_address, signer_owner_address, proposal_address]
+        inputs = [
+            proposal_address,
+            signer_admin_address,
+            signer_owner_address,
+            signer_user_address,
+        ]
         outputs = [proposal_address]
 
         return inputs, outputs
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the signer is an owner of the role"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        # TODO: should be owners
+        if not addresser.role.admin.exists_in_state_inputs(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=message.role_id,
+            target_id=signer,
+        ):
+            raise ValueError(
+                "Signer {} must be an admin of the role {}".format(
+                    signer, message.role_id
+                )
+            )

@@ -16,19 +16,18 @@
 usage: rbac.user.manager.propose.create()"""
 import logging
 from rbac.common import addresser
-from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.proposal.proposal_propose import ProposalPropose
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ProposeUpdateUserManager(ProposalMessage):
+class ProposeUpdateUserManager(ProposalPropose):
     """Implements the PROPOSE_UPDATE_USER_MANAGER message
     usage: rbac.user.manager.propose.create()"""
 
-    @property
-    def message_action_type(self):
-        """The action type performed by this message"""
-        return addresser.MessageActionType.PROPOSE
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_subaction_type(self):
@@ -41,11 +40,21 @@ class ProposeUpdateUserManager(ProposalMessage):
         return addresser.ObjectType.USER
 
     @property
+    def message_related_type(self):
+        """the object type of the related object this message acts upon"""
+        return addresser.ObjectType.USER
+
+    @property
     def message_relationship_type(self):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.MANAGER
 
-    def make_addresses(self, message, signer_keypair=None):
+    @property
+    def _target_id(self):
+        """The attribute name for target_id"""
+        return "new_manager_id"
+
+    def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
@@ -55,23 +64,42 @@ class ProposeUpdateUserManager(ProposalMessage):
         proposal_address = addresser.proposal.address(
             object_id=message.user_id, target_id=message.new_manager_id
         )
+        signer_user_address = addresser.user.address(signer_keypair.public_key)
 
         inputs = [user_address, manager_address, proposal_address]
+        if signer_user_address not in (user_address, manager_address):
+            inputs.append(signer_user_address)
+
         outputs = [proposal_address]
 
         return inputs, outputs
 
-    def new_state(self, state, message, object_id, target_id=None):
-        """Creates a new address in the blockchain state"""
-        address = self.address(object_id=object_id, target_id=target_id)
-        # pylint: disable=not-callable
-        container = self._state_container()
-        item = self._state_object(
-            user_id=message.user_id,
-            name=message.name,
-            manager_id=message.manager_id,
-            metadata=message.metadata,
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the proposed manager is a User that exists in state
+        2. The existing manager (if any) is the signer of the transaction"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
         )
-        # pylint: disable=no-member
-        container.users.extend([item])
-        self.state.set_address(state=state, address=address, container=container)
+        if message.new_manager_id and not addresser.user.exists_in_state_inputs(
+            inputs=inputs, input_state=input_state, object_id=message.new_manager_id
+        ):
+            raise ValueError(
+                "Manager with id {} does not exist in state".format(
+                    message.new_manager_id
+                )
+            )
+        user = addresser.user.get_from_input_state(
+            inputs=inputs, input_state=input_state, object_id=message.user_id
+        )
+        if user.manager_id and user.manager_id != signer:
+            raise ValueError(
+                "Existing manager {} is not the transaction signer".format(
+                    user.manager_id
+                )
+            )

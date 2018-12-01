@@ -14,9 +14,7 @@
 # -----------------------------------------------------------------------------
 """A base for all proposal message types"""
 import logging
-from rbac.common.addresser.address_space import AddressSpace
-from rbac.common.addresser.address_space import ObjectType
-from rbac.common.addresser.address_space import RelationshipType
+from rbac.common import addresser
 from rbac.common.base.base_message import BaseMessage
 
 LOGGER = logging.getLogger(__name__)
@@ -28,22 +26,22 @@ class ProposalMessage(BaseMessage):
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.PROPOSALS
+        return addresser.AddressSpace.PROPOSALS
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.PROPOSAL
+        return addresser.ObjectType.PROPOSAL
 
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.SELF
+        return addresser.ObjectType.SELF
 
     @property
     def relationship_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return RelationshipType.ATTRIBUTES
+        return addresser.RelationshipType.ATTRIBUTES
 
     @property
     def _state_container_prefix(self):
@@ -55,3 +53,51 @@ class ProposalMessage(BaseMessage):
         addresses that may be required in order to validate the message
         and store the resulting data of a successful or failed execution"""
         raise NotImplementedError("Class must implement this method")
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the proposed user is a User that exists in state (if proposal involves a user)
+        2. the proposed role is a Role that exists in state (if a role proposal)
+        3. the proposed task is a Task that exists in state (if a task proposal)
+        """
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if hasattr(message, "user_id") and not addresser.user.exists_in_state_inputs(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=getattr(message, "user_id"),
+            skip_if_not_in_inputs=True,
+        ):
+            raise ValueError(
+                "User with id {} does not exist in state".format(
+                    getattr(message, "user_id")
+                )
+            )
+        if hasattr(message, "role_id") and not addresser.role.exists_in_state_inputs(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=getattr(message, "role_id"),
+            skip_if_not_in_inputs=True,
+        ):
+            raise ValueError(
+                "Role with id {} does not exist in state".format(
+                    getattr(message, "role_id")
+                )
+            )
+        if hasattr(message, "task_id") and not addresser.task.exists_in_state_inputs(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=getattr(message, "task_id"),
+            skip_if_not_in_inputs=True,
+        ):
+            raise ValueError(
+                "Task with id {} does not exist in state".format(
+                    getattr(message, "task_id")
+                )
+            )

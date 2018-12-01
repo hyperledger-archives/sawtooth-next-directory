@@ -58,7 +58,10 @@ class CreateRoleTestHelper(TestAssertions):
         """Get a test data CreateRole message"""
         role_id = self.id()
         name = self.name()
-        message = rbac.role.make(role_id=role_id, name=name)
+        user_id = helper.user.id()
+        message = rbac.role.make(
+            role_id=role_id, name=name, owners=[user_id], admins=[user_id]
+        )
         self.assertIsInstance(message, protobuf.role_transaction_pb2.CreateRole)
         self.assertEqual(message.role_id, role_id)
         self.assertEqual(message.name, name)
@@ -66,11 +69,12 @@ class CreateRoleTestHelper(TestAssertions):
 
     def create(self):
         """Create a test role"""
+        role_id = self.id()
+        name = self.name()
         user, keypair = helper.user.create()
-        message = self.message()
-        message.admins.extend([user.user_id])
-        message.owners.extend([user.user_id])
-
+        message = rbac.role.make(
+            role_id=role_id, name=name, owners=[user.user_id], admins=[user.user_id]
+        )
         role, status = rbac.role.create(
             signer_keypair=keypair, message=message, object_id=message.role_id
         )

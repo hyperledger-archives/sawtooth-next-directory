@@ -42,7 +42,7 @@ class CreateUserGoodTest(TestAssertions):
 
     @pytest.mark.library
     def test_make(self):
-        """Test getting a test data user with keys"""
+        """Test making a create user message"""
         name = helper.user.name()
         keypair = helper.user.key()
         message = rbac.user.make(user_id=keypair.public_key, name=name)
@@ -52,11 +52,26 @@ class CreateUserGoodTest(TestAssertions):
         self.assertEqual(message.user_id, keypair.public_key)
         self.assertEqual(message.name, name)
 
-    @pytest.mark.library
-    def test_make_with_key(self):
-        """Test getting a test data user with keys"""
+    @pytest.mark.skip("TODO: support metadata")
+    def test_make_with_metadata(self):
+        """test making a create user message with metadata"""
         name = helper.user.name()
         keypair = helper.user.key()
+        metadata = {"employeeId": "12345", "mobile": "555-1212"}
+        message = rbac.user.make(
+            user_id=keypair.public_key, name=name, metadata=metadata
+        )
+        self.assertIsInstance(message, protobuf.user_transaction_pb2.CreateUser)
+        self.assertIsInstance(message.user_id, str)
+        self.assertIsInstance(message.name, str)
+        self.assertEqual(message.user_id, keypair.public_key)
+        self.assertEqual(message.name, name)
+        self.assertEqual(message.metadata, metadata)
+
+    @pytest.mark.library
+    def test_make_with_key(self):
+        """Test making a create user message with key generation"""
+        name = helper.user.name()
         message, keypair = rbac.user.make_with_key(name=name)
         self.assertIsInstance(message, protobuf.user_transaction_pb2.CreateUser)
         self.assertIsInstance(message.user_id, str)
@@ -69,9 +84,12 @@ class CreateUserGoodTest(TestAssertions):
     def test_make_addresses(self):
         """Test making addresses without manager"""
         name = helper.user.name()
-        keypair = helper.user.key()
-        message = rbac.user.make(user_id=keypair.public_key, name=name)
-        inputs, outputs = rbac.user.make_addresses(message=message)
+        user_key = helper.user.key()
+        user_id = user_key.public_key
+        message = rbac.user.make(user_id=user_id, name=name)
+        inputs, outputs = rbac.user.make_addresses(
+            message=message, signer_keypair=user_key
+        )
         user_address = rbac.user.address(object_id=message.user_id)
         self.assertIsInstance(inputs, list)
         self.assertIn(user_address, inputs)
@@ -82,13 +100,16 @@ class CreateUserGoodTest(TestAssertions):
     def test_make_addresses_with_manager(self):
         """Test making addresses with manager"""
         name = helper.user.name()
-        user_id = helper.user.id()
+        user_key = helper.user.key()
+        user_id = user_key.public_key
         user_address = rbac.user.address(object_id=user_id)
         manager_id = helper.user.id()
         manager_address = rbac.user.address(object_id=manager_id)
 
         message = rbac.user.make(user_id=user_id, name=name, manager_id=manager_id)
-        inputs, outputs = rbac.user.make_addresses(message=message)
+        inputs, outputs = rbac.user.make_addresses(
+            message=message, signer_keypair=user_key
+        )
 
         self.assertIsInstance(inputs, list)
         self.assertIn(user_address, inputs)
@@ -139,18 +160,19 @@ class CreateUserGoodTest(TestAssertions):
         self.assertEqual(len(inputs), 2)
         self.assertEqual(inputs, outputs)
 
+    @pytest.mark.create_user
     @pytest.mark.integration
     def test_create(self):
         """Test creating a user on the blockchain"""
+        LOGGER.debug("calling user test_create")
         name = helper.user.name()
         user_key = helper.user.key()
         user_id = user_key.public_key
         message = rbac.user.make(user_id=user_id, name=name)
 
-        user, status = rbac.user.create(
-            signer_keypair=user_key, message=message, object_id=user_id
-        )
+        _, status = rbac.user.create(signer_keypair=user_key, message=message)
         self.assertStatusSuccess(status)
+        user = rbac.user.get(object_id=user_id)
         self.assertEqualMessage(user, message)
 
     @pytest.mark.integration
@@ -162,17 +184,15 @@ class CreateUserGoodTest(TestAssertions):
         manager_id = manager_key.public_key
 
         message = rbac.user.make(user_id=manager_id, name=helper.user.name())
-        manager, status = rbac.user.create(
-            signer_keypair=manager_key, message=message, object_id=manager_id
-        )
+        _, status = rbac.user.create(signer_keypair=manager_key, message=message)
         self.assertStatusSuccess(status)
+        manager = rbac.user.get(object_id=manager_id)
         self.assertEqualMessage(manager, message)
 
         message = rbac.user.make(
             user_id=user_id, name=helper.user.name(), manager_id=manager_id
         )
-        user, status = rbac.user.create(
-            signer_keypair=user_key, message=message, object_id=user_id
-        )
+        _, status = rbac.user.create(signer_keypair=user_key, message=message)
         self.assertStatusSuccess(status)
+        user = rbac.user.get(object_id=user_id)
         self.assertEqualMessage(user, message)

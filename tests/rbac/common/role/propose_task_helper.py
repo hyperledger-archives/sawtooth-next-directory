@@ -55,10 +55,14 @@ class ProposeRoleTaskTestHelper(TestAssertions):
         to add a task to their role"""
         role, role_owner, role_owner_key = helper.role.create()
         task, task_owner, task_owner_key = helper.task.create()
-
+        proposal_id = self.id()
         reason = self.reason()
         message = rbac.role.task.propose.make(
-            role_id=role.role_id, task_id=task.task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            role_id=role.role_id,
+            task_id=task.task_id,
+            reason=reason,
+            metadata=None,
         )
         proposal, status = rbac.role.task.propose.create(
             signer_keypair=role_owner_key,
@@ -71,7 +75,7 @@ class ProposeRoleTaskTestHelper(TestAssertions):
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_TASK
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, role.role_id)
         self.assertEqual(proposal.target_id, task.task_id)
         self.assertEqual(proposal.opener, role_owner_key.public_key)

@@ -23,7 +23,6 @@ import logging
 from rbac.common import protobuf
 from rbac.common.crypto.hash import unique_id, hash_id
 from rbac.common.sawtooth import state_client
-from rbac.common.util import get_attribute
 
 LOGGER = logging.getLogger(__name__)
 
@@ -80,10 +79,15 @@ class StateBase:
 
     @property
     def _name_id(self):
-        """The identifier field name for the object type
+        """The attribute name for the object type
         Example: ObjectType.USER -> 'user_id'
         Override where behavior deviates from this norm"""
         return self._name_lower + "_id"
+
+    @property
+    def _target_id(self):
+        """The attribute name for the target_id if not target_id"""
+        return "target_id"
 
     @property
     def _name_upper_plural(self):
@@ -122,6 +126,26 @@ class StateBase:
         return self._name_camel + "s"
 
     @property
+    def _state_object_name(self):
+        """The name of the state object on the state protobuf
+        The 'User' in protobuf.user_state_pb2.User
+        Defaults to self._name_camel, override where differs from this norm"""
+        return self._name_camel
+
+    @property
+    def _state_container_prefix(self):
+        """The 'User' in protobuf.user_state_pb2.UserContainer
+        Defaults to self._state_object_name, override where differs from this norm"""
+        return self._state_object_name
+
+    @property
+    def _state_container_list_name(self):
+        """The name of the state collection on the state container protobuf
+        The 'users' in protobuf.user_state_pb2.UserContainer.users
+        Defaults to self._name_lower_plural, override where differs from this norm"""
+        return self._name_lower_plural
+
+    @property
     def _state_object(self):
         """The state object (protobuf) used by this object type
         Derives name of the protobuf class from the object type name
@@ -132,28 +156,16 @@ class StateBase:
                 "Could not find protobuf.{}_state_pb2".format(self._name_lower)
             )
         if not hasattr(
-            getattr(protobuf, self._name_lower + "_state_pb2"), self._name_camel
+            getattr(protobuf, self._name_lower + "_state_pb2"), self._state_object_name
         ):
             raise AttributeError(
                 "Could not find protobuf.{}_state_pb2.{}".format(
-                    self._name_lower, self._name_camel
+                    self._name_lower, self._state_object_name
                 )
             )
         return getattr(
-            getattr(protobuf, self._name_lower + "_state_pb2"), self._name_camel
+            getattr(protobuf, self._name_lower + "_state_pb2"), self._state_object_name
         )
-
-    @property
-    def _state_container_name_plural(self):
-        """Whether the state container name is plural
-        Default False, override where differs"""
-        return False
-
-    @property
-    def _state_container_prefix(self):
-        """The 'User' in protobuf.user_state_pb2.UserContainer
-        Defaults to self._name_camel, override where differs from this norm"""
-        return self._name_camel
 
     @property
     def _state_container(self):
@@ -179,15 +191,6 @@ class StateBase:
             self._state_container_prefix + "Container",
         )
 
-    @property
-    def _state_container_list_name(self):
-        """The state container (protobuf) used by this object type
-        Derives name of the protobuf class from the object type name
-        Example: if protobuf.user_state_pb2.UserContainer.users
-            ObjectType.USER -> users
-        Override where behavior differs from this norm"""
-        return self._name_lower_plural
-
     def unique_id(self):
         """Generates a random 12-byte hexidecimal string
         Override where desired behavior differs"""
@@ -204,6 +207,11 @@ class StateBase:
         """Makes an address for the given state object"""
         raise NotImplementedError("Class must implement this method")
 
+    def parse(self, address):
+        """Returns the components of an address if the address if of the address type
+        implemented by this class or a child class, otherwise returns None"""
+        raise NotImplementedError("Class must implement this method")
+
     def _get_object_id(self, item):
         """Find the object_id attribute value on an object
         Prefers object_id over specific IDs like user_id"""
@@ -214,8 +222,13 @@ class StateBase:
         return None
 
     def _get_target_id(self, item):
-        """Find the target_id attribute value on an object"""
-        return get_attribute(item, "target_id")
+        """Find the target_id attribute value on an object
+        Prefers target_id over specific IDs like user_id"""
+        if hasattr(item, "target_id"):
+            return getattr(item, "target_id")
+        if self._target_id != "target_id" and hasattr(item, self._target_id):
+            return getattr(item, self._target_id)
+        return None
 
     def _find_in_state_container(self, container, address, object_id, target_id=None):
         """Finds the state_object within a given state_container for the
@@ -247,18 +260,94 @@ class StateBase:
         )
         return None
 
-    def get_from_state(self, state, object_id, target_id=None):
-        """Gets an address from the blockchain state
-        (state object is available when message is handled by transaction processor)"""
-        address = self.address(object_id=object_id, target_id=target_id)
+    def deserialize(self, address, data):  # pylint: disable=unused-argument
+        """Deserialize the data of a blockchain address"""
         # pylint: disable=not-callable
         container = self._state_container()
+        container.ParseFromString(data)
+        return container
 
-        results = state_client.get_address(state=state, address=address)
-        if not list(results):
+    def get_address(self, context, address):
+        """Get the deserialized data of a blockchain address"""
+        data = state_client.get_address(context=context, address=address)
+        if data:
+            return self.deserialize(address=address, data=data)
+        return None
+
+    def get_addresses(self, context, addresses):
+        """Get the list of blockchain addresses"""
+        return state_client.get_addresses(context=context, addresses=addresses)
+
+    def get_from_state_context(self, context, object_id, target_id=None):
+        """Gets an address from the blockchain state"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        container = self.get_address(context=context, address=address)
+        if container:
+            return self._find_in_state_container(
+                container=container,
+                address=address,
+                object_id=object_id,
+                target_id=target_id,
+            )
+        return None
+
+    def _get_new_state(self):
+        """Returns a new state container (protobuf) with a single store object"""
+        # pylint: disable=not-callable
+        container = self._state_container()
+        getattr(container, self._state_container_list_name).extend(
+            [self._state_object()]
+        )
+        store = getattr(container, self._state_container_list_name)[0]
+        return container, store
+
+    def get_from_input_state(self, inputs, input_state, object_id, target_id=None):
+        """Get an address from the transaction input state"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        if address not in inputs:
+            raise ValueError(
+                "{} address {} for {} {} target {} was not sent as an input address".format(
+                    self.parse(address).address_type,
+                    address,
+                    self._name_id,
+                    object_id,
+                    target_id,
+                )
+            )
+        if address not in input_state:
             return None
+        container = input_state[address]
+        if container:
+            return self._find_in_state_container(
+                container=container,
+                address=address,
+                object_id=object_id,
+                target_id=target_id,
+            )
+        return None
 
-        container.ParseFromString(results[0].data)
+    def get_from_output_state(self, outputs, output_state, object_id, target_id=None):
+        """Get an address from the transaction output state"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        if address not in outputs:
+            raise ValueError(
+                "{} address {} for {} {} target {} was not sent as an output address".format(
+                    self._name_title, address, self._name_id, object_id, target_id
+                )
+            )
+        if address not in output_state:
+            raise ValueError(
+                "{} address {} for {} {} target {} was not in output state".format(
+                    self._name_title, address, self._name_id, object_id, target_id
+                )
+            )
+        container = output_state[address]
+        if not container:
+            raise ValueError(
+                "{} address {} for {} {} target {} had no container in output state".format(
+                    self._name_title, address, self._name_id, object_id, target_id
+                )
+            )
         return self._find_in_state_container(
             container=container,
             address=address,
@@ -266,27 +355,126 @@ class StateBase:
             target_id=target_id,
         )
 
-    def address_exists(self, state, object_id, target_id=None):
-        """Checks to see if an address already exists on the blockchain
-        for a given object or object relationship
-        (state object is available when message is handled by transaction processor)"""
+    def set_output_state_attribute(
+        self, name, value, outputs, output_state, object_id, target_id=None
+    ):
+        """Sets an attribute in the state store object"""
         address = self.address(object_id=object_id, target_id=target_id)
-        results = state_client.get_address(state=state, address=address)
-        if not list(results):
+        store = self.get_from_output_state(
+            outputs=outputs,
+            output_state=output_state,
+            object_id=object_id,
+            target_id=target_id,
+        )
+        if not store:
+            raise ValueError(
+                "set_output_state_attribute error: {} address {} for {} {} target {} had no store object in output state".format(
+                    self._name_title, address, self._name_id, object_id, target_id
+                )
+            )
+        if not hasattr(store, name):
+            raise KeyError(
+                "{} address {} for {} {} target {} store has no attribute '{}'".format(
+                    self._name_title, address, self._name_id, object_id, target_id, name
+                )
+            )
+        setattr(store, name, value)
+        output_state["changed"].add(address)
+
+    def address_exists(self, context, object_id, target_id=None):
+        """Checks to see if an address already exists on the blockchain
+        for a given object or object relationship"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        content = state_client.get_address(context=context, address=address)
+        if content is None:
             return False
         return True
 
-    def exists_in_state(self, state, object_id, target_id=None, fast_check=False):
+    def exists_in_state(self, context, object_id, target_id=None, fast_check=False):
         """Checks an object exists in the blockchain
-        fast_check False will see if the object really exists and isn't a hash collission
-        fast_check True will only check to see the address exists (generally sufficient)
-        (state object is available when message is handled by transaction processor)"""
+        fast_check False will see if the object really exists and isn't a hash collision
+        fast_check True will only check to see the address exists (generally sufficient)"""
         if fast_check:  # check address exists only, not contents of address
             return self.address_exists(
-                state=state, object_id=object_id, target_id=target_id
+                context=context, object_id=object_id, target_id=target_id
             )
 
-        result = self.get_from_state(
-            state=state, object_id=object_id, target_id=target_id
+        result = self.get_from_state_context(
+            context=context, object_id=object_id, target_id=target_id
         )
         return bool(result is not None)
+
+    def exists_in_inputs(self, inputs, object_id, target_id=None):
+        """Check an address exists in transaction inputs"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        return bool(address in inputs)
+
+    def exists_in_outputs(self, outputs, object_id, target_id=None):
+        """Check an address exists in transaction outputs"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        return bool(address in outputs)
+
+    def exists_in_state_inputs(
+        self,
+        inputs,
+        input_state,
+        object_id,
+        target_id=None,
+        skip_if_not_in_inputs=False,
+    ):
+        """Check an object exists in the blockchain via inputs and input_state
+        input_state is the result of a state query on addresses=inputs"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        if address not in inputs:
+            if skip_if_not_in_inputs:
+                return True
+            raise ValueError(
+                "{} address {} for {} {} target {} was not sent as an input address".format(
+                    self.parse(address).address_type,
+                    address,
+                    self._name_id,
+                    object_id,
+                    target_id,
+                )
+            )
+        return bool(address in input_state)
+
+    def exist_in_state(self, context, object_ids, target_id=None, fast_check=False):
+        """Checks that all the object ids passed in object_list exist in the blockchain
+        fast_check False will see if the object really exists and isn't a hash collission
+        fast_check True will only check to see the address exists (generally sufficient)"""
+        exists = [
+            self.exists_in_state(
+                context=context,
+                object_id=object_id,
+                target_id=target_id,
+                fast_check=fast_check,
+            )
+            for object_id in object_ids
+        ]
+        all_exist = all(exists)
+        not_found = []
+        if not all_exist:
+            not_found = [
+                object_id for object_id, found in zip(object_ids, exists) if not found
+            ]
+        return all_exist, not_found
+
+    def create_relationship(self, object_id, target_id, outputs, output_state):
+        """Creates a relationship record in the output state for a transaction"""
+        address = self.address(object_id=object_id, target_id=target_id)
+        if address not in outputs:
+            raise ValueError(
+                "address {} for was not included in outputs".format(
+                    self.parse(address=address)
+                )
+            )
+        # pylint: disable=not-callable
+        container = self._state_container()
+        store = self._state_object()
+        setattr(store, self._name_id, object_id)
+        store.identifiers.append(target_id)
+        container = self._state_container()
+        getattr(container, self._state_container_list_name).extend([store])
+        output_state[address] = container
+        output_state["changed"].add(address)

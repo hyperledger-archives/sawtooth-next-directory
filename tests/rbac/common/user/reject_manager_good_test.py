@@ -54,13 +54,15 @@ class RejectManagerTest(TestAssertions):
     @pytest.mark.library
     def test_make_addresses(self):
         """Test making a propose manager message"""
-        user_id = helper.user.id()
+        user_key = helper.user.key()
+        user_id = user_key.public_key
         manager_id = helper.user.id()
         reason = helper.user.manager.propose.reason()
         proposal_id = helper.user.manager.propose.id()
         proposal_address = rbac.user.manager.reject.address(
             object_id=user_id, target_id=manager_id
         )
+        signer_user_address = rbac.user.address(user_key.public_key)
         message = rbac.user.manager.reject.make(
             proposal_id=proposal_id,
             user_id=user_id,
@@ -68,21 +70,31 @@ class RejectManagerTest(TestAssertions):
             reason=reason,
         )
 
-        inputs, outputs = rbac.user.manager.reject.make_addresses(message=message)
+        inputs, outputs = rbac.user.manager.reject.make_addresses(
+            message=message, signer_keypair=user_key
+        )
 
-        self.assertEqual(inputs, [proposal_address])
-        self.assertEqual(outputs, [proposal_address])
+        self.assertIsInstance(inputs, list)
+        self.assertIn(proposal_address, inputs)
+        self.assertIn(signer_user_address, inputs)
+        self.assertEqual(len(inputs), 2)
+
+        self.assertIsInstance(outputs, list)
+        self.assertIn(proposal_address, outputs)
+        self.assertEqual(len(outputs), 1)
 
     @pytest.mark.library
     def test_make_payload(self):
         """Test making a propose manager message"""
-        user_id = helper.user.id()
+        user_key = helper.user.key()
+        user_id = user_key.public_key
         manager_id = helper.user.id()
         reason = helper.user.manager.propose.reason()
         proposal_id = helper.user.manager.propose.id()
         proposal_address = rbac.user.manager.reject.address(
             object_id=user_id, target_id=manager_id
         )
+        signer_user_address = rbac.user.address(user_key.public_key)
         message = rbac.user.manager.reject.make(
             proposal_id=proposal_id,
             user_id=user_id,
@@ -90,18 +102,24 @@ class RejectManagerTest(TestAssertions):
             reason=reason,
         )
 
-        payload = rbac.user.manager.reject.make_payload(message=message)
+        payload = rbac.user.manager.reject.make_payload(
+            message=message, signer_keypair=user_key
+        )
 
         self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
         inputs = list(payload.inputs)
         outputs = list(payload.outputs)
-        self.assertIsInstance(inputs, list)
-        self.assertIsInstance(outputs, list)
-        self.assertEqual(inputs, [proposal_address])
-        self.assertEqual(outputs, [proposal_address])
-        return payload
 
-    @pytest.mark.integration
+        self.assertIsInstance(inputs, list)
+        self.assertIn(proposal_address, inputs)
+        self.assertIn(signer_user_address, inputs)
+        self.assertEqual(len(inputs), 2)
+
+        self.assertIsInstance(outputs, list)
+        self.assertIn(proposal_address, outputs)
+        self.assertEqual(len(outputs), 1)
+
+    @pytest.mark.reject_user_manager
     def test_create(self):
         """Test rejecting a manager proposal"""
         proposal, _, _, _, manager_key = helper.user.manager.propose.create()

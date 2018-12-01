@@ -29,6 +29,10 @@ class CreateRole(BaseMessage):
     """Implements the CREATE_ROLE message
     usage: rbac.role.create()"""
 
+    def __init__(self):
+        super().__init__()
+        self._register()
+
     @property
     def message_action_type(self):
         """The action type from AddressSpace performed by this message"""
@@ -37,7 +41,7 @@ class CreateRole(BaseMessage):
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.ROLE
+        return AddressSpace.ROLES_ATTRIBUTES
 
     @property
     def object_type(self):
@@ -55,13 +59,13 @@ class CreateRole(BaseMessage):
         return RelationshipType.ATTRIBUTES
 
     @property
-    def _state_container_prefix(self):
-        """Roles state container name contains Attributes (RoleAttributesContainer)"""
+    def _state_object_name(self):
+        """Role state object name ends with Attributes (RoleAttributes)"""
         return self._name_camel + "Attributes"
 
     @property
     def _state_container_list_name(self):
-        """Roles state container collection name contains _attributes (role_attributes)"""
+        """Role state container collection name contains _attributes (role_attributes)"""
         return self._name_lower + "_attributes"
 
     @property
@@ -69,7 +73,7 @@ class CreateRole(BaseMessage):
         """Fields that are on the message but not stored on the state object"""
         return ["owners", "admins"]
 
-    def make_addresses(self, message, signer_keypair=None):
+    def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
@@ -79,7 +83,13 @@ class CreateRole(BaseMessage):
             addresser.role.address(message.role_id)
         ]
         inputs.extend([addresser.user.address(u) for u in message.admins])
-        inputs.extend([addresser.user.address(u) for u in message.owners])
+        inputs.extend(
+            [
+                addresser.user.address(u)
+                for u in message.owners
+                if u not in message.admins
+            ]
+        )
         inputs.extend(
             [addresser.role.admin.address(message.role_id, a) for a in message.admins]
         )
@@ -88,3 +98,51 @@ class CreateRole(BaseMessage):
         )
         outputs = inputs
         return inputs, outputs
+
+    def validate(self, message, signer=None):
+        """Validates the message values"""
+        signer = super().validate(message=message, signer=signer)
+        if not message.admins:
+            raise ValueError("New roles must have administrators.")
+        if not message.owners:
+            raise ValueError("New roles must have owners.")
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates the message against state"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if addresser.role.exists_in_state_inputs(
+            inputs=inputs, input_state=input_state, object_id=message.role_id
+        ):
+            raise ValueError("Role with id {} already exists".format(message.role_id))
+        users = list(set(list(message.admins) + list(message.owners)))
+        all_users_exist, users_not_found = addresser.user.exist_in_state(
+            context=context, object_ids=users
+        )
+        if not all_users_exist:
+            raise ValueError("The users {} were not found".format(users_not_found))
+
+    def apply_update(
+        self, message, object_id, target_id, outputs, output_state, signer
+    ):
+        """Create admin and owner addresses"""
+        for admin in message.admins:
+            addresser.role.admin.create_relationship(
+                object_id=object_id,
+                target_id=admin,
+                outputs=outputs,
+                output_state=output_state,
+            )
+        for admin in message.owners:
+            addresser.role.owner.create_relationship(
+                object_id=object_id,
+                target_id=admin,
+                outputs=outputs,
+                output_state=output_state,
+            )

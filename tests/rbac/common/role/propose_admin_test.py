@@ -36,13 +36,19 @@ class ProposeRoleAddAdminTest(TestAssertions):
         """Test making the message"""
         user_id = helper.user.id()
         role_id = helper.role.id()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         message = rbac.role.admin.propose.make(
-            user_id=user_id, role_id=role_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            role_id=role_id,
+            reason=reason,
+            metadata=None,
         )
         self.assertIsInstance(
             message, protobuf.role_transaction_pb2.ProposeAddRoleAdmin
         )
+        self.assertEqual(message.proposal_id, proposal_id)
         self.assertEqual(message.user_id, user_id)
         self.assertEqual(message.role_id, role_id)
         self.assertEqual(message.reason, reason)
@@ -54,12 +60,17 @@ class ProposeRoleAddAdminTest(TestAssertions):
         user_address = rbac.user.address(user_id)
         role_id = helper.role.id()
         role_address = rbac.role.address(role_id)
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         relationship_address = rbac.role.admin.address(role_id, user_id)
         proposal_address = rbac.role.admin.propose.address(role_id, user_id)
         signer_keypair = helper.user.key()
         message = rbac.role.admin.propose.make(
-            user_id=user_id, role_id=role_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            role_id=role_id,
+            reason=reason,
+            metadata=None,
         )
 
         inputs, outputs = rbac.role.admin.propose.make_addresses(
@@ -83,12 +94,17 @@ class ProposeRoleAddAdminTest(TestAssertions):
         user_address = rbac.user.address(user_id)
         role_id = helper.role.id()
         role_address = rbac.role.address(role_id)
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         relationship_address = rbac.role.admin.address(role_id, user_id)
         proposal_address = rbac.role.admin.propose.address(role_id, user_id)
         signer_keypair = helper.user.key()
         message = rbac.role.admin.propose.make(
-            user_id=user_id, role_id=role_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            role_id=role_id,
+            reason=reason,
+            metadata=None,
         )
 
         payload = rbac.role.admin.propose.make_payload(
@@ -108,14 +124,20 @@ class ProposeRoleAddAdminTest(TestAssertions):
         self.assertIsInstance(outputs, list)
         self.assertEqual(outputs, [proposal_address])
 
+    @pytest.mark.propose_role_admin
     def test_create(self):
         """Test executing the message on the blockchain"""
         role, _, _ = helper.role.create()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         user, signer_keypair = helper.user.create()
 
         message = rbac.role.admin.propose.make(
-            user_id=user.user_id, role_id=role.role_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user.user_id,
+            role_id=role.role_id,
+            reason=reason,
+            metadata=None,
         )
         proposal, status = rbac.role.admin.propose.create(
             signer_keypair=signer_keypair,
@@ -128,7 +150,7 @@ class ProposeRoleAddAdminTest(TestAssertions):
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_ADMIN
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, role.role_id)
         self.assertEqual(proposal.target_id, user.user_id)
         self.assertEqual(proposal.opener, signer_keypair.public_key)
