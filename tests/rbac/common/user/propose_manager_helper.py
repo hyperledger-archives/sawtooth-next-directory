@@ -52,8 +52,10 @@ class ProposeManagerTestHelper(TestAssertions):
         """Create a propose manager proposal for a user that has no manager"""
         user, user_key = helper.user.create()
         manager, manager_key = helper.user.create()
+        proposal_id = self.id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=manager.user_id,
             reason=reason,
@@ -71,7 +73,7 @@ class ProposeManagerTestHelper(TestAssertions):
             proposal.proposal_type,
             protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER,
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, user.user_id)
         self.assertEqual(proposal.target_id, manager.user_id)
         self.assertEqual(proposal.opener, user.user_id)

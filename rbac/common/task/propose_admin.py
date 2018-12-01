@@ -16,19 +16,18 @@
 usage: rbac.task.admin.propose.create()"""
 import logging
 from rbac.common import addresser
-from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.proposal.proposal_propose import ProposalPropose
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ProposeAddTaskAdmin(ProposalMessage):
+class ProposeAddTaskAdmin(ProposalPropose):
     """Implements the PROPOSE_ADD_TASK_ADMIN message
     usage: rbac.task.admin.propose.create()"""
 
-    @property
-    def message_action_type(self):
-        """The action type performed by this message"""
-        return addresser.MessageActionType.PROPOSE
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_subaction_type(self):
@@ -39,6 +38,11 @@ class ProposeAddTaskAdmin(ProposalMessage):
     def message_object_type(self):
         """The object type this message acts upon"""
         return addresser.ObjectType.TASK
+
+    @property
+    def message_related_type(self):
+        """the object type of the related object this message acts upon"""
+        return addresser.ObjectType.USER
 
     @property
     def message_relationship_type(self):
@@ -63,3 +67,26 @@ class ProposeAddTaskAdmin(ProposalMessage):
         outputs = [proposal_address]
 
         return inputs, outputs
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the proposed user is not already an admin of the task"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if addresser.task.admin.exists_in_state_inputs(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=message.task_id,
+            target_id=message.user_id,
+        ):
+            raise ValueError(
+                "User {} is already an admin of task {}".format(
+                    message.user_id, message.task_id
+                )
+            )

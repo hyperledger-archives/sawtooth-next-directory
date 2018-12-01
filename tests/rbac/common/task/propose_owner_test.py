@@ -35,13 +35,19 @@ class ProposeTaskAddOwnerTest(TestAssertions):
         """Test making the message"""
         user_id = helper.user.id()
         task_id = helper.task.id()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         message = rbac.task.owner.propose.make(
-            user_id=user_id, task_id=task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            task_id=task_id,
+            reason=reason,
+            metadata=None,
         )
         self.assertIsInstance(
             message, protobuf.task_transaction_pb2.ProposeAddTaskOwner
         )
+        self.assertEqual(message.proposal_id, proposal_id)
         self.assertEqual(message.user_id, user_id)
         self.assertEqual(message.task_id, task_id)
         self.assertEqual(message.reason, reason)
@@ -53,12 +59,17 @@ class ProposeTaskAddOwnerTest(TestAssertions):
         user_address = rbac.user.address(user_id)
         task_id = helper.task.id()
         task_address = rbac.task.address(task_id)
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         relationship_address = rbac.task.owner.address(task_id, user_id)
         proposal_address = rbac.task.owner.propose.address(task_id, user_id)
         signer_keypair = helper.user.key()
         message = rbac.task.owner.propose.make(
-            user_id=user_id, task_id=task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            task_id=task_id,
+            reason=reason,
+            metadata=None,
         )
 
         inputs, outputs = rbac.task.owner.propose.make_addresses(
@@ -82,12 +93,17 @@ class ProposeTaskAddOwnerTest(TestAssertions):
         user_address = rbac.user.address(user_id)
         task_id = helper.task.id()
         task_address = rbac.task.address(task_id)
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         relationship_address = rbac.task.owner.address(task_id, user_id)
         proposal_address = rbac.task.owner.propose.address(task_id, user_id)
         signer_keypair = helper.user.key()
         message = rbac.task.owner.propose.make(
-            user_id=user_id, task_id=task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user_id,
+            task_id=task_id,
+            reason=reason,
+            metadata=None,
         )
 
         payload = rbac.task.owner.propose.make_payload(
@@ -107,14 +123,20 @@ class ProposeTaskAddOwnerTest(TestAssertions):
         self.assertIsInstance(outputs, list)
         self.assertEqual(outputs, [proposal_address])
 
+    @pytest.mark.propose_task_owner
     def test_create(self):
         """Test executing the message on the blockchain"""
         task, _, _ = helper.task.create()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.proposal.reason()
         user, signer_keypair = helper.user.create()
 
         message = rbac.task.owner.propose.make(
-            user_id=user.user_id, task_id=task.task_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            user_id=user.user_id,
+            task_id=task.task_id,
+            reason=reason,
+            metadata=None,
         )
         proposal, status = rbac.task.owner.propose.create(
             signer_keypair=signer_keypair,
@@ -127,7 +149,7 @@ class ProposeTaskAddOwnerTest(TestAssertions):
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNER
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, task.task_id)
         self.assertEqual(proposal.target_id, user.user_id)
         self.assertEqual(proposal.opener, signer_keypair.public_key)

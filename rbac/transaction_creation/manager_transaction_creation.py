@@ -53,6 +53,7 @@ def propose_manager(
         addresser.user.address(user_id),
         addresser.user.address(new_manager_id),
         addresser.proposal.address(object_id=user_id, target_id=new_manager_id),
+        addresser.user.address(txn_key.public_key),
     ]
 
     outputs = [addresser.proposal.address(object_id=user_id, target_id=new_manager_id)]
@@ -60,6 +61,8 @@ def propose_manager(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_update_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.PROPOSE_UPDATE_USER_MANAGER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -86,6 +89,7 @@ def confirm_manager(txn_key, batch_key, proposal_id, user_id, manager_id, reason
     inputs = [
         addresser.proposal.address(user_id, manager_id),
         addresser.user.address(user_id),
+        addresser.user.address(txn_key.public_key),
     ]
 
     outputs = [
@@ -96,6 +100,8 @@ def confirm_manager(txn_key, batch_key, proposal_id, user_id, manager_id, reason
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_update_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CONFIRM_UPDATE_USER_MANAGER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -121,13 +127,18 @@ def reject_manager(txn_key, batch_key, proposal_id, reason, user_id, manager_id)
         proposal_id=proposal_id, user_id=user_id, manager_id=manager_id, reason=reason
     )
 
-    inputs = [addresser.proposal.address(object_id=user_id, target_id=manager_id)]
+    inputs = [
+        addresser.proposal.address(object_id=user_id, target_id=manager_id),
+        addresser.user.address(txn_key.public_key),
+    ]
 
     outputs = [addresser.proposal.address(object_id=user_id, target_id=manager_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_update_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.REJECT_UPDATE_USER_MANAGER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(

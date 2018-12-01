@@ -61,7 +61,4 @@ class TestUserOperations(unittest.TestCase):
             admins=[],
             owners=[],
         )[0]
-        self.assertEqual(
-            response["invalid_transactions"][0]["message"],
-            "Role must have at least one admin",
-        )
+        self.assertIn("must have", response["invalid_transactions"][0]["message"])

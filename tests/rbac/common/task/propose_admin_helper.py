@@ -55,9 +55,14 @@ class ProposeTaskAdminTestHelper(TestAssertions):
         to add themselves as an admin to a task"""
         task, task_owner, task_owner_key = helper.task.create()
         user, user_key = helper.user.create()
+        proposal_id = self.id()
         reason = self.reason()
         message = rbac.task.admin.propose.make(
-            task_id=task.task_id, user_id=user.user_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            task_id=task.task_id,
+            user_id=user.user_id,
+            reason=reason,
+            metadata=None,
         )
         proposal, status = rbac.task.admin.propose.create(
             signer_keypair=user_key,
@@ -70,7 +75,7 @@ class ProposeTaskAdminTestHelper(TestAssertions):
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_ADMIN
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, task.task_id)
         self.assertEqual(proposal.target_id, user.user_id)
         self.assertEqual(proposal.opener, user.user_id)

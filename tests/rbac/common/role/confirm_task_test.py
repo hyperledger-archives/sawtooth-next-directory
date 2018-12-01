@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 """Confirm Role Add Task Test"""
 
-# pylint: disable=no-member
+# pylint: disable=no-member,too-many-locals
 
 import logging
 import pytest
@@ -60,6 +60,7 @@ class ConfirmRoleAddTaskTest(TestAssertions):
         task_owner_address = rbac.task.owner.address(
             task_id, task_owner_keypair.public_key
         )
+        signer_user_address = rbac.user.address(task_owner_keypair.public_key)
         message = rbac.role.task.confirm.make(
             proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
         )
@@ -71,11 +72,13 @@ class ConfirmRoleAddTaskTest(TestAssertions):
         self.assertIsInstance(inputs, list)
         self.assertIn(task_owner_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 2)
+        self.assertIn(relationship_address, inputs)
+        self.assertIn(signer_user_address, inputs)
+        self.assertEqual(len(inputs), 4)
 
         self.assertIsInstance(outputs, list)
-        self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
+        self.assertIn(relationship_address, outputs)
         self.assertEqual(len(outputs), 2)
 
     @pytest.mark.library
@@ -91,6 +94,7 @@ class ConfirmRoleAddTaskTest(TestAssertions):
         task_owner_address = rbac.task.owner.address(
             task_id, task_owner_keypair.public_key
         )
+        signer_user_address = rbac.user.address(task_owner_keypair.public_key)
         message = rbac.role.task.confirm.make(
             proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
         )
@@ -99,20 +103,22 @@ class ConfirmRoleAddTaskTest(TestAssertions):
             message=message, signer_keypair=task_owner_keypair
         )
         self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
-
         inputs = list(payload.inputs)
+        outputs = list(payload.outputs)
+
         self.assertIsInstance(inputs, list)
         self.assertIn(task_owner_address, inputs)
         self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 2)
+        self.assertIn(relationship_address, inputs)
+        self.assertIn(signer_user_address, inputs)
+        self.assertEqual(len(inputs), 4)
 
-        outputs = list(payload.outputs)
         self.assertIsInstance(outputs, list)
-        self.assertIn(relationship_address, outputs)
         self.assertIn(proposal_address, outputs)
+        self.assertIn(relationship_address, outputs)
         self.assertEqual(len(outputs), 2)
 
-    @pytest.mark.integration
+    @pytest.mark.confirm_role_task
     def test_create(self):
         """Test executing the message on the blockchain"""
         proposal, _, _, _, _, _, task_owner_key = helper.role.task.propose.create()
@@ -140,3 +146,8 @@ class ConfirmRoleAddTaskTest(TestAssertions):
         self.assertEqual(confirm.target_id, proposal.target_id)
         self.assertEqual(confirm.close_reason, reason)
         self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
+        self.assertTrue(
+            rbac.role.task.exists(
+                object_id=proposal.object_id, target_id=proposal.target_id
+            )
+        )

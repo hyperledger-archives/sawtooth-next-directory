@@ -16,19 +16,18 @@
 usage: rbac.task.owner.propose.create()"""
 import logging
 from rbac.common import addresser
-from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.proposal.proposal_propose import ProposalPropose
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ProposeAddTaskOwner(ProposalMessage):
+class ProposeAddTaskOwner(ProposalPropose):
     """Implements the PROPOSE_ADD_TASK_OWNER message
     usage: rbac.task.owner.propose.create()"""
 
-    @property
-    def message_action_type(self):
-        """The action type performed by this message"""
-        return addresser.MessageActionType.PROPOSE
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_subaction_type(self):
@@ -41,11 +40,16 @@ class ProposeAddTaskOwner(ProposalMessage):
         return addresser.ObjectType.TASK
 
     @property
+    def message_related_type(self):
+        """the object type of the related object this message acts upon"""
+        return addresser.ObjectType.USER
+
+    @property
     def message_relationship_type(self):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.OWNER
 
-    def make_addresses(self, message, signer_keypair=None):
+    def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
@@ -63,3 +67,26 @@ class ProposeAddTaskOwner(ProposalMessage):
         outputs = [proposal_address]
 
         return inputs, outputs
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the proposed user is not already an owner of the task"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if addresser.task.owner.exists_in_state_inputs(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=message.task_id,
+            target_id=message.user_id,
+        ):
+            raise ValueError(
+                "User {} is already an owner of task {}".format(
+                    message.user_id, message.task_id
+                )
+            )

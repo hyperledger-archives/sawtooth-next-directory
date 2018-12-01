@@ -65,22 +65,23 @@ class CreateRoleTest(TestAssertions):
         role_address = rbac.role.address(role_id)
         user_id = helper.user.id()
         user_address = rbac.user.address(user_id)
+        signer_keypair = helper.user.key()
         owner_address = rbac.role.owner.address(role_id, user_id)
         admin_address = rbac.role.admin.address(role_id, user_id)
         message = rbac.role.make(
             role_id=role_id, name=name, owners=[user_id], admins=[user_id]
         )
 
-        inputs, outputs = rbac.role.make_addresses(message=message)
+        inputs, outputs = rbac.role.make_addresses(
+            message=message, signer_keypair=signer_keypair
+        )
 
         self.assertIsInstance(inputs, list)
         self.assertIn(role_address, inputs)
         self.assertIn(user_address, inputs)
         self.assertIn(owner_address, inputs)
         self.assertIn(admin_address, inputs)
-        self.assertEqual(
-            len(inputs), 5
-        )  # user_address will appear twice, as owner and admin
+        self.assertEqual(len(inputs), 4)
         self.assertEqual(inputs, outputs)
 
     @pytest.mark.library
@@ -109,12 +110,10 @@ class CreateRoleTest(TestAssertions):
         self.assertIn(user_address, inputs)
         self.assertIn(owner_address, inputs)
         self.assertIn(admin_address, inputs)
-        self.assertEqual(
-            len(inputs), 5
-        )  # user_address will appear twice, as owner and admin
+        self.assertEqual(len(inputs), 4)
         self.assertEqual(inputs, outputs)
 
-    @pytest.mark.integration
+    @pytest.mark.create_role
     def test_create(self):
         """Test creating a role"""
         user, keypair = helper.user.create()

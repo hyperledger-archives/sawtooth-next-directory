@@ -61,6 +61,7 @@ class RejectTaskAddOwnerTest(TestAssertions):
         signer_owner_address = rbac.task.owner.address(
             task_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.task.owner.reject.make(
             proposal_id=proposal_id, user_id=user_id, task_id=task_id, reason=reason
         )
@@ -70,10 +71,11 @@ class RejectTaskAddOwnerTest(TestAssertions):
         )
 
         self.assertIsInstance(inputs, list)
+        self.assertIn(proposal_address, inputs)
         self.assertIn(signer_admin_address, inputs)
         self.assertIn(signer_owner_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 3)
+        self.assertIn(signer_user_address, inputs)
+        self.assertEqual(len(inputs), 4)
 
         self.assertIsInstance(outputs, list)
         self.assertIn(proposal_address, outputs)
@@ -94,6 +96,7 @@ class RejectTaskAddOwnerTest(TestAssertions):
         signer_owner_address = rbac.task.owner.address(
             task_id, signer_keypair.public_key
         )
+        signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.task.owner.reject.make(
             proposal_id=proposal_id, user_id=user_id, task_id=task_id, reason=reason
         )
@@ -102,20 +105,21 @@ class RejectTaskAddOwnerTest(TestAssertions):
             message=message, signer_keypair=signer_keypair
         )
         self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
-
         inputs = list(payload.inputs)
+        outputs = list(payload.outputs)
+
         self.assertIsInstance(inputs, list)
+        self.assertIn(proposal_address, inputs)
         self.assertIn(signer_admin_address, inputs)
         self.assertIn(signer_owner_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertEqual(len(inputs), 3)
+        self.assertIn(signer_user_address, inputs)
+        self.assertEqual(len(inputs), 4)
 
-        outputs = list(payload.outputs)
         self.assertIsInstance(outputs, list)
         self.assertIn(proposal_address, outputs)
         self.assertEqual(len(outputs), 1)
 
-    @pytest.mark.integration
+    @pytest.mark.reject_task_owner
     def test_create(self):
         """Test executing the message on the blockchain"""
         proposal, _, _, task_owner_key, _, _ = helper.task.owner.propose.create()
@@ -142,4 +146,5 @@ class RejectTaskAddOwnerTest(TestAssertions):
         self.assertEqual(reject.object_id, proposal.object_id)
         self.assertEqual(reject.target_id, proposal.target_id)
         self.assertEqual(reject.close_reason, reason)
+        self.assertEqual(reject.closer, task_owner_key.public_key)
         self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)

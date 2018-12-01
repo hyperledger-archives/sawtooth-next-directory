@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""A Base Sawtooth Transaction Processor"""
 import logging
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
@@ -26,18 +26,12 @@ message_handlers = {}  # pylint: disable=invalid-name
 
 def register_message_handler(message):
     """Register a transaction message handler for a given message class"""
-    if message.message_type in message_handlers:
-        existing = message_handlers[message.message_type]
     message_handlers[message.message_type] = message
 
 
 def unregister_message_handler(message):
     """Unregister a transaction message handler for a given message class"""
     if message.message_type in message_handlers:
-        LOGGER.debug(
-            "removing message handler for %s",
-            get_message_type_name(message.message_type),
-        )
         del message_handlers[message.message_type]
 
 
@@ -58,7 +52,7 @@ def get_message_handler(message_type):
     return None
 
 
-def handle_message(header, payload, state):
+def handle_message(header, payload, context):
     """Handle the messages submitted to the transaction processor"""
     if not can_handle_message(payload=payload):
         raise InvalidTransaction(
@@ -67,7 +61,7 @@ def handle_message(header, payload, state):
             )
         )
     message_handlers[payload.message_type].apply(
-        header=header, payload=payload, state=state
+        header=header, payload=payload, context=context
     )
 
 
@@ -115,18 +109,18 @@ class BaseTransactionProcessor(object):
         """Get the handler for the given message type"""
         return get_message_handler(message_type)
 
-    def handle_message(self, header, payload, state):
+    def handle_message(self, header, payload, context):
         """Handle the messages submitted to the transaction processor"""
-        return handle_message(header, payload, state)
+        return handle_message(header, payload, context)
 
-    def apply(self, transaction, state):
+    def apply(self, transaction, context):
         """Main entry point for the Sawtooth Transaction Processor
         Transactions get submitted to this required interface method"""
         try:
             payload = RBACPayload()
             payload.ParseFromString(transaction.payload)
             return handle_message(
-                header=transaction.header, payload=payload, state=state
+                header=transaction.header, payload=payload, context=context
             )
         except ValueError as err:
             raise InvalidTransaction(err)

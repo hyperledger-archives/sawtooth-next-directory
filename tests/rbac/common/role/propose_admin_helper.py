@@ -56,9 +56,14 @@ class ProposeRoleAdminTestHelper(TestAssertions):
         to add themselves as an admin to a role"""
         role, role_owner, role_owner_key = helper.role.create()
         user, user_key = helper.user.create()
+        proposal_id = self.id()
         reason = self.reason()
         message = rbac.role.admin.propose.make(
-            role_id=role.role_id, user_id=user.user_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            role_id=role.role_id,
+            user_id=user.user_id,
+            reason=reason,
+            metadata=None,
         )
         proposal, status = rbac.role.admin.propose.create(
             signer_keypair=user_key,
@@ -71,7 +76,7 @@ class ProposeRoleAdminTestHelper(TestAssertions):
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_ADMIN
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, role.role_id)
         self.assertEqual(proposal.target_id, user.user_id)
         self.assertEqual(proposal.opener, user.user_id)

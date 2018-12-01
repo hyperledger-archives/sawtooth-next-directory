@@ -1,0 +1,96 @@
+# Copyright 2018 Contributors to Hyperledger Sawtooth
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+"""A base for all proposal creation message types"""
+import logging
+from rbac.common import addresser
+from rbac.common import protobuf
+from rbac.common.proposal.proposal_message import ProposalMessage
+
+LOGGER = logging.getLogger(__name__)
+
+
+class ProposalPropose(ProposalMessage):
+    """A base for all proposal rejection message types"""
+
+    @property
+    def message_action_type(self):
+        """The action type performed by this message"""
+        return addresser.MessageActionType.PROPOSE
+
+    def make_addresses(self, message, signer_keypair):
+        """Make addresses returns the inputs (read) and output (write)
+        addresses that may be required in order to validate the message
+        and store the resulting data of a successful or failed execution"""
+        raise NotImplementedError("Class must implement this method")
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the proposal is signed by the user or their manager
+        2. there is no open proposal for the same relationship
+        """
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        object_id = self._get_object_id(message)
+        target_id = self._get_target_id(message)
+        if hasattr(message, "user_id") and getattr(message, "user_id") != signer:
+            user = addresser.user.get_from_input_state(
+                inputs=inputs, input_state=input_state, object_id=message.user_id
+            )
+            if user.manager_id != signer:
+                raise ValueError(
+                    "{}: the user or their manager must be the proposal signer, got {}\n{}".format(
+                        self.message_type_name, signer, user
+                    )
+                )
+        last_proposal = addresser.proposal.get_from_input_state(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=object_id,
+            target_id=target_id,
+        )
+        if (
+            # pylint: disable=no-member
+            last_proposal is not None
+            and last_proposal.status == protobuf.proposal_state_pb2.Proposal.OPEN
+        ):
+            raise ValueError(
+                "Existing proposal id {} for {} {} {} {} is still open".format(
+                    last_proposal.proposal_id,
+                    self._name_id,
+                    object_id,
+                    self._target_id,
+                    target_id,
+                )
+            )
+
+    def store_message(
+        self, object_id, target_id, store, message, outputs, output_state, signer
+    ):
+        """Create the proposal data"""
+        store.proposal_id = message.proposal_id
+        store.proposal_type = self.proposal_type
+        # pylint: disable=no-member
+        store.status = protobuf.proposal_state_pb2.Proposal.OPEN
+        store.object_id = self._get_object_id(message)
+        store.target_id = self._get_target_id(message)
+        store.open_reason = message.reason
+        store.opener = signer
+        # store.metadata = message.metadata

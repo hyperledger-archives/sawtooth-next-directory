@@ -23,8 +23,10 @@ from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac.processor.event_handler import RBACTransactionHandler
 
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("sawtooth_sdk.processor.core").setLevel(logging.WARNING)
+
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 VALIDATOR_HOST = os.getenv("VALIDATOR_HOST", "validator")
@@ -59,8 +61,9 @@ def main(args=None):
 
     except KeyboardInterrupt:
         pass
-    except Exception as exe:  # pylint: disable=broad-except
-        LOGGER.error("Error: %s", exe, file=sys.stderr)
+    except Exception as err:  # pylint: disable=broad-except
+        LOGGER.exception("Fatal processor %s exception", type(err))
+        LOGGER.exception(err)
     finally:
         if processor is not None:
             processor.stop()

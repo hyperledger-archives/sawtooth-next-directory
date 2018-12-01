@@ -56,9 +56,14 @@ class ProposeTaskOwnerTestHelper(TestAssertions):
         to add themselves as an owner to a task"""
         task, task_owner, task_owner_key = helper.task.create()
         user, user_key = helper.user.create()
+        proposal_id = self.id()
         reason = self.reason()
         message = rbac.task.owner.propose.make(
-            task_id=task.task_id, user_id=user.user_id, reason=reason, metadata=None
+            proposal_id=proposal_id,
+            task_id=task.task_id,
+            user_id=user.user_id,
+            reason=reason,
+            metadata=None,
         )
         proposal, status = rbac.task.owner.propose.create(
             signer_keypair=user_key,
@@ -71,7 +76,7 @@ class ProposeTaskOwnerTestHelper(TestAssertions):
         self.assertEqual(
             proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNER
         )
-        self.assertEqual(proposal.proposal_id, message.proposal_id)
+        self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, task.task_id)
         self.assertEqual(proposal.target_id, user.user_id)
         self.assertEqual(proposal.opener, user.user_id)

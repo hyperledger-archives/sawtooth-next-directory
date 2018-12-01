@@ -27,10 +27,9 @@ class CreateUser(BaseMessage):
     """Implements the CREATE_USER message
     usage: rbac.user.create()"""
 
-    @property
-    def register_message(self):
-        """Whether to register this message with the transaction processor"""
-        return True  # TODO: remove after TP refactor as default will become True
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_action_type(self):
@@ -81,7 +80,7 @@ class CreateUser(BaseMessage):
         )
         return message, keypair
 
-    def make_addresses(self, message, signer_keypair=None):
+    def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
@@ -98,9 +97,16 @@ class CreateUser(BaseMessage):
         outputs = inputs
         return inputs, outputs
 
+    @property
+    def allow_signer_not_in_state(self):
+        """Whether the signer of the message is allowed to not be
+        in state. Used only for when the transaction also creates the
+        signer of the message (e.g. CREATE_USER)"""
+        return True
+
     def validate(self, message, signer=None):
         """Validates the message values"""
-        signer = super(CreateUser, self).validate(message=message, signer=signer)
+        signer = super().validate(message=message, signer=signer)
         if len(message.name) < 5:
             raise ValueError("Users must have names longer than 4 characters")
         if message.manager_id is not None:
@@ -110,16 +116,25 @@ class CreateUser(BaseMessage):
             if signer not in [message.user_id, message.manager_id]:
                 raise ValueError("Signer must be the user or their manager")
 
-    def validate_state(self, state, message, signer):
+    def validate_state(self, context, message, inputs, input_state, store, signer):
         """Validates the message against state"""
-        super(CreateUser, self).validate_state(
-            state=state, message=message, signer=signer
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
         )
-        if addresser.user.exists_in_state(state=state, object_id=message.user_id):
-            raise ValueError("User with id {} already exists!!".format(message.user_id))
-        if message.manager_id and not addresser.user.exists_in_state(
-            state=state, object_id=message.manager_id
+        if addresser.user.exists_in_state_inputs(
+            inputs=inputs, input_state=input_state, object_id=message.user_id
         ):
             raise ValueError(
-                "Manager with id {} does not exist!!".format(message.manager_id)
+                "User with id {} already exists in state".format(message.user_id)
+            )
+        if message.manager_id and not addresser.user.exists_in_state_inputs(
+            inputs=inputs, input_state=input_state, object_id=message.manager_id
+        ):
+            raise ValueError(
+                "Manager with id {} does not exist in state".format(message.manager_id)
             )

@@ -22,11 +22,11 @@ from sawtooth_sdk.protobuf import batch_pb2
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import transaction_pb2
 from rbac.common import addresser
-from rbac.app.config import BATCHER_KEY_PAIR
+from rbac.common.crypto.keys import Key
 from rbac.common.sawtooth import rbac_payload
 
-
 LOGGER = logging.getLogger(__name__)
+BATCHER_KEY_PAIR = Key()
 
 
 def get_message_type_name(message_type):
@@ -146,8 +146,8 @@ def dict_to_protobuf(message, message_name, dictionary):
                         setattr(message, key, value)
                 except Exception:
                     raise AttributeError(
-                        "Unable to set attribute {} on {} to value {}".format(
-                            key, message_name, value
+                        "Unable to set attribute {} type {} on {} to value {}".format(
+                            key, message_name, type(value), value
                         )
                     )
             else:
@@ -157,12 +157,16 @@ def dict_to_protobuf(message, message_name, dictionary):
     return message
 
 
-def message_to_message(message_to, message_name, message_from):
+def message_to_message(
+    message_to, message_from, message_name=None, exclude_fields=None
+):
     """Makes a message from another message
     Shallow copy; supports primitive data types and lists (arrays)
     Add depth and/or additional datatypes when needed (TODO: add json support)"""
+    if not message_name:
+        message_name = type(message_to)
     for key, value in message_from.ListFields():
-        if hasattr(message_to, key.name):
+        if hasattr(message_to, key.name) and key.name not in exclude_fields:
             try:
                 if isinstance(value, list):
                     getattr(message_to, key.name).extend(value)
@@ -175,7 +179,8 @@ def message_to_message(message_to, message_name, message_from):
                     )
                 )
         else:
-            LOGGER.warning("%s has no property %s", message_name, key.name)
+            if key.name not in exclude_fields:
+                LOGGER.warning("%s has no property %s", message_name, key.name)
     return message_to
 
 

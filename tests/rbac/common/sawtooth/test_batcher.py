@@ -19,12 +19,12 @@
 import logging
 import pytest
 
-from rbac.common.crypto.keys import Key
-from rbac.app.config import BATCHER_KEY_PAIR
 from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth import batcher
+from rbac.common.sawtooth.batcher import BATCHER_KEY_PAIR
+from rbac.common.crypto.keys import Key
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)

@@ -28,6 +28,7 @@ def create_task(txn_key, batch_key, task_id, task_name, admins, owners, metadata
 
     inputs = [
         addresser.task.address(task_id),
+        addresser.user.address(txn_key.public_key),
         addresser.sysadmin.member.address(txn_key.public_key),
     ]
 
@@ -47,6 +48,8 @@ def create_task(txn_key, batch_key, task_id, task_name, admins, owners, metadata
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=create_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CREATE_TASK,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -65,6 +68,7 @@ def propose_add_task_admins(
 
     inputs = [
         addresser.user.address(user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.admin.address(task_id, user_id),
         addresser.proposal.address(task_id, user_id),
         addresser.task.address(task_id),
@@ -75,6 +79,8 @@ def propose_add_task_admins(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_ADMIN,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -87,6 +93,7 @@ def confirm_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, r
 
     inputs = [
         addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.user.address(txn_key.public_key),
         addresser.proposal.address(task_id, user_id),
     ]
 
@@ -98,6 +105,8 @@ def confirm_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, r
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_TASK_ADMIN,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -110,6 +119,7 @@ def reject_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, re
 
     inputs = [
         addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.user.address(txn_key.public_key),
         addresser.proposal.address(task_id, user_id),
     ]
 
@@ -118,6 +128,8 @@ def reject_add_task_admins(txn_key, batch_key, proposal_id, task_id, user_id, re
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_TASK_ADMIN,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -136,6 +148,7 @@ def propose_remove_task_admins(
 
     inputs = [
         addresser.user.address(user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.admin.address(task_id, user_id),
         addresser.proposal.address(task_id, user_id),
         addresser.task.address(task_id),
@@ -146,6 +159,8 @@ def propose_remove_task_admins(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_ADMIN,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -160,6 +175,7 @@ def confirm_remove_task_admins(
 
     inputs = [
         addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.user.address(txn_key.public_key),
         addresser.task.admin.address(task_id, user_id),
         addresser.proposal.address(task_id, user_id),
     ]
@@ -172,6 +188,8 @@ def confirm_remove_task_admins(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_TASK_ADMIN,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -186,6 +204,7 @@ def reject_remove_task_admins(
 
     inputs = [
         addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.user.address(txn_key.public_key),
         addresser.proposal.address(task_id, user_id),
     ]
 
@@ -194,6 +213,8 @@ def reject_remove_task_admins(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_payload.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_TASK_ADMIN,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -212,6 +233,7 @@ def propose_add_task_owner(
 
     inputs = [
         addresser.user.address(user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.owner.address(task_id, user_id),
         addresser.task.address(task_id),
         addresser.proposal.address(task_id, user_id),
@@ -222,6 +244,8 @@ def propose_add_task_owner(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.PROPOSE_ADD_TASK_OWNER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -234,7 +258,9 @@ def confirm_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, r
 
     inputs = [
         addresser.proposal.address(task_id, user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.task.owner.address(task_id, txn_key.public_key),
     ]
 
     outputs = [
@@ -245,6 +271,8 @@ def confirm_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, r
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CONFIRM_ADD_TASK_OWNER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -257,7 +285,9 @@ def reject_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, re
 
     inputs = [
         addresser.proposal.address(task_id, user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.admin.address(task_id, txn_key.public_key),
+        addresser.task.owner.address(task_id, txn_key.public_key),
     ]
 
     outputs = [addresser.proposal.address(task_id, user_id)]
@@ -265,6 +295,8 @@ def reject_add_task_owners(txn_key, batch_key, proposal_id, task_id, user_id, re
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.REJECT_ADD_TASK_OWNER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -283,6 +315,7 @@ def propose_remove_task_owners(
 
     inputs = [
         addresser.user.address(user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.owner.address(task_id, user_id),
         addresser.proposal.address(task_id, user_id),
         addresser.task.address(task_id),
@@ -293,6 +326,8 @@ def propose_remove_task_owners(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.PROPOSE_REMOVE_TASK_OWNER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -307,6 +342,7 @@ def confirm_remove_task_owners(
 
     inputs = [
         addresser.proposal.address(task_id, user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.owner.address(task_id, user_id),
         addresser.task.admin.address(task_id, txn_key.public_key),
     ]
@@ -319,6 +355,8 @@ def confirm_remove_task_owners(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=confirm.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.CONFIRM_REMOVE_TASK_OWNER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)
@@ -333,6 +371,7 @@ def reject_remove_task_owners(
 
     inputs = [
         addresser.proposal.address(task_id, user_id),
+        addresser.user.address(txn_key.public_key),
         addresser.task.admin.address(task_id, txn_key.public_key),
     ]
 
@@ -341,6 +380,8 @@ def reject_remove_task_owners(
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject.SerializeToString(),
         message_type=rbac_payload_pb2.RBACPayload.REJECT_REMOVE_TASK_OWNER,
+        inputs=inputs,
+        outputs=outputs,
     )
 
     return make_header_and_batch(rbac_payload, inputs, outputs, txn_key, batch_key)

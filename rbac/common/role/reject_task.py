@@ -17,14 +17,18 @@ usage: rbac.role.task.reject.create()"""
 import logging
 from rbac.common import addresser
 from rbac.common.crypto.keys import Key
-from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.proposal.proposal_reject import ProposalReject
 
 LOGGER = logging.getLogger(__name__)
 
 
-class RejectAddRoleTask(ProposalMessage):
+class RejectAddRoleTask(ProposalReject):
     """Implements the REJECT_ADD_ROLE_TASK message
     usage: rbac.role.task.reject.create()"""
+
+    def __init__(self):
+        super().__init__()
+        self._register()
 
     @property
     def message_action_type(self):
@@ -42,14 +46,14 @@ class RejectAddRoleTask(ProposalMessage):
         return addresser.ObjectType.ROLE
 
     @property
+    def message_related_type(self):
+        """the object type of the related object this message acts upon"""
+        return addresser.ObjectType.TASK
+
+    @property
     def message_relationship_type(self):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.MEMBER
-
-    @property
-    def message_type_name(self):
-        """A TASK membership rather than a USER membership"""
-        return "REJECT_ADD_ROLE_TASK"
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
@@ -61,12 +65,36 @@ class RejectAddRoleTask(ProposalMessage):
         signer_address = addresser.task.owner.address(
             message.task_id, signer_keypair.public_key
         )
+        signer_user_address = addresser.user.address(signer_keypair.public_key)
 
         proposal_address = self.address(
             object_id=message.role_id, target_id=message.task_id
         )
 
-        inputs = [signer_address, proposal_address]
+        inputs = [proposal_address, signer_address, signer_user_address]
         outputs = [proposal_address]
 
         return inputs, outputs
+
+    def validate_state(self, context, message, inputs, input_state, store, signer):
+        """Validates that:
+        1. the signer is an owner of the task"""
+        super().validate_state(
+            context=context,
+            message=message,
+            inputs=inputs,
+            input_state=input_state,
+            store=store,
+            signer=signer,
+        )
+        if not addresser.task.owner.exists_in_state_inputs(
+            inputs=inputs,
+            input_state=input_state,
+            object_id=message.task_id,
+            target_id=signer,
+        ):
+            raise ValueError(
+                "Signer {} must be an owner of the task {}".format(
+                    signer, message.role_id
+                )
+            )

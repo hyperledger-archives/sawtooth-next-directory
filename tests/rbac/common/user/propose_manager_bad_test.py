@@ -34,8 +34,10 @@ class ProposeManagerBadTest(TestAssertions):
         """Propose a manager who is not in state"""
         user, user_key = helper.user.create()
         manager, _ = helper.user.message()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=manager.user_id,
             reason=reason,
@@ -51,8 +53,10 @@ class ProposeManagerBadTest(TestAssertions):
         """Propose for a user who is not in state"""
         user, user_key = helper.user.message()
         manager, _ = helper.user.create()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=manager.user_id,
             reason=reason,
@@ -67,9 +71,10 @@ class ProposeManagerBadTest(TestAssertions):
     def test_user_proposes_manager_change(self):
         """User propose a change in their manager"""
         user, user_key, manager, _ = helper.user.create_with_manager()
-
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=manager.user_id,
             reason=reason,
@@ -85,9 +90,30 @@ class ProposeManagerBadTest(TestAssertions):
         """A proposed change in manager comes from another"""
         user, _, manager, _ = helper.user.create_with_manager()
         _, other_key = helper.user.create()
-
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
+            user_id=user.user_id,
+            new_manager_id=manager.user_id,
+            reason=reason,
+            metadata=None,
+        )
+        _, status = rbac.user.manager.propose.create(
+            signer_keypair=other_key, message=message
+        )
+        self.assertStatusInvalid(status)
+
+    @pytest.mark.skip("should fail but does not with old TP")
+    def test_other_propose_manager_has_no_manager(self):
+        """Test proposing a manager for a user without a manager, signed by random other person"""
+        user, _ = helper.user.create()
+        manager, _ = helper.user.create()
+        _, other_key = helper.user.create()
+        proposal_id = rbac.addresser.proposal.unique_id()
+        reason = helper.user.reason()
+        message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=manager.user_id,
             reason=reason,
@@ -103,9 +129,10 @@ class ProposeManagerBadTest(TestAssertions):
     def test_manager_already_is_manager(self):
         """Propose the already existing manager"""
         user, _, manager, manager_key = helper.user.create_with_manager()
-
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=manager.user_id,
             reason=reason,
@@ -121,9 +148,10 @@ class ProposeManagerBadTest(TestAssertions):
     def test_proposed_manager_is_self(self):
         """Propose self as manager"""
         user, _, _, manager_key = helper.user.create_with_manager()
-
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=user.user_id,
             reason=reason,
@@ -138,8 +166,10 @@ class ProposeManagerBadTest(TestAssertions):
     def test_proposed_manager_is_already_proposed(self):
         """Propose with an open proposal for the same manager"""
         proposal, _, _, manager, manager_key = helper.user.manager.propose.create()
+        proposal_id = rbac.addresser.proposal.unique_id()
         reason = helper.user.reason()
         message = rbac.user.manager.propose.make(
+            proposal_id=proposal_id,
             user_id=proposal.object_id,
             new_manager_id=manager.user_id,
             reason=reason,
