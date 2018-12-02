@@ -18,14 +18,28 @@ limitations under the License.
  *
  * Extensible utils service
  *
+ * @param name      String used to create slug
+ * @param parent    Object containing name field to poll on
+ *                  availability.
+ *
+ *                  @example If an object is passed before it is
+ *                  ready to render, the function will be polled by
+ *                  Redux until a name field exists and a slug can be created
  *
  *
  */
-export const createSlug = (name) => {
-  return name && name
-    .toLowerCase()
-    .replace(/ /g, '-')
-    .replace(/[^\w-]+/g, '');
+export const createSlug = (name, parent) => {
+  let slug = (parent && parent.name) ? parent.name : name;
+  try {
+    return slug && slug
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
+  } catch (error) {
+    console.error(error);
+    console.error('Invalid resource name: ', name);
+    return '';
+  }
 }
 
 

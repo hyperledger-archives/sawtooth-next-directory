@@ -35,6 +35,10 @@ export const appState = (state) => {
 
     // App
     isAnimating:         AppSelectors.isAnimating(state),
+    isRefreshing:        AppSelectors.isRefreshing(state),
+    isSocketOpen:        AppSelectors.isSocketOpen(state),
+    shouldRefreshOnNextSocketReceive:
+      AppSelectors.shouldRefreshOnNextSocketReceive(state),
 
     // Approver
     openProposals:       ApproverSelectors.openProposals(state),
@@ -47,7 +51,6 @@ export const appState = (state) => {
     isAuthenticated:     AuthSelectors.isAuthenticated(state),
 
     // Chat
-    isSocketOpen:        ChatSelectors.isSocketOpen(state),
     messages:            ChatSelectors.messages(state),
 
     // Requester
@@ -82,6 +85,12 @@ export const appDispatch = (dispatch) => {
     // App
     startAnimation:    ()    => dispatch(AppActions.animationBegin()),
     stopAnimation:     ()    => dispatch(AppActions.animationEnd()),
+    openSocket:        ()    => dispatch(AppActions.socketOpen()),
+    closeSocket:       ()    => dispatch(AppActions.socketClose()),
+    startRefresh:      ()    => dispatch(AppActions.refreshBegin()),
+    stopRefresh:       ()    => dispatch(AppActions.refreshEnd()),
+    refreshOnNextSocketReceive: (flag) =>
+      dispatch(AppActions.refreshOnNextSocketReceive(flag)),
 
     // Approver
     approveProposals:  (ids) => dispatch(ApproverActions.approveProposalsRequest(ids)),
@@ -90,8 +99,8 @@ export const appDispatch = (dispatch) => {
     // Chat
     resetChat:         ()    => dispatch(ChatActions.clearMessages()),
     getConversation:   (id)  => dispatch(ChatActions.conversationRequest(id)),
-    sendMessage:       (message) =>
-      dispatch(ChatActions.sendRequest(message)),
+    sendMessage:       (payload) =>
+      dispatch(ChatActions.messageSend(payload)),
 
     // Requester
     getBase:           ()    => dispatch(RequesterActions.baseRequest()),
@@ -121,7 +130,6 @@ export const appDispatch = (dispatch) => {
 const logout = (dispatch) => {
   return dispatch(AuthActions.logoutRequest()) &&
     dispatch(ChatActions.clearMessages()) &&
-    dispatch(ChatActions.socketClose()) &&
     dispatch(UserActions.resetAll()) &&
     dispatch(RequesterActions.resetAll()) &&
     dispatch(ApproverActions.resetAll())

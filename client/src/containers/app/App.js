@@ -57,39 +57,45 @@ class App extends Component {
    *
    */
   componentDidMount () {
-    const { isAuthenticated } = this.props;
+    const { isAuthenticated, openSocket } = this.props;
     isAuthenticated && this.hydrate();
+    isAuthenticated && openSocket();
   }
 
 
   componentDidUpdate (prevProps) {
     const {
+      closeSocket,
       me,
-      id,
-      isAuthenticated,
       isSocketOpen,
-      sendMessage } = this.props;
+      isAuthenticated,
+      isRefreshing,
+      stopRefresh,
+      openSocket } = this.props;
 
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      return isSocketOpen && closeSocket();
+    }
 
     // On receiving new props, if user authentication
     // state changes, we know that a user has logged in,
     // so get hydrate user and recommended objects
     if (prevProps.isAuthenticated !== isAuthenticated) {
+      openSocket();
       this.hydrate();
     }
 
-    if (prevProps.isSocketOpen !== isSocketOpen) {
-      sendMessage({do: 'CREATE', message: 'recommend', user_id: id});
+    if (prevProps.isRefreshing !== isRefreshing) {
+      console.log('app component hit -> hydrate coming up')
+      this.hydrate();
+      stopRefresh();
     }
 
     // After the user object is populated, the following
     // will get the info required to display data in the
     // sidebar.
-    //
-    // ! Note this will be outmoded after API changes
-    //
     if (prevProps.me !== me) {
+      console.log('hydrate side is happeing!')
       this.hydrateSidebar();
     }
   }
@@ -104,7 +110,6 @@ class App extends Component {
   }
 
 
-  // proposals is array of objects of form { object_id, proposal_id }
   hydrateSidebar () {
     const { getProposals, getRoles, me, roles } = this.props;
 

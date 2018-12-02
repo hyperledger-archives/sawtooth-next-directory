@@ -48,7 +48,7 @@ class NavList extends Component {
   isItemActive = (item) => {
     const { location } = this.props;
 
-    const slug = utils.createSlug(item.name || item);
+    const slug = utils.createSlug(item.name, item);
     return location.pathname.includes(`/${slug}`);
   };
 
@@ -79,7 +79,7 @@ class NavList extends Component {
           as={Link}
           to={item.slug ?
             `${route}/${item.slug}` :
-            `${route}/${utils.createSlug(item.name || item)}`}>
+            `${route}/${utils.createSlug(item.name, item)}`}>
 
           <Image src=''/>
 

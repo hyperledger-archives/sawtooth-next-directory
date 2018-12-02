@@ -99,14 +99,14 @@ async def fetch_role_resource(conn, role_id, head_block_num):
 
 async def fetch_recommended_resources(conn, identifier, head_block_num, start, limit):
     resource = (
-        await r.table("role_members")
+        await r.table("roles")
+        .outer_join(r.table("role_members"), lambda a, b: a["role_id"].eq(b["role_id"]))
+        .zip()
         .filter(
-            lambda doc: doc["identifiers"].contains(identifier).not_()
-            & (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"])
+            lambda c: c.has_fields("identifiers").not_()
+            | c["identifiers"].contains(identifier).not_()
         )
         .slice(start, start + limit)
-        .get_field("role_id")
         .coerce_to("array")
         .run(conn)
     )

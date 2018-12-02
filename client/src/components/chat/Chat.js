@@ -46,6 +46,44 @@ import chatApprover from '../../mock_data/conversation_action.1.json';
  */
 export default class Chat extends Component {
 
+  componentDidMount () {
+    const { id, isSocketOpen, messages, sendMessage, type } = this.props;
+
+    if (type === 0 &&
+        isSocketOpen &&
+        !messages) {
+      sendMessage({do: 'CREATE', message: { text: '/recommend' }, user_id: id});
+    }
+  }
+
+
+  componentDidUpdate (prevProps) {
+    const {
+      id,
+      isSocketOpen,
+      messages,
+      sendMessage,
+      startRefresh,
+      type,
+      refreshOnNextSocketReceive,
+      shouldRefreshOnNextSocketReceive } = this.props;
+
+    if (prevProps.isSocketOpen !== isSocketOpen &&
+        type === 0 &&
+        isSocketOpen &&
+        !messages) {
+        sendMessage({do: 'CREATE', message: { text: '/recommend' }, user_id: id});
+    }
+
+    if (messages !== prevProps.messages) {
+      console.log('chat received message update...')
+      console.log('shouldRefreshOnNextSocketReceive: ', shouldRefreshOnNextSocketReceive)
+      shouldRefreshOnNextSocketReceive && startRefresh();
+      refreshOnNextSocketReceive(false);
+    }
+  }
+
+
   roleName = (roleId) => {
     const { roleFromId } = this.props;
     const role = roleFromId(roleId);
@@ -62,7 +100,7 @@ export default class Chat extends Component {
 
   send (message) {
     const { id, sendMessage } = this.props;
-    sendMessage({do: 'REPLY', message: message, user_id: id});
+    sendMessage({do: 'REPLY', message: { text: message }, user_id: id});
   }
 
 
@@ -98,7 +136,6 @@ export default class Chat extends Component {
 
     return (
       <div id='next-chat-container'>
-
         { type === 0 && title &&
           <Header id='next-chat-header' size='small' inverted>
             {title}
@@ -178,13 +215,16 @@ export default class Chat extends Component {
           </div>
         }
 
+        <div id='next-manual-triggers'>
+          <Button size='tiny' onClick={this.manualRequest}>
+            Request
+          </Button>
+          <Button size='tiny' onClick={this.manualApprove}>
+            Approve
+          </Button>
+        </div>
+
         <div id='next-chat-conversation-dock'>
-        <Button onClick={this.manualRequest}>
-          Manual Request
-        </Button>
-        <Button onClick={this.manualApprove}>
-          Manual Approve
-        </Button>
           <ChatForm
             {...this.props}
             disabled={disabled}

@@ -59,10 +59,14 @@ async def create_conversation(request, recv):
         request.app.config.DB_CONN, recv.get("user_id"), head_block.get("num"), 0, 1
     )
     await create_event(request, recv, "token", utils.extract_request_token(request))
-    await create_event(request, recv, "resource_id", recommended_resource)
+    await create_event(
+        request, recv, "resource_id", recommended_resource.get("role_id")
+    )
+    await create_event(request, recv, "resource_name", recommended_resource.get("name"))
 
 
 async def create_event(request, recv, name, value):
+    """Append an event to the chatbot engine tracker"""
     url = CHATBOT_REST_ENDPOINT + "/conversations/{}/tracker/events".format(
         recv.get("user_id")
     )
@@ -72,7 +76,8 @@ async def create_event(request, recv, name, value):
 
 
 async def generate_chatbot_reply(request, recv):
+    """Get a reply from the chatbot engine"""
     url = CHATBOT_REST_ENDPOINT + "/webhooks/rest/webhook"
-    data = {"sender": recv.get("user_id"), "message": recv.get("message")}
+    data = {"sender": recv.get("user_id"), "message": recv["message"].get("text")}
     async with request.app.config.HTTP_SESSION.post(url=url, json=data) as response:
         return await response.json()
