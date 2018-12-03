@@ -34,7 +34,7 @@ LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
-DELTA_SYNC_INTERVAL_SECONDS = float(os.getenv("DELTA_SYNC_INTERVAL_SECONDS", "3600"))
+DELTA_SYNC_INTERVAL_SECONDS = int(os.getenv("DELTA_SYNC_INTERVAL_SECONDS", "3600"))
 
 LDAP_FILTER_USER_DELTA = "(&(objectClass=person)(whenChanged>=%s))"
 LDAP_FILTER_GROUP_DELTA = "(&(objectClass=group)(whenChanged>=%s))"

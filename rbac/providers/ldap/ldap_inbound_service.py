@@ -52,8 +52,8 @@ DB_PORT = 28015
 # TODO: The db_attrs describe attributes of a queue message. Consider this while naming/relocating
 
 DB_TABLE_INBOUND_LDAP_SYNC_EVENT = "inbound_sync_event"
-DB_TABLE_QUEUE_INBOUND = "queue_inbound"
-DB_TABLE_QUEUE_OUTBOUND = "queue_outbound"
+DB_TABLE_QUEUE_INBOUND = "inbound_queue"
+DB_TABLE_QUEUE_OUTBOUND = "outbound_queue"
 DB_ATTR_LDAP_SYNC_EVENT_TIMESTAMP = "timestamp"
 DB_ATTR_DATA_TYPE = "data_type"
 DB_VALUE_DATA_TYPE_USER = "user"

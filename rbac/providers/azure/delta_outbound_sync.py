@@ -73,7 +73,7 @@ def is_user_in_aad(queue_entry):
         return False
     else:
         raise Exception(
-            f"Error getting user in Azure AD: Status code {response.status_code}"
+            ("Error getting user in Azure AD: Status code %s", response.status_code)
         )
 
 
@@ -91,7 +91,7 @@ def is_group_in_aad(queue_entry):
         return False
     else:
         raise Exception(
-            f"Error getting user in Azure AD: Status code {response.status_code}"
+            ("Error getting user in Azure AD: Status code %s", response.status_code)
         )
 
 
@@ -99,7 +99,7 @@ def fetch_user_aad(user_id):
     """This is an outbound request to get a single user from Azure AD."""
     headers = AUTH.check_token("GET")
     if headers:
-        url = f"{GRAPH_URL}/{GRAPH_VERSION}/users/{user_id}"
+        url = ("%s/%s/users/%s", GRAPH_URL, GRAPH_VERSION, user_id)
         response = requests.get(url=url, headers=headers)
         return response
 
@@ -107,7 +107,7 @@ def fetch_user_aad(user_id):
 def fetch_group_aad(group_id):
     headers = AUTH.check_token("GET")
     if headers:
-        url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups/{group_id}"
+        url = ("%s/%s/groups/%s", GRAPH_URL, GRAPH_VERSION, group_id)
         response = requests.get(url=url, headers=headers)
         return response
 
@@ -131,7 +131,7 @@ def update_user_aad(user):
             user_id = user["user_id"]
         else:
             user_id = user["user_principal_name"]
-        url = f"{GRAPH_URL}/{GRAPH_VERSION}/users/{user_id}"
+        url = ("%s/%s/users/%s", GRAPH_URL, GRAPH_VERSION, user_id)
         aad_user = outbound_user_filter(user, "azure")
         aad_user.pop("mail", None)
         requests.patch(url=url, headers=headers, json=aad_user)
@@ -142,9 +142,9 @@ def update_group_aad(group):
     headers = AUTH.check_token("PATCH")
     if headers:
         group_id = group["role_id"]
-        url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups/{group_id}"
+        url = ("%s/%s/groups/%s", GRAPH_URL, GRAPH_VERSION, group_id)
         aad_group = outbound_group_filter(group, "azure")
-        response = requests.patch(url=url, headers=headers, json=aad_group)
+        requests.patch(url=url, headers=headers, json=aad_group)
 
 
 def create_entry_aad(queue_entry):
@@ -161,7 +161,7 @@ def create_user_aad(queue_entry):
     """Creates a given user in AAD."""
     headers = AUTH.check_token("POST")
     if headers:
-        url = f"{GRAPH_URL}/{GRAPH_VERSION}/users"
+        url = ("%s/%s/users", GRAPH_URL, GRAPH_VERSION)
         try:
             aad_user = outbound_user_creation_filter(queue_entry["data"], "azure")
         except ValueError:
@@ -186,7 +186,7 @@ def create_group_aad(queue_entry):
     """Creates a given group in aad."""
     headers = AUTH.check_token("POST")
     if headers:
-        url = f"{GRAPH_URL}/{GRAPH_VERSION}/groups"
+        url = ("%s/%s/groups", GRAPH_URL, GRAPH_VERSION)
         try:
             aad_group = outbound_group_creation_filter(queue_entry["data"], "azure")
         except ValueError:
