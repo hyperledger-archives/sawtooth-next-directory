@@ -39,7 +39,7 @@ LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 TOP_DIR = DIRNAME(DIRNAME(__file__))
 PROJECT_DIR = os.path.join(TOP_DIR, "chatbot")
 
-NLU_DATA = os.path.join(PROJECT_DIR, "data/nlu_data.md")
+NLU_DATA = os.path.join(PROJECT_DIR, "data/nlu.md")
 NLU_CONFIG = os.path.join(PROJECT_DIR, "nlu_config.yml")
 NLU_MODEL = os.path.join(PROJECT_DIR, "build/")
 
@@ -74,7 +74,7 @@ def train_nlu():
 def train_core():
     keras = KerasPolicy(max_history=5)
     memoization = MemoizationPolicy(max_history=5)
-    fallback = FallbackPolicy()
+    fallback = FallbackPolicy(nlu_threshold=0.28)
 
     LOGGER.info("[CORE] Creating agent from YAML at %s", CORE_DOMAIN)
     agent = Agent(CORE_DOMAIN, policies=[memoization, keras, fallback])

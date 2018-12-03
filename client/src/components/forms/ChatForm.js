@@ -21,11 +21,11 @@ import PropTypes from 'prop-types';
 
 /**
  *
- * @class ChatForm
- * Component encapsulating a reusable chat form suitable for
- * composing within containers where chat functionality is required
+ * @class         ChatForm
+ * @description   Component encapsulating a reusable chat form
+ *                suitable for composing within containers where chat
+ *                functionality is required
  *
- * TODO: Add validation to forms
  *
  */
 export default class ChatForm extends Component {
@@ -34,6 +34,7 @@ export default class ChatForm extends Component {
     actions:          PropTypes.object.isRequired,
     disabled:         PropTypes.bool,
     messages:         PropTypes.array,
+    refreshOnNextSocketReceive: PropTypes.func,
     submit:           PropTypes.func.isRequired,
   };
 
@@ -41,17 +42,32 @@ export default class ChatForm extends Component {
   constructor (props) {
     super(props);
 
-    this.state = { message: '' };
+    this.state = { message: '', isDraft: null };
+  }
+
+
+  componentDidUpdate (prevProps) {
+    const { messages } = this.props;
+
+    if (messages !== prevProps.messages) {
+      try {
+        this.setState({
+          isDraft: messages[0].buttons[0].payload.startsWith('/send'),
+        });
+      } catch {}
+    }
+
   }
 
 
   reset () {
-    this.setState({ message: '' });
+    this.setState({ message: '', isDraft: null });
   }
 
 
-  handleSubmit (message) {
-    const { submit } = this.props;
+  handleSubmit (message, shouldRefresh) {
+    const { refreshOnNextSocketReceive, submit } = this.props;
+    shouldRefresh && refreshOnNextSocketReceive(true);
     submit(message);
     this.reset();
   }
@@ -69,8 +85,38 @@ export default class ChatForm extends Component {
   }
 
 
+  /**
+   *
+   * Create intent payload to send back to chatbot engine,
+   * inserting the current message to send in the body if
+   * the intend is /send. Otherwise, the payload is the original
+   * intent from the the button payload.
+   *
+   * @param payload Payload in button object sent
+   *                from chatbot engine (e.g., "Yes, please.",
+   *                "No, thanks.", '/send{"reason": "..."}')
+   *
+   *
+   */
+  createPayload = (payload) => {
+    const { message } = this.state;
+    if (!payload.startsWith('/') || payload.indexOf('{') === -1) return payload;
+
+    let demarcation = payload.indexOf('{');
+    let parsed = JSON.parse(
+      payload.substring(demarcation, payload.length)
+    );
+    if (parsed.reason) {
+      parsed.reason = message;
+      return payload.substring(0, demarcation) + JSON.stringify(parsed);
+    }
+    return payload;
+  }
+
+
   renderActions () {
     const { disabled, messages } = this.props;
+    const { isDraft } = this.state;
 
     return (
       <div id='next-chat-actions'>
@@ -83,7 +129,8 @@ export default class ChatForm extends Component {
               circular
               size='medium'
               disabled={disabled}
-              onClick={() => this.handleSubmit(button.payload)}>
+              onClick={() =>
+                this.handleSubmit(this.createPayload(button.payload), isDraft)}>
 
               { !disabled &&
                 <span>
@@ -104,29 +151,43 @@ export default class ChatForm extends Component {
 
 
   render () {
-    const { message } = this.state;
+    const { message, isDraft } = this.state;
 
     return (
       <div>
-
-        <Form onSubmit={() => this.handleSubmit(message)}>
-          <Form.Input
-            icon
-            fluid
-            placeholder='Say something...'
-            name='message'
-            value={this.state.message}
-            onChange={this.handleChange}>
-            <input autoComplete='off'/>
-            <Icon
-              link
-              name='paper plane'
-              onClick={() => this.handleSubmit(message)}/>
-          </Form.Input>
-        </Form>
-
+        { !isDraft &&
+        <div>
+          <Form onSubmit={() => this.handleSubmit(message)}>
+            <Form.Input
+              icon
+              fluid
+              placeholder='Say something...'
+              name='message'
+              value={this.state.message}
+              onChange={this.handleChange}>
+              <input autoComplete='off'/>
+              <Icon
+                link
+                name='paper plane'
+                onClick={() => this.handleSubmit(message)}/>
+            </Form.Input>
+          </Form>
+        </div>
+        }
+        { isDraft &&
+        <div id='next-chat-form-draft-container'>
+          <Form
+            onSubmit={() =>
+              this.handleSubmit(`/send{"reason": "${message}"}`, true)}>
+            <Form.TextArea id='next-chat-form-draft-textarea'
+              label='Draft your message...'
+              name='message'
+              value={message}
+              onChange={this.handleChange}/>
+          </Form>
+        </div>
+        }
         {this.renderActions()}
-
       </div>
     );
   }

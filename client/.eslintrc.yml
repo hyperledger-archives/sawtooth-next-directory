@@ -14,4 +14,32 @@ settings:
     version: 16.6
 
 rules:
-  react/display-name: false
+  react/display-name: off
+  curly: [error, multi-or-nest, consistent]
+  default-case: error
+  dot-notation: error
+  eqeqeq: [error, smart]
+  max-classes-per-file: error
+  no-else-return: error
+  no-extra-bind: error
+  no-global-assign: error
+  no-return-await: error
+  no-redeclare: error
+  no-useless-return: error
+  array-bracket-spacing: [error, never]
+  block-spacing: error
+  brace-style: error
+  capitalized-comments: [error, always, { ignoreConsecutiveComments: true }]
+  comma-dangle: [error, always-multiline]
+  comma-spacing: error
+  computed-property-spacing: error
+  eol-last: error
+  indent: [error, 2, {SwitchCase: 1}]
+  jsx-quotes: [error, prefer-single]
+  key-spacing: [error, { mode: minimum }]
+  linebreak-style: error
+  lines-around-comment: error
+  max-len: [error, { code: 80, tabWidth: 2 }]
+  no-mixed-spaces-and-tabs: error
+  no-trailing-spaces: error
+  no-unneeded-ternary: error

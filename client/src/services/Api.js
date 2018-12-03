@@ -128,12 +128,12 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     me,
     requestAccess,
     search,
-    signup
+    signup,
   }
 
 }
 
 
 export default {
-  create
+  create,
 }

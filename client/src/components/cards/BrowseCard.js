@@ -40,7 +40,7 @@ export default class BrowseCard extends Component {
 
   togglePinned = () => {
     this.setState({
-      isPinned: !this.state.isPinned
+      isPinned: !this.state.isPinned,
     });
   }
 
@@ -54,7 +54,6 @@ export default class BrowseCard extends Component {
         <div className='browse-tile-title'>
           <div>
             <div>{details.name}</div>
-            {/* <div className='browse-tile-category'>{details.category}</div> */}
           </div>
           <div className='browse-tile-pinned-icon'>
             <Icon

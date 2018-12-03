@@ -84,7 +84,7 @@ export default class PeopleList extends Component {
    *
    *
    */
-  isRoleChecked = (proposal, userId) => {
+  isRoleChecked = (proposal) => {
     const { selectedProposals } = this.props;
     return selectedProposals.indexOf(proposal.id) !== -1;
   }
@@ -131,7 +131,7 @@ export default class PeopleList extends Component {
           <List.Header>
             <span className='next-people-list-proposal'>
               <Checkbox
-                checked={this.isRoleChecked(proposal, userId)}
+                checked={this.isRoleChecked(proposal)}
                 proposal={proposal.id}
                 user={userId}
                 label={this.roleName(proposal.object)}
@@ -183,9 +183,9 @@ export default class PeopleList extends Component {
           </List.Header>
           <List.List>
             { this.renderUserProposals(
-                userId,
-                openProposalsByUser[userId].map(proposal => proposal)
-              )
+              userId,
+              openProposalsByUser[userId].map(proposal => proposal)
+            )
             }
           </List.List>
         </List.Item>

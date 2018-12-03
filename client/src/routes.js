@@ -56,19 +56,19 @@ const routes = (props) => [
     path:   '/',
     main:   (rest) => <RequesterHome {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    exact:  true,
   },
   {
     path:   '/packs/:id',
     main:   (rest) => <Packs {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    exact:  true,
   },
   {
     path:   '/roles/:id',
     main:   (rest) => <Roles {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
-    exact:  true
+    exact:  true,
   },
 
 
@@ -84,32 +84,32 @@ const routes = (props) => [
     path:   '/approval',
     main:   (rest) => <ApproverHome {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    exact:  true,
   },
   {
     path:   '/approval/pending/individual',
     main:   (rest) => <Individuals {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    exact:  true,
   },
   {
     path:   '/approval/pending/about-to-expire',
     main:   (rest) => <Expiring {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    exact:  true,
   },
   {
     path:   '/approval/manage',
     main:   (rest) => <Manage {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
-    exact:  true
+    exact:  true,
   },
   {
     path:   '/approval/people',
     main:   (rest) => <People {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
-    exact:  true
-  }
+    exact:  true,
+  },
 
 ];
 

@@ -31,7 +31,7 @@ const reducers = combineReducers({
   auth:       AuthReducer,
   chat:       ChatReducer,
   requester:  RequesterReducer,
-  user:       UserReducer
+  user:       UserReducer,
 });
 
 export default reducers;

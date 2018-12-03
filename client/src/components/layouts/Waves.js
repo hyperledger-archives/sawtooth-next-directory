@@ -43,7 +43,8 @@ class Waves extends Component {
     const { location } = this.props;
 
     const waves = location && !location.pathname.startsWith('/approval');
-    const transition = waves ? 'next-waves-animate-up' : 'next-waves-animate-down';
+    const transition = waves ? 'next-waves-animate-up' :
+      'next-waves-animate-down';
     this.setState({ transition })
   }
 
@@ -89,7 +90,9 @@ class Waves extends Component {
               height='43'>
               <path
                 fill='#fff'
-                d='M -1000 37 C -750 37 -750 2 -500 2 C -250 2 -250 37 2 37 C 250 37 250 2 500 2 C 750 2 750 37 1000 37'
+                d={`M -1000 37 C -750 37 -750 2 -500 2 C -250
+                    2 -250 37 2 37 C 250 37 250 2 500 2 C 750
+                    2 750 37 1000 37`}
                 stroke='#f1038e'
                 strokeWidth='0'>
                 <animateTransform
@@ -109,11 +112,11 @@ class Waves extends Component {
             xmlns='http://www.w3.org/2000/svg'
             preserveAspectRatio='xMidYMid'>
             <rect
-            x='0'
-            y='0'
-            width='100%'
-            height='100%'
-            fill='url(#next-pattern-alt)'/>
+              x='0'
+              y='0'
+              width='100%'
+              height='100%'
+              fill='url(#next-pattern-alt)'/>
             <pattern
               x='0'
               y='0'
@@ -123,7 +126,9 @@ class Waves extends Component {
               height='130'>
               <path
                 fill='#ffffff9e'
-                d='M -1000 37 C -750 37 -750 2 -500 2 C -250 2 -250 37 2 37 C 250 37 250 2 500 2 C 750 2 750 37 1000 37'
+                d={`M -1000 37 C -750 37 -750 2 -500 2 C -250
+                    2 -250 37 2 37 C 250 37 250 2 500 2 C 750
+                    2 750 37 1000 37`}
                 stroke='#ca0de8'
                 strokeWidth='0.4'>
                 <animateTransform

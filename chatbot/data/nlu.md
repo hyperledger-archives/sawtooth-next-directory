@@ -1,12 +1,49 @@
 ## intent:recommend
-- recommend
+- /recommend
+- /recommend
+
+## intent:help
 - help
 - help me
-- help me out
-- recommend something
+- show me help
 - i need help
-- please help me
-- i don't know what to do
+- can you help me?
+- could you offer assistance
+- can you assist
+- what can you do
+- What are your capabilities?
+
+## intent:reason
+- Please grant me access. I need it for my job.
+- I need access
+- i require access because
+
+## intent:whoami
+- Who are you
+- what is your name
+- where do you come from
+- what are you called?
+
+## intent:laugh
+- lol
+- haha
+- hahahaha
+- very funny
+- looool
+- nice
+
+## intent:insult
+- you suck
+- you're dumb
+- youre stupid
+- you're not very helpful
+- you are bad
+
+## intent:awe
+- wow
+- whoa
+- interesting
+- clever
 
 ## intent:bye
 - Bye
@@ -95,6 +132,23 @@
 - positively
 - 100%
 - Yes, please
+
+## intent:deny
+- nah
+- eh
+- no
+- no thankyou
+- no thank you
+- No, thanks.
+- no thanks
+- nope
+- nah
+- i don't think so
+- maybe later
+- not today
+- i don't think so
+- don't need you
+- maybe next time
 
 ## intent:name
 - My name is [Juste](name)

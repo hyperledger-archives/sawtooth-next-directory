@@ -43,7 +43,7 @@ class Manage extends Component {
     createRole({
       name:           name,
       owners:         [userId],
-      administrators: [userId]
+      administrators: [userId],
     });
   }
 
@@ -81,7 +81,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createRole: (payload) => dispatch(ApproverActions.createRoleRequest(payload)),
+    createRole: (payload) =>
+      dispatch(ApproverActions.createRoleRequest(payload)),
   };
 }
 

@@ -53,7 +53,7 @@ export default class Create extends Component {
   handleClose = () => this.setState({
     open: false,
     validName: null,
-    name: ''
+    name: '',
   });
 
 

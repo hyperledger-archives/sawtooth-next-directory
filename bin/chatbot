@@ -17,7 +17,7 @@
 
 TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
 
-python -m rasa_core.run --enable_api \
+python -m rasa_core.run --enable_api --debug \
     -d ./chatbot/build/current/core \
     -u ./chatbot/build/current/nlu \
     --credentials ./chatbot/credentials.yml \

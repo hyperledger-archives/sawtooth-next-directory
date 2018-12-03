@@ -38,7 +38,7 @@ import PropTypes from 'prop-types';
 export default class LoginForm extends Component {
 
   static propTypes = {
-    submit: PropTypes.func.isRequired
+    submit: PropTypes.func.isRequired,
   };
 
 
@@ -74,7 +74,7 @@ export default class LoginForm extends Component {
       this.setState({ validUsername: value.length > 0 });
     name === 'password' &&
       this.setState({ validPassword: value.length > 0 });
-      name === 'resetEmail' &&
+    name === 'resetEmail' &&
       this.setState({ validEmail: /\S+@\S+\.\S+/.test(value) });
   }
 
@@ -128,54 +128,54 @@ export default class LoginForm extends Component {
             </Form>
           </div>
         </Transition>
-      <Transition
-        visible={activeIndex === 1}
-        animation='fade down'
-        duration={{ hide, show }}>
-        <div id='next-login-form-2'>
-          <Form onSubmit={() => submit(username, password)}>
-            <Container
-              textAlign='center'
-              id='next-login-form-avatar-container'>
-              <Image
-                avatar
-                src='http://i.pravatar.cc/150'
-                size='tiny' />
-            </Container>
-            <Form.Button
-              id='next-login-form-back-button'
-              content='Back'
-              type='button'
-              icon='left arrow'
-              labelPosition='left'
-              onClick={() => this.setFlow(0)} />
-            <Form.Field id='next-login-form-password'>
-              <Input
-                autoFocus
-                error={validPassword === false}
-                name='password'
-                type='password'
-                placeholder='Password'
-                value={password}
-                onChange={this.handleChange} />
-              <Label>
-                <Button
-                  className='link'
-                  type='button'
-                  onClick={() => this.setFlow(2)}>
-                  Forgot Password?
-                </Button>
-              </Label>
-            </Form.Field>
-            <Container textAlign='center'>
+        <Transition
+          visible={activeIndex === 1}
+          animation='fade down'
+          duration={{ hide, show }}>
+          <div id='next-login-form-2'>
+            <Form onSubmit={() => submit(username, password)}>
+              <Container
+                textAlign='center'
+                id='next-login-form-avatar-container'>
+                <Image
+                  avatar
+                  src='http://i.pravatar.cc/150'
+                  size='tiny' />
+              </Container>
               <Form.Button
-                content='Login'
-                disabled={!validPassword}
-                icon='right arrow'
-                labelPosition='right' />
-            </Container>
-          </Form>
-        </div>
+                id='next-login-form-back-button'
+                content='Back'
+                type='button'
+                icon='left arrow'
+                labelPosition='left'
+                onClick={() => this.setFlow(0)} />
+              <Form.Field id='next-login-form-password'>
+                <Input
+                  autoFocus
+                  error={validPassword === false}
+                  name='password'
+                  type='password'
+                  placeholder='Password'
+                  value={password}
+                  onChange={this.handleChange} />
+                <Label>
+                  <Button
+                    className='link'
+                    type='button'
+                    onClick={() => this.setFlow(2)}>
+                  Forgot Password?
+                  </Button>
+                </Label>
+              </Form.Field>
+              <Container textAlign='center'>
+                <Form.Button
+                  content='Login'
+                  disabled={!validPassword}
+                  icon='right arrow'
+                  labelPosition='right' />
+              </Container>
+            </Form>
+          </div>
         </Transition>
         <Transition
           visible={activeIndex === 2}

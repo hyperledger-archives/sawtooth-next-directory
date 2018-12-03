@@ -23,22 +23,22 @@ const packs = [
         id: 'guid',
         name: 'r_vault_string_something',
         owner: 'Mr Big',
-        email: 'big@gmail.com'
+        email: 'big@gmail.com',
       },
       {
         id: 'guid',
         name: 't_test_gdsasdf',
         owner: 'Mr 2',
-        email: '2@gmail.com'
+        email: '2@gmail.com',
       },
       {
         id: 'guid',
         name: 'another_role',
         owner: 'Mr Big',
-        email: 'big@gmail.com'
-      }
-    ]
-  }
+        email: 'big@gmail.com',
+      },
+    ],
+  },
 ]
 
 export default packs;

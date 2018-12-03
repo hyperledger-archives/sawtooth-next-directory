@@ -100,23 +100,23 @@ export const RequesterSelectors = {
     state.user.me &&
     state.requester.roles.filter(role =>
       !state.user.me.proposals.find(proposal =>
-        proposal['object_id'] === role.id
+        proposal.object_id === role.id
       )
-  ),
+    ),
 
   // Retrieve role by ID
   roleFromId: (state, id) =>
     state.requester.roles &&
     state.requester.roles.find(role =>
       role.id === id
-  ),
+    ),
 
   // Retrieve proposal by ID
   proposalFromId: (state, id) =>
     state.requester.requests &&
     state.requester.requests.find(request =>
       request.id === id
-  ),
+    ),
 
   // Retrieve user requests (proposals)
   requests: (state) =>
@@ -129,10 +129,10 @@ export const RequesterSelectors = {
         return {
           ...request,
           ...state.requester.roles
-            .find(role => role.id === request['object'])
+            .find(role => role.id === request.object),
         }
       }
-  ),
+      ),
 
   /**
    *
@@ -157,7 +157,7 @@ export const RequesterSelectors = {
       case 'proposal_id':
         result = state.user.me && entity &&
         state.user.me.proposals.find((item) =>
-          item['object_id'] === entity.id);
+          item.object_id === entity.id);
         break;
 
       default:
@@ -166,7 +166,7 @@ export const RequesterSelectors = {
     }
 
     return result && result[field];
-  }
+  },
 };
 
 
@@ -196,28 +196,28 @@ export const resetAll = () => {
 export const roleSuccess = (state, { role }) => {
   return state.merge({
     fetching: false,
-    roles: utils.merge(state.roles || [], [role])
+    roles: utils.merge(state.roles || [], [role]),
   });
 }
 
 export const allrolesSuccess = (state, { roles }) => {
   return state.merge({
     fetching: false,
-    roles: roles
+    roles: roles,
   });
 }
 
 export const proposalSuccess = (state, { proposal }) => {
   return state.merge({
     fetching: false,
-    requests: utils.merge(state.requests || [], [proposal])
+    requests: utils.merge(state.requests || [], [proposal]),
   });
 }
 
 export const baseSuccess = (state, { base }) => {
   return state.merge({
     fetching: false,
-    roles: utils.merge(state.roles || [], base || [])
+    roles: utils.merge(state.roles || [], base || []),
   });
 }
 
@@ -244,7 +244,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ROLE_FAILURE]: failure,
 
   [Types.ROLES_REQUEST]: request,
-  
+
   [Types.ALLROLES_REQUEST]: request,
   [Types.ALLROLES_SUCCESS]: allrolesSuccess,
   [Types.ALLROLES_FAILURE]: failure,
@@ -257,5 +257,5 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.ACCESS_REQUEST]: request,
   [Types.ACCESS_SUCCESS]: accessSuccess,
-  [Types.ACCESS_FAILURE]: failure
+  [Types.ACCESS_FAILURE]: failure,
 });

@@ -16,27 +16,38 @@
 intents:
   - recommend
   - affirm
+  - deny
   - greet
   - send
+  - cancel
   - bye
   - thank
   - feeling
+  - reason
+  - laugh
+  - awe
+  - insult
+  - help
+  - whoami
+  - name
 
 slots:
   token:
     type: unfeaturized
   resource_id:
-    type: text
+    type: unfeaturized
   resource_name:
-    type: text
+    type: unfeaturized
   approver_name:
-    type: text
+    type: unfeaturized
   reason:
-    type: text
+    type: unfeaturized
 
 actions:
   - utter_default
+  - utter_standby
   - utter_recommendation
+  - utter_ask_request_access
   - utter_greet
   - utter_draft
   - utter_exclame
@@ -45,6 +56,13 @@ actions:
   - utter_thank
   - utter_feeling
   - utter_bye
+  - utter_laugh
+  - utter_awe
+  - utter_insult
+  - utter_help
+  - utter_whoami
+  - utter_name
+  - utter_passive
   - action_request_access
 
 templates:
@@ -52,16 +70,39 @@ templates:
     - text: Sorry, I didn't get that. Can you clarify?
     - text: I don't understand what you mean.
 
+  utter_standby:
+    - text: Feel free to ping me anytime.
+    - text: I'll be here for you.
+
+  utter_passive:
+    - text: Fine.
+    - text: Have it your way.
+
+  utter_whoami:
+    - text: >-
+          I am Dez, a robot designed specifically to help
+          you because you are special and deserve it.
+    - text: Who are you?
+
   utter_recommendation:
     - text: >-
         Hi! Based on your role, I bet having access
-        to {resource_id} would make it easier for you
-        to function. Would you like me to request access?
+        to {resource_name} would make it easier for you
+        to function.
+
+  utter_ask_request_access:
+    - text: Do you want me to request access for you?
       buttons:
-        - title: Yes, please
-          payload: Yes, please.
-        - title: No, thanks
-          payload: No, thanks.
+      - title: Yes, please
+        payload: Yes, please.
+      - title: No, thanks
+        payload: No, thanks.
+
+  utter_name:
+    - text: It's a pleasure to be getting to know you.
+    - text: That's great.
+    - text: Cool stuff.
+    - text: Uh huh.
 
   utter_greet:
     - text: Bonjour! How can I help you?
@@ -72,8 +113,23 @@ templates:
     - text: What's up?
     - text: How may I serve you?
 
+  utter_help:
+    -text: >-
+        I am here to help get you access to resources
+        you need.
+
+  utter_insult:
+    - text: >-
+        I am trying my best to be helpful. Please let
+        me know more clearly how I can help you.
+    - text: >-
+        All robots make mistakes at some point. This
+        may be one of those moments. Please tell
+        me what it is you'd like me to do.
+
   utter_draft:
     - text: >-
+        So you'd like to request access for {resource_name}?
         Great. All you need to do is draft a note for
         {approver_name} and I'll take care of the rest.
       buttons:
@@ -81,6 +137,15 @@ templates:
           payload: '/send{"reason": "I need access."}'
         - title: Nevermind
           payload: /cancel
+
+  utter_laugh:
+    - text: I know right?
+    - text: You're hilarious.
+    - text: Pretty funny.
+
+  utter_awe:
+    - text: Pretty great, right?
+    - text: Yep.
 
   utter_exclame:
     - text: Awesome!

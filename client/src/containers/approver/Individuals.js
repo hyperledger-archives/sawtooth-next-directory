@@ -166,7 +166,8 @@ class Individuals extends Component {
             title={title}
             subtitle={subtitle}
             groupBy={activeIndex}
-            disabled={!openProposals || (openProposals && openProposals.length === 0)}
+            disabled={!openProposals ||
+              (openProposals && openProposals.length === 0)}
             selectedProposals={selectedProposals}
             selectedRoles={selectedRoles}
             selectedUsers={selectedUsers}

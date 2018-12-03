@@ -64,9 +64,8 @@ export function * getUser (api, action) {
 export function * getUsers (api, action) {
   try {
     const { ids } = action;
-    if (ids.length > 0) {
-      yield all(ids.map(id => fork(getUser, api, { id })));
-    }
+    if (ids.length > 0) yield all(ids.map(id => fork(getUser, api, { id })));
+
   } catch (err) {
     console.error(err);
   }

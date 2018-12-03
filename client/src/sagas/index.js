@@ -14,18 +14,17 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { eventChannel } from 'redux-saga';
-import { all, call, put, take, takeLatest } from 'redux-saga/effects';
+import { all, takeLatest } from 'redux-saga/effects';
 
 
 import API from '../services/Api';
 import FixtureAPI from '../services/FixtureApi';
-import Socket from '../services/Socket'
 
 
+import { AppTypes } from '../redux/AppRedux';
 import { ApproverTypes } from '../redux/ApproverRedux';
 import { AuthTypes } from '../redux/AuthRedux';
-import ChatActions, { ChatTypes } from '../redux/ChatRedux';
+import { ChatTypes } from '../redux/ChatRedux';
 import { RequesterTypes } from '../redux/RequesterRedux';
 import { UserTypes } from '../redux/UserRedux';
 
@@ -44,13 +43,13 @@ import {
   getAllRoles } from './RequesterSaga';
 
 
+import { closeSocket, openSocket } from './AppSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
 import { me, getUser, getUsers } from './UserSaga';
 
 
 const api = API.create();
-const ws = Socket.create();
 
 
 /**
@@ -60,25 +59,7 @@ const ws = Socket.create();
  *
  */
 export default function * root () {
-  yield all([
-    sagas(),
-    channels(),
-  ]);
-}
-
-
-/**
- *
- *
- *
- *
- */
-function * channels () {
-  const channel = yield call(createChannel);
-  while (true) {
-    const action = yield take(channel);
-    yield put(action);
-  }
+  yield sagas();
 }
 
 
@@ -90,6 +71,10 @@ function * channels () {
  */
 function * sagas () {
   yield all([
+
+    // App
+    takeLatest(AppTypes.SOCKET_OPEN, openSocket),
+    takeLatest(AppTypes.SOCKET_CLOSE, closeSocket),
 
     // Approver
     takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
@@ -103,7 +88,7 @@ function * sagas () {
 
     // Chat
     takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, FixtureAPI),
-    takeLatest(ChatTypes.SEND_REQUEST, sendMessage, ws),
+    takeLatest(ChatTypes.MESSAGE_SEND, sendMessage),
 
     // Requester
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
@@ -121,17 +106,3 @@ function * sagas () {
 
   ]);
 }
-
-
-/**
- *
- *
- *
- *
- */
-const createChannel = () =>
-  eventChannel(emitter => {
-    ws.onopen = (event) => emitter(ChatActions.socketOpenSuccess())
-    ws.onmessage = (event) => emitter(ChatActions.sendSuccess(event.data))
-    return () => ws.close();
-  });

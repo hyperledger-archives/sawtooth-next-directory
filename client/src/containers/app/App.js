@@ -17,7 +17,11 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 
@@ -47,7 +51,7 @@ class App extends Component {
 
   static propTypes = {
     isAuthenticated: PropTypes.bool,
-    routes: PropTypes.func
+    routes: PropTypes.func,
   };
 
 
@@ -57,41 +61,44 @@ class App extends Component {
    *
    */
   componentDidMount () {
-    const { isAuthenticated } = this.props;
+    const { isAuthenticated, openSocket } = this.props;
     isAuthenticated && this.hydrate();
+    isAuthenticated && openSocket();
   }
 
 
   componentDidUpdate (prevProps) {
     const {
+      closeSocket,
       me,
-      id,
-      isAuthenticated,
       isSocketOpen,
-      sendMessage } = this.props;
+      isAuthenticated,
+      isRefreshing,
+      stopRefresh,
+      openSocket } = this.props;
 
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) return isSocketOpen && closeSocket();
+
 
     // On receiving new props, if user authentication
     // state changes, we know that a user has logged in,
     // so get hydrate user and recommended objects
     if (prevProps.isAuthenticated !== isAuthenticated) {
+      openSocket();
       this.hydrate();
     }
 
-    if (prevProps.isSocketOpen !== isSocketOpen) {
-      sendMessage({do: 'CREATE', message: 'recommend', user_id: id});
+    if (prevProps.isRefreshing !== isRefreshing) {
+      this.hydrate();
+      stopRefresh();
     }
 
     // After the user object is populated, the following
     // will get the info required to display data in the
     // sidebar.
-    //
-    // ! Note this will be outmoded after API changes
-    //
-    if (prevProps.me !== me) {
+    if (prevProps.me !== me)
       this.hydrateSidebar();
-    }
+
   }
 
 
@@ -104,17 +111,16 @@ class App extends Component {
   }
 
 
-  // proposals is array of objects of form { object_id, proposal_id }
   hydrateSidebar () {
     const { getProposals, getRoles, me, roles } = this.props;
 
     // * (1) Map proposals and memberOf to ID array
     let foo = [
       ...me.proposals,
-      ...me.memberOf
+      ...me.memberOf,
     ].map((item) =>
       typeof item  === 'object' ?
-        item['object_id'] :
+        item.object_id :
         item)
 
     // * (2) Find roles we don't already have loaded in
@@ -123,8 +129,9 @@ class App extends Component {
         roles.find(role => role.id === item));
     }
 
+
     let bar = me.proposals.map(item =>
-        item['proposal_id']);
+      item.proposal_id);
 
     // * (3) Load roles not in
     getProposals(bar);

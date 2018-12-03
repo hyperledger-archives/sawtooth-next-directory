@@ -30,7 +30,7 @@ import PropTypes from 'prop-types';
 export default class SignupForm extends Component {
 
   static propTypes = {
-    submit: PropTypes.func.isRequired
+    submit: PropTypes.func.isRequired,
   };
 
 
@@ -90,8 +90,8 @@ export default class SignupForm extends Component {
       validUsername,
       validPassword } = this.state;
 
-      const hide = 0;
-      const show = 300;
+    const hide = 0;
+    const show = 300;
 
     return (
       <div className='form-inverted'>

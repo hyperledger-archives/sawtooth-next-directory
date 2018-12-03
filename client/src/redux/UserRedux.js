@@ -79,7 +79,7 @@ export const UserSelectors = {
   memberOf:   (state) => state.user.me && state.user.me.memberOf,
   userFromId:   (state, id) =>
     state.user.users &&
-    state.user.users.find(user => user.id === id)
+    state.user.users.find(user => user.id === id),
 };
 
 
@@ -110,14 +110,14 @@ export const meSuccess = (state, { me }) => {
   return state.merge({
     fetching: false,
     me: me,
-    users: utils.merge(state.users || [], [me])
+    users: utils.merge(state.users || [], [me]),
   });
 };
 
 export const userSuccess = (state, { user }) => {
   return state.merge({
     fetching: false,
-    users: utils.merge(state.users || [], [user])
+    users: utils.merge(state.users || [], [user]),
   });
 };
 

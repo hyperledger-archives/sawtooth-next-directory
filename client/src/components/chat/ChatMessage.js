@@ -47,21 +47,21 @@ export default class ChatMessage extends Component {
       messages &&
       messages.map((message, index) => (
         this.isMe(message) ?
-        <Segment compact inverted
-          floated='right'
-          color='blue'
-          className='clear next-chat-message-right'
-          size='small'
-          key={index}>
-          <div>{message.text}</div>
-        </Segment> :
-        <Segment compact
-          floated='left'
-          className='clear next-chat-message-left'
-          size='small'
-          key={index}>
-          <div>{message.text}</div>
-        </Segment>
+          <Segment compact inverted
+            floated='right'
+            color='blue'
+            className='clear next-chat-message-right'
+            size='small'
+            key={index}>
+            <div>{message.text}</div>
+          </Segment> :
+          <Segment compact
+            floated='left'
+            className='clear next-chat-message-left'
+            size='small'
+            key={index}>
+            <div>{message.text}</div>
+          </Segment>
       ))
     );
   }

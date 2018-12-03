@@ -14,10 +14,13 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+export let socket;
+
+
 const create = () =>
-  new WebSocket('ws://localhost:8000/api/chatbot');
+  socket = new WebSocket('ws://localhost:8000/api/chatbot');
 
 
 export default {
-  create
+  create,
 }

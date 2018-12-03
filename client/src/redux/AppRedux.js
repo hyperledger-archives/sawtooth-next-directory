@@ -26,8 +26,18 @@ import Immutable from 'seamless-immutable';
  *
  */
 const { Types, Creators } = createActions({
-  animationBegin:      null,
-  animationEnd:        null,
+  animationBegin:                    null,
+  animationEnd:                      null,
+
+  socketError:                       ['error'],
+  socketOpen:                        null,
+  socketOpenSuccess:                 null,
+  socketClose:                       null,
+  socketCloseSuccess:                null,
+
+  refreshBegin:                      null,
+  refreshEnd:                        null,
+  refreshOnNextSocketReceive:        ['flag'],
 });
 
 
@@ -44,7 +54,11 @@ export default Creators;
  *
  */
 export const INITIAL_STATE = Immutable({
-  isAnimating:         null,
+  error:                              null,
+  isAnimating:                        null,
+  isRefreshing:                       null,
+  shouldRefreshOnNextSocketReceive:   null,
+  isSocketOpen:                       null,
 });
 
 
@@ -55,7 +69,11 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const AppSelectors = {
-  isAnimating: (state) => state.app.isAnimating,
+  isAnimating:     (state) => state.app.isAnimating,
+  isRefreshing:    (state) => state.app.isRefreshing,
+  isSocketOpen:    (state) => state.app.isSocketOpen,
+  shouldRefreshOnNextSocketReceive: (state) =>
+    state.app.shouldRefreshOnNextSocketReceive,
 };
 
 
@@ -65,11 +83,35 @@ export const AppSelectors = {
  *
  *
  */
-export const start = (state) => {
+export const animationBegin = (state) => {
   return state.merge({ isAnimating: true });
 };
-export const end = (state) => {
+export const animationEnd = (state) => {
   return state.merge({ isAnimating: false });
+};
+export const socketOpen = (state) => {
+  return state.merge({});
+};
+export const socketOpenSuccess = (state) => {
+  return state.merge({ isSocketOpen: true });
+};
+export const socketClose = (state) => {
+  return state.merge({});
+};
+export const socketCloseSuccess = (state) => {
+  return state.merge({ isSocketOpen: false });
+};
+export const socketError = (state, { error }) => {
+  return state.merge({ error });
+};
+export const refreshBegin = (state) => {
+  return state.merge({ isRefreshing: true });
+};
+export const refreshEnd = (state) => {
+  return state.merge({ isRefreshing: false });
+};
+export const refreshOnNextSocketReceive = (state, { flag }) => {
+  return state.merge({ shouldRefreshOnNextSocketReceive: flag });
 };
 
 
@@ -80,6 +122,18 @@ export const end = (state) => {
  *
  */
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.ANIMATION_BEGIN]: start,
-  [Types.ANIMATION_END]: end,
+  [Types.ANIMATION_BEGIN]: animationBegin,
+  [Types.ANIMATION_END]: animationEnd,
+
+  [Types.REFRESH_BEGIN]: refreshBegin,
+  [Types.REFRESH_END]: refreshEnd,
+  [Types.REFRESH_ON_NEXT_SOCKET_RECEIVE]: refreshOnNextSocketReceive,
+
+  [Types.SOCKET_ERROR]: socketError,
+
+  [Types.SOCKET_OPEN]: socketOpen,
+  [Types.SOCKET_OPEN_SUCCESS]: socketOpenSuccess,
+
+  [Types.SOCKET_CLOSE]: socketClose,
+  [Types.SOCKET_CLOSE_SUCCESS]: socketCloseSuccess,
 });

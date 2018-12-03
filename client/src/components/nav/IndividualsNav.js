@@ -58,10 +58,10 @@ export default class IndividualsNav extends Component {
         <Search
           fluid
           input={() => <Input
-                          fluid
-                          size='large'
-                          icon='search'
-                          placeholder='Search...'/>}
+            fluid
+            size='large'
+            icon='search'
+            placeholder='Search...'/>}
           className='next-individual-search'
           category
           loading={false}/>

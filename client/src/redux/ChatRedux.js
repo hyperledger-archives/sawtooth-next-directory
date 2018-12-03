@@ -16,6 +16,7 @@ limitations under the License.
 
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
+import ping from '../sounds/ping.mp3'
 
 
 /**
@@ -32,13 +33,8 @@ const { Types, Creators } = createActions({
   conversationSuccess:    ['conversation'],
   conversationFailure:    ['error'],
 
-  sendRequest:            ['message'],
-  sendSuccess:            ['message'],
-  sendFailure:            ['error'],
-
-  actionSet:              ['action'],
-  socketOpenSuccess:      null,
-  socketClose:            null,
+  messageSend:            ['payload'],
+  messageReceive:         ['message'],
 
   clearMessages:          null,
 });
@@ -58,10 +54,7 @@ export default Creators;
  */
 export const INITIAL_STATE = Immutable({
   fetching:         null,
-  error:            null,
   messages:         null,
-  action:           null,
-  isSocketOpen:     null,
 });
 
 
@@ -72,9 +65,7 @@ export const INITIAL_STATE = Immutable({
  *
  */
 export const ChatSelectors = {
-  isSocketOpen: (state) => state.chat.isSocketOpen,
   messages: (state) => state.chat.messages,
-  action: (state) => state.chat.action
 };
 
 
@@ -84,14 +75,11 @@ export const ChatSelectors = {
  *
  *
  */
-export const request = (state) => {
-  return state.merge({ fetching: true });
-}
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
 export const clearMessages = (state) => {
-  return state.merge({ messages: [] });
+  return state.merge({ messages: null });
 };
 
 
@@ -105,33 +93,32 @@ export const conversationSuccess = (state, { conversation }) => {
   return state.merge({ fetching: false, messages: conversation.messages });
 }
 
-export const socketOpenSuccess = (state) => {
-  return state.merge({ fetching: false, isSocketOpen: true });
-}
 
-export const sendSuccess = (state, { message }) => {
-  const parsed = JSON.parse(message)
+export const messageSend = (state, { payload }) => {
+  if (payload.message && payload.message.text.startsWith('/'))
+    return state.merge({ fetching: true });
+
   return state.merge({
-    fetching: false,
-    messages: parsed.length !== 0 ?
-      [JSON.parse(message)[0]].concat(state.messages || []) :
-      state.messages
+    fetching: true,
+    messages: payload.do !== 'CREATE' ?
+      [payload.message, ...(state.messages || [])] :
+      state.messages,
   });
 }
 
+export const messageReceive = (state, { message }) => {
+  const parsed = JSON.parse(message);
 
-/**
- *
- * Reducers - Action
- *
- *
- */
-export const actionSet = (state, { action }) => {
-  return state.merge({ fetching: false, action });
-}
-
-export const socketClose = (state) => {
-  return state.merge({ fetching: false, isSocketOpen: false });
+  if (state.messages && state.messages.length > 0) {
+    const sound = new Audio(ping);
+    sound.play().catch();
+  }
+  return state.merge({
+    fetching: false,
+    messages: parsed.length > 0 ?
+      [...parsed.reverse(), ...(state.messages || [])] :
+      state.messages,
+  });
 }
 
 
@@ -144,15 +131,10 @@ export const socketClose = (state) => {
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.CLEAR_MESSAGES]: clearMessages,
 
-  [Types.CONVERSATION_REQUEST]: request,
-  [Types.CONVERSATION_SUCCESS]: conversationSuccess,
-  [Types.CONVERSATION_FAILURE]: failure,
+  // [Types.CONVERSATION_REQUEST]: request,
+  // [Types.CONVERSATION_SUCCESS]: conversationSuccess,
+  // [Types.CONVERSATION_FAILURE]: failure,
 
-  [Types.SEND_REQUEST]: request,
-  [Types.SEND_SUCCESS]: sendSuccess,
-  [Types.SEND_FAILURE]: failure,
-
-  [Types.ACTION_SET]: actionSet,
-  [Types.SOCKET_OPEN_SUCCESS]: socketOpenSuccess,
-  [Types.SOCKET_CLOSE]: socketClose,
+  [Types.MESSAGE_SEND]: messageSend,
+  [Types.MESSAGE_RECEIVE]: messageReceive,
 });

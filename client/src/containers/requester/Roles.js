@@ -64,12 +64,11 @@ export class Roles extends Component {
   componentDidUpdate (prevProps) {
     const { getProposal, getRole, proposalId, roleId } = this.props;
 
-    if (prevProps.roleId !== roleId) {
-      !this.role && getRole(roleId);
-    }
+    if (prevProps.roleId !== roleId) !this.role && getRole(roleId);
 
     if (prevProps.proposalId !== proposalId) {
-      proposalId && !this.request && getProposal(proposalId);
+      proposalId &&
+      !this.request && getProposal(proposalId);
     }
   }
 
@@ -88,7 +87,9 @@ export class Roles extends Component {
     if (!this.role) return null;
 
     const membersCount = [...this.role.members, ...this.role.owners].length;
-    const subtitle = `${membersCount} ${membersCount > 1 ? 'members' : 'member'}`;
+    const subtitle = `${membersCount} ${membersCount > 1 ?
+      'members' :
+      'member'}`;
     const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
 
     return (
@@ -147,7 +148,7 @@ const mapStateToProps = (state, ownProps) => {
       roles,
       id,
       'proposal_id'
-    )
+    ),
   };
 }
 

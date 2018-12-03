@@ -22,7 +22,7 @@ import roles from '../mock_data/all_roles.json';
 import cloudOnboardingPack from '../mock_data/pack_cloud_onboarding.json';
 import rebellionAccessPack from '../mock_data/pack_rebellion_access.json';
 import rebellionSecurityPack from '../mock_data/pack_rebellion_security.json';
-import jazzSecurityPermissionsPack from '../mock_data/pack_jazz_security_permissions.json';
+import jazzPack from '../mock_data/pack_jazz_security_permissions.json';
 import jazzRevPack from '../mock_data/pack_jazz_rev.json';
 
 
@@ -35,7 +35,7 @@ export default {
   getRequesterBase: () => {
     return {
       ok: true,
-      data: base
+      data: base,
     }
   },
 
@@ -56,7 +56,7 @@ export default {
         break;
 
       case '3e542e8d-2e04-4125-b7f6-5b362dcc8a60':
-        data = jazzSecurityPermissionsPack;
+        data = jazzPack;
         break;
 
       case 'd7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0':
@@ -70,7 +70,7 @@ export default {
 
     return {
       ok: true,
-      data: data
+      data: data,
     }
   },
 
@@ -93,36 +93,36 @@ export default {
 
     return {
       ok: true,
-      data: data
+      data: data,
     }
   },
 
   sendMessage: (message) => {
     return {
       ok: true,
-      data: message
+      data: message,
     }
   },
 
   login: (username, password) => {
     return {
       ok: true,
-      data: {}
+      data: {},
     }
   },
 
   logout: () => {
     return {
       ok: true,
-      data: {}
+      data: {},
     }
   },
-   
+
   getRoles: () => {
     return {
       ok: true,
-      data: roles
+      data: roles,
     }
-  }
+  },
 
 }
