@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+ApproverNav
+Component encapsulating the template for
+the sidebar displayed on the approver landing page */
 
 
 import React, { Component } from 'react';
@@ -25,14 +30,6 @@ import NavList from './NavList';
 import * as utils from '../../services/Utils';
 
 
-/**
- *
- * @class         ApproverNav
- * @description   Component encapsulating the template for
- *                the sidebar displayed on the approver landing page
- *
- *
- */
 export default class ApproverNav extends Component {
 
   static propTypes = {
@@ -42,13 +39,6 @@ export default class ApproverNav extends Component {
   };
 
 
-  /**
-   *
-   * Render sidebar hierarchy
-   *
-   *
-   *
-   */
   renderLists () {
     const { openProposalsCount } = this.props;
 
@@ -97,22 +87,18 @@ export default class ApproverNav extends Component {
 
   render () {
     const { recommended, startAnimation } = this.props;
-
     const homeLink = recommended && recommended[0] ?
       `/roles/${utils.createSlug(recommended[0].name)}` :
       '/';
 
     return (
       <Container>
-
         <Search
           input={() => <Input icon='search' placeholder='Search...'/>}
           className='next-approver-nav-search'
           category
           loading={false}/>
-
         { this.renderLists() }
-
         <h4 id='next-approver-switch-container'>
           <Button
             icon
@@ -124,7 +110,6 @@ export default class ApproverNav extends Component {
             <Icon name='left arrow'/>
           </Button>
         </h4>
-
       </Container>
     );
   }

@@ -164,13 +164,11 @@ class App extends Component {
   }
 
   /**
-   *
    * Render grid system
-   *
    * Create a 2-up top-level grid structure that separates the
    * sidebar from main content. Each route is mapped via its own
    * route component.
-   *
+   * @returns {JSX}
    */
   renderGrid () {
     return (

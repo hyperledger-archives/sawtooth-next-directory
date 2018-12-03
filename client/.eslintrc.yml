@@ -44,8 +44,8 @@ rules:
   no-trailing-spaces: error
   no-unneeded-ternary: error
   no-unreachable: error
-  # valid-jsdoc:
-  #   - error
-  #   - requireReturn: false
-  #     prefer: { return: returns }
-  #     requireReturnDescription: false
+  valid-jsdoc:
+    - error
+    - requireReturn: false
+      prefer: { return: returns }
+      requireReturnDescription: false

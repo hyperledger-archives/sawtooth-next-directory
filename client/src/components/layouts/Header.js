@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Header
+Component encapsulating the application header */
 
 
 import React, { Component } from 'react';
@@ -29,13 +33,6 @@ import './Header.css';
 import logo from '../../images/next-logo-primary.png';
 
 
-/**
- *
- * @class         Header
- * @description   Component encapsulating the application header
- *
- *
- */
 export default class Header extends Component {
 
   static propTypes = {

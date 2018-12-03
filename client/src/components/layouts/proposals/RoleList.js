@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Proposal role list
+Displays roles in a list when approving proposals */
+
 
 
 import React, { Component } from 'react';
@@ -20,12 +25,6 @@ import PropTypes from 'prop-types';
 import './RoleList.css';
 
 
-/**
- *
- * @class RoleList
- *
- *
- */
 export default class RoleList extends Component {
 
   static propTypes = {
@@ -40,13 +39,6 @@ export default class RoleList extends Component {
   };
 
 
-  /**
-   *
-   * Hydrate data
-   *
-   *
-   *
-   */
   componentDidMount () {
     const { getUsers, openProposalsByUser, users } = this.props;
 
@@ -65,7 +57,6 @@ export default class RoleList extends Component {
 
   componentDidUpdate (prevProps) {
     const { getUsers, openProposalsByUser } = this.props;
-
     const newUsers = Object.keys(openProposalsByUser);
     const oldUsers = Object.keys(prevProps.openProposalsByUser);
 
@@ -85,15 +76,12 @@ export default class RoleList extends Component {
 
 
   /**
-   *
    * Render user avatars for a given role
-   *
-   *
-   *
+   * @param {string} roleId Role ID
+   * @returns {JSX}
    */
   renderUsers (roleId) {
     const { openProposalsByRole } = this.props;
-
     return (
       <div className='pull-right'>
         { openProposalsByRole[roleId].map(proposal => (
@@ -108,12 +96,23 @@ export default class RoleList extends Component {
   }
 
 
+  /**
+   * Role item is checked / unchecked based on its presence in
+   * selectedRoles state array
+   * @param {string} roleId Selected role ID
+   * @returns {boolean}
+   */
   isRoleChecked = (roleId) => {
     const { selectedRoles } = this.props;
     return selectedRoles.indexOf(roleId) !== -1;
   }
 
 
+  /**
+   * Is checkbox state indeterminate (i.e., should show dot)
+   * @param {string} roleId Selected role
+   * @returns {boolean}
+   */
   // TODO: Indeterminate state not adding class to UI in one scenario
   isIndeterminate = (roleId) => {
     const { selectedProposals, openProposalsByRole } = this.props;
@@ -126,14 +125,10 @@ export default class RoleList extends Component {
 
 
   /**
-   *
    * Render role list item
-   *
    * One list item per role with an open request.
-   *
-   * @param {*} roleId Role ID
-   *
-   *
+   * @param {string} roleId Role ID
+   * @returns {JSX}
    */
   renderRoleItem (roleId) {
     const { handleChange} = this.props;

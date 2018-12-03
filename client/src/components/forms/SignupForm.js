@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Signup form
+Component encapsulating the signup flow */
 
 
 import React, { Component } from 'react';
@@ -19,14 +23,6 @@ import { Container, Form, Label, Input, Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-/**
- *
- * @class       SignupForm
- * @description Component encapsulating the signup flow
- *
- *
- *
- */
 export default class SignupForm extends Component {
 
   static propTypes = {
@@ -48,11 +44,11 @@ export default class SignupForm extends Component {
 
 
   /**
-   *
-   * @param event   Event passed by Semantic UI
-   * @param name    Name of form element derived from 'name' HTML attribute
-   * @param value   Value of form field
-   *
+   * Handle form change event
+   * @param {object} event Event passed by Semantic UI
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
    */
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });

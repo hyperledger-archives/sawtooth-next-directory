@@ -12,6 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+RequesterNav
+Component encapsulating the template for
+the sidebar displayed on the requester landing page */
 
 
 import React, { Component } from 'react';
@@ -24,14 +30,6 @@ import './RequesterNav.css';
 import NavList from './NavList';
 
 
-/**
- *
- * @class         RequesterNav
- * @description   Component encapsulating the template for
- *                the sidebar displayed on the requester landing page
- *
- *
- */
 export default class RequesterNav extends Component {
 
   static propTypes = {
@@ -43,12 +41,6 @@ export default class RequesterNav extends Component {
   };
 
 
-  /**
-   *
-   * Render sidebar hierarchy
-   *
-   *
-   */
   renderLists () {
     const { recommended, memberOf, requests, roleFromId } = this.props;
 
@@ -83,22 +75,18 @@ export default class RequesterNav extends Component {
     const { startAnimation } = this.props;
     return (
       <Container>
-
         <Link to='/browse' id='next-requester-nav-browse'>
           <Button animated primary fluid>
             <Button.Content visible>BROWSE</Button.Content>
             <Button.Content hidden><Icon name='arrow right'/></Button.Content>
           </Button>
         </Link>
-
         <Search
           input={() => <Input icon='search' placeholder='Search...'/>}
           className='next-requester-nav-search'
           category
           loading={false}/>
-
         { this.renderLists() }
-
         <div id='next-requester-switch-container'>
           <Button
             icon
@@ -110,7 +98,6 @@ export default class RequesterNav extends Component {
             <Icon name='right arrow'/>
           </Button>
         </div>
-
       </Container>
     );
   }

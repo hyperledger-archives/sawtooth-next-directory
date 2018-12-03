@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Login form
+Component encapsulating the login flow */
 
 
 import React, { Component } from 'react';
@@ -26,15 +30,6 @@ import {
 import PropTypes from 'prop-types';
 
 
-
-/**
- *
- * @class       LoginForm
- * @description Component encapsulating the login flow
- *
- *
- *
- */
 export default class LoginForm extends Component {
 
   static propTypes = {
@@ -52,11 +47,11 @@ export default class LoginForm extends Component {
 
 
   /**
-   *
-   * @param event   Event passed by Semantic UI
-   * @param name    Name of form element derived from 'name' HTML attribute
-   * @param value   Value of form field
-   *
+   * Handle form change event
+   * @param {object} event Event passed by Semantic UI
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
    */
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });

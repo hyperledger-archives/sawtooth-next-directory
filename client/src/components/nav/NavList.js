@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+NavList
+Component encapsulating a reusable, selectable list suitable
+for displaying options in navigation components */
 
 
 import React, { Component } from 'react';
@@ -26,13 +31,6 @@ import './NavList.css';
 import * as utils from '../../services/Utils';
 
 
-/**
- *
- * @class NavList
- * Component encapsulating a reusable, selectable list suitable
- * for displaying options in navigation components
- *
- */
 class NavList extends Component {
 
   static propTypes = {
@@ -54,7 +52,6 @@ class NavList extends Component {
 
 
   /**
-   *
    * Generate a sub-list of nav links
    *
    * Each list item is ported into a <Link> router element whose
@@ -63,10 +60,11 @@ class NavList extends Component {
    * Due to some sidebar sub-list items being dynamic and others static,
    * (i.e., *Cloud Onboarding Pack* vs. *Individuals*), to support both in
    * one component, lists are passed in as an array with an optional
-   * slug property, which becomes the ID of the route.
+   * slug property, which becomes the ID of the route. In cases where
+   * no slug is provided, one is generated.
    *
-   * In cases where no slug is provided, one is generated.
-   *
+   * @param {array} list List of nav links to display
+   * @returns {JSX}
    */
   renderList (list) {
     const { dynamic, labels, route } = this.props;
