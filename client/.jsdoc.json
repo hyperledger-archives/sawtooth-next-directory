@@ -1,0 +1,11 @@
+{
+  "source": {
+    "include": ["src", "package.json", "README.md"],
+    "exclude": ["src/semantic"],
+    "includePattern": ".js?$"
+  },
+  "opts": {
+    "destination": "./docs",
+    "template": "node_modules/minami"
+  }
+}

@@ -39,12 +39,15 @@
     "watch:semantic": "cd src/semantic && gulp",
     "lint": "eslint --ext=js --ext==jsx .",
     "test": "react-scripts test --env=jsdom --coverage",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "docs": "jsdoc --configure .jsdoc.json --verbose --recurse"
   },
   "devDependencies": {
     "eslint": "5.6.0",
     "eslint-plugin-react": "^7.11.1",
     "jest-localstorage-mock": "^2.3.0",
+    "jsdoc": "^3.5.5",
+    "minami": "^1.2.3",
     "semui-onyx": "^2.4.2-onyx.7"
   },
   "browserslist": [
@@ -55,6 +58,7 @@
   ],
   "eslintIgnore": [
     "**/coverage/**",
+    "**/docs/**",
     "**/e2e/**",
     "**/semantic/**",
     "src/**/*.test.js",
