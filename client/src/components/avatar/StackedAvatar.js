@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Stacked avatar ?
+Stacked aavatar component */
 
 
 import React, { Component } from 'react';
@@ -21,12 +25,6 @@ import PropTypes from 'prop-types';
 import './StackedAvatar.css';
 
 
-/**
- *
- * @class StackedAvatar
- * StackedAvatar component
- *
- */
 export default class StackedAvatar extends Component {
 
   static propTypes = {

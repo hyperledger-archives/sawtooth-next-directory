@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Chat messages
+Component encapsulating chat messages */
 
 
 import React, { Component } from 'react';
@@ -19,13 +23,6 @@ import { Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-/**
- *
- * @class         ChatMessage
- * @description   Component encapsulating the chat message
- *
- *
- */
 export default class ChatMessage extends Component {
 
   static propTypes = {

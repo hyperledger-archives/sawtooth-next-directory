@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Proposal people list
+Displays people in a list when approving proposals */
 
 
 import React, { Component } from 'react';
@@ -20,12 +24,6 @@ import PropTypes from 'prop-types';
 import './PeopleList.css';
 
 
-/**
- *
- * @class PeopleList
- *
- *
- */
 export default class PeopleList extends Component {
 
   static propTypes = {
@@ -39,12 +37,6 @@ export default class PeopleList extends Component {
   };
 
 
-  /**
-   *
-   * Hydrate data
-   *
-   *
-   */
   componentDidMount () {
     const { getUsers, openProposalsByUser, users } = this.props;
 
@@ -63,7 +55,6 @@ export default class PeopleList extends Component {
 
   componentDidUpdate (prevProps) {
     const { getUsers, openProposalsByUser } = this.props;
-
     const newUsers = Object.keys(openProposalsByUser);
     const oldUsers = Object.keys(prevProps.openProposalsByUser);
 
@@ -75,14 +66,10 @@ export default class PeopleList extends Component {
 
 
   /**
-   *
    * Proposal item is checked / unchecked based on its presence in
    * selectedProposals state array
-   *
-   * @param proposal Selected proposal
-   * @param userId   User ID of selected proposal
-   *
-   *
+   * @param {object} proposal Selected proposal
+   * @returns {boolean}
    */
   isRoleChecked = (proposal) => {
     const { selectedProposals } = this.props;
@@ -91,13 +78,10 @@ export default class PeopleList extends Component {
 
 
   /**
-   *
    * User item is checked / unchecked based on its presence in
    * selectedUsers state array
-   *
-   * @param userId User ID of selected user
-   *
-   *
+   * @param {string} userId User ID of selected user
+   * @returns {boolean}
    */
   isUserChecked = (userId) => {
     const { selectedUsers } = this.props;
@@ -114,13 +98,11 @@ export default class PeopleList extends Component {
 
 
   /**
-   *
    * Render role / pack proposals for a given user as a sub-list
    * of a parent user list item.
-   *
-   * @param userId User ID
-   *
-   *
+   * @param {string} userId    User ID
+   * @param {array}  proposals Array of user proposals
+   * @returns {JSX}
    */
   renderUserProposals (userId, proposals) {
     const { handleChange } = this.props;
@@ -145,14 +127,10 @@ export default class PeopleList extends Component {
 
 
   /**
-   *
    * Render user list item
-   *
    * One list item per user with an open request.
-   *
-   * @param {*} userId User ID
-   *
-   *
+   * @param {string} userId User ID
+   * @returns {JSX}
    */
   renderUserItem (userId) {
     const { handleChange, openProposalsByUser, users } = this.props;
@@ -197,9 +175,7 @@ export default class PeopleList extends Component {
 
   render () {
     const { openProposalsByUser } = this.props;
-
     if (!openProposalsByUser) return null;
-
     return (
       <div>
         <List>

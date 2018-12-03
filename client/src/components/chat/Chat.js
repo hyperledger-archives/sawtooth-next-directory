@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Chat
+Component encapsulating the chat view */
 
 
 import React, { Component } from 'react';
@@ -35,15 +39,7 @@ import chatRequester from '../../mock_data/conversation_action.json';
 import chatApprover from '../../mock_data/conversation_action.1.json';
 
 
-/**
- *
- * @class Chat
- * Component encapsulating the chat widget
- *
- * TODO: Normalize all JSON objects behind a schema
- * TODO: Break out into child components
- *
- */
+// TODO: Break out into child components
 export default class Chat extends Component {
 
   componentDidMount () {

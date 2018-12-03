@@ -12,6 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Chat form
+Component encapsulating a reusable chat form
+suitable for composing within containers where chat
+functionality is required */
 
 
 import React, { Component } from 'react';
@@ -19,15 +25,6 @@ import { Button, Form, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-/**
- *
- * @class         ChatForm
- * @description   Component encapsulating a reusable chat form
- *                suitable for composing within containers where chat
- *                functionality is required
- *
- *
- */
 export default class ChatForm extends Component {
 
   static propTypes = {
@@ -74,11 +71,11 @@ export default class ChatForm extends Component {
 
 
   /**
-   *
-   * @param event   Event passed by Semantic UI
-   * @param name    Name of form element derived from 'name' HTML attribute
-   * @param value   Value of form field
-   *
+   * Handle form change event
+   * @param {object} event Event passed by Semantic UI
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
    */
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });
@@ -86,17 +83,16 @@ export default class ChatForm extends Component {
 
 
   /**
-   *
    * Create intent payload to send back to chatbot engine,
    * inserting the current message to send in the body if
    * the intend is /send. Otherwise, the payload is the original
    * intent from the the button payload.
-   *
-   * @param payload Payload in button object sent
-   *                from chatbot engine (e.g., "Yes, please.",
-   *                "No, thanks.", '/send{"reason": "..."}')
-   *
-   *
+   * @param {string} payload
+   * Payload in button object sent
+   * from chatbot engine
+   *    @example
+   *    "Yes, please.", "No, thanks.", '/send{"reason": "..."}')
+   * @returns {string}
    */
   createPayload = (payload) => {
     const { message } = this.state;
