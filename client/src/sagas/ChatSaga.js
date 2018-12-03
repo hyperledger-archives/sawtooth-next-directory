@@ -12,6 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Chat saga
+Each generator function executes a request to the
+API to retrieve data required to hydrate the UI. */
 
 
 import { call, put } from 'redux-saga/effects';
@@ -20,14 +26,10 @@ import { socket } from '../services/Socket';
 
 
 /**
- *
- * Execute conversation API request
- *
- * The getConversation generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
+ * Get a conversation
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
  */
 export function * getConversation (api, action) {
   try {
@@ -46,14 +48,9 @@ export function * getConversation (api, action) {
 
 
 /**
- *
- * Send a message
- *
- * The sendMessage generator function executes a request to the
- * API and handles the response.
- *
- * @param action
- *
+ * Send a message to the chatbot engine
+ * @param {object} action Redux action
+ * @generator
  */
 export function * sendMessage (action) {
   try {

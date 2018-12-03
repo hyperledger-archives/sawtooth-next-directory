@@ -19,15 +19,12 @@ import Immutable from 'seamless-immutable';
 import * as storage from '../services/Storage';
 
 
-/**
- *
- * Actions
- *
- * @property request  Initiating action
- * @property success  Action called on execution success
- * @property failure  Action called on execution failure
- *
- */
+//
+// Actions
+//
+//
+//
+//
 const { Types, Creators } = createActions({
   loginRequest:     ['username', 'password'],
   loginSuccess:     ['isAuthenticated', 'payload'],
@@ -46,16 +43,12 @@ const { Types, Creators } = createActions({
 export const AuthTypes = Types;
 export default Creators;
 
-
-/**
- *
- * State
- *
- * @property isAuthenticated
- * @property fetching
- * @property error
- *
- */
+//
+// State
+//
+//
+//
+//
 export const INITIAL_STATE = Immutable({
   isAuthenticated:  null,
   fetching:         null,
@@ -64,12 +57,12 @@ export const INITIAL_STATE = Immutable({
 });
 
 
-/**
- *
- * Selectors
- *
- *
- */
+//
+// Selectors
+//
+//
+//
+//
 export const AuthSelectors = {
   isAuthenticated: (state) => {
     return !!storage.getToken() || state.auth.isAuthenticated;
@@ -80,19 +73,18 @@ export const AuthSelectors = {
 };
 
 
-/**
- *
- * Reducers
- *
- *
- */
+//
+// Reducers
+//
+//
+//
+//
 export const request = (state) => state.merge({ fetching: true, error: false });
 
 export const success = (state, { isAuthenticated, payload }) => {
   payload.user ?
     storage.setUserId(payload.user.id) :
     storage.setUserId(payload.user_id);
-
   return state.merge({
     isAuthenticated,
     fetching: false,
@@ -112,12 +104,12 @@ export const logout = (state) => {
 }
 
 
-/**
- *
- * Hooks
- *
- *
- */
+//
+// Hooks
+//
+//
+//
+//
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_REQUEST]: request,
   [Types.LOGIN_SUCCESS]: success,

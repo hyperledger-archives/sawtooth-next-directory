@@ -49,4 +49,3 @@ rules:
   #   - requireReturn: false
   #     prefer: { return: returns }
   #     requireReturnDescription: false
-

@@ -15,7 +15,7 @@ limitations under the License.
 /*
 
 
-Requester sagas
+Requester saga
 Each generator function executes a request to the
 API to retrieve data required to hydrate the UI. */
 
@@ -154,7 +154,7 @@ export function * requestAccess (api, action) {
 /**
  * Helper for getting detailed info for a specific role
  * @param {object} api    API service
- * @param {object} action Redux action
+ * @param {object} id     Role ID
  * @generator
  */
 export function * fetchRole (api, id) {
@@ -172,7 +172,7 @@ export function * fetchRole (api, id) {
 /**
  * Helper for getting detailed info for a specific proposal
  * @param {object} api    API service
- * @param {object} action Redux action
+ * @param {object} id     Proposal ID
  * @generator
  */
 export function * fetchProposal (api, id) {

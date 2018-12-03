@@ -15,14 +15,12 @@ limitations under the License.
 
 
 /**
- *
  * Sync selections
- *
- * @param checked     Checkbox state
- * @param roleId      Role ID
- * @param userId      User ID
- *
- *
+ * @param {boolean} checked     Checkbox state
+ * @param {string}  roleId      Role ID
+ * @param {string}  proposalId  Proposal ID
+ * @param {string}  userId      User ID
+ * @generator
  */
 export function * syncAll (checked, roleId, proposalId, userId) {
   const sync1 = syncFromCategory.call(this, checked, roleId);
@@ -43,13 +41,10 @@ export function * syncAll (checked, roleId, proposalId, userId) {
 
 
 /**
- *
  * Update selections on role checkbox selection
- *
- * @param checked     Checkbox state
- * @param role
- *
- *
+ * @param {boolean} checked    Checkbox state
+ * @param {string} roleId      Role ID
+ * @generator
  */
 export function * syncFromCategory (checked, roleId) {
   const { openProposalsByRole} = this.props;
@@ -73,14 +68,11 @@ export function * syncFromCategory (checked, roleId) {
 
 
 /**
- *
  * Update selections on proposal / user checkbox selection
- *
- * @param checked     Checkbox state
- * @param group
- * @param user
- *
- *
+ * @param {boolean} checked     Checkbox state
+ * @param {string}  proposalId  Proposal ID
+ * @param {string}  userId      User ID
+ * @generator
  */
 export function * syncFromItem (checked, proposalId, userId) {
   const { openProposalsByUser, openProposalFromId } = this.props;
@@ -110,14 +102,11 @@ export function * syncFromItem (checked, proposalId, userId) {
 
 
 /**
- *
  * Update selected users
- *
- * @param checked        Checkbox state
- * @param changedUsers   Changed users
- * @param proposals
- *
- *
+ * @param {boolean} checked        Checkbox state
+ * @param {array}   changedUsers   Changed users
+ * @param {array}   proposals      Array of proposals
+ * @generator
  */
 export function * syncUsers (checked, changedUsers, proposals) {
   const { openProposalsByUser } = this.props;

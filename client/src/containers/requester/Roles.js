@@ -55,12 +55,6 @@ export class Roles extends Component {
   }
 
 
-  /**
-   *
-   * Switch pack on ID change
-   *
-   *
-   */
   componentDidUpdate (prevProps) {
     const { getProposal, getRole, proposalId, roleId } = this.props;
 

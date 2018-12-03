@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+Approver Home
+Component encapsulating the approver landing page  */
 
 
 import React, { Component } from 'react';
@@ -24,12 +28,6 @@ import TrackHeader from '../../components/layouts/TrackHeader';
 import './ApproverHome.css';
 
 
-/**
- *
- * @class Approver Home
- * Component encapsulating the approver landing page
- *
- */
 export default class ApproverHome extends Component {
 
   render() {

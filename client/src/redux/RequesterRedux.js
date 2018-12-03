@@ -19,15 +19,12 @@ import Immutable from 'seamless-immutable';
 import * as utils from '../services/Utils';
 
 
-/**
- *
- * Actions
- *
- * @property request  Initiating action
- * @property success  Action called on execution success
- * @property failure  Action called on execution failure
- *
- */
+//
+// Actions
+//
+//
+//
+//
 const { Types, Creators } = createActions({
   baseRequest:       null,
   baseSuccess:       ['base'],
@@ -60,21 +57,12 @@ const { Types, Creators } = createActions({
 export const RequesterTypes = Types;
 export default Creators;
 
-
-/**
- *
- * State
- *
- * @property recommended
- * @property requests
- * @property fetching
- * @property activeRole
- * @property error
- *
- * @todo Consider normalizing recommended, requests, and packs
- * into one roles entity, queried by selector
- *
- */
+//
+// State
+//
+//
+//
+//
 export const INITIAL_STATE = Immutable({
   activeProposal:   null,
   activeRole:       null,
@@ -85,15 +73,13 @@ export const INITIAL_STATE = Immutable({
   roles:            null,
 });
 
-
-/**
- *
- * Selectors
- *
- *
- */
+//
+// Selectors
+//
+//
+//
+//
 export const RequesterSelectors = {
-
   roles: (state) => state.requester.roles,
   recommended: (state) =>
     state.requester.roles &&
@@ -131,25 +117,22 @@ export const RequesterSelectors = {
           ...state.requester.roles
             .find(role => role.id === request.object),
         }
-      }
-      ),
+      }),
+
 
   /**
-   *
    * Retrieve field ID from URL slug
-   *
-   * @param state       Redux state object
-   * @param collection  Collection to search
-   * @param slug        ID from URL
-   * @param field       ID to retrieve
-   *
+   * @param   {object} state      Redux state
+   * @param   {array}  collection Collection to search
+   * @param   {string} slug       URL slugh
+   * @param   {string} field      ID to retrieve
+   * @returns {string}
    */
   idFromSlug: (state, collection, slug, field) => {
     if (!collection) return null;
 
     let result = {};
     field = field || 'id';
-
     const entity = collection.find((item) =>
       utils.createSlug(item.name) === slug);
 
@@ -159,23 +142,21 @@ export const RequesterSelectors = {
         state.user.me.proposals.find((item) =>
           item.object_id === entity.id);
         break;
-
       default:
         result = entity;
         break;
     }
-
     return result && result[field];
   },
 };
 
 
-/**
- *
- * Reducers - General
- *
- *
- */
+//
+// Reducers
+// General
+//
+//
+//
 export const request = (state) => {
   return state.merge({ fetching: true });
 }
@@ -186,13 +167,12 @@ export const resetAll = () => {
   return INITIAL_STATE;
 };
 
-
-/**
- *
- * Reducers - Success
- *
- *
- */
+//
+// Reducers
+// Success
+//
+//
+//
 export const roleSuccess = (state, { role }) => {
   return state.merge({
     fetching: false,
@@ -225,13 +205,12 @@ export const accessSuccess = (state) => {
   return state.merge({ fetching: false });
 }
 
-
-/**
- *
- * Hooks
- *
- *
- */
+//
+// Hooks
+//
+//
+//
+//
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]: resetAll,
 

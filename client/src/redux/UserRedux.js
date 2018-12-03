@@ -20,15 +20,12 @@ import * as utils from '../services/Utils';
 import * as storage from '../services/Storage';
 
 
-/**
- *
- * Actions
- *
- * @property request  Initiating action
- * @property success  Action called on execution success
- * @property failure  Action called on execution failure
- *
- */
+//
+// Actions
+//
+//
+//
+//
 const { Types, Creators } = createActions({
   resetAll:      null,
 
@@ -47,16 +44,12 @@ const { Types, Creators } = createActions({
 export const UserTypes = Types;
 export default Creators;
 
-
-/**
- *
- * State
- *
- * @property isAuthenticated
- * @property fetching
- * @property error
- *
- */
+//
+// State
+//
+//
+//
+//
 export const INITIAL_STATE = Immutable({
   fetching:         null,
   error:            null,
@@ -64,13 +57,12 @@ export const INITIAL_STATE = Immutable({
   users:            null,
 });
 
-
-/**
- *
- * Selectors
- *
- *
- */
+//
+// Selectors
+//
+//
+//
+//
 export const UserSelectors = {
   me:         (state) => state.user.me,
   id:         (state) =>
@@ -82,13 +74,12 @@ export const UserSelectors = {
     state.user.users.find(user => user.id === id),
 };
 
-
-/**
- *
- * Reducers - General
- *
- *
- */
+//
+// Reducuers
+// General
+//
+//
+//
 export const request = (state) => {
   return state.merge({ fetching: true });
 };
@@ -99,13 +90,12 @@ export const resetAll = (state) => {
   return INITIAL_STATE;
 };
 
-
-/**
- *
- * Reducers - Success
- *
- *
- */
+//
+// Reducuers
+// Success
+//
+//
+//
 export const meSuccess = (state, { me }) => {
   return state.merge({
     fetching: false,
@@ -121,13 +111,12 @@ export const userSuccess = (state, { user }) => {
   });
 };
 
-
-/**
- *
- * Hooks
- *
- *
- */
+//
+// Hooks
+//
+//
+//
+//
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]: resetAll,
 

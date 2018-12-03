@@ -19,15 +19,12 @@ import Immutable from 'seamless-immutable';
 import ping from '../sounds/ping.mp3'
 
 
-/**
- *
- * Actions
- *
- * @property request  Initiating action
- * @property success  Action called on execution success
- * @property failure  Action called on execution failure
- *
- */
+//
+// Actions
+//
+//
+//
+//
 const { Types, Creators } = createActions({
   conversationRequest:    ['id'],
   conversationSuccess:    ['conversation'],
@@ -43,38 +40,35 @@ const { Types, Creators } = createActions({
 export const ChatTypes = Types;
 export default Creators;
 
-
-/**
- *
- * State
- *
- * @property fetching
- * @property error
- *
- */
+//
+// State
+//
+//
+//
+//
 export const INITIAL_STATE = Immutable({
   fetching:         null,
   messages:         null,
 });
 
 
-/**
- *
- * Selectors
- *
- *
- */
+//
+// Selectors
+//
+//
+//
+//
 export const ChatSelectors = {
   messages: (state) => state.chat.messages,
 };
 
 
-/**
- *
- * Reducers - General
- *
- *
- */
+//
+// Reducers
+// General
+//
+//
+//
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 }
@@ -83,21 +77,19 @@ export const clearMessages = (state) => {
 };
 
 
-/**
- *
- * Reducers - Success
- *
- *
- */
+//
+// Reducers
+// Success
+//
+//
+//
 export const conversationSuccess = (state, { conversation }) => {
   return state.merge({ fetching: false, messages: conversation.messages });
 }
 
-
 export const messageSend = (state, { payload }) => {
   if (payload.message && payload.message.text.startsWith('/'))
     return state.merge({ fetching: true });
-
   return state.merge({
     fetching: true,
     messages: payload.do !== 'CREATE' ?
@@ -121,13 +113,12 @@ export const messageReceive = (state, { message }) => {
   });
 }
 
-
-/**
- *
- * Hooks
- *
- *
- */
+//
+// Hooks
+//
+//
+//
+//
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.CLEAR_MESSAGES]: clearMessages,
 

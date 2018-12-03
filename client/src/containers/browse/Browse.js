@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Browse
+Browse component */
 
 
 import React, { Component } from 'react';
@@ -27,13 +32,6 @@ import RequesterActions from '../../redux/RequesterRedux';
 import './Browse.css';
 
 
-/**
- *
- * @class         Browse
- * @description   Browse component
- *
- *
- */
 class Browse extends Component {
 
   static propTypes = {
