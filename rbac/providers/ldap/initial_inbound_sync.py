@@ -22,6 +22,7 @@ import sys
 import json
 import logging
 from datetime import datetime, timezone
+import threading
 import rethinkdb as r
 import ldap3
 from ldap3 import ALL, Connection, Server
@@ -31,6 +32,10 @@ from rbac.providers.common.inbound_filters import (
     inbound_group_filter,
 )
 from rbac.providers.common.common import save_sync_time, check_last_sync
+from rbac.providers.ldap.delta_inbound_sync import (
+    inbound_delta_sync,
+    restart_delta_sync,
+)
 from rbac.providers.common.rethink_db import connect_to_db
 
 
@@ -54,7 +59,7 @@ LDAP_FILTER_GROUP = "(objectClass=group)"
 def fetch_ldap_data(data_type):
     """
         Call to get entries for all (Users | Groups) in Active Directory, saves the time of the sync,
-        and inserts data into RethinkDB.
+        inserts data into RethinkDB, and initiates a new thread for a delta sync for data_type.
     """
     connect_to_db()
 
@@ -79,7 +84,7 @@ def fetch_ldap_data(data_type):
     sync_source = "ldap-" + data_type
     provider_id = LDAP_DC
     save_sync_time(provider_id, sync_source, "initial")
-    # TODO: Initiate timed delta sync thread after successfully inserting records into db
+    initiate_delta_sync(data_type)
 
 
 def insert_to_db(data_dict, data_type):
@@ -103,8 +108,16 @@ def insert_to_db(data_dict, data_type):
     )
 
 
+def initiate_delta_sync(data_type):
+    """Starts a new delta sync thread for LDAP data_type."""
+    threading.Thread(inbound_delta_sync, args=(data_type,)).start()
+
+
 def initialize_ldap_sync():
-    """Fetches (Users | Groups) from Active Directory and inserts them into RethinkDB."""
+    """
+        Checks if LDAP initial syncs has been ran. If not, run initial sync for both ldap users
+        and groups. If initial syncs have been completed, restart the inbound delta syncs.
+    """
 
     if LDAP_DC:
         connect_to_db()
@@ -132,6 +145,6 @@ def initialize_ldap_sync():
 
         if db_user_payload and db_group_payload:
             LOGGER.info("The LDAP initial sync has already been run.")
-            # TODO: Add option to restart inbound delta syncs here
+            restart_delta_sync()
     else:
         LOGGER.info("LDAP Domain Controller is not provided, skipping LDAP sync.")
