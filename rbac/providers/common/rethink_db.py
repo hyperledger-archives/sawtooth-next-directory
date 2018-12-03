@@ -23,7 +23,7 @@ from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.error.unrecoverable_error import DatabaseConnectionException
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
+LOGGER.level = logging.INFO
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 CHANGELOG = os.getenv("CHANGELOG", "changelog")
@@ -60,18 +60,22 @@ def connect_to_db():
         )
 
 
-def peek_at_queue(table_name, provider_id):
+def peek_at_queue(table_name, provider_id=None):
     """Returns a single entry from table_name with the oldest timestamp and matching
     provider_id."""
     try:
-        queue_entry = (
-            r.table(table_name)
-            .filter({"provider_id": provider_id})
-            .min("timestamp")
-            .coerce_to("object")
-            .run()
-        )
-        return queue_entry
+        if provider_id:
+            queue_entry = (
+                r.table(table_name)
+                .filter({"provider_id": provider_id})
+                .min("timestamp")
+                .coerce_to("object")
+                .run()
+            )
+            return queue_entry
+        else:
+            queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run()
+            return queue_entry
     except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError) as err:
         raise ExpectedError(err)
     except Exception as err:
