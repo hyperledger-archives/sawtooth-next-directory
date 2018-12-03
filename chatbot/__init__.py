@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +11,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# -----------------------------------------------------------------------------
-
-TOP_DIR=$(cd $(dirname $(dirname $0)) && pwd)
-
-python -m rasa_core.run --enable_api --debug \
-    -d ./chatbot/build/current/core \
-    -u ./chatbot/build/current/nlu \
-    --credentials ./chatbot/credentials.yml \
-    --endpoints ./chatbot/endpoints.yml \
-    --port 5005
+# ------------------------------------------------------------------------------

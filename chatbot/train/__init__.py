@@ -11,24 +11,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# -----------------------------------------------------------------------------
-
-FROM rasa/rasa_core:0.12.2
-
-RUN apt-get update \
- && apt-get install -y --allow-unauthenticated -q \
-        python3-pip \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-RUN pip3 install \
-        rasa_nlu[spacy]
-
-RUN python -m spacy download en
-
-WORKDIR /project/hyperledger-rbac/chatbot
-
-# Base image entrypoint reset
-ENTRYPOINT []
-
-CMD ["./entrypoint"]
+# ------------------------------------------------------------------------------

@@ -1,0 +1,164 @@
+%YAML 1.1
+---
+actions:
+- utter_default
+- utter_standby
+- utter_recommendation
+- utter_ask_request_access
+- utter_greet
+- utter_draft
+- utter_exclame
+- utter_fanfare_sent
+- utter_request_bye
+- utter_thank
+- utter_feeling
+- utter_bye
+- utter_laugh
+- utter_awe
+- utter_insult
+- utter_help
+- utter_whoami
+- utter_name
+- utter_passive
+- action_request_access
+config:
+  store_entities_as_slots: true
+entities: []
+forms: []
+intents:
+- recommend:
+    use_entities: true
+- affirm:
+    use_entities: true
+- deny:
+    use_entities: true
+- greet:
+    use_entities: true
+- send:
+    use_entities: true
+- cancel:
+    use_entities: true
+- bye:
+    use_entities: true
+- thank:
+    use_entities: true
+- feeling:
+    use_entities: true
+- reason:
+    use_entities: true
+- laugh:
+    use_entities: true
+- awe:
+    use_entities: true
+- insult:
+    use_entities: true
+- help:
+    use_entities: true
+- whoami:
+    use_entities: true
+- name:
+    use_entities: true
+slots:
+  approver_name:
+    auto_fill: true
+    initial_value: null
+    type: rasa_core.slots.UnfeaturizedSlot
+  reason:
+    auto_fill: true
+    initial_value: null
+    type: rasa_core.slots.UnfeaturizedSlot
+  resource_id:
+    auto_fill: true
+    initial_value: null
+    type: rasa_core.slots.UnfeaturizedSlot
+  resource_name:
+    auto_fill: true
+    initial_value: null
+    type: rasa_core.slots.UnfeaturizedSlot
+  token:
+    auto_fill: true
+    initial_value: null
+    type: rasa_core.slots.UnfeaturizedSlot
+templates:
+  utter_ask_request_access:
+  - buttons:
+    - payload: Yes, please.
+      title: Yes, please
+    - payload: No, thanks.
+      title: No, thanks
+    text: Do you want me to request access for you?
+  utter_awe:
+  - text: Pretty great, right?
+  - text: Yep.
+  utter_bye:
+  - text: Talk to you later.
+  - text: Later gater.
+  - text: Until next time.
+  - text: Bye. I will always be here for you.
+  utter_default:
+  - text: Sorry, I didn't get that. Can you clarify?
+  - text: I don't understand what you mean.
+  utter_draft:
+  - buttons:
+    - payload: '/send{"reason": "I need access."}'
+      title: Send request
+    - payload: /cancel
+      title: Nevermind
+    text: So you'd like to request access for {resource_name}? Great. All you need
+      to do is draft a note for {approver_name} and I'll take care of the rest.
+  utter_exclame:
+  - text: Awesome!
+  utter_fanfare_sent:
+  - text: Ta-da! Request sent
+  utter_feeling:
+  - text: I'm okay.
+  - text: I'm just hanging around.
+  - text: Eh. Could be better I guess.
+  - text: Do you actually care?
+  utter_greet:
+  - text: Bonjour! How can I help you?
+  - text: Hola!
+  - text: Sup?
+  - text: Howdy partner.
+  - text: Oh hi there.
+  - text: What's up?
+  - text: How may I serve you?
+  utter_help:
+  - text: -text
+  utter_insult:
+  - text: I am trying my best to be helpful. Please let me know more clearly how I
+      can help you.
+  - text: All robots make mistakes at some point. This may be one of those moments.
+      Please tell me what it is you'd like me to do.
+  utter_laugh:
+  - text: I know right?
+  - text: You're hilarious.
+  - text: Pretty funny.
+  utter_name:
+  - text: It's a pleasure to be getting to know you.
+  - text: That's great.
+  - text: Cool stuff.
+  - text: Uh huh.
+  utter_passive:
+  - text: Fine.
+  - text: Have it your way.
+  utter_recommendation:
+  - text: Hi! Based on your role, I bet having access to {resource_name} would make
+      it easier for you to function.
+  utter_request_bye:
+  - text: Feel free to ping me anytime. I will notify you once I hear from {approver_name}.
+      Au revoir!
+  utter_standby:
+  - text: Feel free to ping me anytime.
+  - text: I'll be here for you.
+  utter_thank:
+  - text: You're most welcome.
+  - text: No problem.
+  - text: My pleasure.
+  - text: You got it.
+  - text: Anytime.
+  - text: Sure thing.
+  utter_whoami:
+  - text: I am Dez, a robot designed specifically to help you because you are special
+      and deserve it.
+  - text: Who are you?

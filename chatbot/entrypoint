@@ -1,3 +1,5 @@
+#!/bin/bash
+#
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +15,9 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM rasa/rasa_core:0.12.2
-
-RUN apt-get update \
- && apt-get install -y --allow-unauthenticated -q \
-        python3-pip \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-RUN pip3 install \
-        rasa_nlu[spacy]
-
-RUN python -m spacy download en
-
-WORKDIR /project/hyperledger-rbac/chatbot
-
-# Base image entrypoint reset
-ENTRYPOINT []
-
-CMD ["./entrypoint"]
+python -m rasa_core.run --enable_api \
+    -d ./models/current/core \
+    -u ./models/current/nlu \
+    --credentials ./config/credentials.yml \
+    --endpoints ./config/endpoints.yml \
+    --port 5005

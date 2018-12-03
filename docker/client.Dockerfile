@@ -25,4 +25,4 @@ RUN yarn global add gulp@4.0 \
 COPY ./client/src/semantic ./src/semantic
 RUN yarn build:semantic
 
-CMD ["./entrypoint.sh"]
+CMD ["./entrypoint"]

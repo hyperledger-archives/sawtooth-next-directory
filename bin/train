@@ -15,81 +15,14 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import argparse
 import os
 import sys
-import logging
-from os.path import dirname as DIRNAME
-
-from rasa_nlu.training_data import load_data
-from rasa_nlu.model import Trainer
-from rasa_nlu import config
-
-from rasa_core.agent import Agent
-from rasa_core.policies.memoization import MemoizationPolicy
-from rasa_core.policies.keras_policy import KerasPolicy
-from rasa_core.policies.fallback import FallbackPolicy
 
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+TOP_DIR = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, TOP_DIR)
 
+from chatbot.train.main import main
 
-TOP_DIR = DIRNAME(DIRNAME(__file__))
-PROJECT_DIR = os.path.join(TOP_DIR, "chatbot")
-
-NLU_DATA = os.path.join(PROJECT_DIR, "data/nlu.md")
-NLU_CONFIG = os.path.join(PROJECT_DIR, "nlu_config.yml")
-NLU_MODEL = os.path.join(PROJECT_DIR, "build/")
-
-CORE_DATA = os.path.join(PROJECT_DIR, "data/stories.md")
-CORE_DOMAIN = os.path.join(PROJECT_DIR, "domain.yml")
-CORE_MODEL = os.path.join(PROJECT_DIR, "build/current/core")
-
-
-def parse_args(args):
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--nlu", help="Train the language processing model", action="store_true"
-    )
-    parser.add_argument(
-        "--core", help="Train the dialog engine model", action="store_true"
-    )
-    return parser.parse_args(args)
-
-
-def train_nlu():
-    LOGGER.info("[NLU] Loading training data from %s", NLU_DATA)
-    training_data = load_data(NLU_DATA)
-
-    LOGGER.info("[NLU] Loading config from %s", NLU_CONFIG)
-    trainer = Trainer(config.load(NLU_CONFIG))
-
-    LOGGER.info("[NLU] Training NLU...")
-    trainer.train(training_data)
-    trainer.persist(NLU_MODEL, fixed_model_name="nlu", project_name="current")
-
-
-def train_core():
-    keras = KerasPolicy(max_history=5)
-    memoization = MemoizationPolicy(max_history=5)
-    fallback = FallbackPolicy(nlu_threshold=0.28)
-
-    LOGGER.info("[CORE] Creating agent from YAML at %s", CORE_DOMAIN)
-    agent = Agent(CORE_DOMAIN, policies=[memoization, keras, fallback])
-
-    LOGGER.info("[CORE] Loading training data from %s", CORE_DATA)
-    data = agent.load_data(CORE_DATA)
-
-    LOGGER.info("[CORE] Training Core...")
-    agent.train(data)
-    agent.persist(CORE_MODEL)
-
-
-if __name__ == "__main__":
-    opts = parse_args(sys.argv[1:])
-    if opts.nlu:
-        train_nlu()
-    if opts.core:
-        train_core()
+if __name__ == '__main__':
+    main()

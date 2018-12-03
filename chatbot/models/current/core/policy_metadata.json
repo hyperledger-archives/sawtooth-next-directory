@@ -1,0 +1,65 @@
+{
+  "action_fingerprints": {
+    "action_listen": {
+      "slots": [
+        "reason"
+      ]
+    },
+    "utter_awe": {
+      "slots": []
+    },
+    "utter_request_bye": {
+      "slots": []
+    },
+    "utter_standby": {
+      "slots": []
+    },
+    "utter_whoami": {
+      "slots": []
+    },
+    "utter_laugh": {
+      "slots": []
+    },
+    "utter_feeling": {
+      "slots": []
+    },
+    "utter_greet": {
+      "slots": []
+    },
+    "utter_thank": {
+      "slots": []
+    },
+    "utter_name": {
+      "slots": []
+    },
+    "utter_insult": {
+      "slots": []
+    },
+    "utter_help": {
+      "slots": []
+    },
+    "utter_ask_request_access": {
+      "slots": []
+    },
+    "utter_draft": {
+      "slots": []
+    },
+    "utter_bye": {
+      "slots": []
+    }
+  },
+  "rasa_core": "0.12.2",
+  "python": "3.6.7",
+  "max_histories": [
+    5,
+    5,
+    null
+  ],
+  "ensemble_name": "rasa_core.policies.ensemble.SimplePolicyEnsemble",
+  "policy_names": [
+    "rasa_core.policies.memoization.MemoizationPolicy",
+    "rasa_core.policies.keras_policy.KerasPolicy",
+    "rasa_core.policies.fallback.FallbackPolicy"
+  ],
+  "trained_at": "20181203-042930"
+}
