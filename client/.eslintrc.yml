@@ -34,7 +34,7 @@ rules:
   comma-spacing: error
   computed-property-spacing: error
   eol-last: error
-  indent: [error, 2, {SwitchCase: 1}]
+  indent: [error, 2, { SwitchCase: 1 }]
   jsx-quotes: [error, prefer-single]
   key-spacing: [error, { mode: minimum }]
   linebreak-style: error
@@ -43,3 +43,10 @@ rules:
   no-mixed-spaces-and-tabs: error
   no-trailing-spaces: error
   no-unneeded-ternary: error
+  no-unreachable: error
+  # valid-jsdoc:
+  #   - error
+  #   - requireReturn: false
+  #     prefer: { return: returns }
+  #     requireReturnDescription: false
+

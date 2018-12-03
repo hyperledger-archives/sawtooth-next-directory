@@ -12,6 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Approver sagas
+Each generator function executes a request to the
+API to retrieve data required to hydrate the UI. */
 
 
 import { all, call, fork, put } from 'redux-saga/effects';
@@ -19,22 +25,10 @@ import ApproverActions from '../redux/ApproverRedux';
 
 
 /**
- *
- * Approver generators
- *
- * Each generator function executes a request to the
- * API to retrieve data required to hydrate the UI.
- *
- * @param api     API object
- * @param action  Redux action
- *
- * @generator getOpenProposals(...)
- *            Get currently open proposals assigned to
- *            logged in user
- * @generator createRole(...)
- *            Create a role
- *
- *
+ * Get currently open proposals assigned to logged in user
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
  */
 export function * getOpenProposals (api, action) {
   try {
@@ -46,6 +40,12 @@ export function * getOpenProposals (api, action) {
 }
 
 
+/**
+ * Create a new role
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
 export function * createRole (api, action) {
   try {
     const { payload } = action;
@@ -57,6 +57,12 @@ export function * createRole (api, action) {
 }
 
 
+/**
+ * Approve an array of proposals
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
 export function * approveProposals (api, action) {
   try {
     const { ids } = action;
@@ -68,8 +74,12 @@ export function * approveProposals (api, action) {
 }
 
 
-// Helpers
-
+/**
+ * Approva a single proposal
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
 export function * approveProposal (api, id) {
   try {
     const res = yield call(api.approveProposals, id, {

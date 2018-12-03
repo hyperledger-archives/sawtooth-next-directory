@@ -12,6 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Auth sagas
+Each generator function executes a request to the
+API to retrieve data required to hydrate the UI. */
 
 
 import { call, put } from 'redux-saga/effects';
@@ -19,23 +25,10 @@ import AuthActions from '../redux/AuthRedux';
 
 
 /**
- *
- * Auth generators
- *
- * Each generator function executes a request to the
- * API to retrieve data required to hydrate the UI.
- *
- * @param api     API object
- * @param action  Redux action
- *
- * @generator login(...)
- *            Authenticate a user
- * @generator signup(...)
- *            Create a new user account
- * @generator logout(...)
- *            Logout of current session
- *
- *
+ * Authenticate a user
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
  */
 export function * login (api, action) {
   try {
@@ -54,6 +47,12 @@ export function * login (api, action) {
 }
 
 
+/**
+ * Create a new user account
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
 export function * signup (api, action) {
   try {
     const { username, password, name, email } = action;
@@ -73,6 +72,12 @@ export function * signup (api, action) {
 }
 
 
+/**
+ * Logout of current session
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
 export function * logout (api, action) {
   try {
     const res = yield call(api.logout);
