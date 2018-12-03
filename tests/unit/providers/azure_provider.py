@@ -20,10 +20,6 @@ import pytest
 
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.azure.initial_inbound_sync import get_ids_from_list_of_dicts
-from rbac.providers.common.inbound_filters import (
-    inbound_group_filter,
-    inbound_user_filter,
-)
 from tests.unit.providers.azure_reponse_mocks import mock_requests_post
 
 # Tests are commented out until function level testing can occur.
@@ -55,36 +51,6 @@ def test_time_left_false():
     AADAUTH.token_creation_timestamp = time
     result = AADAUTH._time_left()  # pylint: disable=protected-access
     assert result is False
-
-
-def test_inbound_user_filter():
-    """Test the inbound user filter for azure transforms and returns a user dict."""
-    result = inbound_user_filter({"id": 1234}, "azure")
-    assert isinstance(result, dict) is True
-    assert result["user_id"] == 1234
-    assert "id" not in result
-    assert result["job_title"] is None
-
-
-def test_inbound_user_filter_bad_provider():
-    """Test the inbound user filter with bad provider throws error"""
-    with pytest.raises(TypeError):
-        inbound_user_filter({"id": 1234}, "potato")
-
-
-def test_inbound_group_filter():
-    """Test the inbound group filter for azure transforms and returns a group dict."""
-    result = inbound_group_filter({"id": 1234}, "azure")
-    assert isinstance(result, dict) is True
-    assert result["role_id"] == 1234
-    assert "id" not in result
-    assert result["classification"] is None
-
-
-def test_inbound_group_filter_bad_provider():
-    """Test the inbound group filter with bad provider throws error"""
-    with pytest.raises(TypeError):
-        inbound_group_filter({"id": 1234}, "potato")
 
 
 # def test_get_token_no_auth_type(caplog):
