@@ -19,14 +19,12 @@ import Immutable from 'seamless-immutable';
 import * as utils from '../services/Utils';
 
 
-/**
- *
- * Actions
- *
- * @property
- * @property
- *
- */
+//
+// Actions
+//
+//
+//
+//
 const { Types, Creators } = createActions({
   openProposalsRequest:     null,
   openProposalsSuccess:     ['openProposals'],
@@ -40,36 +38,31 @@ const { Types, Creators } = createActions({
   approveProposalsSuccess:  ['closedProposal'],
   approveProposalsFailure:  ['error'],
 
-  resetAll:               null,
+  resetAll:                 null,
 });
 
 
 export const ApproverTypes = Types;
 export default Creators;
 
-
-/**
- *
- * State
- *
- * @property isAuthenticated
- * @property fetching
- * @property error
- *
- */
+//
+// State
+//
+//
+//
+//
 export const INITIAL_STATE = Immutable({
   fetching:         null,
   error:            null,
   openProposals:    null,
 });
 
-
-/**
- *
- * Selectors
- *
- *
- */
+//
+// Selectors
+//
+//
+//
+//
 export const ApproverSelectors = {
   openProposals:         (state) => state.approver.openProposals,
   openProposalsByUser:   (state) =>
@@ -84,13 +77,12 @@ export const ApproverSelectors = {
     state.approver.openProposals.find(proposal => proposal.id === id),
 };
 
-
-/**
- *
- * Reducers - General
- *
- *
- */
+//
+// Reducers
+// General
+//
+//
+//
 export const request = (state) => {
   return state.merge({ fetching: true });
 }
@@ -101,13 +93,12 @@ export const resetAll = () => {
   return INITIAL_STATE;
 };
 
-
-/**
- *
- * Reducers - Success
- *
- *
- */
+//
+// Reducers
+// Success
+//
+//
+//
 export const openProposalsSuccess = (state, { openProposals }) => {
   return state.merge({ fetching: false, openProposals: openProposals.data });
 }
@@ -122,13 +113,12 @@ export const approveProposalsSuccess = (state, { closedProposal }) => {
   });
 }
 
-
-/**
- *
- * Hooks
- *
- *
- */
+//
+// Hooks
+//
+//
+//
+//
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]: resetAll,
 

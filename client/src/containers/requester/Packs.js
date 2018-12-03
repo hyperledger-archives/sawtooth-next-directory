@@ -51,17 +51,9 @@ export class Packs extends Component {
   }
 
 
-  /**
-   *
-   * Switch pack on ID change
-   *
-   *
-   */
   componentDidUpdate (prevProps) {
     const { getRole, roleId } = this.props;
-
     if (prevProps.roleId !== roleId) !this.role && getRole(roleId);
-
   }
 
 

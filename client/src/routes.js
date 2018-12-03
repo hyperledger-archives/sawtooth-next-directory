@@ -12,6 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Routes
+Routes are destructured from the declarative syntax due to for
+increased flexibility. State is sent top-down via propsto the main
+and nav components. */
 
 
 import React from 'react';
@@ -31,27 +38,13 @@ import Manage from './containers/approver/Manage';
 import People from './containers/approver/People';
 
 
-/**
- *
- * Destructured routes
- *
- * The routes in this array are destructured from the declarative
- * syntax due to the added complexity of navigation and state.
- *
- * State is sent top-down via props to the main and nav
- * components.
- *
- */
 const routes = (props) => [
-
-  /**
-   *
-   * Requester routes
-   *
-   *
-   *
-   */
-
+  //
+  // Requester
+  //
+  //
+  //
+  //
   {
     path:   '/',
     main:   (rest) => <RequesterHome {...props} {...rest}/>,
@@ -71,14 +64,12 @@ const routes = (props) => [
     exact:  true,
   },
 
-
-  /**
-   *
-   * Approver routes
-   *
-   *
-   *
-   */
+  //
+  // Approver
+  //
+  //
+  //
+  //
 
   {
     path:   '/approval',
@@ -112,5 +103,6 @@ const routes = (props) => [
   },
 
 ];
+
 
 export default routes;

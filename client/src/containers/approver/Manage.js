@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Manage
+Manage component  */
 
 
 import React, { Component } from 'react';
@@ -29,12 +34,6 @@ import TrackHeader from '../../components/layouts/TrackHeader';
 import CreateModal from '../../components/modals/manage/Create';
 
 
-/**
- *
- * @class Manage
- * Manage component
- *
- */
 class Manage extends Component {
 
   createRole = (name) => {

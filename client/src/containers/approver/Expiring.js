@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Expiring
+Expiring component  */
 
 
 import React, { Component } from 'react';
@@ -26,12 +31,6 @@ import TrackHeader from '../../components/layouts/TrackHeader';
 import './Expiring.css';
 
 
-/**
- *
- * @class Expiring
- * Expiring component
- *
- */
 class Expiring extends Component {
 
   render () {

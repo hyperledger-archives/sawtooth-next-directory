@@ -23,14 +23,12 @@ import RequesterActions, {
   RequesterSelectors } from '../../redux/RequesterRedux';
 
 
-/**
- *
- *
- *
- * @param {*} state
- *
- *
- */
+//
+// App-wide selectors
+//
+//
+//
+//
 export const appState = (state) => {
   return {
 
@@ -73,14 +71,12 @@ export const appState = (state) => {
 };
 
 
-/**
- *
- *
- *
- * @param {*} dispatch
- *
- *
- */
+//
+// App-wide actions
+//
+//
+//
+//
 export const appDispatch = (dispatch) => {
   return {
 
@@ -126,11 +122,6 @@ export const appDispatch = (dispatch) => {
 };
 
 
-/**
- *
- *
- *
- */
 const logout = (dispatch) => {
   return dispatch(AuthActions.logoutRequest()) &&
     dispatch(ChatActions.clearMessages()) &&

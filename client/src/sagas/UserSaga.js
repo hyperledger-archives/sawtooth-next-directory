@@ -15,7 +15,7 @@ limitations under the License.
 /*
 
 
-User sagas
+User saga
 Each generator function executes a request to the
 API to retrieve data required to hydrate the UI. */
 

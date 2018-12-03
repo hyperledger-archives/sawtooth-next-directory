@@ -15,7 +15,7 @@ limitations under the License.
 /*
 
 
-Approver sagas
+Approver saga
 Each generator function executes a request to the
 API to retrieve data required to hydrate the UI. */
 
@@ -77,7 +77,7 @@ export function * approveProposals (api, action) {
 /**
  * Approva a single proposal
  * @param {object} api    API service
- * @param {object} action Redux action
+ * @param {object} id     Proposal ID
  * @generator
  */
 export function * approveProposal (api, id) {

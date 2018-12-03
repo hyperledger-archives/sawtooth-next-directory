@@ -18,13 +18,12 @@ import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
 
 
-/**
- *
- * Actions
- *
- * @property animationBegin  Initiating action
- *
- */
+//
+// Actions
+//
+//
+//
+//
 const { Types, Creators } = createActions({
   animationBegin:                    null,
   animationEnd:                      null,
@@ -44,15 +43,12 @@ const { Types, Creators } = createActions({
 export const AppTypes = Types;
 export default Creators;
 
-
-/**
- *
- * State
- *
- * @property isAnimating
- *
- *
- */
+//
+// State
+//
+//
+//
+//
 export const INITIAL_STATE = Immutable({
   error:                              null,
   isAnimating:                        null,
@@ -61,13 +57,12 @@ export const INITIAL_STATE = Immutable({
   isSocketOpen:                       null,
 });
 
-
-/**
- *
- * Selectors
- *
- *
- */
+//
+// Selectors
+//
+//
+//
+//
 export const AppSelectors = {
   isAnimating:     (state) => state.app.isAnimating,
   isRefreshing:    (state) => state.app.isRefreshing,
@@ -76,13 +71,12 @@ export const AppSelectors = {
     state.app.shouldRefreshOnNextSocketReceive,
 };
 
-
-/**
- *
- * Reducers - General
- *
- *
- */
+//
+// Reducers
+//
+//
+//
+//
 export const animationBegin = (state) => {
   return state.merge({ isAnimating: true });
 };
@@ -114,13 +108,12 @@ export const refreshOnNextSocketReceive = (state, { flag }) => {
   return state.merge({ shouldRefreshOnNextSocketReceive: flag });
 };
 
-
-/**
- *
- * Hooks
- *
- *
- */
+//
+// Hooks
+//
+//
+//
+//
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.ANIMATION_BEGIN]: animationBegin,
   [Types.ANIMATION_END]: animationEnd,

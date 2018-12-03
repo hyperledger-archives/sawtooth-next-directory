@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+Individuals
+Individuals component  */
 
 
 import React, { Component } from 'react';
@@ -32,14 +37,6 @@ import './Individuals.css';
 import glyph from '../../images/header-glyph-individual.png';
 
 
-
-/**
- *
- * @class       Individuals
- * @description Individuals component
- *
- *
- */
 class Individuals extends Component {
 
   static propTypes = {
@@ -76,14 +73,12 @@ class Individuals extends Component {
 
 
   /**
-   *
    * Handle proposal change event
-   *
    * When a proposal is checked or unchecked, select or deselect
    * the parent user, taking into account the currently
    * checked sibling proposals.
-   *
-   *
+   * @param {object} event Event passed on change
+   * @param {object} data  Attributes passed on change
    */
   handleChange = (event, data) => {
     const sync = syncAll.call(
