@@ -23,11 +23,12 @@ import './ApprovalCard.css';
 /**
  *
  * @class         ApprovalCard
- * @description   Component encapsulating the approval card
- *
+ * @description   This card formats the display of an open request's
+ *                current approval status. It displays who owns the resource,
+ *                when the request was opened, and approval status
  *
  */
-export default class ApprovalCard extends Component {
+class ApprovalCard extends Component {
 
   static propTypes = {
     getUser:            PropTypes.func,
@@ -36,11 +37,14 @@ export default class ApprovalCard extends Component {
   }
 
 
+  /**
+   * Entry point to perform tasks required to render component.
+   * The card displays conditionally, requiring 'request' to be
+   * passed as a prop.
+   */
   componentDidMount () {
     const { request, getUser, users } = this.props;
-
     if (!request) return;
-
 
     request.appprovers &&
     request.appprovers.map((userId) => {
@@ -51,6 +55,11 @@ export default class ApprovalCard extends Component {
   }
 
 
+  /**
+   * Display the open request's approvers
+   * @param {string} userId Approver's user ID
+   * @returns {JSX}
+   */
   renderApprover (userId) {
     const { users } = this.props;
 
@@ -64,11 +73,13 @@ export default class ApprovalCard extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { request } = this.props;
-
     if (!request) return null;
-
 
     return (
       <div id='next-approval-container'>
@@ -102,3 +113,6 @@ export default class ApprovalCard extends Component {
   }
 
 }
+
+
+export default ApprovalCard;

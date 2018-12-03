@@ -12,11 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-
-Browse
-Browse component */
 
 
 import React, { Component } from 'react';
@@ -31,7 +26,12 @@ import RequesterActions from '../../redux/RequesterRedux';
 
 import './Browse.css';
 
-
+/**
+ *
+ * @class         Browse
+ * @description   The browse screen
+ *
+ */
 class Browse extends Component {
 
   static propTypes = {
@@ -40,6 +40,11 @@ class Browse extends Component {
   };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component. On load, get roles
+   */
+  // TODO: Pagination
   componentDidMount(){
     const { getAllRoles } = this.props;
     getAllRoles();
@@ -48,40 +53,47 @@ class Browse extends Component {
 
   componentDidUpdate (prevProps) {
     const { allRoles } = this.props;
-
     if(allRoles && allRoles.length !== 0) this.formatData(allRoles);
-
   }
 
 
+  /**
+   * Render layout ?
+   * @param {array} value ?
+   */
   formatData = (value) => {
     let arr=[[], [], [], []];
-
     value.forEach((ele, index) => {
       arr[index % 4].push(ele)
     });
-
     this.rolesData = arr;
-
   }
 
+
+  /**
+   * Render layout ?
+   * @returns {JSX}
+   */
   renderLayout() {
     return this.rolesData.map((column, index) => {
       return (<Grid.Column key={index}>
         {this.renderColumns(column)}
       </Grid.Column>);
     });
-
   }
 
 
+  /**
+   * Render columns
+   * @param {array} columnData ?
+   * @returns {JSX}
+   */
   renderColumns = (columnData) => {
     if(columnData) {
       return columnData.map( (item, index) =>{
         return <BrowseCard key={index} details={item}/> ;
       });
     }
-
   }
 
 

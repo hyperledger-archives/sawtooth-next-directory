@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>components/layouts/proposals/RoleList.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="App.html">App</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#componentDidMount">componentDidMount</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#componentDidUpdate">componentDidUpdate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#hydrate">hydrate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#hydrateSidebar">hydrateSidebar</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#render">render</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#renderGrid">renderGrid</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#renderMain">renderMain</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="App.html#renderNav">renderNav</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ApprovalCard.html">ApprovalCard</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ApprovalCard.html#componentDidMount">componentDidMount</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ApprovalCard.html#render">render</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ApprovalCard.html#renderApprover">renderApprover</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Browse.html">Browse</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Browse.html#componentDidMount">componentDidMount</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Browse.html#renderLayout">renderLayout</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BrowseCard.html">BrowseCard</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IndividualsNav.html">IndividualsNav</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Login.html">Login</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="MemberList.html">MemberList</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Packs.html">Packs</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="RequesterHome.html">RequesterHome</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Roles.html">Roles</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="RolesList.html">RolesList</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Signup.html">Signup</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TrackHeader.html">TrackHeader</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Waves.html">Waves</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#approveProposal">approveProposal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#approveProposals">approveProposals</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#componentDidMount">componentDidMount</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#create">create</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#createRole">createRole</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#createSlug">createSlug</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fetchProposal">fetchProposal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#fetchRole">fetchRole</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getAllRoles">getAllRoles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getBase">getBase</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getConversation">getConversation</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getOpenProposals">getOpenProposals</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getProposal">getProposal</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getProposals">getProposals</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getRole">getRole</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getRoles">getRoles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getUser">getUser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getUsers">getUsers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#login">login</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#logout">logout</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#me">me</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderRoleItem">renderRoleItem</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderUserItem">renderUserItem</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderUserProposals">renderUserProposals</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#renderUsers">renderUsers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#requestAccess">requestAccess</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#sagas">sagas</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#sendMessage">sendMessage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#signup">signup</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#syncAll">syncAll</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#syncFromCategory">syncFromCategory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#syncFromItem">syncFromItem</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#syncUsers">syncUsers</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#tokenKey">tokenKey</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">components/layouts/proposals/RoleList.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* Copyright 2018 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+/*
+
+Proposal role list
+Displays roles in a list when approving proposals */
+
+
+
+import React, { Component } from 'react';
+import { Checkbox, Image, Segment } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
+import './RoleList.css';
+
+
+export default class RoleList extends Component {
+
+  static propTypes = {
+    getUsers:               PropTypes.func,
+    handleChange:           PropTypes.func,
+    openProposalsByRole:    PropTypes.object,
+    openProposalsByUser:    PropTypes.object,
+    roleFromId:             PropTypes.func,
+    selectedRoles:          PropTypes.array,
+    selectedProposals:      PropTypes.array,
+    users:                  PropTypes.array,
+  };
+
+
+  componentDidMount () {
+    const { getUsers, openProposalsByUser, users } = this.props;
+
+    if (!openProposalsByUser) return;
+    let collection;
+    const newUsers = Object.keys(openProposalsByUser);
+
+    users ?
+      collection = newUsers.filter(newUser =>
+        !users.find(user => newUser === user.id)) :
+      collection = newUsers;
+
+    getUsers(collection);
+  }
+
+
+  componentDidUpdate (prevProps) {
+    const { getUsers, openProposalsByUser } = this.props;
+    const newUsers = Object.keys(openProposalsByUser);
+    const oldUsers = Object.keys(prevProps.openProposalsByUser);
+
+    if (newUsers.length > prevProps.length) {
+      const diff = newUsers.filter(user => !oldUsers.includes(user));
+      getUsers(diff);
+    }
+  }
+
+
+  roleName = (roleId) => {
+    const { roleFromId } = this.props;
+
+    const role = roleFromId(roleId);
+    return role &amp;&amp; role.name;
+  };
+
+
+  /**
+   * Render user avatars for a given role
+   * @param {string} roleId Role ID
+   * @returns {JSX}
+   */
+  renderUsers (roleId) {
+    const { openProposalsByRole } = this.props;
+    return (
+      &lt;div className='pull-right'>
+        { openProposalsByRole[roleId].map(proposal => (
+          &lt;Image
+            key={proposal.id}
+            src={'http://i.pravatar.cc/150?' + proposal.id}
+            size='mini'
+            avatar/>
+        ))}
+      &lt;/div>
+    );
+  }
+
+
+  /**
+   * Role item is checked / unchecked based on its presence in
+   * selectedRoles state array
+   * @param {string} roleId Selected role ID
+   * @returns {boolean}
+   */
+  isRoleChecked = (roleId) => {
+    const { selectedRoles } = this.props;
+    return selectedRoles.indexOf(roleId) !== -1;
+  }
+
+
+  /**
+   * Is checkbox state indeterminate (i.e., should show dot)
+   * @param {string} roleId Selected role
+   * @returns {boolean}
+   */
+  // TODO: Indeterminate state not adding class to UI in one scenario
+  isIndeterminate = (roleId) => {
+    const { selectedProposals, openProposalsByRole } = this.props;
+    const selected = openProposalsByRole[roleId].filter(proposal =>
+      selectedProposals.includes(proposal.id))
+
+    return selected.length > 0 &amp;&amp;
+      selected.length &lt; openProposalsByRole[roleId].length;
+  }
+
+
+  /**
+   * Render role list item
+   * One list item per role with an open request.
+   * @param {string} roleId Role ID
+   * @returns {JSX}
+   */
+  renderRoleItem (roleId) {
+    const { handleChange} = this.props;
+    return (
+      &lt;div className='next-role-list-item' key={roleId}>
+        &lt;Segment className='light' padded>
+          &lt;Checkbox
+            defaultIndeterminate={this.isIndeterminate(roleId)}
+            checked={this.isRoleChecked(roleId)}
+            role={roleId}
+            label={this.roleName(roleId)}
+            onChange={handleChange}/>
+          {this.renderUsers(roleId)}
+        &lt;/Segment>
+      &lt;/div>
+    );
+  }
+
+
+  render () {
+    const { openProposalsByRole } = this.props;
+    if (!openProposalsByRole) return null;
+
+    return (
+      &lt;div id='next-roles-list-container'>
+        { Object.keys(openProposalsByRole).map(roleId => (
+          this.renderRoleItem(roleId)
+        ))}
+      &lt;/div>
+    );
+  }
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Dec 03 2018 10:57:47 GMT-0800 (Pacific Standard Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

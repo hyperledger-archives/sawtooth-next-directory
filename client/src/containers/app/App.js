@@ -56,9 +56,8 @@ class App extends Component {
 
 
   /**
-   *
-   * Hydrate user object
-   *
+   * Entry point to perform tasks required to render
+   * component. If authenticated, hydate data and open socket.
    */
   componentDidMount () {
     const { isAuthenticated, openSocket } = this.props;
@@ -67,6 +66,11 @@ class App extends Component {
   }
 
 
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const {
       closeSocket,
@@ -102,6 +106,9 @@ class App extends Component {
   }
 
 
+  /**
+   * Update user, recommended resources, and open requests
+   */
   hydrate () {
     const { getBase, getMe, getOpenProposals } = this.props;
 
@@ -111,6 +118,10 @@ class App extends Component {
   }
 
 
+  /**
+   * Get open request and role data needed to display
+   * resource names in the navbar
+   */
   hydrateSidebar () {
     const { getProposals, getRoles, me, roles } = this.props;
 
@@ -139,6 +150,11 @@ class App extends Component {
   }
 
 
+  /**
+   * Render each navbar route as defined in the routes array
+   * for each top-level container
+   * @returns {JSX}
+   */
   renderNav() {
     return this.routes.map((route, index) => (
       route.nav &&
@@ -152,6 +168,11 @@ class App extends Component {
   }
 
 
+  /**
+   * Render each main route as defined in the routes array
+   * for each top-level container
+   * @returns {JSX}
+   */
   renderMain() {
     return this.routes.map((route, index) => (
       <Route
@@ -162,6 +183,7 @@ class App extends Component {
       />
     ));
   }
+
 
   /**
    * Render grid system
@@ -185,6 +207,10 @@ class App extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { isAuthenticated, routes } = this.props;
     this.routes = routes(this.props);
@@ -210,6 +236,4 @@ class App extends Component {
 
 const mapStateToProps = (state) => appState(state);
 const mapDispatchToProps = (dispatch) => appDispatch(dispatch);
-
-
 export default connect(mapStateToProps, mapDispatchToProps)(App);
