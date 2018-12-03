@@ -40,7 +40,7 @@ EVENTHUB_NAME = os.environ.get("AAD_EH_NAME")
 # Address can be in either of these formats:
 # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
 # "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
-ADDRESS = f"amqps://{NAMESPACE}.servicebus.windows.net/{EVENTHUB_NAME}"
+ADDRESS = ("amqps://%s.servicebus.windows.net/%s", NAMESPACE, EVENTHUB_NAME)
 
 # SAS policy and key are not required if they are encoded in the URL
 USER = os.environ.get("AAD_EH_SAS_POLICY")

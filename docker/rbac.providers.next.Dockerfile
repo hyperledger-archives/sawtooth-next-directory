@@ -13,32 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
-# Begin base docker image config for Hyperledger RBAC Next Directory
-# This should remain the same for all python containers to maximize caching
-# -----------------------------------------------------------------------------
-FROM hyperledger/sawtooth-validator:1.0
+FROM python:3.5-slim
 
-RUN apt-get update \
- && apt-get install -y --allow-unauthenticated -q \
-        python3-pip \
-        python3-sawtooth-sdk \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y  apt-utils
-
-RUN pip3 install -U pip setuptools
-
-RUN pip3 install \
-        grpcio-tools \
-        itsdangerous \
-        sanic==0.7.0
+RUN pip install \
+        rethinkdb 
 
 WORKDIR /project/hyperledger-rbac
-
-# Container-specific dependencies are installed separately for
-# optimizing cacheing
-RUN pip3 install \
-        rethinkdb 
 
 CMD [ "./bin/rbac-providers-next" ]

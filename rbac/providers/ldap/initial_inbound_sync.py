@@ -97,7 +97,7 @@ def insert_to_db(data_dict, data_type):
             "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
             "provider_id": LDAP_DC,
         }
-        r.table("queue_inbound").insert(inbound_entry).run()
+        r.table("inbound_queue").insert(inbound_entry).run()
 
     LOGGER.info(
         "Inserted %s %s records into inbound_queue.", str(len(data_dict)), data_type
