@@ -44,7 +44,8 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
    *
    */
   const api = apisauce.create({
-    baseURL
+    baseURL,
+    withCredentials: true,
   });
 
 
@@ -79,10 +80,6 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
         alert(res.data.message);
         break;
     }
-  });
-
-  api.addRequestTransform(req => {
-    req.headers['Authorization'] = storage.getToken();
   });
 
 

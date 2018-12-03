@@ -114,7 +114,7 @@ export const sendSuccess = (state, { message }) => {
   return state.merge({
     fetching: false,
     messages: parsed.length !== 0 ?
-      (state.messages || []).concat([JSON.parse(message)[0]]) :
+      [JSON.parse(message)[0]].concat(state.messages || []) :
       state.messages
   });
 }

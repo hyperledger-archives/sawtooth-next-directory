@@ -15,7 +15,15 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Checkbox, Header, List, Icon, Image, Segment, Transition } from 'semantic-ui-react';
+import {
+  Button,
+  Checkbox,
+  Header,
+  List,
+  Icon,
+  Image,
+  Segment,
+  Transition } from 'semantic-ui-react';
 
 
 import './Chat.css';
@@ -52,37 +60,24 @@ export default class Chat extends Component {
   };
 
 
-  send (message, action) {
-    const {
-      activeRole,
-      approveProposals,
-      me,
-      requestAccess,
-      reset,
-      selectedProposals,
-      sendMessage,
-      type } = this.props;
+  send (message) {
+    const { id, sendMessage } = this.props;
+    sendMessage({do: 'REPLY', message: message, user_id: id});
+  }
 
-    if (action) {
-      switch (action.type) {
-        case 0:
-          if (type === 0) {
-            sendMessage('foobar');
-            requestAccess(activeRole.id, me.id, 'some reason');
-          } else if (type === 1) {
-            approveProposals(selectedProposals);
-            reset();
-          }
-          break;
 
-        case 1:
-          alert('Cancel');
-          break;
+  // * Needed for debugging
+  manualRequest = () => {
+    const { activeRole, me, requestAccess } = this.props;
+    requestAccess(activeRole.id, me.id, 'some reason');
+  }
 
-        default:
-          break;
-      }
-    }
+
+  // * Needed for debugging
+  manualApprove = () => {
+    const { approveProposals, selectedProposals, reset } = this.props;
+    approveProposals(selectedProposals);
+    reset();
   }
 
 
@@ -184,10 +179,17 @@ export default class Chat extends Component {
         }
 
         <div id='next-chat-conversation-dock'>
+        <Button onClick={this.manualRequest}>
+          Manual Request
+        </Button>
+        <Button onClick={this.manualApprove}>
+          Manual Approve
+        </Button>
           <ChatForm
+            {...this.props}
             disabled={disabled}
             actions={actions}
-            submit={(message, action) => this.send(message, action)}/>
+            submit={(message) => this.send(message)}/>
         </div>
       </div>
     );

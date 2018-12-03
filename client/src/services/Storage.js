@@ -21,20 +21,27 @@ limitations under the License.
  *
  *
  */
-const tokenKey = 'auth_token';
+const tokenKey = 'RBAC_AUTH_HEADER_PAYLOAD';
 const userIdKey = 'user_id';
 
 
-export const get = (key) => localStorage.getItem(key);
-export const set = (key, value) => localStorage.setItem(key, value);
-export const remove = (key) => localStorage.removeItem(key);
+export const getToken = () => get(tokenKey);
+export const setToken = (value) => set(tokenKey, value);
+export const removeToken = () => remove(tokenKey);
 
 
-export const getToken = () => localStorage.getItem(tokenKey);
-export const setToken = (value) => localStorage.setItem(tokenKey, value);
-export const removeToken = () => localStorage.removeItem(tokenKey);
+export const getUserId = () => get(userIdKey);
+export const setUserId = (value) => set(userIdKey, value);
+export const removeUserId = () => remove(userIdKey);
 
 
-export const getUserId = () => localStorage.getItem(userIdKey);
-export const setUserId = (value) => localStorage.setItem(userIdKey, value);
-export const removeUserId = () => localStorage.removeItem(userIdKey);
+export const get = (key) =>
+  ('; '+document.cookie).split('; '+key+'=').pop().split(';').shift();
+
+
+export const set = (key, value) =>
+  document.cookie = `${key}=${value}; Path=/;`;
+
+
+export const remove = (key) =>
+  document.cookie = `${key}=; Path=/; Max-Age=0`;

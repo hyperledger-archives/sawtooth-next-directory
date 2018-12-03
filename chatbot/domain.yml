@@ -23,6 +23,8 @@ intents:
   - feeling
 
 slots:
+  token:
+    type: unfeaturized
   resource_id:
     type: text
   resource_name:
@@ -53,13 +55,13 @@ templates:
   utter_recommendation:
     - text: >-
         Hi! Based on your role, I bet having access
-        to {resource_name} would make it easier for you
+        to {resource_id} would make it easier for you
         to function. Would you like me to request access?
       buttons:
         - title: Yes, please
-          payload: Yes, please
+          payload: Yes, please.
         - title: No, thanks
-          payload: No, thanks
+          payload: No, thanks.
 
   utter_greet:
     - text: Bonjour! How can I help you?
@@ -76,7 +78,7 @@ templates:
         {approver_name} and I'll take care of the rest.
       buttons:
         - title: Send request
-          payload: /send
+          payload: '/send{"reason": "I need access."}'
         - title: Nevermind
           payload: /cancel
 
