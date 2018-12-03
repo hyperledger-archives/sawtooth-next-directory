@@ -77,10 +77,11 @@ export const ApproverSelectors = {
   openProposalsByRole:   (state) =>
     utils.groupBy(state.approver.openProposals, 'object'),
   openProposalsCount:    (state) =>
-    (state.approver.openProposals && state.approver.openProposals.length) || null,
+    (state.approver.openProposals && state.approver.openProposals.length) ||
+    null,
   openProposalFromId:    (state, id) =>
     state.approver.openProposals &&
-    state.approver.openProposals.find(proposal => proposal.id === id)
+    state.approver.openProposals.find(proposal => proposal.id === id),
 };
 
 
@@ -117,7 +118,7 @@ export const approveProposalsSuccess = (state, { closedProposal }) => {
   return state.merge({
     fetching: false,
     openProposals: state.openProposals
-      .filter(proposal => proposal.id !== closedProposal['proposal_id'])
+      .filter(proposal => proposal.id !== closedProposal.proposal_id),
   });
 }
 

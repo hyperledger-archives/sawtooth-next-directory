@@ -18,8 +18,9 @@ import AppActions, { AppSelectors } from '../../redux/AppRedux';
 import ApproverActions, { ApproverSelectors } from '../../redux/ApproverRedux';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import ChatActions, { ChatSelectors } from '../../redux/ChatRedux';
-import RequesterActions, { RequesterSelectors } from '../../redux/RequesterRedux';
 import UserActions, { UserSelectors } from '../../redux/UserRedux';
+import RequesterActions, {
+  RequesterSelectors } from '../../redux/RequesterRedux';
 
 
 /**
@@ -45,7 +46,8 @@ export const appState = (state) => {
     openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
     openProposalsCount:  ApproverSelectors.openProposalsCount(state),
-    openProposalFromId:  (id) => ApproverSelectors.openProposalFromId(state, id),
+    openProposalFromId:  (id) =>
+      ApproverSelectors.openProposalFromId(state, id),
 
     // Auth
     isAuthenticated:     AuthSelectors.isAuthenticated(state),
@@ -93,8 +95,10 @@ export const appDispatch = (dispatch) => {
       dispatch(AppActions.refreshOnNextSocketReceive(flag)),
 
     // Approver
-    approveProposals:  (ids) => dispatch(ApproverActions.approveProposalsRequest(ids)),
-    getOpenProposals:  ()    => dispatch(ApproverActions.openProposalsRequest()),
+    approveProposals:  (ids) =>
+      dispatch(ApproverActions.approveProposalsRequest(ids)),
+    getOpenProposals:  ()    =>
+      dispatch(ApproverActions.openProposalsRequest()),
 
     // Chat
     resetChat:         ()    => dispatch(ChatActions.clearMessages()),
@@ -107,10 +111,10 @@ export const appDispatch = (dispatch) => {
     getRole:           (id)  => dispatch(RequesterActions.roleRequest(id)),
     getRoles:          (ids) => dispatch(RequesterActions.rolesRequest(ids)),
     getProposal:       (id)  => dispatch(RequesterActions.proposalRequest(id)),
-    getProposals:      (ids) => dispatch(RequesterActions.proposalsRequest(ids)),
-    requestAccess:     (id, userId, reason) => {
-      return dispatch(RequesterActions.accessRequest(id, userId, reason))
-    },
+    getProposals:      (ids) =>
+      dispatch(RequesterActions.proposalsRequest(ids)),
+    requestAccess:     (id, userId, reason) =>
+      dispatch(RequesterActions.accessRequest(id, userId, reason)),
 
     // User
     getMe:             ()    => dispatch(UserActions.meRequest()),

@@ -31,20 +31,14 @@ import { socket } from '../services/Socket';
  */
 export function * getConversation (api, action) {
   try {
-
     const { id } = action;
     const res = yield call(api.getConversation, id);
-
     if (res.ok) {
-
-      console.log('Retrieved conversation');
       yield put(ChatActions.conversationSuccess(res.data));
-
     } else {
       alert(res.data.error);
       yield put(ChatActions.conversationFailure(res.data.error));
     }
-
   } catch (err) {
     console.error(err);
   }

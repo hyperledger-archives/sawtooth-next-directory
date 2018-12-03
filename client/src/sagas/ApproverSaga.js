@@ -60,9 +60,8 @@ export function * createRole (api, action) {
 export function * approveProposals (api, action) {
   try {
     const { ids } = action;
-    if (ids.length > 0) {
+    if (ids.length > 0)
       yield all(ids.map(id => fork(approveProposal, api, id)));
-    }
   } catch (err) {
     console.error(err);
   }
@@ -75,7 +74,7 @@ export function * approveProposal (api, id) {
   try {
     const res = yield call(api.approveProposals, id, {
       status: 'APPROVED',
-      reason: ''
+      reason: '',
     });
     res.ok ?
       yield put(ApproverActions.approveProposalsSuccess(res.data)) :

@@ -39,7 +39,7 @@ class Signup extends Component {
     history:              PropTypes.object,
     isAuthenticated:      PropTypes.bool,
     recommended:          PropTypes.array,
-    signup:               PropTypes.func.isRequired
+    signup:               PropTypes.func.isRequired,
   };
 
 
@@ -58,8 +58,8 @@ class Signup extends Component {
     const { history, isAuthenticated, recommended } = this.props;
 
     const homeLink = recommended && recommended[0] ?
-    `/roles/${utils.createSlug(recommended[0].name)}` :
-    '/';
+      `/roles/${utils.createSlug(recommended[0].name)}` :
+      '/';
 
     isAuthenticated && history.push(homeLink);
   }
@@ -89,14 +89,14 @@ class Signup extends Component {
 const mapStateToProps = (state) => {
   return {
     error: state.auth.error,
-    isAuthenticated: AuthSelectors.isAuthenticated(state)
+    isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     signup: (name, username, password, email) =>
-      dispatch(AuthActions.signupRequest(name, username, password, email))
+      dispatch(AuthActions.signupRequest(name, username, password, email)),
   };
 }
 

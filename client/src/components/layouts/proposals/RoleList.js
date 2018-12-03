@@ -118,7 +118,7 @@ export default class RoleList extends Component {
   isIndeterminate = (roleId) => {
     const { selectedProposals, openProposalsByRole } = this.props;
     const selected = openProposalsByRole[roleId].filter(proposal =>
-        selectedProposals.includes(proposal.id))
+      selectedProposals.includes(proposal.id))
 
     return selected.length > 0 &&
       selected.length < openProposalsByRole[roleId].length;

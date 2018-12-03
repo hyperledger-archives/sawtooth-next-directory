@@ -60,9 +60,8 @@ export class Packs extends Component {
   componentDidUpdate (prevProps) {
     const { getRole, roleId } = this.props;
 
-    if (prevProps.roleId !== roleId) {
-      !this.role && getRole(roleId);
-    }
+    if (prevProps.roleId !== roleId) !this.role && getRole(roleId);
+
   }
 
 
@@ -74,7 +73,9 @@ export class Packs extends Component {
     if (!this.role) return null;
 
     const membersCount = [...this.role.members, ...this.role.owners].length;
-    const subtitle = `${membersCount} ${membersCount > 1 ? 'members' : 'member'}`;
+    const subtitle = `${membersCount} ${membersCount > 1 ?
+      'members' :
+      'member'}`;
     const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
 
     return (
@@ -123,7 +124,7 @@ const mapStateToProps = (state, ownProps) => {
   const { roles } = state.requester;
 
   return {
-    roleId: RequesterSelectors.idFromSlug(state, roles, params.id)
+    roleId: RequesterSelectors.idFromSlug(state, roles, params.id),
   };
 }
 

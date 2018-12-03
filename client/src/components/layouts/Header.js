@@ -15,7 +15,12 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Icon, Image, Label, Menu, Header as MenuHeader } from 'semantic-ui-react';
+import {
+  Icon,
+  Image,
+  Label,
+  Menu,
+  Header as MenuHeader } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -26,8 +31,9 @@ import logo from '../../images/next-logo-primary.png';
 
 /**
  *
- * @class Header
- * Component encapsulating the main application header
+ * @class         Header
+ * @description   Component encapsulating the application header
+ *
  *
  */
 export default class Header extends Component {

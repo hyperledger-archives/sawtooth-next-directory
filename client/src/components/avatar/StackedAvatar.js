@@ -39,28 +39,27 @@ export default class StackedAvatar extends Component {
 
     if(list) {
       return list.map((item, index) => {
-          if(index > 3){
-            return null;
-          }
-          if(index === 3){
-            return (
-              <div className='next-avatar-element'>
-                <Icon inverted name='add' size='tiny'/>
-              </div>
-            );
-          }else{
-            return (
-              <div key={index} className='next-avatar-element'>
-                <Image
-                  avatar
-                  src='http://i.pravatar.cc/500'/>
-              </div>
-            );
-          }
-        });
-    }else{
-      return <div className='next-avatar-element'>_</div>
+        if(index > 3) return null;
+
+        if(index === 3) {
+          return (
+            <div className='next-avatar-element'>
+              <Icon inverted name='add' size='tiny'/>
+            </div>
+          );
+        }
+        return (
+          <div key={index} className='next-avatar-element'>
+            <Image
+              avatar
+              src='http://i.pravatar.cc/500'/>
+          </div>
+        );
+
+      });
     }
+    return <div className='next-avatar-element'>_</div>
+
   }
 
 
@@ -69,10 +68,12 @@ export default class StackedAvatar extends Component {
 
     return (
       <div id='next-avatar-container'>
-      <div id='next-avatar' className='next-avatar'>
-        {this.renderAvatars()}
-      </div>
-      <div className='next-avatar-count'>{`${list?list.length:0} Members`}</div>
+        <div id='next-avatar' className='next-avatar'>
+          {this.renderAvatars()}
+        </div>
+        <div className='next-avatar-count'>
+          {`${list?list.length:0} members`}
+        </div>
       </div>
     );
   }

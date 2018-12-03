@@ -39,9 +39,8 @@ export default class ApprovalCard extends Component {
   componentDidMount () {
     const { request, getUser, users } = this.props;
 
-    if (!request) {
-      return;
-    }
+    if (!request) return;
+
 
     request.appprovers &&
     request.appprovers.map((userId) => {
@@ -68,9 +67,8 @@ export default class ApprovalCard extends Component {
   render () {
     const { request } = this.props;
 
-    if (!request) {
-      return null;
-    }
+    if (!request) return null;
+
 
     return (
       <div id='next-approval-container'>
@@ -93,8 +91,8 @@ export default class ApprovalCard extends Component {
                 Approver(s)
                 { request.approvers &&
                   request.approvers.map((approver) => (
-                  this.renderApprover(approver)
-                )) }
+                    this.renderApprover(approver)
+                  )) }
               </Grid.Column>
             </Grid>
           </Card.Content>

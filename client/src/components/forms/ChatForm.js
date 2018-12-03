@@ -51,9 +51,12 @@ export default class ChatForm extends Component {
 
     if (messages !== prevProps.messages) {
       try {
-        this.setState({ isDraft: messages[0].buttons[0].payload.startsWith('/send') });
+        this.setState({
+          isDraft: messages[0].buttons[0].payload.startsWith('/send'),
+        });
       } catch {}
     }
+
   }
 
 
@@ -64,7 +67,6 @@ export default class ChatForm extends Component {
 
   handleSubmit (message, shouldRefresh) {
     const { refreshOnNextSocketReceive, submit } = this.props;
-    console.log('this should be true: ', shouldRefresh)
     shouldRefresh && refreshOnNextSocketReceive(true);
     submit(message);
     this.reset();
@@ -98,9 +100,8 @@ export default class ChatForm extends Component {
    */
   createPayload = (payload) => {
     const { message } = this.state;
-    if (!payload.startsWith('/') || payload.indexOf('{') === -1) {
-      return payload;
-    }
+    if (!payload.startsWith('/') || payload.indexOf('{') === -1) return payload;
+
     let demarcation = payload.indexOf('{');
     let parsed = JSON.parse(
       payload.substring(demarcation, payload.length)
@@ -108,9 +109,8 @@ export default class ChatForm extends Component {
     if (parsed.reason) {
       parsed.reason = message;
       return payload.substring(0, demarcation) + JSON.stringify(parsed);
-    } else {
-      return payload;
     }
+    return payload;
   }
 
 
@@ -129,7 +129,8 @@ export default class ChatForm extends Component {
               circular
               size='medium'
               disabled={disabled}
-              onClick={() => this.handleSubmit(this.createPayload(button.payload), isDraft)}>
+              onClick={() =>
+                this.handleSubmit(this.createPayload(button.payload), isDraft)}>
 
               { !disabled &&
                 <span>
@@ -175,7 +176,9 @@ export default class ChatForm extends Component {
         }
         { isDraft &&
         <div id='next-chat-form-draft-container'>
-          <Form onSubmit={() => this.handleSubmit(`/send{"reason": "${message}"}`, true)}>
+          <Form
+            onSubmit={() =>
+              this.handleSubmit(`/send{"reason": "${message}"}`, true)}>
             <Form.TextArea id='next-chat-form-draft-textarea'
               label='Draft your message...'
               name='message'

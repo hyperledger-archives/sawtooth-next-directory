@@ -39,7 +39,7 @@ const { Types, Creators } = createActions({
 
   logoutRequest:    null,
   logoutSuccess:    null,
-  logoutFailure:    ['error']
+  logoutFailure:    ['error'],
 });
 
 
@@ -60,7 +60,7 @@ export const INITIAL_STATE = Immutable({
   isAuthenticated:  null,
   fetching:         null,
   error:            null,
-  user:             null
+  user:             null,
 });
 
 
@@ -76,7 +76,7 @@ export const AuthSelectors = {
   },
   user: (state) => {
     return state.auth.user || { id: storage.getUserId() }
-  }
+  },
 };
 
 

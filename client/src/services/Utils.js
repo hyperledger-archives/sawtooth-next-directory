@@ -55,8 +55,8 @@ export const groupBy = (array, key) => {
 export const merge = (array1, array2) => {
   return [...new Set([
     ...array1,
-    ...array2
+    ...array2,
   ]
-  .map(object => JSON.stringify(object)))]
-  .map(string => JSON.parse(string));
+    .map(object => JSON.stringify(object)))]
+    .map(string => JSON.parse(string));
 }

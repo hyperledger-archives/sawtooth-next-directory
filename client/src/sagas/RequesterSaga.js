@@ -66,9 +66,8 @@ export function * getRoles (api, action) {
   try {
     const { ids } = action;
 
-    if (ids.length > 0) {
-      yield all(ids.map(id => fork(fetchRole, api, id)));
-    }
+    if (ids.length > 0) yield all(ids.map(id => fork(fetchRole, api, id)));
+
   } catch (err) {
     console.error(err);
   }
@@ -124,9 +123,8 @@ export function * getProposal (api, action) {
 export function * getProposals (api, action) {
   try {
     const { ids } = action;
-    if (ids.length > 0) {
-      yield all(ids.map(id => fork(fetchProposal, api, id)));
-    }
+    if (ids.length > 0) yield all(ids.map(id => fork(fetchProposal, api, id)));
+
   } catch (err) {
     console.error(err);
   }
@@ -138,7 +136,7 @@ export function * requestAccess (api, action) {
     const { id, userId, reason } = action;
     const res = yield call(api.requestAccess, id, {
       id: userId,
-      reason: reason
+      reason: reason,
     });
 
     if (res.ok) {
@@ -147,6 +145,7 @@ export function * requestAccess (api, action) {
     } else {
       yield put(RequesterActions.accessFailure(res.data.error));
     }
+
   } catch (err) {
     console.error(err);
   }

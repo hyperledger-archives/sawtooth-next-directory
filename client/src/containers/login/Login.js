@@ -62,8 +62,8 @@ class Login extends Component {
     const { history, isAuthenticated, recommended } = this.props;
 
     const homeLink = recommended && recommended[0] ?
-    `/roles/${utils.createSlug(recommended[0].name)}` :
-    '/';
+      `/roles/${utils.createSlug(recommended[0].name)}` :
+      '/';
 
     isAuthenticated && history.push(homeLink);
   }
@@ -97,7 +97,7 @@ class Login extends Component {
 const mapStateToProps = (state) => {
   return {
     error: state.auth.error,
-    isAuthenticated: AuthSelectors.isAuthenticated(state)
+    isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
 }
 
@@ -106,7 +106,7 @@ const mapDispatchToProps = (dispatch) => {
     login: (email, password) =>
       dispatch(AuthActions.loginRequest(email, password)),
     attemptSignup: (name, username, password, email) =>
-      dispatch(AuthActions.signupRequest(name, username, password, email))
+      dispatch(AuthActions.signupRequest(name, username, password, email)),
   };
 }
 

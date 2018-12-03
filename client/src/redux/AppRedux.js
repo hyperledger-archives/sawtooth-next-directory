@@ -102,7 +102,6 @@ export const socketCloseSuccess = (state) => {
   return state.merge({ isSocketOpen: false });
 };
 export const socketError = (state, { error }) => {
-  console.log('socket open error')
   return state.merge({ error });
 };
 export const refreshBegin = (state) => {
@@ -112,7 +111,6 @@ export const refreshEnd = (state) => {
   return state.merge({ isRefreshing: false });
 };
 export const refreshOnNextSocketReceive = (state, { flag }) => {
-  console.log('redux flag being set to: ', flag)
   return state.merge({ shouldRefreshOnNextSocketReceive: flag });
 };
 

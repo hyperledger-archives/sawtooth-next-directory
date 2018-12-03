@@ -52,7 +52,9 @@ export default class Chat extends Component {
     if (type === 0 &&
         isSocketOpen &&
         !messages) {
-      sendMessage({do: 'CREATE', message: { text: '/recommend' }, user_id: id});
+      sendMessage({
+        do: 'CREATE', message: { text: '/recommend' }, user_id: id,
+      });
     }
   }
 
@@ -72,12 +74,12 @@ export default class Chat extends Component {
         type === 0 &&
         isSocketOpen &&
         !messages) {
-        sendMessage({do: 'CREATE', message: { text: '/recommend' }, user_id: id});
+      sendMessage({
+        do: 'CREATE', message: { text: '/recommend' }, user_id: id,
+      });
     }
 
     if (messages !== prevProps.messages) {
-      console.log('chat received message update...')
-      console.log('shouldRefreshOnNextSocketReceive: ', shouldRefreshOnNextSocketReceive)
       shouldRefreshOnNextSocketReceive && startRefresh();
       refreshOnNextSocketReceive(false);
     }

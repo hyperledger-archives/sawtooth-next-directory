@@ -54,6 +54,10 @@
     "not op_mini all"
   ],
   "eslintIgnore": [
-    "**/semantic/**"
+    "**/coverage/**",
+    "**/e2e/**",
+    "**/semantic/**",
+    "src/**/*.test.js",
+    "src/registerServiceWorker.js"
   ]
 }

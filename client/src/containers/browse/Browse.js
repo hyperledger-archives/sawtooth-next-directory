@@ -51,14 +51,13 @@ class Browse extends Component {
   componentDidUpdate (prevProps) {
     const { allRoles } = this.props;
 
-    if(allRoles && allRoles.length !== 0) {
-      this.formatData(allRoles);
-    }
+    if(allRoles && allRoles.length !== 0) this.formatData(allRoles);
+
   }
 
 
   formatData = (value) => {
-    let arr=[[],[],[],[]];
+    let arr=[[], [], [], []];
 
     value.forEach((ele, index) => {
       arr[index % 4].push(ele)
@@ -70,9 +69,9 @@ class Browse extends Component {
 
   renderLayout() {
     return this.rolesData.map((column, index) => {
-        return (<Grid.Column key={index}>
-          {this.renderColumns(column)}
-        </Grid.Column>);
+      return (<Grid.Column key={index}>
+        {this.renderColumns(column)}
+      </Grid.Column>);
     });
 
   }
@@ -80,10 +79,11 @@ class Browse extends Component {
 
   renderColumns = (columnData) => {
     if(columnData) {
-      return columnData.map( (item,index) =>{
+      return columnData.map( (item, index) =>{
         return <BrowseCard key={index} details={item}/> ;
       });
     }
+
   }
 
 
@@ -94,7 +94,7 @@ class Browse extends Component {
           {this.rolesData &&
               <Grid relaxed stackable columns={4} id='next-browse-grid'>
                 {this.renderLayout()}
-            </Grid>
+              </Grid>
           }
         </Container>
       </div>
@@ -106,7 +106,7 @@ class Browse extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    allRoles: state.requester.roles
+    allRoles: state.requester.roles,
   };
 }
 
