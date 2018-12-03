@@ -21,8 +21,10 @@ import * as AuthActions from '../redux/AuthRedux';
 
 /**
  *
- * Encapsulated service that eases configuration and other
- * API-related tasks.
+ * Service that includes functions for calling endpoints
+ * and configuration for API call behavior
+ *
+ * @param {string} baseURL Base API URL
  *
  * @example
  *    const api = API.create(...)
@@ -34,27 +36,28 @@ import * as AuthActions from '../redux/AuthRedux';
  * @example
  *    yield call(api.login, ...)
  *
+ * @returns {object}
+ *
  */
-const create = (baseURL = 'http://localhost:8000/api/') => {
 
-  /**
-   *
-   * Create and configure API object
-   *
-   *
-   */
+const create = (baseURL = 'http://localhost:8000/api/') => {
+  //
+  // Configuration
+  //
+  //
+  //
+  //
   const api = apisauce.create({
     baseURL,
     withCredentials: true,
   });
 
-
-  /**
-   *
-   * Transforms
-   *
-   *
-   */
+  //
+  // Transforms
+  //
+  //
+  //
+  //
   api.addResponseTransform(res => {
     switch (res.problem) {
       case 'TIMEOUT_ERROR':
@@ -69,7 +72,6 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
       default:
         break;
     }
-
     switch (res.status) {
       case 200:
         break;
@@ -82,23 +84,20 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     }
   });
 
-
-  /**
-   *
-   * Definitions
-   *
-   *
-   */
+  //
+  // Definitions
+  //
+  //
+  //
+  //
   const me = () => {
     const id = storage.get('user_id');
     return api.get(`users/${id}`);
   }
-
   const getOpenProposals = () => {
     const id = storage.get('user_id');
     return api.get(`users/${id}/proposals/open`);
   }
-
 
   const approveProposals = (id, body) => api.patch(`proposals/${id}`, body);
   const createRole = (payload) => api.post('roles', payload);
@@ -130,7 +129,6 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     search,
     signup,
   }
-
 }
 
 

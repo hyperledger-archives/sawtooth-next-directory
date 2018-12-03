@@ -12,6 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+/*
+
+
+User sagas
+Each generator function executes a request to the
+API to retrieve data required to hydrate the UI. */
 
 
 import { all, call, fork, put } from 'redux-saga/effects';
@@ -19,22 +25,10 @@ import UserActions from '../redux/UserRedux';
 
 
 /**
- *
- * User generators
- *
- * Each generator function executes a request to the
- * API to retrieve data required to hydrate the UI.
- *
- * @param api     API object
- * @param action  Redux action
- *
- * @generator me(...)
- *            Get detailed info on the currently logged in user
- * @generator getUser(...)
- *            Get detailed info for a specific user or group of
- *            users
- *
- *
+ * Get detailed info on the currently logged in user
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
  */
 export function * me (api, action) {
   try {
@@ -48,6 +42,13 @@ export function * me (api, action) {
 }
 
 
+/**
+ * Get detailed info for a specific user or group of
+ * users
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
 export function * getUser (api, action) {
   try {
     const { id } = action;
@@ -61,22 +62,17 @@ export function * getUser (api, action) {
 }
 
 
+/**
+ * Get detailed info for an array of users
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
 export function * getUsers (api, action) {
   try {
     const { ids } = action;
     if (ids.length > 0) yield all(ids.map(id => fork(getUser, api, { id })));
-
   } catch (err) {
     console.error(err);
   }
 }
-
-
-// // Helpers
-
-// function * fetchUser (api, id) {
-//   const res = yield call(api.getUser, id);
-//   res.ok ?
-//     yield put(UserActions.userSuccess(res.data.data)) :
-//     yield put(UserActions.userFailure(res.data.message));
-// }
