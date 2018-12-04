@@ -19442,23 +19442,27 @@ ol.ui.horizontal.list li:before,
   box-shadow: none;
 }
 
-/*******************************
-         Site Overrides
-*******************************/
-
 .floated.segment.compact {
-  border-radius: 13px;
+  border-radius: 19px;
   margin-bottom: 0;
-  padding: 9px 14px;
+  padding: 11px 17px;
 }
 
 .floated.segment.compact.left {
   border-bottom-left-radius: 0;
+  -webkit-box-shadow: 0px 12px 18px #d2cece45;
+  box-shadow: 0px 12px 18px #d2cece45;
+  color: #212c3a;
+  margin-left: 15px;
 }
 
 .floated.segment.compact.right {
   border-bottom-right-radius: 0;
 }
+
+/*******************************
+         Site Overrides
+*******************************/
 /*!
  * # Semantic UI undefined - Step
  * http://github.com/semantic-org/semantic-ui/
@@ -20584,7 +20588,7 @@ ol.ui.horizontal.list li:before,
 .ui.form .field.field input:-webkit-autofill {
   -webkit-box-shadow: 0px 0px 0px 100px #FFFFF0 inset !important;
   box-shadow: 0px 0px 0px 100px #FFFFF0 inset !important;
-  border-color: #E5DFA1 !important;
+  border-color: #817c48 !important;
 }
 
 /* Focus */
@@ -21460,27 +21464,27 @@ ol.ui.horizontal.list li:before,
 .form-inverted .ui.form .field input[type="password"],
 .form-inverted .ui.form .field input[type="text"] {
   background: transparent;
-  border-bottom: 1px solid #5b676f;
+  border-bottom: 1px solid #FFFFFF;
 }
 
 .form-inverted .ui.form .field input::-webkit-input-placeholder,
 .form-inverted .ui.form .field input:focus::-webkit-input-placeholder {
-  color: #767676;
+  color: #b19a9af2;
 }
 
 .form-inverted .ui.form .field input:-ms-input-placeholder,
 .form-inverted .ui.form .field input:focus:-ms-input-placeholder {
-  color: #767676;
+  color: #b19a9af2;
 }
 
 .form-inverted .ui.form .field input::-ms-input-placeholder,
 .form-inverted .ui.form .field input:focus::-ms-input-placeholder {
-  color: #767676;
+  color: #b19a9af2;
 }
 
 .form-inverted .ui.form .field input::placeholder,
 .form-inverted .ui.form .field input:focus::placeholder {
-  color: #767676;
+  color: #b19a9af2;
 }
 
 .form-inverted .ui.form .field > .ui.label {
@@ -21490,7 +21494,7 @@ ol.ui.horizontal.list li:before,
 }
 
 .form-inverted .ui.form .field input:-webkit-autofill {
-  -webkit-text-fill-color: #E5DFA1;
+  -webkit-text-fill-color: #817c48;
 }
 
 .form-inverted .ui.form .field .error input[type="password"],

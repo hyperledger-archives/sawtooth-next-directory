@@ -34,7 +34,7 @@
 @inputFontSize: 1.6em;
 @inputPadding: (@inputVerticalPadding + ((1em - @inputLineHeight) / 2)) @inputHorizontalPadding;
 @inputBorder: 0 solid @borderColor;
-@inputBorderColor: #5b676f;
+@inputBorderColor: @white;
 @inputBorderRadius: 0;
 @inputColor: @inputTextColor;
 @inputTransition:
@@ -108,7 +108,7 @@
 
 /* AutoFill */
 @inputAutoFillBackground: #FFFFF0;
-@inputAutoFillBorder: #E5DFA1;
+@inputAutoFillBorder: #817c48;
 @inputAutoFillFocusBackground: @inputAutoFillBackground;
 @inputAutoFillFocusBorder: #D5C315;
 @inputAutoFillErrorBackground: #FFFAF0;

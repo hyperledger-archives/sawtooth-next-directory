@@ -84,12 +84,12 @@ export class Packs extends Component {
                 {...this.props}/>
             }
             <Container id='next-requester-packs-description-container'>
-              <Label horizontal>Description</Label>
+              <Label>Description</Label>
               <div id='next-requester-packs-description'>
                 {this.pack.description}
               </div>
             </Container>
-            <Label horizontal>Roles</Label>
+            <Label>Roles</Label>
             <RolesList activePack={this.pack} {...this.props}/>
           </div>
         </Grid.Column>

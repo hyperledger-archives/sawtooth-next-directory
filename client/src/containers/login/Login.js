@@ -77,7 +77,7 @@ class Login extends Component {
       <div id='next-login-container'>
         <Grid container centered columns={1}>
           <Grid.Column id='next-login-column'>
-            <Header color='grey' textAlign='center'>
+            <Header inverted textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
               <h1>Sign in to NEXT Directory</h1>
             </Header>

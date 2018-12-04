@@ -87,11 +87,11 @@ export default class ChatForm extends Component {
    * inserting the current message to send in the body if
    * the intend is /send. Otherwise, the payload is the original
    * intent from the the button payload.
-   * @param {string} payload
-   * Payload in button object sent
-   * from chatbot engine
-   *    @example
-   *    "Yes, please.", "No, thanks.", '/send{"reason": "..."}')
+   *
+   * @param {string} payload Payload in button object
+   *                         sent rom chatbot engine
+   *                 @example "Yes, please.", "No, thanks.",
+   *                 '/send{"reason": "..."}')
    * @returns {string}
    */
   createPayload = (payload) => {
@@ -120,7 +120,6 @@ export default class ChatForm extends Component {
           messages[0].buttons.map((button, index) => (
             <Button
               key={index}
-              animated='fade'
               className='next-chat-action-button'
               circular
               size='medium'
@@ -129,11 +128,7 @@ export default class ChatForm extends Component {
                 this.handleSubmit(this.createPayload(button.payload), isDraft)}>
 
               { !disabled &&
-                <span>
-                  <Button.Content visible>
-                    {button.title}
-                  </Button.Content>
-                </span>
+                <span>{button.title}</span>
               }
               { disabled &&
                 <span></span>
@@ -176,7 +171,7 @@ export default class ChatForm extends Component {
             onSubmit={() =>
               this.handleSubmit(`/send{"reason": "${message}"}`, true)}>
             <Form.TextArea id='next-chat-form-draft-textarea'
-              label='Draft your message...'
+              placeholder='Draft your message...'
               name='message'
               value={message}
               onChange={this.handleChange}/>

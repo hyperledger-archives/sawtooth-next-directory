@@ -11,7 +11,7 @@
 
 .form-inverted .ui.form .field input::placeholder,
 .form-inverted .ui.form .field input:focus::placeholder {
-  color: @grey;
+  color: #b19a9af2;
 }
 
 .form-inverted .ui.form .field > .ui.label {

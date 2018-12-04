@@ -32,14 +32,29 @@ limitations under the License.
   height: 2.7em;
 }
 
-.next-chat-message-left,
+.next-chat-message-left {
+  align-items: flex-end;
+  display: flex;
+  flex-shrink: 0;
+}
+
 .next-chat-message-right {
-  max-width: 290px;
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-top: 40px;
+}
+
+.next-chat-message-left .ui.segment,
+.next-chat-message-right .ui.segment {
+  max-width: 310px;
 }
 
 #next-chat-actions {
   display: flex;
   margin-top: 15px;
+  min-height: 34px;
 }
 
 #next-chat-selection-heading-container {
@@ -96,8 +111,8 @@ limitations under the License.
 }
 
 #next-chat-messages-container::-webkit-scrollbar {
+  background: transparent;
   width: 0px;
-  background: transparent;  /* optional: just make scrollbar invisible */
 }
 
 #next-chat-roles-selection-container,
@@ -114,14 +129,21 @@ limitations under the License.
 }
 
 .next-chat-action-button {
-  flex: 1
+  flex: 1;
 }
 
 #next-chat-form-draft-container {
-  height: 200px;
+  height: 136px;
 }
 
-#next-chat-form-draft-container input {
+#next-chat-form-draft-container .ui.form,
+#next-chat-form-draft-container .field {
+  height: 100%;
+}
+
+#next-chat-form-draft-container textarea {
+  border-radius: 19px;
+  font-size: 1.1em;
   height: 100%;
 }
 
