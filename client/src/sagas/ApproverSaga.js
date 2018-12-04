@@ -88,7 +88,7 @@ export function * approveProposal (api, id) {
     });
     res.ok ?
       yield put(ApproverActions.approveProposalsSuccess(res.data)) :
-      yield put(ApproverActions.approveProposalsFailure(res.data.error))
+      yield put(ApproverActions.approveProposalsFailure(res.data.error));
   } catch (err) {
     console.error(err);
   }

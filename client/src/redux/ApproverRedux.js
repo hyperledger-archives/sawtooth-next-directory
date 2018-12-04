@@ -85,10 +85,10 @@ export const ApproverSelectors = {
 //
 export const request = (state) => {
   return state.merge({ fetching: true });
-}
+};
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
-}
+};
 export const resetAll = () => {
   return INITIAL_STATE;
 };
@@ -101,17 +101,17 @@ export const resetAll = () => {
 //
 export const openProposalsSuccess = (state, { openProposals }) => {
   return state.merge({ fetching: false, openProposals: openProposals.data });
-}
+};
 export const createRoleSuccess = (state) => {
   return state.merge({ fetching: false });
-}
+};
 export const approveProposalsSuccess = (state, { closedProposal }) => {
   return state.merge({
     fetching: false,
     openProposals: state.openProposals
       .filter(proposal => proposal.id !== closedProposal.proposal_id),
   });
-}
+};
 
 //
 // Hooks

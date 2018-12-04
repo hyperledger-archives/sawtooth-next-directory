@@ -93,11 +93,11 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   const me = () => {
     const id = storage.get('user_id');
     return api.get(`users/${id}`);
-  }
+  };
   const getOpenProposals = () => {
     const id = storage.get('user_id');
     return api.get(`users/${id}/proposals/open`);
-  }
+  };
 
   const approveProposals = (id, body) => api.patch(`proposals/${id}`, body);
   const createRole = (payload) => api.post('roles', payload);
@@ -128,10 +128,10 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     requestAccess,
     search,
     signup,
-  }
-}
+  };
+};
 
 
 export default {
   create,
-}
+};

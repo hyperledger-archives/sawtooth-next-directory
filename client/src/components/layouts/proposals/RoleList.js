@@ -12,11 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Proposal role list
-Displays roles in a list when approving proposals */
-
 
 
 import React, { Component } from 'react';
@@ -25,6 +20,12 @@ import PropTypes from 'prop-types';
 import './RoleList.css';
 
 
+/**
+ *
+ * @class         RoleList
+ * @description   Displays roles in a list when approving proposals
+ *
+ */
 export default class RoleList extends Component {
 
   static propTypes = {
@@ -39,6 +40,10 @@ export default class RoleList extends Component {
   };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component. Get users not loaded in client.
+   */
   componentDidMount () {
     const { getUsers, openProposalsByUser, users } = this.props;
 
@@ -55,6 +60,12 @@ export default class RoleList extends Component {
   }
 
 
+  /**
+   * Called whenever Redux state changes. Get users not
+   * loaded in client on state change.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { getUsers, openProposalsByUser } = this.props;
     const newUsers = Object.keys(openProposalsByUser);
@@ -66,10 +77,13 @@ export default class RoleList extends Component {
     }
   }
 
-
+  /**
+   * Get role name from role ID
+   * @param {string} roleId Role ID
+   * @returns {string}
+   */
   roleName = (roleId) => {
     const { roleFromId } = this.props;
-
     const role = roleFromId(roleId);
     return role && role.name;
   };
@@ -117,7 +131,7 @@ export default class RoleList extends Component {
   isIndeterminate = (roleId) => {
     const { selectedProposals, openProposalsByRole } = this.props;
     const selected = openProposalsByRole[roleId].filter(proposal =>
-      selectedProposals.includes(proposal.id))
+      selectedProposals.includes(proposal.id));
 
     return selected.length > 0 &&
       selected.length < openProposalsByRole[roleId].length;
@@ -148,6 +162,10 @@ export default class RoleList extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { openProposalsByRole } = this.props;
     if (!openProposalsByRole) return null;

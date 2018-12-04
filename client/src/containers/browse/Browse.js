@@ -47,19 +47,21 @@ class Browse extends Component {
    * Entry point to perform tasks required to render
    * component. On load, get roles
    */
-  // TODO: Pagination
   componentDidMount(){
     const { getAllRoles } = this.props;
-    debugger;;
+    // TODO: Pagination
     getAllRoles();
   }
 
 
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { allRoles } = this.props;
-    if (prevProps.allRoles !== allRoles)
-      this.formatData(allRoles);
-
+    if (prevProps.allRoles !== allRoles) this.formatData(allRoles);
   }
 
 
@@ -68,10 +70,9 @@ class Browse extends Component {
    * @param {array} value ?
    */
   formatData = (value) => {
-    debugger;;
     let arr=[[], [], [], []];
     value.forEach((ele, index) => {
-      arr[index % 4].push(ele)
+      arr[index % 4].push(ele);
     });
     this.setState({ rolesData: arr });
   }
@@ -107,6 +108,10 @@ class Browse extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { rolesData } = this.state;
     return (
@@ -129,12 +134,12 @@ const mapStateToProps = (state) => {
   return {
     allRoles: state.requester.roles,
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     getAllRoles: () => dispatch(RequesterActions.allrolesRequest()),
   };
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Browse);

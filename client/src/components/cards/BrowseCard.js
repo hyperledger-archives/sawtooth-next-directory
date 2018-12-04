@@ -45,6 +45,10 @@ export default class BrowseCard extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { details } = this.props;
     const { isPinned } = this.state;

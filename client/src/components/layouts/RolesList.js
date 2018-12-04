@@ -40,17 +40,30 @@ export default class MemberList extends Component {
   }
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component
+   */
   componentDidMount () {
     this.init();
   }
 
 
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { activePack } = this.props;
     if (prevProps.activePack !== activePack) this.init();
   }
 
 
+  /**
+   * Determine which roles and users are not currently loaded
+   * in the client and dispatches actions to retrieve them.
+   */
   init () {
     const {
       activePack,
@@ -66,7 +79,7 @@ export default class MemberList extends Component {
     const diff2 = roles
       .filter(role => placeholder.find(roleId => role.id === roleId))
       .map(role => users
-        .find(user => user.id !== role.owners[0]) && role.owners[0])
+        .find(user => user.id !== role.owners[0]) && role.owners[0]);
 
     diff && getRoles(diff);
     diff2 && getUsers([...new Set(diff2)]);
@@ -94,7 +107,11 @@ export default class MemberList extends Component {
     );
   }
 
-
+  /**
+   * Render segment that contains role info
+   * @param {string} roleId Role ID
+   * @returns {JSX}
+   */
   renderRoleSegment (roleId) {
     const { roles } = this.props;
     if (!roles) return null;
@@ -118,7 +135,10 @@ export default class MemberList extends Component {
     );
   }
 
-
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { roles } = this.props;
     return (

@@ -12,11 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-
-People
-Manage component  */
 
 
 import React, { Component } from 'react';
@@ -24,19 +19,26 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
+import './People.css';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 
 
-import './People.css';
-
-
+/**
+ *
+ * @class         People
+ * @description   People component
+ *
+ */
 class People extends Component {
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     return (
       <Grid id='next-approver-grid'>
-
         <Grid.Column
           id='next-approver-grid-track-column'
           width={11}>
@@ -47,7 +49,6 @@ class People extends Component {
           width={5}>
           <Chat {...this.props}/>
         </Grid.Column>
-
       </Grid>
     );
   }
@@ -57,10 +58,10 @@ class People extends Component {
 
 const mapStateToProps = (state) => {
   return {};
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {};
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(People);

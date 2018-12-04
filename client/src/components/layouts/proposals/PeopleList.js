@@ -12,10 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Proposal people list
-Displays people in a list when approving proposals */
 
 
 import React, { Component } from 'react';
@@ -24,6 +20,12 @@ import PropTypes from 'prop-types';
 import './PeopleList.css';
 
 
+/**
+ *
+ * @class         PeopleList
+ * @description   Displays people in a list when approving proposals
+ *
+ */
 export default class PeopleList extends Component {
 
   static propTypes = {
@@ -37,6 +39,10 @@ export default class PeopleList extends Component {
   };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component. Get users not loaded in client.
+   */
   componentDidMount () {
     const { getUsers, openProposalsByUser, users } = this.props;
 
@@ -53,6 +59,12 @@ export default class PeopleList extends Component {
   }
 
 
+  /**
+   * Called whenever Redux state changes. Get users not
+   * loaded in client on state change.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { getUsers, openProposalsByUser } = this.props;
     const newUsers = Object.keys(openProposalsByUser);
@@ -89,6 +101,11 @@ export default class PeopleList extends Component {
   }
 
 
+  /**
+   * Get role name from role ID
+   * @param {string} roleId Role ID
+   * @returns {string}
+   */
   roleName = (roleId) => {
     const { roleFromId } = this.props;
     const role = roleFromId(roleId);
@@ -173,6 +190,10 @@ export default class PeopleList extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { openProposalsByUser } = this.props;
     if (!openProposalsByUser) return null;

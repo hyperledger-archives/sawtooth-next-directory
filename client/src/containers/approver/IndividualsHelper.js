@@ -57,13 +57,13 @@ export function * syncFromCategory (checked, roleId) {
     checked ?
       (proposals = index === -1 ? [...proposals, proposal.id] : proposals) :
       index !== -1 && proposals.splice(index, 1);
-  })
+  });
 
   roles = checked ?
     [...roles, roleId] :
     roles.indexOf(roleId) !== -1 ? roles.filter(a => a !== roleId) : roles;
 
-  yield { roles, proposals, changedUsers }
+  yield { roles, proposals, changedUsers };
 }
 
 
@@ -79,7 +79,7 @@ export function * syncFromItem (checked, proposalId, userId) {
   let { selectedProposals: proposals, selectedRoles: roles } = this.state;
 
   let scope = proposalId ? [openProposalFromId(proposalId)] :
-    openProposalsByUser[userId]
+    openProposalsByUser[userId];
 
   scope.forEach(proposal => {
     const indices = [
@@ -120,14 +120,14 @@ export function * syncUsers (checked, changedUsers, proposals) {
     } else {
       const userProposals = openProposalsByUser[user]
         .filter(proposal => proposals
-          .includes(proposal.id))
+          .includes(proposal.id));
 
       // Remove user if and only if it has previously been
       // selected and it has no selected children
       index !== -1 && userProposals.length === 0 &&
         users.splice(index, 1);
     }
-  })
+  });
 
   yield { users };
 };

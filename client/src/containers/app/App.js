@@ -132,7 +132,7 @@ class App extends Component {
     ].map((item) =>
       typeof item  === 'object' ?
         item.object_id :
-        item)
+        item);
 
     // * (2) Find roles we don't already have loaded in
     if (roles) {
@@ -203,7 +203,7 @@ class App extends Component {
           { this.renderMain() }
         </Grid.Column>
       </Grid>
-    )
+    );
   }
 
 

@@ -68,7 +68,7 @@ export const AuthSelectors = {
     return !!storage.getToken() || state.auth.isAuthenticated;
   },
   user: (state) => {
-    return state.auth.user || { id: storage.getUserId() }
+    return state.auth.user || { id: storage.getUserId() };
   },
 };
 
@@ -90,18 +90,18 @@ export const success = (state, { isAuthenticated, payload }) => {
     fetching: false,
     user: payload.user,
   });
-}
+};
 
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
-}
+};
 
 export const logout = (state) => {
   storage.removeToken();
   storage.removeUserId();
 
   return INITIAL_STATE;
-}
+};
 
 
 //

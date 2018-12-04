@@ -21,8 +21,6 @@ import PropTypes from 'prop-types';
 
 
 import { RequesterSelectors } from '../../redux/RequesterRedux';
-
-
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import ApprovalCard from '../../components/layouts/ApprovalCard';
@@ -47,18 +45,33 @@ export class Packs extends Component {
   };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component. Get detailed info for current pack and if the
+   * role is in approval state, get proposal info.
+   */
   componentDidMount () {
     const { getPack, packId } = this.props;
     packId && !this.pack && getPack(packId);
   }
 
 
+  /**
+   * Called whenever Redux state changes. If pack or proposal state
+   * changes, update info.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { getPack, packId } = this.props;
     if (prevProps.packId !== packId) !this.pack && getPack(packId);
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { packId, packFromId } = this.props;
 
@@ -67,7 +80,6 @@ export class Packs extends Component {
 
     return (
       <Grid id='next-requester-grid'>
-
         <Grid.Column
           id='next-requester-grid-track-column'
           width={11}>
@@ -93,7 +105,6 @@ export class Packs extends Component {
             <RolesList activePack={this.pack} {...this.props}/>
           </div>
         </Grid.Column>
-
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={5}>
@@ -102,7 +113,6 @@ export class Packs extends Component {
             title={this.pack.name + ' Conversations'}
             activeRole={this.pack} {...this.props}/>
         </Grid.Column>
-
       </Grid>
     );
   }
@@ -117,11 +127,11 @@ const mapStateToProps = (state, ownProps) => {
   return {
     packId: RequesterSelectors.idFromSlug(state, packs, params.id),
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {};
-}
+};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Packs);

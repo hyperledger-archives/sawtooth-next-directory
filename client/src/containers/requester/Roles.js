@@ -48,6 +48,11 @@ export class Roles extends Component {
   };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component. Get detailed info for current role and if the
+   * role is in approval state, get proposal info.
+   */
   componentDidMount () {
     const { getProposal, getRole, proposalId, roleId } = this.props;
     roleId && !this.role && getRole(roleId);
@@ -55,11 +60,16 @@ export class Roles extends Component {
   }
 
 
+  /**
+   * Called whenever Redux state changes. If role or proposal state
+   * changes, update info.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { getProposal, getRole, proposalId, roleId } = this.props;
 
     if (prevProps.roleId !== roleId) !this.role && getRole(roleId);
-
     if (prevProps.proposalId !== proposalId) {
       proposalId &&
       !this.request && getProposal(proposalId);
@@ -67,6 +77,10 @@ export class Roles extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const {
       me,
@@ -148,11 +162,11 @@ const mapStateToProps = (state, ownProps) => {
       'proposal_id'
     ),
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {};
-}
+};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Roles);

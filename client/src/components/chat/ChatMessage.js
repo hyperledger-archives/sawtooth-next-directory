@@ -20,6 +20,12 @@ import PropTypes from 'prop-types';
 import chatbotAvatar from '../../images/chatbot-avatar.png';
 
 
+/**
+ *
+ * @class         ChatMessage
+ * @description   Component encapsulating the chat messages
+ *
+ */
 export default class ChatMessage extends Component {
 
   static propTypes = {
@@ -27,11 +33,20 @@ export default class ChatMessage extends Component {
   }
 
 
+  /**
+   * Determine if comment is from user or external source
+   * @param {object} message Message object
+   * @returns {boolean}
+   */
   isMe = (message) => {
     return !message.recipient_id;
   };
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { messages } = this.props;
     if (!messages) return null;

@@ -12,10 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Chat
-Component encapsulating the chat view */
 
 
 import React, { Component } from 'react';
@@ -41,8 +37,19 @@ import chatApprover from '../../mock_data/conversation_action.1.json';
 
 
 // TODO: Break out into child components
+/**
+ *
+ * @class         Chat
+ * @description   Component encapsulating the chat view
+ *
+ */
 class Chat extends Component {
 
+  /**
+   * Entry point to perform tasks required to render component.
+   * If socket open, send message to get initial recommendation
+   * from chatbot
+   */
   componentDidMount () {
     const { id, isSocketOpen, messages, sendMessage, type } = this.props;
 
@@ -56,6 +63,12 @@ class Chat extends Component {
   }
 
 
+  /**
+   * Called whenever Redux state changes. On socket open, send
+   * message to get initial recommendation from chatbot
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const {
       id,
@@ -83,6 +96,11 @@ class Chat extends Component {
   }
 
 
+  /**
+   * Get role name from role ID
+   * @param {string} roleId Role ID
+   * @returns {string}
+   */
   roleName = (roleId) => {
     const { roleFromId } = this.props;
     const role = roleFromId(roleId);
@@ -90,6 +108,11 @@ class Chat extends Component {
   };
 
 
+  /**
+   * Get user name from user ID
+   * @param {string} userId User ID
+   * @returns {string}
+   */
   userName = (userId) => {
     const { userFromId } = this.props;
     const user = userFromId(userId);
@@ -97,6 +120,10 @@ class Chat extends Component {
   };
 
 
+  /**
+   * Send message to chatbot engine
+   * @param {string} message Message body
+   */
   send (message) {
     const { id, sendMessage } = this.props;
     sendMessage({do: 'REPLY', message: { text: message }, user_id: id});
@@ -118,6 +145,10 @@ class Chat extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const {
       disabled,
@@ -241,10 +272,10 @@ const mapStateToProps = (state) => {
   return {
     fetching: state.chat.fetching,
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {};
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

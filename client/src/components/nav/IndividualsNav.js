@@ -36,6 +36,10 @@ export default class IndividualsNav extends Component {
   };
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { activeIndex, setFlow } = this.props;
 

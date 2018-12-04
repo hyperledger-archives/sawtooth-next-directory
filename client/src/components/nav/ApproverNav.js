@@ -12,15 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-ApproverNav
-Component encapsulating the template for
-the sidebar displayed on the approver landing page */
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { Button, Icon, Container, Input, Search } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
@@ -30,6 +25,13 @@ import NavList from './NavList';
 import * as utils from '../../services/Utils';
 
 
+/**
+ *
+ * @class         ApproverNav
+ * @description   Component encapsulating the template for
+ *                the sidebar displayed on the approver landing page
+ *
+ */
 export default class ApproverNav extends Component {
 
   static propTypes = {
@@ -40,6 +42,11 @@ export default class ApproverNav extends Component {
   };
 
 
+  /**
+   * Render each list of sidebar groups by passing the root
+   * route, title, and array of items to NavList
+   * @returns {JSX}
+   */
   renderLists () {
     const { openProposalsCount } = this.props;
 
@@ -86,6 +93,10 @@ export default class ApproverNav extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const {
       recommendedPacks,

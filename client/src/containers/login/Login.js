@@ -48,16 +48,28 @@ class Login extends Component {
   };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component
+   */
   componentDidMount () {
     this.init();
   }
 
 
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     this.init();
   }
 
 
+  /**
+   * On authentication, determine home URL and redirect
+   */
   init () {
     const {
       history,
@@ -70,6 +82,10 @@ class Login extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render() {
     const { login } = this.props;
 
@@ -100,7 +116,7 @@ const mapStateToProps = (state) => {
     error: state.auth.error,
     isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -109,7 +125,7 @@ const mapDispatchToProps = (dispatch) => {
     attemptSignup: (name, username, password, email) =>
       dispatch(AuthActions.signupRequest(name, username, password, email)),
   };
-}
+};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

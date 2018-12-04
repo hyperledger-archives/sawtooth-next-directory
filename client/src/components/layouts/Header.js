@@ -35,7 +35,6 @@ import logo from '../../images/next-logo-primary.png';
  * @class         Header
  * @description   Header at the top of the viewport
  *
- *
  */
 export default class Header extends Component {
 
@@ -52,6 +51,11 @@ export default class Header extends Component {
   state = { menuVisible: false };
 
 
+
+  /**
+   * Entry point to perform tasks required to render
+   * component. Add event listener to handle click outside menu.
+   */
   componentDidMount () {
     document.addEventListener(
       'mousedown', this.handleClickOutside
@@ -59,6 +63,11 @@ export default class Header extends Component {
   }
 
 
+  /**
+   * Called whenever Redux state changes. Remove event listener.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentWillUnmount () {
     document.removeEventListener(
       'mousedown', this.handleClickOutside
@@ -98,6 +107,10 @@ export default class Header extends Component {
   }
 
 
+  /**
+   * Render global dropdown menu
+   * @returns {JSX}
+   */
   renderMenu () {
     const { me } = this.props;
 
@@ -139,6 +152,10 @@ export default class Header extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const {
       me,

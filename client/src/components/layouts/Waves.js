@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './Waves.css';
 
@@ -39,16 +39,26 @@ class Waves extends Component {
   state = { transition: null };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component. Configure animation update on route change.
+   */
   componentDidMount () {
     const { location } = this.props;
 
     const waves = location && !location.pathname.startsWith('/approval');
     const transition = waves ? 'next-waves-animate-up' :
       'next-waves-animate-down';
-    this.setState({ transition })
+    this.setState({ transition });
   }
 
 
+  /**
+   * Called whenever Redux state changes. Configure animation update
+   * on route change.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { isAnimating, location, stopAnimation } = this.props;
 
@@ -60,11 +70,15 @@ class Waves extends Component {
         (waves ? 'next-waves-animate-up' : 'next-waves-animate-down') :
         (waves ? 'next-waves' : 'next-static');
 
-      this.setState({ transition })
+      this.setState({ transition });
     }
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { transition } = this.state;
 

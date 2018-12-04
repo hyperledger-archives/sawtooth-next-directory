@@ -12,10 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Modal
-Create role */
 
 
 import React, { Component } from 'react';
@@ -24,6 +20,12 @@ import PropTypes from 'prop-types';
 import './Create.css';
 
 
+/**
+ *
+ * @class         Create
+ * @description   Create role modal
+ *
+ */
 export default class Create extends Component {
 
   static propTypes = {
@@ -64,12 +66,22 @@ export default class Create extends Component {
   }
 
 
+  /**
+   * Validate create role form
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
+   */
   validate = (name, value) => {
     name === 'name' &&
       this.setState({ validName: value.length > 4 });
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { open, validName } = this.state;
 
