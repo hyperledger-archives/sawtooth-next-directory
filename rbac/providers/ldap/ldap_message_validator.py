@@ -12,7 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-from rbac.providers.error.unrecoverable_error import LdapValidationException
+
+import os
+
+from rbac.providers.error.unrecoverable_error import (
+    LdapMessageValidationException,
+    NextMessageValidationException,
+)
+
+ENV_VAR_MESSAGE_TARGET = "LDAP_DC"
+MESSAGE_TARGET_VALUE_LDAP = os.getenv(ENV_VAR_MESSAGE_TARGET)
 
 
 def validate_next_payload(payload):
@@ -20,10 +29,10 @@ def validate_next_payload(payload):
 
     # TODO: Move these into an enum, share with outbound_sync
     required_field_data = "data"
-    required_field_data_type = "data_type"
-    required_field_provider_id = "provider_id"
-    required_value_data_type = ["user", "group"]
     required_field_dn = "distinguished_name"
+    required_field_data_type = "data_type"
+    required_value_data_type = ["user", "group"]
+    required_field_provider_id = "provider_id"
 
     # TODO: These are also required given the current outbound_sync mappings. Include tests!
     #       Enforce or remove from outbound_sync
@@ -41,27 +50,49 @@ def validate_next_payload(payload):
         required_field_provider_id,
     ]:
         if required_field not in payload:
-            raise LdapValidationException(
+            raise NextMessageValidationException(
                 "Required field: '{0}' is missing".format(required_field)
             )
 
+    if payload[required_field_provider_id] != MESSAGE_TARGET_VALUE_LDAP:
+        raise NextMessageValidationException(
+            "{0} value must be {1}".format(
+                required_field_provider_id, MESSAGE_TARGET_VALUE_LDAP
+            )
+        )
+
     data_node = payload[required_field_data]
     if required_field_dn not in data_node:
-        raise LdapValidationException(
+        raise NextMessageValidationException(
             "'{0}' is missing an entry for: '{1}'".format(
                 required_field_data, required_field_dn
             )
         )
     if not data_node[required_field_dn]:
-        raise LdapValidationException(
+        raise NextMessageValidationException(
             "'{0}'.'{1}' cannot be empty".format(required_field_data, required_field_dn)
         )
 
     if not any(
         payload[required_field_data_type] in s for s in required_value_data_type
     ):
-        raise LdapValidationException(
+        raise NextMessageValidationException(
             "Invalid value for '{0}'. '{0}' must be in: {1}".format(
                 required_field_data_type, required_value_data_type
             )
+        )
+
+
+def validate_ldap_payload(payload):
+    """
+       Ensures the payload from Active Directory contains fields required for NEXT.
+       Assumes the object has been converted to json using:
+           json.loads(ldap_record.entry_to_json())["attributes"]
+    """
+
+    required_field_cn = "cn"
+
+    if required_field_cn not in payload:
+        raise LdapMessageValidationException(
+            "Required field: '{0}' is missing".format(required_field_cn)
         )
