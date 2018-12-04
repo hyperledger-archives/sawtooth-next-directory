@@ -40,7 +40,7 @@ LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 DB_HOST = "rethink"
 DB_PORT = 28015
 DB_NAME = "rbac"
-DB_TABLE_OUTBOUND_QUEUE = "queue_outbound"
+DB_TABLE_OUTBOUND_QUEUE = "outbound_queue"
 DB_TABLE_ACCESS_RETRY_SECS = 3
 DB_ATTR_DATA_TYPE = "data_type"
 DB_VALUE_DATA_TYPE_USER = "user"

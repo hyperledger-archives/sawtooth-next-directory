@@ -22,7 +22,7 @@ from rbac.providers.common.provider_transforms import (
 
 
 def outbound_user_filter(sawtooth_user, provider):
-    """Takes in a user dict from queue_outbound and formats it to a providers specs.
+    """Takes in a user dict from outbound_queue and formats it to a providers specs.
     :param: user > dict > a dictionary representing a user
     :param: provider > str > inbound provider type (azure, ldap)
     """
@@ -36,7 +36,7 @@ def outbound_user_filter(sawtooth_user, provider):
 
 
 def outbound_group_filter(sawtooth_group, provider):
-    """Takes in a group dict from queue_outbound and formats it to a provider's specs
+    """Takes in a group dict from outbound_queue and formats it to a provider's specs
     :param: group > dict > a dictionary representing a group
     :param: provider > str > inbound provider type (azure, ldap)
     """
@@ -50,7 +50,7 @@ def outbound_group_filter(sawtooth_group, provider):
 
 
 def outbound_user_creation_filter(sawtooth_user, provider):
-    """Takes in a user dict from queue_outbound and formats it to a provider's specs.
+    """Takes in a user dict from outbound_queue and formats it to a provider's specs.
     :param: user > dict > a dictionary representing a user
     :param: provider > str > inbound provider type (azure, ldap)
     """
@@ -75,7 +75,7 @@ def outbound_user_creation_filter(sawtooth_user, provider):
 
 
 def outbound_group_creation_filter(sawtooth_group, provider):
-    """Takes in a group dict from queue_outbound and formats it to a provider's specs
+    """Takes in a group dict from outbound_queue and formats it to a provider's specs
     :param: group > dict > a dictionary representing a group
     :param: provider > str > inbound provider type (azure, ldap)
     """

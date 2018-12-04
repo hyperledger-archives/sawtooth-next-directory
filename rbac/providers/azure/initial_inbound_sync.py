@@ -170,7 +170,7 @@ def insert_group_to_db(groups_dict):
             "timestamp": dt.now().isoformat(),
             "provider_id": TENANT_ID,
         }
-        r.table("queue_inbound").insert(inbound_entry).run()
+        r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def insert_user_to_db(users_dict):
@@ -189,7 +189,7 @@ def insert_user_to_db(users_dict):
             "timestamp": dt.now().isoformat(),
             "provider_id": TENANT_ID,
         }
-        r.table("queue_inbound").insert(inbound_entry).run()
+        r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def initialize_aad_sync():

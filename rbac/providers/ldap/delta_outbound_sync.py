@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
-import logging
+"""Delta Outbound Sync for LDAP to get changes from NEXT into LDAP."""
+import time
 import os
-
-import rethinkdb as r
+import logging
 import ldap3
 from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 
+from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.rethink_db import (
     connect_to_db,
     peek_at_queue,
@@ -34,14 +34,13 @@ from rbac.providers.common.outbound_filters import (
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_CONFIG = {"OUTBOUND_QUEUE": "queue_outbound"}
-
+DEFAULT_CONFIG = {"DELAY": "1", "OUTBOUND_QUEUE": "outbound_queue"}
 OUTBOUND_QUEUE = os.getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
+DELAY = int(float(os.getenv("DELAY", DEFAULT_CONFIG["DELAY"])))
 LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
-DIRECTION = "outbound"
 
 USER_SEARCH_FILTER = "(&(objectClass=person)(distinguishedName={}))"
 GROUP_SEARCH_FILTER = "(&(objectClass=group)(distinguishedName={}))"
@@ -50,26 +49,6 @@ USER_REQUIRED_ATTR = {"cn", "userPrincipalName"}
 GROUP_REQUIRED_ATTR = {"groupType"}
 
 # TODO: Replace process_ldap_outbound() with LDAP outbound queue listener (next task).
-
-
-def process_ldap_outbound():
-    """
-        While there are items in OUTBOUND_QUEUE table, get earliest entry in table.
-        Check if entry is in ldap and process the entry accordingly. Once processed,
-        record entry in changelog and delete the entry from the outbound queue.
-    """
-    connect_to_db()
-    ldap_conn = connect_to_ldap()
-
-    while not r.table(OUTBOUND_QUEUE).filter({"provider_id": LDAP_DC}).is_empty().run():
-        queue_entry = peek_at_queue(table_name=OUTBOUND_QUEUE, provider_id=LDAP_DC)
-        if is_entry_in_ad(queue_entry, ldap_conn):
-            update_entry_ldap(queue_entry, ldap_conn)
-        else:
-            create_entry_ldap(queue_entry, ldap_conn)
-        put_entry_changelog(queue_entry, DIRECTION)
-        queue_entry_id = queue_entry["id"]
-        delete_entry_queue(queue_entry_id, OUTBOUND_QUEUE)
 
 
 def connect_to_ldap():
@@ -169,7 +148,7 @@ def create_entry_ldap(queue_entry, ldap_conn):
 def create_user_ldap(distinguished_name, sawtooth_entry, ldap_conn):
     """Create new AD user using attributes from sawtooth_entry."""
     LOGGER.info("Creating new AD user: %s", distinguished_name)
-    sawtooth_entry_filtered = outbound_user_filter(sawtooth_entry, "ldap")
+    sawtooth_entry_filtered = outbound_user_filter(sawtooth_entry["data"], "ldap")
     if all(attribute in sawtooth_entry_filtered for attribute in USER_REQUIRED_ATTR):
         ldap_conn.add(
             dn=distinguished_name,
@@ -179,7 +158,6 @@ def create_user_ldap(distinguished_name, sawtooth_entry, ldap_conn):
                 "userPrincipalName": sawtooth_entry_filtered["userPrincipalName"],
             },
         )
-
         modify_ad_attributes(distinguished_name, sawtooth_entry_filtered, ldap_conn)
     else:
         LOGGER.info(
@@ -232,8 +210,46 @@ def modify_ad_attributes(distinguished_name, sawtooth_entry_filtered, ldap_conn)
 
 
 def get_distinguished_name(queue_entry):
-    """
-        Returns the distinguished_name of the queue entry.
-    """
+    """Returns the distinguished_name of the queue entry."""
     sawtooth_entry = queue_entry["data"]
     return sawtooth_entry["distinguished_name"][0]
+
+
+def ldap_outbound_listener():
+    """Initialize LDAP delta outbound sync with Active Directory."""
+    LOGGER.info("Starting outbound sync listener...")
+
+    LOGGER.info("Connecting to RethinkDB...")
+    connect_to_db()
+    LOGGER.info("Successfully connected to RethinkDB!")
+
+    LOGGER.info("Connecting to LDAP...")
+    ldap_conn = connect_to_ldap()
+    LOGGER.info("Successfully connected to LDAP!")
+
+    while True:
+        try:
+            queue_entry = peek_at_queue(OUTBOUND_QUEUE, LDAP_DC)
+            LOGGER.info(
+                "Received queue entry %s from outbound queue...", queue_entry["id"]
+            )
+
+            data_type = queue_entry["data_type"]
+            LOGGER.info("Putting %s into ad...", data_type)
+            if is_entry_in_ad(queue_entry, ldap_conn):
+                update_entry_ldap(queue_entry, ldap_conn)
+            else:
+                create_entry_ldap(queue_entry, ldap_conn)
+
+            LOGGER.info("Putting queue entry into changelog...")
+            put_entry_changelog(queue_entry, "outbound")
+
+            LOGGER.info("Deleting queue entry from outbound queue...")
+            entry_id = queue_entry["id"]
+            delete_entry_queue(entry_id, OUTBOUND_QUEUE)
+        except ExpectedError as err:
+            LOGGER.debug(("%s Repolling after %s seconds...", err.__str__, DELAY))
+            time.sleep(DELAY)
+        except Exception as err:
+            LOGGER.exception(err)
+            raise err

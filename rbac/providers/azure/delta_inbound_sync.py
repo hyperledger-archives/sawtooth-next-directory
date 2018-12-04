@@ -155,7 +155,7 @@ def insert_change_to_db(data, record_timestamp):
         "timestamp": record_timestamp,
         "provider_id": TENANT_ID,
     }
-    r.table("queue_inbound").insert(inbound_entry).run()
+    r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def get_last_delta_sync(provider_id, sync_type):
