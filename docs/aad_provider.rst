@@ -19,13 +19,13 @@ The NEXT Identity platform interacts with Azure Active Directory Provider throug
     inbound sync occurred. The records will be queued in the inbound queue and users and groups will be updated accordingly on 
     the NEXT platform. To check for users or groups that have been modified since the last sync occurred, we utilized a changelog
     event hub in Azure. A statistics query set up on the event hub will look for changes to users and groups to be ingested into the
-    queue_inbound.  By default, delta inbound sync will occur by default 50 seconds.
+    inbound_queue.  By default, delta inbound sync will occur by default 50 seconds.
 
 ..
 
 **Delta Outbound Sync**
     The delta outbound sync will record all changes to users and groups as they occur on the NEXT platform by storing the changes 
-    in a queue called 'queue_outbound'. From the queue, each change will be processed and Azure Active Directory will be updated 
+    in a queue called 'outbound_queue'. From the queue, each change will be processed and Azure Active Directory will be updated 
     accordingly. The delta outbound sync will help keep your Active Directory stay up to date with the changes that are being 
     performed on NEXT.
 

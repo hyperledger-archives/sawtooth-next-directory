@@ -14,27 +14,59 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
-import logging
 import os
 import sys
+import threading
+import time
+import logging
 
 TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, TOP_DIR)
 
-from rbac.providers.ldap.main import start_ldap_sync
+# from rbac.providers.ldap.initial_inbound_sync import initialize_ldap_sync
+from rbac.providers.ldap.delta_outbound_sync import ldap_outbound_listener
+# from rbac.providers.ldap.delta_inbound_sync import ldap_inbound_listener
 
-ENV_VAR_MESSAGE_TARGET = "LDAP_DC"
-MESSAGE_TARGET_KEY_LDAP = "provider_id"
-MESSAGE_TARGET_VALUE_LDAP = os.getenv(ENV_VAR_MESSAGE_TARGET)
-
+# LOGGER levels: info, debug, warning, exception, error
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-if __name__ == '__main__':
-    if MESSAGE_TARGET_VALUE_LDAP == "":
-        LOGGER.warning("No message target found on the environment for outbound Ldap (key = %s). Disabling Ldap sync.",
-                       ENV_VAR_MESSAGE_TARGET)
-    else:
-        start_ldap_sync()
+
+class InboundSyncThread(threading.Thread):
+    """Custom Thread subclass that runs an LDAP inbound sync listener in its own
+    thread."""
+    def __init__(self):
+        """Initialize the InboundSyncThread class"""
+        threading.Thread.__init__(self)
+        self.name = "LDAP Inbound Delta Sync Thread"
+
+    def run(self):
+        """Start the InboundSyncThread"""
+        LOGGER.info("Starting %s", self.name)
+        ldap_inbound_listener()
+        LOGGER.info("Exiting %s", self.name)
+
+
+class OutboundSyncThread(threading.Thread):
+    """Custom Thread subclass that runs an LDAP outbound sync listener in its own
+    thread."""
+    def __init__(self):
+        """Initialize the OutboundSyncThread class"""
+        threading.Thread.__init__(self)
+        self.name = "LDAP Outbound Delta Sync Thread"
+
+    def run(self):
+        """Start the OutboundSyncThread"""
+        LOGGER.info("Starting %s", self.name)
+        ldap_outbound_listener()
+        LOGGER.info("Exiting %s", self.name)
+
+
+if __name__ == "__main__":
+    # initialize_ldap_sync()
+    # Create sync listener threads.
+    # inbound_sync_thread = InboundSyncThread()
+    outbound_sync_thread = OutboundSyncThread()
+    # Start sync listener threads.
+    # inbound_sync_thread.start()
+    outbound_sync_thread.start()

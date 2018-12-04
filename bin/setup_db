@@ -78,11 +78,11 @@ def setup_db(host, port, name):
         LOGGER.info('Creating table: inbound_sync_event')
         r.db(name).table_create('inbound_sync_event').run(conn)
 
-        LOGGER.info('Creating table: queue_inbound')
-        r.db(name).table_create('queue_inbound').run(conn)
+        LOGGER.info('Creating table: inbound_queue')
+        r.db(name).table_create('inbound_queue').run(conn)
 
-        LOGGER.info('Creating table: queue_outbound')
-        r.db(name).table_create('queue_outbound').run(conn)
+        LOGGER.info('Creating table: outbound_queue')
+        r.db(name).table_create('outbound_queue').run(conn)
 
         LOGGER.info('Creating table: changelog')
         r.db(name).table_create('changelog').run(conn)

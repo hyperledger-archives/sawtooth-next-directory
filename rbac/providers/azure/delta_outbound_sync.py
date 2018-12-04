@@ -37,14 +37,13 @@ from rbac.providers.common.rethink_db import (
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_CONFIG = {"DELAY": "1", "OUTBOUND_QUEUE": "queue_outbound"}
+DEFAULT_CONFIG = {"DELAY": "1", "OUTBOUND_QUEUE": "outbound_queue"}
 
 OUTBOUND_QUEUE = os.getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
 DELAY = int(float(os.getenv("DELAY", DEFAULT_CONFIG["DELAY"])))
 TENANT_ID = os.getenv("TENANT_ID")
 GRAPH_URL = "https://graph.microsoft.com"
 GRAPH_VERSION = "beta"
-DIRECTION = "outbound"
 AUTH = AadAuth()
 
 
@@ -228,7 +227,7 @@ def outbound_sync_listener():
                 create_entry_aad(queue_entry)
 
             LOGGER.info("Putting queue entry into changelog...")
-            put_entry_changelog(queue_entry, DIRECTION)
+            put_entry_changelog(queue_entry, "outbound")
 
             LOGGER.info("Deleting queue entry from outbound queue...")
             entry_id = queue_entry["id"]
