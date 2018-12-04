@@ -34,7 +34,8 @@ export default class ApproverNav extends Component {
 
   static propTypes = {
     openProposalsCount:     PropTypes.number,
-    recommended:            PropTypes.array,
+    recommendedPacks:       PropTypes.array,
+    recommendedRoles:       PropTypes.array,
     startAnimation:         PropTypes.func,
   };
 
@@ -51,8 +52,8 @@ export default class ApproverNav extends Component {
             null,
           ]}
           list={[
-            'Individual',
-            'About to Expire',
+            { name: 'Individual' },
+            { name: 'About to Expire' },
           ]}
           route='/approval/pending'/>
         <h4>
@@ -86,11 +87,10 @@ export default class ApproverNav extends Component {
 
 
   render () {
-    const { recommended, startAnimation } = this.props;
-    const homeLink = recommended && recommended[0] ?
-      `/roles/${utils.createSlug(recommended[0].name)}` :
-      '/';
-
+    const {
+      recommendedPacks,
+      recommendedRoles,
+      startAnimation } = this.props;
     return (
       <Container>
         <Search
@@ -105,7 +105,7 @@ export default class ApproverNav extends Component {
             as={Link}
             labelPosition='left'
             onClick={startAnimation}
-            to={homeLink}>
+            to={utils.createHomeLink(recommendedPacks, recommendedRoles)}>
             Switch to Requester
             <Icon name='left arrow'/>
           </Button>

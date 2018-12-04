@@ -54,11 +54,13 @@ export const appState = (state) => {
     messages:            ChatSelectors.messages(state),
 
     // Requester
-    recommended:         RequesterSelectors.recommended(state),
+    recommendedRoles:    RequesterSelectors.recommendedRoles(state),
+    recommendedPacks:    RequesterSelectors.recommendedPacks(state),
     requests:            RequesterSelectors.requests(state),
     roles:               RequesterSelectors.roles(state),
     proposalFromId:      (id) => RequesterSelectors.proposalFromId(state, id),
     roleFromId:          (id) => RequesterSelectors.roleFromId(state, id),
+    packFromId:          (id) => RequesterSelectors.packFromId(state, id),
 
     // User
     id:                  UserSelectors.id(state),
@@ -106,6 +108,7 @@ export const appDispatch = (dispatch) => {
     getBase:           ()    => dispatch(RequesterActions.baseRequest()),
     getRole:           (id)  => dispatch(RequesterActions.roleRequest(id)),
     getRoles:          (ids) => dispatch(RequesterActions.rolesRequest(ids)),
+    getPack:           (id)  => dispatch(RequesterActions.packRequest(id)),
     getProposal:       (id)  => dispatch(RequesterActions.proposalRequest(id)),
     getProposals:      (ids) =>
       dispatch(RequesterActions.proposalsRequest(ids)),

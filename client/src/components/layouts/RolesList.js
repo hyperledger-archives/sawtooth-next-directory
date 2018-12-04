@@ -15,52 +15,122 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { List, Segment } from 'semantic-ui-react';
+import { Grid, Header, Image, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-
-import './RolesList.css';
+import './MemberList.css';
+import glyph from '../../images/header-glyph-role.png';
 
 
 /**
  *
  * @class         RolesList
- * @description   Component encapsulating the track pane body
+ * @description   Component encapsulating the roles list
  *
  *
  */
-export default class RolesList extends Component {
+export default class MemberList extends Component {
 
   static propTypes = {
-    activeRole: PropTypes.object,
-  };
+    activePack:         PropTypes.object,
+    getRoles:           PropTypes.func,
+    getUsers:           PropTypes.func,
+    roles:              PropTypes.array,
+    users:              PropTypes.array,
+    userFromId:         PropTypes.func,
+  }
+
+
+  componentDidMount () {
+    this.init();
+  }
+
+
+  componentDidUpdate (prevProps) {
+    const { activePack } = this.props;
+    if (prevProps.activePack !== activePack) this.init();
+  }
+
+
+  init () {
+    const {
+      activePack,
+      getRoles,
+      getUsers,
+      roles,
+      users } = this.props;
+    if (!roles || !users) return;
+
+    const diff = activePack.roles.filter(roleId =>
+      roles.find(role => role.id !== roleId));
+    const placeholder = roles.map(role => role.id);
+    const diff2 = roles
+      .filter(role => placeholder.find(roleId => role.id === roleId))
+      .map(role => users
+        .find(user => user.id !== role.owners[0]) && role.owners[0])
+
+    diff && getRoles(diff);
+    diff2 && getUsers([...new Set(diff2)]);
+  }
+
+
+  /**
+   * Render user info
+   * @param {string} userId User ID
+   * @returns {JSX}
+   */
+  renderUserInfo = (userId) => {
+    const { userFromId } = this.props;
+    const user = userFromId(userId);
+    if (!user) return null;
+    return (
+      <div>
+        { user.name &&
+          <Header.Subheader>By {user.name}</Header.Subheader>
+        }
+        {user.email &&
+          <Header.Subheader>{user.email}</Header.Subheader>
+        }
+      </div>
+    );
+  }
+
+
+  renderRoleSegment (roleId) {
+    const { roles } = this.props;
+    if (!roles) return null;
+    const role = roles.find((role) => role.id === roleId);
+
+    return (
+      role &&
+        <Grid.Column key={roleId} largeScreen={8} widescreen={5}>
+          <Segment padded className='minimal'>
+            <Header as='h4' className='next-roles-list-role-info'>
+              <div>
+                <Image size='mini' src={glyph}/>
+              </div>
+              <div>
+                {role && role.name}
+                {role && role.owners && this.renderUserInfo(role.owners[0])}
+              </div>
+            </Header>
+          </Segment>
+        </Grid.Column>
+    );
+  }
 
 
   render () {
-    const { activeRole } = this.props;
-
+    const { roles } = this.props;
     return (
-      <div id='next-requester-track-body-container'>
-
-        { activeRole && activeRole.description &&
-          <p>{activeRole.description}</p>
-        }
-
-        { activeRole && activeRole.roles &&
-          <List selection verticalAlign='middle'>
-            { activeRole.roles.map((role, index) => (
-              <Segment key={index}>
-                {role.name}
-              </Segment>
-            )) }
-          </List>
-        }
-
-        { activeRole && activeRole.roles &&
-          activeRole.roles.length === 0 &&
-          <h3>No roles found.</h3>
-        }
-
+      <div>
+        <Grid columns={3} stackable>
+          {/* { activePack && activePack.roles.map((roleId) => (
+            this.renderRoleSegment(roleId)
+          )) } */}
+          { roles && roles.map((role) => (
+            this.renderRoleSegment(role.id)
+          )) }
+        </Grid>
       </div>
     );
   }

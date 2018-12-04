@@ -1,7 +1,8 @@
 {
-  "id": "d7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0",
-  "conversation_id": null,
-  "name": "Jazz Rev",
-  "description": "Lorem ipsum dolor sit amet.",
-  "roles": []
+  "data": {
+    "id": "d7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0",
+    "name": "Jazz Rev",
+    "description": "Lorem ipsum dolor sit amet.",
+    "roles": []
+  }
 }

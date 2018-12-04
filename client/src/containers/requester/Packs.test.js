@@ -32,10 +32,9 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
 
   const props = {
-    getRole: () => {},
-    roleFromId: () => {},
+    getPack: () => {},
+    packFromId: () => {},
     match: { params: {} },
-    requester: { recommended: [] }
   };
 
   ReactDOM.render(

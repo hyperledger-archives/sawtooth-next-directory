@@ -34,7 +34,6 @@ import * as utils from '../../services/Utils';
 class NavList extends Component {
 
   static propTypes = {
-    dynamic:          PropTypes.bool,
     labels:           PropTypes.array,
     location:         PropTypes.object,
     list:             PropTypes.array,
@@ -67,7 +66,7 @@ class NavList extends Component {
    * @returns {JSX}
    */
   renderList (list) {
-    const { dynamic, labels, route } = this.props;
+    const { labels, route } = this.props;
 
     return (
       list.map((item, index) => (
@@ -82,10 +81,7 @@ class NavList extends Component {
           <Image src=''/>
 
           <List.Content id='next-nav-list-content'>
-            { dynamic ?
-              <List.Header>{item.name}</List.Header> :
-              <List.Header>{item}</List.Header>
-            }
+            <List.Header>{item.name}</List.Header>
           </List.Content>
 
           { labels && labels[index] &&

@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid } from 'semantic-ui-react';
+import { Container, Grid, Label } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -81,10 +81,10 @@ export class Roles extends Component {
     if (!this.role) return null;
 
     const membersCount = [...this.role.members, ...this.role.owners].length;
+    const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
     const subtitle = `${membersCount} ${membersCount > 1 ?
       'members' :
       'member'}`;
-    const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
 
     return (
       <Grid id='next-requester-grid'>
@@ -105,9 +105,13 @@ export class Roles extends Component {
                 request={this.request}
                 {...this.props}/>
             }
-            <Container id='next-requester-roles-description'>
-              Lorem ipsum dolor sit amet.
+            <Container id='next-requester-roles-description-container'>
+              <Label horizontal>Roles</Label>
+              <div id='next-requester-roles-description'>
+                Lorem ipsum dolor sit amet.
+              </div>
             </Container>
+            <Label horizontal>Members</Label>
             <MemberList {...this.props}
               members={this.role.members}
               owners={this.role.owners}/>

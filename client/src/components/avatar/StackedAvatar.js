@@ -63,6 +63,9 @@ export default class StackedAvatar extends Component {
 
   render () {
     const { list } = this.props;
+    const memberLabel = list && list.length > 1 ?
+      `${list.length} members` :
+      `${list.length} member`;
 
     return (
       <div id='next-avatar-container'>
@@ -70,7 +73,7 @@ export default class StackedAvatar extends Component {
           {this.renderAvatars()}
         </div>
         <div className='next-avatar-count'>
-          {`${list?list.length:0} members`}
+          {memberLabel}
         </div>
       </div>
     );
