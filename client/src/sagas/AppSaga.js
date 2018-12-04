@@ -14,11 +14,11 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { eventChannel } from 'redux-saga'
+import { eventChannel } from 'redux-saga';
 import { call, put, take } from 'redux-saga/effects';
 import AppActions from '../redux/AppRedux';
 import ChatActions from '../redux/ChatRedux';
-import Socket from '../services/Socket'
+import Socket from '../services/Socket';
 
 
 let channel;
@@ -40,12 +40,12 @@ export function * closeSocket () {
 
 const createChannel = (socket) =>
   eventChannel(emit => {
-    socket.onerror = (event) => emit(AppActions.socketError(event))
-    socket.onmessage = (event) => emit(ChatActions.messageReceive(event.data))
-    socket.onopen = () => emit(AppActions.socketOpenSuccess(socket))
+    socket.onerror = (event) => emit(AppActions.socketError(event));
+    socket.onmessage = (event) => emit(ChatActions.messageReceive(event.data));
+    socket.onopen = () => emit(AppActions.socketOpenSuccess(socket));
 
     return () => {
       socket.close();
-      emit(AppActions.socketCloseSuccess(socket))
-    }
+      emit(AppActions.socketCloseSuccess(socket));
+    };
   });

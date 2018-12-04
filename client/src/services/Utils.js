@@ -43,7 +43,7 @@ export const createSlug = (name, parent) => {
     console.error('Invalid resource name: ', name);
     return '';
   }
-}
+};
 
 
 export const createHomeLink = (packs = [], roles = []) => {
@@ -58,7 +58,7 @@ export const createHomeLink = (packs = [], roles = []) => {
     console.error('Error creating home link');
     return '/';
   }
-}
+};
 
 
 export const groupBy = (array, key) => {
@@ -67,7 +67,7 @@ export const groupBy = (array, key) => {
     prev[curr[key]].push(curr);
     return prev;
   }, Object.create(null));
-}
+};
 
 
 export const merge = (array1, array2) => {
@@ -77,4 +77,4 @@ export const merge = (array1, array2) => {
   ]
     .map(object => JSON.stringify(object)))]
     .map(string => JSON.parse(string));
-}
+};

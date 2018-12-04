@@ -12,19 +12,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Stacked avatar ?
-Stacked aavatar component */
 
 
 import React, { Component } from 'react';
 import { Image, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
 import './StackedAvatar.css';
 
 
+/**
+ *
+ * @class         StackedAvatar
+ * @description   Stacked avatar component ?
+ *
+ */
 export default class StackedAvatar extends Component {
 
   static propTypes = {
@@ -32,6 +33,10 @@ export default class StackedAvatar extends Component {
   };
 
 
+  /**
+   * Render avatar iamges
+   * @returns {JSX}
+   */
   renderAvatars = () => {
     const { list } = this.props;
 
@@ -56,11 +61,15 @@ export default class StackedAvatar extends Component {
 
       });
     }
-    return <div className='next-avatar-element'>_</div>
+    return <div className='next-avatar-element'>_</div>;
 
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { list } = this.props;
     const memberLabel = list && list.length > 1 ?

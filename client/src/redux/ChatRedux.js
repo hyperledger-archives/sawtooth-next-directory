@@ -16,7 +16,7 @@ limitations under the License.
 
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
-import ping from '../sounds/ping.mp3'
+import ping from '../sounds/ping.mp3';
 
 
 //
@@ -71,7 +71,7 @@ export const ChatSelectors = {
 //
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
-}
+};
 export const clearMessages = (state) => {
   return state.merge({ messages: null });
 };
@@ -85,7 +85,7 @@ export const clearMessages = (state) => {
 //
 export const conversationSuccess = (state, { conversation }) => {
   return state.merge({ fetching: false, messages: conversation.messages });
-}
+};
 
 export const messageSend = (state, { payload }) => {
   if (payload.message && payload.message.text.startsWith('/'))
@@ -96,7 +96,7 @@ export const messageSend = (state, { payload }) => {
       [payload.message, ...(state.messages || [])] :
       state.messages,
   });
-}
+};
 
 export const messageReceive = (state, { message }) => {
   const parsed = JSON.parse(message);
@@ -111,7 +111,7 @@ export const messageReceive = (state, { message }) => {
       [...parsed.reverse(), ...(state.messages || [])] :
       state.messages,
   });
-}
+};
 
 //
 // Hooks

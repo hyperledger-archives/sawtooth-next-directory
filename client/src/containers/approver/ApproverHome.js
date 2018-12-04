@@ -12,24 +12,28 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Approver Home
-Component encapsulating the approver landing page  */
 
 
 import React, { Component } from 'react';
 import { Grid } from 'semantic-ui-react';
 
 
+import './ApproverHome.css';
 import TrackHeader from '../../components/layouts/TrackHeader';
 
 
-import './ApproverHome.css';
-
-
+/**
+ *
+ * @class         ApproverHome
+ * @description   Approver view fallback landing page
+ *
+ */
 export default class ApproverHome extends Component {
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render() {
     return (
       <Grid id='next-approver-grid'>

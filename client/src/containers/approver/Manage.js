@@ -12,11 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-
-Manage
-Manage component  */
 
 
 import React, { Component } from 'react';
@@ -34,11 +29,20 @@ import TrackHeader from '../../components/layouts/TrackHeader';
 import CreateModal from '../../components/modals/manage/Create';
 
 
+/**
+ *
+ * @class         Manage
+ * @description   Manage component
+ *
+ */
 class Manage extends Component {
 
+  /**
+   * Create a new role
+   * @param {string} name Name of role
+   */
   createRole = (name) => {
     const { createRole, userId } = this.props;
-
     createRole({
       name:           name,
       owners:         [userId],
@@ -46,10 +50,14 @@ class Manage extends Component {
     });
   }
 
+
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     return (
       <Grid id='next-approver-grid'>
-
         <Grid.Column
           id='next-approver-grid-track-column'
           width={11}>
@@ -63,7 +71,6 @@ class Manage extends Component {
           width={5}>
           <Chat type={0} {...this.props}/>
         </Grid.Column>
-
       </Grid>
     );
   }
@@ -76,14 +83,14 @@ const mapStateToProps = (state) => {
     error:  state.approver.error,
     userId: UserSelectors.id(state),
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     createRole: (payload) =>
       dispatch(ApproverActions.createRoleRequest(payload)),
   };
-}
+};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Manage);

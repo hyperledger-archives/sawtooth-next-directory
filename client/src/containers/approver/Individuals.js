@@ -12,11 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-
-Individuals
-Individuals component  */
 
 
 import React, { Component } from 'react';
@@ -37,6 +32,12 @@ import './Individuals.css';
 import glyph from '../../images/header-glyph-individual.png';
 
 
+/**
+ *
+ * @class         Individuals
+ * @description   Individual requests component
+ *
+ */
 class Individuals extends Component {
 
   static propTypes = {
@@ -52,12 +53,20 @@ class Individuals extends Component {
   };
 
 
+  /**
+   * Entry point to perform tasks required to render
+   * component. On load, get open proposals.
+   */
   componentDidMount () {
     const { getOpenProposals, openProposals } = this.props;
     !openProposals && getOpenProposals();
   }
 
 
+  /**
+   * Switch between Roles and People views
+   * @param {number} activeIndex Current screen index
+   */
   setFlow = (activeIndex) => {
     this.setState({ activeIndex });
   };
@@ -100,6 +109,10 @@ class Individuals extends Component {
   };
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { openProposals, userFromId } = this.props;
     const {
@@ -180,11 +193,11 @@ class Individuals extends Component {
 
 const mapStateToProps = (state) => {
   return {};
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {};
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Individuals);
 

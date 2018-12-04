@@ -25,8 +25,8 @@ import * as utils from '../../services/Utils';
  *
  * @class         RequesterHome
  * @description   Component encapsulating the requester
- *                home, the default landing page after login
- *
+ *                home, the fallback landing page after login given no
+ *                recommended packs or roles
  *
  */
 export default class RequesterHome extends Component {
@@ -39,6 +39,11 @@ export default class RequesterHome extends Component {
   };
 
 
+  /**
+   * Called whenever Redux state changes. Determine home URL and redirect.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { history, recommendedPacks, recommendedRoles } = this.props;
     if (prevProps.recommendedPacks !== recommendedPacks ||
@@ -50,6 +55,10 @@ export default class RequesterHome extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     return (
       <Grid id='next-requester-grid'>

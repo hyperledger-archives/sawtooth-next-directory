@@ -25,6 +25,14 @@ import { Button, Form, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
+/**
+ *
+ * @class       ChatForm
+ * @description Component encapsulating a reusable chat form
+ *              suitable for composing within containers where chat
+ *              functionality is required
+ *
+ */
 export default class ChatForm extends Component {
 
   static propTypes = {
@@ -36,13 +44,15 @@ export default class ChatForm extends Component {
   };
 
 
-  constructor (props) {
-    super(props);
-
-    this.state = { message: '', isDraft: null };
-  }
+  state = { message: '', isDraft: null };
 
 
+  /**
+   * Called whenever Redux state changes. Determine whether or not
+   * the chat form should display a draft text area.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { messages } = this.props;
 
@@ -57,11 +67,21 @@ export default class ChatForm extends Component {
   }
 
 
+  /**
+   * Reset form to default state
+   */
   reset () {
     this.setState({ message: '', isDraft: null });
   }
 
 
+  /**
+   * Tell app to refresh to refresh when next message received
+   * and send message to parent handler for dispatch
+   * @param {string} message Message to send
+   * @param {boolean} shouldRefresh If app should refresh on next
+   *                                message received
+   */
   handleSubmit (message, shouldRefresh) {
     const { refreshOnNextSocketReceive, submit } = this.props;
     shouldRefresh && refreshOnNextSocketReceive(true);
@@ -110,6 +130,10 @@ export default class ChatForm extends Component {
   }
 
 
+  /**
+   * Render chat view action buttons
+   * @returns {JSX}
+   */
   renderActions () {
     const { disabled, messages } = this.props;
     const { isDraft } = this.state;
@@ -137,10 +161,14 @@ export default class ChatForm extends Component {
           ))
         }
       </div>
-    )
+    );
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { message, isDraft } = this.state;
 

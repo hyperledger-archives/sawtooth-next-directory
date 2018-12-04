@@ -50,8 +50,8 @@ class ApprovalCard extends Component {
     request.appprovers.map((userId) => {
       return users && users.find((user) => user.id === userId) ?
         undefined :
-        getUser(userId)
-    })
+        getUser(userId);
+    });
   }
 
 

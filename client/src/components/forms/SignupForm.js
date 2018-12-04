@@ -12,10 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Signup form
-Component encapsulating the signup flow */
 
 
 import React, { Component } from 'react';
@@ -23,6 +19,12 @@ import { Container, Form, Label, Input, Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
+/**
+ *
+ * @class         SignupForm
+ * @description   Component encapsulating the signup form
+ *
+ */
 export default class SignupForm extends Component {
 
   static propTypes = {
@@ -56,11 +58,21 @@ export default class SignupForm extends Component {
   }
 
 
+  /**
+   * Set current view based on index
+   * @param {number} index View index
+   */
   setFlow = (index) => {
     this.setState({ activeIndex: index });
   }
 
 
+  /**
+   * Validate signup form input
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
+   */
   validate = (name, value) => {
     name === 'name' &&
       this.setState({ validName: value.length > 4 });
@@ -73,6 +85,10 @@ export default class SignupForm extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { submit } = this.props;
     const {

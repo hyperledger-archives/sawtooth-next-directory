@@ -21,7 +21,7 @@ the sidebar displayed on the requester landing page */
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { Button, Icon, Input, Container, Search } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
@@ -30,6 +30,13 @@ import './RequesterNav.css';
 import NavList from './NavList';
 
 
+/**
+ *
+ * @class         RequesterNav
+ * @description   Component encapsulating the template for
+ *                the sidebar displayed on the requester landing page
+ *
+ */
 export default class RequesterNav extends Component {
 
   static propTypes = {
@@ -41,7 +48,11 @@ export default class RequesterNav extends Component {
     startAnimation:     PropTypes.func,
   };
 
-
+  /**
+   * Render each list of sidebar groups by passing the root
+   * route, title, and array of items to NavList
+   * @returns {JSX}
+   */
   renderLists () {
     const {
       recommendedPacks,
@@ -72,6 +83,10 @@ export default class RequesterNav extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { startAnimation } = this.props;
     return (

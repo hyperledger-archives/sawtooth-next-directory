@@ -20,7 +20,7 @@ for displaying options in navigation components */
 
 
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom';
 import { Image, Label, List, Transition } from 'semantic-ui-react';
 
 
@@ -31,6 +31,13 @@ import './NavList.css';
 import * as utils from '../../services/Utils';
 
 
+/**
+ *
+ * @class         NavList
+ * @description   Component encapsulating a reusable, selectable list suitable
+ *                for displaying options in navigation components
+ *
+ */
 class NavList extends Component {
 
   static propTypes = {
@@ -42,6 +49,11 @@ class NavList extends Component {
   };
 
 
+  /**
+   * Determine if nav item is active
+   * @param {object} item Nav item
+   * @returns {boolean}
+   */
   isItemActive = (item) => {
     const { location } = this.props;
 
@@ -93,10 +105,14 @@ class NavList extends Component {
           }
         </List.Item>
       ))
-    )
+    );
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { list, listTitle } = this.props;
 

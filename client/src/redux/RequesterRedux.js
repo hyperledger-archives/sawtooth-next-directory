@@ -137,7 +137,7 @@ export const RequesterSelectors = {
           ...request,
           ...state.requester.roles
             .find(role => role.id === request.object),
-        }
+        };
       }),
 
 
@@ -180,10 +180,10 @@ export const RequesterSelectors = {
 //
 export const request = (state) => {
   return state.merge({ fetching: true });
-}
+};
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
-}
+};
 export const resetAll = () => {
   return INITIAL_STATE;
 };
@@ -199,28 +199,28 @@ export const roleSuccess = (state, { role }) => {
     fetching: false,
     roles: utils.merge(state.roles || [], [role]),
   });
-}
+};
 
 export const packSuccess = (state, { pack }) => {
   return state.merge({
     fetching: false,
     packs: utils.merge(state.packs || [], [pack]),
   });
-}
+};
 
 export const allrolesSuccess = (state, { roles }) => {
   return state.merge({
     fetching: false,
     roles: roles,
   });
-}
+};
 
 export const proposalSuccess = (state, { proposal }) => {
   return state.merge({
     fetching: false,
     requests: utils.merge(state.requests || [], [proposal]),
   });
-}
+};
 
 export const baseSuccess = (state, { base }) => {
   return state.merge({
@@ -228,11 +228,11 @@ export const baseSuccess = (state, { base }) => {
     roles: utils.merge(state.roles || [], base[0].data.data || []),
     packs: utils.merge(state.packs || [], base[1].data.data || []),
   });
-}
+};
 
 export const accessSuccess = (state) => {
   return state.merge({ fetching: false });
-}
+};
 
 //
 // Hooks

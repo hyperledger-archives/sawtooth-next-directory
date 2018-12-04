@@ -36,11 +36,11 @@ export default class MemberList extends Component {
     users:              PropTypes.array,
   }
 
+
   /**
-   *
-   * Hydrate data
-   *
-   *
+   * Entry point to perform tasks required to render component.
+   * Get users needed to display info for owners and members if
+   * not already loaded in client
    */
   componentDidMount () {
     const { getUsers, members, owners, users } = this.props;
@@ -56,6 +56,12 @@ export default class MemberList extends Component {
   }
 
 
+  /**
+   * Called whenever Redux state changes. If members or owners changed,
+   * get those not loaded in client
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
   componentDidUpdate (prevProps) {
     const { getUsers, members, owners, users } = this.props;
 
@@ -70,6 +76,12 @@ export default class MemberList extends Component {
   }
 
 
+  /**
+   * Render segment containing user info
+   * @param {string} userId User ID
+   * @param {boolean} isOwner If user is owner
+   * @returns {JSX}
+   */
   renderUserSegment (userId, isOwner) {
     const { users } = this.props;
 
@@ -101,6 +113,10 @@ export default class MemberList extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { members, owners } = this.props;
 

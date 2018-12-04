@@ -36,7 +36,7 @@ export default {
     return {
       ok: true,
       data: base,
-    }
+    };
   },
 
   getPack: (id) => {
@@ -71,7 +71,7 @@ export default {
     return {
       ok: true,
       data: data,
-    }
+    };
   },
 
   getConversation: (id) => {
@@ -94,41 +94,41 @@ export default {
     return {
       ok: true,
       data: data,
-    }
+    };
   },
 
   sendMessage: (message) => {
     return {
       ok: true,
       data: message,
-    }
+    };
   },
 
   login: (username, password) => {
     return {
       ok: true,
       data: {},
-    }
+    };
   },
 
   logout: () => {
     return {
       ok: true,
       data: {},
-    }
+    };
   },
 
   getRoles: () => {
     return {
       ok: true,
       data: roles,
-    }
+    };
   },
 
   getPacks: () => {
     return {
       ok: true,
       data: packs,
-    }
+    };
   },
-}
+};

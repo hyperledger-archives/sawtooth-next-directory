@@ -36,6 +36,10 @@ export default class TrackHeader extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { glyph, subtitle, title } = this.props;
 

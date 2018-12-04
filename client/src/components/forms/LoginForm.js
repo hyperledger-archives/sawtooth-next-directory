@@ -12,10 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Login form
-Component encapsulating the login flow */
 
 
 import React, { Component } from 'react';
@@ -30,6 +26,12 @@ import {
 import PropTypes from 'prop-types';
 
 
+/**
+ *
+ * @class         LoginForm
+ * @description   Component encapsulating the login form
+ *
+ */
 export default class LoginForm extends Component {
 
   static propTypes = {
@@ -59,11 +61,21 @@ export default class LoginForm extends Component {
   }
 
 
+  /**
+   * Set current view
+   * @param {number} index View index
+   */
   setFlow = (index) => {
     this.setState({ activeIndex: index });
   }
 
 
+  /**
+   * Validate login form input
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
+   */
   validate = (name, value) => {
     name === 'username' &&
       this.setState({ validUsername: value.length > 0 });
@@ -74,6 +86,10 @@ export default class LoginForm extends Component {
   }
 
 
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render () {
     const { submit } = this.props;
     const {

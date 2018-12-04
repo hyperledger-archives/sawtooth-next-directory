@@ -217,7 +217,7 @@ export function * fetchProposal (api, id) {
     const res = yield call(api.getProposal, id);
     res.ok ?
       yield put(RequesterActions.proposalSuccess(res.data.data)) :
-      yield put(RequesterActions.proposalFailure(res.data.error))
+      yield put(RequesterActions.proposalFailure(res.data.error));
   } catch (err) {
     console.error(err);
   }
