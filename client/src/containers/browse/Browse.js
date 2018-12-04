@@ -40,6 +40,9 @@ class Browse extends Component {
   };
 
 
+  state = { rolesData: null };
+
+
   /**
    * Entry point to perform tasks required to render
    * component. On load, get roles
@@ -47,13 +50,16 @@ class Browse extends Component {
   // TODO: Pagination
   componentDidMount(){
     const { getAllRoles } = this.props;
+    debugger;;
     getAllRoles();
   }
 
 
   componentDidUpdate (prevProps) {
     const { allRoles } = this.props;
-    if(allRoles && allRoles.length !== 0) this.formatData(allRoles);
+    if (prevProps.allRoles !== allRoles)
+      this.formatData(allRoles);
+
   }
 
 
@@ -62,11 +68,12 @@ class Browse extends Component {
    * @param {array} value ?
    */
   formatData = (value) => {
+    debugger;;
     let arr=[[], [], [], []];
     value.forEach((ele, index) => {
       arr[index % 4].push(ele)
     });
-    this.rolesData = arr;
+    this.setState({ rolesData: arr });
   }
 
 
@@ -75,10 +82,13 @@ class Browse extends Component {
    * @returns {JSX}
    */
   renderLayout() {
-    return this.rolesData.map((column, index) => {
-      return (<Grid.Column key={index}>
-        {this.renderColumns(column)}
-      </Grid.Column>);
+    const { rolesData } = this.state;
+    return rolesData.map((column, index) => {
+      return (
+        <Grid.Column key={index}>
+          {this.renderColumns(column)}
+        </Grid.Column>
+      );
     });
   }
 
@@ -98,13 +108,14 @@ class Browse extends Component {
 
 
   render () {
+    const { rolesData } = this.state;
     return (
       <div id='next-browse-wrapper'>
         <Container id='next-browse-container'>
-          {this.rolesData &&
-              <Grid relaxed stackable columns={4} id='next-browse-grid'>
-                {this.renderLayout()}
-              </Grid>
+          {rolesData &&
+            <Grid relaxed stackable columns={4} id='next-browse-grid'>
+              {this.renderLayout()}
+            </Grid>
           }
         </Container>
       </div>

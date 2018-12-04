@@ -38,6 +38,7 @@ import {
   getBase,
   getRole,
   getRoles,
+  getPack,
   getProposal,
   getProposals,
   getAllRoles } from './RequesterSaga';
@@ -91,9 +92,10 @@ function * sagas () {
     takeLatest(ChatTypes.MESSAGE_SEND, sendMessage),
 
     // Requester
-    takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
+    takeLatest(RequesterTypes.BASE_REQUEST, getBase, [api, FixtureAPI]),
     takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),
     takeLatest(RequesterTypes.ROLES_REQUEST, getRoles, api),
+    takeLatest(RequesterTypes.PACK_REQUEST, getPack, FixtureAPI),
     takeLatest(RequesterTypes.ALLROLES_REQUEST, getAllRoles, api),
     takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
     takeLatest(RequesterTypes.PROPOSALS_REQUEST, getProposals, api),

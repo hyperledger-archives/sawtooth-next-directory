@@ -12,10 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Header
-Component encapsulating the application header */
 
 
 import React, { Component } from 'react';
@@ -30,17 +26,26 @@ import PropTypes from 'prop-types';
 
 
 import './Header.css';
+import * as utils from '../../services/Utils';
 import logo from '../../images/next-logo-primary.png';
 
 
+/**
+ *
+ * @class         Header
+ * @description   Header at the top of the viewport
+ *
+ *
+ */
 export default class Header extends Component {
 
   static propTypes = {
-    glyph:                  PropTypes.string,
     logout:                 PropTypes.func,
     me:                     PropTypes.object,
+    startAnimation:         PropTypes.func,
     openProposalsCount:     PropTypes.number,
-    recommended:            PropTypes.array,
+    recommendedPacks:       PropTypes.array,
+    recommendedRoles:       PropTypes.array,
   }
 
 
@@ -61,12 +66,20 @@ export default class Header extends Component {
   }
 
 
+  /**
+   * Close menu if mouse clicks outside
+   * @param {object} event Event
+   */
   handleClickOutside = (event) => {
     this.ref && !this.ref.contains(event.target) &&
       this.setState({ menuVisible: false });
   }
 
 
+  /**
+   * Use to get header DOM
+   * @param {object} node DOM node
+   */
   setRef = (node) => {
     this.ref = node;
   }
@@ -127,13 +140,23 @@ export default class Header extends Component {
 
 
   render () {
-    const { me, openProposalsCount } = this.props;
+    const {
+      me,
+      openProposalsCount,
+      recommendedPacks,
+      recommendedRoles,
+      startAnimation } = this.props;
     const { menuVisible } = this.state;
 
     return (
       <header className='next-header' ref={this.setRef}>
         <div id='next-header-logo'>
-          <Image as={Link} to='/' src={logo} size='tiny'/>
+          <Image
+            as={Link}
+            to={utils.createHomeLink(recommendedPacks, recommendedRoles)}
+            src={logo}
+            onClick={startAnimation}
+            size='tiny'/>
         </div>
         { me &&
         <div id='next-header-actions'>

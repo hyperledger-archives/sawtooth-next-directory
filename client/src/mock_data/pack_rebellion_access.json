@@ -1,7 +1,8 @@
 {
-  "id": "539d9dd3-6b4d-4136-ab67-b6ff6b307c9f",
-  "conversation_id": null,
-  "name": "Rebellion Access",
-  "description": "Lorem ipsum dolor sit amet.",
-  "roles": []
+  "data": {
+    "id": "539d9dd3-6b4d-4136-ab67-b6ff6b307c9f",
+    "name": "Rebellion Access",
+    "description": "Lorem ipsum dolor sit amet.",
+    "roles": []
+  }
 }

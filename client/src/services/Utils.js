@@ -46,6 +46,21 @@ export const createSlug = (name, parent) => {
 }
 
 
+export const createHomeLink = (packs = [], roles = []) => {
+  try {
+    if (packs && packs.length > 0)
+      return `/packs/${createSlug(packs[0].name)}`;
+    else if (roles && roles.length > 0 )
+      return `/roles/${createSlug(roles[0].name)}`;
+    return '/';
+  } catch (error) {
+    console.error(error);
+    console.error('Error creating home link');
+    return '/';
+  }
+}
+
+
 export const groupBy = (array, key) => {
   return array && array.reduce((prev, curr) => {
     prev[curr[key]] = prev[curr[key]] || [];

@@ -30,12 +30,10 @@ describe('RequesterNav component', () => {
     const div = document.createElement('div');
 
     const props = {
-      getRole: () => {},
       activeRole: null,
       getBase: () => {},
       getRole: (id) => {},
       isAuthenticated: true,
-      recommended: null,
       requests: null,
       routes: () => {}
     };

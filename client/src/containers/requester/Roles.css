@@ -20,6 +20,10 @@ limitations under the License.
   top: 170px;
 }
 
-#next-requester-roles-description {
+#next-requester-roles-description-container {
   margin: 30px 0;
+}
+
+#next-requester-roles-description {
+  padding: 20px 10px;
 }

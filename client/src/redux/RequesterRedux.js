@@ -33,8 +33,11 @@ const { Types, Creators } = createActions({
   roleRequest:       ['id'],
   roleSuccess:       ['role'],
   roleFailure:       ['error'],
-
   rolesRequest:      ['ids'],
+
+  packRequest:       ['id'],
+  packSuccess:       ['pack'],
+  packFailure:       ['error'],
 
   allrolesRequest:   null,
   allrolesSuccess:   ['roles'],
@@ -68,7 +71,7 @@ export const INITIAL_STATE = Immutable({
   activeRole:       null,
   error:            null,
   fetching:         null,
-  recommended:      null,
+  packs:            null,
   requests:         null,
   roles:            null,
 });
@@ -81,7 +84,9 @@ export const INITIAL_STATE = Immutable({
 //
 export const RequesterSelectors = {
   roles: (state) => state.requester.roles,
-  recommended: (state) =>
+  packs: (state) => state.requester.packs,
+
+  recommendedRoles: (state) =>
     state.requester.roles &&
     state.user.me &&
     state.requester.roles.filter(role =>
@@ -90,11 +95,27 @@ export const RequesterSelectors = {
       )
     ),
 
+  recommendedPacks: (state) =>
+    state.requester.packs &&
+    state.user.me &&
+    state.requester.packs.filter(pack =>
+      !state.user.me.proposals.find(proposal =>
+        proposal.object_id === pack.id
+      )
+    ),
+
   // Retrieve role by ID
   roleFromId: (state, id) =>
     state.requester.roles &&
     state.requester.roles.find(role =>
       role.id === id
+    ),
+
+  // Retrieve proposal by ID
+  packFromId: (state, id) =>
+    state.requester.packs &&
+    state.requester.packs.find(pack =>
+      pack.id === id
     ),
 
   // Retrieve proposal by ID
@@ -124,7 +145,7 @@ export const RequesterSelectors = {
    * Retrieve field ID from URL slug
    * @param   {object} state      Redux state
    * @param   {array}  collection Collection to search
-   * @param   {string} slug       URL slugh
+   * @param   {string} slug       URL slug
    * @param   {string} field      ID to retrieve
    * @returns {string}
    */
@@ -180,6 +201,13 @@ export const roleSuccess = (state, { role }) => {
   });
 }
 
+export const packSuccess = (state, { pack }) => {
+  return state.merge({
+    fetching: false,
+    packs: utils.merge(state.packs || [], [pack]),
+  });
+}
+
 export const allrolesSuccess = (state, { roles }) => {
   return state.merge({
     fetching: false,
@@ -197,7 +225,8 @@ export const proposalSuccess = (state, { proposal }) => {
 export const baseSuccess = (state, { base }) => {
   return state.merge({
     fetching: false,
-    roles: utils.merge(state.roles || [], base || []),
+    roles: utils.merge(state.roles || [], base[0].data.data || []),
+    packs: utils.merge(state.packs || [], base[1].data.data || []),
   });
 }
 
@@ -221,8 +250,11 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ROLE_REQUEST]: request,
   [Types.ROLE_SUCCESS]: roleSuccess,
   [Types.ROLE_FAILURE]: failure,
-
   [Types.ROLES_REQUEST]: request,
+
+  [Types.PACK_REQUEST]: request,
+  [Types.PACK_SUCCESS]: packSuccess,
+  [Types.PACK_FAILURE]: failure,
 
   [Types.ALLROLES_REQUEST]: request,
   [Types.ALLROLES_SUCCESS]: allrolesSuccess,

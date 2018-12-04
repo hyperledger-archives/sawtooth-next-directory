@@ -15,8 +15,8 @@ limitations under the License.
 
 
 import base from '../mock_data/base.json';
-
 import roles from '../mock_data/all_roles.json';
+import packs from '../mock_data/packs.json';
 
 
 import cloudOnboardingPack from '../mock_data/pack_cloud_onboarding.json';
@@ -39,7 +39,7 @@ export default {
     }
   },
 
-  getRole: (id) => {
+  getPack: (id) => {
     let data;
 
     switch (id) {
@@ -125,4 +125,10 @@ export default {
     }
   },
 
+  getPacks: () => {
+    return {
+      ok: true,
+      data: packs,
+    }
+  },
 }

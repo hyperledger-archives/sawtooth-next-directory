@@ -17,8 +17,6 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-
 import './RequesterHome.css';
 import * as utils from '../../services/Utils';
 
@@ -34,19 +32,21 @@ import * as utils from '../../services/Utils';
 export default class RequesterHome extends Component {
 
   static propTypes = {
-    activeRole:           PropTypes.object,
-    history:              PropTypes.object,
-    recommended:          PropTypes.array,
+    activeRole:             PropTypes.object,
+    history:                PropTypes.object,
+    recommendedPacks:       PropTypes.array,
+    recommendedRoles:       PropTypes.array,
   };
 
 
   componentDidUpdate (prevProps) {
-    const { history, recommended } = this.props;
-    const homeLink = recommended && recommended[0] ?
-      `/roles/${utils.createSlug(recommended[0].name)}` :
-      undefined;
-
-    homeLink && history.push(homeLink);
+    const { history, recommendedPacks, recommendedRoles } = this.props;
+    if (prevProps.recommendedPacks !== recommendedPacks ||
+        prevProps.recommendedRoles !== recommendedRoles) {
+      history.push(
+        utils.createHomeLink(recommendedPacks, recommendedRoles)
+      );
+    }
   }
 
 

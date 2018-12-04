@@ -34,7 +34,8 @@ export default class RequesterNav extends Component {
 
   static propTypes = {
     memberOf:           PropTypes.array,
-    recommended:        PropTypes.array,
+    recommendedPacks:   PropTypes.array,
+    recommendedRoles:   PropTypes.array,
     requests:           PropTypes.array,
     roleFromId:         PropTypes.func,
     startAnimation:     PropTypes.func,
@@ -42,30 +43,30 @@ export default class RequesterNav extends Component {
 
 
   renderLists () {
-    const { recommended, memberOf, requests, roleFromId } = this.props;
-
+    const {
+      recommendedPacks,
+      recommendedRoles,
+      memberOf,
+      requests,
+      roleFromId } = this.props;
     return (
       <div id='next-requester-nav-lists-container'>
         <NavList
-          dynamic
           listTitle='Your Packs / Roles'
           route='/roles'
           list={memberOf && memberOf.map(roleId => roleFromId(roleId))}/>
         <NavList
-          dynamic
           listTitle='Your Requests'
           route='/roles'
           list={requests}/>
         <NavList
-          dynamic
           listTitle='Recommended Packs'
           route='/packs'
-          list={[]}/>
+          list={recommendedPacks}/>
         <NavList
-          dynamic
           listTitle='Recommended Roles'
           route='/roles'
-          list={recommended}/>
+          list={recommendedRoles}/>
       </div>
     );
   }

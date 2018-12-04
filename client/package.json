@@ -58,6 +58,7 @@
   ],
   "eslintIgnore": [
     "**/coverage/**",
+    "**/build/**",
     "**/docs/**",
     "**/e2e/**",
     "**/semantic/**",

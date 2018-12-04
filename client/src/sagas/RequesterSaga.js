@@ -33,8 +33,11 @@ import UserActions from '../redux/UserRedux';
  */
 export function * getBase (api, action) {
   try {
-    const res = yield call(api.getRoles);
-    yield put(RequesterActions.baseSuccess(res.data.data));
+    const res = yield all([
+      call(api[0].getRoles),
+      call(api[1].getPacks),
+    ]);
+    yield put(RequesterActions.baseSuccess(res));
   } catch (err) {
     console.error(err);
   }
@@ -67,6 +70,22 @@ export function * getRoles (api, action) {
   try {
     const { ids } = action;
     if (ids.length > 0) yield all(ids.map(id => fork(fetchRole, api, id)));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Get detailed info for a specific pack
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * getPack (api, action) {
+  try {
+    const { id } = action;
+    yield fetchPack(api, id);
   } catch (err) {
     console.error(err);
   }
@@ -163,6 +182,24 @@ export function * fetchRole (api, id) {
     res.ok ?
       yield put(RequesterActions.roleSuccess(res.data.data)) :
       yield put(RequesterActions.roleFailure(res.data.error));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Helper for getting detailed info for a specific pack
+ * @param {object} api    API service
+ * @param {object} id     Pack ID
+ * @generator
+ */
+export function * fetchPack (api, id) {
+  try {
+    const res = yield call(api.getPack, id);
+    res.ok ?
+      yield put(RequesterActions.packSuccess(res.data.data)) :
+      yield put(RequesterActions.packFailure(res.data.error));
   } catch (err) {
     console.error(err);
   }
