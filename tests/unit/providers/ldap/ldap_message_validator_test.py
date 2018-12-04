@@ -15,30 +15,30 @@
 import pytest
 
 from rbac.providers.ldap import ldap_message_validator
-from rbac.providers.error.unrecoverable_error import LdapValidationException
+from rbac.providers.error.unrecoverable_error import LdapMessageValidationException
 
 
 def test_validate_missing_data_type():
     """ensures a failure occurs when 'data_type' field is missing"""
-    with pytest.raises(LdapValidationException) as response:
-        next_payload = {"data": {"distinguished_name": "yo"}}
-        ldap_message_validator.validate_next_payload(next_payload)
+    with pytest.raises(LdapMessageValidationException) as response:
+        ldap_payload = {"data": {"distinguished_name": "yo"}}
+        ldap_message_validator.validate_ldap_payload(ldap_payload)
         assert response == "Required field: 'data_type' is missing"
 
 
 def test_validate_missing_data_field():
     """ensures a failure occurs when 'data' field is missing"""
-    with pytest.raises(LdapValidationException) as response:
-        next_payload = {"data_type": "user"}
-        ldap_message_validator.validate_next_payload(next_payload)
+    with pytest.raises(LdapMessageValidationException) as response:
+        ldap_payload = {"data_type": "user"}
+        ldap_message_validator.validate_ldap_payload(ldap_payload)
         assert response == "Required field: 'data' is missing"
 
 
 def test_validate_invalid_data_type():
     """ensures a failure occurs when 'data_type' field is invalid"""
-    with pytest.raises(LdapValidationException) as response:
-        next_payload = {"data": {"distinguished_name": "yo"}, "data_type": "no"}
-        ldap_message_validator.validate_next_payload(next_payload)
+    with pytest.raises(LdapMessageValidationException) as response:
+        ldap_payload = {"data": {"distinguished_name": "yo"}, "data_type": "no"}
+        ldap_message_validator.validate_ldap_payload(ldap_payload)
         assert (
             response
             == "Invalid value for 'data_type'. 'data_type' must be in: ['user', 'group']"
@@ -47,15 +47,15 @@ def test_validate_invalid_data_type():
 
 def test_validate_missing_distinguished_name():
     """ensures a failure occurs when 'distinguished_name' field is missing"""
-    with pytest.raises(LdapValidationException) as response:
-        next_payload = {"data": {}, "data_type": "user"}
-        ldap_message_validator.validate_next_payload(next_payload)
+    with pytest.raises(LdapMessageValidationException) as response:
+        ldap_payload = {"data": {}, "data_type": "user"}
+        ldap_message_validator.validate_ldap_payload(ldap_payload)
         assert response == "'data' is missing an entry for: 'distinguished_name'"
 
 
 def test_validate_empty_distinguished_name():
     """ensures a failure occurs when 'distinguished_name' field is empty"""
-    with pytest.raises(LdapValidationException) as response:
-        next_payload = {"data": {"distinguished_name": ""}, "data_type": "user"}
-        ldap_message_validator.validate_next_payload(next_payload)
+    with pytest.raises(LdapMessageValidationException) as response:
+        ldap_payload = {"data": {"distinguished_name": ""}, "data_type": "user"}
+        ldap_message_validator.validate_ldap_payload(ldap_payload)
         assert response == "'data'.'distinguished_name' cannot be empty"

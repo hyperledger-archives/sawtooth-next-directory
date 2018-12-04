@@ -41,6 +41,7 @@ WORKDIR /project/hyperledger-rbac
 RUN pip3 install \
         rethinkdb \
         ldap3 \
-        pyasn1==0.4.4
+        pyasn1==0.4.4 \
+        pytz
 
 CMD [ "./bin/rbac-providers-ldap" ]
