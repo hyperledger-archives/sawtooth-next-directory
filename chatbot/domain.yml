@@ -114,8 +114,8 @@ templates:
     - text: How may I serve you?
 
   utter_help:
-    -text: >-
-        I am here to help get you access to resources
+    - text: >-
+        I am here to help you get access to resources
         you need.
 
   utter_insult:

@@ -72,7 +72,7 @@ class Signup extends Component {
       <div id='next-login-container'>
         <Grid container centered columns={2}>
           <Grid.Column id='next-login-column'>
-            <Header color='grey' textAlign='center'>
+            <Header inverted textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
               <h1>Create an account</h1>
             </Header>

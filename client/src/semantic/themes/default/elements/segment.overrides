@@ -31,3 +31,20 @@
   background: #f7f7f7;
   box-shadow: none;
 }
+
+.floated.segment.compact {
+  border-radius: 19px;
+  margin-bottom: 0;
+  padding: 11px 17px;
+}
+
+.floated.segment.compact.left {
+  border-bottom-left-radius: 0;
+  box-shadow: 0px 12px 18px #d2cece45;
+  color: #212c3a;
+  margin-left: 15px;
+}
+
+.floated.segment.compact.right {
+   border-bottom-right-radius: 0;
+}

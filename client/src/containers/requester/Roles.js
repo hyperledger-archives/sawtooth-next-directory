@@ -106,12 +106,12 @@ export class Roles extends Component {
                 {...this.props}/>
             }
             <Container id='next-requester-roles-description-container'>
-              <Label horizontal>Roles</Label>
+              <Label>Roles</Label>
               <div id='next-requester-roles-description'>
                 Lorem ipsum dolor sit amet.
               </div>
             </Container>
-            <Label horizontal>Members</Label>
+            <Label>Members</Label>
             <MemberList {...this.props}
               members={this.role.members}
               owners={this.role.owners}/>

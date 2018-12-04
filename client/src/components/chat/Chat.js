@@ -19,6 +19,7 @@ Component encapsulating the chat view */
 
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   Button,
   Checkbox,
@@ -40,7 +41,7 @@ import chatApprover from '../../mock_data/conversation_action.1.json';
 
 
 // TODO: Break out into child components
-export default class Chat extends Component {
+class Chat extends Component {
 
   componentDidMount () {
     const { id, isSocketOpen, messages, sendMessage, type } = this.props;
@@ -234,3 +235,16 @@ export default class Chat extends Component {
   }
 
 }
+
+
+const mapStateToProps = (state) => {
+  return {
+    fetching: state.chat.fetching,
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);

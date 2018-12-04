@@ -18,8 +18,9 @@ limitations under the License.
   --header-bg-color: #1d1e27;
   --header-color: #fff;
   --nav-bg-color: #212c3a;
-  --auth-bg-color: #fff;
-  --auth-fg-color: #212c3a;
+  --auth-fg-color: #fff;
+  --auth-fg-highlight-color: #ff92c5;
+  --auth-bg-color: linear-gradient(#870bcc, #f7007f);
   --nav-heading-color: #fff;
   --nav-list-color: #727c85;
   --inverted-text-color: #727c85;

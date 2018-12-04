@@ -143,7 +143,7 @@ export default class LoginForm extends Component {
                 type='button'
                 icon='left arrow'
                 labelPosition='left'
-                onClick={() => this.setFlow(0)} />
+                onClick={() => this.setFlow(0)}/>
               <Form.Field id='next-login-form-password'>
                 <Input
                   autoFocus
@@ -152,7 +152,7 @@ export default class LoginForm extends Component {
                   type='password'
                   placeholder='Password'
                   value={password}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
                 <Label>
                   <Button
                     className='link'
@@ -167,7 +167,7 @@ export default class LoginForm extends Component {
                   content='Login'
                   disabled={!validPassword}
                   icon='right arrow'
-                  labelPosition='right' />
+                  labelPosition='right'/>
               </Container>
             </Form>
           </div>

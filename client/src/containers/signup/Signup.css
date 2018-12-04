@@ -15,7 +15,7 @@ limitations under the License.
 
 
 #next-signup-form-password .ui.label {
-  color: var(--inverted-text-color);
+  color: var(--auth-fg-color);
 }
 
 #next-signup-form-1 {
