@@ -21,8 +21,10 @@ FROM hyperledger/sawtooth-validator:1.0
 
 RUN apt-get update \
  && apt-get install -y --allow-unauthenticated -q \
+        locales \
         python3-pip \
         python3-sawtooth-sdk \
+ && locale-gen en_US.UTF-8 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install -y  apt-utils
@@ -30,23 +32,24 @@ RUN apt-get update && apt-get install -y  apt-utils
 RUN pip3 install -U pip setuptools
 
 RUN pip3 install \
-        grpcio-tools \
-        itsdangerous \
-        rethinkdb \
-        sanic==0.7.0
+        grpcio-tools==1.16.1 \
+        itsdangerous==1.1.0 \
+        rethinkdb==2.3.0.post6 \
+        sanic==0.8.3 \
+        watchdog==0.9.0
 
+ENV LC_ALL=en_US.UTF-8
 WORKDIR /project/hyperledger-rbac
 # -----------------------------------------------------------------------------
 # End base docker image config for Hyperledger RBAC Next Directory
 # -----------------------------------------------------------------------------
 
-RUN apt-get install -y --allow-unauthenticated -q \
-&& pip3 install \
-    pycodestyle \
-    pylint \
-    pytest \
-    dredd_hooks \
-    pytest-cov \
-    pytest-env
+RUN pip3 install \
+    pytest-sanic==0.1.15 \
+    pycodestyle==2.4.0 \
+    pylint==2.2.2 \
+    pytest==4.0.1 \
+    dredd_hooks==0.2. \
+    pytest-cov==2.6.0 \
+    pytest-env==0.6.2
 
-WORKDIR /project/hyperledger-rbac
