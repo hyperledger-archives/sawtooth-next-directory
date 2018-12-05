@@ -55,12 +55,15 @@ def get_last_sync(source, sync_type):
         last_sync = (
             r.table("sync_tracker")
             .filter({"source": source, "sync_type": sync_type})
-            .coerce_to("array")
+            .max("timestamp")
+            .coerce_to("object")
             .run()
         )
         return last_sync
     except (r.ReqlOpFailedError, r.ReqlDriverError) as err:
         raise ExpectedError(err)
+    except r.ReqlNonExistenceError:
+        LOGGER.debug("The sync_tracker table is empty.")
     except Exception as err:
         LOGGER.warning(type(err).__name__)
         raise err
