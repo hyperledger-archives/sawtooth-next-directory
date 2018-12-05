@@ -60,7 +60,7 @@ class RejectManagerTest(TestAssertions):
         reason = helper.user.manager.propose.reason()
         proposal_id = helper.user.manager.propose.id()
         proposal_address = rbac.user.manager.reject.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_user_address = rbac.user.address(user_key.public_key)
         message = rbac.user.manager.reject.make(
@@ -92,7 +92,7 @@ class RejectManagerTest(TestAssertions):
         reason = helper.user.manager.propose.reason()
         proposal_id = helper.user.manager.propose.id()
         proposal_address = rbac.user.manager.reject.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_user_address = rbac.user.address(user_key.public_key)
         message = rbac.user.manager.reject.make(
@@ -128,14 +128,14 @@ class RejectManagerTest(TestAssertions):
         message = rbac.user.manager.reject.make(
             proposal_id=proposal.proposal_id,
             user_id=proposal.object_id,
-            manager_id=proposal.target_id,
+            manager_id=proposal.related_id,
             reason=reason,
         )
         reject, status = rbac.user.manager.reject.create(
             signer_keypair=manager_key,
             message=message,
             object_id=proposal.object_id,
-            target_id=proposal.target_id,
+            related_id=proposal.related_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(reject, protobuf.proposal_state_pb2.Proposal)
@@ -145,6 +145,6 @@ class RejectManagerTest(TestAssertions):
         )
         self.assertEqual(reject.proposal_id, proposal.proposal_id)
         self.assertEqual(reject.object_id, proposal.object_id)
-        self.assertEqual(reject.target_id, proposal.target_id)
+        self.assertEqual(reject.related_id, proposal.related_id)
         self.assertEqual(reject.close_reason, reason)
         self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)

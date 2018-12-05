@@ -60,7 +60,7 @@ class ProposeAddTaskOwner(ProposalPropose):
         user_address = addresser.user.address(message.user_id)
         task_address = addresser.task.address(message.task_id)
         proposal_address = self.address(
-            object_id=message.task_id, target_id=message.user_id
+            object_id=message.task_id, related_id=message.user_id
         )
 
         inputs = [relationship_address, task_address, user_address, proposal_address]
@@ -83,7 +83,7 @@ class ProposeAddTaskOwner(ProposalPropose):
             inputs=inputs,
             input_state=input_state,
             object_id=message.task_id,
-            target_id=message.user_id,
+            related_id=message.user_id,
         ):
             raise ValueError(
                 "User {} is already an owner of task {}".format(

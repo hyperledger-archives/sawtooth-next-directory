@@ -81,9 +81,9 @@ class CreateRoleTestHelper(TestAssertions):
         self.assertStatusSuccess(status)
         self.assertEqualMessage(role, message, rbac.role.message_fields_not_in_state)
         self.assertTrue(
-            rbac.role.owner.exists(object_id=role.role_id, target_id=user.user_id)
+            rbac.role.owner.exists(object_id=role.role_id, related_id=user.user_id)
         )
         self.assertTrue(
-            rbac.role.admin.exists(object_id=role.role_id, target_id=user.user_id)
+            rbac.role.admin.exists(object_id=role.role_id, related_id=user.user_id)
         )
         return role, user, keypair

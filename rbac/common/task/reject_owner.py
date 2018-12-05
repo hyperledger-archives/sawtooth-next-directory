@@ -67,7 +67,7 @@ class RejectAddTaskOwner(ProposalReject):
         signer_user_address = addresser.user.address(signer_keypair.public_key)
 
         proposal_address = self.address(
-            object_id=message.task_id, target_id=message.user_id
+            object_id=message.task_id, related_id=message.user_id
         )
 
         inputs = [
@@ -95,12 +95,12 @@ class RejectAddTaskOwner(ProposalReject):
             inputs=inputs,
             input_state=input_state,
             object_id=message.task_id,
-            target_id=signer,
+            related_id=signer,
         ) and not addresser.task.admin.exists_in_state_inputs(
             inputs=inputs,
             input_state=input_state,
             object_id=message.task_id,
-            target_id=signer,
+            related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an owner or admin of the task {}".format(

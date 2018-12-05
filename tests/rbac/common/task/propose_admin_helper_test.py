@@ -66,4 +66,4 @@ class ProposeTaskAdminHelperTest(TestAssertions):
         self.assertIsInstance(user_key, Key)
         self.assertIsInstance(task_owner_key, Key)
         self.assertEqual(proposal.object_id, task.task_id)
-        self.assertEqual(proposal.target_id, user.user_id)
+        self.assertEqual(proposal.related_id, user.user_id)

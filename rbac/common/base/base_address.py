@@ -40,7 +40,7 @@ class Address:
         object_id,
         related_type,
         relationship_type,
-        target_id,
+        related_id,
     ):
         self._address = address
         self._address_type = address_type
@@ -48,7 +48,7 @@ class Address:
         self._object_id = object_id
         self._related_type = related_type
         self._relationship_type = relationship_type
-        self._target_id = target_id
+        self._related_id = related_id
 
     @property
     def address(self):
@@ -82,11 +82,11 @@ class Address:
         return self._relationship_type
 
     @property
-    def target_id(self):
-        """The hash of a target_id (the target_id
+    def related_id(self):
+        """The hash of a related_id (the related_id
         itself if it is a 12-byte unique identifier)
-        None if no target_id."""
-        return self._target_id
+        None if no related_id."""
+        return self._related_id
 
     def __repr__(self):
         """Return a string representation of the object"""
@@ -98,7 +98,7 @@ class Address:
                 "object_id": self.object_id,
                 "related_type": self.related_type.name,
                 "relationship_type": self.relationship_type.name,
-                "target_id": self.target_id,
+                "related_id": self.related_id,
             }
         )
 
@@ -132,7 +132,7 @@ class AddressBase(StateBase):
             + r"$"
         )
 
-    def _address(self, object_id, target_id):
+    def _address(self, object_id, related_id):
         """Makes an address using the address scheme"""
         address = (
             family.namespace
@@ -141,7 +141,7 @@ class AddressBase(StateBase):
             + self.hash(object_id)
             + hex(self.related_type.value)[2:].zfill(4)
             + hex(self.relationship_type.value)[2:].zfill(2)
-            + self.hash(target_id)
+            + self.hash(related_id)
             + PATTERN_ZERO_BYTE
         )
         return address
@@ -157,7 +157,7 @@ class AddressBase(StateBase):
                 object_id=self.get_object_id(address=address),
                 related_type=self.related_type,
                 relationship_type=self.relationship_type,
-                target_id=self.get_target_id(address=address),
+                related_id=self.get_related_id(address=address),
             )
         return None
 
@@ -204,9 +204,9 @@ class AddressBase(StateBase):
             + self.relationship_type.name
         )
 
-    def address(self, object_id, target_id=None):
+    def address(self, object_id, related_id=None):
         """Makes a blockchain address of this address type"""
-        return self._address(object_id=object_id, target_id=target_id)
+        return self._address(object_id=object_id, related_id=related_id)
 
     def address_is(self, address):
         """Returns the address type if the address is of the address type
@@ -238,8 +238,8 @@ class AddressBase(StateBase):
         is a 12-byte unique identifier), as encoded in a given address"""
         return address[14:38]
 
-    def get_target_id(self, address):
-        """Returns the hash of a target_id (or the target_id itself if it
+    def get_related_id(self, address):
+        """Returns the hash of a related_id (or the related_id itself if it
         is a 12-byte unique identifier), as encoded in a given address"""
         value = address[44:68]
         if value == PATTERN_ZERO_BYTE * 12:

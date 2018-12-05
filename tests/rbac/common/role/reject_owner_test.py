@@ -134,14 +134,14 @@ class RejectRoleAddOwnerTest(TestAssertions):
         message = rbac.role.owner.reject.make(
             proposal_id=proposal.proposal_id,
             role_id=proposal.object_id,
-            user_id=proposal.target_id,
+            user_id=proposal.related_id,
             reason=reason,
         )
         reject, status = rbac.role.owner.reject.create(
             signer_keypair=role_owner_key,
             message=message,
             object_id=proposal.object_id,
-            target_id=proposal.target_id,
+            related_id=proposal.related_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(reject, protobuf.proposal_state_pb2.Proposal)
@@ -150,7 +150,7 @@ class RejectRoleAddOwnerTest(TestAssertions):
         )
         self.assertEqual(reject.proposal_id, proposal.proposal_id)
         self.assertEqual(reject.object_id, proposal.object_id)
-        self.assertEqual(reject.target_id, proposal.target_id)
+        self.assertEqual(reject.related_id, proposal.related_id)
         self.assertEqual(reject.close_reason, reason)
         self.assertEqual(reject.closer, role_owner_key.public_key)
         self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)

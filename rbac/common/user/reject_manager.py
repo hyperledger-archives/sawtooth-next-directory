@@ -60,7 +60,7 @@ class RejectUpdateUserManager(ProposalReject):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
         proposal_address = addresser.proposal.address(
-            object_id=message.user_id, target_id=message.manager_id
+            object_id=message.user_id, related_id=message.manager_id
         )
         signer_user_address = addresser.user.address(signer_keypair.public_key)
 

@@ -142,7 +142,7 @@ class ProposeRoleAddOwnerTest(TestAssertions):
             signer_keypair=signer_keypair,
             message=message,
             object_id=role.role_id,
-            target_id=user.user_id,
+            related_id=user.user_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -151,6 +151,6 @@ class ProposeRoleAddOwnerTest(TestAssertions):
         )
         self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, role.role_id)
-        self.assertEqual(proposal.target_id, user.user_id)
+        self.assertEqual(proposal.related_id, user.user_id)
         self.assertEqual(proposal.opener, signer_keypair.public_key)
         self.assertEqual(proposal.open_reason, reason)

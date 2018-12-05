@@ -131,10 +131,10 @@ class SysAdminAddress(AddressBase):
         """The related type from AddressSpace implemented by this class"""
         return addresser.RelationshipType.ATTRIBUTES
 
-    def address(self, object_id=None, target_id=None):
+    def address(self, object_id=None, related_id=None):
         """Makes a blockchain address of this address type
         (sysadmin has no object_id, there is only one sysadmin role)"""
-        return self._address(object_id=object_id, target_id=target_id)
+        return self._address(object_id=object_id, related_id=related_id)
 
 
 SYSADMIN_ADDRESS = SysAdminAddress()

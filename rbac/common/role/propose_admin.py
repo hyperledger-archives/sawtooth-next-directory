@@ -60,7 +60,7 @@ class ProposeAddRoleAdmin(ProposalPropose):
         user_address = addresser.user.address(message.user_id)
         role_address = addresser.role.address(message.role_id)
         proposal_address = self.address(
-            object_id=message.role_id, target_id=message.user_id
+            object_id=message.role_id, related_id=message.user_id
         )
 
         inputs = [relationship_address, role_address, user_address, proposal_address]
@@ -83,7 +83,7 @@ class ProposeAddRoleAdmin(ProposalPropose):
             inputs=inputs,
             input_state=input_state,
             object_id=message.role_id,
-            target_id=message.user_id,
+            related_id=message.user_id,
         ):
             raise ValueError(
                 "User {} is already an admin of role {}".format(

@@ -68,4 +68,4 @@ class ProposeRoleTaskHelperTest(TestAssertions):
         self.assertIsInstance(role_owner_key, Key)
         self.assertIsInstance(task_owner_key, Key)
         self.assertEqual(proposal.object_id, role.role_id)
-        self.assertEqual(proposal.target_id, task.task_id)
+        self.assertEqual(proposal.related_id, task.task_id)

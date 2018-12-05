@@ -144,14 +144,14 @@ class ConfirmRoleAddMemberTest(TestAssertions):
         message = rbac.role.member.confirm.make(
             proposal_id=proposal.proposal_id,
             role_id=proposal.object_id,
-            user_id=proposal.target_id,
+            user_id=proposal.related_id,
             reason=reason,
         )
         confirm, status = rbac.role.member.confirm.create(
             signer_keypair=role_owner_key,
             message=message,
             object_id=proposal.object_id,
-            target_id=proposal.target_id,
+            related_id=proposal.related_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(confirm, protobuf.proposal_state_pb2.Proposal)
@@ -160,11 +160,11 @@ class ConfirmRoleAddMemberTest(TestAssertions):
         )
         self.assertEqual(confirm.proposal_id, proposal.proposal_id)
         self.assertEqual(confirm.object_id, proposal.object_id)
-        self.assertEqual(confirm.target_id, proposal.target_id)
+        self.assertEqual(confirm.related_id, proposal.related_id)
         self.assertEqual(confirm.close_reason, reason)
         self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
         self.assertTrue(
             rbac.role.member.exists(
-                object_id=proposal.object_id, target_id=proposal.target_id
+                object_id=proposal.object_id, related_id=proposal.related_id
             )
         )

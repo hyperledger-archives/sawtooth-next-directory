@@ -60,7 +60,7 @@ class ProposeAddRoleTask(ProposalPropose):
         task_address = addresser.task.address(message.task_id)
         role_address = addresser.role.address(message.role_id)
         proposal_address = self.address(
-            object_id=message.role_id, target_id=message.task_id
+            object_id=message.role_id, related_id=message.task_id
         )
         signer_user_address = addresser.user.address(signer_keypair.public_key)
         signer_owner_address = addresser.role.owner.address(
@@ -95,7 +95,7 @@ class ProposeAddRoleTask(ProposalPropose):
             inputs=inputs,
             input_state=input_state,
             object_id=message.role_id,
-            target_id=message.task_id,
+            related_id=message.task_id,
         ):
             raise ValueError(
                 "Task {} is already a task of role {}".format(
@@ -106,7 +106,7 @@ class ProposeAddRoleTask(ProposalPropose):
             inputs=inputs,
             input_state=input_state,
             object_id=message.role_id,
-            target_id=signer,
+            related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an owner of the role {}".format(

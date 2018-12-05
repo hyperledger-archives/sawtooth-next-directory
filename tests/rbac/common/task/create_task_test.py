@@ -127,10 +127,10 @@ class CreateTaskTest(TestAssertions):
         task = rbac.task.get(object_id=task_id)
         self.assertEqualMessage(task, message, rbac.task.message_fields_not_in_state)
         self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, target_id=user.user_id)
+            rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
         )
         self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, target_id=user.user_id)
+            rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
         )
 
     @pytest.mark.create_task2
@@ -152,14 +152,14 @@ class CreateTaskTest(TestAssertions):
         task = rbac.task.get(object_id=task_id)
         self.assertEqualMessage(task, message, rbac.task.message_fields_not_in_state)
         self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, target_id=user.user_id)
+            rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
         )
         self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, target_id=user.user_id)
+            rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
         )
         self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, target_id=user2.user_id)
+            rbac.task.owner.exists(object_id=task.task_id, related_id=user2.user_id)
         )
         self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, target_id=user2.user_id)
+            rbac.task.admin.exists(object_id=task.task_id, related_id=user2.user_id)
         )

@@ -38,7 +38,7 @@ def apply_propose(header, payload, state):
     )
 
     proposal_address = addresser.proposal.address(
-        object_id=role_admins_payload.role_id, target_id=role_admins_payload.user_id
+        object_id=role_admins_payload.role_id, related_id=role_admins_payload.user_id
     )
 
     state_entries = role_validator.validate_role_rel_proposal(
@@ -78,7 +78,7 @@ def apply_propose_remove(header, payload, state):
     )
 
     proposal_address = addresser.proposal.address(
-        object_id=role_admins_payload.role_id, target_id=role_admins_payload.user_id
+        object_id=role_admins_payload.role_id, related_id=role_admins_payload.user_id
     )
 
     state_entries = role_validator.validate_role_rel_proposal(

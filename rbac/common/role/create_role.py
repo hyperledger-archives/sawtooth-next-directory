@@ -129,20 +129,20 @@ class CreateRole(BaseMessage):
             raise ValueError("The users {} were not found".format(users_not_found))
 
     def apply_update(
-        self, message, object_id, target_id, outputs, output_state, signer
+        self, message, object_id, related_id, outputs, output_state, signer
     ):
         """Create admin and owner addresses"""
         for admin in message.admins:
             addresser.role.admin.create_relationship(
                 object_id=object_id,
-                target_id=admin,
+                related_id=admin,
                 outputs=outputs,
                 output_state=output_state,
             )
         for admin in message.owners:
             addresser.role.owner.create_relationship(
                 object_id=object_id,
-                target_id=admin,
+                related_id=admin,
                 outputs=outputs,
                 output_state=output_state,
             )

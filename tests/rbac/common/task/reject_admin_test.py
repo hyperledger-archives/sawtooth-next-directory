@@ -121,14 +121,14 @@ class RejectTaskAddAdminTest(TestAssertions):
         message = rbac.task.admin.reject.make(
             proposal_id=proposal.proposal_id,
             task_id=proposal.object_id,
-            user_id=proposal.target_id,
+            user_id=proposal.related_id,
             reason=reason,
         )
         reject, status = rbac.task.admin.reject.create(
             signer_keypair=task_admin_key,
             message=message,
             object_id=proposal.object_id,
-            target_id=proposal.target_id,
+            related_id=proposal.related_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(reject, protobuf.proposal_state_pb2.Proposal)
@@ -137,7 +137,7 @@ class RejectTaskAddAdminTest(TestAssertions):
         )
         self.assertEqual(reject.proposal_id, proposal.proposal_id)
         self.assertEqual(reject.object_id, proposal.object_id)
-        self.assertEqual(reject.target_id, proposal.target_id)
+        self.assertEqual(reject.related_id, proposal.related_id)
         self.assertEqual(reject.close_reason, reason)
         self.assertEqual(reject.closer, task_admin_key.public_key)
         self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)

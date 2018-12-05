@@ -85,9 +85,9 @@ class StateBase:
         return self._name_lower + "_id"
 
     @property
-    def _target_id(self):
-        """The attribute name for the target_id if not target_id"""
-        return "target_id"
+    def _related_id(self):
+        """The attribute name for the related_id if not related_id"""
+        return "related_id"
 
     @property
     def _name_upper_plural(self):
@@ -203,7 +203,7 @@ class StateBase:
         Override where desired behavior differs"""
         return hash_id(value)
 
-    def address(self, object_id, target_id):
+    def address(self, object_id, related_id):
         """Makes an address for the given state object"""
         raise NotImplementedError("Class must implement this method")
 
@@ -221,16 +221,16 @@ class StateBase:
             return getattr(item, self._name_id)
         return None
 
-    def _get_target_id(self, item):
-        """Find the target_id attribute value on an object
-        Prefers target_id over specific IDs like user_id"""
-        if hasattr(item, "target_id"):
-            return getattr(item, "target_id")
-        if self._target_id != "target_id" and hasattr(item, self._target_id):
-            return getattr(item, self._target_id)
+    def _get_related_id(self, item):
+        """Find the related_id attribute value on an object
+        Prefers related_id over specific IDs like user_id"""
+        if hasattr(item, "related_id"):
+            return getattr(item, "related_id")
+        if self._related_id != "related_id" and hasattr(item, self._related_id):
+            return getattr(item, self._related_id)
         return None
 
-    def _find_in_state_container(self, container, address, object_id, target_id=None):
+    def _find_in_state_container(self, container, address, object_id, related_id=None):
         """Finds the state_object within a given state_container for the
         object type implemented by this class; returns None if not found"""
         items = list(getattr(container, self._state_container_list_name))
@@ -241,20 +241,20 @@ class StateBase:
                 "%s container for %s target %s has more than one record at address %s",
                 self._name_title,
                 object_id,
-                target_id,
+                related_id,
                 address,
             )
         for item in items:
             if (
                 object_id == self._get_object_id(item)
-                and target_id == self._get_target_id(item)
-            ) or (object_id == self._get_object_id(item) and target_id is None):
+                and related_id == self._get_related_id(item)
+            ) or (object_id == self._get_object_id(item) and related_id is None):
                 return item
         LOGGER.warning(
             "%s not found in container for %s target %s at address %s\n%s",
             self._name_title,
             object_id,
-            target_id,
+            related_id,
             address,
             container,
         )
@@ -278,16 +278,16 @@ class StateBase:
         """Get the list of blockchain addresses"""
         return state_client.get_addresses(context=context, addresses=addresses)
 
-    def get_from_state_context(self, context, object_id, target_id=None):
+    def get_from_state_context(self, context, object_id, related_id=None):
         """Gets an address from the blockchain state"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         container = self.get_address(context=context, address=address)
         if container:
             return self._find_in_state_container(
                 container=container,
                 address=address,
                 object_id=object_id,
-                target_id=target_id,
+                related_id=related_id,
             )
         return None
 
@@ -301,9 +301,9 @@ class StateBase:
         store = getattr(container, self._state_container_list_name)[0]
         return container, store
 
-    def get_from_input_state(self, inputs, input_state, object_id, target_id=None):
+    def get_from_input_state(self, inputs, input_state, object_id, related_id=None):
         """Get an address from the transaction input state"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         if address not in inputs:
             raise ValueError(
                 "{} address {} for {} {} target {} was not sent as an input address".format(
@@ -311,7 +311,7 @@ class StateBase:
                     address,
                     self._name_id,
                     object_id,
-                    target_id,
+                    related_id,
                 )
             )
         if address not in input_state:
@@ -322,96 +322,101 @@ class StateBase:
                 container=container,
                 address=address,
                 object_id=object_id,
-                target_id=target_id,
+                related_id=related_id,
             )
         return None
 
-    def get_from_output_state(self, outputs, output_state, object_id, target_id=None):
+    def get_from_output_state(self, outputs, output_state, object_id, related_id=None):
         """Get an address from the transaction output state"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         if address not in outputs:
             raise ValueError(
                 "{} address {} for {} {} target {} was not sent as an output address".format(
-                    self._name_title, address, self._name_id, object_id, target_id
+                    self._name_title, address, self._name_id, object_id, related_id
                 )
             )
         if address not in output_state:
             raise ValueError(
                 "{} address {} for {} {} target {} was not in output state".format(
-                    self._name_title, address, self._name_id, object_id, target_id
+                    self._name_title, address, self._name_id, object_id, related_id
                 )
             )
         container = output_state[address]
         if not container:
             raise ValueError(
                 "{} address {} for {} {} target {} had no container in output state".format(
-                    self._name_title, address, self._name_id, object_id, target_id
+                    self._name_title, address, self._name_id, object_id, related_id
                 )
             )
         return self._find_in_state_container(
             container=container,
             address=address,
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
         )
 
     def set_output_state_attribute(
-        self, name, value, outputs, output_state, object_id, target_id=None
+        self, name, value, outputs, output_state, object_id, related_id=None
     ):
         """Sets an attribute in the state store object"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         store = self.get_from_output_state(
             outputs=outputs,
             output_state=output_state,
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
         )
         if not store:
             raise ValueError(
                 "set_output_state_attribute error: {} address {} for {} {} target {} had no store object in output state".format(
-                    self._name_title, address, self._name_id, object_id, target_id
+                    self._name_title, address, self._name_id, object_id, related_id
                 )
             )
         if not hasattr(store, name):
             raise KeyError(
                 "{} address {} for {} {} target {} store has no attribute '{}'".format(
-                    self._name_title, address, self._name_id, object_id, target_id, name
+                    self._name_title,
+                    address,
+                    self._name_id,
+                    object_id,
+                    related_id,
+                    name,
                 )
             )
         setattr(store, name, value)
         output_state["changed"].add(address)
 
-    def address_exists(self, context, object_id, target_id=None):
+    def address_exists(self, context, object_id, related_id=None):
         """Checks to see if an address already exists on the blockchain
         for a given object or object relationship"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         content = state_client.get_address(context=context, address=address)
         if content is None:
             return False
         return True
 
-    def exists_in_state(self, context, object_id, target_id=None, fast_check=False):
+    def exists_in_state(self, context, object_id, related_id=None, fast_check=False):
         """Checks an object exists in the blockchain
         fast_check False will see if the object really exists and isn't a hash collision
         fast_check True will only check to see the address exists (generally sufficient)"""
         if fast_check:  # check address exists only, not contents of address
             return self.address_exists(
-                context=context, object_id=object_id, target_id=target_id
+                context=context, object_id=object_id, related_id=related_id
             )
 
         result = self.get_from_state_context(
-            context=context, object_id=object_id, target_id=target_id
+            context=context, object_id=object_id, related_id=related_id
         )
         return bool(result is not None)
 
-    def exists_in_inputs(self, inputs, object_id, target_id=None):
+    def exists_in_inputs(self, inputs, object_id, related_id=None):
         """Check an address exists in transaction inputs"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         return bool(address in inputs)
 
-    def exists_in_outputs(self, outputs, object_id, target_id=None):
+    def exists_in_outputs(self, outputs, object_id, related_id=None):
         """Check an address exists in transaction outputs"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         return bool(address in outputs)
 
     def exists_in_state_inputs(
@@ -419,12 +424,12 @@ class StateBase:
         inputs,
         input_state,
         object_id,
-        target_id=None,
+        related_id=None,
         skip_if_not_in_inputs=False,
     ):
         """Check an object exists in the blockchain via inputs and input_state
         input_state is the result of a state query on addresses=inputs"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         if address not in inputs:
             if skip_if_not_in_inputs:
                 return True
@@ -434,12 +439,12 @@ class StateBase:
                     address,
                     self._name_id,
                     object_id,
-                    target_id,
+                    related_id,
                 )
             )
         return bool(address in input_state)
 
-    def exist_in_state(self, context, object_ids, target_id=None, fast_check=False):
+    def exist_in_state(self, context, object_ids, related_id=None, fast_check=False):
         """Checks that all the object ids passed in object_list exist in the blockchain
         fast_check False will see if the object really exists and isn't a hash collission
         fast_check True will only check to see the address exists (generally sufficient)"""
@@ -447,7 +452,7 @@ class StateBase:
             self.exists_in_state(
                 context=context,
                 object_id=object_id,
-                target_id=target_id,
+                related_id=related_id,
                 fast_check=fast_check,
             )
             for object_id in object_ids
@@ -460,9 +465,9 @@ class StateBase:
             ]
         return all_exist, not_found
 
-    def create_relationship(self, object_id, target_id, outputs, output_state):
+    def create_relationship(self, object_id, related_id, outputs, output_state):
         """Creates a relationship record in the output state for a transaction"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         if address not in outputs:
             raise ValueError(
                 "address {} for was not included in outputs".format(
@@ -473,7 +478,7 @@ class StateBase:
         container = self._state_container()
         store = self._state_object()
         setattr(store, self._name_id, object_id)
-        store.identifiers.append(target_id)
+        store.identifiers.append(related_id)
         container = self._state_container()
         getattr(container, self._state_container_list_name).extend([store])
         output_state[address] = container

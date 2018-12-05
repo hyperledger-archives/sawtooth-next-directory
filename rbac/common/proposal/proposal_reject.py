@@ -36,7 +36,7 @@ class ProposalReject(ProposalAction):
         raise NotImplementedError("Class must implement this method")
 
     def store_message(
-        self, object_id, target_id, store, message, outputs, output_state, signer
+        self, object_id, related_id, store, message, outputs, output_state, signer
     ):
         """Update the proposal data"""
         # pylint: disable=no-member

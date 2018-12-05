@@ -32,7 +32,9 @@ class TestRoleOwnerAddresser(TestAssertions):
         """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id = addresser.role.owner.unique_id()
         user_id = addresser.user.unique_id()
-        rel_address = addresser.role.owner.address(object_id=role_id, target_id=user_id)
+        rel_address = addresser.role.owner.address(
+            object_id=role_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(
             addresser.address_is(rel_address), addresser.AddressSpace.ROLES_OWNERS
@@ -43,10 +45,10 @@ class TestRoleOwnerAddresser(TestAssertions):
         role_id = addresser.role.owner.unique_id()
         user_id = addresser.user.unique_id()
         rel_address1 = addresser.role.owner.address(
-            object_id=role_id, target_id=user_id
+            object_id=role_id, related_id=user_id
         )
         rel_address2 = addresser.role.owner.address(
-            object_id=role_id, target_id=user_id
+            object_id=role_id, related_id=user_id
         )
         self.assertIsAddress(rel_address1)
         self.assertIsAddress(rel_address2)
@@ -62,10 +64,10 @@ class TestRoleOwnerAddresser(TestAssertions):
         role_id2 = addresser.role.owner.unique_id()
         user_id2 = addresser.user.unique_id()
         rel_address1 = addresser.role.owner.address(
-            object_id=role_id1, target_id=user_id1
+            object_id=role_id1, related_id=user_id1
         )
         rel_address2 = addresser.role.owner.address(
-            object_id=role_id2, target_id=user_id2
+            object_id=role_id2, related_id=user_id2
         )
         self.assertIsAddress(rel_address1)
         self.assertIsAddress(rel_address2)
@@ -84,7 +86,9 @@ class TestRoleOwnerAddresser(TestAssertions):
         expected_address = (
             "bac00100005555326a1713a905b26359fc8da23333cce7570f3f6f7d2c1635f6deea00"
         )
-        rel_address = addresser.role.owner.address(object_id=role_id, target_id=user_id)
+        rel_address = addresser.role.owner.address(
+            object_id=role_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
         self.assertEqual(

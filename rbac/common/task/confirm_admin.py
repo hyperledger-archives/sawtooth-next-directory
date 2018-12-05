@@ -68,7 +68,7 @@ class ConfirmAddTaskAdmin(ProposalConfirm):
         )
 
         proposal_address = self.address(
-            object_id=message.task_id, target_id=message.user_id
+            object_id=message.task_id, related_id=message.user_id
         )
 
         inputs = [
@@ -97,7 +97,7 @@ class ConfirmAddTaskAdmin(ProposalConfirm):
             inputs=inputs,
             input_state=input_state,
             object_id=message.task_id,
-            target_id=signer,
+            related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an admin of the task {}".format(
@@ -106,12 +106,12 @@ class ConfirmAddTaskAdmin(ProposalConfirm):
             )
 
     def apply_update(
-        self, message, object_id, target_id, outputs, output_state, signer
+        self, message, object_id, related_id, outputs, output_state, signer
     ):
         """Create admin address"""
         addresser.task.admin.create_relationship(
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
             outputs=outputs,
             output_state=output_state,
         )

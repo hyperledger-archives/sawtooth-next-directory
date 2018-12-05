@@ -68,7 +68,7 @@ class RejectAddRoleTask(ProposalReject):
         signer_user_address = addresser.user.address(signer_keypair.public_key)
 
         proposal_address = self.address(
-            object_id=message.role_id, target_id=message.task_id
+            object_id=message.role_id, related_id=message.task_id
         )
 
         inputs = [proposal_address, signer_address, signer_user_address]
@@ -91,7 +91,7 @@ class RejectAddRoleTask(ProposalReject):
             inputs=inputs,
             input_state=input_state,
             object_id=message.task_id,
-            target_id=signer,
+            related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an owner of the task {}".format(
