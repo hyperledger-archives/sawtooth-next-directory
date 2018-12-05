@@ -141,7 +141,7 @@ class ProposeTaskAddAdminTest(TestAssertions):
         )
         self.assertStatusSuccess(status)
         proposal = rbac.task.admin.propose.get(
-            object_id=task.task_id, target_id=user.user_id
+            object_id=task.task_id, related_id=user.user_id
         )
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
@@ -149,6 +149,6 @@ class ProposeTaskAddAdminTest(TestAssertions):
         )
         self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, task.task_id)
-        self.assertEqual(proposal.target_id, user.user_id)
+        self.assertEqual(proposal.related_id, user.user_id)
         self.assertEqual(proposal.opener, signer_keypair.public_key)
         self.assertEqual(proposal.open_reason, reason)

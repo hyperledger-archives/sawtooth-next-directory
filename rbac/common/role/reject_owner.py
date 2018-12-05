@@ -72,7 +72,7 @@ class RejectAddRoleOwner(ProposalReject):
         signer_user_address = addresser.user.address(signer_keypair.public_key)
 
         proposal_address = self.address(
-            object_id=message.role_id, target_id=message.user_id
+            object_id=message.role_id, related_id=message.user_id
         )
 
         inputs = [
@@ -101,7 +101,7 @@ class RejectAddRoleOwner(ProposalReject):
             inputs=inputs,
             input_state=input_state,
             object_id=message.role_id,
-            target_id=signer,
+            related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an admin of the role {}".format(

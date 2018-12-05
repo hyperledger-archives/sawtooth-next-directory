@@ -79,11 +79,11 @@ class BaseRelationship(AddressBase):
             self._name_camel + "RelationshipContainer",
         )
 
-    def exists(self, object_id, target_id):
+    def exists(self, object_id, related_id):
         """Check the existence of a relationship record"""
         # pylint: disable=not-callable
         container = self._state_container()
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         container.ParseFromString(client.get_address(address=address))
         items = list(container.relationships)
         if not items:
@@ -94,7 +94,7 @@ class BaseRelationship(AddressBase):
                 self.object_type.name.title(),
                 object_id,
                 self.related_type.name.lower(),
-                target_id,
+                related_id,
                 address,
             )
         item = items[0]
@@ -105,7 +105,7 @@ class BaseRelationship(AddressBase):
                 self.object_type.name.title(),
                 object_id,
                 self.related_type.name.lower(),
-                target_id,
+                related_id,
                 address,
             )
             return False
@@ -115,7 +115,7 @@ class BaseRelationship(AddressBase):
                 self.object_type.name.title(),
                 object_id,
                 self.related_type.name.lower(),
-                target_id,
+                related_id,
                 address,
             )
-        return bool(target_id in item.identifiers)
+        return bool(related_id in item.identifiers)

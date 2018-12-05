@@ -84,13 +84,13 @@ class BaseMessage(AddressBase):
         return self.message_object_type.name.lower() + "_id"
 
     @property
-    def _target_id(self):
-        """The attribute name for the target_id if not target_id
+    def _related_id(self):
+        """The attribute name for the related_id if not related_id
         e.g. RelatedType.TASK -> 'task_id'
         RelationshipType.MANAGER -> 'manager_id
         Override where behavior deviates from this norm"""
         if self.message_related_type == self.related_type:
-            return "target_id"
+            return "related_id"
         if self.message_related_type == self.message_object_type:
             return self.message_relationship_type.name.lower() + "_id"
         return self.message_related_type.name.lower() + "_id"
@@ -321,17 +321,17 @@ class BaseMessage(AddressBase):
         outputs = list(payload.outputs)
         return message, message_type, inputs, outputs
 
-    def create(self, signer_keypair, message, object_id=None, target_id=None):
+    def create(self, signer_keypair, message, object_id=None, related_id=None):
         """Send a message to the blockchain"""
         self.validate(message=message, signer=signer_keypair)
         return self.send(
             signer_keypair=signer_keypair,
             payload=self.make_payload(message=message, signer_keypair=signer_keypair),
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
         )
 
-    def send(self, signer_keypair, payload, object_id=None, target_id=None):
+    def send(self, signer_keypair, payload, object_id=None, related_id=None):
         """Sends a payload to the validator API"""
         if not isinstance(signer_keypair, Key):
             raise TypeError("Expected signer_keypair to be a Key")
@@ -345,13 +345,13 @@ class BaseMessage(AddressBase):
         status = client.send_batches_get_status(batch_list=batch_list)
 
         if object_id is not None:
-            got = self.get(object_id=object_id, target_id=target_id)
+            got = self.get(object_id=object_id, related_id=related_id)
 
         return got, status
 
-    def get(self, object_id, target_id=None):
+    def get(self, object_id, related_id=None):
         """Gets an address from the blockchain from the validator API"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         # pylint: disable=not-callable
         container = self._state_container()
         container.ParseFromString(client.get_address(address=address))
@@ -359,7 +359,7 @@ class BaseMessage(AddressBase):
             container=container,
             address=address,
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
         )
 
     def get_addresses(self, context, addresses):
@@ -393,22 +393,22 @@ class BaseMessage(AddressBase):
             exclude_fields=self.message_fields_not_in_state,
         )
 
-    def set_state(self, context, message, outputs, object_id, target_id=None):
+    def set_state(self, context, message, outputs, object_id, related_id=None):
         """Creates a new address in the blockchain state"""
         store = self.message_to_storage(message=message)
         # pylint: disable=no-member,not-callable
         container = self._state_container()
         getattr(container, self._state_container_list_name).extend([store])
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         if address not in outputs:
             raise ValueError(
                 "Address {} not in listed outputs".format(addresser.parse(address))
             )
         state_client.set_address(context=context, address=address, container=container)
 
-    def _get_store(self, object_id, target_id, outputs, output_state):
+    def _get_store(self, object_id, related_id, outputs, output_state):
         """Gets the store object to store data for this message"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         container = None
         if address not in outputs and address in output_state:
             raise ValueError(
@@ -424,14 +424,14 @@ class BaseMessage(AddressBase):
         return store
 
     def _update_store(
-        self, object_id, target_id, message, store, outputs, output_state, signer
+        self, object_id, related_id, message, store, outputs, output_state, signer
     ):
         """Update the output state entries for the given address using
         the data the given message"""
-        address = self.address(object_id=object_id, target_id=target_id)
+        address = self.address(object_id=object_id, related_id=related_id)
         self.store_message(
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
             store=store,
             message=message,
             outputs=outputs,
@@ -442,7 +442,7 @@ class BaseMessage(AddressBase):
 
     # pylint: disable=unused-argument
     def store_message(
-        self, object_id, target_id, store, message, outputs, output_state, signer
+        self, object_id, related_id, store, message, outputs, output_state, signer
     ):
         """Copies a message to the state object, excluding properties
         listed in message_fields_not_in_state property. This provides
@@ -468,7 +468,7 @@ class BaseMessage(AddressBase):
         state_client.set_state(context=context, entries=entries)
 
     def apply_update(
-        self, message, object_id, target_id, outputs, output_state, signer
+        self, message, object_id, related_id, outputs, output_state, signer
     ):
         """Apply additional state changes (if any)
         Message implementation will override this method if there
@@ -505,7 +505,7 @@ class BaseMessage(AddressBase):
         message, _, inputs, outputs = self.unmake_payload(payload=payload)
         signer = header.signer_public_key
         object_id = self._get_object_id(item=message)
-        target_id = self._get_target_id(item=message)
+        related_id = self._get_related_id(item=message)
 
         self.validate(message=message, signer=signer)
         input_state = self.get_addresses(context=context, addresses=inputs)
@@ -516,7 +516,7 @@ class BaseMessage(AddressBase):
         )
         store = self._get_store(
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
             outputs=outputs,
             output_state=output_state,
         )
@@ -530,7 +530,7 @@ class BaseMessage(AddressBase):
         )
         self._update_store(
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
             message=message,
             store=store,
             outputs=outputs,
@@ -540,7 +540,7 @@ class BaseMessage(AddressBase):
         self.apply_update(
             message=message,
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
             outputs=outputs,
             output_state=output_state,
             signer=signer,

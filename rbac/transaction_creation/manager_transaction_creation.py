@@ -52,11 +52,11 @@ def propose_manager(
     inputs = [
         addresser.user.address(user_id),
         addresser.user.address(new_manager_id),
-        addresser.proposal.address(object_id=user_id, target_id=new_manager_id),
+        addresser.proposal.address(object_id=user_id, related_id=new_manager_id),
         addresser.user.address(txn_key.public_key),
     ]
 
-    outputs = [addresser.proposal.address(object_id=user_id, target_id=new_manager_id)]
+    outputs = [addresser.proposal.address(object_id=user_id, related_id=new_manager_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=propose_update_payload.SerializeToString(),
@@ -128,11 +128,11 @@ def reject_manager(txn_key, batch_key, proposal_id, reason, user_id, manager_id)
     )
 
     inputs = [
-        addresser.proposal.address(object_id=user_id, target_id=manager_id),
+        addresser.proposal.address(object_id=user_id, related_id=manager_id),
         addresser.user.address(txn_key.public_key),
     ]
 
-    outputs = [addresser.proposal.address(object_id=user_id, target_id=manager_id)]
+    outputs = [addresser.proposal.address(object_id=user_id, related_id=manager_id)]
 
     rbac_payload = rbac_payload_pb2.RBACPayload(
         content=reject_update_payload.SerializeToString(),

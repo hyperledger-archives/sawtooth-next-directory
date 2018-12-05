@@ -40,7 +40,7 @@ def validate_role_rel_proposal(header, propose, rel_address, state, is_remove=Fa
     user_address = addresser.user.address(propose.user_id)
     role_address = addresser.role.address(propose.role_id)
     proposal_address = addresser.proposal.address(
-        object_id=propose.role_id, target_id=propose.user_id
+        object_id=propose.role_id, related_id=propose.user_id
     )
 
     state_entries = state_accessor.get_state(
@@ -152,7 +152,7 @@ def validate_create_role_state(create_role, state):
 
 def validate_role_task(header, confirm, txn_signer_rel_address, state):
     proposal_address = addresser.proposal.address(
-        object_id=confirm.role_id, target_id=confirm.task_id
+        object_id=confirm.role_id, related_id=confirm.task_id
     )
 
     state_entries = state_accessor.get_state(
@@ -212,7 +212,7 @@ def get_state_entries(header, confirm, txn_signer_rel_address, state):
     """
 
     proposal_address = addresser.proposal.address(
-        object_id=confirm.role_id, target_id=confirm.user_id
+        object_id=confirm.role_id, related_id=confirm.user_id
     )
 
     state_entries = state_accessor.get_state(

@@ -68,7 +68,7 @@ class ProposeRoleTaskTestHelper(TestAssertions):
             signer_keypair=role_owner_key,
             message=message,
             object_id=role.role_id,
-            target_id=task.task_id,
+            related_id=task.task_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -77,7 +77,7 @@ class ProposeRoleTaskTestHelper(TestAssertions):
         )
         self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, role.role_id)
-        self.assertEqual(proposal.target_id, task.task_id)
+        self.assertEqual(proposal.related_id, task.task_id)
         self.assertEqual(proposal.opener, role_owner_key.public_key)
         self.assertEqual(proposal.open_reason, reason)
         return (

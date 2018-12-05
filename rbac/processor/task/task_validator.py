@@ -52,7 +52,7 @@ def validate_task_rel_proposal(header, propose, rel_address, state):
     user_id = propose.user_id
     user_address = addresser.user.address(user_id)
     task_address = addresser.task.address(task_id)
-    proposal_address = addresser.proposal.address(object_id=task_id, target_id=user_id)
+    proposal_address = addresser.proposal.address(object_id=task_id, related_id=user_id)
 
     state_entries = state_accessor.get_state(
         state, [user_address, task_address, proposal_address, rel_address]
@@ -116,7 +116,7 @@ def validate_task_rel_del_proposal(header, propose, rel_address, state):
     task_address = addresser.task.address(propose.task_id)
 
     proposal_address = addresser.proposal.address(
-        object_id=propose.task_id, target_id=propose.user_id
+        object_id=propose.task_id, related_id=propose.user_id
     )
 
     state_entries = state_accessor.get_state(
@@ -193,7 +193,7 @@ def validate_task_admin_or_owner(
     """
 
     proposal_address = addresser.proposal.address(
-        object_id=confirm.task_id, target_id=confirm.user_id
+        object_id=confirm.task_id, related_id=confirm.user_id
     )
 
     if not is_remove:

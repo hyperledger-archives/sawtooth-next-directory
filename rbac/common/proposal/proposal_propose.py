@@ -49,7 +49,7 @@ class ProposalPropose(ProposalMessage):
             signer=signer,
         )
         object_id = self._get_object_id(message)
-        target_id = self._get_target_id(message)
+        related_id = self._get_related_id(message)
         if hasattr(message, "user_id") and getattr(message, "user_id") != signer:
             user = addresser.user.get_from_input_state(
                 inputs=inputs, input_state=input_state, object_id=message.user_id
@@ -64,7 +64,7 @@ class ProposalPropose(ProposalMessage):
             inputs=inputs,
             input_state=input_state,
             object_id=object_id,
-            target_id=target_id,
+            related_id=related_id,
         )
         if (
             # pylint: disable=no-member
@@ -76,13 +76,13 @@ class ProposalPropose(ProposalMessage):
                     last_proposal.proposal_id,
                     self._name_id,
                     object_id,
-                    self._target_id,
-                    target_id,
+                    self._related_id,
+                    related_id,
                 )
             )
 
     def store_message(
-        self, object_id, target_id, store, message, outputs, output_state, signer
+        self, object_id, related_id, store, message, outputs, output_state, signer
     ):
         """Create the proposal data"""
         store.proposal_id = message.proposal_id
@@ -90,7 +90,7 @@ class ProposalPropose(ProposalMessage):
         # pylint: disable=no-member
         store.status = protobuf.proposal_state_pb2.Proposal.OPEN
         store.object_id = self._get_object_id(message)
-        store.target_id = self._get_target_id(message)
+        store.related_id = self._get_related_id(message)
         store.open_reason = message.reason
         store.opener = signer
         # store.metadata = message.metadata

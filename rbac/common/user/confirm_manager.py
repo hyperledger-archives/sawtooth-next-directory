@@ -55,7 +55,7 @@ class ConfirmUpdateUserManager(ProposalConfirm):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
         proposal_address = addresser.proposal.address(
-            object_id=message.user_id, target_id=message.manager_id
+            object_id=message.user_id, related_id=message.manager_id
         )
         user_address = addresser.user.address(message.user_id)
         signer_user_address = addresser.user.address(signer_keypair.public_key)
@@ -97,10 +97,10 @@ class ConfirmUpdateUserManager(ProposalConfirm):
             )
 
     def store_message(
-        self, object_id, target_id, store, message, outputs, output_state, signer
+        self, object_id, related_id, store, message, outputs, output_state, signer
     ):
         super().store_message(
-            object_id, target_id, store, message, outputs, output_state, signer
+            object_id, related_id, store, message, outputs, output_state, signer
         )
         addresser.user.set_output_state_attribute(
             name="manager_id",
@@ -108,5 +108,5 @@ class ConfirmUpdateUserManager(ProposalConfirm):
             outputs=outputs,
             output_state=output_state,
             object_id=message.user_id,
-            target_id=None,
+            related_id=None,
         )

@@ -50,8 +50,8 @@ class ProposeUpdateUserManager(ProposalPropose):
         return addresser.RelationshipType.MANAGER
 
     @property
-    def _target_id(self):
-        """The attribute name for target_id"""
+    def _related_id(self):
+        """The attribute name for related_id"""
         return "new_manager_id"
 
     def make_addresses(self, message, signer_keypair):
@@ -62,7 +62,7 @@ class ProposeUpdateUserManager(ProposalPropose):
         user_address = addresser.user.address(message.user_id)
         manager_address = addresser.user.address(message.new_manager_id)
         proposal_address = addresser.proposal.address(
-            object_id=message.user_id, target_id=message.new_manager_id
+            object_id=message.user_id, related_id=message.new_manager_id
         )
         signer_user_address = addresser.user.address(signer_keypair.public_key)
 

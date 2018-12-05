@@ -36,7 +36,7 @@ async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
                     "id": proposal["proposal_id"],
                     "type": proposal["proposal_type"],
                     "object": proposal["object_id"],
-                    "target": proposal["target_id"],
+                    "target": proposal["related_id"],
                 }
             )
         )
@@ -51,7 +51,7 @@ async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
             "proposal_id",
             "proposal_type",
             "object_id",
-            "target_id",
+            "related_id",
         )
         .coerce_to("array")
         .run(conn)
@@ -72,7 +72,7 @@ async def fetch_proposal_resource(conn, proposal_id, head_block_num):
                     "id": proposal["proposal_id"],
                     "type": proposal["proposal_type"],
                     "object": proposal["object_id"],
-                    "target": proposal["target_id"],
+                    "target": proposal["related_id"],
                 }
             )
         )
@@ -87,7 +87,7 @@ async def fetch_proposal_resource(conn, proposal_id, head_block_num):
             "proposal_id",
             "proposal_type",
             "object_id",
-            "target_id",
+            "related_id",
         )
         .coerce_to("array")
         .run(conn)
@@ -117,7 +117,7 @@ def fetch_approver_ids(table, object_id, head_block_num):
 def fetch_proposal_ids_by_target(target, head_block_num):
     return (
         r.table("proposals")
-        .get_all(target, index="target_id")
+        .get_all(target, index="related_id")
         .filter(
             lambda doc: (head_block_num >= doc["start_block_num"])
             & (head_block_num < doc["end_block_num"])

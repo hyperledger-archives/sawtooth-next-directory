@@ -93,7 +93,7 @@ def _update_state(database, block_num, address, resource):
             "object_id": bytes_from_hex(address_parts.object_id),
             "related_type": address_parts.related_type.value,
             "relationship_type": address_parts.relationship_type.value,
-            "related_id": bytes_from_hex(address_parts.target_id),
+            "related_id": bytes_from_hex(address_parts.related_id),
             "data": resource,
         }
         table_query = database.get_table("state")

@@ -31,7 +31,9 @@ class TestTaskOwnerAddresser(TestAssertions):
         """Tests address makes an address that identifies as the correct AddressSpace"""
         task_id = addresser.task.owner.unique_id()
         user_id = addresser.user.unique_id()
-        rel_address = addresser.task.owner.address(object_id=task_id, target_id=user_id)
+        rel_address = addresser.task.owner.address(
+            object_id=task_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(
             addresser.address_is(rel_address), addresser.AddressSpace.TASKS_OWNERS
@@ -42,10 +44,10 @@ class TestTaskOwnerAddresser(TestAssertions):
         task_id = addresser.task.owner.unique_id()
         user_id = addresser.user.unique_id()
         rel_address1 = addresser.task.owner.address(
-            object_id=task_id, target_id=user_id
+            object_id=task_id, related_id=user_id
         )
         rel_address2 = addresser.task.owner.address(
-            object_id=task_id, target_id=user_id
+            object_id=task_id, related_id=user_id
         )
         self.assertIsAddress(rel_address1)
         self.assertIsAddress(rel_address2)
@@ -61,10 +63,10 @@ class TestTaskOwnerAddresser(TestAssertions):
         task_id2 = addresser.task.owner.unique_id()
         user_id2 = addresser.user.unique_id()
         rel_address1 = addresser.task.owner.address(
-            object_id=task_id1, target_id=user_id1
+            object_id=task_id1, related_id=user_id1
         )
         rel_address2 = addresser.task.owner.address(
-            object_id=task_id2, target_id=user_id2
+            object_id=task_id2, related_id=user_id2
         )
         self.assertIsAddress(rel_address1)
         self.assertIsAddress(rel_address2)
@@ -83,7 +85,9 @@ class TestTaskOwnerAddresser(TestAssertions):
         expected_address = (
             "bac00100006666326a1713a905b26359fc8da23333cce7570f3f6f7d2c1635f6deea00"
         )
-        rel_address = addresser.task.owner.address(object_id=task_id, target_id=user_id)
+        rel_address = addresser.task.owner.address(
+            object_id=task_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
         self.assertEqual(

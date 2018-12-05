@@ -134,7 +134,7 @@ class ConfirmTaskAddAdminTest(TestAssertions):
         message = rbac.task.admin.confirm.make(
             proposal_id=proposal.proposal_id,
             task_id=proposal.object_id,
-            user_id=proposal.target_id,
+            user_id=proposal.related_id,
             reason=reason,
         )
         _, status = rbac.task.admin.confirm.create(
@@ -142,7 +142,7 @@ class ConfirmTaskAddAdminTest(TestAssertions):
         )
         self.assertStatusSuccess(status)
         confirm = rbac.task.admin.confirm.get(
-            object_id=proposal.object_id, target_id=proposal.target_id
+            object_id=proposal.object_id, related_id=proposal.related_id
         )
         self.assertIsInstance(confirm, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
@@ -150,11 +150,11 @@ class ConfirmTaskAddAdminTest(TestAssertions):
         )
         self.assertEqual(confirm.proposal_id, proposal.proposal_id)
         self.assertEqual(confirm.object_id, proposal.object_id)
-        self.assertEqual(confirm.target_id, proposal.target_id)
+        self.assertEqual(confirm.related_id, proposal.related_id)
         self.assertEqual(confirm.close_reason, reason)
         self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
         self.assertTrue(
             rbac.task.admin.exists(
-                object_id=proposal.object_id, target_id=proposal.target_id
+                object_id=proposal.object_id, related_id=proposal.related_id
             )
         )

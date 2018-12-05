@@ -25,7 +25,7 @@ from rbac.processor import state_accessor
 
 def hierarchical_decide(header, confirm, state, txn_signer_rel_address, isApproval):
     proposal_address = addresser.proposal.address(
-        object_id=confirm.role_id, target_id=confirm.user_id
+        object_id=confirm.role_id, related_id=confirm.user_id
     )
 
     state_entries = state_accessor.get_state(

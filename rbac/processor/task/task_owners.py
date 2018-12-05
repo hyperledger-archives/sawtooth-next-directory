@@ -30,7 +30,7 @@ def apply_propose(header, payload, state):
     task_owners_address = addresser.task.owner.address(propose.task_id, propose.user_id)
 
     proposal_address = addresser.proposal.address(
-        object_id=propose.task_id, target_id=propose.user_id
+        object_id=propose.task_id, related_id=propose.user_id
     )
 
     state_entries = task_validator.validate_task_rel_proposal(
@@ -66,7 +66,7 @@ def apply_propose_remove(header, payload, state):
     task_owners_address = addresser.task.owner.address(propose.task_id, propose.user_id)
 
     proposal_address = addresser.proposal.address(
-        object_id=propose.task_id, target_id=propose.user_id
+        object_id=propose.task_id, related_id=propose.user_id
     )
 
     state_entries = task_validator.validate_task_rel_del_proposal(

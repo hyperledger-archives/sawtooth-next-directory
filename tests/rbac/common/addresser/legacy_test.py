@@ -112,19 +112,19 @@ class TestAddressLegacyCompatibility(TestAssertions):
         )
         self.assertEqual(
             legacy.make_role_owners_address(role_id=unique_id, user_id=user_id),
-            addresser.role.owner.address(object_id=unique_id, target_id=user_id),
+            addresser.role.owner.address(object_id=unique_id, related_id=user_id),
         )
         self.assertEqual(
             legacy.make_role_admins_address(role_id=unique_id, user_id=user_id),
-            addresser.role.admin.address(object_id=unique_id, target_id=user_id),
+            addresser.role.admin.address(object_id=unique_id, related_id=user_id),
         )
         self.assertEqual(
             legacy.make_role_members_address(role_id=unique_id, user_id=user_id),
-            addresser.role.member.address(object_id=unique_id, target_id=user_id),
+            addresser.role.member.address(object_id=unique_id, related_id=user_id),
         )
         self.assertEqual(
             legacy.make_role_tasks_address(role_id=unique_id, task_id=unique_id2),
-            addresser.role.task.address(object_id=unique_id, target_id=unique_id2),
+            addresser.role.task.address(object_id=unique_id, related_id=unique_id2),
         )
 
         self.assertEqual(
@@ -133,11 +133,11 @@ class TestAddressLegacyCompatibility(TestAssertions):
         )
         self.assertEqual(
             legacy.make_task_owners_address(task_id=unique_id, user_id=user_id),
-            addresser.task.owner.address(object_id=unique_id, target_id=user_id),
+            addresser.task.owner.address(object_id=unique_id, related_id=user_id),
         )
         self.assertEqual(
             legacy.make_task_admins_address(task_id=unique_id, user_id=user_id),
-            addresser.task.admin.address(object_id=unique_id, target_id=user_id),
+            addresser.task.admin.address(object_id=unique_id, related_id=user_id),
         )
 
         self.assertEqual(
@@ -159,11 +159,11 @@ class TestAddressLegacyCompatibility(TestAssertions):
     def test_proposal_address_static(self):
         """Test addreser makes expected address"""
         object_id = "cb048d507eec42a5845e20eed982d5d2"
-        target_id = "f1e916b663164211a9ac34516324681a"
+        related_id = "f1e916b663164211a9ac34516324681a"
         expected_address = "9f4448e3b874e90b2bcf58e65e0727\
 91ea499543ee52fc9d0449fc1e41f77d4d4f926e"
         proposal_address = addresser.proposal.address(
-            object_id=object_id, target_id=target_id
+            object_id=object_id, related_id=related_id
         )
         self.assertIsAddress(proposal_address)
         self.assertEqual(proposal_address, expected_address)
@@ -177,7 +177,9 @@ class TestAddressLegacyCompatibility(TestAssertions):
         user_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = "9f444809326a1713a905b26359fc8d\
 a2817c1a5f67de6f464701f0c10042da345d28f7"
-        rel_address = addresser.role.admin.address(object_id=role_id, target_id=user_id)
+        rel_address = addresser.role.admin.address(
+            object_id=role_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
         self.assertEqual(
@@ -191,7 +193,7 @@ a2817c1a5f67de6f464701f0c10042da345d28f7"
         expected_address = "9f444809326a1713a905b26359fc8d\
 a2817c1a5f67de6f464701f0c10042da345d2833"
         rel_address = addresser.role.member.address(
-            object_id=role_id, target_id=user_id
+            object_id=role_id, related_id=user_id
         )
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
@@ -205,7 +207,9 @@ a2817c1a5f67de6f464701f0c10042da345d2833"
         user_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = "9f444809326a1713a905b26359fc8d\
 a2817c1a5f67de6f464701f0c10042da345d2893"
-        rel_address = addresser.role.owner.address(object_id=role_id, target_id=user_id)
+        rel_address = addresser.role.owner.address(
+            object_id=role_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
         self.assertEqual(
@@ -218,7 +222,7 @@ a2817c1a5f67de6f464701f0c10042da345d2893"
         task_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = "9f444809326a1713a905b26359fc8d\
 a2817c1a5f67de6f464701f0c10042da345d28c5"
-        rel_address = addresser.role.task.address(object_id=role_id, target_id=task_id)
+        rel_address = addresser.role.task.address(object_id=role_id, related_id=task_id)
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
         self.assertEqual(
@@ -291,7 +295,9 @@ a2817c1a5f67de6f464701f0c10042da345d2800"
         user_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = "9f44481e326a1713a905b26359fc8d\
 a2817c1a5f67de6f464701f0c10042da345d2848"
-        rel_address = addresser.task.admin.address(object_id=task_id, target_id=user_id)
+        rel_address = addresser.task.admin.address(
+            object_id=task_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
         self.assertEqual(
@@ -304,7 +310,9 @@ a2817c1a5f67de6f464701f0c10042da345d2848"
         user_id = "966ab67317234df489adb4bc1f517b88"
         expected_address = "9f44481e326a1713a905b26359fc8d\
 a2817c1a5f67de6f464701f0c10042da345d2808"
-        rel_address = addresser.task.owner.address(object_id=task_id, target_id=user_id)
+        rel_address = addresser.task.owner.address(
+            object_id=task_id, related_id=user_id
+        )
         self.assertIsAddress(rel_address)
         self.assertEqual(rel_address, expected_address)
         self.assertEqual(

@@ -86,7 +86,7 @@ def _validate_state_and_return_user(header, user_proposal, state):
 
 def _validate_unique_proposal(user_proposal, state):
     proposal_address = addresser.proposal.address(
-        object_id=user_proposal.user_id, target_id=user_proposal.new_manager_id
+        object_id=user_proposal.user_id, related_id=user_proposal.new_manager_id
     )
     state_return = state_accessor.get_state(state, [proposal_address])
     if not proposal_validator.has_no_open_proposal(
@@ -120,7 +120,7 @@ def apply_user_confirm(header, payload, state):
     confirm_payload.ParseFromString(payload.content)
 
     proposal_address = addresser.proposal.address(
-        object_id=confirm_payload.user_id, target_id=confirm_payload.manager_id
+        object_id=confirm_payload.user_id, related_id=confirm_payload.manager_id
     )
 
     proposal_entries = state_accessor.get_state(state, [proposal_address])
@@ -144,10 +144,12 @@ def apply_user_confirm(header, payload, state):
         container=proposal_container, proposal_id=confirm_payload.proposal_id
     )
 
-    if not proposal.target_id == header.signer_public_key:
+    if not proposal.related_id == header.signer_public_key:
         raise InvalidTransaction(
             "Confirm update manager txn signed by {} while "
-            "proposal expecting {}".format(header.signer_public_key, proposal.target_id)
+            "proposal expecting {}".format(
+                header.signer_public_key, proposal.related_id
+            )
         )
 
     state_change.confirm_manager_change(
@@ -167,7 +169,7 @@ def apply_user_reject(header, payload, state):
     reject_payload.ParseFromString(payload.content)
 
     proposal_address = addresser.proposal.address(
-        object_id=reject_payload.user_id, target_id=reject_payload.manager_id
+        object_id=reject_payload.user_id, related_id=reject_payload.manager_id
     )
 
     state_entries = state_accessor.get_state(state, [proposal_address])

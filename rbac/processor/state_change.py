@@ -91,7 +91,7 @@ def propose_manager_change(proposal_state_entries, header, user_proposal, state)
     proposal.proposal_id = user_proposal.proposal_id
     proposal.proposal_type = proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
     proposal.object_id = user_proposal.user_id
-    proposal.target_id = user_proposal.new_manager_id
+    proposal.related_id = user_proposal.new_manager_id
     proposal.opener = header.signer_public_key
     proposal.status = proposal_state_pb2.Proposal.OPEN
     proposal.open_reason = user_proposal.reason
@@ -143,7 +143,7 @@ def propose_task_action(
 
     proposal.proposal_id = payload.proposal_id
     proposal.object_id = payload.task_id
-    proposal.target_id = getattr(payload, related_type)
+    proposal.related_id = getattr(payload, related_type)
     proposal.proposal_type = proposal_type
     proposal.status = proposal_state_pb2.Proposal.OPEN
     proposal.opener = header.signer_public_key
@@ -170,7 +170,7 @@ def confirm_task_action(
 
     """
     proposal_address = addresser.proposal.address(
-        object_id=confirm.task_id, target_id=confirm.user_id
+        object_id=confirm.task_id, related_id=confirm.user_id
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -213,7 +213,7 @@ def confirm_task_action(
 
 def reject_task_action(state_entries, header, reject, state):
     proposal_address = addresser.proposal.address(
-        object_id=reject.task_id, target_id=reject.user_id
+        object_id=reject.task_id, related_id=reject.user_id
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -250,7 +250,7 @@ def propose_role_action(
 
     proposal.proposal_id = payload.proposal_id
     proposal.object_id = payload.role_id
-    proposal.target_id = getattr(payload, related_type)
+    proposal.related_id = getattr(payload, related_type)
     proposal.proposal_type = proposal_type
     proposal.status = proposal_state_pb2.Proposal.OPEN
     proposal.opener = header.signer_public_key
@@ -264,7 +264,7 @@ def confirm_role_action(
     state_entries, header, confirm, role_rel_address, state, rel_type="user_id"
 ):
     proposal_address = addresser.proposal.address(
-        object_id=confirm.role_id, target_id=getattr(confirm, rel_type)
+        object_id=confirm.role_id, related_id=getattr(confirm, rel_type)
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -301,7 +301,7 @@ def confirm_role_action(
 
 def reject_role_action(state_entries, header, reject, state, rel_type="user_id"):
     proposal_address = addresser.proposal.address(
-        object_id=reject.role_id, target_id=getattr(reject, rel_type)
+        object_id=reject.role_id, related_id=getattr(reject, rel_type)
     )
 
     proposal_entry = state_accessor.get_state_entry(state_entries, proposal_address)
@@ -357,7 +357,7 @@ def record_decision(state, header, confirm, isApproval):
     on_behalf_id = confirm.on_behalf_id
 
     proposal_address = addresser.proposal.address(
-        object_id=confirm.role_id, target_id=confirm.user_id
+        object_id=confirm.role_id, related_id=confirm.user_id
     )
 
     state_entries = state_accessor.get_state(state, [proposal_address])

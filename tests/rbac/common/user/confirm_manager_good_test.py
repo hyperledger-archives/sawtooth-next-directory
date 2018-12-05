@@ -62,7 +62,7 @@ class ConfirmManagerTest(TestAssertions):
         reason = helper.user.manager.propose.reason()
         proposal_id = helper.proposal.id()
         proposal_address = rbac.user.manager.confirm.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.user.manager.confirm.make(
@@ -97,7 +97,7 @@ class ConfirmManagerTest(TestAssertions):
         reason = helper.user.manager.propose.reason()
         proposal_id = helper.proposal.id()
         proposal_address = rbac.user.manager.confirm.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_user_address = rbac.user.address(signer_keypair.public_key)
         message = rbac.user.manager.confirm.make(
@@ -135,18 +135,18 @@ class ConfirmManagerTest(TestAssertions):
         message = rbac.user.manager.confirm.make(
             proposal_id=proposal.proposal_id,
             user_id=proposal.object_id,
-            manager_id=proposal.target_id,
+            manager_id=proposal.related_id,
             reason=reason,
         )
         _, status = rbac.user.manager.confirm.create(
             signer_keypair=manager_key,
             message=message,
             object_id=proposal.object_id,
-            target_id=proposal.target_id,
+            related_id=proposal.related_id,
         )
         self.assertStatusSuccess(status)
         confirm = rbac.user.manager.confirm.get(
-            object_id=proposal.object_id, target_id=proposal.target_id
+            object_id=proposal.object_id, related_id=proposal.related_id
         )
         self.assertIsInstance(confirm, protobuf.proposal_state_pb2.Proposal)
         self.assertEqual(
@@ -155,9 +155,9 @@ class ConfirmManagerTest(TestAssertions):
         )
         self.assertEqual(confirm.proposal_id, proposal.proposal_id)
         self.assertEqual(confirm.object_id, proposal.object_id)
-        self.assertEqual(confirm.target_id, proposal.target_id)
+        self.assertEqual(confirm.related_id, proposal.related_id)
         self.assertEqual(confirm.close_reason, reason)
         self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
         user = rbac.user.get(object_id=proposal.object_id)
         self.assertIsInstance(user, protobuf.user_state_pb2.User)
-        self.assertEqual(user.manager_id, proposal.target_id)
+        self.assertEqual(user.manager_id, proposal.related_id)

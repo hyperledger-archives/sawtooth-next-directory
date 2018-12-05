@@ -81,9 +81,9 @@ class CreateTaskTestHelper(TestAssertions):
         task = rbac.task.get(object_id=message.task_id)
         self.assertEqualMessage(task, message, rbac.task.message_fields_not_in_state)
         self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, target_id=user.user_id)
+            rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
         )
         self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, target_id=user.user_id)
+            rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
         )
         return task, user, keypair

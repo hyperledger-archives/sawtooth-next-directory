@@ -99,7 +99,7 @@ class TestUserAddresser(TestAssertions):
         )
         self.assertEqual(parsed.address_type, addresser.AddressSpace.USER)
         self.assertEqual(parsed.object_id, user_id)
-        self.assertEqual(parsed.target_id, None)
+        self.assertEqual(parsed.related_id, None)
 
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
@@ -114,7 +114,7 @@ class TestUserAddresser(TestAssertions):
         )
         self.assertEqual(parsed.address_type, addresser.AddressSpace.USER)
         self.assertEqual(parsed.object_id, user_id)
-        self.assertEqual(parsed.target_id, None)
+        self.assertEqual(parsed.related_id, None)
 
     def test_parse_other(self):
         """Test that parse returns None if it is not a user address"""

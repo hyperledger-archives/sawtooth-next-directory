@@ -64,5 +64,5 @@ class ProposeManagerTestHelperTest(TestAssertions):
         self.assertIsInstance(user_key, Key)
         self.assertIsInstance(manager_key, Key)
         self.assertEqual(proposal.object_id, user.user_id)
-        self.assertEqual(proposal.target_id, manager.user_id)
+        self.assertEqual(proposal.related_id, manager.user_id)
         self.assertEqual(user.manager_id, "")

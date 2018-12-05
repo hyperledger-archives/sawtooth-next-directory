@@ -36,7 +36,7 @@ def has_no_open_proposal(
     for proposal in prop_container.proposals:
         if (
             proposal.object_id == object_id
-            and proposal.target_id == related_id
+            and proposal.related_id == related_id
             and proposal.status == proposal_state_pb2.Proposal.OPEN
             and proposal.proposal_type == proposal_type
         ):

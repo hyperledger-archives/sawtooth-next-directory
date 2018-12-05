@@ -61,7 +61,7 @@ class ProposeManagerGoodTest(TestAssertions):
         manager_id = helper.user.id()
         manager_address = rbac.user.address(object_id=manager_id)
         proposal_address = rbac.user.manager.propose.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_user_address = rbac.user.address(user_key.public_key)
         proposal_id = rbac.addresser.proposal.unique_id()
@@ -98,7 +98,7 @@ class ProposeManagerGoodTest(TestAssertions):
         manager_id = helper.user.id()
         manager_address = rbac.user.address(object_id=manager_id)
         proposal_address = rbac.user.manager.propose.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_user_address = rbac.user.address(user_key.public_key)
         proposal_id = rbac.addresser.proposal.unique_id()
@@ -135,7 +135,7 @@ class ProposeManagerGoodTest(TestAssertions):
         manager_id = helper.user.id()
         manager_address = rbac.user.address(object_id=manager_id)
         proposal_address = rbac.user.manager.propose.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_keypair = helper.user.key()
         signer_user_address = rbac.user.address(signer_keypair.public_key)
@@ -173,7 +173,7 @@ class ProposeManagerGoodTest(TestAssertions):
         manager_id = helper.user.id()
         manager_address = rbac.user.address(object_id=manager_id)
         proposal_address = rbac.user.manager.propose.address(
-            object_id=user_id, target_id=manager_id
+            object_id=user_id, related_id=manager_id
         )
         signer_user_address = rbac.user.address(user_key.public_key)
         proposal_id = rbac.addresser.proposal.unique_id()
@@ -224,7 +224,7 @@ class ProposeManagerGoodTest(TestAssertions):
             signer_keypair=user_key,
             message=message,
             object_id=user.user_id,
-            target_id=manager.user_id,
+            related_id=manager.user_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -234,7 +234,7 @@ class ProposeManagerGoodTest(TestAssertions):
         )
         self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, user.user_id)
-        self.assertEqual(proposal.target_id, manager.user_id)
+        self.assertEqual(proposal.related_id, manager.user_id)
         self.assertEqual(proposal.opener, user.user_id)
         self.assertEqual(proposal.open_reason, reason)
 
@@ -257,7 +257,7 @@ class ProposeManagerGoodTest(TestAssertions):
             signer_keypair=manager_key,
             message=message,
             object_id=user.user_id,
-            target_id=manager.user_id,
+            related_id=manager.user_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -267,7 +267,7 @@ class ProposeManagerGoodTest(TestAssertions):
         )
         self.assertEqual(proposal.proposal_id, proposal_id)
         self.assertEqual(proposal.object_id, user.user_id)
-        self.assertEqual(proposal.target_id, manager.user_id)
+        self.assertEqual(proposal.related_id, manager.user_id)
         self.assertEqual(proposal.opener, manager.user_id)
         self.assertEqual(proposal.open_reason, reason)
 
@@ -290,7 +290,7 @@ class ProposeManagerGoodTest(TestAssertions):
             signer_keypair=user_key,
             message=message,
             object_id=proposal.object_id,
-            target_id=new_manager.user_id,
+            related_id=new_manager.user_id,
         )
         self.assertStatusSuccess(status)
         self.assertIsInstance(new_proposal, protobuf.proposal_state_pb2.Proposal)
@@ -300,6 +300,6 @@ class ProposeManagerGoodTest(TestAssertions):
         )
         self.assertEqual(new_proposal.proposal_id, proposal_id)
         self.assertEqual(new_proposal.object_id, user.user_id)
-        self.assertEqual(new_proposal.target_id, new_manager.user_id)
+        self.assertEqual(new_proposal.related_id, new_manager.user_id)
         self.assertEqual(new_proposal.opener, user.user_id)
         self.assertEqual(new_proposal.open_reason, reason)
