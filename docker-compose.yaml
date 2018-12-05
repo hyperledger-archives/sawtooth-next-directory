@@ -76,6 +76,7 @@ services:
       - LDAP_SERVER=${LDAP_SERVER}
       - LDAP_USER=${LDAP_USER}
       - LDAP_PASS=${LDAP_PASS}
+      - DELTA_SYNC_INTERVAL_SECONDS=${DELTA_SYNC_INTERVAL_SECONDS}
     depends_on:
       - ledger-sync
     command: ./bin/rbac-providers-ldap
