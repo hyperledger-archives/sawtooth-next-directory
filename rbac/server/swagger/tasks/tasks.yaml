@@ -1,0 +1,81 @@
+    get:
+      security:
+        - Bearer: []
+      description: Fetches the details of all tasks in state
+      parameters:
+        - $ref: '../parameters/parameters.yaml#/head'
+        - $ref: '../parameters/parameters.yaml#/start'
+        - $ref: '../parameters/parameters.yaml#/limit'
+      responses:
+        '200':
+          description: Response with a list of tasks
+          schema:
+            properties:
+              link:
+                $ref: '../definitions/definitions.yaml#/getAllTasksLink'
+              paging:
+                $ref: '../definitions/definitions.yaml#/paging'
+              head:
+                $ref: '../definitions/definitions.yaml#/head'
+              data:
+                type: array
+                items:
+                  $ref: '../definitions/definitions.yaml#/task'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'
+    post:
+      security:
+        - Bearer: []
+      description: Creates a new task in the system
+      parameters:
+        - name: task
+          in: body
+          description: Task to add to the system
+          required: true
+          schema:
+            $ref: '../definitions/definitions.yaml#/newTask'
+      responses:
+        '200':
+          description: Success response with task resource
+          schema:
+            properties:
+              data:
+                $ref: '../definitions/definitions.yaml#/newTaskResponse'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'

@@ -1,0 +1,54 @@
+  head:
+    name: head
+    in: query
+    type: string
+    default: latest
+    description: The id of the block to use as the chain head
+    x-example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
+  start:
+    name: start
+    in: query
+    type: integer
+    default: 0
+    description: The index of the resource to start a page with
+  limit:
+    name: limit
+    in: query
+    type: integer
+    default: 100
+    description: The maximum number of resources to return per page
+  proposalId:
+    name: id
+    in: path
+    description: Id of a particular proposal in state
+    required: true
+    type: string
+    x-example: 63467642-6067-4c82-a096-1a1972d776b3
+  roleId:
+    name: id
+    in: path
+    description: Id of a particular role in state
+    required: true
+    type: string
+    x-example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+  taskId:
+    name: id
+    in: path
+    description: Id of a particular task in state
+    required: true
+    type: string
+    x-example: 7303e601-a596-4561-94f2-84ad716c4089
+  userId:
+    name: id
+    in: path
+    description: Id of a particular user in state
+    required: true
+    type: string
+    x-example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+  blockId: 
+    name: id
+    in: path
+    description: Id of the block being fetched
+    required: true
+    type: string
+    x-example: 65cd3a3ce088b265b626f704b7f3db97b6f12e848dccb35d7806f3d0324c71b709ed360d602b8b658b94695374717e3bdb4b76f77886953777d5d008558247dd
