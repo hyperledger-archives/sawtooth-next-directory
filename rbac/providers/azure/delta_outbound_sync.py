@@ -26,7 +26,7 @@ from rbac.providers.common.outbound_filters import (
     outbound_group_creation_filter,
 )
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.rethink_db import (
+from rbac.providers.common.db_queries import (
     connect_to_db,
     peek_at_queue,
     put_entry_changelog,

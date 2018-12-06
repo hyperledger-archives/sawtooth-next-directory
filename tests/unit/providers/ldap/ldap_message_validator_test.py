@@ -15,7 +15,7 @@
 import pytest
 
 from rbac.providers.ldap import ldap_message_validator
-from rbac.providers.error.unrecoverable_error import LdapMessageValidationException
+from rbac.providers.common.expected_errors import LdapMessageValidationException
 
 
 def test_validate_missing_data_type():

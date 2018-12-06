@@ -24,8 +24,8 @@ import rethinkdb as r
 from azure.eventhub import EventHubClient, Offset
 
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.rethink_db import connect_to_db
-from rbac.providers.common.common import save_sync_time, check_last_sync
+from rbac.providers.common.db_queries import connect_to_db, save_sync_time
+from rbac.providers.common.common import check_last_sync
 
 DELAY = os.environ.get("DELAY")
 
@@ -40,7 +40,7 @@ EVENTHUB_NAME = os.environ.get("AAD_EH_NAME")
 # Address can be in either of these formats:
 # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
 # "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
-ADDRESS = ("amqps://%s.servicebus.windows.net/%s", NAMESPACE, EVENTHUB_NAME)
+ADDRESS = "amqps://{}.servicebus.windows.net/{}".format(NAMESPACE, EVENTHUB_NAME)
 
 # SAS policy and key are not required if they are encoded in the URL
 USER = os.environ.get("AAD_EH_SAS_POLICY")
@@ -73,7 +73,9 @@ def inbound_sync_listener():
             LOGGER.info("Successfully connected to RethinkDB!")
 
             initial_sync_time = check_last_sync("azure-user", "initial")
-            initial_sync_time = initial_sync_time[0]["timestamp"][:26]
+            LOGGER.info(initial_sync_time)
+            LOGGER.info("This is your initial sync time")
+            initial_sync_time = initial_sync_time["timestamp"][:26]
             latest_delta_sync_time = get_last_delta_sync(provider_id, "delta")
             if latest_delta_sync_time:
                 latest_delta_sync_time = latest_delta_sync_time["timestamp"][:26]
@@ -85,6 +87,7 @@ def inbound_sync_listener():
                     initial_sync_time, "%Y-%m-%dT%H:%M:%S.%f"
                 )
             # Create an eventhub client.
+            LOGGER.info(ADDRESS)
             client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
             try:
                 LOGGER.info("Opening connection to EventHub...")

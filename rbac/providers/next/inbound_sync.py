@@ -22,7 +22,7 @@ import os
 import time
 import logging
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.rethink_db import (
+from rbac.providers.common.db_queries import (
     connect_to_db,
     peek_at_queue,
     put_entry_changelog,

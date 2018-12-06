@@ -17,10 +17,14 @@ import time
 import os
 import sys
 import logging
+from datetime import timezone
 from datetime import datetime as dt
 import rethinkdb as r
-from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.error.unrecoverable_error import DatabaseConnectionException
+
+from rbac.providers.common.expected_errors import (
+    ExpectedError,
+    DatabaseConnectionException,
+)
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.INFO
@@ -58,6 +62,44 @@ def connect_to_db():
                 DB_CONNECT_MAX_ATTEMPTS
             )
         )
+
+
+def get_last_sync(source, sync_type):
+    """
+        Search and get last sync entry from the specified source. Throws
+        ExpectedError if sync_tracker table has not been initialized.
+    """
+    try:
+        last_sync = (
+            r.table("sync_tracker")
+            .filter({"source": source, "sync_type": sync_type})
+            .max("timestamp")
+            .coerce_to("object")
+            .run()
+        )
+        return last_sync
+    except (r.ReqlOpFailedError, r.ReqlDriverError) as err:
+        raise ExpectedError(err)
+    except r.ReqlNonExistenceError:
+        LOGGER.debug("The sync_tracker table is empty.")
+    except Exception as err:
+        LOGGER.warning(type(err).__name__)
+        raise err
+
+
+def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
+    """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
+    if timestamp:
+        last_sync_time = timestamp
+    else:
+        last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
+    sync_entry = {
+        "provider_id": provider_id,
+        "timestamp": last_sync_time,
+        "source": sync_source,
+        "sync_type": sync_type,
+    }
+    r.table("sync_tracker").insert(sync_entry).run()
 
 
 def peek_at_queue(table_name, provider_id=None):
