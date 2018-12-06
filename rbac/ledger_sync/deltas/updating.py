@@ -99,7 +99,8 @@ def _update_state(database, block_num, address, resource):
         table_query = database.get_table("state")
         query = table_query.get(key).replace(
             lambda doc: r.branch(
-                (doc is None),
+                # pylint: disable=singleton-comparison
+                (doc == None),  # noqa
                 r.expr(data).merge(
                     {
                         "address": key,
