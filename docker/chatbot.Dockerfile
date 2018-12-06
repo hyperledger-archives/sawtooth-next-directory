@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM rasa/rasa_core:0.12.2
+FROM rasa/rasa_core:0.12.3
 
 RUN apt-get update \
  && apt-get install -y --allow-unauthenticated -q \
@@ -22,9 +22,11 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install \
-        rasa_nlu[spacy]
+        msgpack==0.5.6 \
+        rasa_nlu[spacy]==0.13.8
 
-RUN python -m spacy download en
+RUN python -m spacy download en_core_web_md \
+ && python -m spacy link en_core_web_md en
 
 WORKDIR /project/hyperledger-rbac
 
