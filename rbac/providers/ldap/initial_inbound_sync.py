@@ -32,10 +32,7 @@ from rbac.providers.common.inbound_filters import (
     inbound_group_filter,
 )
 from rbac.providers.common.common import save_sync_time, check_last_sync
-from rbac.providers.ldap.delta_inbound_sync import (
-    inbound_delta_sync,
-    restart_delta_sync,
-)
+from rbac.providers.ldap.delta_inbound_sync import inbound_delta_sync
 from rbac.providers.common.rethink_db import connect_to_db
 
 
@@ -84,7 +81,6 @@ def fetch_ldap_data(data_type):
     sync_source = "ldap-" + data_type
     provider_id = LDAP_DC
     save_sync_time(provider_id, sync_source, "initial")
-    initiate_delta_sync(data_type)
 
 
 def insert_to_db(data_dict, data_type):
@@ -108,9 +104,9 @@ def insert_to_db(data_dict, data_type):
     )
 
 
-def initiate_delta_sync(data_type):
+def initiate_delta_sync():
     """Starts a new delta sync thread for LDAP data_type."""
-    threading.Thread(inbound_delta_sync, args=(data_type,)).start()
+    threading.Thread(target=inbound_delta_sync).start()
 
 
 def initialize_ldap_sync():
@@ -122,6 +118,8 @@ def initialize_ldap_sync():
     if LDAP_DC:
         connect_to_db()
 
+        user_sync_completed = False
+        group_sync_completed = False
         db_user_payload = check_last_sync("ldap-user", "initial")
         if not db_user_payload:
             LOGGER.info(
@@ -132,6 +130,7 @@ def initialize_ldap_sync():
             fetch_ldap_data(data_type="user")
 
             LOGGER.info("Initial AD user upload completed.")
+            user_sync_completed = True
 
         db_group_payload = check_last_sync("ldap-group", "initial")
         if not db_group_payload:
@@ -142,9 +141,17 @@ def initialize_ldap_sync():
             fetch_ldap_data(data_type="group")
 
             LOGGER.info("Initial AD group upload completed.")
+            group_sync_completed = True
+
+        if user_sync_completed and group_sync_completed:
+            initiate_delta_sync()
+        else:
+            LOGGER.info(
+                "Initial syncs did not complete successfully, LDAP delta sync will not start."
+            )
 
         if db_user_payload and db_group_payload:
             LOGGER.info("The LDAP initial sync has already been run.")
-            restart_delta_sync()
+            initiate_delta_sync()
     else:
         LOGGER.info("LDAP Domain Controller is not provided, skipping LDAP sync.")
