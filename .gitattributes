@@ -45,3 +45,5 @@ MAINTAINERS text
 *.ttf binary
 *.woff binary
 *.woff2 binary
+*.pkl binary
+*.h5 binary

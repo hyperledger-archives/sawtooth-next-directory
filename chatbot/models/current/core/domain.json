@@ -16,6 +16,7 @@
     "intent_send",
     "intent_thank",
     "intent_whoami",
+    "entity_reason",
     "prev_action_listen",
     "prev_action_restart",
     "prev_action_default_fallback",

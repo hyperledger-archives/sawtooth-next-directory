@@ -23,7 +23,8 @@ actions:
 - action_request_access
 config:
   store_entities_as_slots: true
-entities: []
+entities:
+- reason
 forms: []
 intents:
 - recommend:

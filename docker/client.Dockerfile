@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-
 FROM node:8
 
 WORKDIR /client
@@ -25,4 +23,4 @@ RUN yarn global add gulp@4.0 \
 COPY ./client/src/semantic ./src/semantic
 RUN yarn build:semantic
 
-CMD ["./entrypoint.sh"]
+CMD ["./entrypoint"]

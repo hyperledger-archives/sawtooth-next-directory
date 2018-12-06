@@ -33,4 +33,4 @@ WORKDIR /project/hyperledger-rbac
 # Base image entrypoint reset
 ENTRYPOINT []
 
-CMD ["./bin/chatbot"]
+CMD ["./chatbot/entrypoint"]
