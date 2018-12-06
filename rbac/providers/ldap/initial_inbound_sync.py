@@ -31,10 +31,9 @@ from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
 )
-from rbac.providers.common.common import save_sync_time, check_last_sync
+from rbac.providers.common.common import check_last_sync
 from rbac.providers.ldap.delta_inbound_sync import inbound_delta_sync
-from rbac.providers.common.rethink_db import connect_to_db
-
+from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG

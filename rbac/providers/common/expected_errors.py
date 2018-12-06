@@ -44,3 +44,23 @@ class ExpectedError(Exception):
     def __str__(self):
         super(ExpectedError, self).__str__()
         return self.message
+
+
+class DatabaseConnectionException(Exception):
+    """Thrown when all attempts to connect to the database have failed"""
+
+
+class LdapConnectionException(Exception):
+    """Thrown when all attempts to connect to active directory have failed"""
+
+
+class LdapMessageValidationException(Exception):
+    """Thrown when an LDAP-formatted message fails a validation"""
+
+
+class NextMessageValidationException(Exception):
+    """Thrown when a NEXT-formatted message fails a validation"""
+
+
+class MissingLdapDestinationException(Exception):
+    """Thrown when an environment variable for ldap target is missing"""

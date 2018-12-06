@@ -14,59 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Functions that are common to all providers."""
 import logging
 import sys
 import time
-from datetime import datetime as dt
-from datetime import timezone
-import rethinkdb as r
 
 from rbac.providers.common.expected_errors import ExpectedError
+from rbac.providers.common.db_queries import get_last_sync
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.INFO
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 DELAY = 1
-
-
-def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
-    """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
-    if timestamp:
-        last_sync_time = timestamp
-    else:
-        last_sync_time = dt.now().replace(tzinfo=timezone.utc).isoformat()
-    sync_entry = {
-        "provider_id": provider_id,
-        "timestamp": last_sync_time,
-        "source": sync_source,
-        "sync_type": sync_type,
-    }
-    r.table("sync_tracker").insert(sync_entry).run()
-
-
-def get_last_sync(source, sync_type):
-    """
-        Search and get last sync entry from the specified source. Throws
-        ExpectedError if sync_tracker table has not been initialized.
-    """
-    try:
-        last_sync = (
-            r.table("sync_tracker")
-            .filter({"source": source, "sync_type": sync_type})
-            .max("timestamp")
-            .coerce_to("object")
-            .run()
-        )
-        return last_sync
-    except (r.ReqlOpFailedError, r.ReqlDriverError) as err:
-        raise ExpectedError(err)
-    except r.ReqlNonExistenceError:
-        LOGGER.debug("The sync_tracker table is empty.")
-    except Exception as err:
-        LOGGER.warning(type(err).__name__)
-        raise err
 
 
 def check_last_sync(sync_source, sync_type):

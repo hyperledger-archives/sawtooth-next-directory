@@ -20,7 +20,7 @@ import ldap3
 from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.rethink_db import (
+from rbac.providers.common.db_queries import (
     connect_to_db,
     peek_at_queue,
     put_entry_changelog,
@@ -47,8 +47,6 @@ GROUP_SEARCH_FILTER = "(&(objectClass=group)(distinguishedName={}))"
 
 USER_REQUIRED_ATTR = {"cn", "userPrincipalName"}
 GROUP_REQUIRED_ATTR = {"groupType"}
-
-# TODO: Replace process_ldap_outbound() with LDAP outbound queue listener (next task).
 
 
 def connect_to_ldap():

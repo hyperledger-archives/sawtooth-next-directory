@@ -15,7 +15,7 @@
 
 import os
 
-from rbac.providers.error.unrecoverable_error import (
+from rbac.providers.common.expected_errors import (
     LdapMessageValidationException,
     NextMessageValidationException,
 )

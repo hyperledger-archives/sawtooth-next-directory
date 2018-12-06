@@ -21,13 +21,11 @@ import rethinkdb as r
 import ldap3
 from ldap3 import ALL, Connection, Server
 
-from rbac.providers.common.rethink_db import connect_to_db
-from rbac.providers.common.common import save_sync_time
 from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
 )
-from rbac.providers.ldap.ldap_payload_mapper import to_date_ldap_query
+from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 
 DELAY = os.environ.get("DELAY")
 LDAP_DC = os.getenv("LDAP_DC")
@@ -87,6 +85,15 @@ def fetch_ldap_data():
     insert_to_db(data_dict=ldap_conn.entries, when_changed=parsed_last_sync_time)
 
 
+def to_date_ldap_query(rethink_timestamp):
+    """
+        Call to transform timestamp stored in RethinkDB to a string in the following format:YYYYmmddHHMMSS.Tz
+    """
+    return datetime.strptime(
+        rethink_timestamp.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f"
+    ).strftime("%Y%m%d%H%M%S.0Z")
+
+
 def insert_to_db(data_dict, when_changed):
     """Insert (Users | Groups) individually to RethinkDB from dict of data and begins delta sync timer."""
     insertion_counter = 0
@@ -99,7 +106,6 @@ def insert_to_db(data_dict, when_changed):
             else:
                 data_type = "group"
                 standardized_entry = inbound_group_filter(entry_data, "ldap")
-
             entry_modified_timestamp = entry.whenChanged.value.strftime(
                 "%Y-%m-%dT%H:%M:%S.%f+00:00"
             )
