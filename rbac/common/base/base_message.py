@@ -311,6 +311,42 @@ class BaseMessage(AddressBase):
             message=message, message_type=message_type, inputs=inputs, outputs=outputs
         )
 
+    def batch(self, signer_keypair, batch=None, **kwargs):
+        """Adds a new message to an existing or new batch"""
+        message = kwargs.get("message")
+        object_id = kwargs.get("object_id")
+        related_id = kwargs.get("related_id")
+        if not message:
+            message = self.make(**kwargs)
+        else:
+            self.validate(message=message, signer=signer_keypair)
+        payload = self.make_payload(message=message, signer_keypair=signer_keypair)
+        transaction, new_batch, _, _ = batcher.make(
+            payload=payload, signer_keypair=signer_keypair
+        )
+        if batch:
+            batch.transactions.extend([transaction])
+            return batch
+        return new_batch
+
+    def batch_list(self, signer_keypair, batch_list=None, **kwargs):
+        """Adds a new message to an existing or new batch list"""
+        message = kwargs.get("message")
+        object_id = kwargs.get("object_id")
+        related_id = kwargs.get("related_id")
+        if not message:
+            message = self.make(**kwargs)
+        else:
+            self.validate(message=message, signer=signer_keypair)
+        payload = self.make_payload(message=message, signer_keypair=signer_keypair)
+        _, new_batch, new_batch_list, _ = batcher.make(
+            payload=payload, signer_keypair=signer_keypair
+        )
+        if batch_list:
+            batch_list.batches.extend([new_batch])
+            return batch_list
+        return new_batch_list
+
     def unmake_payload(self, payload):
         """Unmake the payload for the given message type"""
         message_type = self.message_type
@@ -321,9 +357,15 @@ class BaseMessage(AddressBase):
         outputs = list(payload.outputs)
         return message, message_type, inputs, outputs
 
-    def create(self, signer_keypair, message, object_id=None, related_id=None):
+    def create(self, signer_keypair, **kwargs):
         """Send a message to the blockchain"""
-        self.validate(message=message, signer=signer_keypair)
+        message = kwargs.get("message")
+        object_id = kwargs.get("object_id")
+        related_id = kwargs.get("related_id")
+        if not message:
+            message = self.make(**kwargs)
+        else:
+            self.validate(message=message, signer=signer_keypair)
         return self.send(
             signer_keypair=signer_keypair,
             payload=self.make_payload(message=message, signer_keypair=signer_keypair),
