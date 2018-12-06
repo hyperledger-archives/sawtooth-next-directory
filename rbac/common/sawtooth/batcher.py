@@ -16,6 +16,7 @@
 to pass messages to and from the Sawtooth validator"""
 
 import logging
+import itertools
 from hashlib import sha512
 from uuid import uuid4
 from sawtooth_sdk.protobuf import batch_pb2
@@ -24,6 +25,7 @@ from sawtooth_sdk.protobuf import transaction_pb2
 from rbac.common import addresser
 from rbac.common.crypto.keys import Key
 from rbac.common.sawtooth import rbac_payload
+from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 
 LOGGER = logging.getLogger(__name__)
 BATCHER_KEY_PAIR = Key()
@@ -125,6 +127,94 @@ def make(payload, signer_keypair, batcher_keypair=BATCHER_KEY_PAIR):
     transaction = make_transaction(payload=payload, signer_keypair=signer_keypair)
 
     batch = make_batch(transaction=transaction, batcher_keypair=batcher_keypair)
+
+    batch_list = batch_to_list(batch=batch)
+    batch_request = make_batch_request(batch_list=batch_list)
+
+    return transaction, batch, batch_list, batch_request
+
+
+def unmake(
+    batch_object, signer_public_key=None, batcher_public_key=BATCHER_KEY_PAIR.public_key
+):
+    """Will unmake a batch_request, batch_list, batch, transaction
+    or payload, and return a list of the included messages.
+    Validation of signatures will occur if public keys are provided.
+    Only used for testing purposes.
+    """
+    if isinstance(
+        batch_object, client_batch_submit_pb2.ClientBatchSubmitRequest
+    ) or isinstance(batch_object, batch_pb2.BatchList):
+        return list(itertools.chain(*[unmake(batch) for batch in batch_object.batches]))
+    if isinstance(batch_object, batch_pb2.Batch):
+        batch_header = batch_pb2.BatchHeader()
+        batch_header.ParseFromString(batch_object.header)
+        if batcher_public_key:
+            assert batch_header.signer_public_key == batcher_public_key
+            batcher_keypair = Key(public_key=batcher_public_key)
+            assert batcher_keypair.verify(
+                signature=batch_object.header_signature, message=batch_object.header
+            )
+        transactions = list(batch_object.transactions)
+        return [unmake_item(transaction) for transaction in transactions]
+    return [
+        unmake_item(
+            batch_object=batch_object,
+            signer_public_key=signer_public_key,
+            batcher_public_key=batcher_public_key,
+        )
+    ]
+
+
+def unmake_item(
+    batch_object, signer_public_key=None, batcher_public_key=BATCHER_KEY_PAIR.public_key
+):
+    """Will unmake_item a transaction or payload, and return a message.
+    Validation of signatures will occur if public keys are provided.
+    Only used for testing purposes.
+    """
+    if isinstance(batch_object, transaction_pb2.Transaction):
+        header = transaction_pb2.TransactionHeader()
+        header.ParseFromString(batch_object.header)
+        assert header.payload_sha512 == sha512(batch_object.payload).hexdigest()
+        if signer_public_key:
+            assert header.signer_public_key == signer_public_key
+            signer = Key(public_key=signer_public_key)
+            signer.verify(
+                signature=batch_object.header_signature, message=batch_object.header
+            )
+        payload = RBACPayload()
+        payload.ParseFromString(batch_object.payload)
+        batch_object = payload
+    if isinstance(batch_object, RBACPayload):
+        _, message, _, _ = unmake_payload(payload=batch_object)
+        return message
+    raise Exception(
+        "unmake doesn't handle type {}\n{}".format(type(batch_object), batch_object)
+    )
+
+
+def make_ping():
+    """Makes a ping transaction (a transaction that does nothing but make
+    sure the validator and transaction processor is up and responding)"""
+    payload = "ping".encode("utf-8")
+    header = transaction_pb2.TransactionHeader(
+        inputs=[],
+        outputs=[],
+        batcher_public_key=BATCHER_KEY_PAIR.public_key,
+        dependencies=[],
+        family_name=addresser.family.name,
+        family_version=addresser.family.version,
+        nonce=uuid4().hex,
+        signer_public_key=BATCHER_KEY_PAIR.public_key,
+        payload_sha512=sha512(payload).hexdigest(),
+    )
+    transaction = transaction_pb2.Transaction(
+        payload=payload,
+        header=header.SerializeToString(),
+        header_signature=BATCHER_KEY_PAIR.sign(header.SerializeToString()),
+    )
+    batch = make_batch(transaction=transaction, batcher_keypair=BATCHER_KEY_PAIR)
 
     batch_list = batch_to_list(batch=batch)
     batch_request = make_batch_request(batch_list=batch_list)

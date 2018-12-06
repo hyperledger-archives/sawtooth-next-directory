@@ -91,11 +91,62 @@ class TestBatchClient(TestAssertions):
             payload=payload, message=message, message_type=message_type
         )
 
+    def test_unmake_payload(self):
+        """Test the unmake batch function"""
+        message, message_type, inputs, outputs, signer = self.get_test_inputs()
+        payload = batcher.make_payload(
+            message=message, message_type=message_type, inputs=inputs, outputs=outputs
+        )
+        messages = batcher.unmake(
+            batch_object=payload, signer_public_key=signer.public_key
+        )
+        self.assertEqual(len(messages), 1)
+        self.assertEqualMessage(message, messages[0])
+
     def test_get_test_payload(self):
         """Verifies the test data payload function returns the expected test data"""
         payload, signer = self.get_test_payload()
         self.assertIsInstance(payload, RBACPayload)
         self.assertIsInstance(signer, Key)
+
+    def test_unmake(self):
+        """Test the unmake batch function with a single message"""
+        message, message_type, inputs, outputs, signer_keypair = self.get_test_inputs()
+        payload = batcher.make_payload(
+            message=message, message_type=message_type, inputs=inputs, outputs=outputs
+        )
+        transaction, batch, batch_list, batch_request = batcher.make(
+            payload=payload, signer_keypair=signer_keypair
+        )
+        messages = batcher.unmake(
+            batch_object=payload, signer_public_key=signer_keypair.public_key
+        )
+        self.assertEqual(len(messages), 1)
+        self.assertEqualMessage(message, messages[0])
+
+        messages = batcher.unmake(
+            batch_object=transaction, signer_public_key=signer_keypair.public_key
+        )
+        self.assertEqual(len(messages), 1)
+        self.assertEqualMessage(message, messages[0])
+
+        messages = batcher.unmake(
+            batch_object=batch, signer_public_key=signer_keypair.public_key
+        )
+        self.assertEqual(len(messages), 1)
+        self.assertEqualMessage(message, messages[0])
+
+        messages = batcher.unmake(
+            batch_object=batch_list, signer_public_key=signer_keypair.public_key
+        )
+        self.assertEqual(len(messages), 1)
+        self.assertEqualMessage(message, messages[0])
+
+        messages = batcher.unmake(
+            batch_object=batch_request, signer_public_key=signer_keypair.public_key
+        )
+        self.assertEqual(len(messages), 1)
+        self.assertEqualMessage(message, messages[0])
 
     def test_make_transaction_header(self):
         """Test the make transaction header batch function"""
