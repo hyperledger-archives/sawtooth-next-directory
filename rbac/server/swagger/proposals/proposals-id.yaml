@@ -1,0 +1,83 @@
+    get:
+      security:
+        - Bearer: []
+      description: Fetches the complete details of a proposal
+      parameters:
+        - $ref: '../parameters/parameters.yaml#/head'
+        - $ref: '../parameters/parameters.yaml#/proposalId'
+      responses:
+        '200':
+          description: Response with the fetched proposal
+          schema:
+            properties:
+              link:
+                $ref: '../definitions/definitions.yaml#/getProposalLink'
+              head:
+                $ref: '../definitions/definitions.yaml#/head'
+              data:
+                $ref: '../definitions/definitions.yaml#/proposal'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '../definitions/definitions.yaml#/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'
+    patch:
+      security:
+        - Bearer: []
+      description: Updates the status of a proposal
+      parameters:
+        - name: update
+          in: body
+          description: Update information for the proposal
+          required: true
+          schema:
+            $ref: '../definitions/definitions.yaml#/proposalUpdate'
+        - $ref: '../parameters/parameters.yaml#/proposalId'    
+      responses:
+        '200':
+          description: Success response with proposal id
+          schema:
+            $ref: '../definitions/definitions.yaml#/proposalId'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '../definitions/definitions.yaml#/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'
