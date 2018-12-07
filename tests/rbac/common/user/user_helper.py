@@ -54,6 +54,10 @@ class UserTestHelper:
         """Returns a random username"""
         return self.create_user.username()
 
+    def email(self):
+        """Get a random email"""
+        return self.create_user.email()
+
     def reason(self):
         """Returns a random reason"""
         return self.create_user.reason()

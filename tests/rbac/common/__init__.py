@@ -21,7 +21,7 @@ from tests.rbac.common.task.task_helper import TaskTestHelper
 from tests.rbac.common.proposal.proposal_helper import ProposalTestHelper
 
 
-class TestHelper(TestAssertions):
+class StubTestHelper(TestAssertions):
     """Test Helper"""
 
     def __init__(self, *args, **kwargs):
@@ -33,6 +33,6 @@ class TestHelper(TestAssertions):
 
 
 # pylint: disable=invalid-name
-helper = TestHelper()
+helper = StubTestHelper()
 
 __all__ = ["helper"]

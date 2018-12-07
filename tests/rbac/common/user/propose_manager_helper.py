@@ -25,7 +25,7 @@ from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 LOGGER = logging.getLogger(__name__)
 
 
-class TestHelper:
+class StubTestHelper:
     """A minimal test helper required by this test helper"""
 
     def __init__(self):
@@ -33,7 +33,7 @@ class TestHelper:
 
 
 # pylint: disable=invalid-name
-helper = TestHelper()
+helper = StubTestHelper()
 
 
 class ProposeManagerTestHelper:

@@ -26,7 +26,7 @@ from tests.rbac.common.task.create_task_helper import CreateTaskTestHelper
 LOGGER = logging.getLogger(__name__)
 
 
-class TestHelper:
+class StubTestHelper:
     """A minimal test helper required by this test helper"""
 
     def __init__(self):
@@ -35,7 +35,7 @@ class TestHelper:
 
 
 # pylint: disable=invalid-name
-helper = TestHelper()
+helper = StubTestHelper()
 
 
 class ProposeTaskAdminTestHelper:

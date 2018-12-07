@@ -42,13 +42,15 @@ def test_address():
 def test_make():
     """Test making a create user message"""
     name = helper.user.name()
+    email = helper.user.email()
     keypair = helper.user.key()
-    message = rbac.user.make(user_id=keypair.public_key, name=name)
+    message = rbac.user.make(user_id=keypair.public_key, name=name, email=email)
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
     assert message.user_id == keypair.public_key
     assert message.name == name
+    assert message.email == email
 
 
 @pytest.mark.user
@@ -56,14 +58,18 @@ def test_make():
 def test_make_with_metadata():
     """test making a create user message with metadata"""
     name = helper.user.name()
+    email = helper.user.email()
     keypair = helper.user.key()
     metadata = {"employeeId": "12345", "mobile": "555-1212"}
-    message = rbac.user.make(user_id=keypair.public_key, name=name, metadata=metadata)
+    message = rbac.user.make(
+        user_id=keypair.public_key, name=name, email=email, metadata=metadata
+    )
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
     assert message.user_id == keypair.public_key
     assert message.name == name
+    assert message.email == email
     assert message.metadata == metadata
 
 
@@ -72,13 +78,15 @@ def test_make_with_metadata():
 def test_make_with_key():
     """Test making a create user message with key generation"""
     name = helper.user.name()
-    message, keypair = rbac.user.make_with_key(name=name)
+    email = helper.user.email()
+    message, keypair = rbac.user.make_with_key(name=name, email=email)
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
     assert isinstance(keypair, Key)
     assert message.user_id == keypair.public_key
     assert message.name == name
+    assert message.email == email
 
 
 @pytest.mark.user
@@ -86,9 +94,10 @@ def test_make_with_key():
 def test_make_addresses():
     """Test making addresses without manager"""
     name = helper.user.name()
+    email = helper.user.email()
     user_key = helper.user.key()
     user_id = user_key.public_key
-    message = rbac.user.make(user_id=user_id, name=name)
+    message = rbac.user.make(user_id=user_id, name=name, email=email)
     inputs, outputs = rbac.user.make_addresses(message=message, signer_keypair=user_key)
     user_address = rbac.user.address(object_id=message.user_id)
 
@@ -104,13 +113,16 @@ def test_make_addresses():
 def test_make_addresses_with_manager():
     """Test making addresses with manager"""
     name = helper.user.name()
+    email = helper.user.email()
     user_key = helper.user.key()
     user_id = user_key.public_key
     user_address = rbac.user.address(object_id=user_id)
     manager_id = helper.user.id()
     manager_address = rbac.user.address(object_id=manager_id)
 
-    message = rbac.user.make(user_id=user_id, name=name, manager_id=manager_id)
+    message = rbac.user.make(
+        user_id=user_id, name=name, email=email, manager_id=manager_id
+    )
     inputs, outputs = rbac.user.make_addresses(message=message, signer_keypair=user_key)
 
     assert isinstance(inputs, set)
@@ -127,16 +139,20 @@ def test_make_addresses_with_manager():
 def test_create_user():
     """Test creating a user on the blockchain"""
     name = helper.user.name()
+    email = helper.user.email()
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    _, status = rbac.user.create(signer_keypair=user_key, user_id=user_id, name=name)
+    _, status = rbac.user.create(
+        signer_keypair=user_key, user_id=user_id, name=name, email=email
+    )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     user = rbac.user.get(object_id=user_id)
     assert user.user_id == user_id
     assert user.name == name
+    assert user.email == email
 
 
 @pytest.mark.user
@@ -146,12 +162,17 @@ def test_create_with_manager():
     user_key = helper.user.key()
     user_id = user_key.public_key
     name = helper.user.name()
+    email = helper.user.email()
     manager_key = helper.user.key()
     manager_id = manager_key.public_key
     manager_name = helper.user.name()
+    manager_email = helper.user.email()
 
     _, status = rbac.user.create(
-        signer_keypair=manager_key, user_id=manager_id, name=manager_name
+        signer_keypair=manager_key,
+        user_id=manager_id,
+        name=manager_name,
+        email=manager_email,
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -159,9 +180,14 @@ def test_create_with_manager():
     manager = rbac.user.get(object_id=manager_id)
     assert manager.user_id == manager_id
     assert manager.name == manager_name
+    assert manager.email == manager_email
 
     _, status = rbac.user.create(
-        signer_keypair=user_key, user_id=user_id, name=name, manager_id=manager_id
+        signer_keypair=user_key,
+        user_id=user_id,
+        name=name,
+        email=email,
+        manager_id=manager_id,
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -169,4 +195,5 @@ def test_create_with_manager():
     user = rbac.user.get(object_id=user_id)
     assert user.user_id == user_id
     assert user.name == name
+    assert user.email == email
     assert user.manager_id == manager_id
