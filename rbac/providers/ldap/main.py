@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+
+# Copyright 2018 Contributors to Hyperledger Sawtooth
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------------
+""" LDAP Active Directory Provider
+"""
+import threading
+import logging
+
+from rbac.providers.ldap.initial_inbound_sync import initialize_ldap_sync
+from rbac.providers.ldap.delta_outbound_sync import ldap_outbound_listener
+
+# LOGGER levels: info, debug, warning, exception, error
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger(__name__)
+
+
+class OutboundSyncThread(threading.Thread):
+    """Custom Thread subclass that runs an LDAP outbound sync listener in its own
+    thread."""
+
+    def __init__(self):
+        """Initialize the OutboundSyncThread class"""
+        threading.Thread.__init__(self)
+        self.name = "LDAP Outbound Delta Sync Thread"
+
+    def run(self):
+        """Start the OutboundSyncThread"""
+        LOGGER.info("Starting %s", self.name)
+        ldap_outbound_listener()
+        LOGGER.info("Exiting %s", self.name)
+
+
+def main():
+    """ Starts the provider threads
+    """
+    initialize_ldap_sync()
+    # Create sync listener threads.
+    outbound_sync_thread = OutboundSyncThread()
+    # Start sync listener threads.
+    outbound_sync_thread.start()
