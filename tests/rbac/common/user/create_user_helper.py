@@ -44,6 +44,10 @@ class CreateUserTestHelper:
         """Get a random username"""
         return "user" + str(random.randint(10000, 100000))
 
+    def email(self):
+        """Get a random email"""
+        return "email" + str(random.randint(10000, 100000)) + "@example.com"
+
     def reason(self):
         """Get a random reason"""
         return "Because" + str(random.randint(10000, 100000))
