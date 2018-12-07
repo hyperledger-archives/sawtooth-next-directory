@@ -20,6 +20,7 @@ from rbac.common.user.create_user import CreateUser
 from rbac.common.user.propose_manager import ProposeUpdateUserManager
 from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
 from rbac.common.user.reject_manager import RejectUpdateUserManager
+from rbac.common.user.imports_user import ImportsUser
 
 LOGGER = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class User(CreateUser):
     def __init__(self):
         CreateUser.__init__(self)
         self.manager = Manager()
+        self.imports = ImportsUser()
 
 
 USER = User()

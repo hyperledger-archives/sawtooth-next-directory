@@ -13,25 +13,23 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Propose Role Task Test Helper"""
-# pylint: disable=no-member
+# pylint: disable=no-member,too-few-public-methods
 
 import logging
 import random
 
 from rbac.common import rbac
 from rbac.common import protobuf
-from tests.rbac.common.assertions import TestAssertions
 from tests.rbac.common.task.create_task_helper import CreateTaskTestHelper
 from tests.rbac.common.role.create_role_helper import CreateRoleTestHelper
 
 LOGGER = logging.getLogger(__name__)
 
 
-class TestHelper(TestAssertions):
+class TestHelper:
     """A minimal test helper required by this test helper"""
 
-    def __init__(self, *args, **kwargs):
-        TestAssertions.__init__(self, *args, **kwargs)
+    def __init__(self):
         self.role = CreateRoleTestHelper()
         self.task = CreateTaskTestHelper()
 
@@ -40,10 +38,11 @@ class TestHelper(TestAssertions):
 helper = TestHelper()
 
 
-class ProposeRoleTaskTestHelper(TestAssertions):
+class ProposeRoleTaskTestHelper:
     """Propose Role Task Test Helper"""
 
     def id(self):
+        """Get a unique identifier"""
         return rbac.addresser.proposal.unique_id()
 
     def reason(self):
@@ -70,16 +69,17 @@ class ProposeRoleTaskTestHelper(TestAssertions):
             object_id=role.role_id,
             related_id=task.task_id,
         )
-        self.assertStatusSuccess(status)
-        self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
-        self.assertEqual(
-            proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_TASK
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+        assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
+        assert (
+            proposal.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_ROLE_TASK
         )
-        self.assertEqual(proposal.proposal_id, proposal_id)
-        self.assertEqual(proposal.object_id, role.role_id)
-        self.assertEqual(proposal.related_id, task.task_id)
-        self.assertEqual(proposal.opener, role_owner_key.public_key)
-        self.assertEqual(proposal.open_reason, reason)
+        assert proposal.proposal_id == proposal_id
+        assert proposal.object_id == role.role_id
+        assert proposal.related_id == task.task_id
+        assert proposal.opener == role_owner_key.public_key
+        assert proposal.open_reason == reason
         return (
             proposal,
             role,

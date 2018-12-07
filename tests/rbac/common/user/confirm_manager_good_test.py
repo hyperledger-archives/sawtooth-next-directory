@@ -21,143 +21,90 @@ import pytest
 from rbac.common import rbac
 from rbac.common import protobuf
 from tests.rbac.common import helper
-from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.user
-class ConfirmManagerTest(TestAssertions):
-    """Confirm Manager Test"""
+@pytest.mark.library
+def test_make():
+    """Test making the message"""
+    user_id = helper.user.id()
+    manager_id = helper.user.id()
+    reason = helper.user.manager.propose.reason()
+    proposal_id = helper.user.manager.propose.id()
+    message = rbac.user.manager.confirm.make(
+        proposal_id=proposal_id, user_id=user_id, manager_id=manager_id, reason=reason
+    )
+    assert isinstance(message, protobuf.user_transaction_pb2.ConfirmUpdateUserManager)
+    assert message.proposal_id == proposal_id
+    assert message.user_id == user_id
+    assert message.manager_id == manager_id
+    assert message.reason == reason
 
-    @pytest.mark.library
-    def test_make(self):
-        """Test making the message"""
-        user_id = helper.user.id()
-        manager_id = helper.user.id()
-        reason = helper.user.manager.propose.reason()
-        proposal_id = helper.user.manager.propose.id()
-        message = rbac.user.manager.confirm.make(
-            proposal_id=proposal_id,
-            user_id=user_id,
-            manager_id=manager_id,
-            reason=reason,
-        )
-        self.assertIsInstance(
-            message, protobuf.user_transaction_pb2.ConfirmUpdateUserManager
-        )
-        self.assertEqual(message.proposal_id, proposal_id)
-        self.assertEqual(message.user_id, user_id)
-        self.assertEqual(message.manager_id, manager_id)
-        self.assertEqual(message.reason, reason)
 
-    @pytest.mark.library
-    def test_make_addresses(self):
-        """Test making the message addresses"""
-        user_id = helper.user.id()
-        user_address = rbac.user.address(object_id=user_id)
-        signer_keypair = helper.user.key()
+@pytest.mark.user
+@pytest.mark.library
+def test_make_addresses():
+    """Test making the message addresses"""
+    user_id = helper.user.id()
+    user_address = rbac.user.address(object_id=user_id)
+    signer_keypair = helper.user.key()
 
-        manager_id = helper.user.id()
-        reason = helper.user.manager.propose.reason()
-        proposal_id = helper.proposal.id()
-        proposal_address = rbac.user.manager.confirm.address(
-            object_id=user_id, related_id=manager_id
-        )
-        signer_user_address = rbac.user.address(signer_keypair.public_key)
-        message = rbac.user.manager.confirm.make(
-            proposal_id=proposal_id,
-            user_id=user_id,
-            manager_id=manager_id,
-            reason=reason,
-        )
+    manager_id = helper.user.id()
+    reason = helper.user.manager.propose.reason()
+    proposal_id = helper.proposal.id()
+    proposal_address = rbac.user.manager.confirm.address(
+        object_id=user_id, related_id=manager_id
+    )
+    signer_user_address = rbac.user.address(signer_keypair.public_key)
+    message = rbac.user.manager.confirm.make(
+        proposal_id=proposal_id, user_id=user_id, manager_id=manager_id, reason=reason
+    )
 
-        inputs, outputs = rbac.user.manager.confirm.make_addresses(
-            message=message, signer_keypair=signer_keypair
-        )
+    inputs, outputs = rbac.user.manager.confirm.make_addresses(
+        message=message, signer_keypair=signer_keypair
+    )
 
-        self.assertIsInstance(inputs, list)
-        self.assertIn(user_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertIn(signer_user_address, inputs)
-        self.assertEqual(len(inputs), 3)
+    assert user_address in inputs
+    assert proposal_address in inputs
+    assert signer_user_address in inputs
 
-        self.assertIsInstance(outputs, list)
-        self.assertIn(user_address, outputs)
-        self.assertIn(proposal_address, outputs)
-        self.assertEqual(len(outputs), 2)
+    assert user_address in outputs
+    assert proposal_address in outputs
 
-    @pytest.mark.library
-    def test_make_payload(self):
-        """Test making the message payload"""
-        user_id = helper.user.id()
-        user_address = rbac.user.address(object_id=user_id)
-        signer_keypair = helper.user.key()
-        manager_id = helper.user.id()
-        reason = helper.user.manager.propose.reason()
-        proposal_id = helper.proposal.id()
-        proposal_address = rbac.user.manager.confirm.address(
-            object_id=user_id, related_id=manager_id
-        )
-        signer_user_address = rbac.user.address(signer_keypair.public_key)
-        message = rbac.user.manager.confirm.make(
-            proposal_id=proposal_id,
-            user_id=user_id,
-            manager_id=manager_id,
-            reason=reason,
-        )
 
-        payload = rbac.user.manager.confirm.make_payload(
-            message=message, signer_keypair=signer_keypair
-        )
-        inputs = list(payload.inputs)
-        outputs = list(payload.outputs)
+@pytest.mark.user
+@pytest.mark.confirm_user_manager
+def test_create():
+    """Test confirming a manager proposal"""
+    proposal, _, _, _, manager_key = helper.user.manager.propose.create()
 
-        self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
+    reason = helper.user.manager.propose.reason()
+    _, status = rbac.user.manager.confirm.create(
+        signer_keypair=manager_key,
+        proposal_id=proposal.proposal_id,
+        user_id=proposal.object_id,
+        manager_id=proposal.related_id,
+        reason=reason,
+    )
+    assert len(status) == 1
+    assert status[0]["status"] == "COMMITTED"
 
-        self.assertIsInstance(inputs, list)
-        self.assertIn(user_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertIn(signer_user_address, inputs)
-        self.assertEqual(len(inputs), 3)
+    confirm = rbac.user.manager.confirm.get(
+        object_id=proposal.object_id, related_id=proposal.related_id
+    )
+    assert isinstance(confirm, protobuf.proposal_state_pb2.Proposal)
+    assert (
+        confirm.proposal_type
+        == protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
+    )
+    assert confirm.proposal_id == proposal.proposal_id
+    assert confirm.object_id == proposal.object_id
+    assert confirm.related_id == proposal.related_id
+    assert confirm.close_reason == reason
+    assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
 
-        self.assertIsInstance(outputs, list)
-        self.assertIn(user_address, outputs)
-        self.assertIn(proposal_address, outputs)
-        self.assertEqual(len(outputs), 2)
-
-    @pytest.mark.confirm_user_manager
-    def test_create(self):
-        """Test confirming a manager proposal"""
-        proposal, _, _, _, manager_key = helper.user.manager.propose.create()
-
-        reason = helper.user.manager.propose.reason()
-        message = rbac.user.manager.confirm.make(
-            proposal_id=proposal.proposal_id,
-            user_id=proposal.object_id,
-            manager_id=proposal.related_id,
-            reason=reason,
-        )
-        _, status = rbac.user.manager.confirm.create(
-            signer_keypair=manager_key,
-            message=message,
-            object_id=proposal.object_id,
-            related_id=proposal.related_id,
-        )
-        self.assertStatusSuccess(status)
-        confirm = rbac.user.manager.confirm.get(
-            object_id=proposal.object_id, related_id=proposal.related_id
-        )
-        self.assertIsInstance(confirm, protobuf.proposal_state_pb2.Proposal)
-        self.assertEqual(
-            confirm.proposal_type,
-            protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER,
-        )
-        self.assertEqual(confirm.proposal_id, proposal.proposal_id)
-        self.assertEqual(confirm.object_id, proposal.object_id)
-        self.assertEqual(confirm.related_id, proposal.related_id)
-        self.assertEqual(confirm.close_reason, reason)
-        self.assertEqual(confirm.status, protobuf.proposal_state_pb2.Proposal.CONFIRMED)
-        user = rbac.user.get(object_id=proposal.object_id)
-        self.assertIsInstance(user, protobuf.user_state_pb2.User)
-        self.assertEqual(user.manager_id, proposal.related_id)
+    user = rbac.user.get(object_id=proposal.object_id)
+    assert isinstance(user, protobuf.user_state_pb2.User)
+    assert user.manager_id == proposal.related_id

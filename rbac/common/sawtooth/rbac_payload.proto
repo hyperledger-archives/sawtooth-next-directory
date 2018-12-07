@@ -69,6 +69,16 @@ message RBACPayload {
         UPDATE_PROPOSAL = 43;
         UPDATE_TASK = 44;
         UPDATE_USER = 45;
+
+        IMPORTS_USER = 46;
+        IMPORTS_ROLE = 47;
+        IMPORTS_ADD_ROLE_OWNER = 48;
+        IMPORTS_ADD_ROLE_ADMIN = 49;
+        IMPORTS_ADD_ROLE_MEMBER = 50;
+        IMPORTS_REMOVE_ROLE_OWNER = 51;
+        IMPORTS_REMOVE_ROLE_ADMIN = 52;
+        IMPORTS_REMOVE_ROLE_MEMBER = 53;
+        
     }
 
 

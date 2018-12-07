@@ -21,130 +21,81 @@ import pytest
 from rbac.common import rbac
 from rbac.common import protobuf
 from tests.rbac.common import helper
-from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.user
-class RejectManagerTest(TestAssertions):
-    """Reject Manager Test"""
+@pytest.mark.library
+def test_make():
+    """Test making the message"""
+    user_id = helper.user.id()
+    manager_id = helper.user.id()
+    reason = helper.user.manager.propose.reason()
+    proposal_id = helper.user.manager.propose.id()
+    message = rbac.user.manager.reject.make(
+        proposal_id=proposal_id, user_id=user_id, manager_id=manager_id, reason=reason
+    )
+    assert isinstance(message, protobuf.user_transaction_pb2.RejectUpdateUserManager)
+    assert message.proposal_id == proposal_id
+    assert message.user_id == user_id
+    assert message.manager_id == manager_id
+    assert message.reason == reason
 
-    @pytest.mark.library
-    def test_make(self):
-        """Test making the message"""
-        user_id = helper.user.id()
-        manager_id = helper.user.id()
-        reason = helper.user.manager.propose.reason()
-        proposal_id = helper.user.manager.propose.id()
-        message = rbac.user.manager.reject.make(
-            proposal_id=proposal_id,
-            user_id=user_id,
-            manager_id=manager_id,
-            reason=reason,
-        )
-        self.assertIsInstance(
-            message, protobuf.user_transaction_pb2.RejectUpdateUserManager
-        )
-        self.assertEqual(message.proposal_id, proposal_id)
-        self.assertEqual(message.user_id, user_id)
-        self.assertEqual(message.manager_id, manager_id)
-        self.assertEqual(message.reason, reason)
 
-    @pytest.mark.library
-    def test_make_addresses(self):
-        """Test making a propose manager message"""
-        user_key = helper.user.key()
-        user_id = user_key.public_key
-        manager_id = helper.user.id()
-        reason = helper.user.manager.propose.reason()
-        proposal_id = helper.user.manager.propose.id()
-        proposal_address = rbac.user.manager.reject.address(
-            object_id=user_id, related_id=manager_id
-        )
-        signer_user_address = rbac.user.address(user_key.public_key)
-        message = rbac.user.manager.reject.make(
-            proposal_id=proposal_id,
-            user_id=user_id,
-            manager_id=manager_id,
-            reason=reason,
-        )
+@pytest.mark.user
+@pytest.mark.library
+def test_make_addresses():
+    """Test making a propose manager message"""
+    user_key = helper.user.key()
+    user_id = user_key.public_key
+    manager_id = helper.user.id()
+    reason = helper.user.manager.propose.reason()
+    proposal_id = helper.user.manager.propose.id()
+    proposal_address = rbac.user.manager.reject.address(
+        object_id=user_id, related_id=manager_id
+    )
+    signer_user_address = rbac.user.address(user_key.public_key)
+    message = rbac.user.manager.reject.make(
+        proposal_id=proposal_id, user_id=user_id, manager_id=manager_id, reason=reason
+    )
 
-        inputs, outputs = rbac.user.manager.reject.make_addresses(
-            message=message, signer_keypair=user_key
-        )
+    inputs, outputs = rbac.user.manager.reject.make_addresses(
+        message=message, signer_keypair=user_key
+    )
 
-        self.assertIsInstance(inputs, list)
-        self.assertIn(proposal_address, inputs)
-        self.assertIn(signer_user_address, inputs)
-        self.assertEqual(len(inputs), 2)
+    assert proposal_address in inputs
+    assert signer_user_address in inputs
 
-        self.assertIsInstance(outputs, list)
-        self.assertIn(proposal_address, outputs)
-        self.assertEqual(len(outputs), 1)
+    assert proposal_address in outputs
 
-    @pytest.mark.library
-    def test_make_payload(self):
-        """Test making a propose manager message"""
-        user_key = helper.user.key()
-        user_id = user_key.public_key
-        manager_id = helper.user.id()
-        reason = helper.user.manager.propose.reason()
-        proposal_id = helper.user.manager.propose.id()
-        proposal_address = rbac.user.manager.reject.address(
-            object_id=user_id, related_id=manager_id
-        )
-        signer_user_address = rbac.user.address(user_key.public_key)
-        message = rbac.user.manager.reject.make(
-            proposal_id=proposal_id,
-            user_id=user_id,
-            manager_id=manager_id,
-            reason=reason,
-        )
 
-        payload = rbac.user.manager.reject.make_payload(
-            message=message, signer_keypair=user_key
-        )
+@pytest.mark.user
+@pytest.mark.reject_user_manager
+def test_create():
+    """Test rejecting a manager proposal"""
+    proposal, _, _, _, manager_key = helper.user.manager.propose.create()
 
-        self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
-        inputs = list(payload.inputs)
-        outputs = list(payload.outputs)
+    reason = helper.user.manager.propose.reason()
+    _, status = rbac.user.manager.reject.create(
+        signer_keypair=manager_key,
+        proposal_id=proposal.proposal_id,
+        user_id=proposal.object_id,
+        manager_id=proposal.related_id,
+        reason=reason,
+    )
+    assert len(status) == 1
+    assert status[0]["status"] == "COMMITTED"
 
-        self.assertIsInstance(inputs, list)
-        self.assertIn(proposal_address, inputs)
-        self.assertIn(signer_user_address, inputs)
-        self.assertEqual(len(inputs), 2)
-
-        self.assertIsInstance(outputs, list)
-        self.assertIn(proposal_address, outputs)
-        self.assertEqual(len(outputs), 1)
-
-    @pytest.mark.reject_user_manager
-    def test_create(self):
-        """Test rejecting a manager proposal"""
-        proposal, _, _, _, manager_key = helper.user.manager.propose.create()
-
-        reason = helper.user.manager.propose.reason()
-        message = rbac.user.manager.reject.make(
-            proposal_id=proposal.proposal_id,
-            user_id=proposal.object_id,
-            manager_id=proposal.related_id,
-            reason=reason,
-        )
-        reject, status = rbac.user.manager.reject.create(
-            signer_keypair=manager_key,
-            message=message,
-            object_id=proposal.object_id,
-            related_id=proposal.related_id,
-        )
-        self.assertStatusSuccess(status)
-        self.assertIsInstance(reject, protobuf.proposal_state_pb2.Proposal)
-        self.assertEqual(
-            reject.proposal_type,
-            protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER,
-        )
-        self.assertEqual(reject.proposal_id, proposal.proposal_id)
-        self.assertEqual(reject.object_id, proposal.object_id)
-        self.assertEqual(reject.related_id, proposal.related_id)
-        self.assertEqual(reject.close_reason, reason)
-        self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)
+    reject = rbac.user.manager.reject.get(
+        object_id=proposal.object_id, related_id=proposal.related_id
+    )
+    assert isinstance(reject, protobuf.proposal_state_pb2.Proposal)
+    assert (
+        reject.proposal_type == protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
+    )
+    assert reject.proposal_id == proposal.proposal_id
+    assert reject.object_id == proposal.object_id
+    assert reject.related_id == proposal.related_id
+    assert reject.close_reason == reason
+    assert reject.status == protobuf.proposal_state_pb2.Proposal.REJECTED

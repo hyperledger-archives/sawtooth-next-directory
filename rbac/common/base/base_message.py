@@ -26,7 +26,6 @@ from rbac.common.sawtooth import client
 from rbac.common.sawtooth import state_client
 from rbac.common.base import base_processor as processor
 from rbac.common.base.base_address import AddressBase
-from rbac.common.util import has_duplicates, duplicates
 
 LOGGER = logging.getLogger(__name__)
 
@@ -225,11 +224,6 @@ class BaseMessage(AddressBase):
         """Fields that are on the message but not stored on its state object"""
         return []
 
-    @property
-    def register_message(self):
-        """Whether to register this message handler with the transaction processor"""
-        return False  # TODO: default will flip to True after TP refactor
-
     def make(self, **kwargs):
         """Makes the message (protobuf) from the named arguments passed to make"""
         # pylint: disable=not-callable
@@ -268,8 +262,8 @@ class BaseMessage(AddressBase):
             raise ValueError("Signer is required")
         if message is None:
             raise ValueError("Message is required")
-        if not isinstance(inputs, list):
-            raise ValueError("Inputs is required and expected to be a list")
+        if not isinstance(inputs, list) and not isinstance(inputs, set):
+            raise ValueError("Inputs is required and expected to be a list or a set")
         if not isinstance(input_state, dict):
             raise ValueError("Input state was expecte to be a dictionary")
         if not isinstance(signer, str) and PUBLIC_KEY_PATTERN.match(signer):
@@ -285,25 +279,17 @@ class BaseMessage(AddressBase):
         inputs, outputs = self.make_addresses(
             message=message, signer_keypair=signer_keypair
         )
-        if has_duplicates(inputs):
-            raise ValueError(
-                "{} inputs duplicated addresses {}".format(
-                    self.message_type_name,
-                    addresser.parse_addresses(duplicates(inputs)),
-                )
-            )
-        if has_duplicates(outputs):
-            raise ValueError(
-                "{} outputs duplicated addresses {}".format(
-                    self.message_type_name,
-                    addresser.parse_addresses(duplicates(outputs)),
-                )
-            )
-        if not set(outputs).issubset(set(inputs)):
+        inputs = set(inputs)
+        outputs = set(outputs)
+
+        if signer_keypair:
+            inputs.add(addresser.user.address(object_id=signer_keypair.public_key))
+
+        if not outputs.issubset(inputs):
             raise ValueError(
                 "{} output addresses {} not contained in inputs".format(
                     self.message_type_name,
-                    addresser.parse_addresses(set(outputs).difference(set(inputs))),
+                    addresser.parse_addresses(outputs.difference(inputs)),
                 )
             )
 
@@ -314,8 +300,6 @@ class BaseMessage(AddressBase):
     def batch(self, signer_keypair, batch=None, **kwargs):
         """Adds a new message to an existing or new batch"""
         message = kwargs.get("message")
-        object_id = kwargs.get("object_id")
-        related_id = kwargs.get("related_id")
         if not message:
             message = self.make(**kwargs)
         else:
@@ -332,8 +316,6 @@ class BaseMessage(AddressBase):
     def batch_list(self, signer_keypair, batch_list=None, **kwargs):
         """Adds a new message to an existing or new batch list"""
         message = kwargs.get("message")
-        object_id = kwargs.get("object_id")
-        related_id = kwargs.get("related_id")
         if not message:
             message = self.make(**kwargs)
         else:
@@ -353,8 +335,8 @@ class BaseMessage(AddressBase):
         # pylint: disable=not-callable
         message = self.message_proto()
         message.ParseFromString(payload.content)
-        inputs = list(payload.inputs)
-        outputs = list(payload.outputs)
+        inputs = set(list(payload.inputs))
+        outputs = set(list(payload.outputs))
         return message, message_type, inputs, outputs
 
     def create(self, signer_keypair, **kwargs):

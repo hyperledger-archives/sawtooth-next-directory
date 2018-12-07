@@ -34,4 +34,6 @@ message User {
 
     string metadata = 4;
 
+    string email = 5;
+
 }

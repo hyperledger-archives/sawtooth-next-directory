@@ -21,145 +21,116 @@ import pytest
 from rbac.common import rbac
 from rbac.common import protobuf
 from tests.rbac.common import helper
-from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.task
-class CreateTaskTest(TestAssertions):
-    """Create Task Test"""
+@pytest.mark.library
+@pytest.mark.address
+def test_address():
+    """Test the address method and that it is in sync with the addresser"""
+    task_id = helper.task.id()
+    address1 = rbac.task.address(object_id=task_id)
+    address2 = rbac.addresser.task.address(task_id)
+    assert address1 == address2
 
-    @pytest.mark.library
-    @pytest.mark.address
-    def test_address(self):
-        """Test the address method and that it is in sync with the addresser"""
-        task_id = helper.task.id()
-        address1 = rbac.task.address(object_id=task_id)
-        address2 = rbac.addresser.task.address(task_id)
-        self.assertEqual(address1, address2)
 
-    @pytest.mark.library
-    def test_make(self):
-        """Test making a message"""
-        name = helper.task.name()
-        task_id = helper.task.id()
-        user_id = helper.user.id()
-        message = rbac.task.make(
-            task_id=task_id, name=name, owners=[user_id], admins=[user_id]
-        )
-        self.assertIsInstance(message, protobuf.task_transaction_pb2.CreateTask)
-        self.assertIsInstance(message.task_id, str)
-        self.assertIsInstance(message.name, str)
-        self.assertEqual(message.task_id, task_id)
-        self.assertEqual(message.name, name)
-        self.assertEqual(message.owners, [user_id])
-        self.assertEqual(message.admins, [user_id])
+@pytest.mark.task
+@pytest.mark.library
+def test_make():
+    """Test making a message"""
+    name = helper.task.name()
+    task_id = helper.task.id()
+    user_id = helper.user.id()
+    message = rbac.task.make(
+        task_id=task_id, name=name, owners=[user_id], admins=[user_id]
+    )
+    assert isinstance(message, protobuf.task_transaction_pb2.CreateTask)
+    assert isinstance(message.task_id, str)
+    assert isinstance(message.name, str)
+    assert message.task_id == task_id
+    assert message.name == name
+    assert message.owners == [user_id]
+    assert message.admins == [user_id]
 
-    @pytest.mark.library
-    def test_make_addresses(self):
-        """Test the make addresses method for the message"""
-        name = helper.task.name()
-        task_id = helper.task.id()
-        task_address = rbac.task.address(task_id)
-        user_id = helper.user.id()
-        user_address = rbac.user.address(user_id)
-        signer_keypair = helper.user.key()
-        owner_address = rbac.task.owner.address(task_id, user_id)
-        admin_address = rbac.task.admin.address(task_id, user_id)
-        message = rbac.task.make(
-            task_id=task_id, name=name, owners=[user_id], admins=[user_id]
-        )
 
-        inputs, outputs = rbac.task.make_addresses(
-            message=message, signer_keypair=signer_keypair
-        )
+@pytest.mark.task
+@pytest.mark.library
+def test_make_addresses():
+    """Test the make addresses method for the message"""
+    name = helper.task.name()
+    task_id = helper.task.id()
+    task_address = rbac.task.address(task_id)
+    user_id = helper.user.id()
+    user_address = rbac.user.address(user_id)
+    signer_keypair = helper.user.key()
+    owner_address = rbac.task.owner.address(task_id, user_id)
+    admin_address = rbac.task.admin.address(task_id, user_id)
+    message = rbac.task.make(
+        task_id=task_id, name=name, owners=[user_id], admins=[user_id]
+    )
 
-        self.assertIsInstance(inputs, list)
-        self.assertIn(task_address, inputs)
-        self.assertIn(user_address, inputs)
-        self.assertIn(owner_address, inputs)
-        self.assertIn(admin_address, inputs)
-        self.assertEqual(len(inputs), 4)
-        self.assertEqual(inputs, outputs)
+    inputs, outputs = rbac.task.make_addresses(
+        message=message, signer_keypair=signer_keypair
+    )
 
-    @pytest.mark.library
-    def test_make_payload(self):
-        """Test making a payload for a CreateTask message"""
-        name = helper.task.name()
-        task_id = helper.task.id()
-        user_id = helper.user.id()
-        task_address = rbac.task.address(task_id)
-        user_address = rbac.user.address(user_id)
-        owner_address = rbac.task.owner.address(task_id, user_id)
-        admin_address = rbac.task.admin.address(task_id, user_id)
-        message = rbac.task.make(
-            task_id=task_id, name=name, owners=[user_id], admins=[user_id]
-        )
+    assert task_address in inputs
+    assert user_address in inputs
+    assert owner_address in inputs
+    assert admin_address in inputs
 
-        payload = rbac.task.make_payload(message=message)
+    assert task_address in outputs
+    assert user_address in outputs
+    assert owner_address in outputs
+    assert admin_address in outputs
 
-        self.assertEqual(
-            payload.message_type, protobuf.rbac_payload_pb2.RBACPayload.CREATE_TASK
-        )
-        inputs = list(payload.inputs)
-        outputs = list(payload.outputs)
-        self.assertIsInstance(inputs, list)
-        self.assertIn(task_address, inputs)
-        self.assertIn(user_address, inputs)
-        self.assertIn(owner_address, inputs)
-        self.assertIn(admin_address, inputs)
-        self.assertEqual(len(inputs), 4)
-        self.assertEqual(inputs, outputs)
 
-    @pytest.mark.create_task
-    def test_create(self):
-        """Test creating a task"""
-        user, keypair = helper.user.create()
-        name = helper.task.name()
-        task_id = helper.task.id()
-        message = rbac.task.make(
-            task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
-        )
+@pytest.mark.task
+@pytest.mark.create_task
+def test_create():
+    """Test creating a task"""
+    user, keypair = helper.user.create()
+    name = helper.task.name()
+    task_id = helper.task.id()
+    message = rbac.task.make(
+        task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
+    )
 
-        _, status = rbac.task.create(signer_keypair=keypair, message=message)
-        self.assertStatusSuccess(status)
-        task = rbac.task.get(object_id=task_id)
-        self.assertEqualMessage(task, message, rbac.task.message_fields_not_in_state)
-        self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
-        )
-        self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
-        )
+    _, status = rbac.task.create(signer_keypair=keypair, message=message)
+    assert len(status) == 1
+    assert status[0]["status"] == "COMMITTED"
 
-    @pytest.mark.create_task2
-    def test_create_two_owners(self):
-        """Test creating a task with two admin+owners"""
-        user, keypair = helper.user.create()
-        user2, _ = helper.user.create()
-        name = helper.task.name()
-        task_id = helper.task.id()
-        message = rbac.task.make(
-            task_id=task_id,
-            name=name,
-            owners=[user.user_id, user2.user_id],
-            admins=[user.user_id, user2.user_id],
-        )
+    task = rbac.task.get(object_id=task_id)
+    assert task.task_id == message.task_id
+    assert task.name == message.name
+    assert rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
+    assert rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
 
-        _, status = rbac.task.create(signer_keypair=keypair, message=message)
-        self.assertStatusSuccess(status)
-        task = rbac.task.get(object_id=task_id)
-        self.assertEqualMessage(task, message, rbac.task.message_fields_not_in_state)
-        self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
-        )
-        self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
-        )
-        self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, related_id=user2.user_id)
-        )
-        self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, related_id=user2.user_id)
-        )
+
+@pytest.mark.task
+@pytest.mark.create_task2
+def test_create_two_owners():
+    """Test creating a task with two admin+owners"""
+    user, keypair = helper.user.create()
+    user2, _ = helper.user.create()
+    name = helper.task.name()
+    task_id = helper.task.id()
+    message = rbac.task.make(
+        task_id=task_id,
+        name=name,
+        owners=[user.user_id, user2.user_id],
+        admins=[user.user_id, user2.user_id],
+    )
+
+    _, status = rbac.task.create(signer_keypair=keypair, message=message)
+    assert len(status) == 1
+    assert status[0]["status"] == "COMMITTED"
+
+    task = rbac.task.get(object_id=task_id)
+    assert task.task_id == message.task_id
+    assert task.name == message.name
+    assert rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
+    assert rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
+    assert rbac.task.owner.exists(object_id=task.task_id, related_id=user2.user_id)
+    assert rbac.task.admin.exists(object_id=task.task_id, related_id=user2.user_id)
