@@ -31,7 +31,7 @@ USER_TRANSFORM = {
     "email": {"azure": "mail", "ldap": "mail"},
     "user_nickname": {"azure": "mailNickname", "ldap": "cn"},
     "manager": {"azure": "manager", "ldap": "manager"},
-    "mobile_phone": {"azure": "mobilePhone", "ldap": "mobilePhone"},
+    "mobile_phone": {"azure": "mobilePhone", "ldap": "mobile"},
     "distinguished_name": {
         "azure": "onPremisesDistinguishedName",
         "ldap": "distinguishedName",
