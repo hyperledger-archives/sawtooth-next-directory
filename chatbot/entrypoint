@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,5 +15,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
+MODELS_DIR=chatbot/models/current
+CONFIG_DIR=chatbot/config
 
-yarn start --env=prod --host=0.0.0.0 --port=3000
+python -m rasa_core.run --enable_api --port 5005 \
+    --credentials $CONFIG_DIR/credentials.yml \
+    --endpoints $CONFIG_DIR/endpoints.yml \
+    -d $MODELS_DIR/core \
+    -u $MODELS_DIR/nlu
