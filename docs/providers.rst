@@ -7,8 +7,8 @@ NEXT Directory Platform has the ability to incorporate various identity provider
 
 Here are the providers that we currently support:
 
-- :ref:`ldap-provider`
-- :ref:`aad-provider`
+* `Active Directory Provider`
+* `Azure Active Directory Provider`
 
 
 Incorporate your Organization's Identity Provider

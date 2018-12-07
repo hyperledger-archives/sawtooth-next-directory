@@ -1,5 +1,3 @@
-.. _ldap-provider:
-
 =========================
 Active Directory Provider
 =========================
