@@ -10,6 +10,8 @@
 
    introduction
    providers
+      * Active Directory Provider <active-directory-provider>
+      * Azure Active Directory Provider <azure-active-directory-provider>
    support
    developer-setup
 
