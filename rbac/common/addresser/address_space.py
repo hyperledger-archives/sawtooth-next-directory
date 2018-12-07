@@ -32,6 +32,8 @@ class ObjectType(enum.Enum):
     PROPOSAL = 17476  # 4444
     ROLE = 21845  # 5555
     TASK = 26214  # 6666
+    EMAIL = 30583  # 7777
+    KEY = 34952  # 8888
 
 
 @enum.unique
@@ -63,6 +65,7 @@ class MessageActionType(enum.Enum):
     DELETE = 3
     ADD = 4
     REMOVE = 5
+    IMPORTS = 6
 
     PROPOSE = 10
     CONFIRM = 11

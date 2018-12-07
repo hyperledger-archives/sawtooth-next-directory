@@ -352,10 +352,26 @@ message CreateRole {
 
     repeated string admins = 4;
 
-    string metadata = 5;
+    repeated string members = 5;
+
+    string metadata = 6;
 
 }
 
+message ImportsRole {
+
+    string role_id = 1;
+
+    string name = 2;
+
+    repeated string owners = 3;
+
+    repeated string admins = 4;
+
+    repeated string members = 5;
+
+    string metadata = 6;
+}
 
 message UpdateRole {
 

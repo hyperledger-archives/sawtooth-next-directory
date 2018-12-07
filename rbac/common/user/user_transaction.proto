@@ -70,7 +70,26 @@ message CreateUser {
 
     string metadata = 5;
 
+    string email = 6;
+
 }
+
+message ImportsUser {
+
+    string name = 1;
+
+    string user_name = 2;
+
+    string user_id = 3;
+
+    string manager_id = 4;
+
+    string metadata = 5;
+
+    string email = 6;
+
+}
+
 
 
 message UpdateUser {

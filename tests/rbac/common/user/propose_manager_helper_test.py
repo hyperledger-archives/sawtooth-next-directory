@@ -21,48 +21,47 @@ import pytest
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from tests.rbac.common import helper
-from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.user
-class ProposeManagerTestHelperTest(TestAssertions):
-    """Test Propose Manager Test Helper"""
+@pytest.mark.library
+def test_id():
+    """Test get a random proposal id"""
+    id1 = helper.user.manager.propose.id()
+    id2 = helper.user.manager.propose.id()
+    assert isinstance(id1, str)
+    assert isinstance(id2, str)
+    assert len(id1) == 24
+    assert len(id2) == 24
+    assert id1 != id2
 
-    @pytest.mark.library
-    def test_id(self):
-        """Test get a random proposal id"""
-        id1 = helper.user.manager.propose.id()
-        id2 = helper.user.manager.propose.id()
-        self.assertIsInstance(id1, str)
-        self.assertIsInstance(id2, str)
-        self.assertEqual(len(id1), 24)
-        self.assertEqual(len(id2), 24)
-        self.assertNotEqual(id1, id2)
 
-    @pytest.mark.library
-    def test_reason(self):
-        """Test get a random reason"""
-        reason1 = helper.user.manager.propose.reason()
-        reason2 = helper.user.manager.propose.reason()
-        self.assertIsInstance(reason1, str)
-        self.assertIsInstance(reason2, str)
-        self.assertGreater(len(reason1), 4)
-        self.assertGreater(len(reason2), 4)
-        self.assertNotEqual(reason1, reason2)
+@pytest.mark.user
+@pytest.mark.library
+def test_reason():
+    """Test get a random reason"""
+    reason1 = helper.user.manager.propose.reason()
+    reason2 = helper.user.manager.propose.reason()
+    assert isinstance(reason1, str)
+    assert isinstance(reason2, str)
+    assert len(reason1) > 4
+    assert len(reason2) > 4
+    assert reason1 != reason2
 
-    @pytest.mark.integration
-    def test_create(self):
-        """Test creating a propose manager proposal for a user that has no manager"""
-        proposal, user, user_key, manager, manager_key = (
-            helper.user.manager.propose.create()
-        )
-        self.assertIsInstance(proposal, protobuf.proposal_state_pb2.Proposal)
-        self.assertIsInstance(user, protobuf.user_state_pb2.User)
-        self.assertIsInstance(manager, protobuf.user_state_pb2.User)
-        self.assertIsInstance(user_key, Key)
-        self.assertIsInstance(manager_key, Key)
-        self.assertEqual(proposal.object_id, user.user_id)
-        self.assertEqual(proposal.related_id, manager.user_id)
-        self.assertEqual(user.manager_id, "")
+
+@pytest.mark.user
+def test_create():
+    """Test creating a propose manager proposal for a user that has no manager"""
+    proposal, user, user_key, manager, manager_key = (
+        helper.user.manager.propose.create()
+    )
+    assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
+    assert isinstance(user, protobuf.user_state_pb2.User)
+    assert isinstance(manager, protobuf.user_state_pb2.User)
+    assert isinstance(user_key, Key)
+    assert isinstance(manager_key, Key)
+    assert proposal.object_id == user.user_id
+    assert proposal.related_id == manager.user_id
+    assert user.manager_id == ""

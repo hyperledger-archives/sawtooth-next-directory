@@ -21,7 +21,7 @@ class UserAddress(AddressBase):
     """Addresses and accesses user objects on the blockchain"""
 
     def __init__(self):
-        AddressBase.__init__(self)
+        super().__init__()
         self._register()
 
     @property

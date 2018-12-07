@@ -23,149 +23,163 @@ from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
 from tests.rbac.common import helper
-from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.user
-class CreateUserTestHelperTest(TestAssertions):
-    """Test Create User Test Helper"""
+@pytest.mark.library
+def test_id():
+    """Test get a random user_id"""
+    user_id1 = helper.user.id()
+    user_id2 = helper.user.id()
+    assert isinstance(user_id1, str)
+    assert isinstance(user_id2, str)
+    assert PUBLIC_KEY_PATTERN.match(user_id1)
+    assert PUBLIC_KEY_PATTERN.match(user_id2)
+    assert user_id1 != user_id2
 
-    @pytest.mark.library
-    def test_id(self):
-        """Test get a random user_id"""
-        user_id1 = helper.user.id()
-        user_id2 = helper.user.id()
-        self.assertIsInstance(user_id1, str)
-        self.assertIsInstance(user_id2, str)
-        self.assertTrue(PUBLIC_KEY_PATTERN.match(user_id1))
-        self.assertTrue(PUBLIC_KEY_PATTERN.match(user_id2))
-        self.assertNotEqual(user_id1, user_id2)
 
-    @pytest.mark.library
-    def test_key(self):
-        """Test get a generated keypair"""
-        key1 = helper.user.key()
-        key2 = helper.user.key()
-        self.assertIsInstance(key1, Key)
-        self.assertIsInstance(key2, Key)
-        self.assertTrue(PUBLIC_KEY_PATTERN.match(key1.public_key))
-        self.assertTrue(PUBLIC_KEY_PATTERN.match(key2.public_key))
-        self.assertTrue(PRIVATE_KEY_PATTERN.match(key1.private_key))
-        self.assertTrue(PRIVATE_KEY_PATTERN.match(key2.private_key))
-        self.assertNotEqual(key1.public_key, key2.public_key)
-        self.assertNotEqual(key1.private_key, key2.private_key)
+@pytest.mark.user
+@pytest.mark.library
+def test_key():
+    """Test get a generated keypair"""
+    key1 = helper.user.key()
+    key2 = helper.user.key()
+    assert isinstance(key1, Key)
+    assert isinstance(key2, Key)
+    assert PUBLIC_KEY_PATTERN.match(key1.public_key)
+    assert PUBLIC_KEY_PATTERN.match(key2.public_key)
+    assert PRIVATE_KEY_PATTERN.match(key1.private_key)
+    assert PRIVATE_KEY_PATTERN.match(key2.private_key)
+    assert key1.public_key != key2.public_key
+    assert key1.private_key != key2.private_key
 
-    @pytest.mark.library
-    def test_name(self):
-        """Test get a random name"""
-        name1 = helper.user.name()
-        name2 = helper.user.name()
-        self.assertIsInstance(name1, str)
-        self.assertIsInstance(name2, str)
-        self.assertGreater(len(name1), 4)
-        self.assertGreater(len(name2), 4)
-        self.assertNotEqual(name1, name2)
 
-    @pytest.mark.library
-    def test_username(self):
-        """Test get a random username"""
-        username1 = helper.user.username()
-        username2 = helper.user.username()
-        self.assertIsInstance(username1, str)
-        self.assertIsInstance(username2, str)
-        self.assertGreater(len(username1), 4)
-        self.assertGreater(len(username2), 4)
-        self.assertNotEqual(username1, username2)
+@pytest.mark.user
+@pytest.mark.library
+def test_name():
+    """Test get a random name"""
+    name1 = helper.user.name()
+    name2 = helper.user.name()
+    assert isinstance(name1, str)
+    assert isinstance(name2, str)
+    assert len(name1) > 4
+    assert len(name2) > 4
+    assert name1 != name2
 
-    @pytest.mark.library
-    def test_reason(self):
-        """Test get a random reason"""
-        reason1 = helper.user.reason()
-        reason2 = helper.user.reason()
-        self.assertIsInstance(reason1, str)
-        self.assertIsInstance(reason2, str)
-        self.assertGreater(len(reason1), 4)
-        self.assertGreater(len(reason2), 4)
-        self.assertNotEqual(reason1, reason2)
 
-    @pytest.mark.library
-    def test_message(self):
-        """Test getting a test create user message with key"""
-        message, keypair = helper.user.message()
-        self.assertIsInstance(message, protobuf.user_transaction_pb2.CreateUser)
-        self.assertIsInstance(message.user_id, str)
-        self.assertIsInstance(message.name, str)
-        self.assertIsInstance(keypair, Key)
-        self.assertEqual(message.user_id, keypair.public_key)
+@pytest.mark.user
+@pytest.mark.library
+def test_username():
+    """Test get a random username"""
+    username1 = helper.user.username()
+    username2 = helper.user.username()
+    assert isinstance(username1, str)
+    assert isinstance(username2, str)
+    assert len(username1) > 4
+    assert len(username2) > 4
+    assert username1 != username2
 
-    @pytest.mark.library
-    def test_message_with_manager(self):
-        """Test getting a test create user and manager message"""
-        user, user_key, manager, manager_key = helper.user.message_with_manager()
-        self.assertIsInstance(user, protobuf.user_transaction_pb2.CreateUser)
-        self.assertIsInstance(manager, protobuf.user_transaction_pb2.CreateUser)
-        self.assertIsInstance(user.user_id, str)
-        self.assertIsInstance(manager.user_id, str)
-        self.assertIsInstance(user.name, str)
-        self.assertIsInstance(manager.name, str)
-        self.assertIsInstance(user_key, Key)
-        self.assertIsInstance(manager_key, Key)
-        self.assertEqual(user.user_id, user_key.public_key)
-        self.assertEqual(manager.user_id, manager_key.public_key)
-        self.assertEqual(user.manager_id, manager.user_id)
-        self.assertNotEqual(user.user_id, manager.user_id)
 
-    @pytest.mark.integration
-    def test_create(self):
-        """Test getting a created test user"""
-        user, keypair = helper.user.create()
-        self.assertIsInstance(user, protobuf.user_state_pb2.User)
-        self.assertIsInstance(user.user_id, str)
-        self.assertIsInstance(user.name, str)
-        self.assertIsInstance(keypair, Key)
-        self.assertEqual(user.user_id, keypair.public_key)
+@pytest.mark.user
+@pytest.mark.library
+def test_reason():
+    """Test get a random reason"""
+    reason1 = helper.user.reason()
+    reason2 = helper.user.reason()
+    assert isinstance(reason1, str)
+    assert isinstance(reason2, str)
+    assert len(reason1) > 4
+    assert len(reason2) > 4
+    assert reason1 != reason2
 
-    @pytest.mark.integration
-    def test_create_with_manager(self):
-        """Test getting a created test user with manager"""
-        user, user_key, manager, manager_key = helper.user.create_with_manager()
-        self.assertIsInstance(user, protobuf.user_state_pb2.User)
-        self.assertIsInstance(manager, protobuf.user_state_pb2.User)
-        self.assertIsInstance(user.user_id, str)
-        self.assertIsInstance(manager.user_id, str)
-        self.assertIsInstance(user.name, str)
-        self.assertIsInstance(manager.name, str)
-        self.assertIsInstance(user_key, Key)
-        self.assertIsInstance(manager_key, Key)
-        self.assertEqual(user.user_id, user_key.public_key)
-        self.assertEqual(manager.user_id, manager_key.public_key)
-        self.assertEqual(user.manager_id, manager.user_id)
-        self.assertNotEqual(user.user_id, manager.user_id)
 
-    @pytest.mark.integration
-    def test_create_with_grand_manager(self):
-        """Test getting a created test user with manager and their manager"""
-        user, user_key, manager, manager_key, grandmgr, grandmgr_key = (
-            helper.user.create_with_grand_manager()
-        )
-        self.assertIsInstance(user, protobuf.user_state_pb2.User)
-        self.assertIsInstance(manager, protobuf.user_state_pb2.User)
-        self.assertIsInstance(grandmgr, protobuf.user_state_pb2.User)
-        self.assertIsInstance(user.user_id, str)
-        self.assertIsInstance(manager.user_id, str)
-        self.assertIsInstance(grandmgr.user_id, str)
-        self.assertIsInstance(user.name, str)
-        self.assertIsInstance(manager.name, str)
-        self.assertIsInstance(grandmgr.name, str)
-        self.assertIsInstance(user_key, Key)
-        self.assertIsInstance(manager_key, Key)
-        self.assertIsInstance(grandmgr_key, Key)
-        self.assertEqual(user.user_id, user_key.public_key)
-        self.assertEqual(manager.user_id, manager_key.public_key)
-        self.assertEqual(grandmgr.user_id, grandmgr_key.public_key)
-        self.assertEqual(user.manager_id, manager.user_id)
-        self.assertEqual(manager.manager_id, grandmgr.user_id)
-        self.assertNotEqual(user.user_id, manager.user_id)
-        self.assertNotEqual(manager.user_id, grandmgr.user_id)
+@pytest.mark.user
+@pytest.mark.library
+def test_message():
+    """Test getting a test create user message with key"""
+    message, keypair = helper.user.message()
+    assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
+    assert isinstance(message.user_id, str)
+    assert isinstance(message.name, str)
+    assert isinstance(keypair, Key)
+    assert message.user_id == keypair.public_key
+
+
+@pytest.mark.user
+@pytest.mark.library
+def test_message_with_manager():
+    """Test getting a test create user and manager message"""
+    user, user_key, manager, manager_key = helper.user.message_with_manager()
+    assert isinstance(user, protobuf.user_transaction_pb2.CreateUser)
+    assert isinstance(manager, protobuf.user_transaction_pb2.CreateUser)
+    assert isinstance(user.user_id, str)
+    assert isinstance(manager.user_id, str)
+    assert isinstance(user.name, str)
+    assert isinstance(manager.name, str)
+    assert isinstance(user_key, Key)
+    assert isinstance(manager_key, Key)
+    assert user.user_id == user_key.public_key
+    assert manager.user_id == manager_key.public_key
+    assert user.manager_id == manager.user_id
+    assert user.user_id != manager.user_id
+
+
+@pytest.mark.user
+@pytest.mark.integration
+def test_create():
+    """Test getting a created test user"""
+    user, keypair = helper.user.create()
+    assert isinstance(user, protobuf.user_state_pb2.User)
+    assert isinstance(user.user_id, str)
+    assert isinstance(user.name, str)
+    assert isinstance(keypair, Key)
+    assert user.user_id == keypair.public_key
+
+
+@pytest.mark.user
+@pytest.mark.integration
+def test_create_with_manager():
+    """Test getting a created test user with manager"""
+    user, user_key, manager, manager_key = helper.user.create_with_manager()
+    assert isinstance(user, protobuf.user_state_pb2.User)
+    assert isinstance(manager, protobuf.user_state_pb2.User)
+    assert isinstance(user.user_id, str)
+    assert isinstance(manager.user_id, str)
+    assert isinstance(user.name, str)
+    assert isinstance(manager.name, str)
+    assert isinstance(user_key, Key)
+    assert isinstance(manager_key, Key)
+    assert user.user_id == user_key.public_key
+    assert manager.user_id == manager_key.public_key
+    assert user.manager_id == manager.user_id
+    assert user.user_id != manager.user_id
+
+
+@pytest.mark.user
+@pytest.mark.integration
+def test_create_with_grand_manager():
+    """Test getting a created test user with manager and their manager"""
+    user, user_key, manager, manager_key, grandmgr, grandmgr_key = (
+        helper.user.create_with_grand_manager()
+    )
+    assert isinstance(user, protobuf.user_state_pb2.User)
+    assert isinstance(manager, protobuf.user_state_pb2.User)
+    assert isinstance(grandmgr, protobuf.user_state_pb2.User)
+    assert isinstance(user.user_id, str)
+    assert isinstance(manager.user_id, str)
+    assert isinstance(grandmgr.user_id, str)
+    assert isinstance(user.name, str)
+    assert isinstance(manager.name, str)
+    assert isinstance(grandmgr.name, str)
+    assert isinstance(user_key, Key)
+    assert isinstance(manager_key, Key)
+    assert isinstance(grandmgr_key, Key)
+    assert user.user_id == user_key.public_key
+    assert manager.user_id == manager_key.public_key
+    assert grandmgr.user_id == grandmgr_key.public_key
+    assert user.manager_id == manager.user_id
+    assert manager.manager_id == grandmgr.user_id
+    assert user.user_id != manager.user_id
+    assert manager.user_id != grandmgr.user_id

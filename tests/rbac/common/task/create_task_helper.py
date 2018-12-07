@@ -13,24 +13,22 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Create Task Test Helper"""
-# pylint: disable=no-member
+# pylint: disable=no-member,too-few-public-methods
 
 import logging
 import random
 
 from rbac.common import rbac
 from rbac.common import protobuf
-from tests.rbac.common.assertions import TestAssertions
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 
 LOGGER = logging.getLogger(__name__)
 
 
-class TestHelper(TestAssertions):
+class TestHelper:
     """A minimal test helper required by this test helper"""
 
-    def __init__(self, *args, **kwargs):
-        TestAssertions.__init__(self, *args, **kwargs)
+    def __init__(self):
         self.user = CreateUserTestHelper()
 
 
@@ -38,7 +36,7 @@ class TestHelper(TestAssertions):
 helper = TestHelper()
 
 
-class CreateTaskTestHelper(TestAssertions):
+class CreateTaskTestHelper:
     """Create Task Test Helper"""
 
     def id(self):
@@ -61,9 +59,9 @@ class CreateTaskTestHelper(TestAssertions):
         message = rbac.task.make(
             task_id=task_id, name=name, owners=[user_id], admins=[user_id]
         )
-        self.assertIsInstance(message, protobuf.task_transaction_pb2.CreateTask)
-        self.assertEqual(message.task_id, task_id)
-        self.assertEqual(message.name, name)
+        assert isinstance(message, protobuf.task_transaction_pb2.CreateTask)
+        assert message.task_id == task_id
+        assert message.name == name
         return message
 
     def create(self):
@@ -77,13 +75,12 @@ class CreateTaskTestHelper(TestAssertions):
         _, status = rbac.task.create(
             signer_keypair=keypair, message=message, object_id=message.task_id
         )
-        self.assertStatusSuccess(status)
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+
         task = rbac.task.get(object_id=message.task_id)
-        self.assertEqualMessage(task, message, rbac.task.message_fields_not_in_state)
-        self.assertTrue(
-            rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
-        )
-        self.assertTrue(
-            rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
-        )
+        assert task.task_id == message.task_id
+        assert task.name == message.name
+        assert rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
+        assert rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
         return task, user, keypair

@@ -21,123 +21,81 @@ import pytest
 from rbac.common import rbac
 from rbac.common import protobuf
 from tests.rbac.common import helper
-from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.role
-class RejectRoleAddTaskTest(TestAssertions):
-    """Reject Role Add Task Test"""
+@pytest.mark.library
+def test_make():
+    """Test making the message"""
+    task_id = helper.task.id()
+    role_id = helper.role.id()
+    proposal_id = helper.proposal.id()
+    reason = helper.proposal.reason()
+    message = rbac.role.task.reject.make(
+        proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
+    )
+    assert isinstance(message, protobuf.role_transaction_pb2.RejectAddRoleTask)
+    assert message.proposal_id == proposal_id
+    assert message.task_id == task_id
+    assert message.role_id == role_id
+    assert message.reason == reason
 
-    @pytest.mark.library
-    def test_make(self):
-        """Test making the message"""
-        task_id = helper.task.id()
-        role_id = helper.role.id()
-        proposal_id = helper.proposal.id()
-        reason = helper.proposal.reason()
-        message = rbac.role.task.reject.make(
-            proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
-        )
-        self.assertIsInstance(message, protobuf.role_transaction_pb2.RejectAddRoleTask)
-        self.assertEqual(message.proposal_id, proposal_id)
-        self.assertEqual(message.task_id, task_id)
-        self.assertEqual(message.role_id, role_id)
-        self.assertEqual(message.reason, reason)
 
-    @pytest.mark.library
-    def test_make_addresses(self):
-        """Test making the message addresses"""
-        task_id = helper.task.id()
-        role_id = helper.role.id()
-        proposal_id = helper.proposal.id()
-        proposal_address = rbac.role.task.propose.address(role_id, task_id)
-        reason = helper.proposal.reason()
-        task_owner_keypair = helper.user.key()
-        task_owner_address = rbac.task.owner.address(
-            task_id, task_owner_keypair.public_key
-        )
-        signer_user_address = rbac.user.address(task_owner_keypair.public_key)
-        message = rbac.role.task.reject.make(
-            proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
-        )
+@pytest.mark.role
+@pytest.mark.library
+def test_make_addresses():
+    """Test making the message addresses"""
+    task_id = helper.task.id()
+    role_id = helper.role.id()
+    proposal_id = helper.proposal.id()
+    proposal_address = rbac.role.task.propose.address(role_id, task_id)
+    reason = helper.proposal.reason()
+    task_owner_keypair = helper.user.key()
+    task_owner_address = rbac.task.owner.address(task_id, task_owner_keypair.public_key)
+    signer_user_address = rbac.user.address(task_owner_keypair.public_key)
+    message = rbac.role.task.reject.make(
+        proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
+    )
 
-        inputs, outputs = rbac.role.task.reject.make_addresses(
-            message=message, signer_keypair=task_owner_keypair
-        )
+    inputs, outputs = rbac.role.task.reject.make_addresses(
+        message=message, signer_keypair=task_owner_keypair
+    )
 
-        self.assertIsInstance(inputs, list)
-        self.assertIn(task_owner_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertIn(signer_user_address, inputs)
-        self.assertEqual(len(inputs), 3)
+    assert task_owner_address in inputs
+    assert proposal_address in inputs
+    assert signer_user_address in inputs
 
-        self.assertIsInstance(outputs, list)
-        self.assertIn(proposal_address, outputs)
-        self.assertEqual(len(outputs), 1)
+    assert proposal_address in outputs
 
-    @pytest.mark.library
-    def test_make_payload(self):
-        """Test making the message payload"""
-        task_id = helper.task.id()
-        role_id = helper.role.id()
-        proposal_id = helper.proposal.id()
-        proposal_address = rbac.role.task.propose.address(role_id, task_id)
-        reason = helper.proposal.reason()
-        task_owner_keypair = helper.user.key()
-        task_owner_address = rbac.task.owner.address(
-            task_id, task_owner_keypair.public_key
-        )
-        signer_user_address = rbac.user.address(task_owner_keypair.public_key)
-        message = rbac.role.task.reject.make(
-            proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
-        )
 
-        payload = rbac.role.task.reject.make_payload(
-            message=message, signer_keypair=task_owner_keypair
-        )
-        inputs = list(payload.inputs)
-        outputs = list(payload.outputs)
+@pytest.mark.role
+@pytest.mark.reject_role_task
+def test_create():
+    """Test executing the message on the blockchain"""
+    proposal, _, _, _, _, _, task_owner_key = helper.role.task.propose.create()
 
-        self.assertIsInstance(payload, protobuf.rbac_payload_pb2.RBACPayload)
-
-        self.assertIsInstance(inputs, list)
-        self.assertIn(task_owner_address, inputs)
-        self.assertIn(proposal_address, inputs)
-        self.assertIn(signer_user_address, inputs)
-        self.assertEqual(len(inputs), 3)
-
-        self.assertIsInstance(outputs, list)
-        self.assertIn(proposal_address, outputs)
-        self.assertEqual(len(outputs), 1)
-
-    @pytest.mark.reject_role_task
-    def test_create(self):
-        """Test executing the message on the blockchain"""
-        proposal, _, _, _, _, _, task_owner_key = helper.role.task.propose.create()
-
-        reason = helper.role.task.propose.reason()
-        message = rbac.role.task.reject.make(
-            proposal_id=proposal.proposal_id,
-            role_id=proposal.object_id,
-            task_id=proposal.related_id,
-            reason=reason,
-        )
-        reject, status = rbac.role.task.reject.create(
-            signer_keypair=task_owner_key,
-            message=message,
-            object_id=proposal.object_id,
-            related_id=proposal.related_id,
-        )
-        self.assertStatusSuccess(status)
-        self.assertIsInstance(reject, protobuf.proposal_state_pb2.Proposal)
-        self.assertEqual(
-            reject.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_TASK
-        )
-        self.assertEqual(reject.proposal_id, proposal.proposal_id)
-        self.assertEqual(reject.object_id, proposal.object_id)
-        self.assertEqual(reject.related_id, proposal.related_id)
-        self.assertEqual(reject.close_reason, reason)
-        self.assertEqual(reject.closer, task_owner_key.public_key)
-        self.assertEqual(reject.status, protobuf.proposal_state_pb2.Proposal.REJECTED)
+    reason = helper.role.task.propose.reason()
+    message = rbac.role.task.reject.make(
+        proposal_id=proposal.proposal_id,
+        role_id=proposal.object_id,
+        task_id=proposal.related_id,
+        reason=reason,
+    )
+    reject, status = rbac.role.task.reject.create(
+        signer_keypair=task_owner_key,
+        message=message,
+        object_id=proposal.object_id,
+        related_id=proposal.related_id,
+    )
+    assert len(status) == 1
+    assert status[0]["status"] == "COMMITTED"
+    assert isinstance(reject, protobuf.proposal_state_pb2.Proposal)
+    assert reject.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_ROLE_TASK
+    assert reject.proposal_id == proposal.proposal_id
+    assert reject.object_id == proposal.object_id
+    assert reject.related_id == proposal.related_id
+    assert reject.close_reason == reason
+    assert reject.closer == task_owner_key.public_key
+    assert reject.status == protobuf.proposal_state_pb2.Proposal.REJECTED

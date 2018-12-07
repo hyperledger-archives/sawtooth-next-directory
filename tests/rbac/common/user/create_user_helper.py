@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Create User Test Helper"""
-# pylint: disable=no-member
+# pylint: disable=no-member,too-few-public-methods,invalid-name
 
 import logging
 import random
@@ -21,12 +21,11 @@ import random
 from rbac.common import rbac
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
-from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
 
 
-class CreateUserTestHelper(TestAssertions):
+class CreateUserTestHelper:
     """Create User Test Helper"""
 
     def id(self):
@@ -53,10 +52,10 @@ class CreateUserTestHelper(TestAssertions):
         """Get a test data CreateUser message with a new keypair"""
         name = self.name()
         user, keypair = rbac.user.make_with_key(name=name)
-        self.assertIsInstance(user, protobuf.user_transaction_pb2.CreateUser)
-        self.assertIsInstance(keypair, Key)
-        self.assertEqual(user.user_id, keypair.public_key)
-        self.assertEqual(user.name, name)
+        assert isinstance(user, protobuf.user_transaction_pb2.CreateUser)
+        assert isinstance(keypair, Key)
+        assert user.user_id == keypair.public_key
+        assert user.name == name
         return user, keypair
 
     def message_with_manager(self):
@@ -65,7 +64,7 @@ class CreateUserTestHelper(TestAssertions):
         user, user_key = rbac.user.make_with_key(
             name=self.name(), manager_id=manager.user_id
         )
-        self.assertEqual(manager.user_id, user.manager_id)
+        assert manager.user_id == user.manager_id
         return user, user_key, manager, manager_key
 
     def create(self):
@@ -75,8 +74,11 @@ class CreateUserTestHelper(TestAssertions):
         user, status = rbac.user.create(
             signer_keypair=keypair, message=message, object_id=message.user_id
         )
-        self.assertStatusSuccess(status)
-        self.assertEqualMessage(user, message)
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+
+        assert user.user_id == message.user_id
+        assert user.name == message.name
         return user, keypair
 
     def create_with_manager(self):
@@ -86,12 +88,14 @@ class CreateUserTestHelper(TestAssertions):
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        user, status = rbac.user.create(
-            signer_keypair=manager_key, message=message, object_id=message.user_id
-        )
-        self.assertStatusSuccess(status)
-        self.assertEqualMessage(user, message)
-        self.assertEqual(user.manager_id, manager.user_id)
+        _, status = rbac.user.create(signer_keypair=manager_key, message=message)
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+
+        user = rbac.user.get(object_id=message.user_id)
+        assert user.user_id == message.user_id
+        assert user.name == message.name
+        assert user.manager_id == manager.user_id
         return user, user_key, manager, manager_key
 
     def create_with_grand_manager(self):
@@ -101,20 +105,24 @@ class CreateUserTestHelper(TestAssertions):
         message, manager_key = self.message()
         message.manager_id = grandmgr.user_id
 
-        manager, status = rbac.user.create(
-            signer_keypair=grandmgr_key, message=message, object_id=message.user_id
-        )
-        self.assertStatusSuccess(status)
-        self.assertEqualMessage(manager, message)
-        self.assertEqual(manager.manager_id, grandmgr.user_id)
+        _, status = rbac.user.create(signer_keypair=grandmgr_key, message=message)
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+
+        manager = rbac.user.get(object_id=message.user_id)
+        assert manager.user_id == message.user_id
+        assert manager.name == message.name
+        assert manager.manager_id == grandmgr.user_id
 
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        user, status = rbac.user.create(
-            signer_keypair=manager_key, message=message, object_id=message.user_id
-        )
-        self.assertStatusSuccess(status)
-        self.assertEqualMessage(user, message)
-        self.assertEqual(user.manager_id, manager.user_id)
+        _, status = rbac.user.create(signer_keypair=manager_key, message=message)
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+
+        user = rbac.user.get(object_id=message.user_id)
+        assert user.user_id == message.user_id
+        assert user.name == message.name
+        assert user.manager_id == manager.user_id
         return user, user_key, manager, manager_key, grandmgr, grandmgr_key

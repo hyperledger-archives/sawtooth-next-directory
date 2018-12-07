@@ -143,32 +143,40 @@ def unmake(
     Only used for testing purposes.
     """
     if isinstance(
-        batch_object, client_batch_submit_pb2.ClientBatchSubmitRequest
-    ) or isinstance(batch_object, batch_pb2.BatchList):
-        return list(itertools.chain(*[unmake(batch) for batch in batch_object.batches]))
+        batch_object,
+        (client_batch_submit_pb2.ClientBatchSubmitRequest, batch_pb2.BatchList),
+    ):
+        return list(
+            itertools.chain(
+                *[
+                    unmake(
+                        batch_object=batch,
+                        signer_public_key=signer_public_key,
+                        batcher_public_key=batcher_public_key,
+                    )
+                    for batch in batch_object.batches
+                ]
+            )
+        )
     if isinstance(batch_object, batch_pb2.Batch):
         batch_header = batch_pb2.BatchHeader()
         batch_header.ParseFromString(batch_object.header)
         if batcher_public_key:
+            # pylint: disable=no-member
             assert batch_header.signer_public_key == batcher_public_key
             batcher_keypair = Key(public_key=batcher_public_key)
             assert batcher_keypair.verify(
                 signature=batch_object.header_signature, message=batch_object.header
             )
         transactions = list(batch_object.transactions)
-        return [unmake_item(transaction) for transaction in transactions]
-    return [
-        unmake_item(
-            batch_object=batch_object,
-            signer_public_key=signer_public_key,
-            batcher_public_key=batcher_public_key,
-        )
-    ]
+        return [
+            unmake_item(batch_object=transaction, signer_public_key=signer_public_key)
+            for transaction in transactions
+        ]
+    return [unmake_item(batch_object=batch_object, signer_public_key=signer_public_key)]
 
 
-def unmake_item(
-    batch_object, signer_public_key=None, batcher_public_key=BATCHER_KEY_PAIR.public_key
-):
+def unmake_item(batch_object, signer_public_key=None):
     """Will unmake_item a transaction or payload, and return a message.
     Validation of signatures will occur if public keys are provided.
     Only used for testing purposes.
@@ -176,6 +184,7 @@ def unmake_item(
     if isinstance(batch_object, transaction_pb2.Transaction):
         header = transaction_pb2.TransactionHeader()
         header.ParseFromString(batch_object.header)
+        # pylint: disable=no-member
         assert header.payload_sha512 == sha512(batch_object.payload).hexdigest()
         if signer_public_key:
             assert header.signer_public_key == signer_public_key
