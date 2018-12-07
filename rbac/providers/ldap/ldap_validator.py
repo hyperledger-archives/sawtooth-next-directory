@@ -12,5 +12,72 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+import sys
+import logging
+from rbac.providers.common.expected_errors import ValidationException
 
-# TODO: Add validation for LDAP sync payloads
+LOGGER = logging.getLogger(__name__)
+LOGGER.level = logging.INFO
+LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+
+
+def validate_create_entry(payload, data_type):
+    """Validate (User | Group) payload from NEXT being added to AD."""
+    new_entry_required_fields = ["distinguishedName"]
+    new_entry_prohibited_fields = ["objectGUID", "whenChanged"]
+
+    if data_type == "user":
+        new_entry_required_fields.append("cn")
+    elif data_type == "group":
+        new_entry_required_fields.append("groupType")
+    else:
+        raise ValidationException(
+            "Payload does not have the data_type of user or group."
+        )
+
+    for required_field in new_entry_required_fields:
+        if required_field not in payload:
+            raise ValidationException(
+                "Required field: '{}' is missing".format(required_field)
+            )
+
+    for prohibited_field in new_entry_prohibited_fields:
+        if prohibited_field in payload:
+            LOGGER.info(
+                "Payload contains prohibited field %s. Removing prohibited field from payload",
+                prohibited_field,
+            )
+            payload.remove(prohibited_field)
+
+    return payload
+
+
+def validate_update_entry(payload, data_type):
+    """Validate (User | Group) payload from NEXT being updated on AD."""
+    updated_required_fields = ["distinguishedName"]
+    prohibited_updated_group_fields = ["objectGUID", "whenCreated"]
+
+    if data_type == "user":
+        prohibited_updated_group_fields.append("cn")
+    elif data_type == "group":
+        prohibited_updated_group_fields.append("groupType")
+    else:
+        raise ValidationException(
+            "Payload does not have the data_type of user or group."
+        )
+
+    for required_field in updated_required_fields:
+        if required_field not in payload:
+            raise ValidationException(
+                "Required field: '{}' is missing".format(required_field)
+            )
+
+    for prohibited_field in prohibited_updated_group_fields:
+        if prohibited_field in payload:
+            LOGGER.info(
+                "Payload contains prohibited field %s. Removing prohibited field from payload",
+                prohibited_field,
+            )
+            payload.remove(prohibited_field)
+
+    return payload

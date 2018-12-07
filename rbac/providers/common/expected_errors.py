@@ -18,7 +18,7 @@ import logging
 import rethinkdb as r
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
+LOGGER.level = logging.INFO
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 
@@ -54,7 +54,7 @@ class LdapConnectionException(Exception):
     """Thrown when all attempts to connect to active directory have failed"""
 
 
-class LdapMessageValidationException(Exception):
+class ValidationException(Exception):
     """Thrown when an LDAP-formatted message fails a validation"""
 
 

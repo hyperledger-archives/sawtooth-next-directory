@@ -16,7 +16,7 @@
 import os
 
 from rbac.providers.common.expected_errors import (
-    LdapMessageValidationException,
+    ValidationException,
     NextMessageValidationException,
 )
 
@@ -93,6 +93,6 @@ def validate_ldap_payload(payload):
     required_field_cn = "cn"
 
     if required_field_cn not in payload:
-        raise LdapMessageValidationException(
+        raise ValidationException(
             "Required field: '{0}' is missing".format(required_field_cn)
         )
