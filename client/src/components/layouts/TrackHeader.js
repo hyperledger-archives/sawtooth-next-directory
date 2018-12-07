@@ -30,6 +30,7 @@ import './TrackHeader.css';
 export default class TrackHeader extends Component {
 
   static propTypes = {
+    button:             PropTypes.func,
     glyph:              PropTypes.string,
     subtitle:           PropTypes.string,
     title:              PropTypes.string,
@@ -41,7 +42,7 @@ export default class TrackHeader extends Component {
    * @returns {JSX}
    */
   render () {
-    const { glyph, subtitle, title } = this.props;
+    const { button, glyph, subtitle, title } = this.props;
 
     return (
       <Grid>
@@ -61,6 +62,7 @@ export default class TrackHeader extends Component {
                   </Header.Content>
                 </Header>
               }
+              {button && button()}
             </div>
           </div>
         </Grid.Column>

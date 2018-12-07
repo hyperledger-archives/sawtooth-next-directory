@@ -100,21 +100,26 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
   };
 
   const approveProposals = (id, body) => api.patch(`proposals/${id}`, body);
+  const createPack = (payload) => api.post('packs', payload);
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRequesterBase = () => api.get('me/base');
   const getRole = (id) => api.get(`roles/${id}`);
   const getRoles = () => api.get('roles');
+  const getPack = (id) => api.get(`packs/${id}`);
+  const getPacks = () => api.get('packs');
   const getRoot = () => api.get('');
   const getUser = (id) => api.get(`users/${id}`);
-  const requestAccess = (id, body) => api.post(`roles/${id}/members`, body);
+  const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
+  const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const search = (query) => api.post('', { q: query });
   const signup = (creds) => api.post('users', creds);
 
 
   return {
     approveProposals,
+    createPack,
     createRole,
     login,
     getOpenProposals,
@@ -122,10 +127,13 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     getRequesterBase,
     getRole,
     getRoles,
+    getPack,
+    getPacks,
     getRoot,
     getUser,
     me,
-    requestAccess,
+    requestPackAccess,
+    requestRoleAccess,
     search,
     signup,
   };

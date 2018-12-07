@@ -75,14 +75,13 @@ export default class MemberList extends Component {
 
     const diff = activePack.roles.filter(roleId =>
       roles.find(role => role.id !== roleId));
-    const placeholder = roles.map(role => role.id);
     const diff2 = roles
-      .filter(role => placeholder.find(roleId => role.id === roleId))
+      .filter(role => activePack.roles.find(roleId => role.id === roleId))
       .map(role => users
         .find(user => user.id !== role.owners[0]) && role.owners[0]);
 
-    diff && getRoles(diff);
-    diff2 && getUsers([...new Set(diff2)]);
+    diff && diff.length > 0 && getRoles(diff);
+    diff2 && diff.length > 0 && getUsers([...new Set(diff2)]);
   }
 
 
@@ -106,6 +105,7 @@ export default class MemberList extends Component {
       </div>
     );
   }
+
 
   /**
    * Render segment that contains role info
@@ -135,20 +135,18 @@ export default class MemberList extends Component {
     );
   }
 
+
   /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
-    const { roles } = this.props;
+    const { activePack } = this.props;
     return (
       <div>
         <Grid columns={3} stackable>
-          {/* { activePack && activePack.roles.map((roleId) => (
+          { activePack && activePack.roles && activePack.roles.map((roleId) => (
             this.renderRoleSegment(roleId)
-          )) } */}
-          { roles && roles.map((role) => (
-            this.renderRoleSegment(role.id)
           )) }
         </Grid>
       </div>

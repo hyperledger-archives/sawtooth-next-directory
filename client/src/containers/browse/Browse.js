@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid } from 'semantic-ui-react';
+import { Container, Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -114,13 +114,19 @@ class Browse extends Component {
    */
   render () {
     const { rolesData } = this.state;
+    console.log(rolesData);
     return (
       <div id='next-browse-wrapper'>
         <Container id='next-browse-container'>
-          {rolesData &&
+          { rolesData &&
             <Grid relaxed stackable columns={4} id='next-browse-grid'>
               {this.renderLayout()}
             </Grid>
+          }
+          { rolesData && rolesData.some(item => !item.length) &&
+            <Header as='h3' textAlign='center' color='grey'>
+              <Header.Content>No roles or packs</Header.Content>
+            </Header>
           }
         </Container>
       </div>

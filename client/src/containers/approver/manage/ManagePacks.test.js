@@ -20,8 +20,8 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
-import Manage from './Manage';
+import * as customStore from '../../../customStore';
+import ManagePacks from './ManagePacks';
 
 
 const store = customStore.create();
@@ -32,7 +32,7 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Manage/></BrowserRouter>
+      <BrowserRouter><ManagePacks/></BrowserRouter>
     </Provider>, div
   );
 

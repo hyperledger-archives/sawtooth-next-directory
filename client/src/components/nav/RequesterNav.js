@@ -28,6 +28,7 @@ import PropTypes from 'prop-types';
 
 import './RequesterNav.css';
 import NavList from './NavList';
+import * as utils from '../../services/Utils';
 
 
 /**
@@ -40,13 +41,53 @@ import NavList from './NavList';
 export default class RequesterNav extends Component {
 
   static propTypes = {
+    getPacks:           PropTypes.func,
     memberOf:           PropTypes.array,
+    packs:              PropTypes.array,
     recommendedPacks:   PropTypes.array,
     recommendedRoles:   PropTypes.array,
     requests:           PropTypes.array,
     roleFromId:         PropTypes.func,
     startAnimation:     PropTypes.func,
   };
+
+
+  /**
+   * Entry point to perform tasks required to render
+   * component
+   */
+  componentDidMount() {
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const { recommendedPacks } = this.props;
+    if (!utils.arraysEqual(prevProps.recommendedPacks, recommendedPacks))
+      this.init();
+  }
+
+
+  /**
+   * Determine which packs are not currently loaded
+   * in the client and dispatches actions to retrieve them.
+   */
+  init () {
+    const { getPacks, packs, recommendedPacks } = this.props;
+    let diff;
+    packs && recommendedPacks ?
+      diff = recommendedPacks.filter(packId =>
+        packs.find(pack => pack.id !== packId)) :
+      diff = recommendedPacks;
+
+    diff && diff.length > 0 && getPacks(diff);
+  }
+
 
   /**
    * Render each list of sidebar groups by passing the root
@@ -57,9 +98,15 @@ export default class RequesterNav extends Component {
     const {
       recommendedPacks,
       recommendedRoles,
+      packs,
       memberOf,
       requests,
       roleFromId } = this.props;
+
+    const packList = packs && recommendedPacks ?
+      packs.filter((pack) => recommendedPacks.includes(pack.id)) :
+      [];
+
     return (
       <div id='next-requester-nav-lists-container'>
         <NavList
@@ -73,7 +120,7 @@ export default class RequesterNav extends Component {
         <NavList
           listTitle='Recommended Packs'
           route='/packs'
-          list={recommendedPacks}/>
+          list={packList}/>
         <NavList
           listTitle='Recommended Roles'
           route='/roles'

@@ -59,3 +59,11 @@ limitations under the License.
   display: flex;
   position: relative;
 }
+
+.next-global-loading-bar {
+  background-color: #323449;
+  height: 39px;
+  left: 0;
+  position: absolute;
+  top: 0;
+}

@@ -41,6 +41,27 @@ export function * getOpenProposals (api, action) {
 
 
 /**
+ * Create a new pack
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * createPack (api, action) {
+  try {
+    const { payload } = action;
+    const res = yield call(api.createPack, payload);
+    if (res.ok)
+      yield put(ApproverActions.createPackSuccess(res.data));
+    else
+      yield put(ApproverActions.createPackFailure(res.data));
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
  * Create a new role
  * @param {object} api    API service
  * @param {object} action Redux action
@@ -50,7 +71,11 @@ export function * createRole (api, action) {
   try {
     const { payload } = action;
     const res = yield call(api.createRole, payload);
-    yield put(ApproverActions.createRoleSuccess(res.data));
+    if (res.ok)
+      yield put(ApproverActions.createRoleSuccess(res.data));
+    else
+      yield put(ApproverActions.createRoleFailure(res.data.error));
+
   } catch (err) {
     console.error(err);
   }

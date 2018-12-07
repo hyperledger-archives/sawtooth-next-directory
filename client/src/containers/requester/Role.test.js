@@ -1,3 +1,4 @@
+
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,29 +17,33 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 
 import * as customStore from '../../customStore';
-import Header from './Header';
+import Role from './Role';
 
 
 const store = customStore.create();
 
 
-describe('Header component', () => {
+it('renders without crashing', () => {
+  const div = document.createElement('div');
 
-  it('renders without crashing', () => {
-    const div = document.createElement('div');
+  const props = {
+    getRole: () => {},
+    roleFromId: () => {},
+    proposalFromId: () => {},
+    match: { params: {} },
+    requester: { requests: [] }
+  };
 
-    ReactDOM.render(
-      <Provider store={store}>
-        <BrowserRouter><Header/></BrowserRouter>
-      </Provider>, div
-    );
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Role {...props}/></BrowserRouter>
+    </Provider>, div
+  );
 
-    ReactDOM.unmountComponentAtNode(div);
-  });
-
+  ReactDOM.unmountComponentAtNode(div);
 });

@@ -1,3 +1,4 @@
+
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +17,31 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import ApprovalCard from './ApprovalCard';
+import * as customStore from '../../customStore';
+import Pack from './Pack';
 
 
-describe('ApprovalCard component', () => {
+const store = customStore.create();
 
-  it('renders without crashing', () => {
-    const div = document.createElement('div');
 
-    ReactDOM.render(
-      <BrowserRouter><ApprovalCard/></BrowserRouter>, div
-    );
+it('renders without crashing', () => {
+  const div = document.createElement('div');
 
-    ReactDOM.unmountComponentAtNode(div);
-  });
+  const props = {
+    getPack: () => {},
+    packFromId: () => {},
+    match: { params: {} },
+  };
 
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Pack {...props}/></BrowserRouter>
+    </Provider>, div
+  );
+
+  ReactDOM.unmountComponentAtNode(div);
 });

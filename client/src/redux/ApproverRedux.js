@@ -34,6 +34,10 @@ const { Types, Creators } = createActions({
   createRoleSuccess:        ['success'],
   createRoleFailure:        ['error'],
 
+  createPackRequest:        ['payload'],
+  createPackSuccess:        ['success'],
+  createPackFailure:        ['error'],
+
   approveProposalsRequest:  ['ids'],
   approveProposalsSuccess:  ['closedProposal'],
   approveProposalsFailure:  ['error'],
@@ -105,6 +109,9 @@ export const openProposalsSuccess = (state, { openProposals }) => {
 export const createRoleSuccess = (state) => {
   return state.merge({ fetching: false });
 };
+export const createPackSuccess = (state) => {
+  return state.merge({ fetching: false });
+};
 export const approveProposalsSuccess = (state, { closedProposal }) => {
   return state.merge({
     fetching: false,
@@ -129,6 +136,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.CREATE_ROLE_REQUEST]: request,
   [Types.CREATE_ROLE_SUCCESS]: createRoleSuccess,
   [Types.CREATE_ROLE_FAILURE]: failure,
+
+  [Types.CREATE_PACK_REQUEST]: request,
+  [Types.CREATE_PACK_SUCCESS]: createPackSuccess,
+  [Types.CREATE_PACK_FAILURE]: failure,
 
   [Types.APPROVE_PROPOSALS_REQUEST]: request,
   [Types.APPROVE_PROPOSALS_SUCCESS]: approveProposalsSuccess,

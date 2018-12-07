@@ -23,22 +23,22 @@ import PropTypes from 'prop-types';
 import { RequesterSelectors } from '../../redux/RequesterRedux';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
-import ApprovalCard from '../../components/layouts/ApprovalCard';
+import PackApproval from './PackApproval';
 import RolesList from '../../components/layouts/RolesList';
 
 
-import './Packs.css';
+import './Pack.css';
 import glyph from '../../images/header-glyph-pack.png';
 
 
 /**
  *
- * @class         Packs
- * @description   Packs component
+ * @class         Pack
+ * @description   Pack component
  *
  *
  */
-export class Packs extends Component {
+export class Pack extends Component {
 
   static propTypes = {
     getRole: PropTypes.func,
@@ -51,8 +51,11 @@ export class Packs extends Component {
    * role is in approval state, get proposal info.
    */
   componentDidMount () {
-    const { getPack, packId } = this.props;
+    const { getPack, getProposal, packId, proposalId } = this.props;
+
+    // TODO: Only get if not loaded
     packId && !this.pack && getPack(packId);
+    proposalId && !this.request && getProposal(proposalId);
   }
 
 
@@ -63,8 +66,12 @@ export class Packs extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { getPack, packId } = this.props;
+    const { getPack, getProposal, packId, proposalId } = this.props;
+    // TODO: Only get if not loaded
     if (prevProps.packId !== packId) !this.pack && getPack(packId);
+    if (prevProps.proposalId !== proposalId)
+      proposalId && !this.request && getProposal(proposalId);
+
   }
 
 
@@ -73,10 +80,11 @@ export class Packs extends Component {
    * @returns {JSX}
    */
   render () {
-    const { packId, packFromId } = this.props;
+    const { packId, packFromId, proposalFromId, proposalId } = this.props;
 
     this.pack = packFromId(packId);
     if (!this.pack) return null;
+    this.request = proposalFromId(proposalId);
 
     return (
       <Grid id='next-requester-grid'>
@@ -90,8 +98,7 @@ export class Packs extends Component {
             {...this.props}/>
           <div id='next-requester-packs-content'>
             { this.request &&
-              this.request.status === 'OPEN' &&
-              <ApprovalCard
+              <PackApproval
                 request={this.request}
                 {...this.props}/>
             }
@@ -111,7 +118,7 @@ export class Packs extends Component {
           <Chat
             type={0}
             title={this.pack.name + ' Conversations'}
-            activeRole={this.pack} {...this.props}/>
+            activePack={this.pack} {...this.props}/>
         </Grid.Column>
       </Grid>
     );
@@ -121,11 +128,17 @@ export class Packs extends Component {
 
 
 const mapStateToProps = (state, ownProps) => {
-  const { params } = ownProps.match;
+  const { id } = ownProps.match.params;
   const { packs } = state.requester;
 
   return {
-    packId: RequesterSelectors.idFromSlug(state, packs, params.id),
+    packId: RequesterSelectors.idFromSlug(state, packs, id),
+    proposalId: RequesterSelectors.idFromSlug(
+      state,
+      packs,
+      id,
+      'proposal_id'
+    ),
   };
 };
 
@@ -134,4 +147,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Packs);
+export default connect(mapStateToProps, mapDispatchToProps)(Pack);

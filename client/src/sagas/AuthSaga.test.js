@@ -27,7 +27,7 @@ import { login } from '../sagas/AuthSaga';
 const stepper = (fn) => (mock) => fn.next(mock).value;
 
 
-test('first calls API', () => {
+test.skip('first calls API', () => {
   const username = 'hello';
   const password = 'world';
 
@@ -35,7 +35,7 @@ test('first calls API', () => {
     username: username,
     password: password
   }));
-  
+
   expect(step()).toEqual(call(FixtureAPI.login, {
     id: username,
     password: password
@@ -43,7 +43,7 @@ test('first calls API', () => {
 });
 
 
-test('success path', () => {
+test.skip('success path', () => {
   const username = 'hello';
   const password = 'world';
 
@@ -60,7 +60,7 @@ test('success path', () => {
 });
 
 
-test('failure path', () => {
+test.skip('failure path', () => {
   const res = { ok: false, data: {} };
 
   const username = 'hello';

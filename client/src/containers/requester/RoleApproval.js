@@ -17,18 +17,18 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Card, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import './ApprovalCard.css';
+import './RoleApproval.css';
 
 
 /**
  *
- * @class         ApprovalCard
- * @description   This card formats the display of an open request's
+ * @class         RoleApproval
+ * @description   This layout formats the display of an open request's
  *                current approval status. It displays who owns the resource,
- *                when the request was opened, and approval status
+ *                when the request was opened, and approval status.
  *
  */
-class ApprovalCard extends Component {
+class RoleApproval extends Component {
 
   static propTypes = {
     getUser:            PropTypes.func,
@@ -115,4 +115,4 @@ class ApprovalCard extends Component {
 }
 
 
-export default ApprovalCard;
+export default RoleApproval;

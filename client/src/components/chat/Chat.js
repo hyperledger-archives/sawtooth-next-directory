@@ -131,9 +131,16 @@ class Chat extends Component {
 
 
   // * Needed for debugging
-  manualRequest = () => {
-    const { activeRole, me, requestAccess } = this.props;
-    requestAccess(activeRole.id, me.id, 'some reason');
+  manualRequestRole = () => {
+    const { activeRole, me, requestRoleAccess } = this.props;
+    requestRoleAccess(activeRole.id, me.id, 'some reason');
+  }
+
+
+  // * Needed for debugging
+  manualRequestPack = () => {
+    const { activePack, me, requestPackAccess } = this.props;
+    requestPackAccess(activePack.id, me.id, 'some reason');
   }
 
 
@@ -246,8 +253,11 @@ class Chat extends Component {
         }
 
         <div id='next-manual-triggers'>
-          <Button size='tiny' onClick={this.manualRequest}>
-            Request
+          <Button size='tiny' onClick={this.manualRequestPack}>
+            Pack Request
+          </Button>
+          <Button size='tiny' onClick={this.manualRequestRole}>
+            Role Request
           </Button>
           <Button size='tiny' onClick={this.manualApprove}>
             Approve
