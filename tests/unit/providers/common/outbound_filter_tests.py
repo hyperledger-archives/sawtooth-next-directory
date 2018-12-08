@@ -15,11 +15,13 @@
 
 import pytest
 
-from rbac.providers.common.outbound_filters import (
+from rbac.providers.azure.azure_validators import (
     outbound_group_creation_filter,
+    outbound_user_creation_filter,
+)
+from rbac.providers.common.outbound_filters import (
     outbound_group_filter,
     outbound_user_filter,
-    outbound_user_creation_filter,
 )
 
 LIST_OF_VALID_INPUT = [

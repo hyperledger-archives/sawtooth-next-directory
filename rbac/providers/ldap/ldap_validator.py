@@ -28,6 +28,7 @@ def validate_create_entry(payload, data_type):
 
     if data_type == "user":
         new_entry_required_fields.append("cn")
+        new_entry_required_fields.append("userPrincipalName")
     elif data_type == "group":
         new_entry_required_fields.append("groupType")
     else:
@@ -47,7 +48,7 @@ def validate_create_entry(payload, data_type):
                 "Payload contains prohibited field %s. Removing prohibited field from payload",
                 prohibited_field,
             )
-            payload.remove(prohibited_field)
+            payload.pop(prohibited_field, None)
 
     return payload
 
@@ -78,6 +79,6 @@ def validate_update_entry(payload, data_type):
                 "Payload contains prohibited field %s. Removing prohibited field from payload",
                 prohibited_field,
             )
-            payload.remove(prohibited_field)
+            payload.pop(prohibited_field, None)
 
     return payload

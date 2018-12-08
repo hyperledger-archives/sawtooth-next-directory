@@ -27,21 +27,15 @@ from rbac.providers.common.inbound_filters import (
 )
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 
-DELAY = os.environ.get("DELAY")
 LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
 DELTA_SYNC_INTERVAL_SECONDS = int(os.getenv("DELTA_SYNC_INTERVAL_SECONDS", "3600"))
 
-LDAP_FILTER_USER_DELTA = "(&(objectClass=person)(whenChanged>=%s))"
-LDAP_FILTER_GROUP_DELTA = "(&(objectClass=group)(whenChanged>=%s))"
-
 # LOGGER levels: info, debug, warning, exception, error
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
-
-# TODO: Fix redundancy in function calls
 
 
 def fetch_ldap_data():
@@ -109,7 +103,6 @@ def insert_to_db(data_dict, when_changed):
             entry_modified_timestamp = entry.whenChanged.value.strftime(
                 "%Y-%m-%dT%H:%M:%S.%f+00:00"
             )
-            # TODO: Decide on inbound_entry format
             inbound_entry = {
                 "data": standardized_entry,
                 "data_type": data_type,

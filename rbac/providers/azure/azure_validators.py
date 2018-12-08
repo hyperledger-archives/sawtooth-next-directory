@@ -12,25 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-"""Outbound payload filters for transforming data into provider compatible schema."""
-from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
+
+from rbac.providers.common.provider_transforms import (
+    GROUP_CREATION_TRANSFORM,
+    USER_CREATION_TRANSFORM,
+)
 
 
-def outbound_user_filter(sawtooth_user, provider):
-    """Takes in a user dict from outbound_queue and formats it to a providers specs.
+def outbound_user_creation_filter(sawtooth_user, provider):
+    """Takes in a user dict from outbound_queue and formats it to a provider's specs.
     :param: user > dict > a dictionary representing a user
     :param: provider > str > inbound provider type (azure, ldap)
     """
     if provider != "azure" and provider != "ldap":
         raise TypeError("Provider must be specified with a valid option.")
     user = {}
-    for key, value in USER_TRANSFORM.items():
+    for key, value in USER_CREATION_TRANSFORM.items():
         if key in sawtooth_user:
             user[value[provider]] = sawtooth_user[key]
+    if "userPrincipalName" not in user or "displayName" not in user:
+        raise ValueError("User entry does not contain appropriate data")
+    if "userPrincipalName" not in user:
+        user["userPrincipalName"] = user["mail"]
+    if "mailNickname" not in user:
+        index = user["userPrincipalName"].find("@")
+        user["mailNickname"] = user["userPrincipalName"][:index]
+    user.pop("mail", None)
+    if "accountEnabled" not in user:
+        user["accountEnabled"] = True
+    user["passwordPolicies"] = "None"
     return user
 
 
-def outbound_group_filter(sawtooth_group, provider):
+def outbound_group_creation_filter(sawtooth_group, provider):
     """Takes in a group dict from outbound_queue and formats it to a provider's specs
     :param: group > dict > a dictionary representing a group
     :param: provider > str > inbound provider type (azure, ldap)
@@ -38,7 +52,11 @@ def outbound_group_filter(sawtooth_group, provider):
     if provider != "azure" and provider != "ldap":
         raise TypeError("Provider must be specified with a valid option.")
     group = {}
-    for key, value in GROUP_TRANSFORM.items():
+    for key, value in GROUP_CREATION_TRANSFORM.items():
         if key in sawtooth_group:
             group[value[provider]] = sawtooth_group[key]
+    if "mailNickname" not in group:
+        raise ValueError("User entry does not contain appropriate data")
+    if "mailEnabled" not in group:
+        group["mailEnabled"] = False
     return group

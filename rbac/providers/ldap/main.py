@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-import os
-import sys
+"""Start the LDAP provider with initial sync and listener outbound delta."""
+from rbac.providers.common.threading import DeltaSyncThread
+from rbac.providers.ldap.delta_outbound_sync import ldap_outbound_listener
+from rbac.providers.ldap.initial_inbound_sync import initialize_ldap_sync
 
-TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, TOP_DIR)
 
-from rbac.providers.ldap.main import main
-
-if __name__ == "__main__":
-    main()
+def main():
+    """Start the initial sync and oubound delta thread."""
+    initialize_ldap_sync()
+    # Create sync listener threads.
+    outbound_sync_thread = DeltaSyncThread("LDAP Outbound", ldap_outbound_listener)
+    # Start sync listener threads.
+    outbound_sync_thread.start()

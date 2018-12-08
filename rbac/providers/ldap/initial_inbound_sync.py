@@ -40,16 +40,13 @@ LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 DB_HOST = os.getenv("DB_HOST", "rethink")
-DB_PORT = int(float(os.getenv("DB_PORT", "28015")))
+DB_PORT = int(os.getenv("DB_PORT", "28015"))
 DB_NAME = os.getenv("DB_NAME", "rbac")
 
 LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
-
-LDAP_FILTER_USER = "(objectClass=person)"
-LDAP_FILTER_GROUP = "(objectClass=group)"
 
 
 def fetch_ldap_data(data_type):
@@ -60,9 +57,9 @@ def fetch_ldap_data(data_type):
     connect_to_db()
 
     if data_type == "user":
-        search_filter = LDAP_FILTER_USER
+        search_filter = "(objectClass=person)"
     elif data_type == "group":
-        search_filter = LDAP_FILTER_GROUP
+        search_filter = "(objectClass=group)"
 
     server = Server(LDAP_SERVER, get_info=ALL)
     conn = Connection(server, user=LDAP_USER, password=LDAP_PASS)
@@ -93,6 +90,7 @@ def insert_to_db(data_dict, data_type):
         inbound_entry = {
             "data": standardized_entry,
             "data_type": data_type,
+            "sync_type": "initial",
             "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
             "provider_id": LDAP_DC,
         }
@@ -117,8 +115,7 @@ def initialize_ldap_sync():
     if LDAP_DC:
         connect_to_db()
 
-        user_sync_completed = False
-        group_sync_completed = False
+        # Check to see if User Sync has occured.  If not - Sync
         db_user_payload = check_last_sync("ldap-user", "initial")
         if not db_user_payload:
             LOGGER.info(
@@ -129,8 +126,8 @@ def initialize_ldap_sync():
             fetch_ldap_data(data_type="user")
 
             LOGGER.info("Initial AD user upload completed.")
-            user_sync_completed = True
 
+        # Check to see if Group Sync has occured.  If not - Sync
         db_group_payload = check_last_sync("ldap-group", "initial")
         if not db_group_payload:
             LOGGER.info(
@@ -140,17 +137,11 @@ def initialize_ldap_sync():
             fetch_ldap_data(data_type="group")
 
             LOGGER.info("Initial AD group upload completed.")
-            group_sync_completed = True
-
-        if user_sync_completed and group_sync_completed:
-            initiate_delta_sync()
-        else:
-            LOGGER.info(
-                "Initial syncs did not complete successfully, LDAP delta sync will not start."
-            )
 
         if db_user_payload and db_group_payload:
             LOGGER.info("The LDAP initial sync has already been run.")
-            initiate_delta_sync()
+
+        # Start the inbound delta sync
+        initiate_delta_sync()
     else:
         LOGGER.info("LDAP Domain Controller is not provided, skipping LDAP sync.")
