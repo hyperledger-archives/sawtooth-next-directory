@@ -19,11 +19,13 @@ import logging
 from uuid import uuid4
 import requests
 from rbac.providers.azure.aad_auth import AadAuth
+from rbac.providers.azure.azure_validators import (
+    outbound_user_creation_filter,
+    outbound_group_creation_filter,
+)
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
     outbound_group_filter,
-    outbound_user_creation_filter,
-    outbound_group_creation_filter,
 )
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import (
@@ -37,10 +39,7 @@ from rbac.providers.common.db_queries import (
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_CONFIG = {"DELAY": "1", "OUTBOUND_QUEUE": "outbound_queue"}
-
-OUTBOUND_QUEUE = os.getenv("OUTBOUND_QUEUE", DEFAULT_CONFIG["OUTBOUND_QUEUE"])
-DELAY = int(float(os.getenv("DELAY", DEFAULT_CONFIG["DELAY"])))
+LISTENER_POLLING_DELAY = int(os.getenv("LISTENER_POLLING_DELAY", "1"))
 TENANT_ID = os.getenv("TENANT_ID")
 GRAPH_URL = "https://graph.microsoft.com"
 GRAPH_VERSION = "beta"
@@ -176,7 +175,7 @@ def create_user_aad(queue_entry):
         }
         response = requests.post(url=url, headers=headers, json=aad_user)
         if response.status_code == 201:
-            delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
+            delete_entry_queue(queue_entry["id"], "outbound_queue")
         else:
             LOGGER.warning("Unable to create user in AAD: %s", queue_entry)
             raise ExpectedError("Unable to create user.")
@@ -198,7 +197,7 @@ def create_group_aad(queue_entry):
             )
         response = requests.post(url=url, headers=headers, json=aad_group)
         if response.status_code == 201:
-            delete_entry_queue(queue_entry["id"], OUTBOUND_QUEUE)
+            delete_entry_queue(queue_entry["id"], "outbound_queue")
         else:
             LOGGER.warning("Unable to create group in AAD: %s", queue_entry)
             raise ExpectedError("Unable to create group.")
@@ -214,7 +213,7 @@ def outbound_sync_listener():
 
     while True:
         try:
-            queue_entry = peek_at_queue(OUTBOUND_QUEUE, TENANT_ID)
+            queue_entry = peek_at_queue("outbound_queue", TENANT_ID)
             LOGGER.info(
                 "Received queue entry %s from outbound queue...", queue_entry["id"]
             )
@@ -231,10 +230,16 @@ def outbound_sync_listener():
 
             LOGGER.info("Deleting queue entry from outbound queue...")
             entry_id = queue_entry["id"]
-            delete_entry_queue(entry_id, OUTBOUND_QUEUE)
+            delete_entry_queue(entry_id, "outbound_queue")
         except ExpectedError as err:
-            LOGGER.debug(("%s Repolling after %s seconds...", err.__str__, DELAY))
-            time.sleep(DELAY)
+            LOGGER.debug(
+                (
+                    "%s Repolling after %s seconds...",
+                    err.__str__,
+                    LISTENER_POLLING_DELAY,
+                )
+            )
+            time.sleep(LISTENER_POLLING_DELAY)
         except Exception as err:
             LOGGER.exception(err)
             raise err

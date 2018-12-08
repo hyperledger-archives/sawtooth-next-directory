@@ -17,7 +17,6 @@ import logging
 import os
 import time
 from datetime import datetime as dt
-
 import requests
 import rethinkdb as r
 
@@ -29,21 +28,17 @@ from rbac.providers.common.inbound_filters import (
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 
-
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_CONFIG = {"DB_HOST": "rethink", "DB_PORT": "28015", "DB_NAME": "rbac"}
-DB_HOST = os.getenv("DB_HOST", DEFAULT_CONFIG["DB_HOST"])
-DB_PORT = os.getenv("DB_PORT", DEFAULT_CONFIG["DB_PORT"])
-DB_NAME = os.getenv("DB_NAME", DEFAULT_CONFIG["DB_NAME"])
+DB_HOST = os.getenv("DB_HOST", "rethink")
+DB_PORT = os.getenv("DB_PORT", "28015")
+DB_NAME = os.getenv("DB_NAME", "rbac")
 GRAPH_URL = "https://graph.microsoft.com/beta/"
 
 TENANT_ID = os.getenv("TENANT_ID")
 AUTH = AadAuth()
-
-DELAY = 1
 
 
 def fetch_groups_with_members():

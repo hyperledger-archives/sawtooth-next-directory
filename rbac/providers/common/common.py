@@ -26,8 +26,6 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.INFO
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-DELAY = 1
-
 
 def check_last_sync(sync_source, sync_type):
     """
@@ -42,10 +40,9 @@ def check_last_sync(sync_source, sync_type):
             return db_payload
         except ExpectedError:
             LOGGER.debug(
-                "Sync tracker table has not been initialized. Checking again in %s seconds",
-                DELAY,
+                "Sync tracker table has not been initialized. Checking again in 1 second"
             )
-            time.sleep(DELAY)
+            time.sleep(1)
             continue
         except Exception as err:
             LOGGER.warning(type(err).__name__)

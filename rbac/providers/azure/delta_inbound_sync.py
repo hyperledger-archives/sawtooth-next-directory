@@ -27,8 +27,6 @@ from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 from rbac.providers.common.common import check_last_sync
 
-DELAY = os.environ.get("DELAY")
-
 # LOGGER levels: info, debug, warning, exception, error
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
@@ -36,6 +34,7 @@ LOGGER = logging.getLogger(__name__)
 TENANT_ID = os.getenv("TENANT_ID")
 NAMESPACE = os.environ.get("AAD_EH_NAMESPACE")
 EVENTHUB_NAME = os.environ.get("AAD_EH_NAME")
+LISTENER_POLLING_DELAY = os.environ.get("LISTENER_POLLING_DELAY", "1")
 
 # Address can be in either of these formats:
 # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
@@ -142,8 +141,14 @@ def inbound_sync_listener():
             finally:
                 client.stop()
         except ExpectedError as err:
-            LOGGER.debug(("%s Repolling after %s seconds...", err.__str__, DELAY))
-            time.sleep(DELAY)
+            LOGGER.debug(
+                (
+                    "%s Repolling after %s seconds...",
+                    err.__str__,
+                    LISTENER_POLLING_DELAY,
+                )
+            )
+            time.sleep(LISTENER_POLLING_DELAY)
         except Exception as err:
             LOGGER.exception(err)
             raise err
