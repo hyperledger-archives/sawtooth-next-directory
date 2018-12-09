@@ -26,39 +26,39 @@ import * as utils from '../services/Utils';
 //
 //
 const { Types, Creators } = createActions({
-  baseRequest:       null,
-  baseSuccess:       ['base'],
-  baseFailure:       ['error'],
+  baseRequest:          null,
+  baseSuccess:          ['base'],
+  baseFailure:          ['error'],
 
-  roleRequest:       ['id'],
-  rolesRequest:      ['ids'],
-  roleSuccess:       ['role'],
-  roleFailure:       ['error'],
+  roleRequest:          ['id'],
+  rolesRequest:         ['ids'],
+  roleSuccess:          ['role'],
+  roleFailure:          ['error'],
 
-  packRequest:       ['id'],
-  packsRequest:      ['ids'],
-  packSuccess:       ['pack'],
-  packFailure:       ['error'],
+  packRequest:          ['id'],
+  packsRequest:         ['ids'],
+  packSuccess:          ['pack'],
+  packFailure:          ['error'],
 
-  allrolesRequest:   null,
-  allrolesSuccess:   ['roles'],
-  allrolesFailure:   ['error'],
+  allrolesRequest:      null,
+  allrolesSuccess:      ['roles'],
+  allrolesFailure:      ['error'],
 
-  proposalRequest:   ['id'],
-  proposalSuccess:   ['proposal'],
-  proposalFailure:   ['error'],
+  proposalRequest:      ['id'],
+  proposalSuccess:      ['proposal'],
+  proposalFailure:      ['error'],
 
-  proposalsRequest:  ['ids'],
+  proposalsRequest:     ['ids'],
 
-  roleAccessRequest:     ['id', 'userId', 'reason'],
-  roleAccessSuccess:      null,
-  roleAccessFailure:     null,
+  roleAccessRequest:    ['id', 'userId', 'reason'],
+  roleAccessSuccess:    null,
+  roleAccessFailure:    null,
 
-  packAccessRequest:     ['id', 'userId', 'reason'],
-  packAccessSuccess:     null,
-  packAccessFailure:     null,
+  packAccessRequest:    ['id', 'userId', 'reason'],
+  packAccessSuccess:    null,
+  packAccessFailure:    null,
 
-  resetAll:          null,
+  resetAll:             null,
 });
 
 
@@ -91,6 +91,8 @@ export const RequesterSelectors = {
   roles: (state) => state.requester.roles,
   packs: (state) => state.requester.packs,
 
+
+  // Retrieve recommended roles
   recommendedRoles: (state) =>
     state.requester.roles &&
     state.user.me &&
@@ -100,16 +102,25 @@ export const RequesterSelectors = {
         proposal.object_id === role.id
       )
     ),
-
+  // Retrieve recommended packs
   recommendedPacks: (state) => {
     if (!state.requester.roles || !state.user.me) return null;
-    const recommended = Object.keys(
-      utils.groupBy(state.requester.roles, 'packs')
-    ).filter(packId =>
-      packId.length > 0 && !packId.includes('undefined')
-    );
-    return recommended.join('') ? recommended : null;
+    const roles = state.requester.roles.filter(
+        item => !state.user.me.proposals.find(e => e.object_id === item.id)
+      ),
+      recommend = Object.keys(utils.groupBy(roles, 'packs')).filter(item => {
+        const cond1 = 0 === item.length && item.includes('undefined'),
+          cond2 =
+            RequesterSelectors.requests(state) &&
+            RequesterSelectors.requests(state).find(obj => obj.id === item),
+          cond3 =
+            RequesterSelectors.mine(state) &&
+            RequesterSelectors.mine(state).find(obj => obj.id === item);
+        return !(cond3 || cond2 || cond1);
+      });
+    return recommend.join('') ? recommend : null;
   },
+
 
   // Retrieve role by ID
   roleFromId: (state, id) =>
@@ -117,64 +128,136 @@ export const RequesterSelectors = {
     state.requester.roles.find(role =>
       role.id === id
     ),
-
   // Retrieve proposal by ID
   packFromId: (state, id) =>
     state.requester.packs &&
     state.requester.packs.find(pack =>
       pack.id === id
     ),
-
   // Retrieve proposal by ID
   proposalFromId: (state, id) =>
     state.requester.requests &&
     state.requester.requests.find(request =>
       request.id === id
     ),
+  // Retrieve proposals by IDs
+  proposalsFromIds: (state, ids) =>
+    state.requester.requests &&
+    state.requester.requests.filter(request =>
+      ids.includes(request.id)
+    ),
+
 
   // Retrieve user requests (proposals)
-  requests: (state) =>
-    state.user.me &&
-    state.requester.roles &&
-    state.requester.requests &&
+  requests: (state) => {
+    if (
+      !state.requester.requests ||
+      !state.user.me ||
+      !state.requester.roles ||
+      !state.requester.packs
+    )
+      return null;
+
+    let open = [];
     state.requester.requests
       .filter(request => request.status === 'OPEN')
-      .map(request => {
-        return {
-          ...request,
-          ...state.requester.roles
-            .find(role => role.id === request.object),
+      .forEach(request => {
+        const merge = { ...request, ...state.requester.roles
+          .find(role => role.id === request.object),
         };
-      }),
+        if (merge && merge.packs && merge.packs.length > 0) {
+          open.push(state.requester.packs.find(pack =>
+            pack.id === merge.packs[0]
+          ));
+        } else {
+          open.push(merge);
+        }
+      });
+
+    return [...new Set(open)];
+  },
+
+
+  // Retrieve and group my packs / roles
+  mine: (state) => {
+    if (
+      !state.requester.requests ||
+      !state.user.me ||
+      !state.requester.roles ||
+      !state.requester.packs
+    )
+      return null;
+
+    let confirmed = [];
+    let unconfirmed = [];
+
+    // Iterating over open proposals, constructing an object
+    // for each request with info about its corresponding role
+    state.requester.requests.forEach(request => {
+      const merge = { ...request, ...state.requester.roles
+        .find(role => role.id === request.object),
+      };
+      if (merge && merge.packs && merge.packs.length > 0) {
+        let pack = state.requester.packs.find(pack =>
+          pack.id === merge.packs[0]
+        );
+        merge.status !== 'CONFIRMED' && unconfirmed.push(pack.id);
+        confirmed.push(pack);
+      } else {
+        merge.status === 'CONFIRMED' && confirmed.push(merge);
+      }
+    });
+
+    // Create a new array of the form [{ pack }, {role}, ...],
+    // removing duplicates and unconfirmed proposals
+    let unique = [...new Set(confirmed)];
+    return unique.filter(item => !unconfirmed.includes(item.id));
+  },
 
 
   /**
-   * Retrieve field ID from URL slug
+   * Find the proposal ID(s) of a resource in the store provided
+   * the URL slug of the resource
    * @param   {object} state      Redux state
-   * @param   {array}  collection Collection to search
+   * @param   {array}  collection Redux entity
    * @param   {string} slug       URL slug
-   * @param   {string} field      ID to retrieve
-   * @returns {string}
+   * @param   {string} type       Entity group type (e.g., role)
+   * @returns {string|array}
    */
-  idFromSlug: (state, collection, slug, field) => {
-    if (!collection) return null;
-
-    let result = {};
-    field = field || 'id';
+  proposalIdFromSlug: (state, collection, slug, type) => {
+    if (!collection || !state.user.me) return null;
+    let result = null;
     const entity = collection.find((item) =>
       utils.createSlug(item.name) === slug);
 
-    switch (field) {
-      case 'proposal_id':
-        result = state.user.me && entity &&
-        state.user.me.proposals.find((item) =>
-          item.object_id === entity.id);
-        break;
-      default:
-        result = entity;
-        break;
+    if (type === 'pack') {
+      result = entity && state.user.me.proposals
+        .filter(item => entity.roles.includes(item.object_id))
+        .map(item => item.proposal_id);
     }
-    return result && result[field];
+    if (type === 'role') {
+      const proposal = entity && state.user.me.proposals
+        .find(item => item.object_id === entity.id);
+      result = proposal && proposal.proposal_id;
+    }
+
+    return result;
+  },
+
+
+  /**
+   * Find the ID of a resource in the store provided
+   * the URL slug of the resource
+   * @param   {object} state      Redux state
+   * @param   {array}  collection Redux entity
+   * @param   {string} slug       URL slug
+   * @returns {string}
+   */
+  idFromSlug: (state, collection, slug) => {
+    if (!collection) return null;
+    const result = collection.find((item) =>
+      utils.createSlug(item.name) === slug);
+    return result && result.id;
   },
 };
 
@@ -269,10 +352,9 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ALLROLES_FAILURE]: failure,
 
   [Types.PROPOSAL_REQUEST]: request,
+  [Types.PROPOSALS_REQUEST]: request,
   [Types.PROPOSAL_SUCCESS]: proposalSuccess,
   [Types.PROPOSAL_FAILURE]: failure,
-
-  [Types.PROPOSALS_REQUEST]: request,
 
   [Types.ROLE_ACCESS_REQUEST]: request,
   [Types.ROLE_ACCESS_SUCCESS]: accessSuccess,

@@ -42,7 +42,7 @@ export default class RequesterNav extends Component {
 
   static propTypes = {
     getPacks:           PropTypes.func,
-    memberOf:           PropTypes.array,
+    mine:               PropTypes.array,
     packs:              PropTypes.array,
     recommendedPacks:   PropTypes.array,
     recommendedRoles:   PropTypes.array,
@@ -99,9 +99,8 @@ export default class RequesterNav extends Component {
       recommendedPacks,
       recommendedRoles,
       packs,
-      memberOf,
-      requests,
-      roleFromId } = this.props;
+      mine,
+      requests } = this.props;
 
     const packList = packs && recommendedPacks ?
       packs.filter((pack) => recommendedPacks.includes(pack.id)) :
@@ -111,11 +110,9 @@ export default class RequesterNav extends Component {
       <div id='next-requester-nav-lists-container'>
         <NavList
           listTitle='Your Packs / Roles'
-          route='/roles'
-          list={memberOf && memberOf.map(roleId => roleFromId(roleId))}/>
+          list={mine}/>
         <NavList
           listTitle='Your Requests'
-          route='/roles'
           list={requests}/>
         <NavList
           listTitle='Recommended Packs'

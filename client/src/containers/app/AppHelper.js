@@ -54,14 +54,18 @@ export const appState = (state) => {
     messages:            ChatSelectors.messages(state),
 
     // Requester
+    mine:                RequesterSelectors.mine(state),
     recommendedRoles:    RequesterSelectors.recommendedRoles(state),
     recommendedPacks:    RequesterSelectors.recommendedPacks(state),
     requests:            RequesterSelectors.requests(state),
     packs:               RequesterSelectors.packs(state),
     roles:               RequesterSelectors.roles(state),
-    proposalFromId:      (id) => RequesterSelectors.proposalFromId(state, id),
-    roleFromId:          (id) => RequesterSelectors.roleFromId(state, id),
-    packFromId:          (id) => RequesterSelectors.packFromId(state, id),
+    proposalFromId:      (id)  =>
+      RequesterSelectors.proposalFromId(state, id),
+    proposalsFromIds:    (ids) =>
+      RequesterSelectors.proposalsFromIds(state, ids),
+    roleFromId:          (id)  => RequesterSelectors.roleFromId(state, id),
+    packFromId:          (id)  => RequesterSelectors.packFromId(state, id),
 
     // User
     id:                  UserSelectors.id(state),

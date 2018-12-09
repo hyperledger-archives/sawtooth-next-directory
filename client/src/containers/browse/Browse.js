@@ -114,7 +114,6 @@ class Browse extends Component {
    */
   render () {
     const { rolesData } = this.state;
-    console.log(rolesData);
     return (
       <div id='next-browse-wrapper'>
         <Container id='next-browse-container'>

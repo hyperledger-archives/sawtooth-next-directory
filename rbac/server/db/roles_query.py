@@ -88,6 +88,9 @@ async def fetch_role_resource(conn, role_id, head_block_num):
                     "role_tasks", "role_id", role_id, head_block_num
                 ),
                 "proposals": fetch_proposal_ids_by_opener(role_id, head_block_num),
+                "packs": fetch_relationships(
+                    "role_packs", "role_id", role_id, head_block_num
+                ),
             }
         )
         .without("role_id")
