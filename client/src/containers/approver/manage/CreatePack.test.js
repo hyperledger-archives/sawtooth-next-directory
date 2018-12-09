@@ -20,25 +20,21 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
-import Header from './Header';
+import * as customStore from '../../../customStore';
+import CreatePack from './CreatePack';
 
 
 const store = customStore.create();
 
 
-describe('Header component', () => {
+it('renders without crashing', () => {
+  const div = document.createElement('div');
 
-  it('renders without crashing', () => {
-    const div = document.createElement('div');
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><CreatePack/></BrowserRouter>
+    </Provider>, div
+  );
 
-    ReactDOM.render(
-      <Provider store={store}>
-        <BrowserRouter><Header/></BrowserRouter>
-      </Provider>, div
-    );
-
-    ReactDOM.unmountComponentAtNode(div);
-  });
-
+  ReactDOM.unmountComponentAtNode(div);
 });

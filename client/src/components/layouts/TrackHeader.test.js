@@ -19,7 +19,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import TrackHeader from './Header';
+import TrackHeader from './TrackHeader';
 
 
 describe('TrackHeader component', () => {

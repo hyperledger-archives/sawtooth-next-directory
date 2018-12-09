@@ -26,16 +26,20 @@ import React from 'react';
 
 import RequesterHome from './containers/requester/RequesterHome';
 import RequesterNav from './components/nav/RequesterNav';
-import Roles from './containers/requester/Roles';
-import Packs from './containers/requester/Packs';
+import Role from './containers/requester/Role';
+import Pack from './containers/requester/Pack';
 
 
 import ApproverHome from './containers/approver/ApproverHome';
 import ApproverNav from './components/nav/ApproverNav';
 import Individuals from './containers/approver/Individuals';
 import Expiring from './containers/approver/Expiring';
-import Manage from './containers/approver/Manage';
+import Manage from './containers/approver/manage/Manage';
+import ManageRoles from './containers/approver/manage/ManageRoles';
 import People from './containers/approver/People';
+import CreateRole from './containers/approver/manage/CreateRole';
+import ManagePacks from './containers/approver/manage/ManagePacks';
+import CreatePack from './containers/approver/manage/CreatePack';
 
 
 const routes = (props) => [
@@ -53,13 +57,13 @@ const routes = (props) => [
   },
   {
     path:   '/packs/:id',
-    main:   (rest) => <Packs {...props} {...rest}/>,
+    main:   (rest) => <Pack {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true,
   },
   {
     path:   '/roles/:id',
-    main:   (rest) => <Roles {...props} {...rest}/>,
+    main:   (rest) => <Role {...props} {...rest}/>,
     nav:    () => <RequesterNav {...props}/>,
     exact:  true,
   },
@@ -92,6 +96,30 @@ const routes = (props) => [
   {
     path:   '/approval/manage',
     main:   (rest) => <Manage {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/manage/roles',
+    main:   (rest) => <ManageRoles {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/manage/packs',
+    main:   (rest) => <ManagePacks {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/manage/roles/create',
+    main:   (rest) => <CreateRole {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/manage/packs/create',
+    main:   (rest) => <CreatePack {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

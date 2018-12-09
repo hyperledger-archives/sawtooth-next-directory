@@ -25,22 +25,22 @@ import { RequesterSelectors } from '../../redux/RequesterRedux';
 
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
-import ApprovalCard from '../../components/layouts/ApprovalCard';
+import RoleApproval from './RoleApproval';
 import MemberList from '../../components/layouts/MemberList';
 
 
-import './Roles.css';
+import './Role.css';
 import glyph from '../../images/header-glyph-role.png';
 
 
 /**
  *
- * @class         Roles
- * @description   Roles component
+ * @class         Role
+ * @description   Role component
  *
  *
  */
-export class Roles extends Component {
+export class Role extends Component {
 
   static propTypes = {
     getProposal: PropTypes.func,
@@ -55,6 +55,8 @@ export class Roles extends Component {
    */
   componentDidMount () {
     const { getProposal, getRole, proposalId, roleId } = this.props;
+
+    // TODO: Only get if not loaded
     roleId && !this.role && getRole(roleId);
     proposalId && !this.request && getProposal(proposalId);
   }
@@ -69,6 +71,7 @@ export class Roles extends Component {
   componentDidUpdate (prevProps) {
     const { getProposal, getRole, proposalId, roleId } = this.props;
 
+    // TODO: Only get if not loaded
     if (prevProps.roleId !== roleId) !this.role && getRole(roleId);
     if (prevProps.proposalId !== proposalId) {
       proposalId &&
@@ -90,9 +93,8 @@ export class Roles extends Component {
       roleFromId } = this.props;
 
     this.role = roleFromId(roleId);
-    this.request = proposalFromId(proposalId);
-
     if (!this.role) return null;
+    this.request = proposalFromId(proposalId);
 
     const membersCount = [...this.role.members, ...this.role.owners].length;
     const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
@@ -115,7 +117,7 @@ export class Roles extends Component {
           <div id='next-requester-roles-content'>
             { this.request &&
               this.request.status === 'OPEN' &&
-              <ApprovalCard
+              <RoleApproval
                 request={this.request}
                 {...this.props}/>
             }
@@ -169,4 +171,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Roles);
+export default connect(mapStateToProps, mapDispatchToProps)(Role);

@@ -1,4 +1,3 @@
-
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +20,8 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
-import Packs from './Packs';
+import * as customStore from '../../../customStore';
+import CreateRole from './CreateRole';
 
 
 const store = customStore.create();
@@ -31,15 +30,9 @@ const store = customStore.create();
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
-  const props = {
-    getPack: () => {},
-    packFromId: () => {},
-    match: { params: {} },
-  };
-
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Packs {...props}/></BrowserRouter>
+      <BrowserRouter><CreateRole/></BrowserRouter>
     </Provider>, div
   );
 

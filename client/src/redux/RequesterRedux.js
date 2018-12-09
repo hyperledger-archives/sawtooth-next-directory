@@ -31,11 +31,12 @@ const { Types, Creators } = createActions({
   baseFailure:       ['error'],
 
   roleRequest:       ['id'],
+  rolesRequest:      ['ids'],
   roleSuccess:       ['role'],
   roleFailure:       ['error'],
-  rolesRequest:      ['ids'],
 
   packRequest:       ['id'],
+  packsRequest:      ['ids'],
   packSuccess:       ['pack'],
   packFailure:       ['error'],
 
@@ -49,9 +50,13 @@ const { Types, Creators } = createActions({
 
   proposalsRequest:  ['ids'],
 
-  accessRequest:     ['id', 'userId', 'reason'],
-  accessSuccess:     null,
-  accessFailure:     null,
+  roleAccessRequest:     ['id', 'userId', 'reason'],
+  roleAccessSuccess:      null,
+  roleAccessFailure:     null,
+
+  packAccessRequest:     ['id', 'userId', 'reason'],
+  packAccessSuccess:     null,
+  packAccessFailure:     null,
 
   resetAll:          null,
 });
@@ -90,19 +95,21 @@ export const RequesterSelectors = {
     state.requester.roles &&
     state.user.me &&
     state.requester.roles.filter(role =>
+      role.packs && role.packs.length === 0 &&
       !state.user.me.proposals.find(proposal =>
         proposal.object_id === role.id
       )
     ),
 
-  recommendedPacks: (state) =>
-    state.requester.packs &&
-    state.user.me &&
-    state.requester.packs.filter(pack =>
-      !state.user.me.proposals.find(proposal =>
-        proposal.object_id === pack.id
-      )
-    ),
+  recommendedPacks: (state) => {
+    if (!state.requester.roles || !state.user.me) return null;
+    const recommended = Object.keys(
+      utils.groupBy(state.requester.roles, 'packs')
+    ).filter(packId =>
+      packId.length > 0 && !packId.includes('undefined')
+    );
+    return recommended.join('') ? recommended : null;
+  },
 
   // Retrieve role by ID
   roleFromId: (state, id) =>
@@ -248,11 +255,12 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.BASE_FAILURE]: failure,
 
   [Types.ROLE_REQUEST]: request,
+  [Types.ROLES_REQUEST]: request,
   [Types.ROLE_SUCCESS]: roleSuccess,
   [Types.ROLE_FAILURE]: failure,
-  [Types.ROLES_REQUEST]: request,
 
   [Types.PACK_REQUEST]: request,
+  [Types.PACKS_REQUEST]: request,
   [Types.PACK_SUCCESS]: packSuccess,
   [Types.PACK_FAILURE]: failure,
 
@@ -266,7 +274,11 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.PROPOSALS_REQUEST]: request,
 
-  [Types.ACCESS_REQUEST]: request,
-  [Types.ACCESS_SUCCESS]: accessSuccess,
-  [Types.ACCESS_FAILURE]: failure,
+  [Types.ROLE_ACCESS_REQUEST]: request,
+  [Types.ROLE_ACCESS_SUCCESS]: accessSuccess,
+  [Types.ROLE_ACCESS_FAILURE]: failure,
+
+  [Types.PACK_ACCESS_REQUEST]: request,
+  [Types.PACK_ACCESS_SUCCESS]: accessSuccess,
+  [Types.PACK_ACCESS_FAILURE]: failure,
 });

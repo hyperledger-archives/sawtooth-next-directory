@@ -39,16 +39,16 @@ export const createSlug = (name, parent) => {
       .replace(/ /g, '-')
       .replace(/[^\w-]+/g, '');
   } catch (error) {
-    console.error(error);
-    console.error('Invalid resource name: ', name);
-    return '';
+    console.error(`Invalid resource name: ${name}. Expected a string.`);
+    return 'Error loading resource name';
   }
 };
 
 
 export const createHomeLink = (packs = [], roles = []) => {
   try {
-    if (packs && packs.length > 0)
+    // TODO: Get name for pack
+    if (packs && packs.length > 0 && packs[0].name)
       return `/packs/${createSlug(packs[0].name)}`;
     else if (roles && roles.length > 0 )
       return `/roles/${createSlug(roles[0].name)}`;
@@ -77,4 +77,16 @@ export const merge = (array1, array2) => {
   ]
     .map(object => JSON.stringify(object)))]
     .map(string => JSON.parse(string));
+};
+
+
+export const arraysEqual = (array1, array2) => {
+  if (array1 === array2) return true;
+  if (array1 == null || array2 == null) return false;
+  if (array1.length !== array2.length) return false;
+
+  for (let i = 0; i < array1.length; ++i)
+    if (array1[i] !== array2[i]) return false;
+
+  return true;
 };

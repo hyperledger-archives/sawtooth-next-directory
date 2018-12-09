@@ -32,13 +32,16 @@ import { UserTypes } from '../redux/UserRedux';
 import {
   approveProposals,
   getOpenProposals,
+  createPack,
   createRole } from './ApproverSaga';
 import {
-  requestAccess,
+  packAccess,
+  roleAccess,
   getBase,
   getRole,
   getRoles,
   getPack,
+  getPacks,
   getProposal,
   getProposals,
   getAllRoles } from './RequesterSaga';
@@ -79,6 +82,7 @@ function * sagas () {
 
     // Approver
     takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
+    takeLatest(ApproverTypes.CREATE_PACK_REQUEST, createPack, api),
     takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
     takeLatest(ApproverTypes.APPROVE_PROPOSALS_REQUEST, approveProposals, api),
 
@@ -92,14 +96,16 @@ function * sagas () {
     takeLatest(ChatTypes.MESSAGE_SEND, sendMessage),
 
     // Requester
-    takeLatest(RequesterTypes.BASE_REQUEST, getBase, [api, FixtureAPI]),
+    takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
     takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),
     takeLatest(RequesterTypes.ROLES_REQUEST, getRoles, api),
-    takeLatest(RequesterTypes.PACK_REQUEST, getPack, FixtureAPI),
+    takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
+    takeLatest(RequesterTypes.PACKS_REQUEST, getPacks, api),
     takeLatest(RequesterTypes.ALLROLES_REQUEST, getAllRoles, api),
     takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
     takeLatest(RequesterTypes.PROPOSALS_REQUEST, getProposals, api),
-    takeLatest(RequesterTypes.ACCESS_REQUEST, requestAccess, api),
+    takeLatest(RequesterTypes.ROLE_ACCESS_REQUEST, roleAccess, api),
+    takeLatest(RequesterTypes.PACK_ACCESS_REQUEST, packAccess, api),
 
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),

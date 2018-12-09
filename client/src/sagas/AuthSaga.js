@@ -21,6 +21,7 @@ API to retrieve data required to hydrate the UI. */
 
 
 import { call, put } from 'redux-saga/effects';
+import { showLoading, hideLoading } from 'react-redux-loading-bar';
 import AuthActions from '../redux/AuthRedux';
 
 
@@ -32,6 +33,7 @@ import AuthActions from '../redux/AuthRedux';
  */
 export function * login (api, action) {
   try {
+    yield put(showLoading());
     const { username, password } = action;
     const res = yield call(api.login, {
       id: username,
@@ -43,6 +45,8 @@ export function * login (api, action) {
       yield put(AuthActions.loginFailure(res.data.message));
   } catch (err) {
     console.error(err);
+  } finally {
+    yield put(hideLoading());
   }
 }
 
@@ -55,6 +59,7 @@ export function * login (api, action) {
  */
 export function * signup (api, action) {
   try {
+    yield put(showLoading());
     const { username, password, name, email } = action;
     const res = yield call(api.signup, {
       username: username,
@@ -68,6 +73,8 @@ export function * signup (api, action) {
       yield put(AuthActions.signupFailure(res.data.message));
   } catch (err) {
     console.error(err);
+  } finally {
+    yield put(hideLoading());
   }
 }
 

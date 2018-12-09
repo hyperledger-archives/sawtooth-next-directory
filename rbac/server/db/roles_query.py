@@ -51,6 +51,9 @@ async def fetch_all_role_resources(conn, head_block_num, start, limit):
                     "proposals": fetch_proposal_ids_by_opener(
                         role["role_id"], head_block_num
                     ),
+                    "packs": fetch_relationships(
+                        "role_packs", "role_id", role["role_id"], head_block_num
+                    ),
                 }
             )
         )

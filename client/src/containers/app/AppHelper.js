@@ -57,6 +57,7 @@ export const appState = (state) => {
     recommendedRoles:    RequesterSelectors.recommendedRoles(state),
     recommendedPacks:    RequesterSelectors.recommendedPacks(state),
     requests:            RequesterSelectors.requests(state),
+    packs:               RequesterSelectors.packs(state),
     roles:               RequesterSelectors.roles(state),
     proposalFromId:      (id) => RequesterSelectors.proposalFromId(state, id),
     roleFromId:          (id) => RequesterSelectors.roleFromId(state, id),
@@ -97,6 +98,10 @@ export const appDispatch = (dispatch) => {
       dispatch(ApproverActions.approveProposalsRequest(ids)),
     getOpenProposals:  ()    =>
       dispatch(ApproverActions.openProposalsRequest()),
+    createRole: (payload) =>
+      dispatch(ApproverActions.createRoleRequest(payload)),
+    createPack: (payload) =>
+      dispatch(ApproverActions.createPackRequest(payload)),
 
     // Chat
     resetChat:         ()    => dispatch(ChatActions.clearMessages()),
@@ -109,11 +114,14 @@ export const appDispatch = (dispatch) => {
     getRole:           (id)  => dispatch(RequesterActions.roleRequest(id)),
     getRoles:          (ids) => dispatch(RequesterActions.rolesRequest(ids)),
     getPack:           (id)  => dispatch(RequesterActions.packRequest(id)),
+    getPacks:          (ids) => dispatch(RequesterActions.packsRequest(ids)),
     getProposal:       (id)  => dispatch(RequesterActions.proposalRequest(id)),
     getProposals:      (ids) =>
       dispatch(RequesterActions.proposalsRequest(ids)),
-    requestAccess:     (id, userId, reason) =>
-      dispatch(RequesterActions.accessRequest(id, userId, reason)),
+    requestRoleAccess:     (id, userId, reason) =>
+      dispatch(RequesterActions.roleAccessRequest(id, userId, reason)),
+    requestPackAccess:     (id, userId, reason) =>
+      dispatch(RequesterActions.packAccessRequest(id, userId, reason)),
 
     // User
     getMe:             ()    => dispatch(UserActions.meRequest()),

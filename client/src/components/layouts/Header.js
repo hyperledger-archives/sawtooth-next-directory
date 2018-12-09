@@ -22,6 +22,7 @@ import {
   Menu,
   Header as MenuHeader } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import LoadingBar from 'react-redux-loading-bar';
 import PropTypes from 'prop-types';
 
 
@@ -167,6 +168,7 @@ export default class Header extends Component {
 
     return (
       <header className='next-header' ref={this.setRef}>
+        <LoadingBar showFastActions className='next-global-loading-bar'/>
         <div id='next-header-logo'>
           <Image
             as={Link}

@@ -27,7 +27,8 @@ def fetch_relationships(table, index, identifier, head_block_num):
         .get_all(identifier, index=index)
         .filter(
             lambda doc: (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"])
+            & (head_block_num < doc["end_block_num"]),
+            default=True,
         )
         .get_field("identifiers")
         .coerce_to("array")
@@ -41,7 +42,8 @@ def fetch_relationships_by_id(table, identifier, key, head_block_num):
         .filter(
             lambda doc: doc["identifiers"].contains(identifier)
             & (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"])
+            & (head_block_num < doc["end_block_num"]),
+            default=True,
         )
         .get_field(key)
         .distinct()

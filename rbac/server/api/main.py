@@ -34,6 +34,7 @@ from rbac.server.api.auth import AUTH_BP
 from rbac.server.api.chatbot import CHATBOT_BP
 from rbac.server.api.blocks import BLOCKS_BP
 from rbac.server.api.errors import ERRORS_BP
+from rbac.server.api.packs import PACKS_BP
 from rbac.server.api.proposals import PROPOSALS_BP
 from rbac.server.api.roles import ROLES_BP
 from rbac.server.api.tasks import TASKS_BP
@@ -249,6 +250,7 @@ def main():
     app.blueprint(BLOCKS_BP)
     app.blueprint(CHATBOT_BP)
     app.blueprint(ERRORS_BP)
+    app.blueprint(PACKS_BP)
     app.blueprint(PROPOSALS_BP)
     app.blueprint(ROLES_BP)
     app.blueprint(TASKS_BP)
@@ -271,7 +273,10 @@ def main():
     zmq = ZMQEventLoop()
     asyncio.set_event_loop(zmq)
     server = app.create_server(
-        host=app.config.HOST, port=app.config.PORT, debug=app.config.DEBUG
+        host=app.config.HOST,
+        port=app.config.PORT,
+        debug=app.config.DEBUG,
+        access_log=False,
     )
     loop = asyncio.get_event_loop()
     asyncio.ensure_future(server)

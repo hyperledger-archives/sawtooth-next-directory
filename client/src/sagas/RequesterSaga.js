@@ -34,8 +34,8 @@ import UserActions from '../redux/UserRedux';
 export function * getBase (api, action) {
   try {
     const res = yield all([
-      call(api[0].getRoles),
-      call(api[1].getPacks),
+      call(api.getRoles),
+      call(api.getPacks),
     ]);
     yield put(RequesterActions.baseSuccess(res));
   } catch (err) {
@@ -86,6 +86,22 @@ export function * getPack (api, action) {
   try {
     const { id } = action;
     yield fetchPack(api, id);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Get detailed info for an array of packs
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * getPacks (api, action) {
+  try {
+    const { ids } = action;
+    if (ids.length > 0) yield all(ids.map(id => fork(fetchPack, api, id)));
   } catch (err) {
     console.error(err);
   }
@@ -148,21 +164,46 @@ export function * getProposals (api, action) {
 /**
  * Send a request to become a member of a role
  * @param {object} api    API service
- * @param {object} action Redux action
+ * @param {string} action Redux action
  * @generator
  */
-export function * requestAccess (api, action) {
+export function * roleAccess (api, action) {
   try {
     const { id, userId, reason } = action;
-    const res = yield call(api.requestAccess, id, {
+    const res = yield call(api.requestRoleAccess, id, {
       id: userId,
       reason: reason,
     });
     if (res.ok) {
-      yield put(RequesterActions.accessSuccess(res.data));
+      yield put(RequesterActions.roleAccessSuccess(res.data));
       yield put(UserActions.meRequest());
     } else {
-      yield put(RequesterActions.accessFailure(res.data.error));
+      yield put(RequesterActions.roleAccessFailure(res.data.error));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Send a request to become a member of a pack's roles
+ * @param {object} api    API service
+ * @param {string} action Redux action
+ * @generator
+ */
+export function * packAccess (api, action) {
+  try {
+    const { id, userId, reason } = action;
+    const res = yield call(api.requestPackAccess, id, {
+      id: userId,
+      reason: reason,
+    });
+    if (res.ok) {
+      yield put(RequesterActions.packAccessSuccess(res.data));
+      yield put(UserActions.meRequest());
+    } else {
+      yield put(RequesterActions.packAccessFailure(res.data.error));
     }
   } catch (err) {
     console.error(err);

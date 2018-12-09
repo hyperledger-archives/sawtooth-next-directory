@@ -16,26 +16,19 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
-import Header from './Header';
+import RoleApproval from './RoleApproval';
 
 
-const store = customStore.create();
-
-
-describe('Header component', () => {
+describe('RoleApproval component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <Provider store={store}>
-        <BrowserRouter><Header/></BrowserRouter>
-      </Provider>, div
+      <BrowserRouter><RoleApproval/></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

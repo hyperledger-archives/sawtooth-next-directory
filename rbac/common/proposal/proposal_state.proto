@@ -93,12 +93,12 @@ message Proposal {
 
 message Approval {
     string approver = 1;
-    
+
     string on_behalf = 2;
 }
 
 message Rejection {
     string rejector = 1;
-    
+
     string on_behalf = 2;
 }
