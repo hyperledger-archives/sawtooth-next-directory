@@ -14,32 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-role-approval-container {
-  margin: 0 auto;
-  padding: 30px 0 10px 0;
-  width: 70%;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-#next-role-approval-status-emoji {
-  font-size: 4.3em;
-}
 
-#next-role-approval-status {
-  color: #ffb338;
-  padding: 54px 0 20px 0;
-  text-align: center;
-}
+import PackApprovalList from './PackApprovalList';
 
-#next-role-approval-status h3 {
-  margin-top: 10px;
-}
 
-#next-role-approval-approver {
-  color: var(--black);
-  font-weight: bold;
-}
+describe('PackApprovalList component', () => {
 
-#next-role-approval-details {
-  font-size: .9em;
-  text-align: center;
-}
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    ReactDOM.render(
+      <BrowserRouter><PackApprovalList/></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});

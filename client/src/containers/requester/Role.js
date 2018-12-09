@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Label } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -49,38 +49,6 @@ export class Role extends Component {
 
 
   /**
-   * Entry point to perform tasks required to render
-   * component. Get detailed info for current role and if the
-   * role is in approval state, get proposal info.
-   */
-  componentDidMount () {
-    const { getProposal, getRole, proposalId, roleId } = this.props;
-
-    // TODO: Only get if not loaded
-    roleId && !this.role && getRole(roleId);
-    proposalId && !this.request && getProposal(proposalId);
-  }
-
-
-  /**
-   * Called whenever Redux state changes. If role or proposal state
-   * changes, update info.
-   * @param {object} prevProps Props before update
-   * @returns {undefined}
-   */
-  componentDidUpdate (prevProps) {
-    const { getProposal, getRole, proposalId, roleId } = this.props;
-
-    // TODO: Only get if not loaded
-    if (prevProps.roleId !== roleId) !this.role && getRole(roleId);
-    if (prevProps.proposalId !== proposalId) {
-      proposalId &&
-      !this.request && getProposal(proposalId);
-    }
-  }
-
-
-  /**
    * Render entrypoint
    * @returns {JSX}
    */
@@ -94,7 +62,7 @@ export class Role extends Component {
 
     this.role = roleFromId(roleId);
     if (!this.role) return null;
-    this.request = proposalFromId(proposalId);
+    this.proposal = proposalFromId(proposalId);
 
     const membersCount = [...this.role.members, ...this.role.owners].length;
     const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
@@ -115,19 +83,17 @@ export class Role extends Component {
             subtitle={subtitle}
             {...this.props}/>
           <div id='next-requester-roles-content'>
-            { this.request &&
-              this.request.status === 'OPEN' &&
+            { this.proposal &&
+              this.proposal.status === 'OPEN' &&
               <RoleApproval
-                request={this.request}
+                proposal={this.proposal}
                 {...this.props}/>
             }
             <Container id='next-requester-roles-description-container'>
-              <Label>Roles</Label>
               <div id='next-requester-roles-description'>
                 Lorem ipsum dolor sit amet.
               </div>
             </Container>
-            <Label>Members</Label>
             <MemberList {...this.props}
               members={this.role.members}
               owners={this.role.owners}/>
@@ -157,12 +123,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     roleId: RequesterSelectors.idFromSlug(state, roles, id),
-    proposalId: RequesterSelectors.idFromSlug(
-      state,
-      roles,
-      id,
-      'proposal_id'
-    ),
+    proposalId: RequesterSelectors.proposalIdFromSlug(state, roles, id, 'role'),
   };
 };
 

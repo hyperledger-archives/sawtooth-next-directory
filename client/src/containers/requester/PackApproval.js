@@ -15,9 +15,12 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Card, Grid } from 'semantic-ui-react';
+import { Card, Grid, Label } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+
+
 import './PackApproval.css';
+import * as utils from '../../services/Utils';
 
 
 /**
@@ -32,46 +35,61 @@ class PackApproval extends Component {
 
   static propTypes = {
     getUser:            PropTypes.func,
-    request:            PropTypes.array,
+    proposals:          PropTypes.array,
     users:              PropTypes.array,
   }
 
 
+  state = { approved: 0, pending: 0, rejected: 0 };
+
+
   /**
    * Entry point to perform tasks required to render component.
-   * The card displays conditionally, requiring 'request' to be
+   * The card displays conditionally, requiring 'proposals' to be
    * passed as a prop.
    */
   componentDidMount () {
-    const { request, getUser, users } = this.props;
-    if (!request) return;
-
-    console.log(request);
-
-    request.appprovers &&
-    request.appprovers.map((userId) => {
-      return users && users.find((user) => user.id === userId) ?
-        undefined :
-        getUser(userId);
-    });
+    this.init();
   }
 
 
   /**
-   * Display the open request's approvers
-   * @param {string} userId Approver's user ID
-   * @returns {JSX}
+   * Called whenever Redux state changes. If proposals prop is changed,
+   * update info.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
    */
-  renderApprover (userId) {
-    const { users } = this.props;
+  componentDidUpdate (prevProps) {
+    const { proposals } = this.props;
+    if (!utils.arraysEqual(prevProps.proposals, proposals)) this.init();
+  }
 
-    if (!users) return null;
-    const user = users.find((user) => user.id === userId);
-    return (
-      <div id='next-approval-approver' key={userId}>
-        {user && user.name}
-      </div>
-    );
+
+  /**
+   * On load, get users not loaded in and tabulate status counts
+   */
+  init () {
+    const { proposals, getUser, users } = this.props;
+    if (!proposals) return;
+
+    let pending = 0;
+    let approved = 0;
+    let rejected = 0;
+
+    proposals.forEach(proposal => {
+      proposal.appprovers &&
+      proposal.appprovers.map((userId) => {
+        return users && users.find((user) => user.id === userId) ?
+          undefined :
+          getUser(userId);
+      });
+
+      if (proposal.status === 'OPEN') pending += 1;
+      if (proposal.status === 'CONFIRMED') approved += 1;
+      if (proposal.status === 'REJECTED') rejected += 1;
+    });
+
+    this.setState({ approved, pending, rejected });
   }
 
 
@@ -80,35 +98,57 @@ class PackApproval extends Component {
    * @returns {JSX}
    */
   render () {
-    const { request } = this.props;
-    if (!request) return null;
+    const { proposals } = this.props;
+    const { approved, pending, rejected } = this.state;
+    if (!proposals) return null;
 
     return (
-      <div id='next-approval-container'>
+      <div id='next-pack-approval-container'>
         <Card fluid>
-          <Card.Header id='next-approval-status'>
-            <span id='next-approval-status-emoji' role='img' aria-label=''>
-              🙇
-            </span>
-            <h3>Awaiting approval</h3>
-          </Card.Header>
-          <Card.Content extra>
-            <Grid columns={3} padded='vertically'>
-              <Grid.Column>
-                Request ID
+          <Card.Header id='next-pack-approval-status'>
+            <Grid columns={4} padded='vertically'>
+              <Grid.Column id='next-pack-approval-request-info'>
+                <div>Request ID</div>
+                <div>Request Date</div>
               </Grid.Column>
               <Grid.Column>
-                Request Date
+                <h1>{approved}</h1>
+                <Label circular color='grey'>
+                  <span
+                    className='next-pack-approval-status-emoji'
+                    role='img'
+                    aria-label=''>
+                    👍
+                  </span>
+                  Approved
+                </Label>
               </Grid.Column>
               <Grid.Column>
-                Approver(s)
-                { request.approvers &&
-                  request.approvers.map((approver) => (
-                    this.renderApprover(approver)
-                  )) }
+                <h1>{pending}</h1>
+                <Label circular color='grey'>
+                  <span
+                    className='next-pack-approval-status-emoji'
+                    role='img'
+                    aria-label=''>
+                    🙇
+                  </span>
+                  Pending
+                </Label>
+              </Grid.Column>
+              <Grid.Column>
+                <h1>{rejected}</h1>
+                <Label circular color='grey'>
+                  <span
+                    className='next-pack-approval-status-emoji'
+                    role='img'
+                    aria-label=''>
+                    😩
+                  </span>
+                  Rejected
+                </Label>
               </Grid.Column>
             </Grid>
-          </Card.Content>
+          </Card.Header>
         </Card>
       </div>
     );

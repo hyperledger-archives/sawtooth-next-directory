@@ -78,7 +78,8 @@ export default class MemberList extends Component {
     const diff2 = roles
       .filter(role => activePack.roles.find(roleId => role.id === roleId))
       .map(role => users
-        .find(user => user.id !== role.owners[0]) && role.owners[0]);
+        .find(user => user.id !== role.owners[0]) && role.owners[0])
+      .filter(userId => userId);
 
     diff && diff.length > 0 && getRoles(diff);
     diff2 && diff.length > 0 && getUsers([...new Set(diff2)]);

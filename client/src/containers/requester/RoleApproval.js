@@ -32,22 +32,22 @@ class RoleApproval extends Component {
 
   static propTypes = {
     getUser:            PropTypes.func,
-    request:            PropTypes.object,
+    proposal:           PropTypes.object,
     users:              PropTypes.array,
   }
 
 
   /**
    * Entry point to perform tasks required to render component.
-   * The card displays conditionally, requiring 'request' to be
+   * The card displays conditionally, requiring 'proposal' to be
    * passed as a prop.
    */
   componentDidMount () {
-    const { request, getUser, users } = this.props;
-    if (!request) return;
+    const { proposal, getUser, users } = this.props;
+    if (!proposal) return;
 
-    request.appprovers &&
-    request.appprovers.map((userId) => {
+    proposal.appprovers &&
+    proposal.appprovers.map((userId) => {
       return users && users.find((user) => user.id === userId) ?
         undefined :
         getUser(userId);
@@ -66,7 +66,7 @@ class RoleApproval extends Component {
     if (!users) return null;
     const user = users.find((user) => user.id === userId);
     return (
-      <div id='next-approval-approver' key={userId}>
+      <div id='next-role-approval-approver' key={userId}>
         {user && user.name}
       </div>
     );
@@ -78,19 +78,19 @@ class RoleApproval extends Component {
    * @returns {JSX}
    */
   render () {
-    const { request } = this.props;
-    if (!request) return null;
+    const { proposal } = this.props;
+    if (!proposal) return null;
 
     return (
-      <div id='next-approval-container'>
+      <div id='next-role-approval-container'>
         <Card fluid>
-          <Card.Header id='next-approval-status'>
-            <span id='next-approval-status-emoji' role='img' aria-label=''>
+          <Card.Header id='next-role-approval-status'>
+            <span id='next-role-approval-status-emoji' role='img' aria-label=''>
               🙇
             </span>
             <h3>Awaiting approval</h3>
           </Card.Header>
-          <Card.Content extra>
+          <Card.Content extra id='next-role-approval-details'>
             <Grid columns={3} padded='vertically'>
               <Grid.Column>
                 Request ID
@@ -100,8 +100,8 @@ class RoleApproval extends Component {
               </Grid.Column>
               <Grid.Column>
                 Approver(s)
-                { request.approvers &&
-                  request.approvers.map((approver) => (
+                { proposal.approvers &&
+                  proposal.approvers.map((approver) => (
                     this.renderApprover(approver)
                   )) }
               </Grid.Column>

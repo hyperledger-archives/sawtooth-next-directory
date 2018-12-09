@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Label } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -24,6 +24,7 @@ import { RequesterSelectors } from '../../redux/RequesterRedux';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import PackApproval from './PackApproval';
+import PackApprovalList from './PackApprovalList';
 import RolesList from '../../components/layouts/RolesList';
 
 
@@ -46,45 +47,15 @@ export class Pack extends Component {
 
 
   /**
-   * Entry point to perform tasks required to render
-   * component. Get detailed info for current pack and if the
-   * role is in approval state, get proposal info.
-   */
-  componentDidMount () {
-    const { getPack, getProposal, packId, proposalId } = this.props;
-
-    // TODO: Only get if not loaded
-    packId && !this.pack && getPack(packId);
-    proposalId && !this.request && getProposal(proposalId);
-  }
-
-
-  /**
-   * Called whenever Redux state changes. If pack or proposal state
-   * changes, update info.
-   * @param {object} prevProps Props before update
-   * @returns {undefined}
-   */
-  componentDidUpdate (prevProps) {
-    const { getPack, getProposal, packId, proposalId } = this.props;
-    // TODO: Only get if not loaded
-    if (prevProps.packId !== packId) !this.pack && getPack(packId);
-    if (prevProps.proposalId !== proposalId)
-      proposalId && !this.request && getProposal(proposalId);
-
-  }
-
-
-  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
-    const { packId, packFromId, proposalFromId, proposalId } = this.props;
+    const { packId, packFromId, proposalsFromIds, proposalIds } = this.props;
 
     this.pack = packFromId(packId);
     if (!this.pack) return null;
-    this.request = proposalFromId(proposalId);
+    this.proposals = proposalsFromIds(proposalIds);
 
     return (
       <Grid id='next-requester-grid'>
@@ -97,18 +68,21 @@ export class Pack extends Component {
             title={this.pack.name}
             {...this.props}/>
           <div id='next-requester-packs-content'>
-            { this.request &&
-              <PackApproval
-                request={this.request}
-                {...this.props}/>
+            { this.proposals && this.proposals.length > 0 &&
+              <div>
+                <PackApproval
+                  proposals={this.proposals}
+                  {...this.props}/>
+                <PackApprovalList
+                  proposals={this.proposals}
+                  {...this.props}/>
+              </div>
             }
             <Container id='next-requester-packs-description-container'>
-              <Label>Description</Label>
               <div id='next-requester-packs-description'>
                 {this.pack.description}
               </div>
             </Container>
-            <Label>Roles</Label>
             <RolesList activePack={this.pack} {...this.props}/>
           </div>
         </Grid.Column>
@@ -133,11 +107,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     packId: RequesterSelectors.idFromSlug(state, packs, id),
-    proposalId: RequesterSelectors.idFromSlug(
-      state,
-      packs,
-      id,
-      'proposal_id'
+    proposalIds: RequesterSelectors.proposalIdFromSlug(
+      state, packs, id, 'pack'
     ),
   };
 };

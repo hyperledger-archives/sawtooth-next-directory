@@ -14,32 +14,21 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-role-approval-container {
-  margin: 0 auto;
-  padding: 30px 0 10px 0;
-  width: 70%;
+#next-pack-approval-list-container {
+  margin-top: 40px;
 }
 
-#next-role-approval-status-emoji {
-  font-size: 4.3em;
+#next-pack-approval-list-grid .column{
+  align-items: center;
+  display: flex;
 }
 
-#next-role-approval-status {
-  color: #ffb338;
-  padding: 54px 0 20px 0;
-  text-align: center;
+.next-pack-approval-list-status {
+  align-items: center;
+  display: flex;
 }
 
-#next-role-approval-status h3 {
-  margin-top: 10px;
-}
-
-#next-role-approval-approver {
-  color: var(--black);
-  font-weight: bold;
-}
-
-#next-role-approval-details {
-  font-size: .9em;
-  text-align: center;
+.next-pack-approval-list-status-emoji {
+  font-size: 3em;
+  margin-left: 10px;
 }

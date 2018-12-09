@@ -63,6 +63,21 @@ class NavList extends Component {
 
 
   /**
+   * Create relative URL for nav list item
+   * @param {object} item Nav item
+   * @returns {string}
+   */
+  createNavLink = (item) => {
+    const { route } = this.props;
+    const root = route ||
+      (item.roles && item.roles.length > 0 ? '/packs' : '/roles');
+    return item.slug ?
+      `${root}/${item.slug}` :
+      `${root}/${utils.createSlug(item.name, item)}`;
+  };
+
+
+  /**
    * Generate a sub-list of nav links
    *
    * Each list item is ported into a <Link> router element whose
@@ -78,7 +93,7 @@ class NavList extends Component {
    * @returns {JSX}
    */
   renderList (list) {
-    const { labels, route } = this.props;
+    const { labels } = this.props;
 
     return (
       list.map((item, index) => (
@@ -86,9 +101,7 @@ class NavList extends Component {
         <List.Item active={this.isItemActive(item)}
           key={index}
           as={Link}
-          to={item.slug ?
-            `${route}/${item.slug}` :
-            `${route}/${utils.createSlug(item.name, item)}`}>
+          to={this.createNavLink(item)}>
 
           <Image src=''/>
 
