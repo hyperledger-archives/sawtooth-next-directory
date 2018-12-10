@@ -27,7 +27,7 @@ import './MemberList.css';
  *
  *
  */
-export default class MemberList extends Component {
+class MemberList extends Component {
 
   static propTypes = {
     getUsers:           PropTypes.func,
@@ -142,3 +142,6 @@ export default class MemberList extends Component {
   }
 
 }
+
+
+export default MemberList;

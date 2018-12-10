@@ -38,7 +38,7 @@ import * as utils from '../../services/Utils';
  *                the sidebar displayed on the requester landing page
  *
  */
-export default class RequesterNav extends Component {
+class RequesterNav extends Component {
 
   static propTypes = {
     getPacks:           PropTypes.func,
@@ -163,3 +163,6 @@ export default class RequesterNav extends Component {
   }
 
 }
+
+
+export default RequesterNav;

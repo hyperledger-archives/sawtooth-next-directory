@@ -26,7 +26,7 @@ import './RoleList.css';
  * @description   Displays roles in a list when approving proposals
  *
  */
-export default class RoleList extends Component {
+class RoleList extends Component {
 
   static propTypes = {
     getUsers:               PropTypes.func,
@@ -180,3 +180,6 @@ export default class RoleList extends Component {
   }
 
 }
+
+
+export default RoleList;

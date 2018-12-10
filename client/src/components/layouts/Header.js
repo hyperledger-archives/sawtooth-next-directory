@@ -37,7 +37,7 @@ import logo from '../../images/next-logo-primary.png';
  * @description   Header at the top of the viewport
  *
  */
-export default class Header extends Component {
+class Header extends Component {
 
   static propTypes = {
     logout:                 PropTypes.func,
@@ -203,3 +203,6 @@ export default class Header extends Component {
   }
 
 }
+
+
+export default Header;

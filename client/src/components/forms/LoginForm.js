@@ -32,7 +32,7 @@ import PropTypes from 'prop-types';
  * @description   Component encapsulating the login form
  *
  */
-export default class LoginForm extends Component {
+class LoginForm extends Component {
 
   static propTypes = {
     submit: PropTypes.func.isRequired,
@@ -225,3 +225,6 @@ export default class LoginForm extends Component {
   }
 
 }
+
+
+export default LoginForm;

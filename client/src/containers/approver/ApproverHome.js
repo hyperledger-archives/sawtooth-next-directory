@@ -28,7 +28,7 @@ import TrackHeader from '../../components/layouts/TrackHeader';
  * @description   Approver view fallback landing page
  *
  */
-export default class ApproverHome extends Component {
+class ApproverHome extends Component {
 
   /**
    * Render entrypoint
@@ -47,3 +47,6 @@ export default class ApproverHome extends Component {
   }
 
 }
+
+
+export default ApproverHome;

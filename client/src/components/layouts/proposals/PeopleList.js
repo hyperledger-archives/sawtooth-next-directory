@@ -26,7 +26,7 @@ import './PeopleList.css';
  * @description   Displays people in a list when approving proposals
  *
  */
-export default class PeopleList extends Component {
+class PeopleList extends Component {
 
   static propTypes = {
     getUsers:                 PropTypes.func,
@@ -209,3 +209,6 @@ export default class PeopleList extends Component {
   }
 
 }
+
+
+export default PeopleList;

@@ -17,7 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Grid, Header, Image, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import './MemberList.css';
+import './RolesList.css';
 import glyph from '../../images/header-glyph-role.png';
 
 
@@ -28,7 +28,7 @@ import glyph from '../../images/header-glyph-role.png';
  *
  *
  */
-export default class MemberList extends Component {
+class RolesList extends Component {
 
   static propTypes = {
     activePack:         PropTypes.object,
@@ -155,3 +155,6 @@ export default class MemberList extends Component {
   }
 
 }
+
+
+export default RolesList;

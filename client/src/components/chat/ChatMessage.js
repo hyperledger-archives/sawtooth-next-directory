@@ -26,7 +26,7 @@ import chatbotAvatar from '../../images/chatbot-avatar.png';
  * @description   Component encapsulating the chat messages
  *
  */
-export default class ChatMessage extends Component {
+class ChatMessage extends Component {
 
   static propTypes = {
     messages: PropTypes.array,
@@ -76,3 +76,6 @@ export default class ChatMessage extends Component {
   }
 
 }
+
+
+export default ChatMessage;

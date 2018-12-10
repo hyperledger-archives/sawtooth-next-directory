@@ -29,7 +29,7 @@ import * as utils from '../../services/Utils';
  *                recommended packs or roles
  *
  */
-export default class RequesterHome extends Component {
+class RequesterHome extends Component {
 
   static propTypes = {
     activeRole:             PropTypes.object,
@@ -72,3 +72,6 @@ export default class RequesterHome extends Component {
   }
 
 }
+
+
+export default RequesterHome;
