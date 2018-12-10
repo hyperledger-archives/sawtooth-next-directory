@@ -33,7 +33,7 @@ import PropTypes from 'prop-types';
  *              functionality is required
  *
  */
-export default class ChatForm extends Component {
+class ChatForm extends Component {
 
   static propTypes = {
     actions:              PropTypes.object.isRequired,
@@ -284,3 +284,6 @@ export default class ChatForm extends Component {
   }
 
 }
+
+
+export default ChatForm;

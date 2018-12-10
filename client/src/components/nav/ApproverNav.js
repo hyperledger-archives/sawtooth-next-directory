@@ -32,7 +32,7 @@ import * as utils from '../../services/Utils';
  *                the sidebar displayed on the approver landing page
  *
  */
-export default class ApproverNav extends Component {
+class ApproverNav extends Component {
 
   static propTypes = {
     openProposalsCount:     PropTypes.number,
@@ -126,3 +126,6 @@ export default class ApproverNav extends Component {
   }
 
 }
+
+
+export default ApproverNav;

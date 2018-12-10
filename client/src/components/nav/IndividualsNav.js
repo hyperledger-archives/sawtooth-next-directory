@@ -28,7 +28,7 @@ import './IndividualsNav.css';
  *
  *
  */
-export default class IndividualsNav extends Component {
+class IndividualsNav extends Component {
 
   static propTypes = {
     activeIndex:        PropTypes.number,
@@ -74,3 +74,6 @@ export default class IndividualsNav extends Component {
   }
 
 }
+
+
+export default IndividualsNav;

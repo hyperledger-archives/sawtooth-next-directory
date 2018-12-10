@@ -28,7 +28,7 @@ import './BrowseCard.css';
  *
  *
  */
-export default class BrowseCard extends Component {
+class BrowseCard extends Component {
 
   static propTypes = {
     details: PropTypes.object,
@@ -74,3 +74,6 @@ export default class BrowseCard extends Component {
   }
 
 }
+
+
+export default BrowseCard;

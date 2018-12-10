@@ -105,7 +105,7 @@ export function * approveProposals (api, action) {
 
 
 /**
- * Approva a single proposal
+ * Approve a single proposal
  * @param {object} api    API service
  * @param {object} id     Proposal ID
  * @generator
