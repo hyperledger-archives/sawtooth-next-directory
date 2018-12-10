@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test Suite for inbound filters for providers."""
 import pytest
-
 
 from rbac.providers.common.inbound_filters import (
     inbound_group_filter,
