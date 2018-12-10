@@ -17,10 +17,12 @@
 ---
 intents:
   - recommend
+  - access
   - affirm
   - deny
   - greet
-  - send
+  - send_current
+  - send_recommended
   - cancel
   - bye
   - thank
@@ -37,6 +39,11 @@ config:
   store_entities_as_slots: true
 
 entities:
+- token
+- resource_id
+- resource_type
+- resource_name
+- approver_name
 - reason
 
 forms: []
@@ -46,6 +53,11 @@ slots:
     type: unfeaturized
   resource_id:
     type: unfeaturized
+  resource_type:
+    type: categorical
+    values:
+    - PACK
+    - ROLE
   resource_name:
     type: unfeaturized
   approver_name:
@@ -53,13 +65,15 @@ slots:
   reason:
     type: unfeaturized
 
+
 actions:
   - utter_default
   - utter_standby
   - utter_recommendation
   - utter_ask_request_access
   - utter_greet
-  - utter_draft
+  - utter_recommended_draft
+  - utter_current_draft
   - utter_exclame
   - utter_fanfare_sent
   - utter_request_bye
@@ -72,6 +86,8 @@ actions:
   - utter_help
   - utter_whoami
   - utter_name
+  - utter_test
+  - utter_test_role
   - utter_passive
   - action_request_access
 
@@ -137,16 +153,34 @@ templates:
         may be one of those moments. Please tell
         me what it is you'd like me to do.
 
-  utter_draft:
+  utter_recommended_draft:
     - text: >-
         So you'd like to request access for {resource_name}?
         Great. All you need to do is draft a note for
         {approver_name} and I'll take care of the rest.
       buttons:
         - title: Send request
-          payload: '/send{"reason": "I need access."}'
+          payload: '/send_recommended{"reason": "I need access."}'
         - title: Nevermind
           payload: /cancel
+
+  utter_current_draft:
+    - text: >-
+        Okay. So you need access to this?
+        Go ahead and draft a note and I'll take care of the rest.
+      buttons:
+        - title: Send request
+          payload: '/send_current{"reason": "-", "resource_id": "-", "resource_type": "-"}'
+        - title: Nevermind
+          payload: /cancel
+
+  utter_test:
+    - text: >-
+        ITS A PACK, ID you want is {resource_id}
+
+  utter_test_role:
+    - text: >-
+        ITS A ROLE, ID you want is {resource_id}
 
   utter_laugh:
     - text: I know right?

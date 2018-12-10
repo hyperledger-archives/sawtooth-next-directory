@@ -101,7 +101,7 @@ export const RequesterSelectors = {
       !state.user.me.proposals.find(proposal =>
         proposal.object_id === role.id
       )
-    ),
+    ).slice(0, 3),
   // Retrieve recommended packs
   recommendedPacks: (state) => {
     if (!state.requester.roles || !state.user.me) return null;
@@ -160,7 +160,7 @@ export const RequesterSelectors = {
 
     let open = [];
     state.requester.requests
-      .filter(request => request.status === 'OPEN')
+      .filter(request => request.status !== 'CONFIRMED')
       .forEach(request => {
         const merge = { ...request, ...state.requester.roles
           .find(role => role.id === request.object),

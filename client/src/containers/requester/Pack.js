@@ -61,7 +61,7 @@ export class Pack extends Component {
       <Grid id='next-requester-grid'>
         <Grid.Column
           id='next-requester-grid-track-column'
-          width={11}>
+          width={12}>
           <TrackHeader
             glyph={glyph}
             waves
@@ -88,9 +88,9 @@ export class Pack extends Component {
         </Grid.Column>
         <Grid.Column
           id='next-requester-grid-converse-column'
-          width={5}>
+          width={4}>
           <Chat
-            type={0}
+            type='REQUESTER'
             title={this.pack.name + ' Conversations'}
             activePack={this.pack} {...this.props}/>
         </Grid.Column>

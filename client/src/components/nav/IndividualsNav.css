@@ -15,8 +15,13 @@ limitations under the License.
 
 
 #next-individuals-nav {
+  background: white;
   display: flex;
   padding: var(--page-content-padding);
+  position: fixed;
+  top: 183px;
+  width: calc(75% - 245px);
+  z-index: 2;
 }
 
 .next-individual-search {

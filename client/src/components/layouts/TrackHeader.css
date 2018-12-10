@@ -15,8 +15,10 @@ limitations under the License.
 
 
 #next-track-header-container {
-  position: fixed;
+  position: relative;
+  top: 40px;
   width: 100%;
+  z-index: 99;
 }
 
 #next-track-header {
@@ -25,6 +27,8 @@ limitations under the License.
   display: flex;
   height: 140px;
   padding: 0 var(--page-content-padding);
+  position: fixed;
+  width: 100%;
 }
 
 #next-track-header .ui.header {

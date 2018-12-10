@@ -42,6 +42,10 @@ const { Types, Creators } = createActions({
   approveProposalsSuccess:  ['closedProposal'],
   approveProposalsFailure:  ['error'],
 
+  rejectProposalsRequest:   ['ids'],
+  rejectProposalsSuccess:   ['closedProposal'],
+  rejectProposalsFailure:   ['error'],
+
   resetAll:                 null,
 });
 
@@ -119,6 +123,13 @@ export const approveProposalsSuccess = (state, { closedProposal }) => {
       .filter(proposal => proposal.id !== closedProposal.proposal_id),
   });
 };
+export const rejectProposalsSuccess = (state, { closedProposal }) => {
+  return state.merge({
+    fetching: false,
+    openProposals: state.openProposals
+      .filter(proposal => proposal.id !== closedProposal.proposal_id),
+  });
+};
 
 //
 // Hooks
@@ -144,4 +155,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.APPROVE_PROPOSALS_REQUEST]: request,
   [Types.APPROVE_PROPOSALS_SUCCESS]: approveProposalsSuccess,
   [Types.APPROVE_PROPOSALS_FAILURE]: failure,
+
+  [Types.REJECT_PROPOSALS_REQUEST]: request,
+  [Types.REJECT_PROPOSALS_SUCCESS]: rejectProposalsSuccess,
+  [Types.REJECT_PROPOSALS_FAILURE]: failure,
 });

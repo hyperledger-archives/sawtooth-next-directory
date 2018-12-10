@@ -10,6 +10,66 @@
         "text": "/recommend"
       },
       {
+        "intent": "send_current",
+        "text": "/send_current"
+      },
+      {
+        "intent": "send_current",
+        "text": "/send_current"
+      },
+      {
+        "intent": "send_recommended",
+        "text": "/send_recommended"
+      },
+      {
+        "intent": "send_recommended",
+        "text": "/send_recommended"
+      },
+      {
+        "intent": "access",
+        "text": "i want access to this pack"
+      },
+      {
+        "intent": "access",
+        "text": "No give me access to this role"
+      },
+      {
+        "intent": "access",
+        "text": "i need access to this"
+      },
+      {
+        "intent": "access",
+        "text": "give me access to this one"
+      },
+      {
+        "intent": "access",
+        "text": "no, i need this pack"
+      },
+      {
+        "intent": "access",
+        "text": "I need this role"
+      },
+      {
+        "intent": "access",
+        "text": "please grant me access to this item"
+      },
+      {
+        "intent": "access",
+        "text": "i require access to this resource"
+      },
+      {
+        "intent": "access",
+        "text": "gimme access to this permission"
+      },
+      {
+        "intent": "access",
+        "text": "i want this group"
+      },
+      {
+        "intent": "access",
+        "text": "need access to this group"
+      },
+      {
         "intent": "help",
         "text": "help"
       },
@@ -770,9 +830,19 @@
     "lookup_tables": [],
     "entity_synonyms": [
       {
+        "value": "pack",
+        "synonyms": [
+          "item",
+          "resource",
+          "permission",
+          "group",
+          "role"
+        ]
+      },
+      {
         "value": "role",
         "synonyms": [
-          "item"
+          "pack"
         ]
       }
     ]

@@ -2,6 +2,27 @@
 - /recommend
 - /recommend
 
+## intent:send_current
+- /send_current
+- /send_current
+
+## intent:send_recommended
+- /send_recommended
+- /send_recommended
+
+## intent:access
+- i want access to this pack
+- No give me access to this role
+- i need access to this
+- give me access to this one
+- no, i need this pack
+- I need this role
+- please grant me access to this item
+- i require access to this resource
+- gimme access to this permission
+- i want this group
+- need access to this group
+
 ## intent:help
 - help
 - help me
@@ -191,3 +212,14 @@
 
 ## synonym:role
 - item
+- pack
+- resource
+- permission
+- group
+
+## synonym:pack
+- role
+- item
+- resource
+- permission
+- group

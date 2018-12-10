@@ -31,6 +31,6 @@ limitations under the License.
 
 #next-browse-wrapper {
   background: var(--browse-bg-color);
-  overflow-y: scroll;
-  min-height: calc(100vh  - 40px);
+  height: 100%;
+  padding-top: 40px;
 }

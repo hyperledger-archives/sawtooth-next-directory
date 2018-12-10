@@ -21469,22 +21469,22 @@ ol.ui.horizontal.list li:before,
 
 .form-inverted .ui.form .field input::-webkit-input-placeholder,
 .form-inverted .ui.form .field input:focus::-webkit-input-placeholder {
-  color: #b19a9af2;
+  color: #ffffffa6;
 }
 
 .form-inverted .ui.form .field input:-ms-input-placeholder,
 .form-inverted .ui.form .field input:focus:-ms-input-placeholder {
-  color: #b19a9af2;
+  color: #ffffffa6;
 }
 
 .form-inverted .ui.form .field input::-ms-input-placeholder,
 .form-inverted .ui.form .field input:focus::-ms-input-placeholder {
-  color: #b19a9af2;
+  color: #ffffffa6;
 }
 
 .form-inverted .ui.form .field input::placeholder,
 .form-inverted .ui.form .field input:focus::placeholder {
-  color: #b19a9af2;
+  color: #ffffffa6;
 }
 
 .form-inverted .ui.form .field > .ui.label {

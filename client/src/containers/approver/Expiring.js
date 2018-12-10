@@ -41,13 +41,13 @@ class Expiring extends Component {
       <Grid id='next-approver-grid'>
         <Grid.Column
           id='next-approver-grid-track-column'
-          width={11}>
+          width={12}>
           <TrackHeader title='About to Expire' {...this.props}/>
         </Grid.Column>
         <Grid.Column
           id='next-approver-grid-converse-column'
-          width={5}>
-          <Chat type={0} {...this.props}/>
+          width={4}>
+          <Chat type='REQUESTER' {...this.props}/>
         </Grid.Column>
       </Grid>
     );

@@ -46,7 +46,6 @@ class CreateRole extends Component {
       owners:         [id],
       administrators: [id],
     });
-    alert('Role crated');
   }
 
 

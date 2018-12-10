@@ -17,7 +17,6 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  Button,
   Checkbox,
   Header,
   List,
@@ -53,7 +52,7 @@ class Chat extends Component {
   componentDidMount () {
     const { id, isSocketOpen, messages, sendMessage, type } = this.props;
 
-    if (type === 0 &&
+    if (type === 'REQUESTER' &&
         isSocketOpen &&
         !messages) {
       sendMessage({
@@ -81,7 +80,7 @@ class Chat extends Component {
       shouldRefreshOnNextSocketReceive } = this.props;
 
     if (prevProps.isSocketOpen !== isSocketOpen &&
-        type === 0 &&
+        type === 'REQUESTER' &&
         isSocketOpen &&
         !messages) {
       sendMessage({
@@ -144,10 +143,16 @@ class Chat extends Component {
   }
 
 
-  // * Needed for debugging
   manualApprove = () => {
     const { approveProposals, selectedProposals, reset } = this.props;
     approveProposals(selectedProposals);
+    reset();
+  }
+
+
+  manualReject = () => {
+    const { rejectProposals, selectedProposals, reset } = this.props;
+    rejectProposals(selectedProposals);
     reset();
   }
 
@@ -173,14 +178,14 @@ class Chat extends Component {
 
     return (
       <div id='next-chat-container'>
-        { type === 0 && title &&
+        { type === 'REQUESTER' && title &&
           <Header id='next-chat-header' size='small' inverted>
             {title}
             <Icon link name='pin' size='mini' className='pull-right'/>
           </Header>
         }
 
-        { type === 1 && selectedUsers &&
+        { type === 'APPROVER' && selectedUsers &&
           <div id='next-chat-selection-heading-container'>
             <Transition.Group
               as={List}
@@ -208,7 +213,7 @@ class Chat extends Component {
           </div>
         }
 
-        { type === 1 && groupBy === 0 && selectedUsers &&
+        { type === 'APPROVER' && groupBy === 0 && selectedUsers &&
           <div id='next-chat-users-selection-container'>
             <Transition.Group
               as={List}
@@ -227,7 +232,7 @@ class Chat extends Component {
           </div>
         }
 
-        { type === 1 && groupBy === 1 && selectedRoles &&
+        { type === 'APPROVER' && groupBy === 1 && selectedRoles &&
           <div id='next-chat-roles-selection-container'>
             <Transition.Group
               as={List}
@@ -246,30 +251,20 @@ class Chat extends Component {
           </div>
         }
 
-        { type === 0 &&
+        { type === 'REQUESTER' &&
           <div id='next-chat-messages-container'>
             <ChatMessage {...this.props}/>
           </div>
         }
-
-        <div id='next-manual-triggers'>
-          <Button size='tiny' onClick={this.manualRequestPack}>
-            Pack Request
-          </Button>
-          <Button size='tiny' onClick={this.manualRequestRole}>
-            Role Request
-          </Button>
-          <Button size='tiny' onClick={this.manualApprove}>
-            Approve
-          </Button>
-        </div>
 
         <div id='next-chat-conversation-dock'>
           <ChatForm
             {...this.props}
             disabled={disabled}
             actions={actions}
-            submit={(message) => this.send(message)}/>
+            approve={this.manualApprove}
+            reject={this.manualReject}
+            send={(message) => this.send(message)}/>
         </div>
       </div>
     );

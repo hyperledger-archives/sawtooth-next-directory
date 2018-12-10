@@ -17,6 +17,7 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { Slide, ToastContainer } from 'react-toastify';
 
 
 import routes from './routes';
@@ -27,13 +28,21 @@ import * as customStore from './customStore';
 
 import './index.css';
 import './semantic/semantic.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const store = customStore.create();
 
 
 ReactDOM.render(
-  <Provider store={store}><App routes={routes}/></Provider>,
+  <div id='next-root'>
+    <Provider store={store}><App routes={routes}/></Provider>
+    <ToastContainer
+      autoClose={2000}
+      hideProgressBar
+      position='bottom-left'
+      transition={Slide}/>
+  </div>,
   document.getElementById('root')
 );
 

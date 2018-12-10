@@ -130,7 +130,7 @@ class Individuals extends Component {
     return (
       <Grid id='next-approver-grid'>
 
-        <Grid.Column id='next-approver-grid-track-column' width={11}>
+        <Grid.Column id='next-approver-grid-track-column' width={12}>
           <TrackHeader
             glyph={glyph}
             title='Individual Requests'
@@ -168,9 +168,9 @@ class Individuals extends Component {
 
         <Grid.Column
           id='next-approver-grid-converse-column'
-          width={5}>
+          width={4}>
           <Chat
-            type={1}
+            type='APPROVER'
             title={title}
             subtitle={subtitle}
             groupBy={activeIndex}

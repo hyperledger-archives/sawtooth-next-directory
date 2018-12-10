@@ -47,6 +47,7 @@ class Manage extends Component {
               <Grid.Row columns={3}>
                 <Grid.Column>
                   <Card
+                    fluid
                     as={Link}
                     to='manage/roles'
                     header='Roles'
@@ -57,6 +58,7 @@ class Manage extends Component {
                 </Grid.Column>
                 <Grid.Column>
                   <Card
+                    fluid
                     as={Link}
                     to='manage/packs'
                     header='Packs'
@@ -66,6 +68,7 @@ class Manage extends Component {
                 </Grid.Column>
                 <Grid.Column>
                   <Card
+                    fluid
                     as={Link}
                     to='manage/delegations'
                     header='Delegations'
@@ -77,6 +80,7 @@ class Manage extends Component {
               <Grid.Row columns={3}>
                 <Grid.Column>
                   <Card
+                    fluid
                     as={Link}
                     to='manage/hierarchical'
                     header='Hierarchical'
@@ -86,6 +90,7 @@ class Manage extends Component {
                 </Grid.Column>
                 <Grid.Column>
                   <Card
+                    fluid
                     as={Link}
                     to='/manage/alerts'
                     header='Alerts'

@@ -75,7 +75,7 @@ export class Role extends Component {
 
         <Grid.Column
           id='next-requester-grid-track-column'
-          width={11}>
+          width={12}>
           <TrackHeader
             glyph={glyph}
             waves
@@ -84,7 +84,7 @@ export class Role extends Component {
             {...this.props}/>
           <div id='next-requester-roles-content'>
             { this.proposal &&
-              this.proposal.status === 'OPEN' &&
+              this.proposal.status !== 'CONFIRMED' &&
               <RoleApproval
                 proposal={this.proposal}
                 {...this.props}/>
@@ -102,9 +102,9 @@ export class Role extends Component {
 
         <Grid.Column
           id='next-requester-grid-converse-column'
-          width={5}>
+          width={4}>
           <Chat
-            type={0}
+            type='REQUESTER'
             disabled={isOwner}
             title={this.role.name + ' Conversations'}
             activeRole={this.role} {...this.props}/>
