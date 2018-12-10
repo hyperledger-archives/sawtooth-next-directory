@@ -99,4 +99,3 @@ test.skip('getRole: failure path', () => {
   const stepRes = step(res);
   expect(stepRes).toEqual(put(RequesterActions.roleFailure(res.data.error)));
 });
-

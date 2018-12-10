@@ -111,6 +111,15 @@ export default {
     };
   },
 
+  signup: (username, password, name, email) => {
+    return {
+      ok: true,
+      data: {}
+    }
+  },
+
+
+
   logout: () => {
     return {
       ok: true,
@@ -121,10 +130,29 @@ export default {
   getRoles: () => {
     return {
       ok: true,
-      data: roles,
-    };
+      data: roles
+    }
+  },
+  me: () => {
+    return {
+      ok: true,
+      data: {}
+    }
   },
 
+  getUser: (id) => {
+    return {
+      ok: true,
+      data: {}
+    }
+  },
+
+  getRole: (id) => {
+    return {
+      ok: true,
+      data: {}
+    }
+  },
   getPacks: () => {
     return {
       ok: true,

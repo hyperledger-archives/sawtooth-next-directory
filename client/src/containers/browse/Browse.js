@@ -35,8 +35,8 @@ import './Browse.css';
 class Browse extends Component {
 
   static propTypes = {
-    allRoles:           PropTypes.array,
-    getAllRoles:        PropTypes.func,
+    allRoles: PropTypes.array,
+    getAllRoles: PropTypes.func,
   };
 
 
@@ -77,19 +77,14 @@ class Browse extends Component {
     this.setState({ rolesData: arr });
   }
 
+  renderLayout(layoutData) {
+    const{ rolesData } = this.state;
+    let data = layoutData ? layoutData : rolesData;
 
-  /**
-   * Render layout ?
-   * @returns {JSX}
-   */
-  renderLayout() {
-    const { rolesData } = this.state;
-    return rolesData.map((column, index) => {
-      return (
-        <Grid.Column key={index}>
-          {this.renderColumns(column)}
-        </Grid.Column>
-      );
+    return data.map((column, index) => {
+      return (<Grid.Column key={index}>
+        {this.renderColumns(column)}
+      </Grid.Column>);
     });
   }
 

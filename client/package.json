@@ -9,6 +9,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "apisauce": "^0.16.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0",
+    "enzyme-to-json": "^3.3.4",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
@@ -17,11 +20,13 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
     "react-toastify": "^4.4.3",
+    "react-test-renderer": "^16.6.3",
     "redux": "^4.0.0",
     "redux-saga": "^0.16.0",
     "reduxsauce": "^1.0.0",
     "seamless-immutable": "^7.1.4",
-    "semantic-ui-react": "^0.83.0"
+    "semantic-ui-react": "^0.83.0",
+    "sinon": "^7.1.1"
   },
   "jest": {
     "collectCoverageFrom": [

@@ -92,7 +92,7 @@ class Signup extends Component {
               <Image centered src={logo} id='next-login-logo'/>
               <h1>Create an account</h1>
             </Header>
-            <SignupForm submit={signup}/>
+            <SignupForm submit={signup} />
           </Grid.Column>
         </Grid>
       </div>

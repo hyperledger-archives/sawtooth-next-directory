@@ -33,15 +33,15 @@ export default class SignupForm extends Component {
 
 
   state = {
-    activeIndex:    0,
-    name:           '',
-    email:          '',
-    username:       '',
-    password:       '',
-    validName:      null,
-    validEmail:     null,
-    validUsername:  null,
-    validPassword:  null,
+    activeIndex: 0,
+    name: '',
+    email: '',
+    username: '',
+    password: '',
+    validName: null,
+    validEmail: null,
+    validUsername: null,
+    validPassword: null,
   };
 
 
@@ -111,10 +111,11 @@ export default class SignupForm extends Component {
           visible={activeIndex === 0}
           animation='fade up'
           duration={{ hide, show }}>
-          <div id='next-signup-form-1'>
-            <Form onSubmit={() => this.setFlow(1)}>
+          <div>
+            <Form id='next-signup-form-1' onSubmit={() => this.setFlow(1)}>
               <Form.Field>
                 <Input
+                  id='next-name-signupInput'
                   autoFocus
                   placeholder='Name'
                   error={validName === false}
@@ -125,6 +126,7 @@ export default class SignupForm extends Component {
               </Form.Field>
               <Form.Field>
                 <Input
+                  id='next-email-signupInput'
                   placeholder='Email'
                   error={validEmail === false}
                   name='email'
@@ -134,6 +136,7 @@ export default class SignupForm extends Component {
               </Form.Field>
               <Form.Field>
                 <Input
+                  id='next-username-signupInput'
                   placeholder='User ID'
                   error={validUsername === false}
                   name='username'
@@ -156,7 +159,7 @@ export default class SignupForm extends Component {
           animation='fade down'
           duration={{ hide, show }}>
           <div>
-            <Form onSubmit={() => submit(name, username, password, email)}>
+            <Form id='next-password-signupForm' onSubmit={() => submit(name, username, password, email)}>
               <Form.Button
                 id='next-signup-form-back-button'
                 content='Back'
@@ -166,6 +169,7 @@ export default class SignupForm extends Component {
                 onClick={() => this.setFlow(0)} />
               <Form.Field id='next-signup-form-password'>
                 <Input
+                  id='next-password-signupInput'
                   autoFocus
                   error={validPassword === false}
                   name='password'

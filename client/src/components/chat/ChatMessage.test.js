@@ -14,33 +14,31 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-
 import * as customStore from '../../customStore';
-import Signup from './Signup';
-
+import ChatMessage from './Chat';
 
 const store = customStore.create();
 
+describe('ChatMessage component', () => {
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
-  const props = {
-    history: { push: () => { } },
-    isAuthenticated: true,
-    recommended: [{ id: '', name: '' }]
-  };
+    const props = {
+      messages: [{ text: 'message text' }],
+    }
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><Signup {...props} /></BrowserRouter>
+    ReactDOM.render(
+      <Provider store={store}>
+      <BrowserRouter><ChatMessage {...props} /></BrowserRouter>
     </Provider>, div
-  );
-
-  ReactDOM.unmountComponentAtNode(div);
+    );
+    ReactDOM.unmountComponentAtNode(div);
+  })
 });

@@ -13,34 +13,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { getToken, get, getUserId, set, setToken, setUserId, remove, removeToken, removeUserId } from './Storage';
 
 
-import * as customStore from '../../customStore';
-import Signup from './Signup';
+describe('Storage Service', () => {
 
+  test('get token', () => {
+    getToken();
+  });
 
-const store = customStore.create();
+  test('set token', () => {
+    setToken('value');
+  });
 
+  test('remove token', () => {
+    removeToken();
+  });
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
+  test('remove user', () => {
+    removeUserId();
+  });
 
-  const props = {
-    history: { push: () => { } },
-    isAuthenticated: true,
-    recommended: [{ id: '', name: '' }]
-  };
-
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><Signup {...props} /></BrowserRouter>
-    </Provider>, div
-  );
-
-  ReactDOM.unmountComponentAtNode(div);
 });

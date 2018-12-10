@@ -16,31 +16,34 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
-import Signup from './Signup';
+import ChatForm from './ChatForm';
 
 
-const store = customStore.create();
-
-
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-
+describe('ChatForm component', () => {
   const props = {
-    history: { push: () => { } },
-    isAuthenticated: true,
-    recommended: [{ id: '', name: '' }]
+    submit: (username, password) => { },
+    send: () => {}
   };
+  const wrapper = shallow(<ChatForm {...props} />);
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    ReactDOM.render(
+      <BrowserRouter><ChatForm {...props} /></BrowserRouter>, div
+    );
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><Signup {...props} /></BrowserRouter>
-    </Provider>, div
-  );
+    ReactDOM.unmountComponentAtNode(div);
+  });
 
-  ReactDOM.unmountComponentAtNode(div);
+  test('chat submit form', () => {
+    wrapper.find('#next-placeholder-chat').simulate('submit');
+  });
+
+  test('form  button click event', () => {
+    wrapper.find('#next-name-chatSubmit').simulate('click');
+  });
+
 });

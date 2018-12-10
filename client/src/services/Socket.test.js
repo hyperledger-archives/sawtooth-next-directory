@@ -13,34 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import socket from './Socket';
 
 
-import * as customStore from '../../customStore';
-import Signup from './Signup';
+describe('Socket Service', () => {
 
+  test('create socket', () => {
+    socket.create();
+  });
 
-const store = customStore.create();
-
-
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-
-  const props = {
-    history: { push: () => { } },
-    isAuthenticated: true,
-    recommended: [{ id: '', name: '' }]
-  };
-
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><Signup {...props} /></BrowserRouter>
-    </Provider>, div
-  );
-
-  ReactDOM.unmountComponentAtNode(div);
 });
