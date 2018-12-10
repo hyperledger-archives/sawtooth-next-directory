@@ -14,37 +14,17 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.next-people-list-item {
-  padding: 21px 30px;
+#next-approver-approved-content {
+  margin-top: 300px;
+  position: relative;
+  width: calc(100% - 60px) !important;
 }
 
-.next-people-list-name {
-  flex: 0 0 40%;
-  padding-right: 20px;
-}
-
-.next-people-list-name .ui.checkbox label {
-  font-weight: bold;
-}
-
-.next-people-list-email {
+.next-approver-approved-table-email {
   color: var(--magenta);
-  flex: 1;
-  font-size: .9em;
-  padding: 0 20px;
 }
 
-.next-people-list-item .header,
-.next-people-list-item .ui.checkbox label {
-  display: flex;
-  font-size: 1.1em;
-}
-
-.next-people-list-proposal .ui.checkbox label {
-  font-size: 1em;
-  font-weight: normal;
-}
-
-.next-people-list-item:hover {
-  background: var(--selection-list-active-color);
+.next-approver-approved-table-email i {
+  left: 9px;
+  position: relative;
 }

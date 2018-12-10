@@ -39,7 +39,7 @@ class ChatMessage extends Component {
    * @returns {boolean}
    */
   isMe = (message) => {
-    return !message.recipient_id;
+    return !message.recipient_id && !message.from;
   };
 
 
@@ -55,6 +55,7 @@ class ChatMessage extends Component {
       messages &&
       messages.map((message, index) => (
         this.isMe(message) ?
+          message.text &&
           <div className='next-chat-message-right' key={index}>
             <Segment compact inverted
               floated='right'
@@ -64,7 +65,10 @@ class ChatMessage extends Component {
             </Segment>
           </div> :
           <div className='next-chat-message-left' key={index}>
-            <Image src={chatbotAvatar} size='mini'/>
+            { message.from ?
+              <Image src='http://i.pravatar.cc/150' size='mini' avatar/> :
+              <Image src={chatbotAvatar} size='mini'/>
+            }
             <Segment compact
               floated='left'
               size='small'>

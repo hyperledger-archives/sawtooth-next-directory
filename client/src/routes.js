@@ -24,22 +24,23 @@ and nav components. */
 import React from 'react';
 
 
+import ApproverNav from './components/nav/ApproverNav';
 import RequesterHome from './containers/requester/RequesterHome';
 import RequesterNav from './components/nav/RequesterNav';
 import Role from './containers/requester/Role';
 import Pack from './containers/requester/Pack';
 
 
+import Approved from './containers/approver/Approved';
 import ApproverHome from './containers/approver/ApproverHome';
-import ApproverNav from './components/nav/ApproverNav';
-import Individuals from './containers/approver/Individuals';
+import CreatePack from './containers/approver/manage/CreatePack';
+import CreateRole from './containers/approver/manage/CreateRole';
 import Expiring from './containers/approver/Expiring';
+import Individuals from './containers/approver/Individuals';
 import Manage from './containers/approver/manage/Manage';
+import ManagePacks from './containers/approver/manage/ManagePacks';
 import ManageRoles from './containers/approver/manage/ManageRoles';
 import People from './containers/approver/People';
-import CreateRole from './containers/approver/manage/CreateRole';
-import ManagePacks from './containers/approver/manage/ManagePacks';
-import CreatePack from './containers/approver/manage/CreatePack';
 
 
 const routes = (props) => [
@@ -126,6 +127,12 @@ const routes = (props) => [
   {
     path:   '/approval/people',
     main:   (rest) => <People {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/approved',
+    main:   (rest) => <Approved {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

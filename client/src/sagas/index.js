@@ -33,6 +33,7 @@ import {
   approveProposals,
   rejectProposals,
   getOpenProposals,
+  getConfirmedProposals,
   createPack,
   createRole } from './ApproverSaga';
 import {
@@ -87,6 +88,9 @@ function * sagas () {
     takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
     takeLatest(ApproverTypes.APPROVE_PROPOSALS_REQUEST, approveProposals, api),
     takeLatest(ApproverTypes.REJECT_PROPOSALS_REQUEST, rejectProposals, api),
+    takeLatest(
+      ApproverTypes.CONFIRMED_PROPOSALS_REQUEST, getConfirmedProposals, api
+    ),
 
     // Auth
     takeLatest(AuthTypes.LOGIN_REQUEST, login, api),

@@ -31,10 +31,6 @@ import ChatForm from '../forms/ChatForm';
 import ChatMessage from './ChatMessage';
 
 
-import chatRequester from '../../mock_data/conversation_action.json';
-import chatApprover from '../../mock_data/conversation_action.1.json';
-
-
 // TODO: Break out into child components
 /**
  *
@@ -165,16 +161,13 @@ class Chat extends Component {
     const {
       disabled,
       handleChange,
+      selectedProposal,
       selectedRoles,
       selectedUsers,
       subtitle,
       title,
       groupBy,
       type } = this.props;
-
-    // ! Temporary
-    const actions = type ? chatApprover.actions :
-      chatRequester.actions;
 
     return (
       <div id='next-chat-container'>
@@ -183,6 +176,20 @@ class Chat extends Component {
             {title}
             <Icon link name='pin' size='mini' className='pull-right'/>
           </Header>
+        }
+
+        { type === 'APPROVER' && selectedProposal && title && subtitle &&
+          <div id='next-chat-selection-heading-container'>
+            <Image
+              size='tiny'
+              className='pull-left'
+              src='http://i.pravatar.cc/150'
+              avatar/>
+            <Header as='h3' inverted>
+              {title}
+              <Header.Subheader>{subtitle}</Header.Subheader>
+            </Header>
+          </div>
         }
 
         { type === 'APPROVER' && selectedUsers &&
@@ -251,6 +258,16 @@ class Chat extends Component {
           </div>
         }
 
+        { type === 'APPROVER' && selectedProposal &&
+          <div id='next-chat-messages-container'>
+            <ChatMessage
+              messages={[{
+                text: selectedProposal.open_reason,
+                from: selectedProposal.opener,
+              }]}/>
+          </div>
+        }
+
         { type === 'REQUESTER' &&
           <div id='next-chat-messages-container'>
             <ChatMessage {...this.props}/>
@@ -261,7 +278,6 @@ class Chat extends Component {
           <ChatForm
             {...this.props}
             disabled={disabled}
-            actions={actions}
             approve={this.manualApprove}
             reject={this.manualReject}
             send={(message) => this.send(message)}/>

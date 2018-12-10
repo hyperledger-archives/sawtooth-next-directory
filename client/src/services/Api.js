@@ -94,6 +94,10 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     const id = storage.get('user_id');
     return api.get(`users/${id}`);
   };
+  const getConfirmedProposals = () => {
+    const id = storage.get('user_id');
+    return api.get(`users/${id}/proposals/confirmed`);
+  };
   const getOpenProposals = () => {
     const id = storage.get('user_id');
     return api.get(`users/${id}/proposals/open`);
@@ -122,6 +126,7 @@ const create = (baseURL = 'http://localhost:8000/api/') => {
     createPack,
     createRole,
     login,
+    getConfirmedProposals,
     getOpenProposals,
     getProposal,
     getRequesterBase,

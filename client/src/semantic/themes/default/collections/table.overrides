@@ -1,0 +1,7 @@
+.ui.table thead tr:first-child > th:first-child {
+  padding-left: 30px;
+}
+
+.ui.table tr td:first-child {
+    padding-left: 30px;
+}
