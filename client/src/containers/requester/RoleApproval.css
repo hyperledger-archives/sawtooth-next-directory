@@ -25,9 +25,16 @@ limitations under the License.
 }
 
 #next-role-approval-status {
-  color: #ffb338;
   padding: 54px 0 20px 0;
   text-align: center;
+}
+
+#next-role-approval-open {
+  color: #ffb338;
+}
+
+#next-role-approval-rejected {
+  color: red;
 }
 
 #next-role-approval-status h3 {
@@ -35,7 +42,7 @@ limitations under the License.
 }
 
 #next-role-approval-approver {
-  color: var(--black);
+  color: black;
   font-weight: bold;
 }
 

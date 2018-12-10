@@ -36,11 +36,16 @@ import PropTypes from 'prop-types';
 export default class ChatForm extends Component {
 
   static propTypes = {
-    actions:          PropTypes.object.isRequired,
-    disabled:         PropTypes.bool,
-    messages:         PropTypes.array,
+    actions:              PropTypes.object.isRequired,
+    activePack:           PropTypes.object,
+    activeRole:           PropTypes.object,
+    approve:              PropTypes.func,
+    disabled:             PropTypes.bool,
+    messages:             PropTypes.array,
     refreshOnNextSocketReceive: PropTypes.func,
-    submit:           PropTypes.func.isRequired,
+    reject:               PropTypes.func,
+    send:                 PropTypes.func.isRequired,
+    type:                 PropTypes.string,
   };
 
 
@@ -82,10 +87,22 @@ export default class ChatForm extends Component {
    * @param {boolean} shouldRefresh If app should refresh on next
    *                                message received
    */
-  handleSubmit (message, shouldRefresh) {
-    const { refreshOnNextSocketReceive, submit } = this.props;
+  handleSend (message, shouldRefresh) {
+    const { refreshOnNextSocketReceive, send } = this.props;
     shouldRefresh && refreshOnNextSocketReceive(true);
-    submit(message);
+    send(message);
+    this.reset();
+  }
+
+
+  /**
+   * Handle approval action
+   * @param {number} action 0 (Reject) or 1 (Approve)
+   */
+  handleApprove = (action) => {
+    const { approve, reject } = this.props;
+    action === 0 && reject();
+    action === 1 && approve();
     this.reset();
   }
 
@@ -115,6 +132,7 @@ export default class ChatForm extends Component {
    * @returns {string}
    */
   createPayload = (payload) => {
+    const { activePack, activeRole } = this.props;
     const { message } = this.state;
     if (!payload.startsWith('/') || payload.indexOf('{') === -1) return payload;
 
@@ -122,6 +140,16 @@ export default class ChatForm extends Component {
     let parsed = JSON.parse(
       payload.substring(demarcation, payload.length)
     );
+    // Debugger;;
+
+    if (parsed.resource_id) {
+      parsed.resource_id = (activePack && activePack.id) ||
+        (activeRole && activeRole.id);
+    }
+    if (parsed.resource_type) {
+      parsed.resource_type = (activePack && 'PACK') ||
+        (activeRole && 'ROLE');
+    }
     if (parsed.reason) {
       parsed.reason = message;
       return payload.substring(0, demarcation) + JSON.stringify(parsed);
@@ -134,7 +162,7 @@ export default class ChatForm extends Component {
    * Render chat view action buttons
    * @returns {JSX}
    */
-  renderActions () {
+  renderRequesterActions () {
     const { disabled, messages } = this.props;
     const { isDraft } = this.state;
 
@@ -149,7 +177,7 @@ export default class ChatForm extends Component {
               size='medium'
               disabled={disabled}
               onClick={() =>
-                this.handleSubmit(this.createPayload(button.payload), isDraft)}>
+                this.handleSend(this.createPayload(button.payload), isDraft)}>
 
               { !disabled &&
                 <span>{button.title}</span>
@@ -166,17 +194,60 @@ export default class ChatForm extends Component {
 
 
   /**
+   * Render chat view approval buttons
+   * @returns {JSX}
+   */
+  renderApproverActions () {
+    const { disabled } = this.props;
+
+    return (
+      <div id='next-chat-actions'>
+        <Button
+          className='next-chat-action-button'
+          circular
+          size='medium'
+          disabled={disabled}
+          onClick={() => this.handleApprove(1)}>
+
+          { !disabled &&
+              <span>Approve</span>
+          }
+          { disabled &&
+              <span></span>
+          }
+        </Button>
+        <Button
+          className='next-chat-action-button'
+          circular
+          size='medium'
+          disabled={disabled}
+          onClick={() => this.handleApprove(0)}>
+
+          { !disabled &&
+              <span>Reject</span>
+          }
+          { disabled &&
+              <span></span>
+          }
+        </Button>
+      </div>
+    );
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
+    const { type } = this.props;
     const { message, isDraft } = this.state;
 
     return (
       <div>
         { !isDraft &&
         <div>
-          <Form onSubmit={() => this.handleSubmit(message)}>
+          <Form onSubmit={() => this.handleSend(message)}>
             <Form.Input
               icon
               fluid
@@ -188,7 +259,7 @@ export default class ChatForm extends Component {
               <Icon
                 link
                 name='paper plane'
-                onClick={() => this.handleSubmit(message)}/>
+                onClick={() => this.handleSend(message)}/>
             </Form.Input>
           </Form>
         </div>
@@ -197,7 +268,7 @@ export default class ChatForm extends Component {
         <div id='next-chat-form-draft-container'>
           <Form
             onSubmit={() =>
-              this.handleSubmit(`/send{"reason": "${message}"}`, true)}>
+              this.handleSend(`/send{"reason": "${message}"}`, true)}>
             <Form.TextArea id='next-chat-form-draft-textarea'
               placeholder='Draft your message...'
               name='message'
@@ -206,7 +277,8 @@ export default class ChatForm extends Component {
           </Form>
         </div>
         }
-        {this.renderActions()}
+        {type === 'REQUESTER' && this.renderRequesterActions()}
+        {type === 'APPROVER' && this.renderApproverActions()}
       </div>
     );
   }

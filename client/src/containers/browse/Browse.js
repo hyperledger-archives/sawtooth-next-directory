@@ -122,7 +122,7 @@ class Browse extends Component {
               {this.renderLayout()}
             </Grid>
           }
-          { rolesData && rolesData.some(item => !item.length) &&
+          { rolesData && rolesData.every(item => !item.length) &&
             <Header as='h3' textAlign='center' color='grey'>
               <Header.Content>No roles or packs</Header.Content>
             </Header>

@@ -31,6 +31,7 @@ import { UserTypes } from '../redux/UserRedux';
 
 import {
   approveProposals,
+  rejectProposals,
   getOpenProposals,
   createPack,
   createRole } from './ApproverSaga';
@@ -85,6 +86,7 @@ function * sagas () {
     takeLatest(ApproverTypes.CREATE_PACK_REQUEST, createPack, api),
     takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
     takeLatest(ApproverTypes.APPROVE_PROPOSALS_REQUEST, approveProposals, api),
+    takeLatest(ApproverTypes.REJECT_PROPOSALS_REQUEST, rejectProposals, api),
 
     // Auth
     takeLatest(AuthTypes.LOGIN_REQUEST, login, api),

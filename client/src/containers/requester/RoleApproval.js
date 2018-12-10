@@ -86,9 +86,15 @@ class RoleApproval extends Component {
         <Card fluid>
           <Card.Header id='next-role-approval-status'>
             <span id='next-role-approval-status-emoji' role='img' aria-label=''>
-              🙇
+              {proposal.status === 'OPEN' && '🙇'}
+              {proposal.status === 'REJECTED' && '😩'}
             </span>
-            <h3>Awaiting approval</h3>
+            {proposal.status === 'OPEN' &&
+              <h3 id='next-role-approval-open'>Awaiting approval</h3>
+            }
+            {proposal.status === 'REJECTED' &&
+              <h3 id='next-role-approval-rejected'>Request rejected</h3>
+            }
           </Card.Header>
           <Card.Content extra id='next-role-approval-details'>
             <Grid columns={3} padded='vertically'>

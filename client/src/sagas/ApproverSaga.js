@@ -22,6 +22,7 @@ API to retrieve data required to hydrate the UI. */
 
 import { all, call, fork, put } from 'redux-saga/effects';
 import ApproverActions from '../redux/ApproverRedux';
+import { toast } from 'react-toastify';
 
 
 /**
@@ -50,10 +51,12 @@ export function * createPack (api, action) {
   try {
     const { payload } = action;
     const res = yield call(api.createPack, payload);
-    if (res.ok)
+    if (res.ok) {
+      toast('Successfully created a new pack.');
       yield put(ApproverActions.createPackSuccess(res.data));
-    else
+    } else {
       yield put(ApproverActions.createPackFailure(res.data));
+    }
 
   } catch (err) {
     console.error(err);
@@ -71,10 +74,12 @@ export function * createRole (api, action) {
   try {
     const { payload } = action;
     const res = yield call(api.createRole, payload);
-    if (res.ok)
+    if (res.ok) {
+      toast('Successfully created a new role.');
       yield put(ApproverActions.createRoleSuccess(res.data));
-    else
+    } else {
       yield put(ApproverActions.createRoleFailure(res.data.error));
+    }
 
   } catch (err) {
     console.error(err);
@@ -114,6 +119,44 @@ export function * approveProposal (api, id) {
     res.ok ?
       yield put(ApproverActions.approveProposalsSuccess(res.data)) :
       yield put(ApproverActions.approveProposalsFailure(res.data.error));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Reject an array of proposals
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * rejectProposals (api, action) {
+  try {
+    const { ids } = action;
+    if (ids.length > 0)
+      yield all(ids.map(id => fork(rejectProposal, api, id)));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Reject a single proposal
+ * @param {object} api    API service
+ * @param {object} id     Proposal ID
+ * @generator
+ */
+export function * rejectProposal (api, id) {
+  try {
+    const res = yield call(api.approveProposals, id, {
+      status: 'REJECTED',
+      reason: '',
+    });
+    res.ok ?
+      yield put(ApproverActions.rejectProposalsSuccess(res.data)) :
+      yield put(ApproverActions.rejectProposalsFailure(res.data.error));
   } catch (err) {
     console.error(err);
   }

@@ -6,7 +6,8 @@ actions:
 - utter_recommendation
 - utter_ask_request_access
 - utter_greet
-- utter_draft
+- utter_recommended_draft
+- utter_current_draft
 - utter_exclame
 - utter_fanfare_sent
 - utter_request_bye
@@ -19,15 +20,24 @@ actions:
 - utter_help
 - utter_whoami
 - utter_name
+- utter_test
+- utter_test_role
 - utter_passive
 - action_request_access
 config:
   store_entities_as_slots: true
 entities:
+- token
+- resource_id
+- resource_type
+- resource_name
+- approver_name
 - reason
 forms: []
 intents:
 - recommend:
+    use_entities: true
+- access:
     use_entities: true
 - affirm:
     use_entities: true
@@ -35,7 +45,9 @@ intents:
     use_entities: true
 - greet:
     use_entities: true
-- send:
+- send_current:
+    use_entities: true
+- send_recommended:
     use_entities: true
 - cancel:
     use_entities: true
@@ -76,6 +88,13 @@ slots:
     auto_fill: true
     initial_value: null
     type: rasa_core.slots.UnfeaturizedSlot
+  resource_type:
+    auto_fill: true
+    initial_value: null
+    type: rasa_core.slots.CategoricalSlot
+    values:
+    - pack
+    - role
   token:
     auto_fill: true
     initial_value: null
@@ -96,17 +115,18 @@ templates:
   - text: Later gater.
   - text: Until next time.
   - text: Bye. I will always be here for you.
-  utter_default:
-  - text: Sorry, I didn't get that. Can you clarify?
-  - text: I don't understand what you mean.
-  utter_draft:
+  utter_current_draft:
   - buttons:
-    - payload: '/send{"reason": "I need access."}'
+    - payload: '/send_current{"reason": "-", "resource_id": "-", "resource_type":
+        "-"}'
       title: Send request
     - payload: /cancel
       title: Nevermind
-    text: So you'd like to request access for {resource_name}? Great. All you need
-      to do is draft a note for {approver_name} and I'll take care of the rest.
+    text: Okay. So you need access to this? Go ahead and draft a note and I'll take
+      care of the rest.
+  utter_default:
+  - text: Sorry, I didn't get that. Can you clarify?
+  - text: I don't understand what you mean.
   utter_exclame:
   - text: Awesome!
   utter_fanfare_sent:
@@ -146,12 +166,24 @@ templates:
   utter_recommendation:
   - text: Hi! Based on your role, I bet having access to {resource_name} would make
       it easier for you to function.
+  utter_recommended_draft:
+  - buttons:
+    - payload: '/send_recommended{"reason": "I need access."}'
+      title: Send request
+    - payload: /cancel
+      title: Nevermind
+    text: So you'd like to request access for {resource_name}? Great. All you need
+      to do is draft a note for {approver_name} and I'll take care of the rest.
   utter_request_bye:
   - text: Feel free to ping me anytime. I will notify you once I hear from {approver_name}.
       Au revoir!
   utter_standby:
   - text: Feel free to ping me anytime.
   - text: I'll be here for you.
+  utter_test:
+  - text: ITS A PACK, ID you want is {resource_id}
+  utter_test_role:
+  - text: ITS A ROLE, ID you want is {resource_id}
   utter_thank:
   - text: You're most welcome.
   - text: No problem.

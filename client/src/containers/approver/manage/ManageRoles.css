@@ -12,3 +12,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+
+
+#next-approver-manage-roles-content {
+  padding: 0 15%;
+  position: relative;
+  top: 230px;
+  z-index: -3;
+}
+
+#next-approver-manage-roles-content .ui.header {
+  position: relative;
+  top: 50px;
+}
+
+#next-approver-manage-roles-create-button {
+  position: fixed;
+  right: 0;
+}

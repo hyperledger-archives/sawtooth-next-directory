@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Grid } from 'semantic-ui-react';
+import { Button, Grid, Header } from 'semantic-ui-react';
 
 
 import './ManagePacks.css';
@@ -45,12 +45,19 @@ class ManagePacks extends Component {
           <TrackHeader
             title='Roles'
             button={() =>
-              <Button as={Link} to='packs/create'>Create New Pack</Button>}
+              <Button
+                id='next-approver-manage-packs-create-button'
+                as={Link}
+                to='packs/create'>Create New Pack</Button>}
             {...this.props}/>
           <div id='next-approver-manage-content'>
             { me && me.administratorOf.length > 0 ?
               <h1>Packs you created:</h1> :
-              <h1>You haven&apos;t created any packs</h1>
+              <Header as='h3' textAlign='center' color='grey'>
+                <Header.Content>
+                  You haven&apos;t created any packs
+                </Header.Content>
+              </Header>
             }
             { me && me.administratorOf.map(roleId => (
               <span key={roleId}>{roleId}</span>

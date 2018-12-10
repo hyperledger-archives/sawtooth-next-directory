@@ -100,6 +100,8 @@ export const appDispatch = (dispatch) => {
     // Approver
     approveProposals:  (ids) =>
       dispatch(ApproverActions.approveProposalsRequest(ids)),
+    rejectProposals:   (ids) =>
+      dispatch(ApproverActions.rejectProposalsRequest(ids)),
     getOpenProposals:  ()    =>
       dispatch(ApproverActions.openProposalsRequest()),
     createRole: (payload) =>

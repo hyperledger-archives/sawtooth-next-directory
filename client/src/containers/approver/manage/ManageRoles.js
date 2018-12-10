@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Grid } from 'semantic-ui-react';
+import { Button, Grid, Header, Segment } from 'semantic-ui-react';
 
 
 import './ManageRoles.css';
@@ -32,6 +32,22 @@ import TrackHeader from '../../../components/layouts/TrackHeader';
 class ManageRoles extends Component {
 
   /**
+   * Render a list of roles created by the user
+   * @returns {JSX}
+   */
+  renderRoles () {
+    const { me } = this.props;
+    return (
+      <div>
+        { me && me.administratorOf.map(roleId => (
+          <Segment key={roleId}>{roleId}</Segment>
+        ))}
+      </div>
+    );
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
@@ -45,17 +61,21 @@ class ManageRoles extends Component {
           <TrackHeader
             title='Roles'
             button={() =>
-              <Button as={Link} to='roles/create'>Create New Role</Button>}
+              <Button
+                id='next-approver-manage-roles-create-button'
+                as={Link}
+                to='roles/create'>Create New Role</Button>}
             {...this.props}/>
-          <div id='next-approver-manage-content'>
+          <div id='next-approver-manage-roles-content'>
             { me && me.administratorOf.length > 0 ?
-              <h1>Roles you created:</h1> :
-              <h1>You haven&apos;t created any roles</h1>
+              <h3>Roles you created:</h3> :
+              <Header as='h3' textAlign='center' color='grey'>
+                <Header.Content>
+                  You haven&apos;t created any roles
+                </Header.Content>
+              </Header>
             }
-            { me && me.administratorOf.map(roleId => (
-              <span key={roleId}>{roleId}</span>
-            ))
-            }
+            {this.renderRoles()}
           </div>
         </Grid.Column>
       </Grid>

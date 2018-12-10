@@ -3,16 +3,34 @@
   - utter_recommendation
   - utter_ask_request_access
 
+## story_access
+* access
+  - utter_current_draft
+
 ## story_affirm
 * affirm
-  - utter_draft
+  - utter_recommended_draft
 
 ## story_deny
 * deny
   - utter_standby
 
-## story_send
-* send{"reason": "I need access."}
+## story_send_recommended
+* send_recommended{"reason": "I need access."}
+  - action_request_access
+  - utter_exclame
+  - utter_fanfare_sent
+  - utter_request_bye
+
+## story_send_current_pack
+* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "PACK"}
+  - action_request_access
+  - utter_exclame
+  - utter_fanfare_sent
+  - utter_request_bye
+
+## story_send_current_role
+* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
   - action_request_access
   - utter_exclame
   - utter_fanfare_sent

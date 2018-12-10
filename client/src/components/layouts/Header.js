@@ -168,7 +168,7 @@ export default class Header extends Component {
 
     return (
       <header className='next-header' ref={this.setRef}>
-        <LoadingBar showFastActions className='next-global-loading-bar'/>
+        <LoadingBar className='next-global-loading-bar'/>
         <div id='next-header-logo'>
           <Image
             as={Link}

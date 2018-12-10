@@ -18,6 +18,7 @@ limitations under the License.
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-top: 40px;
 }
 
 #next-chat-conversation-dock {
@@ -60,7 +61,7 @@ limitations under the License.
 #next-chat-selection-heading-container {
   align-items: center;
   display: flex;
-  flex: 0 0 106px;
+  flex: 0 0 113px;
   margin-bottom: 30px;
   padding-left: calc(5% + 21px);
 }
@@ -76,7 +77,7 @@ limitations under the License.
 
 #next-chat-header {
   padding: 2rem;
-  flex: 0 0 130px;
+  flex: 0 0 131px;
 }
 
 #next-chat-header i.mini {
@@ -98,7 +99,7 @@ limitations under the License.
   height: 30px;
   left: 0;
   position: absolute;
-  top: 141px;
+  top: 183px;
   width: 100%;
   z-index: 1;
 }

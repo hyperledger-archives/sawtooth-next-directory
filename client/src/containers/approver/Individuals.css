@@ -15,5 +15,7 @@ limitations under the License.
 
 
 #next-approver-individuals-content {
-  margin-top: 142px;
+  margin-top: 300px;
+  position: relative;
+  width: calc(100% - 65px) !important;
 }
