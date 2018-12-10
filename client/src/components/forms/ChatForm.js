@@ -36,7 +36,6 @@ import PropTypes from 'prop-types';
 class ChatForm extends Component {
 
   static propTypes = {
-    actions:              PropTypes.object.isRequired,
     activePack:           PropTypes.object,
     activeRole:           PropTypes.object,
     approve:              PropTypes.func,

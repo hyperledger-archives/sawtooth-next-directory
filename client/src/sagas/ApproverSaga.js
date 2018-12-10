@@ -26,7 +26,7 @@ import { toast } from 'react-toastify';
 
 
 /**
- * Get currently open proposals assigned to logged in user
+ * Get currently open proposals
  * @param {object} api    API service
  * @param {object} action Redux action
  * @generator
@@ -35,6 +35,22 @@ export function * getOpenProposals (api, action) {
   try {
     const res = yield call(api.getOpenProposals);
     yield put(ApproverActions.openProposalsSuccess(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Get confirmed proposals
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * getConfirmedProposals (api, action) {
+  try {
+    const res = yield call(api.getConfirmedProposals);
+    yield put(ApproverActions.confirmedProposalsSuccess(res.data));
   } catch (err) {
     console.error(err);
   }

@@ -40,6 +40,7 @@ export const appState = (state) => {
       AppSelectors.shouldRefreshOnNextSocketReceive(state),
 
     // Approver
+    confirmedProposals:  ApproverSelectors.confirmedProposals(state),
     openProposals:       ApproverSelectors.openProposals(state),
     openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
@@ -104,6 +105,8 @@ export const appDispatch = (dispatch) => {
       dispatch(ApproverActions.rejectProposalsRequest(ids)),
     getOpenProposals:  ()    =>
       dispatch(ApproverActions.openProposalsRequest()),
+    getConfirmedProposals: () =>
+      dispatch(ApproverActions.confirmedProposalsRequest()),
     createRole: (payload) =>
       dispatch(ApproverActions.createRoleRequest(payload)),
     createPack: (payload) =>

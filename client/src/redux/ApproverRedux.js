@@ -26,27 +26,31 @@ import * as utils from '../services/Utils';
 //
 //
 const { Types, Creators } = createActions({
-  openProposalsRequest:     null,
-  openProposalsSuccess:     ['openProposals'],
-  openProposalsFailure:     ['error'],
+  openProposalsRequest:       null,
+  openProposalsSuccess:       ['openProposals'],
+  openProposalsFailure:       ['error'],
 
-  createRoleRequest:        ['payload'],
-  createRoleSuccess:        ['success'],
-  createRoleFailure:        ['error'],
+  confirmedProposalsRequest:  null,
+  confirmedProposalsSuccess:  ['confirmedProposals'],
+  confirmedProposalsFailure:  ['error'],
 
-  createPackRequest:        ['payload'],
-  createPackSuccess:        ['success'],
-  createPackFailure:        ['error'],
+  createRoleRequest:          ['payload'],
+  createRoleSuccess:          ['success'],
+  createRoleFailure:          ['error'],
 
-  approveProposalsRequest:  ['ids'],
-  approveProposalsSuccess:  ['closedProposal'],
-  approveProposalsFailure:  ['error'],
+  createPackRequest:          ['payload'],
+  createPackSuccess:          ['success'],
+  createPackFailure:          ['error'],
 
-  rejectProposalsRequest:   ['ids'],
-  rejectProposalsSuccess:   ['closedProposal'],
-  rejectProposalsFailure:   ['error'],
+  approveProposalsRequest:    ['ids'],
+  approveProposalsSuccess:    ['closedProposal'],
+  approveProposalsFailure:    ['error'],
 
-  resetAll:                 null,
+  rejectProposalsRequest:     ['ids'],
+  rejectProposalsSuccess:     ['closedProposal'],
+  rejectProposalsFailure:     ['error'],
+
+  resetAll:                   null,
 });
 
 
@@ -60,9 +64,10 @@ export default Creators;
 //
 //
 export const INITIAL_STATE = Immutable({
-  fetching:         null,
-  error:            null,
-  openProposals:    null,
+  fetching:           null,
+  error:              null,
+  openProposals:      null,
+  confirmedProposals: null,
 });
 
 //
@@ -73,6 +78,7 @@ export const INITIAL_STATE = Immutable({
 //
 export const ApproverSelectors = {
   openProposals:         (state) => state.approver.openProposals,
+  confirmedProposals:    (state) => state.approver.confirmedProposals,
   openProposalsByUser:   (state) =>
     utils.groupBy(state.approver.openProposals, 'opener'),
   openProposalsByRole:   (state) =>
@@ -110,6 +116,11 @@ export const resetAll = () => {
 export const openProposalsSuccess = (state, { openProposals }) => {
   return state.merge({ fetching: false, openProposals: openProposals.data });
 };
+export const confirmedProposalsSuccess = (state, { confirmedProposals }) => {
+  return state.merge({
+    fetching: false, confirmedProposals: confirmedProposals.data,
+  });
+};
 export const createRoleSuccess = (state) => {
   return state.merge({ fetching: false });
 };
@@ -143,6 +154,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.OPEN_PROPOSALS_REQUEST]: request,
   [Types.OPEN_PROPOSALS_SUCCESS]: openProposalsSuccess,
   [Types.OPEN_PROPOSALS_FAILURE]: failure,
+
+  [Types.CONFIRMED_PROPOSALS_REQUEST]: request,
+  [Types.CONFIRMED_PROPOSALS_SUCCESS]: confirmedProposalsSuccess,
+  [Types.CONFIRMED_PROPOSALS_FAILURE]: failure,
 
   [Types.CREATE_ROLE_REQUEST]: request,
   [Types.CREATE_ROLE_SUCCESS]: createRoleSuccess,

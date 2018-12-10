@@ -26733,10 +26733,10 @@ Floated Menu / Item
   width: 100%;
   background: #FFFFFF;
   margin: 1em 0em;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 0 solid rgba(34, 36, 38, 0.15);
   -webkit-box-shadow: none;
   box-shadow: none;
-  border-radius: 0.71428571rem;
+  border-radius: 0;
   text-align: left;
   color: rgba(0, 0, 0, 0.87);
   border-collapse: separate;
@@ -26772,15 +26772,15 @@ Floated Menu / Item
 
 .ui.table thead th {
   cursor: auto;
-  background: #F9FAFB;
+  background: transparent;
   text-align: inherit;
-  color: rgba(0, 0, 0, 0.87);
+  color: #767676;
   padding: 0.92857143em 0.78571429em;
   vertical-align: inherit;
   font-style: none;
   font-weight: bold;
   text-transform: none;
-  border-bottom: 1px solid rgba(34, 36, 38, 0.1);
+  border-bottom: 0;
   border-left: none;
 }
 
@@ -26789,15 +26789,15 @@ Floated Menu / Item
 }
 
 .ui.table thead tr:first-child > th:first-child {
-  border-radius: 0.71428571rem 0em 0em 0em;
+  border-radius: 0 0em 0em 0em;
 }
 
 .ui.table thead tr:first-child > th:last-child {
-  border-radius: 0em 0.71428571rem 0em 0em;
+  border-radius: 0em 0 0em 0em;
 }
 
 .ui.table thead tr:first-child > th:only-child {
-  border-radius: 0.71428571rem 0.71428571rem 0em 0em;
+  border-radius: 0 0 0em 0em;
 }
 
 /* Footer */
@@ -26825,21 +26825,21 @@ Floated Menu / Item
 }
 
 .ui.table tfoot tr:first-child > th:first-child {
-  border-radius: 0em 0em 0em 0.71428571rem;
+  border-radius: 0em 0em 0em 0;
 }
 
 .ui.table tfoot tr:first-child > th:last-child {
-  border-radius: 0em 0em 0.71428571rem 0em;
+  border-radius: 0em 0em 0 0em;
 }
 
 .ui.table tfoot tr:first-child > th:only-child {
-  border-radius: 0em 0em 0.71428571rem 0.71428571rem;
+  border-radius: 0em 0em 0 0;
 }
 
 /* Table Row */
 
 .ui.table tr td {
-  border-top: 1px solid rgba(34, 36, 38, 0.1);
+  border-top: 0;
 }
 
 .ui.table tr:first-child td {
@@ -26849,7 +26849,7 @@ Floated Menu / Item
 /* Repeated tbody */
 
 .ui.table tbody + tbody tr:first-child td {
-  border-top: 1px solid rgba(34, 36, 38, 0.1);
+  border-top: 0;
 }
 
 /* Table Cells */
@@ -26970,8 +26970,8 @@ Floated Menu / Item
 }
 
 .ui.structured.sortable.table thead th {
-  border-left: 1px solid rgba(34, 36, 38, 0.15);
-  border-right: 1px solid rgba(34, 36, 38, 0.15);
+  border-left: 0;
+  border-right: 0;
 }
 
 .ui.structured.basic.table th {
@@ -26981,8 +26981,8 @@ Floated Menu / Item
 
 .ui.structured.celled.table tr th,
 .ui.structured.celled.table tr td {
-  border-left: 1px solid rgba(34, 36, 38, 0.1);
-  border-right: 1px solid rgba(34, 36, 38, 0.1);
+  border-left: 0;
+  border-right: 0;
 }
 
 /*--------------
@@ -26994,8 +26994,8 @@ Floated Menu / Item
   background: transparent;
   font-weight: normal;
   color: rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: -1px -1px 0px 1px #FFFFFF;
-  box-shadow: -1px -1px 0px 1px #FFFFFF;
+  -webkit-box-shadow: 0 0 0px 0 #FFFFFF;
+  box-shadow: 0 0 0px 0 #FFFFFF;
 }
 
 .ui.definition.table tfoot:not(.full-width) th:first-child {
@@ -27003,20 +27003,20 @@ Floated Menu / Item
   background: transparent;
   font-weight: rgba(0, 0, 0, 0.4);
   color: normal;
-  -webkit-box-shadow: 1px 1px 0px 1px #FFFFFF;
-  box-shadow: 1px 1px 0px 1px #FFFFFF;
+  -webkit-box-shadow: 0 0 0px 0 #FFFFFF;
+  box-shadow: 0 0 0px 0 #FFFFFF;
 }
 
 /* Remove Border */
 
 .ui.celled.definition.table thead:not(.full-width) th:first-child {
-  -webkit-box-shadow: 0px -1px 0px 1px #FFFFFF;
-  box-shadow: 0px -1px 0px 1px #FFFFFF;
+  -webkit-box-shadow: 0px 0 0px 0 #FFFFFF;
+  box-shadow: 0px 0 0px 0 #FFFFFF;
 }
 
 .ui.celled.definition.table tfoot:not(.full-width) th:first-child {
-  -webkit-box-shadow: 0px 1px 0px 1px #FFFFFF;
-  box-shadow: 0px 1px 0px 1px #FFFFFF;
+  -webkit-box-shadow: 0px 0 0px 0 #FFFFFF;
+  box-shadow: 0px 0 0px 0 #FFFFFF;
 }
 
 /* Highlight Defining Column */
@@ -27038,15 +27038,15 @@ Floated Menu / Item
 /* Fix 2nd Column */
 
 .ui.definition.table thead:not(.full-width) th:nth-child(2) {
-  border-left: 1px solid rgba(34, 36, 38, 0.15);
+  border-left: 0 solid rgba(34, 36, 38, 0.15);
 }
 
 .ui.definition.table tfoot:not(.full-width) th:nth-child(2) {
-  border-left: 1px solid rgba(34, 36, 38, 0.15);
+  border-left: 0 solid rgba(34, 36, 38, 0.15);
 }
 
 .ui.definition.table td:nth-child(2) {
-  border-left: 1px solid rgba(34, 36, 38, 0.15);
+  border-left: 0 solid rgba(34, 36, 38, 0.15);
 }
 
 /*******************************
@@ -27336,12 +27336,12 @@ Floated Menu / Item
   top: 0px;
   bottom: 0px;
   border-radius: 0px;
-  margin: 0em -1px;
-  width: calc(100% - (-1px * 2));
-  max-width: calc(100% - (-1px * 2));
+  margin: 0em 0;
+  width: calc(100% - (0 * 2));
+  max-width: calc(100% - (0 * 2));
   -webkit-box-shadow: none;
   box-shadow: none;
-  border: 1px solid #D4D4D5;
+  border: 0 solid #D4D4D5;
 }
 
 .ui.attached + .ui.attached.table:not(.top) {
@@ -27355,7 +27355,7 @@ Floated Menu / Item
   margin-bottom: 0em;
   top: 0px;
   margin-top: 1em;
-  border-radius: 0.71428571rem 0.71428571rem 0em 0em;
+  border-radius: 0 0 0em 0em;
 }
 
 .ui.table[class*="top attached"]:first-child {
@@ -27371,7 +27371,7 @@ Floated Menu / Item
   margin-bottom: 1em;
   -webkit-box-shadow: none, none;
   box-shadow: none, none;
-  border-radius: 0em 0em 0.71428571rem 0.71428571rem;
+  border-radius: 0em 0em 0 0;
 }
 
 .ui[class*="bottom attached"].table:last-child {
@@ -27723,7 +27723,7 @@ Floated Menu / Item
 .ui.sortable.table thead th {
   cursor: pointer;
   white-space: nowrap;
-  border-left: 1px solid rgba(34, 36, 38, 0.15);
+  border-left: 0;
   color: rgba(0, 0, 0, 0.87);
 }
 
@@ -27867,7 +27867,7 @@ Floated Menu / Item
 
 .ui.basic.table {
   background: transparent;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 0 solid rgba(34, 36, 38, 0.15);
   -webkit-box-shadow: none;
   box-shadow: none;
 }
@@ -27926,7 +27926,7 @@ Floated Menu / Item
 
 .ui.celled.table tr th,
 .ui.celled.table tr td {
-  border-left: 1px solid rgba(34, 36, 38, 0.1);
+  border-left: 0;
 }
 
 .ui.celled.table tr th:first-child,
@@ -28003,6 +28003,14 @@ Floated Menu / Item
 
 .ui.large.table {
   font-size: 1.1em;
+}
+
+.ui.table thead tr:first-child > th:first-child {
+  padding-left: 30px;
+}
+
+.ui.table tr td:first-child {
+  padding-left: 30px;
 }
 
 /*******************************

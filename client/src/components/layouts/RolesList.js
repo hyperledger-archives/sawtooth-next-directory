@@ -82,7 +82,7 @@ class RolesList extends Component {
       .filter(userId => userId);
 
     diff && diff.length > 0 && getRoles(diff);
-    diff2 && diff.length > 0 && getUsers([...new Set(diff2)]);
+    diff2 && diff2.length > 0 && getUsers([...new Set(diff2)]);
   }
 
 

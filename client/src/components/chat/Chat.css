@@ -117,6 +117,7 @@ limitations under the License.
 }
 
 #next-chat-roles-selection-container,
+#next-chat-proposals-selection-container,
 #next-chat-users-selection-container {
   display: flex;
   flex: 1;

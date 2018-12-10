@@ -11,14 +11,14 @@
 @margin: @verticalMargin @horizontalMargin;
 @borderCollapse: separate;
 @borderSpacing: 0px;
-@borderRadius: @defaultBorderRadius;
+@borderRadius: 0;
 @transition:
   background @defaultDuration @defaultEasing,
   color @defaultDuration @defaultEasing
 ;
 @background: @white;
 @color: @textColor;
-@borderWidth: 1px;
+@borderWidth: 0;
 @border: @borderWidth solid @borderColor;
 @boxShadow: none;
 @textAlign: left;
@@ -28,22 +28,22 @@
 ---------------*/
 
 /* Table Row */
-@rowBorder: 1px solid @internalBorderColor;
+@rowBorder: 0;
 
 /* Table Cell */
 @cellVerticalPadding: @relativeMini;
 @cellHorizontalPadding: @relativeMini;
 @cellVerticalAlign: inherit;
 @cellTextAlign: inherit;
-@cellBorder: 1px solid @internalBorderColor;
+@cellBorder: 0;
 
 /* Table Header */
-@headerBorder: 1px solid @internalBorderColor;
+@headerBorder: 0;
 @headerDivider: none;
-@headerBackground: @offWhite;
+@headerBackground: transparent;
 @headerAlign: inherit;
 @headerVerticalAlign: inherit;
-@headerColor: @textColor;
+@headerColor: @grey;
 @headerVerticalPadding: @relativeSmall;
 @headerHorizontalPadding: @cellHorizontalPadding;
 @headerFontStyle: none;
@@ -174,7 +174,7 @@
 @sortableBackground: '';
 @sortableColor: @textColor;
 
-@sortableBorder: 1px solid @borderColor;
+@sortableBorder: 0;
 @sortableIconWidth: auto;
 @sortableIconDistance: 0.5em;
 @sortableIconOpacity: 0.8;

@@ -180,6 +180,39 @@ async def fetch_open_proposals(request, user_id):
     )
 
 
+@USERS_BP.get("api/users/<user_id>/proposals/confirmed")
+@authorized()
+async def fetch_confirmed_proposals(request, user_id):
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
+    proposals = await proposals_query.fetch_all_proposal_resources(
+        request.app.config.DB_CONN, head_block.get("num"), start, limit
+    )
+    proposal_resources = []
+    for proposal in proposals:
+        proposal_resource = await compile_proposal_resource(
+            request.app.config.DB_CONN, proposal, head_block.get("num")
+        )
+        proposal_resources.append(proposal_resource)
+
+    confirmed_proposals = []
+    for proposal_resource in proposal_resources:
+        if (
+            proposal_resource["status"] == "CONFIRMED"
+            and user_id in proposal_resource["approvers"]
+        ):
+            confirmed_proposals.append(proposal_resource)
+
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        confirmed_proposals,
+        head_block,
+        start=start,
+        limit=limit,
+    )
+
+
 def create_user_response(request, public_key):
     token = generate_api_key(request.app.config.SECRET_KEY, public_key)
     user_resource = {

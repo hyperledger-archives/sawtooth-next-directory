@@ -14,37 +14,33 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.next-people-list-item {
-  padding: 21px 30px;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
-.next-people-list-name {
-  flex: 0 0 40%;
-  padding-right: 20px;
-}
 
-.next-people-list-name .ui.checkbox label {
-  font-weight: bold;
-}
+import * as customStore from '../../customStore';
+import Approved from './Approved';
 
-.next-people-list-email {
-  color: var(--magenta);
-  flex: 1;
-  font-size: .9em;
-  padding: 0 20px;
-}
 
-.next-people-list-item .header,
-.next-people-list-item .ui.checkbox label {
-  display: flex;
-  font-size: 1.1em;
-}
+const store = customStore.create();
 
-.next-people-list-proposal .ui.checkbox label {
-  font-size: 1em;
-  font-weight: normal;
-}
 
-.next-people-list-item:hover {
-  background: var(--selection-list-active-color);
-}
+it('renders without crashing', () => {
+  const div = document.createElement('div');
+
+  const props = {
+    getConfirmedProposals: () => {},
+    roleFromId: () => {},
+    userFromId: () => {},
+  };
+
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Approved {...props}/></BrowserRouter>
+    </Provider>, div
+  );
+
+  ReactDOM.unmountComponentAtNode(div);
+});
