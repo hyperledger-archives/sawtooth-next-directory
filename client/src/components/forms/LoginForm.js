@@ -22,7 +22,7 @@ import {
   Label,
   Image,
   Input,
-  Transition
+  Transition,
 } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
@@ -146,7 +146,8 @@ class LoginForm extends Component {
           animation='fade down'
           duration={{ hide, show }}>
           <div id='next-login-form-2'>
-            <Form id='next-password-form' onSubmit={() => submit(username, password)}>
+            <Form id='next-password-form'
+              onSubmit={() => submit(username, password)}>
               <Container
                 textAlign='center'
                 id='next-login-form-avatar-container'>
@@ -196,7 +197,8 @@ class LoginForm extends Component {
           animation='fade up'
           duration={{ hide, show }}>
           <div>
-            <Form id='next-login-form-reset-password' onSubmit={() => this.setFlow(0)}>
+            <Form id='next-login-form-reset-password'
+              onSubmit={() => this.setFlow(0)}>
               <Form.Field >
                 <Form.Button
                   id='next-login-reset-email-back-button'

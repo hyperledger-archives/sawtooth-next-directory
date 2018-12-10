@@ -42,33 +42,34 @@ export default class StackedAvatar extends Component {
 
     if (list) {
       return list.map((item, index) => {
-        if (index > 3) {
+        if (index > 3)
           return null;
-        }
+
         if (index === 3) {
           return (
             <div className='next-avatar-element'>
               <Icon inverted name='add' size='tiny' />
             </div>
           );
-        } else {
-          return (
-            <div key={index} className='next-avatar-element'>
-              <Image
-                avatar
-                src='http://i.pravatar.cc/500' />
-            </div>
-          );
         }
+        return (
+          <div key={index} className='next-avatar-element'>
+            <Image
+              avatar
+              src='http://i.pravatar.cc/500' />
+          </div>
+        );
+
       });
-    } else {
-      return <div className='next-avatar-element'>_</div>
     }
     return <div className='next-avatar-element'>_</div>;
 
   }
 
-
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render() {
     const { list } = this.props;
     const memberLabel = list && list.length > 1 ?
@@ -80,7 +81,9 @@ export default class StackedAvatar extends Component {
         <div id='next-avatar' className='next-avatar'>
           {this.renderAvatars()}
         </div>
-        <div className='next-avatar-count'>{`${list ? list.length : 0} Members`}</div>
+        <div className='next-avatar-count'>
+          {`${list ? list.length : 0} Members`}
+        </div>
       </div>
     );
   }

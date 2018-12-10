@@ -159,7 +159,8 @@ export default class SignupForm extends Component {
           animation='fade down'
           duration={{ hide, show }}>
           <div>
-            <Form id='next-password-signupForm' onSubmit={() => submit(name, username, password, email)}>
+            <Form id='next-password-signupForm'
+              onSubmit={() => submit(name, username, password, email)}>
               <Form.Button
                 id='next-signup-form-back-button'
                 content='Back'

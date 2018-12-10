@@ -20,8 +20,8 @@ import PropTypes from 'prop-types';
 
 /**
  *
- * @class *Create* modal
- *
+ * @class         Create
+ * @description   Component encapsulating the create role
  *
  */
 export default class Create extends Component {
@@ -35,15 +35,13 @@ export default class Create extends Component {
 
 
   /**
-   *
-   * @param event   Event passed by Semantic UI
-   * @param name    Name of form element derived from 'name' HTML attribute
-   * @param value   Value of form field
+   * Determine the change event triggered
+   * @param {object} event   Event passed by Semantic UI
    *
    */
-  handleChange(e) {
-    const name = e.target.name;
-    const value = e.target.value;
+  handleChange(event) {
+    const name = event.target.name;
+    const value = event.target.value;
     this.setState({ [name]: value }, () => {
 
       this.validate(name, value);
@@ -51,12 +49,16 @@ export default class Create extends Component {
     });
   }
 
+  /**
+   * Determine username and password fields
+   *
+   */
   checkFields() {
-    if (this.state.username.length > 0 && this.state.password.length > 0) {
-      this.setState({ validFields: true })
-    } else {
-      this.setState({ validFields: false })
-    }
+    if (this.state.username.length > 0 && this.state.password.length > 0)
+      this.setState({ validFields: true });
+    else
+      this.setState({ validFields: false });
+
   }
 
 
@@ -64,7 +66,7 @@ export default class Create extends Component {
   handleClose = () => this.setState({
     open: false,
     validName: null,
-    name: ''
+    name: '',
   });
 
 
@@ -77,18 +79,29 @@ export default class Create extends Component {
   }
 
 
+  /**
+   *
+   * @param name   name of the field
+   * @param value  value entered by the user
+   *
+   */
+
   validate = (name, value) => {
     name === 'name' &&
       this.setState({ validName: value.length > 4 });
   }
 
-
+  /**
+   * Render entrypoint
+   * @returns {JSX}
+   */
   render() {
     const { open, validName } = this.state;
 
     return (
       <Modal
-        trigger={<Button id='next-open-modal-icon' icon='add' onClick={this.handleOpen} />}
+        trigger={<Button id='next-open-modal-icon' icon='add'
+          onClick={this.handleOpen} />}
         basic
         dimmer='inverted'
         size='mini'
@@ -107,7 +120,8 @@ export default class Create extends Component {
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button id='next-modal-close-button' basic color='red' onClick={this.handleClose}>
+          <Button id='next-modal-close-button' basic color='red'
+            onClick={this.handleClose}>
             <Icon name='remove' /> Close
           </Button>
           <Button

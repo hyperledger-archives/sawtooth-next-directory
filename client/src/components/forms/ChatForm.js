@@ -246,7 +246,8 @@ class ChatForm extends Component {
       <div>
         { !isDraft &&
         <div>
-          <Form id='next-placeholder-chat' onSubmit={() => this.handleSend(message)}>
+          <Form id='next-placeholder-chat'
+            onSubmit={() => this.handleSend(message)}>
             <Form.Input
               icon
               fluid

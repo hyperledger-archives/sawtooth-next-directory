@@ -114,8 +114,8 @@ export default {
   signup: (username, password, name, email) => {
     return {
       ok: true,
-      data: {}
-    }
+      data: {},
+    };
   },
 
 
@@ -130,28 +130,28 @@ export default {
   getRoles: () => {
     return {
       ok: true,
-      data: roles
-    }
+      data: roles,
+    };
   },
   me: () => {
     return {
       ok: true,
-      data: {}
-    }
+      data: {},
+    };
   },
 
   getUser: (id) => {
     return {
       ok: true,
-      data: {}
-    }
+      data: {},
+    };
   },
 
   getRole: (id) => {
     return {
       ok: true,
-      data: {}
-    }
+      data: {},
+    };
   },
   getPacks: () => {
     return {

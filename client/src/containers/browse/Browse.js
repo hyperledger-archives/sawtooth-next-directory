@@ -66,7 +66,7 @@ class Browse extends Component {
 
 
   /**
-   * Render layout ?
+   * Format data ?
    * @param {array} value ?
    */
   formatData = (value) => {
@@ -77,6 +77,11 @@ class Browse extends Component {
     this.setState({ rolesData: arr });
   }
 
+  /**
+   * Render layout ?
+   * @param {array} layoutData ?
+   * @returns {JSX}
+   */
   renderLayout(layoutData) {
     const{ rolesData } = this.state;
     let data = layoutData ? layoutData : rolesData;

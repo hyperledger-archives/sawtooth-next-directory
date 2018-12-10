@@ -169,15 +169,15 @@ class RoleList extends Component {
   render () {
     const { openProposalsByRole } = this.props;
     if (!openProposalsByRole) return null;
-    else {
-      return (
-        <div id='next-roles-list-container'>
-          {Object.keys(openProposalsByRole).map(roleId => (
-            this.renderRoleItem(roleId)
-          ))}
-        </div>
-      );
-    }
+
+    return (
+      <div id='next-roles-list-container'>
+        {Object.keys(openProposalsByRole).map(roleId => (
+          this.renderRoleItem(roleId)
+        ))}
+      </div>
+    );
+
   }
 
 }

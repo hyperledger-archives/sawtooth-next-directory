@@ -116,7 +116,7 @@ class MemberList extends Component {
         </Grid.Column>
       );
     }
-    else return null;
+    return null;
   }
 
 
