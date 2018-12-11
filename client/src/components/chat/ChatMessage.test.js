@@ -32,13 +32,13 @@ describe('ChatMessage component', () => {
 
     const props = {
       messages: [{ text: 'message text' }],
-    }
+    };
 
     ReactDOM.render(
       <Provider store={store}>
-      <BrowserRouter><ChatMessage {...props} /></BrowserRouter>
-    </Provider>, div
+        <BrowserRouter><ChatMessage {...props} /></BrowserRouter>
+      </Provider>, div
     );
     ReactDOM.unmountComponentAtNode(div);
-  })
+  });
 });

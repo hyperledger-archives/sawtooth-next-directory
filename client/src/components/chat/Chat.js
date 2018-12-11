@@ -31,6 +31,10 @@ import ChatForm from '../forms/ChatForm';
 import ChatMessage from './ChatMessage';
 
 
+import chatRequester from '../../mock_data/conversation_action.json';
+import chatApprover from '../../mock_data/conversation_action.1.json';
+
+
 // TODO: Break out into child components
 /**
  *
@@ -161,7 +165,6 @@ class Chat extends Component {
     const {
       disabled,
       handleChange,
-      selectedProposal,
       selectedRoles,
       selectedUsers,
       subtitle,
@@ -169,27 +172,17 @@ class Chat extends Component {
       groupBy,
       type } = this.props;
 
+    // ! Temporary
+    const actions = type ? chatApprover.actions :
+      chatRequester.actions;
+
     return (
       <div id='next-chat-container'>
         { type === 'REQUESTER' && title &&
           <Header id='next-chat-header' size='small' inverted>
             {title}
-            <Icon link name='pin' size='mini' className='pull-right' />
+            <Icon link name='pin' size='mini' className='pull-right'/>
           </Header>
-        }
-
-        { type === 'APPROVER' && selectedProposal && title && subtitle &&
-          <div id='next-chat-selection-heading-container'>
-            <Image
-              size='tiny'
-              className='pull-left'
-              src='http://i.pravatar.cc/150'
-              avatar/>
-            <Header as='h3' inverted>
-              {title}
-              <Header.Subheader>{subtitle}</Header.Subheader>
-            </Header>
-          </div>
         }
 
         { type === 'APPROVER' && selectedUsers &&
@@ -198,20 +191,20 @@ class Chat extends Component {
               as={List}
               horizontal
               animation='fade right'
-              duration={{ hide: 0, show: 1000 }}>
-              {selectedUsers.map(user => (
+              duration={{hide: 0, show: 1000}}>
+              { selectedUsers.map(user => (
                 <Image
                   key={user}
                   size='tiny'
                   className='pull-left'
                   src='http://i.pravatar.cc/150'
-                  avatar />
-              ))}
+                  avatar/>
+              )) }
             </Transition.Group>
             <Transition
               visible={selectedUsers.length > 0}
               animation='fade left'
-              duration={{ hide: 0, show: 300 }}>
+              duration={{hide: 0, show: 300}}>
               <Header as='h3' inverted>
                 {selectedUsers.length === 1 && title}
                 <Header.Subheader>{subtitle}</Header.Subheader>
@@ -225,16 +218,16 @@ class Chat extends Component {
             <Transition.Group
               as={List}
               animation='fade down'
-              duration={{ hide: 300, show: 300 }}>
-              {selectedUsers.map(user => (
+              duration={{hide: 300, show: 300}}>
+              { selectedUsers.map(user => (
                 <Segment className='minimal' padded='very' key={user}>
                   <Checkbox
                     checked={!!user}
                     user={user}
                     label={this.userName(user)}
-                    onChange={handleChange} />
+                    onChange={handleChange}/>
                 </Segment>
-              ))}
+              )) }
             </Transition.Group>
           </div>
         }
@@ -244,33 +237,23 @@ class Chat extends Component {
             <Transition.Group
               as={List}
               animation='fade down'
-              duration={{ hide: 300, show: 300 }}>
-              {[...new Set(selectedRoles)].map(role => (
+              duration={{hide: 300, show: 300}}>
+              { [...new Set(selectedRoles)].map(role => (
                 <Segment className='minimal' padded='very' key={role}>
                   <Checkbox
                     checked={!!role}
                     role={role}
                     label={this.roleName(role)}
-                    onChange={handleChange} />
+                    onChange={handleChange}/>
                 </Segment>
-              ))}
+              )) }
             </Transition.Group>
-          </div>
-        }
-
-        { type === 'APPROVER' && selectedProposal &&
-          <div id='next-chat-messages-container'>
-            <ChatMessage
-              messages={[{
-                text: selectedProposal.open_reason,
-                from: selectedProposal.opener,
-              }]}/>
           </div>
         }
 
         { type === 'REQUESTER' &&
           <div id='next-chat-messages-container'>
-            <ChatMessage {...this.props} />
+            <ChatMessage {...this.props}/>
           </div>
         }
 
@@ -278,6 +261,7 @@ class Chat extends Component {
           <ChatForm
             {...this.props}
             disabled={disabled}
+            actions={actions}
             approve={this.manualApprove}
             reject={this.manualReject}
             send={(message) => this.send(message)}/>

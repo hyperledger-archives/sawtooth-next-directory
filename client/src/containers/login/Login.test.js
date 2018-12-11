@@ -33,7 +33,7 @@ it('renders without crashing', () => {
   const props = {
     recommended: [{ name: 'abc' }],
     isAuthenticated: true,
-    history: { push: () => { } }
+    history: { push: () => { } },
   };
 
   ReactDOM.render(

@@ -181,7 +181,7 @@ class ChatForm extends Component {
               { !disabled &&
                 <span>{button.title}</span>
               }
-              {disabled &&
+              { disabled &&
                 <span></span>
               }
             </Button>
@@ -258,7 +258,7 @@ class ChatForm extends Component {
               <input autoComplete='off'/>
               <Icon
                 link
-                id='next-name-chatSubmit'
+                id='next-name-chat-submit'
                 name='paper plane'
                 onClick={() => this.handleSend(message)}/>
             </Form.Input>

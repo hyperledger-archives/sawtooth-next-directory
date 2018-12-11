@@ -35,13 +35,13 @@ describe('Header component', () => {
     const props = {
       me: { name: 'username' },
       openProposalsCount: 5,
-      renderMenu: () => { return },
+      renderMenu: () => {  },
       logout: () => { },
     };
     ReactDOM.render(
       <Provider store={store}>
-      <BrowserRouter><Header {...props} /></BrowserRouter>
-    </Provider>, div
+        <BrowserRouter><Header {...props} /></BrowserRouter>
+      </Provider>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
@@ -51,7 +51,7 @@ describe('Header component', () => {
     const props = {
       me: { name: 'username' },
       openProposalsCount: 5,
-      renderMenu: () => { return },
+      renderMenu: () => {  },
       logout: () => { },
     };
 

@@ -26,7 +26,7 @@ import LoginForm from './LoginForm';
 describe('LoginForm component', () => {
 
   const props = {
-    submit: (username, password) => { }
+    submit: (username, password) => { },
   };
   const wrapper = shallow(<LoginForm {...props} />);
 
@@ -42,9 +42,12 @@ describe('LoginForm component', () => {
 
   test('username form', () => {
     wrapper.find('#next-username-form').simulate('submit');
-    wrapper.find('#next-username-input').simulate('change', { event: {} }, { name: 'username', value: '' });
-    wrapper.find('#next-username-input').simulate('change', { event: {} }, { name: 'password', value: '' });
-    wrapper.find('#next-username-input').simulate('change', { event: {} }, { name: 'resetEmail', value: '' });
+    wrapper.find('#next-username-input').simulate('change',
+      { event: {} }, { name: 'username', value: '' });
+    wrapper.find('#next-username-input').simulate('change',
+      { event: {} }, { name: 'password', value: '' });
+    wrapper.find('#next-username-input').simulate('change',
+      { event: {} }, { name: 'resetEmail', value: '' });
   });
 
   test('password form', () => {

@@ -42,12 +42,11 @@ export default class StackedAvatar extends Component {
 
     if (list) {
       return list.map((item, index) => {
-        if (index > 3)
-          return null;
+        if (index > 3) return null;
 
         if (index === 3) {
           return (
-            <div className='next-avatar-element'>
+            <div key={index} className='next-avatar-element'>
               <Icon inverted name='add' size='tiny' />
             </div>
           );
@@ -82,7 +81,7 @@ export default class StackedAvatar extends Component {
           {this.renderAvatars()}
         </div>
         <div className='next-avatar-count'>
-          {`${list ? list.length : 0} Members`}
+          {memberLabel}
         </div>
       </div>
     );

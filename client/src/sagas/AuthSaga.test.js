@@ -33,12 +33,12 @@ test.skip('first calls API', () => {
 
   const step = stepper(login(FixtureAPI, {
     username: username,
-    password: password
+    password: password,
   }));
 
   expect(step()).toEqual(call(FixtureAPI.login, {
     id: username,
-    password: password
+    password: password,
   }));
 });
 
@@ -50,7 +50,7 @@ test.skip('success path', () => {
   const res = FixtureAPI.login(username, password);
   const step = stepper(login(FixtureAPI, {
     username: username,
-    password: password
+    password: password,
   }));
 
   step();
@@ -68,7 +68,7 @@ test.skip('failure path', () => {
 
   const step = stepper(login(FixtureAPI, {
     username: username,
-    password: password
+    password: password,
   }));
 
   step();
@@ -87,13 +87,13 @@ test.skip('signup API', () => {
     username: username,
     password: password,
     name: name,
-    email: email
+    email: email,
   }));
   expect(step()).toEqual(call(FixtureAPI.signup, {
     username: username,
     password: password,
     name: name,
-    email: email
+    email: email,
   }));
 });
 
@@ -108,7 +108,7 @@ test.skip('signup success path', () => {
     name: name,
     username: username,
     password: password,
-    email: email
+    email: email,
   }));
 
   step();
@@ -129,7 +129,7 @@ test.skip('signup failure path', () => {
     username: username,
     password: password,
     name: name,
-    email: email
+    email: email,
 
   }));
 
@@ -160,7 +160,7 @@ test('logout success path', () => {
 
 test('failure path', () => {
 
-  const res = { ok: false, data: {} }
+  const res = { ok: false, data: {} };
 
   const step = stepper(logout(FixtureAPI, {}));
 

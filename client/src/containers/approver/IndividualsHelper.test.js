@@ -13,11 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-import { syncAll, syncFromCategory, syncFromItem, syncUsers } from './IndividualsHelper';
+import { syncAll, syncFromCategory, syncFromItem,
+  syncUsers } from './IndividualsHelper';
 
 describe('Individuals helper test', () => {
   it('should call syncAll function', function () {
-    const checked = true, roleId = 'roleID', proposalId = 'proposalID', userId = 'userID';
+    const checked = true, roleId = 'roleID',
+      proposalId = 'proposalID', userId = 'userID';
     let self = this;
     self.props = { openProposalsByRole: { 'roleID': [] } };
     self.state = { selectedProposals: '', selectedRoles: '' };
@@ -28,13 +30,15 @@ describe('Individuals helper test', () => {
       roleId,
       proposalId,
       userId,
-    )
+    );
 
-    expect(generator.next().value).toEqual({ 'proposals': '', 'roles': ['roleID'] });
+    expect(generator.next().value).toEqual({ 'proposals': '',
+      'roles': ['roleID'] });
   });
 
   it('should call syncFromCategory function', function () {
-    const checked = true, roleId = 'roleID', proposalId = 'proposalID', userId = 'userID';
+    const checked = true, roleId = 'roleID',
+      proposalId = 'proposalID', userId = 'userID';
     let self = this;
     self.props = { openProposalsByRole: { 'roleID': [{ id: 'userID' }] } };
     self.state = { selectedProposals: '', selectedRoles: '' };
@@ -45,15 +49,17 @@ describe('Individuals helper test', () => {
       roleId,
       proposalId,
       userId,
-    )
+    );
 
-    expect(generator.next().value).toEqual({ 'changedUsers': [undefined], 'proposals': ['userID'], 'roles': ['roleID'] });
+    expect(generator.next().value).toEqual({ 'changedUsers': [undefined],
+      'proposals': ['userID'], 'roles': ['roleID'] });
   });
 
   it('should call syncFromItem function', function () {
     const checked = true, proposalId = 'proposalID', userId = 'userID';
     let self = this;
-    self.props = { openProposalsByUser: { 'userID': [{ id: '' }] }, openProposalFromId: () => { } };
+    self.props = { openProposalsByUser: { 'userID': [{ id: '' }] },
+      openProposalFromId: () => { } };
     self.state = { selectedProposals: '', selectedRoles: '' };
 
     const generator = syncFromItem.call(
@@ -61,15 +67,17 @@ describe('Individuals helper test', () => {
       checked,
       null,
       userId,
-    )
+    );
 
-    expect(generator.next().value).toEqual({ changedUsers: ['userID'], 'proposals': '', 'roles': [undefined] });
+    expect(generator.next().value).toEqual({ changedUsers: ['userID'],
+      'proposals': '', 'roles': [undefined] });
   });
 
   it('should call syncUsers function', function () {
     const checked = true, proposalId = 'proposalID', userId = 'userID';
     let self = this;
-    self.props = { openProposalsByUser: { 'userID': [{ id: '' }] }, openProposalFromId: () => { } };
+    self.props = { openProposalsByUser: { 'userID': [{ id: '' }] },
+      openProposalFromId: () => { } };
     self.state = { selectedUsers: '' };
 
     const generator = syncUsers.call(
@@ -77,7 +85,7 @@ describe('Individuals helper test', () => {
       checked,
       ['userID'],
       proposalId,
-    )
+    );
 
     expect(generator.next().value).toEqual({ users: ['userID'] });
   });

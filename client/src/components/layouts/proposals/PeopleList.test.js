@@ -31,12 +31,13 @@ describe('PeopleList component', () => {
     const props = {
       getUsers: (collection) => { },
       openProposalsByUser: { proposal1: [''] },
-      users: [{ id: 'proposal1', name: 'username', email: 'defaultuser@gmail.com' }],
+      users: [{ id: 'proposal1', name: 'username',
+        email: 'defaultuser@gmail.com' }],
       openProposalsByRole: { roleProposal1: [{ id: 'userid' }] },
       handleChange: () => { },
       selectedProposals: ['userid'],
       selectedUsers: ['userid'],
-      roleFromId: () => { return }
+      roleFromId: () => {  },
     };
 
 
@@ -48,7 +49,7 @@ describe('PeopleList component', () => {
     ReactDOM.unmountComponentAtNode(div);
     const wrapper = shallow(
       <PeopleList {...props} />);
-    wrapper.instance().componentDidUpdate(props)
+    wrapper.instance().componentDidUpdate(props);
   });
-  
+
 });

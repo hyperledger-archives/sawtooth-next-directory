@@ -30,10 +30,10 @@ import './MemberList.css';
 class MemberList extends Component {
 
   static propTypes = {
-    getUsers: PropTypes.func,
-    members: PropTypes.array,
-    owners: PropTypes.array,
-    users: PropTypes.array,
+    getUsers:           PropTypes.func,
+    members:            PropTypes.array,
+    owners:             PropTypes.array,
+    users:               PropTypes.array,
   }
 
 
@@ -42,7 +42,7 @@ class MemberList extends Component {
    * Get users needed to display info for owners and members if
    * not already loaded in client
    */
-  componentDidMount() {
+  componentDidMount   () {
     const { getUsers, members, owners, users } = this.props;
     if (!owners || !members) return;
 
@@ -130,13 +130,13 @@ class MemberList extends Component {
     return (
       <div>
         <Grid columns={3} stackable>
-          {owners && owners.map((owner) => (
+          { owners && owners.map((owner) => (
             this.renderUserSegment(owner, true)
-          ))}
+          )) }
 
-          {members && members.map((member) => (
+          { members && members.map((member) => (
             this.renderUserSegment(member)
-          ))}
+          )) }
         </Grid>
 
       </div>

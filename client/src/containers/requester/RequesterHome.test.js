@@ -27,13 +27,13 @@ const props = {
   isAuthenticated: true,
   recommended: [{ id: '', name: '' }],
   recommendedPacks: [],
-  recommendedRoles: []
+  recommendedRoles: [],
 };
 
 const prevProps = {
   recommendedPacks: [{id: 'pack-id'}],
-  recommendedRoles: [{id: 'role-id'}]
-}
+  recommendedRoles: [{id: 'role-id'}],
+};
 
 it('renders without crashing', () => {
   const div = document.createElement('div');

@@ -13,7 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-import { getToken, get, getUserId, set, setToken, setUserId, remove, removeToken, removeUserId } from './Storage';
+import { getToken, get, getUserId, set, setToken, setUserId, remove,
+  removeToken, removeUserId } from './Storage';
 
 
 describe('Storage Service', () => {

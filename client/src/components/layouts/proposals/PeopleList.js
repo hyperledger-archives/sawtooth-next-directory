@@ -127,7 +127,7 @@ class PeopleList extends Component {
     return (
       proposals.map((proposal) => (
         <List.Item key={proposal.id}>
-          <List.Header>
+          <List.Header key={proposal.id}>
             <span className='next-people-list-proposal'>
               <Checkbox
                 checked={this.isRoleChecked(proposal)}

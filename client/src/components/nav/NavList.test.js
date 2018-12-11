@@ -33,7 +33,7 @@ describe('NavList component', () => {
       dynamic: false,
       list: ['List header'],
       listTitle: 'Title',
-      route: '/home/requests'
+      route: '/home/requests',
     };
 
     ReactDOM.render(

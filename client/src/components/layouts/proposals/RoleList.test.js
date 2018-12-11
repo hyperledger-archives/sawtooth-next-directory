@@ -36,7 +36,7 @@ describe('RoleList component', () => {
       handleChange: () => { },
       selectedProposals: ['roleid'],
       selectedRoles: ['roleid'],
-      roleFromId: () => { return }
+      roleFromId: () => {  },
     };
 
     ReactDOM.render(
@@ -46,7 +46,7 @@ describe('RoleList component', () => {
     ReactDOM.unmountComponentAtNode(div);
     const wrapper = shallow(
       <RoleList {...props} />);
-    wrapper.instance().componentDidUpdate(props)
+    wrapper.instance().componentDidUpdate(props);
   });
-  
+
 });

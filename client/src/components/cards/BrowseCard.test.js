@@ -30,8 +30,8 @@ describe('BrowseCard component', () => {
       details: {
         name: '',
         category: '',
-        admins: []
-      }
+        admins: [],
+      },
     };
 
     ReactDOM.render(
@@ -40,13 +40,13 @@ describe('BrowseCard component', () => {
     ReactDOM.unmountComponentAtNode(div);
   });
 
-  it("calls prop `onToggle` when icon clicked", () => {
+  it('calls prop `onToggle` when icon clicked', () => {
     const props = {
       details: {
         name: '',
         category: '',
-        admins: []
-      }
+        admins: [],
+      },
     };
 
     const wrapper = shallow(<BrowseCard {...props} />);

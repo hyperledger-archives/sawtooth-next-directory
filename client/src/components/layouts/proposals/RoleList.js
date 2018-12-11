@@ -29,14 +29,14 @@ import './RoleList.css';
 class RoleList extends Component {
 
   static propTypes = {
-    getUsers: PropTypes.func,
-    handleChange: PropTypes.func,
-    openProposalsByRole: PropTypes.object,
-    openProposalsByUser: PropTypes.object,
-    roleFromId: PropTypes.func,
-    selectedRoles: PropTypes.array,
-    selectedProposals: PropTypes.array,
-    users: PropTypes.array,
+    getUsers:              PropTypes.func,
+    handleChange:          PropTypes.func,
+    openProposalsByRole:   PropTypes.object,
+    openProposalsByUser:   PropTypes.object,
+    roleFromId:            PropTypes.func,
+    selectedRoles:         PropTypes.array,
+    selectedProposals:     PropTypes.array,
+    users:                 PropTypes.array,
   };
 
 
@@ -44,7 +44,7 @@ class RoleList extends Component {
    * Entry point to perform tasks required to render
    * component. Get users not loaded in client.
    */
-  componentDidMount() {
+  componentDidMount  () {
     const { getUsers, openProposalsByUser, users } = this.props;
 
     if (!openProposalsByUser) return;
@@ -94,11 +94,11 @@ class RoleList extends Component {
    * @param {string} roleId Role ID
    * @returns {JSX}
    */
-  renderUsers(roleId) {
+  renderUsers  (roleId) {
     const { openProposalsByRole } = this.props;
     return (
       <div className='pull-right'>
-        {openProposalsByRole[roleId].map(proposal => (
+        {  openProposalsByRole[roleId].map(proposal => (
           <Image
             key={proposal.id}
             src={'http://i.pravatar.cc/150?' + proposal.id}
@@ -144,7 +144,7 @@ class RoleList extends Component {
    * @param {string} roleId Role ID
    * @returns {JSX}
    */
-  renderRoleItem(roleId) {
+  renderRoleItem (roleId) {
     const { handleChange } = this.props;
     return (
       <div className='next-role-list-item' key={roleId}>
@@ -154,7 +154,7 @@ class RoleList extends Component {
             checked={this.isRoleChecked(roleId)}
             role={roleId}
             label={this.roleName(roleId)}
-            onChange={handleChange} />
+            onChange={handleChange}/>
           {this.renderUsers(roleId)}
         </Segment>
       </div>
@@ -172,7 +172,7 @@ class RoleList extends Component {
 
     return (
       <div id='next-roles-list-container'>
-        {Object.keys(openProposalsByRole).map(roleId => (
+        { Object.keys(openProposalsByRole).map(roleId => (
           this.renderRoleItem(roleId)
         ))}
       </div>

@@ -33,11 +33,11 @@ describe('Chat component', () => {
     const props = {
       submit: (username, password) => { },
       title: 'defaultTitle',
-      type: 1,
+      type: '1',
       selectedUsers: ['userID'],
       groupBy: 0,
-      userFromId: (userId) => { return }
-    }
+      userFromId: (userId) => {  },
+    };
 
     ReactDOM.render(
       <BrowserRouter><Chat store={store} {...props} /></BrowserRouter>, div
@@ -52,25 +52,30 @@ describe('Chat component', () => {
     const props = {
       submit: (username, password) => { },
       title: 'defaultTitle',
-      type: 1,
+      type: '1',
       selectedUsers: ['userID'],
       groupBy: 1,
-      userFromId: (userId) => { return { name: '' } }
-    }
+      userFromId: (userId) => {
+        return { name: '' };
+      },
+    };
 
     const newProps = {
-      type: 1,
+      type: '1',
       groupBy: 1,
       selectedRoles: [{ id: 'roleid' }],
-      roleFromId: () => { return { name: '' } }
-    }
+      roleFromId: () => {
+        return { name: '' };
+      },
+    };
 
     ReactDOM.render(
       <BrowserRouter><Chat store={store} {...props} /></BrowserRouter>, div
     );
 
     ReactDOM.render(
-      <BrowserRouter><Chat store={store} title='defaultTitle' type={0} /></BrowserRouter>, div
+      <BrowserRouter><Chat store={store}
+        title='defaultTitle' type={'0'} /></BrowserRouter>, div
     );
 
     ReactDOM.render(
@@ -78,7 +83,7 @@ describe('Chat component', () => {
     );
 
     ReactDOM.render(
-      <BrowserRouter><Chat type={0} store={store} /></BrowserRouter>, div
+      <BrowserRouter><Chat type={'0'} store={store} /></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
@@ -86,19 +91,19 @@ describe('Chat component', () => {
   test('expect send function to be called', () => {
     const props = {
       sendMessage: () => { },
-      type: 0,
+      type: '0',
       activeRole: { id: 'abc' },
       me: { id: 'asdf' },
-      requestAccess: () => { }
+      requestAccess: () => { },
     };
 
     const newProps = {
       sendMessage: () => { },
-      type: 1,
+      type: '1',
       activeRole: { id: 'abc' },
       me: { id: 'asdf' },
       approveProposals: () => { },
-      reset: () => { }
+      reset: () => { },
     };
 
     const wrapper = shallow(<Chat {...props}  store={store} />);

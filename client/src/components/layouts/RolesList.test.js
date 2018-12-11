@@ -30,8 +30,8 @@ describe('RolesList component', () => {
     const props = {
       activeRole: {
         description: 'pack description',
-        roles: [{ name: 'role name' }]
-      }
+        roles: [{ name: 'role name' }],
+      },
     };
 
     ReactDOM.render(

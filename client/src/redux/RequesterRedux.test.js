@@ -24,7 +24,7 @@ test.skip('baseRequest', () => {
 });
 
 test('roleRequest', () => {
-  const id = 'abc123'
+  const id = 'abc123';
   const state = reducer(INITIAL_STATE, Actions.roleRequest(id));
 
   expect(state.fetching).toBe(true);

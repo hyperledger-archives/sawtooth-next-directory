@@ -22,8 +22,7 @@ import {
   Label,
   Image,
   Input,
-  Transition,
-} from 'semantic-ui-react';
+  Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -42,10 +41,10 @@ class LoginForm extends Component {
 
   state = {
     activeIndex: 0, username: '', password: '',
-    validUsername: null,
-    validPassword: null,
-    validEmail: null,
-    resetEmail: '',
+    validUsername:  null,
+    validPassword:  null,
+    validEmail:     null,
+    resetEmail:     '',
   };
 
 
@@ -91,7 +90,7 @@ class LoginForm extends Component {
    * Render entrypoint
    * @returns {JSX}
    */
-  render() {
+  render () {
     const { submit } = this.props;
     const {
       activeIndex,
@@ -162,7 +161,7 @@ class LoginForm extends Component {
                 type='button'
                 icon='left arrow'
                 labelPosition='left'
-                onClick={() => this.setFlow(0)} />
+                onClick={() => this.setFlow(0)}/>
               <Form.Field id='next-login-form-password'>
                 <Input
                   autoFocus
@@ -171,14 +170,14 @@ class LoginForm extends Component {
                   type='password'
                   placeholder='Password'
                   value={password}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
                 <Label>
                   <Button
                     id='next-login-form-forgot-password'
                     className='link'
                     type='button'
                     onClick={() => this.setFlow(2)}>
-                    Forgot Password?
+                  Forgot Password?
                   </Button>
                 </Label>
               </Form.Field>
@@ -187,7 +186,7 @@ class LoginForm extends Component {
                   content='Login'
                   disabled={!validPassword}
                   icon='right arrow'
-                  labelPosition='right' />
+                  labelPosition='right'/>
               </Container>
             </Form>
           </div>
@@ -206,21 +205,21 @@ class LoginForm extends Component {
                   type='button'
                   icon='left arrow'
                   labelPosition='left'
-                  onClick={() => this.setFlow(1)} />
+                  onClick={() => this.setFlow(1)}/>
                 <Input
                   autoFocus
                   name='resetEmail'
                   type='text'
                   placeholder='Email'
                   value={resetEmail}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button
                   content='Reset Password'
                   disabled={!validEmail}
                   icon='right arrow'
-                  labelPosition='right' />
+                  labelPosition='right'/>
               </Container>
             </Form>
           </div>

@@ -29,13 +29,13 @@ const store = customStore.create();
 const props = {
   getOpenProposals: () => { },
   userFromId: () => { },
-  openProposals: ['']
+  openProposals: [''],
 };
 
 const newprops = {
   getOpenProposals: () => { },
   userFromId: () => { },
-  openProposals: []
+  openProposals: [],
 };
 const wrapper = shallow(<Individuals {...props} store={store} />);
 

@@ -35,8 +35,8 @@ import './Browse.css';
 class Browse extends Component {
 
   static propTypes = {
-    allRoles: PropTypes.array,
-    getAllRoles: PropTypes.func,
+    allRoles:            PropTypes.array,
+    getAllRoles:         PropTypes.func,
   };
 
 
@@ -47,7 +47,7 @@ class Browse extends Component {
    * Entry point to perform tasks required to render
    * component. On load, get roles
    */
-  componentDidMount(){
+  componentDidMount (){
     const { getAllRoles } = this.props;
     // TODO: Pagination
     getAllRoles();
@@ -82,7 +82,7 @@ class Browse extends Component {
    * @param {array} layoutData ?
    * @returns {JSX}
    */
-  renderLayout(layoutData) {
+  renderLayout (layoutData) {
     const{ rolesData } = this.state;
     let data = layoutData ? layoutData : rolesData;
 

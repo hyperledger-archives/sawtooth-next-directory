@@ -21,7 +21,8 @@ describe('Utils Service', () => {
 
   test('create slug', () => {
     expect(createSlug('create Slug string')).toBe('create-slug-string');
-    expect(createSlug('', { name: 'create slug string' })).toBe('create-slug-string');
+    expect(createSlug('', { name: 'create slug string' }))
+      .toBe('create-slug-string');
   });
 
   test('test groupby', () => {

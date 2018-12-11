@@ -35,7 +35,7 @@ describe('RequesterNav component', () => {
       getRole: (id) => {},
       isAuthenticated: true,
       requests: null,
-      routes: () => {}
+      routes: () => {},
     };
 
     ReactDOM.render(

@@ -31,7 +31,7 @@ const props = {
   allRoles: [{ id: 'role-id-1' }, { id: 'role-id-2' }],
 };
 const prevProp = {
-  allRoles: null
+  allRoles: null,
 };
 const formatedData = [[{ id: 'role-id-1' }], [{ id: 'role-id-2' }], [], []];
 const wrapper = shallow(<Browse store={store} {...props} />);

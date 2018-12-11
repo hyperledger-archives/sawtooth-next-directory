@@ -22,18 +22,18 @@ import StackedAvatar from './StackedAvatar';
 
 describe('StackedAvatar component', () => {
 
-    it('Renders more than 3 components', () => {
-        const div = document.createElement('div');
+  it('Renders more than 3 components', () => {
+    const div = document.createElement('div');
 
-        const props = {
-            list: ['one', 'two', 'three', 'four', 'five'],
-        };
+    const props = {
+      list: ['one', 'two', 'three', 'four', 'five'],
+    };
 
-        ReactDOM.render(
-            <StackedAvatar {...props} />, div
-        );
+    ReactDOM.render(
+      <StackedAvatar {...props} />, div
+    );
 
-        ReactDOM.unmountComponentAtNode(div);
-    });
+    ReactDOM.unmountComponentAtNode(div);
+  });
 
 });

@@ -33,12 +33,14 @@ const props = {
   getRoles: () => { },
   me: {
     proposals: [{ id: 'proposalID' }],
-    memberOf: ['']
+    memberOf: [''],
   },
   roles: [],
   getBase: () => { },
   isAuthenticated: false,
-  routes: () => { return [{ path: '/path', exact: '', nav: '' }] }
+  routes: () => {
+    return [{ path: '/path', exact: true, nav: '' }];
+  },
 };
 
 const newProps = {
@@ -47,11 +49,13 @@ const newProps = {
   sendMessage: () => { },
   me: {
     proposals: [{ id: 'proposalID' }],
-    memberOf: ['']
+    memberOf: [''],
   },
   id: 'aaa',
-  routes: () => { return [{ path: '/path', exact: '', nav: '' }] }
-}
+  routes: () => {
+    return [{ path: '/path', exact: true, nav: '' }];
+  },
+};
 
 const wrapper = shallow(<App {...props} store={store} />);
 

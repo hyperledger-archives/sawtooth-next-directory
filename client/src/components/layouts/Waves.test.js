@@ -30,7 +30,7 @@ describe('Waves component', () => {
     const props = {
       location: { pathname: 'route' },
       isAnimating: false,
-      stopAnimation: () => { }
+      stopAnimation: () => { },
     };
 
     ReactDOM.render(

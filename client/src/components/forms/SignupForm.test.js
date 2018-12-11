@@ -9,8 +9,8 @@ import SignupForm from './SignupForm';
 
 describe('SignupForm component', () => {
   const props = {
-    submit: (username, password) => { }
-  }
+    submit: (username, password) => { },
+  };
   const wrapper = shallow(<SignupForm {...props} />);
 
 
@@ -26,14 +26,18 @@ describe('SignupForm component', () => {
 
   test('username form', () => {
     wrapper.find('#next-signup-form-1').simulate('submit');
-    wrapper.find('#next-name-signupInput').simulate('change', { event: {} }, { name: 'name', value: '' });
-    wrapper.find('#next-email-signupInput').simulate('change', { event: {} }, { name: 'email', value: '' });
-    wrapper.find('#next-username-signupInput').simulate('change', { event: {} }, { name: 'username', value: '' });
-    wrapper.find('#next-password-signupInput').simulate('change', { event: {} }, { name: 'password', value: '' });
+    wrapper.find('#next-name-signup-input').simulate('change',
+      { event: {} }, { name: 'name', value: '' });
+    wrapper.find('#next-email-signup-input').simulate('change',
+      { event: {} }, { name: 'email', value: '' });
+    wrapper.find('#next-username-signup-input').simulate('change',
+      { event: {} }, { name: 'username', value: '' });
+    wrapper.find('#next-password-signup-input').simulate('change',
+      { event: {} }, { name: 'password', value: '' });
   });
 
   test('password form', () => {
-    wrapper.find('#next-password-signupForm').simulate('submit');
+    wrapper.find('#next-password-signup-form').simulate('submit');
   });
 
   test('form back button click event', () => {

@@ -28,19 +28,19 @@ describe('MemberList component', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     const props = {
-      getUsers: (collection) => { return },
+      getUsers: (collection) => {  },
       members: ['props'],
       owners: [''],
-      users: [{ id: 'proposal1' }]
+      users: [{ id: 'proposal1' }],
 
-    }
+    };
     const newProps = {
-      getUsers: (collection) => { return },
+      getUsers: (collection) => {  },
       members: ['newProps'],
       owners: [''],
-      users: [{ id: 'proposal1' }]
+      users: [{ id: 'proposal1' }],
 
-    }
+    };
 
     ReactDOM.render(
       <BrowserRouter><MemberList {...props} /></BrowserRouter>, div

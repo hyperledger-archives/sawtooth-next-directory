@@ -26,7 +26,7 @@ import ChatForm from './ChatForm';
 describe('ChatForm component', () => {
   const props = {
     submit: (username, password) => { },
-    send: () => {}
+    send: () => {},
   };
   const wrapper = shallow(<ChatForm {...props} />);
   it('renders without crashing', () => {
@@ -43,7 +43,7 @@ describe('ChatForm component', () => {
   });
 
   test('form  button click event', () => {
-    wrapper.find('#next-name-chatSubmit').simulate('click');
+    wrapper.find('#next-name-chat-submit').simulate('click');
   });
 
 });

@@ -32,7 +32,7 @@ test('chat conversation', () => {
   const id = '490d7d4c-6e07-4795-b785-7a0146d4ec0f';
 
   const step = stepper(getConversation(FixtureAPI, {
-    id
+    id,
   }));
 
   expect(step()).toEqual(call(FixtureAPI.getConversation, id));
@@ -43,7 +43,7 @@ test('conversation success', () => {
   const res = FixtureAPI.getConversation(id);
 
   const step = stepper(getConversation(FixtureAPI, {
-    id: id
+    id: id,
   }));
 
   step();
@@ -57,7 +57,7 @@ test('conversation failure', () => {
   const id = '';
 
   const step = stepper(getConversation(FixtureAPI, {
-    id: id
+    id: id,
   }));
 
   step();

@@ -33,13 +33,17 @@ it('renders without crashing', () => {
 
   const props = {
     getRole: (id) => { },
-    roleFromId: () => { return { members: [], owners: [] } },
-    proposalFromId: () => { return { status: 'OPEN' } },
+    roleFromId: () => {
+      return { members: [], owners: [] };
+    },
+    proposalFromId: () => {
+      return { status: 'OPEN' };
+    },
     getProposal: (id) => { },
     proposalId: 'id-1',
     roleId: 'id-2',
     match: { params: {} },
-    requester: { requests: [] }
+    requester: { requests: [] },
   };
 
   ReactDOM.render(

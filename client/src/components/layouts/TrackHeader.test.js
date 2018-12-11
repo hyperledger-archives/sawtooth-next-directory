@@ -28,11 +28,11 @@ describe('TrackHeader component', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     const props = {
-      getUser: (UserId) => { return },
+      getUser: (UserId) => {  },
       users: [{ id: 'proposal1' }],
       openProposalsByUser: { proposal1: [''] },
-      request: { appprovers: [''] }
-    }
+      request: { appprovers: [''] },
+    };
 
     ReactDOM.render(
       <BrowserRouter><TrackHeader/></BrowserRouter>, div

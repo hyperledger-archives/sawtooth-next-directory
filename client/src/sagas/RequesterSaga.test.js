@@ -64,7 +64,7 @@ test.skip('getRole: first calls API', () => {
   const id = 'e15a71ee-58d2-49e8-a8e4-21888144be1f';
 
   const step = stepper(getRole(FixtureAPI, {
-    id: id
+    id: id,
   }));
 
   expect(step()).toEqual(call(FixtureAPI.getRole, id));
