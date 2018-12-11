@@ -91,15 +91,24 @@ def to_date_ldap_query(rethink_timestamp):
 def insert_to_db(data_dict, when_changed):
     """Insert (Users | Groups) individually to RethinkDB from dict of data and begins delta sync timer."""
     insertion_counter = 0
+
     for entry in data_dict:
+        entry_to_insert = {}
+        entry_json = json.loads(entry.entry_to_json())
+        entry_attributes = entry_json["attributes"]
+        for attribute in entry_attributes:
+            if len(entry_attributes[attribute]) > 1:
+                entry_to_insert[attribute] = entry_attributes[attribute]
+            else:
+                entry_to_insert[attribute] = entry_attributes[attribute][0]
+
         if entry.whenChanged.value > when_changed:
-            entry_data = json.loads(entry.entry_to_json())["attributes"]
             if "person" in entry.objectClass.value:
                 data_type = "user"
-                standardized_entry = inbound_user_filter(entry_data, "ldap")
+                standardized_entry = inbound_user_filter(entry_to_insert, "ldap")
             else:
                 data_type = "group"
-                standardized_entry = inbound_group_filter(entry_data, "ldap")
+                standardized_entry = inbound_group_filter(entry_to_insert, "ldap")
             entry_modified_timestamp = entry.whenChanged.value.strftime(
                 "%Y-%m-%dT%H:%M:%S.%f+00:00"
             )
