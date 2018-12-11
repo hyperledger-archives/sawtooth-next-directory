@@ -82,11 +82,19 @@ def fetch_ldap_data(data_type):
 def insert_to_db(data_dict, data_type):
     """Insert (Users | Groups) individually to RethinkDB from dict of data and begins delta sync timer."""
     for entry in data_dict:
-        entry_data = json.loads(entry.entry_to_json())["attributes"]
+        entry_to_insert = {}
+        entry_json = json.loads(entry.entry_to_json())
+        entry_attributes = entry_json["attributes"]
+        for attribute in entry_attributes:
+            if len(entry_attributes[attribute]) > 1:
+                entry_to_insert[attribute] = entry_attributes[attribute]
+            else:
+                entry_to_insert[attribute] = entry_attributes[attribute][0]
+
         if data_type == "user":
-            standardized_entry = inbound_user_filter(entry_data, "ldap")
+            standardized_entry = inbound_user_filter(entry_to_insert, "ldap")
         elif data_type == "group":
-            standardized_entry = inbound_group_filter(entry_data, "ldap")
+            standardized_entry = inbound_group_filter(entry_to_insert, "ldap")
         inbound_entry = {
             "data": standardized_entry,
             "data_type": data_type,

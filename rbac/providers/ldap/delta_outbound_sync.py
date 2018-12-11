@@ -167,11 +167,11 @@ def modify_ad_attributes(distinguished_name, validated_entry, ldap_conn):
                 dn=distinguished_name,
                 changes={ad_attribute: [(MODIFY_REPLACE, [validated_entry["member"]])]},
             )
-        else:
+        elif ad_attribute != "distinguishedName":
             ldap_conn.modify(
                 dn=distinguished_name,
                 changes={
-                    ad_attribute: [(MODIFY_REPLACE, [validated_entry[ad_attribute][0]])]
+                    ad_attribute: [(MODIFY_REPLACE, [validated_entry[ad_attribute]])]
                 },
             )
 
@@ -180,7 +180,7 @@ def get_distinguished_name(queue_entry):
     """Returns the distinguished_name of the queue entry."""
     sawtooth_entry = queue_entry["data"]
     if "distinguished_name" in sawtooth_entry:
-        return sawtooth_entry["distinguished_name"][0]
+        return sawtooth_entry["distinguished_name"]
     raise ValidationException("Payload does not have a distinguished_name.")
 
 
