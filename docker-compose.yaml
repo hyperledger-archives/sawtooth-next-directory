@@ -40,24 +40,6 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - AES_KEY=${AES_KEY}
 
-  rbac-provider-next:
-    build:
-      context: .
-      dockerfile: ./docker/rbac.providers.next.Dockerfile
-    container_name: rbac-providers-next
-    image: rbac-provider-next:${ISOLATION_ID-latest}
-    volumes:
-      - ".:/project/hyperledger-rbac"
-    environment:
-      - CLIENT_ID=${CLIENT_ID}
-      - CLIENT_SECRET=${CLIENT_SECRET}
-      - CLIENT_ASSERTION=${CLIENT_ASSERTION}
-      - TENANT_ID=${TENANT_ID}
-      - AUTH_TYPE=${AUTH_TYPE}
-    depends_on:
-      - ledger-sync
-    command: ./bin/rbac-providers-next
-
   rbac-provider-azure:
     build:
       context: .
