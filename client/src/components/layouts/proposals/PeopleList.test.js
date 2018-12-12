@@ -30,7 +30,7 @@ describe('PeopleList component', () => {
 
     const props = {
       getUsers: (collection) => { },
-      openProposalsByUser: { proposal1: [''] },
+      openProposalsByUser: { proposal1: [{name: 'prop', id: 'proposal1'}] },
       users: [{ id: 'proposal1', name: 'username',
         email: 'defaultuser@gmail.com' }],
       openProposalsByRole: { roleProposal1: [{ id: 'userid' }] },
