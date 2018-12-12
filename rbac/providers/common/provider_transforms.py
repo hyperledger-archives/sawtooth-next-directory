@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+""" Transforms incoming data based on key names and provider type
+"""
 
 USER_TRANSFORM = {
     "user_id": {"azure": "id", "ldap": "objectGUID"},
@@ -30,7 +32,7 @@ USER_TRANSFORM = {
     "job_title": {"azure": "jobTitle", "ldap": "title"},
     "email": {"azure": "mail", "ldap": "mail"},
     "user_nickname": {"azure": "mailNickname", "ldap": "cn"},
-    "manager": {"azure": "manager", "ldap": "manager"},
+    "manager_id": {"azure": "manager", "ldap": "manager"},
     "mobile_phone": {"azure": "mobilePhone", "ldap": "mobile"},
     "distinguished_name": {
         "azure": "onPremisesDistinguishedName",
@@ -63,7 +65,6 @@ GROUP_TRANSFORM = {
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
 }
-
 
 USER_CREATION_TRANSFORM = {
     "account_enabled": {"azure": "accountEnabled", "ldap": None},
@@ -98,3 +99,5 @@ GROUP_CREATION_TRANSFORM = {
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
 }
+
+STANDARD_USER_TRANSFORM = {"name": {"name", "given_name", "user_nickname"}}

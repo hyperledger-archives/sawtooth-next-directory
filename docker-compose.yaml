@@ -29,7 +29,7 @@ services:
     command: tail -f /dev/null
     environment:
       - PYTHONPATH=/project/hyperledger-rbac/
-      - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
+      - SERVER_HOST=${SERVER_HOST:-rbac-server}
       - SERVER_PORT=${SERVER_PORT:-8000}
       - VALIDATOR_HOST=${VALIDATOR_HOST:-validator}
       - VALIDATOR_PORT=${VALIDATOR_PORT:-4004}

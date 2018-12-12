@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10role_state.proto\"C\n\x17RoleAttributesContainer\x12(\n\x0frole_attributes\x18\x01 \x03(\x0b\x32\x0f.RoleAttributes\"A\n\x0eRoleAttributes\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08metadata\x18\x03 \x01(\t\"E\n\x19RoleRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.RoleRelationship\"8\n\x10RoleRelationship\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\tb\x06proto3')
+  serialized_pb=_b('\n\x10role_state.proto\"C\n\x17RoleAttributesContainer\x12(\n\x0frole_attributes\x18\x01 \x03(\x0b\x32\x0f.RoleAttributes\"V\n\x0eRoleAttributes\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08metadata\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\"E\n\x19RoleRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.RoleRelationship\"8\n\x10RoleRelationship\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\tb\x06proto3')
 )
 
 
@@ -84,6 +84,13 @@ _ROLEATTRIBUTES = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='description', full_name='RoleAttributes.description', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -97,7 +104,7 @@ _ROLEATTRIBUTES = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=89,
-  serialized_end=154,
+  serialized_end=175,
 )
 
 
@@ -127,8 +134,8 @@ _ROLERELATIONSHIPCONTAINER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=156,
-  serialized_end=225,
+  serialized_start=177,
+  serialized_end=246,
 )
 
 
@@ -165,8 +172,8 @@ _ROLERELATIONSHIP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=227,
-  serialized_end=283,
+  serialized_start=248,
+  serialized_end=304,
 )
 
 _ROLEATTRIBUTESCONTAINER.fields_by_name['role_attributes'].message_type = _ROLEATTRIBUTES

@@ -197,10 +197,12 @@ class StateBase:
         return unique_id()
 
     def hash(self, value):
-        """Returns a 12-byte hash of a given string, unless it is already a
+        """Returns a 12-byte hash of a given string lowercased, unless it is already a
         12-byte hexadecimal string (e.g. as returned by the unique_id function).
         Returns zero bytes if the value is None or falsey
         Override where desired behavior differs"""
+        if isinstance(value, str):
+            value = value.lower()
         return hash_id(value)
 
     def address(self, object_id, related_id):

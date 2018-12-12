@@ -12,8 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
-from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
+""" Filters for inbound data fields
+"""
+from rbac.providers.common.provider_transforms import (
+    GROUP_TRANSFORM,
+    USER_TRANSFORM,
+    STANDARD_USER_TRANSFORM,
+)
 
 
 def inbound_user_filter(user, provider):
@@ -21,14 +26,22 @@ def inbound_user_filter(user, provider):
     :param: user > dict > a dictionary representing a user
     :param: provider > str > inbound provider type (azure, ldap)
     """
-    if provider != "azure" and provider != "ldap":
+    if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
     clean_user = {}
-    for key, value in USER_TRANSFORM.items():
-        if value[provider] in user:
-            clean_user[key] = user[value[provider]]
-        else:
-            clean_user[key] = None
+    for key, alias in USER_TRANSFORM.items():
+        if alias[provider] in user:
+            value = inbound_value_filter(user[alias[provider]])
+            if value:
+                clean_user[key] = value
+    for key, aliases in STANDARD_USER_TRANSFORM.items():
+        if key not in clean_user:
+            for alias in aliases:
+                if alias in user:
+                    value = inbound_value_filter(user[alias])
+                    if value:
+                        clean_user[key] = value
+                        break
     return clean_user
 
 
@@ -37,12 +50,25 @@ def inbound_group_filter(group, provider):
     :param: group > dict > a dictionary representing a group
     :param: provider > str > inbound provider type (azure, ldap)
     """
-    if provider != "azure" and provider != "ldap":
+    if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
     clean_group = {}
-    for key, value in GROUP_TRANSFORM.items():
-        if value[provider] in group:
-            clean_group[key] = group[value[provider]]
-        else:
-            clean_group[key] = None
+    for key, alias in GROUP_TRANSFORM.items():
+        if alias[provider] in group:
+            value = inbound_value_filter(group[alias[provider]])
+            if value:
+                clean_group[key] = value
     return clean_group
+
+
+def inbound_value_filter(value):
+    """Cleans up data values
+    1. Removes empty arrays
+    2. Unwraps single value arrays
+    """
+    if isinstance(value, list):
+        if not value:
+            return None
+        if len(value) == 1:
+            return value[0]
+    return value

@@ -17,6 +17,7 @@ usage: rbac.role.import.create()"""
 
 import logging
 from rbac.common import addresser
+from rbac.common.protobuf import role_transaction_pb2  # pylint: disable=unused-import
 from rbac.common.addresser.address_space import AddressSpace
 from rbac.common.addresser.address_space import ObjectType
 from rbac.common.addresser.address_space import RelationshipType
@@ -71,7 +72,7 @@ class ImportsRole(BaseMessage):
     @property
     def message_fields_not_in_state(self):
         """Fields that are on the message but not stored on the state object"""
-        return ["owners", "admins"]
+        return ["owners", "admins", "members"]
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
@@ -101,6 +102,12 @@ class ImportsRole(BaseMessage):
         )
         outputs = inputs
         return inputs, outputs
+
+    @property
+    def allow_signer_not_in_state(self):
+        """Whether the signer of the message is allowed to not be
+        in state. (TODO: temporary, add provider keys to state)"""
+        return True
 
     def validate_state(self, context, message, inputs, input_state, store, signer):
         """Validates the message against state"""

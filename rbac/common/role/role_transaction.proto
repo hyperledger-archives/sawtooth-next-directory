@@ -354,7 +354,9 @@ message CreateRole {
 
     repeated string members = 5;
 
-    string metadata = 6;
+    string description = 6;
+
+    string metadata = 7;
 
 }
 
@@ -370,7 +372,9 @@ message ImportsRole {
 
     repeated string members = 5;
 
-    string metadata = 6;
+    string description = 6;
+    
+    string metadata = 7;
 }
 
 message UpdateRole {
