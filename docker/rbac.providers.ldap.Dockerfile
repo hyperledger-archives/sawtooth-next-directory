@@ -47,8 +47,7 @@ WORKDIR /project/hyperledger-rbac
 # Container-specific dependencies are installed separately for
 # optimizing caching
 RUN pip3 install \
-        rethinkdb \
-        ldap3 \
+        ldap3==2.5.1 \
         pyasn1==0.4.4 \
         pytz==2018.6
 

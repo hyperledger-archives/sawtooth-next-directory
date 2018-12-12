@@ -25,9 +25,8 @@ def test_inbound_user_filter():
     """Test the inbound user filter for azure transforms and returns a user dict."""
     result = inbound_user_filter({"id": 1234}, "azure")
     assert isinstance(result, dict) is True
-    assert result["user_id"] == 1234
+    assert result["remote_id"] == 1234
     assert "id" not in result
-    assert result["job_title"] is None
 
 
 def test_inbound_user_filter_bad_provider():
@@ -40,9 +39,8 @@ def test_inbound_group_filter():
     """Test the inbound group filter for azure transforms and returns a group dict."""
     result = inbound_group_filter({"id": 1234}, "azure")
     assert isinstance(result, dict) is True
-    assert result["role_id"] == 1234
+    assert result["remote_id"] == 1234
     assert "id" not in result
-    assert result["classification"] is None
 
 
 def test_inbound_group_filter_bad_provider():

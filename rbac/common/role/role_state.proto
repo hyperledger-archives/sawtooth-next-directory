@@ -32,6 +32,10 @@ message RoleAttributes {
 
     string metadata = 3;
 
+    string description = 4;
+
+    string remote_id = 6;
+
 }
 
 message RoleRelationshipContainer {

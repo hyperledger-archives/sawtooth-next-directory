@@ -36,7 +36,8 @@ RUN pip3 install \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
         sanic==0.8.3 \
-        watchdog==0.9.0
+        watchdog==0.9.0 \
+        apscheduler
 
 ENV LC_ALL=en_US.UTF-8
 WORKDIR /project/hyperledger-rbac

@@ -88,6 +88,8 @@ message ImportsUser {
 
     string email = 6;
 
+    string remote_id = 7;
+
 }
 
 

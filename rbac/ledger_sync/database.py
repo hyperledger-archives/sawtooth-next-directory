@@ -12,21 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-import logging
+"""Simple object for managing a connection to a rethink database
+"""
+import time
 import rethinkdb as r
 
-LOGGER = logging.getLogger(__name__)
+from rbac.common.config import get_config
+from rbac.common.logs import getLogger
+
+LOGGER = getLogger(__name__)
+DB_HOST = get_config("DB_HOST")
+DB_PORT = get_config("DB_PORT")
+DB_NAME = get_config("DB_NAME")
+
+# State Delta catches up based on the first valid ID it finds, which is
+# likely genesis, defeating the purpose. Rewind just 15 blocks to handle forks.
+KNOWN_COUNT = 15
 
 
-class Database(object):
+class Database:
     """Simple object for managing a connection to a rethink database
     """
 
-    def __init__(self, host, port, name):
-        self._host = host
-        self._port = port
-        self._name = name
+    def __init__(self, host=None, port=None, name=None):
+        self._host = host or DB_HOST
+        self._port = port or DB_PORT
+        self._name = name or DB_NAME
         self._conn = None
 
     def connect(self):
@@ -64,6 +75,25 @@ class Database(object):
         )
 
         return list(cursor)[-count:]
+
+    def get_last_known_blocks(self):
+        """ Get the last known blocks
+        """
+        count = 0
+        while True:
+            try:
+                count = count + 1
+                return self.last_known_blocks(KNOWN_COUNT)
+            except Exception as err:  # pylint: disable=broad-except
+                if count > 3:
+                    LOGGER.error(
+                        "Tried to get last known block for more than 3 times. Reporting Error ..."
+                    )
+                    raise err
+                LOGGER.exception(err)
+                LOGGER.info("Retrying to get last known block ...")
+                time.sleep(3)
+            break
 
     def drop_fork(self, block_num):
         """Deletes all resources from a particular block_num

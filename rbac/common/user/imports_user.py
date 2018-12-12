@@ -17,6 +17,7 @@ usage: rbac.user.imports.create()"""
 import logging
 
 from rbac.common import addresser
+from rbac.common.protobuf import user_transaction_pb2  # pylint: disable=unused-import
 from rbac.common.base.base_message import BaseMessage
 
 LOGGER = logging.getLogger(__name__)
