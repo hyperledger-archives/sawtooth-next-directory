@@ -81,20 +81,24 @@ def get_updater(database, block_num):
 def _update_state(database, block_num, address, resource):
     try:
         # update state table
-        state = dict(resource)
         address_parts = addresser.parse(address)
         address_binary = bytes_from_hex(address)
         key = address_binary
         keys = {"address": address_binary}
+        object_id = bytes_from_hex(address_parts.object_id)
+        object_type = address_parts.object_type.value
+        related_id = bytes_from_hex(address_parts.related_id)
+        related_type = address_parts.related_type.value
+        relationship_type = address_parts.relationship_type.value
         data = {
             "block_updated": int(block_num),
             "updated_at": r.now(),
-            "object_type": address_parts.object_type.value,
-            "object_id": bytes_from_hex(address_parts.object_id),
-            "related_type": address_parts.related_type.value,
-            "relationship_type": address_parts.relationship_type.value,
-            "related_id": bytes_from_hex(address_parts.related_id),
-            "data": resource,
+            "object_type": object_type,
+            "object_id": object_id,
+            "related_type": related_type,
+            "relationship_type": relationship_type,
+            "related_id": related_id,
+            **resource,
         }
         table_query = database.get_table("state")
         query = table_query.get(key).replace(

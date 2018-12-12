@@ -61,7 +61,7 @@ LIST_OF_INVALID_INPUT = [
 
 def test_outbound_user_filter():
     """ Test outbound user filter with valid user """
-    result = outbound_user_filter({"user_id": 1234}, "azure")
+    result = outbound_user_filter({"remote_id": 1234}, "azure")
     assert isinstance(result, dict) is True
     assert result["id"] == 1234
     assert "job_title" not in result
@@ -70,12 +70,12 @@ def test_outbound_user_filter():
 def test_outbound_user_filter_bad_provider():
     """ Test outbound user filter with bad provider throws error"""
     with pytest.raises(TypeError):
-        outbound_user_filter({"user_id": 1234}, "test_run")
+        outbound_user_filter({"remote_id": 1234}, "test_run")
 
 
 def test_outbound_group_filter():
     """ Test outbound group filter with valid user """
-    result = outbound_group_filter({"role_id": 1234}, "ldap")
+    result = outbound_group_filter({"remote_id": 1234}, "ldap")
     assert result["objectGUID"] == 1234
     assert "id" not in result
 
@@ -83,7 +83,7 @@ def test_outbound_group_filter():
 def test_outbound_group_filter_bad_provider():
     """ Test outbound group filter with bad provider throws error"""
     with pytest.raises(TypeError):
-        outbound_group_filter({"user_id": 1234}, "test_run")
+        outbound_group_filter({"remote_id": 1234}, "test_run")
 
 
 @pytest.mark.parametrize(

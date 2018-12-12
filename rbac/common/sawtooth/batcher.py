@@ -19,6 +19,8 @@ import logging
 import itertools
 from hashlib import sha512
 from uuid import uuid4
+from google.protobuf.descriptor import FieldDescriptor
+
 from sawtooth_sdk.protobuf import batch_pb2
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import transaction_pb2
@@ -234,24 +236,27 @@ def make_ping():
 def dict_to_protobuf(message, message_name, dictionary):
     """Makes a message from dictionary
     Shallow copy; supports primitive data types and lists (arrays)
-    Add depth and/or additional datatypes when needed (TODO: add json support)"""
-    for key, value in dictionary.items():
-        if value is not None:
-            if hasattr(message, key):
-                try:
-                    if isinstance(value, list):
-                        getattr(message, key).extend(value)
+    Add depth and/or additional datatypes when needed"""
+    for _, field in type(message).DESCRIPTOR.fields_by_name.items():
+        key = field.name
+        attribute = getattr(message, key)
+        if key in dictionary and dictionary[key] is not None:
+            value = dictionary[key]
+            try:
+                if field.label == FieldDescriptor.LABEL_REPEATED:
+                    if isinstance(value, (list, set)):
+                        attribute.extend(list(value))
                     else:
-                        setattr(message, key, value)
-                except Exception:
-                    raise AttributeError(
-                        "Unable to set attribute {} type {} on {} to value {}".format(
-                            key, message_name, type(value), value
-                        )
-                    )
-            else:
-                raise AttributeError(
-                    "{} does not contain a {} property".format(message_name, key)
+                        attribute.extend([value])
+                else:
+                    setattr(message, key, value)
+            except Exception:  # pylint: disable=broad-except
+                LOGGER.warning(
+                    "Unable to set attribute %s type %s on %s to value %s",
+                    key,
+                    message_name,
+                    type(value),
+                    value,
                 )
     return message
 

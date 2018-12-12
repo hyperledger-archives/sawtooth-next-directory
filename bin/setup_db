@@ -68,6 +68,10 @@ def setup_db(host, port, name):
         r.db(name).table_create('state_history', primary_key='address').run(conn)
         r.db(name).table("state_history").index_create("object", [r.row["object_type"], r.row["object_id"]]).run(conn)
 
+        LOGGER.info('Creating table: metadata')
+        r.db(name).table_create('metadata', primary_key='address').run(conn)
+        r.db(name).table("metadata").index_create("object", [r.row["object_type"], r.row["object_id"]]).run(conn)
+
         LOGGER.info('Creating table: users')
         r.db(name).table_create('users').run(conn)
         r.db(name).table('users').index_create('user_id').run(conn)
@@ -78,8 +82,17 @@ def setup_db(host, port, name):
         LOGGER.info('Creating table: inbound_queue')
         r.db(name).table_create('inbound_queue').run(conn)
 
+        LOGGER.info('Creating table: inbound_queue_errors')
+        r.db(name).table_create('inbound_queue_errors').run(conn)
+
+        LOGGER.info('Creating table: inbound_queue_archive')
+        r.db(name).table_create('inbound_queue_archive').run(conn)
+
         LOGGER.info('Creating table: outbound_queue')
         r.db(name).table_create('outbound_queue').run(conn)
+
+        LOGGER.info('Creating table: outbound_queue_archive')
+        r.db(name).table_create('outbound_queue_archive').run(conn)
 
         LOGGER.info('Creating table: changelog')
         r.db(name).table_create('changelog').run(conn)

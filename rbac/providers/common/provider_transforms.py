@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+""" Transforms incoming data based on key names and provider type
+"""
 
 USER_TRANSFORM = {
-    "user_id": {"azure": "id", "ldap": "objectGUID"},
+    "remote_id": {"azure": "id", "ldap": "objectGUID"},
     "deleted_date": {"azure": "deletedDateTime", "ldap": None},
     "account_enabled": {"azure": "accountEnabled", "ldap": None},
     "business_phones": {"azure": "businessPhones", "ldap": "telephoneNumber"},
@@ -30,7 +32,7 @@ USER_TRANSFORM = {
     "job_title": {"azure": "jobTitle", "ldap": "title"},
     "email": {"azure": "mail", "ldap": "mail"},
     "user_nickname": {"azure": "mailNickname", "ldap": "cn"},
-    "manager": {"azure": "manager", "ldap": "manager"},
+    "manager_id": {"azure": "manager", "ldap": "manager"},
     "mobile_phone": {"azure": "mobilePhone", "ldap": "mobile"},
     "distinguished_name": {
         "azure": "onPremisesDistinguishedName",
@@ -45,10 +47,11 @@ USER_TRANSFORM = {
     "usage_location": {"azure": "usageLocation", "ldap": None},
     "user_principal_name": {"azure": "userPrincipalName", "ldap": "userPrincipalName"},
     "user_type": {"azure": "userType", "ldap": None},
+    "relationship_id": {"azure": "id", "ldap": "distinguishedName"},
 }
 
 GROUP_TRANSFORM = {
-    "role_id": {"azure": "id", "ldap": "objectGUID"},
+    "remote_id": {"azure": "id", "ldap": "objectGUID"},
     "created_date": {"azure": "createdDateTime", "ldap": "whenCreated"},
     "deleted_date": {"azure": "deletedDateTime", "ldap": None},
     "distinguished_name": {"azure": None, "ldap": "distinguishedName"},
@@ -62,8 +65,8 @@ GROUP_TRANSFORM = {
     "security_enabled": {"azure": "securityEnabled", "ldap": None},
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
+    "relationship_id": {"azure": "id", "ldap": "distinguishedName"},
 }
-
 
 USER_CREATION_TRANSFORM = {
     "account_enabled": {"azure": "accountEnabled", "ldap": None},
@@ -98,3 +101,5 @@ GROUP_CREATION_TRANSFORM = {
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
 }
+
+STANDARD_USER_TRANSFORM = {"name": {"name", "given_name", "user_nickname"}}

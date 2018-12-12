@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16user_transaction.proto\"z\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"d\n\x18\x43onfirmUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"c\n\x17RejectUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"s\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\"t\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\"b\n\nUpdateUser\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\x10\n\x08new_name\x18\x02 \x01(\t\x12\x1b\n\x13old_metadata_sha512\x18\x03 \x01(\t\x12\x14\n\x0cnew_metadata\x18\x04 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16user_transaction.proto\"z\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"d\n\x18\x43onfirmUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"c\n\x17RejectUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"s\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\"\x87\x01\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x11\n\tremote_id\x18\x07 \x01(\t\"b\n\nUpdateUser\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\x10\n\x08new_name\x18\x02 \x01(\t\x12\x1b\n\x13old_metadata_sha512\x18\x03 \x01(\t\x12\x14\n\x0cnew_metadata\x18\x04 \x01(\tb\x06proto3')
 )
 
 
@@ -303,6 +303,13 @@ _IMPORTSUSER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='remote_id', full_name='ImportsUser.remote_id', index=6,
+      number=7, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -315,8 +322,8 @@ _IMPORTSUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=470,
-  serialized_end=586,
+  serialized_start=471,
+  serialized_end=606,
 )
 
 
@@ -367,8 +374,8 @@ _UPDATEUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=588,
-  serialized_end=686,
+  serialized_start=608,
+  serialized_end=706,
 )
 
 DESCRIPTOR.message_types_by_name['ProposeUpdateUserManager'] = _PROPOSEUPDATEUSERMANAGER

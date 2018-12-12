@@ -36,4 +36,6 @@ message User {
 
     string email = 5;
 
+    string remote_id = 6;
+
 }

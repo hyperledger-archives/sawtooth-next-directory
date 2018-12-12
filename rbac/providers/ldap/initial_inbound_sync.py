@@ -14,7 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+""" LDAP inbound initial sync
+"""
 # http://docs.python-requests.org/en/master/
 
 import os
@@ -34,6 +35,7 @@ from rbac.providers.common.inbound_filters import (
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.ldap.delta_inbound_sync import inbound_delta_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
+from rbac.providers.common.rbac_transactions import add_transaction
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
@@ -90,7 +92,6 @@ def insert_to_db(data_dict, data_type):
                 entry_to_insert[attribute] = entry_attributes[attribute]
             else:
                 entry_to_insert[attribute] = entry_attributes[attribute][0]
-
         if data_type == "user":
             standardized_entry = inbound_user_filter(entry_to_insert, "ldap")
         elif data_type == "group":
@@ -101,7 +102,9 @@ def insert_to_db(data_dict, data_type):
             "sync_type": "initial",
             "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
             "provider_id": LDAP_DC,
+            "raw": entry_json,
         }
+        add_transaction(inbound_entry)
         r.table("inbound_queue").insert(inbound_entry).run()
 
     LOGGER.info(
