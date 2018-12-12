@@ -258,25 +258,26 @@ def main():
     app.blueprint(WEBHOOKS_BP)
     app.blueprint(APP_BP)
 
+    load_config(app)
+
     CORS(
         app,
         automatic_options=True,
         supports_credentials=True,
         resources={
-            r"/api/*": {"origins": CLIENT_HOST + ":" + CLIENT_PORT},
+            r"/api/*": {
+                "origins": app.config.CLIENT_HOST + ":" + app.config.CLIENT_PORT
+            },
             r"/webhooks/*": {"origins": "*"},
         },
     )
-
-    load_config(app)
-
     zmq = ZMQEventLoop()
     asyncio.set_event_loop(zmq)
     server = app.create_server(
         host=app.config.HOST,
         port=app.config.PORT,
         debug=app.config.DEBUG,
-        access_log=False,
+        access_log=True,
     )
     loop = asyncio.get_event_loop()
     asyncio.ensure_future(server)

@@ -40,7 +40,10 @@ import * as AuthActions from '../redux/AuthRedux';
  *
  */
 
-const create = (baseURL = 'http://localhost:8000/api/') => {
+const create = (baseURL =
+(process.env.REACT_APP_HTTP_PROTOCOL || 'http://') +
+  (process.env.REACT_APP_SERVER_HOST || 'localhost') + ':' +
+  (process.env.REACT_APP_SERVER_PORT || '8000') + '/api/') => {
   //
   // Configuration
   //
