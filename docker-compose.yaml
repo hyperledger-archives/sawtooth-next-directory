@@ -100,6 +100,8 @@ services:
       - SERVER_PORT=${SERVER_PORT:-8000}
       - SECRET_KEY=${SECRET_KEY}
       - AES_KEY=${AES_KEY}
+      - CLIENT_HOST=${CLIENT_HOST}
+      - CLIENT_PORT=${CLIENT_PORT}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:
@@ -152,6 +154,10 @@ services:
     container_name: rbac-client
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_SERVER_HOST=${REACT_APP_SERVER_HOST}
+      - REACT_APP_SERVER_PORT=${REACT_APP_SERVER_PORT}
+      - REACT_APP_HTTP_PROTOCOL=${REACT_APP_HTTP_PROTOCOL}
+      - REACT_APP_WS_PROTOCOL=${REACT_APP_WS_PROTOCOL}
     image: rbac-client:${ISOLATION_ID-latest}
     volumes:
       - ./client:/client
