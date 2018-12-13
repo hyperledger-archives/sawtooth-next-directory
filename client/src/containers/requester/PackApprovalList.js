@@ -134,7 +134,14 @@ class PackApprovalList extends Component {
             {role && role.name}
           </Grid.Column>
           <Grid.Column width={7}>
-            {proposal.approvers && this.renderUserInfo(proposal.approvers[0])}
+            { proposal.approvers && proposal.approvers.map(approver => (
+              <div
+                key={approver}
+                id='next-pack-approval-list-approvers'
+                className='pull-left'>
+                {this.renderUserInfo(approver)}
+              </div>
+            ))}
           </Grid.Column>
           <Grid.Column width={4}>
             {this.renderStatus(proposal.status)}
