@@ -84,4 +84,8 @@ async def fetch_pack_resource(conn, pack_id, head_block_num):
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No pack with the id {} exists".format(pack_id))
+        raise ApiNotFound(
+            "Pack Not Found: Couldn't find the requested resource with ID {}".format(
+                pack_id
+            )
+        )

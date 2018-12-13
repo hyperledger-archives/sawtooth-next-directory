@@ -91,4 +91,6 @@ async def fetch_task_resource(conn, task_id, head_block_num):
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No task with the id {} exists".format(task_id))
+        raise ApiNotFound(
+            "Task Not Found: Could not find task with ID {}".format(task_id)
+        )

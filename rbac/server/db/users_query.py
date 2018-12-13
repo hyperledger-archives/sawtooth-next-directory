@@ -78,7 +78,9 @@ async def fetch_user_resource(conn, user_id, head_block_num):
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
+        raise ApiNotFound(
+            "User Not Found: Could not find user with ID{} ".format(user_id)
+        )
 
 
 async def fetch_all_user_resources(conn, head_block_num, start, limit):

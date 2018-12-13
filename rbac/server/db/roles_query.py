@@ -100,7 +100,9 @@ async def fetch_role_resource(conn, role_id, head_block_num):
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No role with the id {} exists".format(role_id))
+        raise ApiNotFound(
+            "Role Not Found: Could not find any role with ID {} .".format(role_id)
+        )
 
 
 async def fetch_recommended_resources(conn, identifier, head_block_num, start, limit):
@@ -119,4 +121,6 @@ async def fetch_recommended_resources(conn, identifier, head_block_num, start, l
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No role without identifier {}".format(identifier))
+        raise ApiNotFound(
+            "Not Found: Could not find role with identifier {}".format(identifier)
+        )

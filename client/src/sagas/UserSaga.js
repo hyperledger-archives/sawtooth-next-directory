@@ -50,14 +50,20 @@ export function * me (api, action) {
  * @generator
  */
 export function * getUser (api, action) {
+  const { id } = action;
+  const payload = id;
   try {
-    const { id } = action;
     const res = yield call(api.getUser, id);
     res.ok ?
       yield put(UserActions.userSuccess(res.data.data)) :
       yield put(UserActions.userFailure(res.data.message));
   } catch (err) {
     console.error(err);
+    yield call( retryServiceCall,
+      api.getUser,
+      payload,
+      UserActions.userSuccess,
+      UserActions.userFailure );
   }
 }
 

@@ -23,6 +23,7 @@ API to retrieve data required to hydrate the UI. */
 import { call, put } from 'redux-saga/effects';
 import { showLoading, hideLoading } from 'react-redux-loading-bar';
 import AuthActions from '../redux/AuthRedux';
+import { toast } from 'react-toastify';
 
 
 /**
@@ -40,9 +41,12 @@ export function * login (api, action) {
       password: password,
     });
 
-    res.ok ?
-      yield put(AuthActions.loginSuccess(true, res.data.data)) :
+    if(res.ok) {
+      yield put(AuthActions.loginSuccess(true, res.data.data));
+    } else {
+      toast(res.data.message);
       yield put(AuthActions.loginFailure(res.data.message));
+    }
   } catch (err) {
     console.error(err);
   } finally {
@@ -88,9 +92,14 @@ export function * signup (api, action) {
 export function * logout (api, action) {
   try {
     const res = yield call(api.logout);
-    res.ok ?
-      yield put(AuthActions.logoutSuccess()) :
+
+    if(res.ok) {
+      yield put(AuthActions.logoutSuccess());
+    } else {
+      toast(res.data.message);
       yield put(AuthActions.logoutFailure(res.data.message));
+    }
+
   } catch (err) {
     console.error(err);
   }
