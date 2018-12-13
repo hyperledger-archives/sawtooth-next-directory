@@ -81,7 +81,7 @@ async def fetch_block_by_id(conn, block_id):
         return resource[0]
     except IndexError:
         raise ApiNotFound(
-            "Not Found: No block with the id '{}' exists.".format(block_id)
+            "Not Found: We could not find the block with block ID '{}'. ".format(block_id)
         )
 
 
@@ -96,5 +96,5 @@ async def fetch_block_by_num(conn, block_num):
         )
     except ReqlRuntimeError:
         raise ApiNotFound(
-            "Not Found: " "No block with the block num '{}' exists.".format(block_num)
+            "Not Found: We could not find the block with block ID '{}'. ".format(block_num)
         )

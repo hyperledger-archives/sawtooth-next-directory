@@ -23,6 +23,7 @@ API to retrieve data required to hydrate the UI. */
 import { all, call, fork, put } from 'redux-saga/effects';
 import ApproverActions from '../redux/ApproverRedux';
 import { toast } from 'react-toastify';
+import retryServiceCall from './sagaHelper';
 
 
 /**
@@ -64,11 +65,12 @@ export function * getConfirmedProposals (api, action) {
  * @generator
  */
 export function * createPack (api, action) {
+  const { payload } = action;
+  const successMessage = 'Successfully created a new pack.';
   try {
-    const { payload } = action;
     const res = yield call(api.createPack, payload);
     if (res.ok) {
-      toast('Successfully created a new pack.');
+      toast(successMessage);
       yield put(ApproverActions.createPackSuccess(res.data));
     } else {
       yield put(ApproverActions.createPackFailure(res.data));
@@ -76,6 +78,15 @@ export function * createPack (api, action) {
 
   } catch (err) {
     console.error(err);
+
+    yield call(retryServiceCall,
+      api.createPack,
+      call,
+      payload,
+      ApproverActions.createPackSuccess,
+      ApproverActions.createPackFailure,
+      successMessage);
+
   }
 }
 
@@ -87,18 +98,27 @@ export function * createPack (api, action) {
  * @generator
  */
 export function * createRole (api, action) {
+  const { payload } = action;
+  const successMessage = 'Successfully created a new role.';
   try {
-    const { payload } = action;
     const res = yield call(api.createRole, payload);
     if (res.ok) {
-      toast('Successfully created a new role.');
+      toast(successMessage);
       yield put(ApproverActions.createRoleSuccess(res.data));
     } else {
       yield put(ApproverActions.createRoleFailure(res.data.error));
     }
 
   } catch (err) {
-    console.error(err);
+    console.log(err);
+
+    yield call(retryServiceCall,
+      api.createRole,
+      call,
+      payload,
+      ApproverActions.createRoleSuccess,
+      ApproverActions.createRoleFailure,
+      successMessage);
   }
 }
 
