@@ -17,6 +17,7 @@ limitations under the License.
 import apisauce from 'apisauce';
 import * as storage from '../services/Storage';
 import * as AuthActions from '../redux/AuthRedux';
+import { toast } from 'react-toastify';
 
 
 /**
@@ -64,13 +65,13 @@ const create = (baseURL =
   api.addResponseTransform(res => {
     switch (res.problem) {
       case 'TIMEOUT_ERROR':
-        alert('Server is not responding. Please try again later.');
+        toast('Server is not responding. Please try again later.');
         return;
       case 'NETWORK_ERROR':
-        alert('Server currently unavailable. Please try again later.');
+        toast('Server currently unavailable. Please try again later.');
         return;
       case 'CONNECTION_ERROR':
-        alert('Cannot connect to server. Please try again later.');
+        toast('Cannot connect to server. Please try again later.');
         return;
       default:
         break;
@@ -82,7 +83,7 @@ const create = (baseURL =
         AuthActions.logout();
         break;
       default:
-        alert(res.data.message);
+        toast(res.data.message);
         break;
     }
   });

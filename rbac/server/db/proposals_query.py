@@ -96,7 +96,7 @@ async def fetch_proposal_resource(conn, proposal_id, head_block_num):
         return resource[0]
     except IndexError:
         raise ApiNotFound(
-            "Not Found: No proposal with the id {} exists".format(proposal_id)
+            "Proposal Not Found: Could not find any proposal with ID {} .".format(proposal_id)
         )
 
 

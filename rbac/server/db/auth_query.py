@@ -29,7 +29,7 @@ async def fetch_info_by_user_id(conn, user_id):
     LOGGER.warning("fetching user with id: %s", user_id)
     auth_info = await r.table("auth").get(user_id).run(conn)
     if auth_info is None:
-        raise ApiNotFound("Not Found: " "No user with id '{}' exists.".format(user_id))
+        raise ApiNotFound("User Not Found: Sorry we could not find any user with ID : '{}'.".format(user_id))
     return auth_info
 
 
@@ -43,7 +43,7 @@ async def fetch_info_by_user_name(conn, user_name):
 
     if not auth_info:
         raise ApiNotFound(
-            "Not Found: " "No user with name '{}' exists.".format(user_name)
+            "User Not Found: Sorry we could not find any user with NAME : '{}'.".format(user_name)
         )
 
     LOGGER.warning(auth_info[0])
