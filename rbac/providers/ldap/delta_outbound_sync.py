@@ -13,11 +13,12 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Delta Outbound Sync for LDAP to get changes from NEXT into LDAP."""
-import time
-import os
 import logging
+import os
+import time
+
 import ldap3
-from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
+from ldap3 import MODIFY_REPLACE
 
 from rbac.providers.common.db_queries import (
     connect_to_db,
@@ -25,6 +26,7 @@ from rbac.providers.common.db_queries import (
     put_entry_changelog,
     delete_entry_queue,
 )
+from rbac.providers.common.ldap_connection import create_ldap_connection
 from rbac.providers.common.expected_errors import ExpectedError, ValidationException
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
@@ -43,21 +45,6 @@ LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
-
-
-def connect_to_ldap():
-    """
-        Creates a connection to LDAP server and returns the connection object.
-    """
-    server = Server(host=LDAP_SERVER, get_info=ALL)
-    ldap_conn = Connection(server, user=LDAP_USER, password=LDAP_PASS)
-    if not ldap_conn.bind():
-        raise ValueError(
-            "Error connecting to LDAP server {0} : {1}".format(
-                LDAP_SERVER, ldap_conn.result
-            )
-        )
-    return ldap_conn
 
 
 def is_entry_in_ad(queue_entry, ldap_conn):
@@ -192,43 +179,46 @@ def ldap_outbound_listener():
     connect_to_db()
     LOGGER.info("Successfully connected to RethinkDB!")
 
-    LOGGER.info("Connecting to LDAP...")
-    ldap_conn = connect_to_ldap()
-    LOGGER.info("Successfully connected to LDAP!")
+    ldap_connection = create_ldap_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
 
-    while True:
-        try:
-            queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
-            LOGGER.info(
-                "Received queue entry %s from outbound queue...", queue_entry["id"]
-            )
-
-            data_type = queue_entry["data_type"]
-            LOGGER.info("Putting %s into ad...", data_type)
-            if is_entry_in_ad(queue_entry, ldap_conn):
-                update_entry_ldap(queue_entry, ldap_conn)
-            else:
-                create_entry_ldap(queue_entry, ldap_conn)
-
-            LOGGER.info("Putting queue entry into changelog...")
-            put_entry_changelog(queue_entry, "outbound")
-
-            LOGGER.info("Deleting queue entry from outbound queue...")
-            entry_id = queue_entry["id"]
-            delete_entry_queue(entry_id, "outbound_queue")
-        except ValidationException as err:
-            LOGGER.info(err)
-            LOGGER.info("No oubound payload possible.  Deleting entry %s", queue_entry)
-            delete_entry_queue(queue_entry["id"], "outbound_queue")
-        except ExpectedError as err:
-            LOGGER.debug(
-                (
-                    "%s Repolling after %s seconds...",
-                    err.__str__,
-                    "LISTENER_POLLING_DELAY",
+    if ldap_connection is None:
+        LOGGER.error("No Ldap connection available. Skipping ldap outbound sync")
+    else:
+        while True:
+            try:
+                queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
+                LOGGER.info(
+                    "Received queue entry %s from outbound queue...", queue_entry["id"]
                 )
-            )
-            time.sleep(LISTENER_POLLING_DELAY)
-        except Exception as err:
-            LOGGER.exception(err)
-            raise err
+
+                data_type = queue_entry["data_type"]
+                LOGGER.info("Putting %s into ad...", data_type)
+                if is_entry_in_ad(queue_entry, ldap_connection):
+                    update_entry_ldap(queue_entry, ldap_connection)
+                else:
+                    create_entry_ldap(queue_entry, ldap_connection)
+
+                LOGGER.info("Putting queue entry into changelog...")
+                put_entry_changelog(queue_entry, "outbound")
+
+                LOGGER.info("Deleting queue entry from outbound queue...")
+                entry_id = queue_entry["id"]
+                delete_entry_queue(entry_id, "outbound_queue")
+            except ValidationException as err:
+                LOGGER.info(err)
+                LOGGER.info(
+                    "No oubound payload possible.  Deleting entry %s", queue_entry
+                )
+                delete_entry_queue(queue_entry["id"], "outbound_queue")
+            except ExpectedError as err:
+                LOGGER.debug(
+                    (
+                        "%s Repolling after %s seconds...",
+                        err.__str__,
+                        "LISTENER_POLLING_DELAY",
+                    )
+                )
+                time.sleep(LISTENER_POLLING_DELAY)
+            except Exception as err:
+                LOGGER.exception(err)
+                raise err
