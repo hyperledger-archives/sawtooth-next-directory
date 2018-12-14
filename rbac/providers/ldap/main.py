@@ -19,7 +19,8 @@ from rbac.providers.ldap.initial_inbound_sync import initialize_ldap_sync
 
 
 def main():
-    """Start the initial sync and oubound delta thread."""
+    """Start the initial sync and outbound delta thread."""
+
     initialize_ldap_sync()
     # Create sync listener threads.
     outbound_sync_thread = DeltaSyncThread("LDAP Outbound", ldap_outbound_listener)

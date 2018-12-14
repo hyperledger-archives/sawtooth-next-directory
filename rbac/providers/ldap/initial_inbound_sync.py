@@ -16,26 +16,26 @@
 # -----------------------------------------------------------------------------
 """ LDAP inbound initial sync
 """
-# http://docs.python-requests.org/en/master/
 
-import os
-import sys
 import json
 import logging
-from datetime import datetime, timezone
+import os
+import sys
 import threading
-import rethinkdb as r
-import ldap3
-from ldap3 import ALL, Connection, Server
+from datetime import datetime, timezone
 
+import ldap3
+import rethinkdb as r
+
+from rbac.providers.common.common import check_last_sync
+from rbac.providers.common.db_queries import connect_to_db, save_sync_time
+from rbac.providers.common.ldap_connection import create_ldap_connection
 from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
 )
-from rbac.providers.common.common import check_last_sync
-from rbac.providers.ldap.delta_inbound_sync import inbound_delta_sync
-from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 from rbac.providers.common.rbac_transactions import add_transaction
+from rbac.providers.ldap.delta_inbound_sync import inbound_delta_sync
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
@@ -63,22 +63,22 @@ def fetch_ldap_data(data_type):
     elif data_type == "group":
         search_filter = "(objectClass=group)"
 
-    server = Server(LDAP_SERVER, get_info=ALL)
-    conn = Connection(server, user=LDAP_USER, password=LDAP_PASS)
-    if not conn.bind():
-        LOGGER.error(
-            "Error connecting to LDAP server %s : %s", LDAP_SERVER, conn.result
-        )
-    conn.search(
-        search_base=LDAP_DC,
-        search_filter=search_filter,
-        attributes=ldap3.ALL_ATTRIBUTES,
-    )
+    ldap_connection = create_ldap_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
 
-    insert_to_db(data_dict=conn.entries, data_type=data_type)
-    sync_source = "ldap-" + data_type
-    provider_id = LDAP_DC
-    save_sync_time(provider_id, sync_source, "initial")
+    if ldap_connection is None:
+        LOGGER.error("Ldap connection creation failed. Skipping Ldap fetch")
+    else:
+
+        ldap_connection.search(
+            search_base=LDAP_DC,
+            search_filter=search_filter,
+            attributes=ldap3.ALL_ATTRIBUTES,
+        )
+
+        insert_to_db(data_dict=ldap_connection.entries, data_type=data_type)
+        sync_source = "ldap-" + data_type
+        provider_id = LDAP_DC
+        save_sync_time(provider_id, sync_source, "initial")
 
 
 def insert_to_db(data_dict, data_type):
@@ -123,10 +123,14 @@ def initialize_ldap_sync():
         and groups. If initial syncs have been completed, restart the inbound delta syncs.
     """
 
-    if LDAP_DC:
+    if not LDAP_DC:
+        LOGGER.info("Ldap Domain Controller is not provided, skipping Ldap sync.")
+    elif not _can_connect_to_ldap():
+        LOGGER.info("Ldap Connection failed. Skipping Ldap sync.")
+    else:
         connect_to_db()
 
-        # Check to see if User Sync has occured.  If not - Sync
+        # Check to see if User Sync has occurred.  If not - Sync
         db_user_payload = check_last_sync("ldap-user", "initial")
         if not db_user_payload:
             LOGGER.info(
@@ -154,5 +158,7 @@ def initialize_ldap_sync():
 
         # Start the inbound delta sync
         initiate_delta_sync()
-    else:
-        LOGGER.info("LDAP Domain Controller is not provided, skipping LDAP sync.")
+
+
+def _can_connect_to_ldap():
+    return create_ldap_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS) is not None
