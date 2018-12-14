@@ -1,23 +1,62 @@
-![logo](logo.png)
-
-# Hyperledger Sawtooth NEXT Identity Platform
-
 [![Build Status](https://travis-ci.org/hyperledger/sawtooth-next-directory.svg?branch=master)](https://travis-ci.org/hyperledger/sawtooth-next-directory)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://github.com/hyperledger/sawtooth-next-directory/blob/master/LICENSE)
-[![Documentation Status](https://readthedocs.org/projects/sawtooth-next-directory/badge/?version=latest)](https://sawtooth-next-directory.readthedocs.io/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/sawtooth-next-directory/badge/?version=latest)](https://sawtooth-next-directory.readthedocs.io/?badge=latest)  
 
-This repo contains multiple components which together with a
-_Hyperledger Sawtooth_ validator, will comprise the "blockchain" components
-of the NEXT Identity Platform project. The components include:
+![logo](./readmeUI/logo.png)
+# Hyperledger Sawtooth NEXT Identity Platform
+A Federated Tool for Managing Entitlements.
 
-- a **server** which provides a REST API for querying blockchain data
-- a **transaction processor** which handles RBAC-specific transaction logic
-- a **ledger sync** which writes blockchain state changes to a local database
+## Introduction
+### What is NEXT? 
+NEXT is an open-source Identity and Access Management Platform for enterprise. NEXT is built by leveraging the Sawtooth blockchain to not only improve the status-quo of identity governance and auditing, but also replaces trust with cryptographic proof. Originally envisioned and designed by T-Mobile, NEXT is an enterprise-grade blockchain application, built to integrate with a wide-ranging number of indentity consuming and identity-providing applications. NEXT can integrate with industry standard directory services and provid request, approval, and audit features with the integrity of the Blockchain.
+
+The main components of NEXT includes: Sawtooth, a modular platform created by Intel that sits atop of The Linux Foundation's Hyperledger project, a transaction processor which handles RBAC-specific transaction logic, and a ledger sync which writes the blockchain state changes to a local database. The NEXT platform also features a chatbot component as well as an intuitive UI which will provide a smooth experience for users. 
+
+At its heart, NEXT is about replacing trust with cryptographic truth. It is a federated tool for managing entitlements. 
 
 
-## Usage
+### Table of Contents:
+* [Application Flow](#application-flow)
+* [How to Contribute](#how-to-contribute)
+* [Using the Platform](#using-next)
+* [Acknowledgements](#Acknowledgements)
 
-The easiest way to run these components is with
+
+## Application Flow  
+### _UI for User's Request Dashboard_
+![User_request_dashboard](./readmeUI/NextUI/user_request_dashboard.png)  
+
+### _User requests to join a security group_
+![User_request_dashboard](./readmeUI/NextUI/user_awaiting_approval.png)  
+
+### _User's role request appears in admin's request dashboard_
+![User_request_dashboard](./readmeUI/NextUI/admin_approval_with_chat.png)  
+
+### _Owner approves the user's request and the user is notified_
+![User_request_dashboard](./readmeUI/NextUI/user_role_approved.png) 
+
+### _Owner History of accepted/reject permission requests_
+![User_request_dashboard](./readmeUI/NextUI/admin_history.png) 
+
+
+This flow highlights the typical use case of this platform. The a user requests access to be apart of a group. The owner of the group either accepts or rejects the user's request. The owner's activity log gets updated and auditing can be done in a fast and simple manner reducing overhead.
+
+
+## How to Contribute  
+Awesome! So you want to be apart of the NEXT Project. There are a couple of good resources for you to get started with. The first being the [developer setup](https://github.com/hyperledger/sawtooth-next-directory/wiki/Developer-Setup). This document helps to standardize
+the developer environment for everyone across different operating systems so when developing, we are all on the same page. 
+
+Here are some ideas on how to get started:
+
+### Good First Issues
+Our team has tagged some issues with the "Good First Issues" tag which are issues that can be picked up and worked on without having to know much about the overall guts and intracacies of the system. These [issues](https://github.com/hyperledger/sawtooth-next-directory/labels/good%20first%20issue) will also allow you to gradually get up to speed into the different components of NEXT, which will let you contribute to "bigger" issues down the line.
+
+If you have any questions or comments, or you just want to chat, here is a link to our [Rocketchat](https://chat.hyperledger.org/channel/sawtooth-next-directory)! 
+
+
+
+## Using NEXT
+The easiest way to set-up the NEXT platform is by using
 [Docker](https://www.docker.com/what-docker). To start these components,
 first install Docker for your platform and clone this repo.
 
@@ -32,7 +71,7 @@ docker-compose up
 
 A shortcut is available via:
 ```bash
-bin/start
+bin/start -b
 ```
 
 This will build all components, start them in individual Docker containers,
@@ -40,7 +79,6 @@ and download and run the necessary Sawtooth components.
 
 - Sawtooth's blockchain REST API will be available at **http://localhost:8080**
 - Rethink's database admin panel will be available at **http://localhost:9090**
-- The legacy NEXT UI will be available at **http://localhost:4200**
 - The next generation NEXT UI will be available at **http://localhost:4201**
 
 
@@ -188,6 +226,21 @@ docker exec -it rbac-shell bash
 pytest
 ```
 
+Unit tests can be run with the following command:
+
+```bash 
+pytest tests/unit/
+```
+
+#### Docs Set-up
+Documentation for the NEXT project is available (here)[https://sawtooth-next-directory.readthedocs.io/en/latest/]
+
+Here are the following steps to create documentation:
+1. Navigate to the home directory and navigate into the "docs" folder. 
+2. Create a new reStructuredText file.
+3. When editing the reStructuredText file, please follow the guidelines listed (here)[http://docutils.sourceforge.net/rst.html]
+4. When finished, save the document and navigate into the "index.rst" file, add your file name without the ".rst" extension into the section you see fit, and then save the document.
+5. Once the pull request is approved, your new document should be published and available to read.
 
 #### Cleaning the Docker Image Cache
 
@@ -219,14 +272,18 @@ To work around this situation, shut down the application, delete all containers 
     
 
 # License
-
 Hyperledger Sawtooth NEXT Identity Platform software is licensed under the 
 [Apache License Version 2.0](LICENSE) software license.
 
 # Acknowledgements
-
 ### Big Thanks
 
-Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs][homepage]
+Cross-browser Testing Platform and Open Source <3 Provided by [Saucelabs]
 
-[homepage]: https://saucelabs.com
+Continuous Integration Platform provided by [Travis-CI]
+
+Project Management Platform provided by [Zenhub] 
+
+[Saucelabs]: https://saucelabs.com
+[Travis-CI]: https://travis-ci.com/
+[Zenhub]: https://www.zenhub.com/

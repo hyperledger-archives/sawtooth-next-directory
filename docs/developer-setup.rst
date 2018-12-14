@@ -202,28 +202,20 @@ Client Setup
 ================
  1. Run the following:
  ::
-
    # Install Yarn and Gulp globally
    npm install -g yarn gulp
 
  2. Install NPM packages:
  ::
-
    # Install NPM packages and create yarn.lock
    cd client && yarn
 
  3. Build Semantic UI (https://react.semantic-ui.com/usage/):
  ::
-
    # Build Semantic UI
    yarn build:semantic
 
 Client Development
-==================
-
- Watch Semantic UI files by running the following:
- ::
-
    # Watch for changes to Semantic source
    yarn watch:semantic
 
