@@ -24,6 +24,7 @@ from sawtooth_signing import CryptoFactory
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 
 from rbac.common import addresser
+from rbac.common.crypto.keys import Key  # pylint: disable=unused-import
 
 
 def wrap_payload_in_txn_batch(txn_key, payload, header, batch_key):
@@ -98,24 +99,3 @@ def make_header(inputs, outputs, payload_sha512, signer_pubkey, batcher_pubkey):
         payload_sha512=payload_sha512,
     )
     return header
-
-
-class Key(object):
-    def __init__(self, private_key, public_key=None):
-        self._private_key = private_key
-        if public_key is None:
-            self._public_key = (
-                sawtooth_signing.create_context("secp256k1")
-                .get_public_key(Secp256k1PrivateKey.from_hex(private_key))
-                .as_hex()
-            )
-        else:
-            self._public_key = public_key
-
-    @property
-    def public_key(self):
-        return self._public_key
-
-    @property
-    def private_key(self):
-        return self._private_key

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Utility class for encrypting and decrypting keys using AES;
+and for generating a key for validating web authentication tokens"""
 
 import os
 import logging
@@ -47,23 +49,27 @@ def generate_random_string(length, chars=string.ascii_uppercase + string.digits)
 
 
 def generate_api_key(secret_key, user_id):
+    """Generate an API key for a user"""
     serializer = Serializer(secret_key)
     token = serializer.dumps({"id": user_id})
     return token.decode("ascii")
 
 
 def deserialize_api_key(secret_key, token):
+    """Decode the API key of a user"""
     serializer = Serializer(secret_key)
     return serializer.loads(token)
 
 
 # pylint: disable=unused-argument
 def encrypt_private_key(aes_key, user_id, private_key):
+    """Encrypt the private key of a user"""
     cipher = AES(aes_key)
     return cipher.encrypt(private_key)
 
 
 # pylint: disable=unused-argument
 def decrypt_private_key(aes_key, user_id, encrypted_private_key):
+    """Decrypt the private key of the user"""
     cipher = AES(aes_key)
     return cipher.decrypt(encrypted_private_key)

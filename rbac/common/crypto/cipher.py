@@ -12,11 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Symmetric AES encryption library wrapper"""
+
 import base64
 from cryptography.fernet import Fernet
 
 
 class AES(Fernet):
+    """Symmetric AES encryption library wrapper"""
+
     def __init__(self, key):
         try:
             key = base64.urlsafe_b64encode(bytes.fromhex(key))
@@ -25,11 +29,13 @@ class AES(Fernet):
             raise ValueError("Fernet (AES) key must be 64 hex-encoded bytes.")
 
     def encrypt(self, data):
+        """Encrypt the given plaintext"""
         if isinstance(data, str):
             data = data.encode()
         return super().encrypt(data)
 
     def decrypt(self, token, ttl=None):
+        """Decrypt the given ciphertext"""
         if isinstance(token, str):
             token = token.encode()
         return super().decrypt(token=token, ttl=ttl)
