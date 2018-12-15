@@ -12,29 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Test Helper"""
+""" A test helper class that provides is the root
+    of all API helper classes
+"""
+# pylint: disable=too-few-public-methods
 
-from tests.rbac.common.assertions import TestAssertions
-from tests.rbac.common.user.user_helper import UserTestHelper
-from tests.rbac.common.role.role_helper import RoleTestHelper
-from tests.rbac.common.task.task_helper import TaskTestHelper
-from tests.rbac.common.proposal.proposal_helper import ProposalTestHelper
-from tests.rbac.api import ApiTestHelper
+import pytest
+
+from tests.rbac.api.user.user_helper import UserTestHelper
+from tests.rbac.api.role.role_helper import RoleTestHelper
+from tests.rbac.api.proposal.proposal_helper import ProposalTestHelper
+from tests.rbac.api.base.base_helper import BaseApiHelper
 
 
-class StubTestHelper(TestAssertions):
-    """Test Helper"""
+class ApiTestHelper(BaseApiHelper):
+    """ A test helper class that provides is the root
+        of all API helper classes
+    """
 
-    def __init__(self, *args, **kwargs):
-        TestAssertions.__init__(self, *args, **kwargs)
+    def __init__(self):
+        super().__init__()
         self.user = UserTestHelper()
         self.role = RoleTestHelper()
-        self.task = TaskTestHelper()
         self.proposal = ProposalTestHelper()
-        self.api = ApiTestHelper()
 
 
 # pylint: disable=invalid-name
-helper = StubTestHelper()
+helper = ApiTestHelper()
 
 __all__ = ["helper"]
