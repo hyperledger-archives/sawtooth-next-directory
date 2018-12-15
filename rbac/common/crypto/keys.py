@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Eliptical curve library wrapper (secp256k1)"""
 
 import logging
 import re
@@ -48,9 +49,9 @@ class Key:
 
         if private_key is None and public_key is None:
             private_key = Secp256k1PrivateKey.new_random()
-        if isinstance(private_key, str):
+        if private_key and not isinstance(private_key, Secp256k1PrivateKey):
             private_key = Secp256k1PrivateKey.from_hex(private_key)
-        if isinstance(public_key, str):
+        if public_key and not isinstance(public_key, Secp256k1PublicKey):
             public_key = Secp256k1PublicKey.from_hex(public_key)
         if public_key is None and private_key is not None:
             public_key = self._context.get_public_key(private_key)

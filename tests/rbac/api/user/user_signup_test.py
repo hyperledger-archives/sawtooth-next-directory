@@ -12,40 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Test the REST API endpoint"""
-# pylint: disable=invalid-name,redefined-outer-name,unused-import
+""" User Signup Test
+"""
 
 import requests
 import pytest
 
 from rbac.common.logs import getLogger
-from tests.rbac.test.fixtures import url_base
-from tests.rbac.test.fixtures import testdata
-from tests.rbac.test.assertions import assert_api_error
-from tests.rbac.test.assertions import assert_api_success
+
+from tests.rbac import helper
+from tests.rbac.api.assertions import assert_api_error
+from tests.rbac.api.assertions import assert_api_success
 
 LOGGER = getLogger(__name__)
 
 
 @pytest.mark.api
-@pytest.mark.api_signup
+@pytest.mark.api_user
 @pytest.mark.parametrize(
     "data",
     [
         (
             {
-                "name": testdata.name(),
-                "username": testdata.username(),
-                "email": testdata.email(),
-                "password": testdata.password(),
+                "name": helper.api.user.name(),
+                "username": helper.api.user.username(),
+                "email": helper.api.user.email(),
+                "password": helper.api.user.password(),
             }
         )
     ],
 )
-def test_api_user_signup_good(url_base, data):
-    """Test user signup with good data
+def test_api_user_signup_good(data):
+    """ Test user signup with good data
     """
-    url = url_base + "/api/users/"
+    url = helper.api.user.create.url
     response = requests.post(url=url, headers=None, json=data)
     result = assert_api_success(response)
     assert result["data"]
@@ -58,39 +58,42 @@ def test_api_user_signup_good(url_base, data):
 
 
 @pytest.mark.api
-@pytest.mark.api_signup
+@pytest.mark.api_user
 @pytest.mark.parametrize(
-    "data, expected_error",
+    "data, message, status_code",
     [
         (
             {
-                "username": testdata.username(),
-                "email": testdata.email(),
-                "password": testdata.password(),
+                "username": helper.api.user.username(),
+                "email": helper.api.user.email(),
+                "password": helper.api.user.password(),
             },
             "Bad Request: name field is required",
+            400,
         ),
         (
             {
-                "name": testdata.name(),
-                "username": testdata.username(),
-                "password": testdata.password(),
+                "name": helper.api.user.name(),
+                "username": helper.api.user.username(),
+                "password": helper.api.user.password(),
             },
             "Bad Request: email field is required",
+            400,
         ),
         (
             {
-                "name": testdata.name(),
-                "username": testdata.username(),
-                "email": testdata.email(),
+                "name": helper.api.user.name(),
+                "username": helper.api.user.username(),
+                "email": helper.api.user.email(),
             },
             "Bad Request: password field is required",
+            400,
         ),
     ],
 )
-def test_api_user_signup_bad(url_base, data, expected_error):
-    """Test user signup with bad data
+def test_api_user_signup_bad(data, message, status_code):
+    """ Test user signup with bad data
     """
-    url = url_base + "/api/users/"
+    url = helper.api.user.create.url
     response = requests.post(url=url, headers=None, json=data)
-    assert_api_error(response, expected_error)
+    assert assert_api_error(response, message, status_code)
