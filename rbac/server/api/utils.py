@@ -13,21 +13,22 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import logging
 import binascii
 import rethinkdb as r
 from sanic.response import json
 
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import validator_pb2
+
+from rbac.common.logs import getLogger
+from rbac.common.crypto.secrets import decrypt_private_key
+from rbac.common.crypto.secrets import deserialize_api_key
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthorized
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
 from rbac.transaction_creation.common import Key
-from rbac.common.crypto.secrets import decrypt_private_key
-from rbac.common.crypto.secrets import deserialize_api_key
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = getLogger(__name__)
 
 SIGNATURE_KEY = "RBAC_AUTH_SIGNATURE"
 PAYLOAD_KEY = "RBAC_AUTH_HEADER_PAYLOAD"
@@ -45,7 +46,7 @@ def validate_fields(required_fields, body):
 def create_authorization_response(token, data):
     """Create destructured token response payload, splitting a
     token into its signature and payload components"""
-    response = json({"data": data})
+    response = json({"data": data, "token": token})
     response.cookies[SIGNATURE_KEY] = ".".join(token.split(".")[0:2])
     response.cookies[PAYLOAD_KEY] = token.split(".")[2]
 
@@ -54,24 +55,28 @@ def create_authorization_response(token, data):
 
 
 def extract_request_token(request):
-    """Given a request was initiated by the chatbot engine, retrieve
-    the auth token directly from the slot field, otherwise construct
-    the token by concatenating the the supplied credentials (cookies)"""
+    """If a request was initiated by the chatbot engine, retrieve
+    the auth token directly from the slot field, otherwise return
+    the Authorization header value or cookie token values."""
+
+    if "Authorization" in request.headers:
+        return request.headers["Authorization"]
+
+    token_signature = request.cookies.get(SIGNATURE_KEY)
+    token_payload = request.cookies.get(PAYLOAD_KEY)
+
+    if token_signature and token_payload:
+        return ".".join([token_signature, token_payload])
+
     try:
         return request.json["tracker"]["slots"]["token"]
     except (KeyError, TypeError):
         pass
-    if request.cookies.get(SIGNATURE_KEY) is None:
-        raise ApiUnauthorized("Unauthorized: No token signature provided")
-    if request.cookies.get(PAYLOAD_KEY) is None:
-        raise ApiUnauthorized("Unauthorized: No token payload provided")
-    return ".".join(
-        [request.cookies.get(SIGNATURE_KEY), request.cookies.get(PAYLOAD_KEY)]
-    )
+
+    raise ApiUnauthorized("Unauthorized: No authentication token provided")
 
 
 async def create_response(conn, request_url, data, head_block, start=None, limit=None):
-    LOGGER.warning(request_url)
     base_url = request_url.split("?")[0]
     table = base_url.split("/")[4]
     url = "{}?head={}".format(base_url, head_block.get("id"))
