@@ -13,11 +13,12 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
-
 from sanic.response import json
 from sanic import Blueprint
 from sanic.exceptions import SanicException
+from sanic.exceptions import NotFound
+
+import rbac.common.logs as logging
 
 
 ERRORS_BP = Blueprint("errors")
@@ -85,8 +86,24 @@ class ApiInternalError(ApiException):
     pass
 
 
+@ERRORS_BP.exception(NotFound)
+async def handle_not_found(request, exception):
+    return json(
+        {"code": exception.status_code, "message": exception.message},
+        status=exception.status_code,
+    )
+
+
 @ERRORS_BP.exception(ApiException)
 def api_json_error(request, exception):
+    return json(
+        {"code": exception.status_code, "message": exception.message},
+        status=exception.status_code,
+    )
+
+
+@ERRORS_BP.exception(SanicException)
+async def handle_errors(request, exception):
     LOGGER.exception(exception)
     return json(
         {"code": exception.status_code, "message": exception.message},
