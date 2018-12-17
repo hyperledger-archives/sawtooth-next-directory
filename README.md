@@ -8,7 +8,7 @@ A Federated Tool for Managing Entitlements.
 
 ## Introduction
 ### What is NEXT? 
-NEXT is an open-source Identity and Access Management Platform for enterprise. NEXT is built by leveraging the Sawtooth blockchain to not only improve the status-quo of identity governance and auditing, but also replaces trust with cryptographic proof. Originally envisioned and designed by T-Mobile, NEXT is an enterprise-grade blockchain application, built to integrate with a wide-ranging number of indentity consuming and identity-providing applications. NEXT can integrate with industry standard directory services and provid request, approval, and audit features with the integrity of the Blockchain.
+NEXT is an open-source Identity and Access Management Platform for enterprise. NEXT is built by leveraging the Sawtooth blockchain to not only improve the status-quo of identity governance and auditing, but also replaces trust with cryptographic proof. Originally envisioned and designed by T-Mobile, NEXT is an enterprise-grade blockchain application, built to integrate with a wide-ranging number of indentity consuming and identity-providing applications. NEXT can integrate with industry standard directory services and provide request, approval, and audit features with the integrity of the blockchain.
 
 The main components of NEXT includes: Sawtooth, a modular platform created by Intel that sits atop of The Linux Foundation's Hyperledger project, a transaction processor which handles RBAC-specific transaction logic, and a ledger sync which writes the blockchain state changes to a local database. The NEXT platform also features a chatbot component as well as an intuitive UI which will provide a smooth experience for users. 
 
@@ -26,20 +26,20 @@ At its heart, NEXT is about replacing trust with cryptographic truth. It is a fe
 ### _UI for User's Request Dashboard_
 ![User_request_dashboard](./readmeUI/NextUI/user_request_dashboard.png)  
 
-### _User requests to join a security group_
+### _User Requests To Join a Security Group_
 ![User_request_dashboard](./readmeUI/NextUI/user_awaiting_approval.png)  
 
-### _User's role request appears in admin's request dashboard_
+### _User's Role Request Appears in Admin's Request Dashboard_
 ![User_request_dashboard](./readmeUI/NextUI/admin_approval_with_chat.png)  
 
-### _Owner approves the user's request and the user is notified_
+### _Owner Approves the User's Request and the User is Notified_
 ![User_request_dashboard](./readmeUI/NextUI/user_role_approved.png) 
 
-### _Owner History of accepted/reject permission requests_
+### _Owner History of Accepted/Reject Permission Requests_
 ![User_request_dashboard](./readmeUI/NextUI/admin_history.png) 
 
 
-This flow highlights the typical use case of this platform. The a user requests access to be apart of a group. The owner of the group either accepts or rejects the user's request. The owner's activity log gets updated and auditing can be done in a fast and simple manner reducing overhead.
+This flow highlights the typical use-case of this platform. The a user requests access to be apart of a group. The owner of the group either accepts or rejects the user's request. The owner's activity log gets updated and auditing can be done in a fast and simple manner reducing overhead.
 
 
 ## How to Contribute  
@@ -52,7 +52,6 @@ Here are some ideas on how to get started:
 Our team has tagged some issues with the "Good First Issues" tag which are issues that can be picked up and worked on without having to know much about the overall guts and intracacies of the system. These [issues](https://github.com/hyperledger/sawtooth-next-directory/labels/good%20first%20issue) will also allow you to gradually get up to speed into the different components of NEXT, which will let you contribute to "bigger" issues down the line.
 
 If you have any questions or comments, or you just want to chat, here is a link to our [Rocketchat](https://chat.hyperledger.org/channel/sawtooth-next-directory)! 
-
 
 
 ## Using NEXT
@@ -278,7 +277,7 @@ Hyperledger Sawtooth NEXT Identity Platform software is licensed under the
 # Acknowledgements
 ### Big Thanks
 
-Cross-browser Testing Platform and Open Source <3 Provided by [Saucelabs]
+Cross-browser Testing Platform and Open Source <3 provided by [Saucelabs]
 
 Continuous Integration Platform provided by [Travis-CI]
 
