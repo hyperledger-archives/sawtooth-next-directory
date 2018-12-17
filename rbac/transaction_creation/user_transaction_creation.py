@@ -23,15 +23,13 @@ from rbac.common.protobuf import user_transaction_pb2, rbac_payload_pb2
 LOGGER = logging.getLogger(__name__)
 
 
-def create_user(
-    txn_key, batch_key, name, user_name, user_id, metadata, manager_id=None
-):
+def create_user(txn_key, batch_key, name, username, user_id, metadata, manager_id=None):
     """Create a BatchList with a CreateUser RBAC transaction.
 
     Args:
         txn_key (Key): The transaction signer's public/private key pair.
         batch_key (Key): The batch signer's public/private key pair.
-        user_name (str): The user name of the User.
+        username (str): The user name of the User.
         user_id (str): The User's public key.
         metadata (str): Client supplied metadata.
         manager_id (str): The optional id of the manager of this User.
@@ -44,7 +42,7 @@ def create_user(
     """
 
     create_user_payload = user_transaction_pb2.CreateUser(
-        name=name, user_name=user_name, user_id=user_id, metadata=metadata
+        name=name, username=username, user_id=user_id, metadata=metadata
     )
     inputs = [
         addresser.user.address(user_id),

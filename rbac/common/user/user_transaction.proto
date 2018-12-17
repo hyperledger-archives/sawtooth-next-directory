@@ -62,7 +62,7 @@ message CreateUser {
 
     string name = 1;
 
-    string user_name = 2;
+    string username = 2;
 
     string user_id = 3;
 
@@ -72,13 +72,15 @@ message CreateUser {
 
     string email = 6;
 
+    string key = 7;
+
 }
 
 message ImportsUser {
 
     string name = 1;
 
-    string user_name = 2;
+    string username = 2;
 
     string user_id = 3;
 
@@ -90,18 +92,22 @@ message ImportsUser {
 
     string remote_id = 7;
 
+    string key = 8;
+
 }
-
-
 
 message UpdateUser {
 
-    string user_id = 1;
+    string name = 1;
 
-    string new_name = 2;
+    string username = 2;
 
-    string old_metadata_sha512 = 3;
+    string user_id = 3;
 
-    string new_metadata = 4;
+    string manager_id = 4;
+
+    string metadata = 5;
+
+    string email = 6;
 
 }

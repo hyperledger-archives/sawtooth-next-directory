@@ -16,12 +16,13 @@
 from uuid import uuid4
 
 import hashlib
-import logging
 
 from sanic import Blueprint
 from sanic.response import json
 
-from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
+from rbac.common import rbac
+from rbac.common.logs import getLogger
+from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
 
 from rbac.server.api.errors import ApiNotImplemented
@@ -33,12 +34,10 @@ from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import users_query
 
-from rbac.transaction_creation.common import Key
-from rbac.transaction_creation.user_transaction_creation import create_user
 from rbac.transaction_creation.manager_transaction_creation import propose_manager
 from rbac.common.crypto.secrets import generate_api_key
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = getLogger(__name__)
 USERS_BP = Blueprint("users")
 
 
@@ -66,26 +65,26 @@ async def create_new_user(request):
     utils.validate_fields(required_fields, request.json)
 
     # Generate keys
-    private_key = Secp256k1PrivateKey.new_random()
-    txn_key = Key(private_key.as_hex())
+    txn_key = Key()
     encrypted_private_key = encrypt_private_key(
-        request.app.config.AES_KEY, txn_key.public_key, private_key.as_bytes()
+        request.app.config.AES_KEY, txn_key.public_key, txn_key.private_key_bytes
     )
 
     # Build create user transaction
-    batch_list = create_user(
-        txn_key,
-        request.app.config.BATCHER_KEY_PAIR,
-        request.json.get("name"),
-        request.json.get("username"),
-        txn_key.public_key,
-        request.json.get("metadata"),
-        request.json.get("manager"),
+    batch_list = rbac.user.batch_list(
+        signer_keypair=txn_key,
+        user_id=txn_key.public_key,
+        name=request.json.get("name"),
+        username=request.json.get("username"),
+        email=request.json.get("email"),
+        metadata=request.json.get("metadata"),
+        manager=request.json.get("manager"),
+        key=txn_key.public_key,
     )
 
     # Submit transaction and wait for complete
     await utils.send(
-        request.app.config.VAL_CONN, batch_list[0], request.app.config.TIMEOUT
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
 
     # Save new user in auth table
@@ -97,7 +96,7 @@ async def create_new_user(request):
         "user_id": txn_key.public_key,
         "hashed_password": hashed_password,
         "encrypted_private_key": encrypted_private_key,
-        "user_name": request.json.get("username"),
+        "username": request.json.get("username"),
         "email": request.json.get("email"),
     }
     await auth_query.create_auth_entry(request.app.config.DB_CONN, auth_entry)
