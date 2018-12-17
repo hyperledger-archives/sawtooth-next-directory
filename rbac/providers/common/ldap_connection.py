@@ -23,18 +23,16 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-LDAP_CONNECTION_TIMEOUT = 5
+LDAP_READ_TIMEOUT = 10
+LDAP_CONNECT_TIMEOUT = 6
 
 
 def create_ldap_connection(server, user, password):
     """Creates an open connection to an LDAP server"""
 
-    server = Server(server, get_info=ALL)
+    server = Server(server, get_info=ALL, connect_timeout=LDAP_CONNECT_TIMEOUT)
     connection = Connection(
-        server=server,
-        user=user,
-        password=password,
-        receive_timeout=LDAP_CONNECTION_TIMEOUT,
+        server=server, user=user, password=password, receive_timeout=LDAP_READ_TIMEOUT
     )
 
     try:
@@ -47,3 +45,7 @@ def create_ldap_connection(server, user, password):
         return None
 
     return connection
+
+
+def can_connect_to_ldap(server, user, password):
+    return create_ldap_connection(server, user, password) is not None
