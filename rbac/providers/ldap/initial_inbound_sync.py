@@ -29,7 +29,7 @@ import rethinkdb as r
 
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
-from rbac.providers.common import ldap_connection
+from rbac.providers.common import ldap_connector
 from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
@@ -63,24 +63,18 @@ def fetch_ldap_data(data_type):
     elif data_type == "group":
         search_filter = "(objectClass=group)"
 
-    ad_connection = ldap_connection.create_ldap_connection(
-        LDAP_SERVER, LDAP_USER, LDAP_PASS
+    ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
+
+    ldap_connection.search(
+        search_base=LDAP_DC,
+        search_filter=search_filter,
+        attributes=ldap3.ALL_ATTRIBUTES,
     )
 
-    if ldap_connection is None:
-        LOGGER.error("Ldap connection creation failed. Skipping Ldap fetch")
-    else:
-
-        ad_connection.search(
-            search_base=LDAP_DC,
-            search_filter=search_filter,
-            attributes=ldap3.ALL_ATTRIBUTES,
-        )
-
-        insert_to_db(data_dict=ad_connection.entries, data_type=data_type)
-        sync_source = "ldap-" + data_type
-        provider_id = LDAP_DC
-        save_sync_time(provider_id, sync_source, "initial")
+    insert_to_db(data_dict=ldap_connection.entries, data_type=data_type)
+    sync_source = "ldap-" + data_type
+    provider_id = LDAP_DC
+    save_sync_time(provider_id, sync_source, "initial")
 
 
 def insert_to_db(data_dict, data_type):
@@ -127,7 +121,7 @@ def initialize_ldap_sync():
 
     if not LDAP_DC:
         LOGGER.info("Ldap Domain Controller is not provided, skipping Ldap sync.")
-    elif not ldap_connection.can_connect_to_ldap(LDAP_SERVER, LDAP_USER, LDAP_PASS):
+    elif not ldap_connector.can_connect_to_ldap(LDAP_SERVER, LDAP_USER, LDAP_PASS):
         LOGGER.info("Ldap Connection failed. Skipping Ldap sync.")
     else:
         connect_to_db()

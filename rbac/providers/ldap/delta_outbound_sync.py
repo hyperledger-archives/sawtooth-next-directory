@@ -26,7 +26,7 @@ from rbac.providers.common.db_queries import (
     put_entry_changelog,
     delete_entry_queue,
 )
-from rbac.providers.common.ldap_connection import create_ldap_connection
+from rbac.providers.common import ldap_connector
 from rbac.providers.common.expected_errors import ExpectedError, ValidationException
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
@@ -175,50 +175,46 @@ def ldap_outbound_listener():
     """Initialize LDAP delta outbound sync with Active Directory."""
     LOGGER.info("Starting outbound sync listener...")
 
-    LOGGER.info("Connecting to RethinkDB...")
+    LOGGER.info("Connecting to RethinkDb...")
     connect_to_db()
-    LOGGER.info("Successfully connected to RethinkDB!")
+    LOGGER.info("..connected to RethinkDb")
 
-    ldap_connection = create_ldap_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
+    ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
 
-    if ldap_connection is None:
-        LOGGER.error("No Ldap connection available. Skipping ldap outbound sync")
-    else:
-        while True:
-            try:
-                queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
-                LOGGER.info(
-                    "Received queue entry %s from outbound queue...", queue_entry["id"]
+    while True:
+        try:
+            LOGGER.debug("Peeking at outbound queue")
+            queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
+            LOGGER.info(
+                "Received queue entry %s from outbound queue...", queue_entry["id"]
+            )
+
+            data_type = queue_entry["data_type"]
+            LOGGER.info("Putting %s into ad...", data_type)
+            if is_entry_in_ad(queue_entry, ldap_connection):
+                update_entry_ldap(queue_entry, ldap_connection)
+            else:
+                create_entry_ldap(queue_entry, ldap_connection)
+
+            LOGGER.info("Putting queue entry into changelog...")
+            put_entry_changelog(queue_entry, "outbound")
+
+            LOGGER.info("Deleting queue entry from outbound queue...")
+            entry_id = queue_entry["id"]
+            delete_entry_queue(entry_id, "outbound_queue")
+        except ValidationException as err:
+            LOGGER.info(err)
+            LOGGER.info("No outbound payload possible.  Deleting entry %s", queue_entry)
+            delete_entry_queue(queue_entry["id"], "outbound_queue")
+        except ExpectedError as err:
+            LOGGER.debug(
+                (
+                    "%s Repolling after %s seconds...",
+                    err.__str__,
+                    "LISTENER_POLLING_DELAY",
                 )
-
-                data_type = queue_entry["data_type"]
-                LOGGER.info("Putting %s into ad...", data_type)
-                if is_entry_in_ad(queue_entry, ldap_connection):
-                    update_entry_ldap(queue_entry, ldap_connection)
-                else:
-                    create_entry_ldap(queue_entry, ldap_connection)
-
-                LOGGER.info("Putting queue entry into changelog...")
-                put_entry_changelog(queue_entry, "outbound")
-
-                LOGGER.info("Deleting queue entry from outbound queue...")
-                entry_id = queue_entry["id"]
-                delete_entry_queue(entry_id, "outbound_queue")
-            except ValidationException as err:
-                LOGGER.info(err)
-                LOGGER.info(
-                    "No oubound payload possible.  Deleting entry %s", queue_entry
-                )
-                delete_entry_queue(queue_entry["id"], "outbound_queue")
-            except ExpectedError as err:
-                LOGGER.debug(
-                    (
-                        "%s Repolling after %s seconds...",
-                        err.__str__,
-                        "LISTENER_POLLING_DELAY",
-                    )
-                )
-                time.sleep(LISTENER_POLLING_DELAY)
-            except Exception as err:
-                LOGGER.exception(err)
-                raise err
+            )
+            time.sleep(LISTENER_POLLING_DELAY)
+        except Exception as err:
+            LOGGER.exception(err)
+            raise err
