@@ -65,7 +65,8 @@ def setup_db(host, port, name):
         r.db(name).table("state").index_create("object", [r.row["object_type"], r.row["object_id"]]).run(conn)
 
         LOGGER.info('Creating table: state_history')
-        r.db(name).table_create('state_history', primary_key='address').run(conn)
+        r.db(name).table_create('state_history').run(conn)
+        r.db(name).table("state_history").index_create("address").run(conn)
         r.db(name).table("state_history").index_create("object", [r.row["object_type"], r.row["object_id"]]).run(conn)
 
         LOGGER.info('Creating table: metadata')

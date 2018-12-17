@@ -81,57 +81,76 @@ def get_updater(database, block_num):
 def _update_state(database, block_num, address, resource):
     try:
         # update state table
+        now = r.now()
         address_parts = addresser.parse(address)
         address_binary = bytes_from_hex(address)
-        key = address_binary
-        keys = {"address": address_binary}
         object_id = bytes_from_hex(address_parts.object_id)
         object_type = address_parts.object_type.value
         related_id = bytes_from_hex(address_parts.related_id)
         related_type = address_parts.related_type.value
         relationship_type = address_parts.relationship_type.value
+
+        state = database.get_table("state")
+        state_history = database.get_table("state_history")
+
         data = {
-            "block_updated": int(block_num),
-            "updated_at": r.now(),
+            "address": address_binary,
             "object_type": object_type,
             "object_id": object_id,
             "related_type": related_type,
             "relationship_type": relationship_type,
             "related_id": related_id,
+            "block_created": int(block_num),
+            "block_num": int(block_num),
+            "created_at": now,
+            "updated_at": now,
             **resource,
         }
-        table_query = database.get_table("state")
-        query = table_query.get(key).replace(
+        delta = {"block_num": int(block_num), "updated_at": now, **resource}
+        query = state.get(address_binary).replace(
             lambda doc: r.branch(
                 # pylint: disable=singleton-comparison
                 (doc == None),  # noqa
-                r.expr(data).merge(
-                    {
-                        "address": key,
-                        "block_created": int(block_num),
-                        "created_at": r.now(),
-                    }
-                ),
-                doc.merge(data),
-            )
+                r.expr(data),
+                doc.merge(delta),
+            ),
+            return_changes=True,
         )
         result = database.run_query(query)
+
         if not result["inserted"] == 1 and not result["replaced"]:
             LOGGER.warning("error updating state table:\n%s\n%s", result, query)
+        if result["replaced"] and "changes" in result and result["changes"]:
+            query = state_history.insert(result["changes"][0]["old_val"])
+            # data["address"] = [address_binary, int(block_num)]
+            result = database.run_query(query)
+            if not result["inserted"] == 1:
+                LOGGER.warning(
+                    "error updating state_history table:\n%s\n%s", result, query
+                )
 
-        key = [address_binary, int(block_num)]
-        data["address"] = key
-        if result["inserted"] == 1:
-            data["block_created"] = int(block_num)
-            data["created_at"] = r.now()
-        elif result["replaced"] == 1:
-            LOGGER.warning(result)
-
-        table_query = database.get_table("state_history")
-        query = table_query.get(key).replace(data)
-        result = database.run_query(query)
-        if not result["inserted"] == 1 and not result["replaced"]:
-            LOGGER.warning("error updating state_history table:\n%s\n%s", result, query)
+        if not related_id:
+            data["address"] = address_binary
+            del data["related_type"]
+            del data["relationship_type"]
+            del data["related_id"]
+            query = (
+                database.get_table("metadata")
+                .get(address_binary)
+                .replace(
+                    lambda doc: r.branch(
+                        # pylint: disable=singleton-comparison
+                        (doc == None),  # noqa
+                        r.expr(data),
+                        doc.merge(delta),
+                    )
+                )
+            )
+            result = database.run_query(query)
+            if (not result["inserted"] and not result["replaced"]) or result[
+                "errors"
+            ] > 0:
+                LOGGER.warning("error updating metadata record:\n%s\n%s", result, query)
 
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.warning("update_state %s error:", type(err))
