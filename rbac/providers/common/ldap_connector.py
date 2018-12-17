@@ -14,6 +14,7 @@
 # ------------------------------------------------------------------------------
 
 import sys
+import time
 import logging
 
 from ldap3 import Connection, Server, ALL
@@ -23,16 +24,20 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.DEBUG
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
-LDAP_READ_TIMEOUT = 10
-LDAP_CONNECT_TIMEOUT = 6
+LDAP_READ_TIMEOUT_SECS = 10
+LDAP_CONNECT_TIMEOUT_SECS = 6
+LDAP_CONNECT_RETRY_SECS = 10
 
 
-def create_ldap_connection(server, user, password):
+def create_connection(server, user, password):
     """Creates an open connection to an LDAP server"""
 
-    server = Server(server, get_info=ALL, connect_timeout=LDAP_CONNECT_TIMEOUT)
+    server = Server(server, get_info=ALL, connect_timeout=LDAP_CONNECT_TIMEOUT_SECS)
     connection = Connection(
-        server=server, user=user, password=password, receive_timeout=LDAP_READ_TIMEOUT
+        server=server,
+        user=user,
+        password=password,
+        receive_timeout=LDAP_READ_TIMEOUT_SECS,
     )
 
     try:
@@ -41,11 +46,27 @@ def create_ldap_connection(server, user, password):
                 "Error binding to LDAP server %s : %s", server, connection.result
             )
     except LDAPSocketOpenError as lsoe:
-        LOGGER.error("Error opening LDAP socket to server %s. %s", server, lsoe)
+        LOGGER.warning("Error opening LDAP socket to server %s. %s", server, lsoe)
         return None
 
     return connection
 
 
+def await_connection(server, user, password):
+    """Retries connecting to an LDAP server indefinitely"""
+
+    connection = create_connection(server, user, password)
+
+    while connection is None:
+        LOGGER.info(
+            "Failed to connect to Active Directory. Retrying in %s seconds",
+            LDAP_CONNECT_RETRY_SECS,
+        )
+        time.sleep(LDAP_CONNECT_RETRY_SECS)
+        connection = create_connection(server, user, password)
+
+    return connection
+
+
 def can_connect_to_ldap(server, user, password):
-    return create_ldap_connection(server, user, password) is not None
+    return create_connection(server, user, password) is not None
