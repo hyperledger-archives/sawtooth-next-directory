@@ -38,4 +38,6 @@ message User {
 
     string remote_id = 6;
 
+    string username = 7;
+
 }

@@ -81,7 +81,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key1,
                 name=self.user1,
-                user_name=self.user1,
+                username=self.user1,
                 user_id=self.key1.public_key,
             )[0]["status"],
             "COMMITTED",
@@ -91,7 +91,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key1,
                 name=self.user2a,
-                user_name=self.user2a,
+                username=self.user2a,
                 user_id=self.key2a.public_key,
                 manager_id=self.key1.public_key,
             )[0]["status"],
@@ -102,7 +102,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key3a,
                 name=self.user2b,
-                user_name=self.user2b,
+                username=self.user2b,
                 user_id=self.key_manager.public_key,
                 manager_id=self.key3a.public_key,
             )[0]["status"],
@@ -115,7 +115,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key2a,
                 name=self.user1,
-                user_name=self.user1,
+                username=self.user1,
                 user_id=self.key2a.public_key,
                 manager_id=self.key1.public_key,
             )[0]["status"],
@@ -127,7 +127,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key2a,
                 name=self.user2b,
-                user_name=self.user2b,
+                username=self.user2b,
                 user_id=self.key_manager.public_key,
                 manager_id=self.key1.public_key,
             )[0]["status"],
@@ -139,7 +139,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key_invalid,
                 name=self.user_invalid[:4],
-                user_name=self.user_invalid[:4],
+                username=self.user_invalid[:4],
                 user_id=self.key_invalid.public_key,
                 manager_id=None,
             )[0]["status"],
@@ -151,7 +151,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key2a,
                 name=self.user3a,
-                user_name=self.user3a,
+                username=self.user3a,
                 user_id=self.key3a.public_key,
                 manager_id=self.key2a.public_key,
             )[0]["status"],
@@ -162,7 +162,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key1,
                 name=self.user2b,
-                user_name=self.user2b,
+                username=self.user2b,
                 user_id=self.key_manager.public_key,
                 manager_id=self.key1.public_key,
             )[0]["status"],
@@ -173,7 +173,7 @@ class TestOrgHierarchy(unittest.TestCase):
             self.client.create_user(
                 key=self.key3b,
                 name=self.user3b,
-                user_name=self.user3b,
+                username=self.user3b,
                 user_id=self.key3b.public_key,
                 manager_id=self.key_manager.public_key,
             )[0]["status"],

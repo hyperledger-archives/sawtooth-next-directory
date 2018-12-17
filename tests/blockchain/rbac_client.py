@@ -45,12 +45,12 @@ class RbacClient(object):
                 items.append((user_container, addresser.AddressSpace.USER))
         return items
 
-    def create_user(self, key, name, user_name, user_id, manager_id=None):
+    def create_user(self, key, name, username, user_id, manager_id=None):
         batch_list, signature = create_user(
             txn_key=key,
             batch_key=self._key,
             name=name,
-            user_name=user_name,
+            username=username,
             user_id=user_id,
             metadata=uuid4().hex,
             manager_id=manager_id,

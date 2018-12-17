@@ -15,7 +15,6 @@
 
 from functools import wraps
 import hashlib
-import logging
 
 from itsdangerous import BadSignature
 
@@ -25,10 +24,11 @@ from rbac.server.api.errors import ApiNotFound, ApiUnauthorized
 from rbac.server.api import utils
 
 from rbac.server.db import auth_query
+from rbac.common.logs import getLogger
 from rbac.common.crypto.secrets import generate_api_key
 from rbac.common.crypto.secrets import deserialize_api_key
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = getLogger(__name__)
 AUTH_BP = Blueprint("auth")
 
 
@@ -55,12 +55,14 @@ def authorized():
 
 @AUTH_BP.post("api/authorization")
 async def authorize(request):
+    """ User login (authorization)
+    """
     required_fields = ["id", "password"]
     utils.validate_fields(required_fields, request.json)
 
     password = request.json.get("password")
     hashed_pwd = hashlib.sha256(password.encode("utf-8")).hexdigest()
-    auth_info = await auth_query.fetch_info_by_user_name(
+    auth_info = await auth_query.fetch_info_by_username(
         request.app.config.DB_CONN, request.json.get("id")
     )
     if auth_info is None or auth_info.get("hashed_password") != hashed_pwd:

@@ -38,15 +38,15 @@ class TestUserOperations(unittest.TestCase):
         cls.client = RbacClient(None, IntegrationTestHelper.get_batcher_key())
         cls.test_helper.wait_for_containers()
 
-        cls.user_key, cls.user_name = cls.test_helper.make_key_and_name()
+        cls.user_key, cls.username = cls.test_helper.make_key_and_name()
         cls.role_key, cls.role_name = cls.test_helper.make_key_and_name()
 
     def test_create_user(self):
         self.assertEqual(
             self.client.create_user(
                 key=self.user_key,
-                name=self.user_name,
-                user_name=self.user_name,
+                name=self.username,
+                username=self.username,
                 user_id=self.user_key.public_key,
             )[0]["status"],
             "COMMITTED",

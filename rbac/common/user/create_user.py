@@ -60,7 +60,7 @@ class CreateUser(BaseMessage):
         self,
         name,
         user_id=None,
-        user_name=None,
+        username=None,
         email=None,
         metadata=None,
         manager_id=None,
@@ -73,7 +73,7 @@ class CreateUser(BaseMessage):
         message = self.make(
             user_id=user_id,
             name=name,
-            user_name=user_name,
+            username=username,
             email=email,
             metadata=metadata,
             manager_id=manager_id,

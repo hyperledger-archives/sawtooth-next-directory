@@ -26,24 +26,23 @@ async def create_auth_entry(conn, auth_entry):
 
 
 async def fetch_info_by_user_id(conn, user_id):
-    LOGGER.warning("fetching user with id: %s", user_id)
     auth_info = await r.table("auth").get(user_id).run(conn)
     if auth_info is None:
         raise ApiNotFound("Not Found: " "No user with id '{}' exists.".format(user_id))
     return auth_info
 
 
-async def fetch_info_by_user_name(conn, user_name):
+async def fetch_info_by_username(conn, username):
     auth_info = (
         await r.table("auth")
-        .filter(r.row["user_name"] == user_name)
+        .filter(r.row["username"] == username)
         .coerce_to("array")
         .run(conn)
     )
 
     if not auth_info:
         raise ApiNotFound(
-            "Not Found: " "No user with name '{}' exists.".format(user_name)
+            "Not Found: " "No user with name '{}' exists.".format(username)
         )
 
     LOGGER.warning(auth_info[0])
