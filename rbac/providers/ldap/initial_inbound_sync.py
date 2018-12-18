@@ -50,6 +50,8 @@ LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
 
+LDAP_SEARCH_PAGE_SIZE = 500
+
 
 def fetch_ldap_data(data_type):
     """
@@ -70,42 +72,74 @@ def fetch_ldap_data(data_type):
         search_filter=search_filter,
         attributes=ldap3.ALL_ATTRIBUTES,
     )
+    if ldap_connection is None:
+        LOGGER.error("Ldap connection creation failed. Skipping Ldap fetch")
+    else:
 
-    insert_to_db(data_dict=ldap_connection.entries, data_type=data_type)
-    sync_source = "ldap-" + data_type
-    provider_id = LDAP_DC
-    save_sync_time(provider_id, sync_source, "initial")
-
-
-def insert_to_db(data_dict, data_type):
-    """Insert (Users | Groups) individually to RethinkDB from dict of data and begins delta sync timer."""
-    for entry in data_dict:
-        entry_to_insert = {}
-        entry_json = json.loads(entry.entry_to_json())
-        entry_attributes = entry_json["attributes"]
-        for attribute in entry_attributes:
-            if len(entry_attributes[attribute]) > 1:
-                entry_to_insert[attribute] = entry_attributes[attribute]
-            else:
-                entry_to_insert[attribute] = entry_attributes[attribute][0]
-        if data_type == "user":
-            standardized_entry = inbound_user_filter(entry_to_insert, "ldap")
-        elif data_type == "group":
-            standardized_entry = inbound_group_filter(entry_to_insert, "ldap")
-        inbound_entry = {
-            "data": standardized_entry,
-            "data_type": data_type,
-            "sync_type": "initial",
-            "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
-            "provider_id": LDAP_DC,
-            "raw": entry_json,
+        search_parameters = {
+            "search_base": LDAP_DC,
+            "search_filter": search_filter,
+            "attributes": ldap3.ALL_ATTRIBUTES,
+            "paged_size": LDAP_SEARCH_PAGE_SIZE,
         }
-        add_transaction(inbound_entry)
-        r.table("inbound_queue").insert(inbound_entry).run()
 
-    LOGGER.info(
-        "Inserted %s %s records into inbound_queue.", str(len(data_dict)), data_type
-    )
+        index = 1
+        while True:
+
+            ldap_connection.search(**search_parameters)
+            for entry in ldap_connection.entries:
+
+                index = index + 1
+                if index % LDAP_SEARCH_PAGE_SIZE == 0:
+                    LOGGER.info("Processing record: %s", index)
+
+                insert_to_db(entry, data_type=data_type)
+
+                # 1.2.840.113556.1.4.319 is the OID/extended control for PagedResults
+                cookie = ldap_connection.result["controls"]["1.2.840.113556.1.4.319"][
+                    "value"
+                ]["cookie"]
+                if cookie:
+                    search_parameters["paged_cookie"] = cookie
+                else:
+                    LOGGER.info("Imported %s entries from Active Directory", index)
+                    break
+
+    sync_source = "ldap-" + data_type
+    save_sync_time(LDAP_DC, sync_source, "initial")
+
+
+def insert_to_db(entry, data_type):
+    """Insert user or group individually to RethinkDB from dict of data and begins delta sync timer."""
+
+    entry_json = json.loads(entry.entry_to_json())
+    entry_attributes = entry_json["attributes"]
+
+    for attribute in entry_attributes:
+
+        try:
+            if len(entry_attributes[attribute]) > 1:
+                entry[attribute] = entry_attributes[attribute]
+            else:
+                entry[attribute] = entry_attributes[attribute][0]
+        except TypeError:
+            # TODO: There are a lot of mapping attempts that end up in this block. Revisit'
+            LOGGER.warning("Could not assign: %s", entry_attributes[attribute][0])
+
+    if data_type == "user":
+        standardized_entry = inbound_user_filter(entry, "ldap")
+    elif data_type == "group":
+        standardized_entry = inbound_group_filter(entry, "ldap")
+    inbound_entry = {
+        "data": standardized_entry,
+        "data_type": data_type,
+        "sync_type": "initial",
+        "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
+        "provider_id": LDAP_DC,
+        "raw": entry_json,
+    }
+    add_transaction(inbound_entry)
+    r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def initiate_delta_sync():
