@@ -122,15 +122,7 @@ async def get_table_count(conn, table, head_block_num):
             .count()
             .run(conn)
         )
-    return (
-        await r.table(table)
-        .filter(
-            (head_block_num >= r.row["start_block_num"])
-            & (head_block_num <= r.row["end_block_num"])
-        )
-        .count()
-        .run(conn)
-    )
+    return await r.table(table).count().run(conn)
 
 
 def get_request_paging_info(request):

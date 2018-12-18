@@ -30,10 +30,6 @@ async def fetch_all_task_resources(conn, head_block_num, start, limit):
     resources = (
         await r.table("tasks")
         .order_by(index="task_id")
-        .filter(
-            (head_block_num >= r.row["start_block_num"])
-            & (head_block_num < r.row["end_block_num"])
-        )
         .slice(start, start + limit)
         .map(
             lambda task: task.merge(
@@ -65,10 +61,6 @@ async def fetch_task_resource(conn, task_id, head_block_num):
     resource = (
         await r.table("tasks")
         .get_all(task_id, index="task_id")
-        .filter(
-            (head_block_num >= r.row["start_block_num"])
-            & (head_block_num < r.row["end_block_num"])
-        )
         .merge(
             {
                 "id": r.row["task_id"],

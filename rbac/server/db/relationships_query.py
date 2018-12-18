@@ -25,11 +25,6 @@ def fetch_relationships(table, index, identifier, head_block_num):
     return (
         r.table(table)
         .get_all(identifier, index=index)
-        .filter(
-            lambda doc: (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"]),
-            default=True,
-        )
         .get_field("identifiers")
         .coerce_to("array")
         .concat_map(lambda identifiers: identifiers)
@@ -39,12 +34,7 @@ def fetch_relationships(table, index, identifier, head_block_num):
 def fetch_relationships_by_id(table, identifier, key, head_block_num):
     return (
         r.table(table)
-        .filter(
-            lambda doc: doc["identifiers"].contains(identifier)
-            & (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"]),
-            default=True,
-        )
+        .filter(lambda doc: doc["identifiers"].contains(identifier), default=True)
         .get_field(key)
         .distinct()
         .coerce_to("array")
