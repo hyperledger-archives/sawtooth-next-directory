@@ -20,7 +20,8 @@ import Actions, { reducer, INITIAL_STATE } from './AuthRedux';
 test('loginRequest', () => {
   const username = 'hello';
   const password = 'world';
-  const state = reducer(INITIAL_STATE, Actions.loginRequest(username, password));
+  const state = reducer(INITIAL_STATE,
+    Actions.loginRequest(username, password));
 
   expect(state.fetching).toBe(true);
 });
@@ -30,9 +31,10 @@ test('loginSuccess', () => {
   const isAuthenticated = true;
   const authData = {
     authorization: '',
-    user_id: ''
+    user_id: '',
   };
-  const state = reducer(INITIAL_STATE, Actions.loginSuccess(isAuthenticated, authData));
+  const state = reducer(INITIAL_STATE,
+    Actions.loginSuccess(isAuthenticated, authData));
 
   expect(state.fetching).toBe(false);
   expect(state.isAuthenticated).toBe(true);

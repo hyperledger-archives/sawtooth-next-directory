@@ -111,42 +111,45 @@ export default class SignupForm extends Component {
           visible={activeIndex === 0}
           animation='fade up'
           duration={{ hide, show }}>
-          <div id='next-signup-form-1'>
-            <Form onSubmit={() => this.setFlow(1)}>
+          <div>
+            <Form id='next-signup-form-1' onSubmit={() => this.setFlow(1)}>
               <Form.Field>
                 <Input
+                  id='next-name-signup-input'
                   autoFocus
                   placeholder='Name'
                   error={validName === false}
                   name='name'
                   type='text'
                   value={name}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
               </Form.Field>
               <Form.Field>
                 <Input
+                  id='next-email-signup-input'
                   placeholder='Email'
                   error={validEmail === false}
                   name='email'
                   type='email'
                   value={email}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
               </Form.Field>
               <Form.Field>
                 <Input
+                  id='next-username-signup-input'
                   placeholder='User ID'
                   error={validUsername === false}
                   name='username'
                   type='text'
                   value={username}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button
                   content='Next'
                   disabled={!validName || !validEmail || !validUsername}
                   icon='right arrow'
-                  labelPosition='right' />
+                  labelPosition='right'/>
               </Container>
             </Form>
           </div>
@@ -156,23 +159,25 @@ export default class SignupForm extends Component {
           animation='fade down'
           duration={{ hide, show }}>
           <div>
-            <Form onSubmit={() => submit(name, username, password, email)}>
+            <Form id='next-password-signup-form'
+              onSubmit={() => submit(name, username, password, email)}>
               <Form.Button
                 id='next-signup-form-back-button'
                 content='Back'
                 type='button'
                 icon='left arrow'
                 labelPosition='left'
-                onClick={() => this.setFlow(0)} />
+                onClick={() => this.setFlow(0)}/>
               <Form.Field id='next-signup-form-password'>
                 <Input
+                  id='next-password-signup-input'
                   autoFocus
                   error={validPassword === false}
                   name='password'
                   type='password'
                   placeholder='Password'
                   value={password}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
                 <Label>
                   Password must be at least 6 characters
                 </Label>
@@ -182,7 +187,7 @@ export default class SignupForm extends Component {
                   content='Sign Up'
                   disabled={!validPassword}
                   icon='right arrow'
-                  labelPosition='right' />
+                  labelPosition='right'/>
               </Container>
             </Form>
           </div>

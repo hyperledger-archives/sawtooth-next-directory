@@ -16,7 +16,7 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import { shallow } from 'enzyme';
 
 import BrowseCard from './BrowseCard';
 
@@ -28,17 +28,29 @@ describe('BrowseCard component', () => {
 
     const props = {
       details: {
-        name:'',
-        category:'',
-        admins:[]
-      }
+        name: '',
+        category: '',
+        admins: [],
+      },
     };
 
     ReactDOM.render(
-      <BrowseCard {...props}/>, div
+      <BrowseCard {...props} />, div
     );
-
     ReactDOM.unmountComponentAtNode(div);
   });
 
+  it('calls prop `onToggle` when icon clicked', () => {
+    const props = {
+      details: {
+        name: '',
+        category: '',
+        admins: [],
+      },
+    };
+
+    const wrapper = shallow(<BrowseCard {...props} />);
+    wrapper.find('#browse-tile-pinned-icon').simulate('click');
+
+  });
 });

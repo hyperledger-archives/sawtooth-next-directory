@@ -19,6 +19,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
 
+
 import Waves from './Waves';
 
 
@@ -26,9 +27,14 @@ describe('Waves component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
+    const props = {
+      location: { pathname: 'route' },
+      isAnimating: false,
+      stopAnimation: () => { },
+    };
 
     ReactDOM.render(
-      <BrowserRouter><Waves/></BrowserRouter>, div
+      <BrowserRouter><Waves {...props} /></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

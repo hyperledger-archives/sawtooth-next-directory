@@ -22,15 +22,15 @@ import StackedAvatar from './StackedAvatar';
 
 describe('StackedAvatar component', () => {
 
-  it('renders without crashing', () => {
+  it('Renders more than 3 components', () => {
     const div = document.createElement('div');
 
     const props = {
-      list: []
+      list: ['one', 'two', 'three', 'four', 'five'],
     };
 
     ReactDOM.render(
-      <StackedAvatar {...props}/>, div
+      <StackedAvatar {...props} />, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

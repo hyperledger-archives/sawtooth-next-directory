@@ -18,18 +18,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
+import { shallow } from 'enzyme';
 
 import LoginForm from './LoginForm';
 
 
 describe('LoginForm component', () => {
 
+  const props = {
+    submit: (username, password) => { },
+  };
+  const wrapper = shallow(<LoginForm {...props} />);
+
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
-    const props = {
-      submit: (username, password) => {}
-    }
 
     ReactDOM.render(
       <BrowserRouter><LoginForm {...props} /></BrowserRouter>, div
@@ -37,4 +39,36 @@ describe('LoginForm component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
+
+  test('username form', () => {
+    wrapper.find('#next-username-form').simulate('submit');
+    wrapper.find('#next-username-input').simulate('change',
+      { event: {} }, { name: 'username', value: '' });
+    wrapper.find('#next-username-input').simulate('change',
+      { event: {} }, { name: 'password', value: '' });
+    wrapper.find('#next-username-input').simulate('change',
+      { event: {} }, { name: 'resetEmail', value: '' });
+  });
+
+  test('password form', () => {
+    wrapper.find('#next-password-form').simulate('submit');
+  });
+
+  test('form back button click event', () => {
+    wrapper.find('#next-login-form-back-button').simulate('click');
+  });
+
+  test('reset password form', () => {
+    wrapper.find('#next-login-form-reset-password').simulate('submit');
+  });
+
+
+  test('form email back button', () => {
+    wrapper.find('#next-login-reset-email-back-button').simulate('click');
+  });
+
+  test('forgot password button click', () => {
+    wrapper.find('#next-login-form-forgot-password').simulate('click');
+  });
+
 });

@@ -19,28 +19,49 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-
+import { shallow } from 'enzyme';
 
 import * as customStore from '../../customStore';
 import Individuals from './Individuals';
 
 
 const store = customStore.create();
+const props = {
+  getOpenProposals: () => { },
+  userFromId: () => { },
+  openProposals: [''],
+};
+
+const newprops = {
+  getOpenProposals: () => { },
+  userFromId: () => { },
+  openProposals: [],
+};
+const wrapper = shallow(<Individuals {...props} store={store} />);
 
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
-  const props = {
-    getOpenProposals: () => {},
-    userFromId: () => {},
-  };
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Individuals {...props} /></BrowserRouter>
+    </Provider>, div
+  );
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Individuals {...props}/></BrowserRouter>
+      <BrowserRouter><Individuals {...newprops} /></BrowserRouter>
     </Provider>, div
   );
 
   ReactDOM.unmountComponentAtNode(div);
+});
+
+it('calls reset function', () => {
+  wrapper.dive().instance().reset();
+});
+
+it('calls setFlow function', () => {
+  wrapper.dive().instance().setFlow();
 });

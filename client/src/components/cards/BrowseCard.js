@@ -61,13 +61,14 @@ class BrowseCard extends Component {
           </div>
           <div className='browse-tile-pinned-icon'>
             <Icon
+              id='browse-tile-pinned-icon'
               disabled={!isPinned}
               onClick={this.togglePinned}
-              inverted name='pin' size='small'/>
+              inverted name='pin' size='small' />
           </div>
         </div>
         <div className='browse-tile-members'>
-          <StackedAvatar list={details.owners || []}/>
+          <StackedAvatar list={details.owners || []} />
         </div>
       </div>
     );

@@ -40,14 +40,14 @@ export default class StackedAvatar extends Component {
   renderAvatars = () => {
     const { list } = this.props;
 
-    if(list) {
+    if (list) {
       return list.map((item, index) => {
-        if(index > 3) return null;
+        if (index > 3) return null;
 
-        if(index === 3) {
+        if (index === 3) {
           return (
-            <div className='next-avatar-element'>
-              <Icon inverted name='add' size='tiny'/>
+            <div key={index} className='next-avatar-element'>
+              <Icon inverted name='add' size='tiny' />
             </div>
           );
         }
@@ -55,7 +55,7 @@ export default class StackedAvatar extends Component {
           <div key={index} className='next-avatar-element'>
             <Image
               avatar
-              src='http://i.pravatar.cc/500'/>
+              src='http://i.pravatar.cc/500' />
           </div>
         );
 
@@ -65,12 +65,11 @@ export default class StackedAvatar extends Component {
 
   }
 
-
   /**
    * Render entrypoint
    * @returns {JSX}
    */
-  render () {
+  render() {
     const { list } = this.props;
     const memberLabel = list && list.length > 1 ?
       `${list.length} members` :

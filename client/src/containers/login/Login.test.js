@@ -30,11 +30,15 @@ const store = customStore.create();
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
-  const props = {};
+  const props = {
+    recommended: [{ name: 'abc' }],
+    isAuthenticated: true,
+    history: { push: () => { } },
+  };
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Login {...props}/></BrowserRouter>
+      <BrowserRouter><Login {...props} /></BrowserRouter>
     </Provider>, div
   );
 

@@ -111,9 +111,10 @@ class LoginForm extends Component {
           animation='fade up'
           duration={{ hide, show }}>
           <div id='next-login-form-1'>
-            <Form onSubmit={() => this.setFlow(1)}>
+            <Form id='next-username-form' onSubmit={() => this.setFlow(1)}>
               <Form.Field>
                 <Input
+                  id='next-username-input'
                   autoFocus
                   placeholder='User ID'
                   error={validUsername === false}
@@ -144,7 +145,8 @@ class LoginForm extends Component {
           animation='fade down'
           duration={{ hide, show }}>
           <div id='next-login-form-2'>
-            <Form onSubmit={() => submit(username, password)}>
+            <Form id='next-password-form'
+              onSubmit={() => submit(username, password)}>
               <Container
                 textAlign='center'
                 id='next-login-form-avatar-container'>
@@ -171,6 +173,7 @@ class LoginForm extends Component {
                   onChange={this.handleChange}/>
                 <Label>
                   <Button
+                    id='next-login-form-forgot-password'
                     className='link'
                     type='button'
                     onClick={() => this.setFlow(2)}>
@@ -193,29 +196,30 @@ class LoginForm extends Component {
           animation='fade up'
           duration={{ hide, show }}>
           <div>
-            <Form onSubmit={() => this.setFlow(0)}>
-              <Form.Field id='next-login-form-reset-password'>
+            <Form id='next-login-form-reset-password'
+              onSubmit={() => this.setFlow(0)}>
+              <Form.Field >
                 <Form.Button
-                  id='next-login-form-back-button'
+                  id='next-login-reset-email-back-button'
                   content='Back'
                   type='button'
                   icon='left arrow'
                   labelPosition='left'
-                  onClick={() => this.setFlow(1)} />
+                  onClick={() => this.setFlow(1)}/>
                 <Input
                   autoFocus
                   name='resetEmail'
                   type='text'
                   placeholder='Email'
                   value={resetEmail}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button
                   content='Reset Password'
                   disabled={!validEmail}
                   icon='right arrow'
-                  labelPosition='right' />
+                  labelPosition='right'/>
               </Container>
             </Form>
           </div>
@@ -223,7 +227,6 @@ class LoginForm extends Component {
       </div>
     );
   }
-
 }
 
 

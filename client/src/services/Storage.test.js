@@ -13,35 +13,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-
-import React from 'react';
-
-
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { getToken, get, getUserId, set, setToken, setUserId, remove,
+  removeToken, removeUserId } from './Storage';
 
 
-import RequesterNav from './RequesterNav';
+describe('Storage Service', () => {
 
-
-describe('RequesterNav component', () => {
-
-  it('renders without crashing', () => {
-    const div = document.createElement('div');
-
-    const props = {
-      activeRole: null,
-      getBase: () => {},
-      getRole: (id) => {},
-      isAuthenticated: true,
-      requests: null,
-      routes: () => {},
-    };
-
-    ReactDOM.render(
-      <BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
-    );
-
-    ReactDOM.unmountComponentAtNode(div);
+  test('get token', () => {
+    getToken();
   });
+
+  test('set token', () => {
+    setToken('value');
+  });
+
+  test('remove token', () => {
+    removeToken();
+  });
+
+  test('remove user', () => {
+    removeUserId();
+  });
+
 });

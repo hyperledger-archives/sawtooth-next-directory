@@ -17,6 +17,7 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
@@ -31,14 +32,32 @@ describe('Header component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
+    const props = {
+      me: { name: 'username' },
+      openProposalsCount: 5,
+      renderMenu: () => {  },
+      logout: () => { },
+    };
     ReactDOM.render(
       <Provider store={store}>
-        <BrowserRouter><Header/></BrowserRouter>
+        <BrowserRouter><Header {...props} /></BrowserRouter>
       </Provider>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
+  });
+
+  it('calls logout function', () => {
+    const props = {
+      me: { name: 'username' },
+      openProposalsCount: 5,
+      renderMenu: () => {  },
+      logout: () => { },
+    };
+
+    const wrapper = shallow(<Header {...props} store={store}/>);
+
+    wrapper.instance().logout();
   });
 
 });

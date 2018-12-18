@@ -29,14 +29,14 @@ import './RoleList.css';
 class RoleList extends Component {
 
   static propTypes = {
-    getUsers:               PropTypes.func,
-    handleChange:           PropTypes.func,
-    openProposalsByRole:    PropTypes.object,
-    openProposalsByUser:    PropTypes.object,
-    roleFromId:             PropTypes.func,
-    selectedRoles:          PropTypes.array,
-    selectedProposals:      PropTypes.array,
-    users:                  PropTypes.array,
+    getUsers:              PropTypes.func,
+    handleChange:          PropTypes.func,
+    openProposalsByRole:   PropTypes.object,
+    openProposalsByUser:   PropTypes.object,
+    roleFromId:            PropTypes.func,
+    selectedRoles:         PropTypes.array,
+    selectedProposals:     PropTypes.array,
+    users:                 PropTypes.array,
   };
 
 
@@ -44,7 +44,7 @@ class RoleList extends Component {
    * Entry point to perform tasks required to render
    * component. Get users not loaded in client.
    */
-  componentDidMount () {
+  componentDidMount  () {
     const { getUsers, openProposalsByUser, users } = this.props;
 
     if (!openProposalsByUser) return;
@@ -94,16 +94,16 @@ class RoleList extends Component {
    * @param {string} roleId Role ID
    * @returns {JSX}
    */
-  renderUsers (roleId) {
+  renderUsers  (roleId) {
     const { openProposalsByRole } = this.props;
     return (
       <div className='pull-right'>
-        { openProposalsByRole[roleId].map(proposal => (
+        {  openProposalsByRole[roleId].map(proposal => (
           <Image
             key={proposal.id}
             src={'http://i.pravatar.cc/150?' + proposal.id}
             size='mini'
-            avatar/>
+            avatar />
         ))}
       </div>
     );
@@ -145,7 +145,7 @@ class RoleList extends Component {
    * @returns {JSX}
    */
   renderRoleItem (roleId) {
-    const { handleChange} = this.props;
+    const { handleChange } = this.props;
     return (
       <div className='next-role-list-item' key={roleId}>
         <Segment className='light' padded>
@@ -177,6 +177,7 @@ class RoleList extends Component {
         ))}
       </div>
     );
+
   }
 
 }

@@ -22,20 +22,69 @@ import { BrowserRouter } from 'react-router-dom';
 
 import * as customStore from '../../customStore';
 import App from './App';
+import { shallow } from 'enzyme';
 
 
 const store = customStore.create();
+const props = {
+  getMe: () => { },
+  getOpenProposals: () => { },
+  getProposals: () => { },
+  getRoles: () => { },
+  me: {
+    proposals: [{ id: 'proposalID' }],
+    memberOf: [''],
+  },
+  roles: [],
+  getBase: () => { },
+  isAuthenticated: false,
+  routes: () => {
+    return [{ path: '/path', exact: true, nav: '' }];
+  },
+};
+
+const newProps = {
+  isAuthenticated: true,
+  isSocketOpen: true,
+  sendMessage: () => { },
+  me: {
+    proposals: [{ id: 'proposalID' }],
+    memberOf: [''],
+  },
+  id: 'aaa',
+  routes: () => {
+    return [{ path: '/path', exact: true, nav: '' }];
+  },
+};
+
+const wrapper = shallow(<App {...props} store={store} />);
 
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  const routes = () => {};
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><App routes={routes}/></BrowserRouter>
+      <BrowserRouter><App {...props} /></BrowserRouter>
     </Provider>, div
   );
 
   ReactDOM.unmountComponentAtNode(div);
+
+  const wrapper = shallow(<App {...newProps} store={store} />);
+  wrapper.dive().instance().componentDidUpdate(props);
+});
+
+
+it('calls the renderGrid function', () => {
+  wrapper.dive().instance().renderGrid();
+});
+
+it('calls the hydrate function', () => {
+  wrapper.dive().instance().hydrate();
+});
+
+test.skip('calls the hydrate sidebar function', () => {
+  const wrapper = shallow(<App routes={() => { }} me='' store={store} />);
+  wrapper.dive().instance().hydrateSidebar();
 });

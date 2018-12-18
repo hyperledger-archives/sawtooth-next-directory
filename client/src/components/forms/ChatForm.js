@@ -246,7 +246,8 @@ class ChatForm extends Component {
       <div>
         { !isDraft &&
         <div>
-          <Form onSubmit={() => this.handleSend(message)}>
+          <Form id='next-placeholder-chat'
+            onSubmit={() => this.handleSend(message)}>
             <Form.Input
               icon
               fluid
@@ -257,6 +258,7 @@ class ChatForm extends Component {
               <input autoComplete='off'/>
               <Icon
                 link
+                id='next-name-chat-submit'
                 name='paper plane'
                 onClick={() => this.handleSend(message)}/>
             </Form.Input>
@@ -281,7 +283,6 @@ class ChatForm extends Component {
       </div>
     );
   }
-
 }
 
 

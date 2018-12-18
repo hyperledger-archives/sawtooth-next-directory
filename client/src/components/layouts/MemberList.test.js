@@ -16,6 +16,7 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
@@ -26,12 +27,29 @@ describe('MemberList component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
+    const props = {
+      getUsers: (collection) => {  },
+      members: ['props'],
+      owners: [''],
+      users: [{ id: 'proposal1' }],
+
+    };
+    const newProps = {
+      getUsers: (collection) => {  },
+      members: ['newProps'],
+      owners: [''],
+      users: [{ id: 'proposal1' }],
+
+    };
 
     ReactDOM.render(
-      <BrowserRouter><MemberList/></BrowserRouter>, div
+      <BrowserRouter><MemberList {...props} /></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
+
+    const wrapper = shallow(<MemberList {...newProps} />);
+    wrapper.instance().componentDidUpdate(props);
   });
 
 });

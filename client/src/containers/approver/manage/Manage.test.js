@@ -17,6 +17,7 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { shallow, mount, render } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
@@ -32,7 +33,7 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Manage/></BrowserRouter>
+      <BrowserRouter><Manage /></BrowserRouter>
     </Provider>, div
   );
 

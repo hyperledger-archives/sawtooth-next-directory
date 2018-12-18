@@ -16,6 +16,7 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { shallow, mount, render } from 'enzyme';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -25,6 +26,15 @@ import Browse from './Browse';
 
 
 const store = customStore.create();
+const props = {
+  getAllRoles: () => { },
+  allRoles: [{ id: 'role-id-1' }, { id: 'role-id-2' }],
+};
+const prevProp = {
+  allRoles: null,
+};
+const formatedData = [[{ id: 'role-id-1' }], [{ id: 'role-id-2' }], [], []];
+const wrapper = shallow(<Browse store={store} {...props} />);
 
 
 it('renders without crashing', () => {
@@ -32,9 +42,21 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Browse/></BrowserRouter>
+      <BrowserRouter><Browse /></BrowserRouter>
     </Provider>, div
   );
 
   ReactDOM.unmountComponentAtNode(div);
+});
+
+test('Browse component update', () => {
+  wrapper.dive(props).instance().componentDidUpdate(prevProp);
+});
+
+it('calls formatData function', () => {
+  wrapper.dive(props).instance().formatData(props.allRoles);
+});
+
+it('calls renderLayout function', () => {
+  wrapper.dive(props).instance().renderLayout(formatedData);
 });

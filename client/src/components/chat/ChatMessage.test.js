@@ -14,42 +14,31 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { shallow } from 'enzyme';
 
+import * as customStore from '../../customStore';
+import ChatMessage from './Chat';
 
-import PeopleList from './PeopleList';
+const store = customStore.create();
 
-
-describe('PeopleList component', () => {
+describe('ChatMessage component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     const props = {
-      getUsers: (collection) => { },
-      openProposalsByUser: { proposal1: [{name: 'prop', id: 'proposal1'}] },
-      users: [{ id: 'proposal1', name: 'username',
-        email: 'defaultuser@gmail.com' }],
-      openProposalsByRole: { roleProposal1: [{ id: 'userid' }] },
-      handleChange: () => { },
-      selectedProposals: ['userid'],
-      selectedUsers: ['userid'],
-      roleFromId: () => {  },
+      messages: [{ text: 'message text' }],
     };
 
-
-
     ReactDOM.render(
-      <BrowserRouter><PeopleList {...props} /></BrowserRouter>, div
+      <Provider store={store}>
+        <BrowserRouter><ChatMessage {...props} /></BrowserRouter>
+      </Provider>, div
     );
-
     ReactDOM.unmountComponentAtNode(div);
-    const wrapper = shallow(
-      <PeopleList {...props} />);
-    wrapper.instance().componentDidUpdate(props);
   });
-
 });

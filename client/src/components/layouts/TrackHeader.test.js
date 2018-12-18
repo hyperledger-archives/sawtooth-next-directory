@@ -16,6 +16,7 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
@@ -26,6 +27,12 @@ describe('TrackHeader component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
+    const props = {
+      getUser: (UserId) => {  },
+      users: [{ id: 'proposal1' }],
+      openProposalsByUser: { proposal1: [''] },
+      request: { appprovers: [''] },
+    };
 
     ReactDOM.render(
       <BrowserRouter><TrackHeader/></BrowserRouter>, div

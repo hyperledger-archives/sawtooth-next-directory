@@ -16,40 +16,34 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
 import { shallow } from 'enzyme';
+import { BrowserRouter } from 'react-router-dom';
 
 
-import PeopleList from './PeopleList';
+import ChatForm from './ChatForm';
 
 
-describe('PeopleList component', () => {
-
+describe('ChatForm component', () => {
+  const props = {
+    submit: (username, password) => { },
+    send: () => {},
+  };
+  const wrapper = shallow(<ChatForm {...props} />);
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
-    const props = {
-      getUsers: (collection) => { },
-      openProposalsByUser: { proposal1: [{name: 'prop', id: 'proposal1'}] },
-      users: [{ id: 'proposal1', name: 'username',
-        email: 'defaultuser@gmail.com' }],
-      openProposalsByRole: { roleProposal1: [{ id: 'userid' }] },
-      handleChange: () => { },
-      selectedProposals: ['userid'],
-      selectedUsers: ['userid'],
-      roleFromId: () => {  },
-    };
-
-
-
     ReactDOM.render(
-      <BrowserRouter><PeopleList {...props} /></BrowserRouter>, div
+      <BrowserRouter><ChatForm {...props} /></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
-    const wrapper = shallow(
-      <PeopleList {...props} />);
-    wrapper.instance().componentDidUpdate(props);
+  });
+
+  test('chat submit form', () => {
+    wrapper.find('#next-placeholder-chat').simulate('submit');
+  });
+
+  test('form  button click event', () => {
+    wrapper.find('#next-name-chat-submit').simulate('click');
   });
 
 });

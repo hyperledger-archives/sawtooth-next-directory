@@ -139,7 +139,7 @@ class Header extends Component {
               </MenuHeader.Content>
             </MenuHeader>
           </Menu.Item>
-          <Menu.Item onClick={this.logout}>
+          <Menu.Item  id='next-signout-button' onClick={this.logout}>
             <MenuHeader as='h5'>
               <Icon name='sign out' color='grey'/>
               <MenuHeader.Content>

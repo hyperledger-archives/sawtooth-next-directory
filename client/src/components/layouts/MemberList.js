@@ -33,7 +33,7 @@ class MemberList extends Component {
     getUsers:           PropTypes.func,
     members:            PropTypes.array,
     owners:             PropTypes.array,
-    users:              PropTypes.array,
+    users:               PropTypes.array,
   }
 
 
@@ -42,7 +42,7 @@ class MemberList extends Component {
    * Get users needed to display info for owners and members if
    * not already loaded in client
    */
-  componentDidMount () {
+  componentDidMount   () {
     const { getUsers, members, owners, users } = this.props;
     if (!owners || !members) return;
 
@@ -85,11 +85,11 @@ class MemberList extends Component {
   renderUserSegment (userId, isOwner) {
     const { users } = this.props;
 
-    if (!users) return null;
-    const user = users.find((user) => user.id === userId);
+    if (users) {
+      const user = users.find((user) => user.id === userId);
 
-    return (
-      user &&
+      return (
+        user &&
         <Grid.Column key={userId} largeScreen={8} widescreen={5}>
           <Segment padded className='minimal'>
             { isOwner ?
@@ -104,7 +104,7 @@ class MemberList extends Component {
             }
             <Header as='h4' className='next-member-list-user-info'>
               <div>
-                <Image src='http://i.pravatar.cc/300' avatar/>
+                <Image src='http://i.pravatar.cc/300' avatar />
               </div>
               <div>
                 {user && user.name}
@@ -114,7 +114,9 @@ class MemberList extends Component {
 
           </Segment>
         </Grid.Column>
-    );
+      );
+    }
+    return null;
   }
 
 

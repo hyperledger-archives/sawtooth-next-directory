@@ -14,34 +14,25 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import React from 'react';
+import { createSlug, groupBy, merge } from './Utils';
 
 
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+describe('Utils Service', () => {
 
-
-import RequesterNav from './RequesterNav';
-
-
-describe('RequesterNav component', () => {
-
-  it('renders without crashing', () => {
-    const div = document.createElement('div');
-
-    const props = {
-      activeRole: null,
-      getBase: () => {},
-      getRole: (id) => {},
-      isAuthenticated: true,
-      requests: null,
-      routes: () => {},
-    };
-
-    ReactDOM.render(
-      <BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
-    );
-
-    ReactDOM.unmountComponentAtNode(div);
+  test('create slug', () => {
+    expect(createSlug('create Slug string')).toBe('create-slug-string');
+    expect(createSlug('', { name: 'create slug string' }))
+      .toBe('create-slug-string');
   });
+
+  test('test groupby', () => {
+    groupBy([{ group: '' }], 'group');
+  });
+
+  test('test merge', () => {
+    const array1 = ['firstname'], array2 = ['lastname'];
+    expect(merge(array1, array2)).toEqual([...array1, ...array2]);
+
+  });
+
 });
