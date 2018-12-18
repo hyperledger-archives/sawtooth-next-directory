@@ -129,3 +129,7 @@ yarn-error.log*
 
 # Secrets
 secrets.sh
+
+# temporary files
+*.tmp
+*.log*
