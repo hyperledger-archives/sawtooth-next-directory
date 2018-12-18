@@ -42,14 +42,14 @@ conn = Connection(server, user=org['user'], password=org['password'], auto_bind=
 
 print("Querying ldap...")
 
-searchParameters = {'search_base': org['domain_components'],
-                    'search_filter': search_filter,
-                    # 'attributes': [],
-                    'paged_size': paged_size}
+search_parameters = {'search_base': org['domain_components'],
+                     'search_filter': search_filter,
+                     # 'attributes': [],
+                     'paged_size': paged_size}
 
 index = 1
 while True:
-    conn.search(**searchParameters)
+    conn.search(**search_parameters)
     for entry in conn.entries:
         print('Result: ' + str(index))
         print(entry)
@@ -57,6 +57,6 @@ while True:
         # 1.2.840.113556.1.4.319 is the OID/extended control for PagedResults
     cookie = conn.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
     if cookie:
-        searchParameters['paged_cookie'] = cookie
+        search_parameters['paged_cookie'] = cookie
     else:
         break
