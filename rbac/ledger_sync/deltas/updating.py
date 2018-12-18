@@ -157,29 +157,31 @@ def _update_state(database, block_num, address, resource):
         LOGGER.warning(err)
 
 
-def _update(database, block_num, address, resource):
+def _update_legacy(database, block_num, address, resource):
     data_type = addresser.address_is(address)
-
-    _update_state(database, block_num, address, resource)
-
-    resource["start_block_num"] = int(block_num)
-    resource["end_block_num"] = int(sys.maxsize)
-
-    if ADD_SUFFIX.get(data_type, False):
-        resource["suffix"] = int(address[-2:], 16)
-
     try:
+        data = {
+            "id": address,
+            "start_block_num": int(block_num),
+            "end_block_num": int(sys.maxsize),
+            **resource,
+        }
+
         table_query = database.get_table(TABLE_NAMES[data_type])
-        update_filter = {k: resource[k] for k in FILTER_KEYS[data_type]}
+        query = table_query.get(address).replace(
+            lambda doc: r.branch(
+                # pylint: disable=singleton-comparison
+                (doc == None),  # noqa
+                r.expr(data),
+                doc.merge(resource),
+            )
+        )
+        return database.run_query(query)
+
     except KeyError:
         raise TypeError("Unknown data type: {}".format(data_type))
 
-    update_filter["end_block_num"] = int(sys.maxsize)
 
-    query = (
-        table_query.filter(update_filter)
-        .update({"end_block_num": int(block_num)})
-        .merge(table_query.insert(resource).without("replaced"))
-    )
-
-    return database.run_query(query)
+def _update(database, block_num, address, resource):
+    _update_state(database, block_num, address, resource)
+    return _update_legacy(database, block_num, address, resource)

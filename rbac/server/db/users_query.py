@@ -27,10 +27,6 @@ async def fetch_user_resource(conn, user_id, head_block_num):
     resource = (
         await r.table("users")
         .get_all(user_id, index="user_id")
-        .filter(
-            (head_block_num >= r.row["start_block_num"])
-            & (head_block_num < r.row["end_block_num"])
-        )
         .merge(
             {
                 "id": r.row["user_id"],
@@ -85,10 +81,6 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
     return (
         await r.table("users")
         .order_by(index="user_id")
-        .filter(
-            (head_block_num >= r.row["start_block_num"])
-            & (head_block_num < r.row["end_block_num"])
-        )
         .slice(start, start + limit)
         .map(
             lambda user: user.merge(
@@ -145,11 +137,7 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
 def fetch_user_ids_by_manager(manager_id, head_block_num):
     return (
         r.table("users")
-        .filter(
-            lambda user: (head_block_num >= user["start_block_num"])
-            & (head_block_num < user["end_block_num"])
-            & (manager_id == user["manager_id"])
-        )
+        .filter(lambda user: (manager_id == user["manager_id"]))
         .get_field("user_id")
         .coerce_to("array")
     )

@@ -25,10 +25,6 @@ async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
     return (
         await r.table("proposals")
         .order_by(index="proposal_id")
-        .filter(
-            (head_block_num >= r.row["start_block_num"])
-            & (head_block_num < r.row["end_block_num"])
-        )
         .slice(start, start + limit)
         .map(
             lambda proposal: proposal.merge(
@@ -62,10 +58,6 @@ async def fetch_proposal_resource(conn, proposal_id, head_block_num):
     resource = (
         await r.table("proposals")
         .get_all(proposal_id, index="proposal_id")
-        .filter(
-            (head_block_num >= r.row["start_block_num"])
-            & (head_block_num < r.row["end_block_num"])
-        )
         .map(
             lambda proposal: proposal.merge(
                 {
@@ -104,10 +96,6 @@ def fetch_approver_ids(table, object_id, head_block_num):
     return (
         r.table(table)
         .get_all(object_id)
-        .filter(
-            lambda doc: (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"])
-        )
         .pluck("identifiers", "manager")
         .coerce_to("array")
         .concat_map(lambda identifiers: identifiers)
@@ -118,10 +106,6 @@ def fetch_proposal_ids_by_target(target, head_block_num):
     return (
         r.table("proposals")
         .get_all(target, index="related_id")
-        .filter(
-            lambda doc: (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"])
-        )
         .get_field("proposal_id")
         .coerce_to("array")
     )
@@ -131,10 +115,6 @@ def fetch_proposal_ids_by_opener(opener, head_block_num):
     return (
         r.table("proposals")
         .get_all(opener, index="opener")
-        .filter(
-            lambda doc: (head_block_num >= doc["start_block_num"])
-            & (head_block_num < doc["end_block_num"])
-        )
         .pluck("proposal_id", "object_id")
         .coerce_to("array")
     )
