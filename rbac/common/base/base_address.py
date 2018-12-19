@@ -21,6 +21,7 @@ import re as regex
 from rbac.common.addresser.family_address import family
 from rbac.common.base.base_state import StateBase
 from rbac.common.addresser.addressers import register_addresser
+from rbac.common.crypto import hash_util
 
 LOGGER = logging.getLogger(__name__)
 
@@ -138,10 +139,10 @@ class AddressBase(StateBase):
             family.namespace
             + PATTERN_ZERO_BYTE * 2
             + hex(self.object_type.value)[2:].zfill(4)
-            + self.hash(object_id)
+            + hash_util.to_12_byte_hex_hash(object_id)
             + hex(self.related_type.value)[2:].zfill(4)
             + hex(self.relationship_type.value)[2:].zfill(2)
-            + self.hash(related_id)
+            + hash_util.to_12_byte_hex_hash(related_id)
             + PATTERN_ZERO_BYTE
         )
         return address

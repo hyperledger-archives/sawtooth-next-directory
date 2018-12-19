@@ -48,7 +48,7 @@ class AddressAssertions(KeyAssertions):
         )
         self.assertTrue(
             PATTERN_ADDRESS.match(value),
-            "Expected address to a lowercase 70 characater hexadecimal string. Got {}".format(
+            "Expected address to a lowercase 70 character hexadecimal string. Got {}".format(
                 value
             ),
         )
@@ -64,7 +64,7 @@ class AddressAssertions(KeyAssertions):
         self.assertIsInstance(value, str)
         self.assertTrue(
             PATTERN_IDENTIFIER.match(value),
-            "Expected id to a lowercase 24 characater hexadecimal string. Got {}".format(
+            "Expected id to a lowercase 24 character hexadecimal string. Got {}".format(
                 value
             ),
         )

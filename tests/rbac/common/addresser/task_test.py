@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ class TestTaskAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        task_id = addresser.task.unique_id()
+        task_id = hash_util.generate_12_byte_random_hex()
         task_address = addresser.task.address(object_id=task_id)
         self.assertIsAddress(task_address)
         self.assertEqual(
@@ -38,7 +39,7 @@ class TestTaskAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        task_id1 = addresser.task.unique_id()
+        task_id1 = hash_util.generate_12_byte_random_hex()
         task_address1 = addresser.task.address(object_id=task_id1)
         task_address2 = addresser.task.address(object_id=task_id1)
         self.assertIsAddress(task_address1)
@@ -50,8 +51,8 @@ class TestTaskAddresser(TestAssertions):
 
     def test_address_random(self):
         """Tests address makes a unique address given different inputs"""
-        task_id1 = addresser.task.unique_id()
-        task_id2 = addresser.task.unique_id()
+        task_id1 = hash_util.generate_12_byte_random_hex()
+        task_id2 = hash_util.generate_12_byte_random_hex()
         task_address1 = addresser.task.address(object_id=task_id1)
         task_address2 = addresser.task.address(object_id=task_id2)
         self.assertIsAddress(task_address1)

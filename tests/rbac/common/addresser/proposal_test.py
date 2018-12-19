@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
@@ -29,8 +30,8 @@ class TestProposalAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        object_id = addresser.proposal.unique_id()
-        related_id = addresser.proposal.unique_id()
+        object_id = hash_util.generate_12_byte_random_hex()
+        related_id = hash_util.generate_12_byte_random_hex()
         proposal_address = addresser.proposal.address(
             object_id=object_id, related_id=related_id
         )
@@ -41,8 +42,8 @@ class TestProposalAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address generates the same output given the same input"""
-        object_id = addresser.proposal.unique_id()
-        related_id = addresser.proposal.unique_id()
+        object_id = hash_util.generate_12_byte_random_hex()
+        related_id = hash_util.generate_12_byte_random_hex()
         proposal_address1 = addresser.proposal.address(
             object_id=object_id, related_id=related_id
         )
@@ -58,10 +59,10 @@ class TestProposalAddresser(TestAssertions):
 
     def test_address_random(self):
         """Tests address makes a unique address given different inputs"""
-        object_id1 = addresser.proposal.unique_id()
-        related_id1 = addresser.proposal.unique_id()
-        object_id2 = addresser.proposal.unique_id()
-        related_id2 = addresser.proposal.unique_id()
+        object_id1 = hash_util.generate_12_byte_random_hex()
+        related_id1 = hash_util.generate_12_byte_random_hex()
+        object_id2 = hash_util.generate_12_byte_random_hex()
+        related_id2 = hash_util.generate_12_byte_random_hex()
         proposal_address1 = addresser.proposal.address(
             object_id=object_id1, related_id=related_id1
         )

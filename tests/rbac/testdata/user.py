@@ -18,7 +18,7 @@
 import random
 import string
 
-from rbac.common.crypto.hash import hash_id
+from rbac.common.crypto import hash_util
 from rbac.common.crypto.keys import Key
 
 
@@ -47,10 +47,8 @@ class UserTestData:
         return self.last_key
 
     def hash(self, value):
-        """Returns a 12-byte hash of a given string, unless it is already a
-        12-byte hexadecimal string (e.g. as returned by the unique_id function).
-        Returns zero bytes if the value is None or falsey"""
-        self.last_hash = hash_id(value)
+        """Assigns to self.lash_hash the given value hashed by common.crypto.hash"""
+        self.last_hash = hash_util.to_12_byte_hex_hash(value)
         return self.last_hash
 
     def name(self):

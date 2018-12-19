@@ -76,7 +76,6 @@ class BaseModelTest(TestAssertions):
         self.assertEqual(model._state_object, protobuf.user_state_pb2.User)
         self.assertEqual(model._state_container, protobuf.user_state_pb2.UserContainer)
         self.assertEqual(model._state_container_list_name, "users")
-        self.assertIsIdentifier(model.unique_id())
 
     def test_base_model_with_role_attributes(self):
         """Test the _name* properties of the class"""

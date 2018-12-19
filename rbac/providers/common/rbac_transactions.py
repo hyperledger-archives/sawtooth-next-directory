@@ -17,6 +17,7 @@
 import logging
 
 from rbac.common import rbac
+from rbac.common.crypto import hash_util
 from rbac.common.crypto.keys import Key
 from rbac.common.util import bytes_from_hex
 
@@ -50,7 +51,7 @@ def add_transaction(inbound_entry):
         if inbound_entry["data_type"] == "user":
 
             user_id = data["relationship_id"]
-            object_id = rbac.user.hash(user_id)
+            object_id = hash_util.to_12_byte_hex_hash(user_id)
             address = rbac.user.address(object_id=object_id)
 
             inbound_entry["address"] = bytes_from_hex(address)
@@ -69,7 +70,7 @@ def add_transaction(inbound_entry):
         elif inbound_entry["data_type"] == "group":
 
             role_id = data["relationship_id"]
-            object_id = rbac.role.hash(role_id)
+            object_id = hash_util.to_12_byte_hex_hash(role_id)
             address = rbac.role.address(object_id=object_id)
 
             inbound_entry["address"] = bytes_from_hex(address)

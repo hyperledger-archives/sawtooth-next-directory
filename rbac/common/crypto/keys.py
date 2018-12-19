@@ -61,14 +61,14 @@ class Key:
 
     @property
     def public_key(self):
-        """Public part of this Key as a 66 character hexidecimal string"""
+        """Public part of this Key as a 66 character hexadecimal string"""
         if self._public_key is None:
             return None
         return self._public_key.as_hex()
 
     @property
     def private_key(self):
-        """Private part of this Key as a 64 character hexidecimal string"""
+        """Private part of this Key as a 64 character hexadecimal string"""
         if self._private_key is None:
             return None
         return self._private_key.as_hex()

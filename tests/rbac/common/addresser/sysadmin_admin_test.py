@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ class TestSysAdminAdminAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        user_id = addresser.user.unique_id()
+        user_id = hash_util.generate_12_byte_random_hex()
         rel_address = addresser.sysadmin.admin.address(object_id=user_id)
         self.assertIsAddress(rel_address)
         self.assertEqual(
@@ -38,7 +39,7 @@ class TestSysAdminAdminAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        user_id = addresser.user.unique_id()
+        user_id = hash_util.generate_12_byte_random_hex()
         rel_address1 = addresser.sysadmin.admin.address(object_id=user_id)
         rel_address2 = addresser.sysadmin.admin.address(object_id=user_id)
         self.assertIsAddress(rel_address1)
@@ -50,8 +51,8 @@ class TestSysAdminAdminAddresser(TestAssertions):
 
     def test_address_random(self):
         """Tests address makes a unique address given different inputs"""
-        user_id1 = addresser.user.unique_id()
-        user_id2 = addresser.user.unique_id()
+        user_id1 = hash_util.generate_12_byte_random_hex()
+        user_id2 = hash_util.generate_12_byte_random_hex()
         rel_address1 = addresser.sysadmin.admin.address(object_id=user_id1)
         rel_address2 = addresser.sysadmin.admin.address(object_id=user_id2)
         self.assertIsAddress(rel_address1)

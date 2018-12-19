@@ -25,12 +25,12 @@ PATTERN_12_HEX_BYTES = r"[0-9a-f]{24}"
 PATTERN_12_BYTE_HASH = regex.compile(r"^" + PATTERN_12_HEX_BYTES + r"$")
 
 
-def unique_id():
-    """Generates a random 12-byte hexidecimal string"""
+def generate_12_byte_random_hex():
+    """Generates a random 12-byte hexadecimal string"""
     return os.urandom(12).hex()
 
 
-def hash_id(value):
+def to_12_byte_hex_hash(value: str):
     """Returns a 12-byte hash of a given string, unless it is already a
     12-byte hexadecimal string (e.g. as returned by the unique_id function).
     Returns zero bytes if the value is None or falsey"""

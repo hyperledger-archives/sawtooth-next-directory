@@ -20,6 +20,7 @@ import random
 
 from rbac.common import rbac
 from rbac.common import protobuf
+from rbac.common.crypto import hash_util
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.common.task.create_task_helper import CreateTaskTestHelper
 
@@ -43,7 +44,7 @@ class ProposeTaskOwnerTestHelper:
 
     def id(self):
         """Gets a unique identifier"""
-        return rbac.addresser.proposal.unique_id()
+        return hash_util.generate_12_byte_random_hex()
 
     def reason(self):
         """Get a random reason"""

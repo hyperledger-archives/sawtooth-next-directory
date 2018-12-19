@@ -26,6 +26,7 @@ from rbac.common.sawtooth import client
 from rbac.common.sawtooth import state_client
 from rbac.common.base import base_processor as processor
 from rbac.common.base.base_address import AddressBase
+from rbac.common.crypto import hash_util
 
 LOGGER = logging.getLogger(__name__)
 
@@ -51,7 +52,6 @@ class BaseMessage(AddressBase):
     def message_action_type(self):
         """The action type performed by this message"""
         return None
-        # raise NotImplementedError("Class must implement this property")
 
     @property
     def message_subaction_type(self):
@@ -165,7 +165,7 @@ class BaseMessage(AddressBase):
 
     @property
     def message_type(self):
-        """The message type of this message, an atrribute enum of RBACPayload
+        """The message type of this message, an attribute enum of RBACPayload
         Defaults to protobuf.rbac_payload_pb2.{message_type_name}
         (see message_type_name) Override message_type_name where behavior differs"""
         if not self.message_action_type:
@@ -231,7 +231,7 @@ class BaseMessage(AddressBase):
         batcher.make_message(message, self.message_type, **kwargs)
         if hasattr(message, self._name_id) and getattr(message, self._name_id) == "":
             # sets the unique identifier field of the message to a unique_id if no identifier is provided
-            setattr(message, self._name_id, self.unique_id())
+            setattr(message, self._name_id, hash_util.generate_12_byte_random_hex())
         self.validate(message=message)
         return message
 
@@ -242,7 +242,7 @@ class BaseMessage(AddressBase):
         raise NotImplementedError("Class must implement this method")
 
     def validate(self, message, signer=None):
-        """Commmon validation for all messages"""
+        """Common validation for all messages"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
         if (

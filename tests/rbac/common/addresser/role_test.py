@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ class TestRoleAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        role_id = addresser.role.unique_id()
+        role_id = hash_util.generate_12_byte_random_hex()
         role_address = addresser.role.address(object_id=role_id)
         self.assertIsAddress(role_address)
         self.assertEqual(
@@ -39,8 +40,8 @@ class TestRoleAddresser(TestAssertions):
     def test_get_address_type(self):
         """Tests that get_address_type returns AddressSpace.USER if it is a role
         address, and None if it is of another address type"""
-        role_address = addresser.role.address(addresser.role.unique_id())
-        other_address = addresser.user.address(addresser.user.unique_id())
+        role_address = addresser.role.address(hash_util.generate_12_byte_random_hex())
+        other_address = addresser.user.address(hash_util.generate_12_byte_random_hex())
         self.assertEqual(
             addresser.get_address_type(role_address),
             addresser.AddressSpace.ROLES_ATTRIBUTES,
@@ -54,9 +55,9 @@ class TestRoleAddresser(TestAssertions):
     def test_addresses_are(self):
         """Test that addresses_are returns True if all addresses are a role
         addresses, and False if any addresses are if a different address type"""
-        role_address1 = addresser.role.address(addresser.role.unique_id())
-        role_address2 = addresser.role.address(addresser.role.unique_id())
-        other_address = addresser.user.address(addresser.user.unique_id())
+        role_address1 = addresser.role.address(hash_util.generate_12_byte_random_hex())
+        role_address2 = addresser.role.address(hash_util.generate_12_byte_random_hex())
+        other_address = addresser.user.address(hash_util.generate_12_byte_random_hex())
         self.assertTrue(addresser.role.addresses_are([role_address1]))
         self.assertTrue(addresser.role.addresses_are([role_address1, role_address2]))
         self.assertFalse(addresser.role.addresses_are([other_address]))
@@ -66,7 +67,7 @@ class TestRoleAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        role_id1 = addresser.role.unique_id()
+        role_id1 = hash_util.generate_12_byte_random_hex()
         role_address1 = addresser.role.address(object_id=role_id1)
         role_address2 = addresser.role.address(object_id=role_id1)
         self.assertIsAddress(role_address1)
@@ -78,8 +79,8 @@ class TestRoleAddresser(TestAssertions):
 
     def test_address_random(self):
         """Tests address makes a unique address given different inputs"""
-        role_id1 = addresser.role.unique_id()
-        role_id2 = addresser.role.unique_id()
+        role_id1 = hash_util.generate_12_byte_random_hex()
+        role_id2 = hash_util.generate_12_byte_random_hex()
         role_address1 = addresser.role.address(object_id=role_id1)
         role_address2 = addresser.role.address(object_id=role_id2)
         self.assertIsAddress(role_address1)

@@ -21,6 +21,7 @@ import pytest
 from rbac.common.crypto.keys import Key
 from rbac.legacy import addresser as legacy
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 
 from tests.rbac.common.assertions import TestAssertions
 
@@ -98,8 +99,8 @@ class TestAddressLegacyCompatibility(TestAssertions):
     def test_legacy_make_addresses(self):
         """Test equality of the legacy addresser and new addresser classes"""
         user_id = Key().public_key
-        unique_id = addresser.role.unique_id()
-        unique_id2 = addresser.task.unique_id()
+        unique_id = hash_util.generate_12_byte_random_hex()
+        unique_id2 = hash_util.generate_12_byte_random_hex()
 
         self.assertEqual(
             legacy.make_user_address(user_id=user_id),

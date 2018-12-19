@@ -32,21 +32,3 @@ class TestAddresser(TestAssertions):
         self.assertIsInstance(addresser.family.name, str)
         self.assertIsInstance(addresser.family.version, str)
         self.assertIsInstance(addresser.family.pattern.pattern, str)
-
-    def test_unique_id(self):
-        """Test unique_id returns unique identifiers"""
-        unique_id1 = addresser.role.unique_id()
-        unique_id2 = addresser.role.unique_id()
-
-        self.assertIsIdentifier(unique_id1)
-        self.assertIsIdentifier(unique_id2)
-        self.assertNotEqual(unique_id1, unique_id2)
-
-    def test_hash(self):
-        """Test hash returns unique identifiers"""
-        hash1 = addresser.role.hash(addresser.role.unique_id())
-        hash2 = addresser.role.hash(addresser.role.unique_id())
-
-        self.assertIsIdentifier(hash1)
-        self.assertIsIdentifier(hash2)
-        self.assertNotEqual(hash1, hash2)

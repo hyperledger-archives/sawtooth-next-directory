@@ -17,7 +17,7 @@
 
 import logging
 import pytest
-
+from rbac.common.crypto import hash_util
 from rbac.common import rbac
 from tests.rbac.common import helper
 
@@ -30,7 +30,7 @@ def test_manager_not_in_state():
     """Propose a manager who is not in state"""
     user, user_key = helper.user.create()
     manager, _ = helper.user.message()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,
@@ -52,7 +52,7 @@ def test_user_not_in_state():
     """Propose for a user who is not in state"""
     user, user_key = helper.user.message()
     manager, _ = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,
@@ -73,7 +73,7 @@ def test_user_not_in_state():
 def test_user_proposes_manager_change():
     """User propose a change in their manager"""
     user, user_key, manager, _ = helper.user.create_with_manager()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,
@@ -94,7 +94,7 @@ def test_another_proposes_manager_change():
     """A proposed change in manager comes from another"""
     user, _, manager, _ = helper.user.create_with_manager()
     _, other_key = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,
@@ -117,7 +117,7 @@ def test_other_propose_manager_has_no_manager():
     user, _ = helper.user.create()
     manager, _ = helper.user.create()
     _, other_key = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,
@@ -139,7 +139,7 @@ def test_other_propose_manager_has_no_manager():
 def test_manager_already_is_manager():
     """Propose the already existing manager"""
     user, _, manager, manager_key = helper.user.create_with_manager()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,
@@ -161,7 +161,7 @@ def test_manager_already_is_manager():
 def test_proposed_manager_is_self():
     """Propose self as manager"""
     user, _, _, manager_key = helper.user.create_with_manager()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,
@@ -182,7 +182,7 @@ def test_proposed_manager_is_self():
 def test_proposed_manager_is_already_proposed():
     """Propose with an open proposal for the same manager"""
     proposal, _, _, manager, manager_key = helper.user.manager.propose.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
         proposal_id=proposal_id,

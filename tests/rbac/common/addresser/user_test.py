@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ class TestUserAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        user_id = addresser.user.unique_id()
+        user_id = hash_util.generate_12_byte_random_hex()
         user_address = addresser.user.address(user_id)
         self.assertIsAddress(user_address)
         self.assertEqual(
@@ -38,8 +39,8 @@ class TestUserAddresser(TestAssertions):
 
     def test_unique_id(self):
         """Tests that unique_id generates a unique identifier and is unique"""
-        id1 = addresser.user.unique_id()
-        id2 = addresser.user.unique_id()
+        id1 = hash_util.generate_12_byte_random_hex()
+        id2 = hash_util.generate_12_byte_random_hex()
         self.assertIsIdentifier(id1)
         self.assertIsIdentifier(id2)
         self.assertNotEqual(id1, id2)
@@ -47,8 +48,8 @@ class TestUserAddresser(TestAssertions):
     def test_address_is(self):
         """Tests that address_is returns AddressSpace.USER if it is a user
         address, and None if it is of another address type"""
-        user_address = addresser.user.address(addresser.user.unique_id())
-        role_address = addresser.role.address(addresser.role.unique_id())
+        user_address = addresser.user.address(hash_util.generate_12_byte_random_hex())
+        role_address = addresser.role.address(hash_util.generate_12_byte_random_hex())
         self.assertEqual(
             addresser.address_is(user_address), addresser.AddressSpace.USER
         )
@@ -63,8 +64,8 @@ class TestUserAddresser(TestAssertions):
     def test_get_address_type(self):
         """Tests that get_address_type returns AddressSpace.USER if it is a user
         address, and None if it is of another address type"""
-        user_address = addresser.user.address(addresser.user.unique_id())
-        other_address = addresser.role.address(addresser.role.unique_id())
+        user_address = addresser.user.address(hash_util.generate_12_byte_random_hex())
+        other_address = addresser.role.address(hash_util.generate_12_byte_random_hex())
         self.assertEqual(
             addresser.get_address_type(user_address), addresser.AddressSpace.USER
         )
@@ -76,8 +77,8 @@ class TestUserAddresser(TestAssertions):
     def test_get_addresser(self):
         """Test that get_addresser returns the addresser class if it is a
         user address, and None if it is of another address type"""
-        user_address = addresser.user.address(addresser.user.unique_id())
-        other_address = addresser.role.address(addresser.role.unique_id())
+        user_address = addresser.user.address(hash_util.generate_12_byte_random_hex())
+        other_address = addresser.role.address(hash_util.generate_12_byte_random_hex())
         self.assertIsInstance(
             addresser.get_addresser(user_address), type(addresser.user)
         )
@@ -88,7 +89,7 @@ class TestUserAddresser(TestAssertions):
 
     def test_user_parse(self):
         """Test addresser.user.parse returns a parsed address if it is a user address"""
-        user_id = addresser.user.unique_id()
+        user_id = hash_util.generate_12_byte_random_hex()
         user_address = addresser.user.address(user_id)
         parsed = addresser.user.parse(user_address)
 
@@ -103,7 +104,7 @@ class TestUserAddresser(TestAssertions):
 
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
-        user_id = addresser.user.unique_id()
+        user_id = hash_util.generate_12_byte_random_hex()
         user_address = addresser.user.address(user_id)
         parsed = addresser.parse(user_address)
 
@@ -118,15 +119,15 @@ class TestUserAddresser(TestAssertions):
 
     def test_parse_other(self):
         """Test that parse returns None if it is not a user address"""
-        other_address = addresser.role.address(addresser.role.unique_id())
+        other_address = addresser.role.address(hash_util.generate_12_byte_random_hex())
         self.assertIsNone(addresser.user.parse(other_address))
 
     def test_addresses_are(self):
         """Test that addresses_are returns True if all addresses are a user
         addresses, and False if any addresses are if a different address type"""
-        user_address1 = addresser.user.address(addresser.user.unique_id())
-        user_address2 = addresser.user.address(addresser.user.unique_id())
-        other_address = addresser.role.address(addresser.role.unique_id())
+        user_address1 = addresser.user.address(hash_util.generate_12_byte_random_hex())
+        user_address2 = addresser.user.address(hash_util.generate_12_byte_random_hex())
+        other_address = addresser.role.address(hash_util.generate_12_byte_random_hex())
         self.assertTrue(addresser.user.addresses_are([user_address1]))
         self.assertTrue(addresser.user.addresses_are([user_address1, user_address2]))
         self.assertFalse(addresser.user.addresses_are([other_address]))
@@ -136,7 +137,7 @@ class TestUserAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        user_id1 = addresser.user.unique_id()
+        user_id1 = hash_util.generate_12_byte_random_hex()
         user_address1 = addresser.user.address(user_id1)
         user_address2 = addresser.user.address(user_id1)
         self.assertIsAddress(user_address1)
@@ -148,8 +149,8 @@ class TestUserAddresser(TestAssertions):
 
     def test_address_random(self):
         """Tests address makes a unique address given different inputs"""
-        user_id1 = addresser.user.unique_id()
-        user_id2 = addresser.user.unique_id()
+        user_id1 = hash_util.generate_12_byte_random_hex()
+        user_id2 = hash_util.generate_12_byte_random_hex()
         user_address1 = addresser.user.address(user_id1)
         user_address2 = addresser.user.address(user_id2)
         self.assertIsAddress(user_address1)

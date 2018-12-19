@@ -18,6 +18,7 @@ import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
@@ -30,8 +31,8 @@ class TestRoleOwnerAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        role_id = addresser.role.owner.unique_id()
-        user_id = addresser.user.unique_id()
+        role_id = hash_util.generate_12_byte_random_hex()
+        user_id = hash_util.generate_12_byte_random_hex()
         rel_address = addresser.role.owner.address(
             object_id=role_id, related_id=user_id
         )
@@ -42,8 +43,8 @@ class TestRoleOwnerAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        role_id = addresser.role.owner.unique_id()
-        user_id = addresser.user.unique_id()
+        role_id = hash_util.generate_12_byte_random_hex()
+        user_id = hash_util.generate_12_byte_random_hex()
         rel_address1 = addresser.role.owner.address(
             object_id=role_id, related_id=user_id
         )
@@ -59,10 +60,10 @@ class TestRoleOwnerAddresser(TestAssertions):
 
     def test_address_random(self):
         """Tests address makes a unique address given different inputs"""
-        role_id1 = addresser.role.owner.unique_id()
-        user_id1 = addresser.user.unique_id()
-        role_id2 = addresser.role.owner.unique_id()
-        user_id2 = addresser.user.unique_id()
+        role_id1 = hash_util.generate_12_byte_random_hex()
+        user_id1 = hash_util.generate_12_byte_random_hex()
+        role_id2 = hash_util.generate_12_byte_random_hex()
+        user_id2 = hash_util.generate_12_byte_random_hex()
         rel_address1 = addresser.role.owner.address(
             object_id=role_id1, related_id=user_id1
         )

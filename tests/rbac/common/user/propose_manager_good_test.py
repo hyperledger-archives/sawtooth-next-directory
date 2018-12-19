@@ -20,6 +20,7 @@ import pytest
 
 from rbac.common import rbac
 from rbac.common import protobuf
+from rbac.common.crypto import hash_util
 from tests.rbac.common import helper
 
 LOGGER = logging.getLogger(__name__)
@@ -31,17 +32,11 @@ def test_make():
     """Test making the message"""
     user_id = helper.user.id()
     manager_id = helper.user.id()
-    proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
-        proposal_id=proposal_id,
-        user_id=user_id,
-        new_manager_id=manager_id,
-        reason=reason,
-        metadata=None,
+        user_id=user_id, new_manager_id=manager_id, reason=reason, metadata=None
     )
     assert isinstance(message, protobuf.user_transaction_pb2.ProposeUpdateUserManager)
-    assert message.proposal_id == proposal_id
     assert message.user_id == user_id
     assert message.new_manager_id == manager_id
     assert message.reason == reason
@@ -60,14 +55,9 @@ def test_make_addresses_user():
         object_id=user_id, related_id=manager_id
     )
     signer_user_address = rbac.user.address(user_key.public_key)
-    proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
-        proposal_id=proposal_id,
-        user_id=user_id,
-        new_manager_id=manager_id,
-        reason=reason,
-        metadata=None,
+        user_id=user_id, new_manager_id=manager_id, reason=reason, metadata=None
     )
 
     inputs, outputs = rbac.user.manager.propose.make_addresses(
@@ -95,14 +85,9 @@ def test_make_addresses_manager():
         object_id=user_id, related_id=manager_id
     )
     signer_user_address = rbac.user.address(user_key.public_key)
-    proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
-        proposal_id=proposal_id,
-        user_id=user_id,
-        new_manager_id=manager_id,
-        reason=reason,
-        metadata=None,
+        user_id=user_id, new_manager_id=manager_id, reason=reason, metadata=None
     )
 
     inputs, outputs = rbac.user.manager.propose.make_addresses(
@@ -131,14 +116,9 @@ def test_make_addresses_other():
     )
     signer_keypair = helper.user.key()
     signer_user_address = rbac.user.address(signer_keypair.public_key)
-    proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
     message = rbac.user.manager.propose.make(
-        proposal_id=proposal_id,
-        user_id=user_id,
-        new_manager_id=manager_id,
-        reason=reason,
-        metadata=None,
+        user_id=user_id, new_manager_id=manager_id, reason=reason, metadata=None
     )
 
     inputs, outputs = rbac.user.manager.propose.make_addresses(
@@ -159,11 +139,9 @@ def test_user_propose_manager_has_no_manager():
     """Test proposing a manager for a user without a manager, signed by user"""
     user, user_key = helper.user.create()
     manager, _ = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
     _, status = rbac.user.manager.propose.create(
         signer_keypair=user_key,
-        proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=manager.user_id,
         reason=reason,
@@ -179,7 +157,6 @@ def test_user_propose_manager_has_no_manager():
         proposal.proposal_type
         == protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
     )
-    assert proposal.proposal_id == proposal_id
     assert proposal.object_id == user.user_id
     assert proposal.related_id == manager.user_id
     assert proposal.opener == user.user_id
@@ -193,7 +170,7 @@ def test_manager_propose_manager_has_no_manager():
     """Test proposing a manager for a user without a manager, signed by new manager"""
     user, _ = helper.user.create()
     manager, manager_key = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.user.reason()
     _, status = rbac.user.manager.propose.create(
         signer_keypair=manager_key,
@@ -221,17 +198,14 @@ def test_manager_propose_manager_has_no_manager():
 
 
 @pytest.mark.user
-# @pytest.mark.skip("not sure this ought to work")
 @pytest.mark.integration
 def test_changing_propose_manager():
     """Test changing a manager proposal to a new manager"""
     proposal, user, user_key, _, _ = helper.user.manager.propose.create()
     new_manager, _ = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
     _, status = rbac.user.manager.propose.create(
         signer_keypair=user_key,
-        proposal_id=proposal_id,
         user_id=proposal.object_id,
         new_manager_id=new_manager.user_id,
         reason=reason,
@@ -247,7 +221,6 @@ def test_changing_propose_manager():
         new_proposal.proposal_type
         == protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
     )
-    assert new_proposal.proposal_id == proposal_id
     assert new_proposal.object_id == user.user_id
     assert new_proposal.related_id == new_manager.user_id
     assert new_proposal.opener == user.user_id

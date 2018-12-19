@@ -21,7 +21,6 @@ and the unique identifier name"""
 import logging
 
 from rbac.common import protobuf
-from rbac.common.crypto.hash import unique_id, hash_id
 from rbac.common.sawtooth import state_client
 
 LOGGER = logging.getLogger(__name__)
@@ -190,20 +189,6 @@ class StateBase:
             getattr(protobuf, self._name_lower + "_state_pb2"),
             self._state_container_prefix + "Container",
         )
-
-    def unique_id(self):
-        """Generates a random 12-byte hexidecimal string
-        Override where desired behavior differs"""
-        return unique_id()
-
-    def hash(self, value):
-        """Returns a 12-byte hash of a given string lowercased, unless it is already a
-        12-byte hexadecimal string (e.g. as returned by the unique_id function).
-        Returns zero bytes if the value is None or falsey
-        Override where desired behavior differs"""
-        if isinstance(value, str):
-            value = value.lower()
-        return hash_id(value)
 
     def address(self, object_id, related_id):
         """Makes an address for the given state object"""

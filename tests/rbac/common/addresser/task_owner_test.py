@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.crypto import hash_util
 from tests.rbac.common.assertions import TestAssertions
 
 LOGGER = logging.getLogger(__name__)
@@ -29,8 +30,8 @@ class TestTaskOwnerAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        task_id = addresser.task.owner.unique_id()
-        user_id = addresser.user.unique_id()
+        task_id = hash_util.generate_12_byte_random_hex()
+        user_id = hash_util.generate_12_byte_random_hex()
         rel_address = addresser.task.owner.address(
             object_id=task_id, related_id=user_id
         )
@@ -41,8 +42,8 @@ class TestTaskOwnerAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        task_id = addresser.task.owner.unique_id()
-        user_id = addresser.user.unique_id()
+        task_id = hash_util.generate_12_byte_random_hex()
+        user_id = hash_util.generate_12_byte_random_hex()
         rel_address1 = addresser.task.owner.address(
             object_id=task_id, related_id=user_id
         )
@@ -58,10 +59,10 @@ class TestTaskOwnerAddresser(TestAssertions):
 
     def test_address_random(self):
         """Tests address makes a unique address given different inputs"""
-        task_id1 = addresser.task.owner.unique_id()
-        user_id1 = addresser.user.unique_id()
-        task_id2 = addresser.task.owner.unique_id()
-        user_id2 = addresser.user.unique_id()
+        task_id1 = hash_util.generate_12_byte_random_hex()
+        user_id1 = hash_util.generate_12_byte_random_hex()
+        task_id2 = hash_util.generate_12_byte_random_hex()
+        user_id2 = hash_util.generate_12_byte_random_hex()
         rel_address1 = addresser.task.owner.address(
             object_id=task_id1, related_id=user_id1
         )

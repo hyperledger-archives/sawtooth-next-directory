@@ -12,24 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Proposal test helper"""
-# pylint: disable=no-member,too-few-public-methods,invalid-name
 
-import logging
-import random
-
+import pytest
 from rbac.common.crypto import hash_util
 
-LOGGER = logging.getLogger(__name__)
+
+def test_hash_id_happy_path():
+    result = hash_util.to_12_byte_hex_hash("aHashId")
+    assert result == "3a392b49adf4b306976fb0d0"
 
 
-class ProposalTestHelper:
-    """Proposal test helper"""
+def test_hash_id_empty_value():
+    result = hash_util.to_12_byte_hex_hash("")
+    assert result == "000000000000000000000000"
 
-    def id(self):
-        """Get a test proposal_id (not created)"""
-        return hash_util.generate_12_byte_random_hex()
 
-    def reason(self):
-        """Get a random reason"""
-        return "Because" + str(random.randint(10000, 100000))
+def test_hash_id_12_byte_hex_value():
+    result = hash_util.to_12_byte_hex_hash("3a392b49adf4b306976fb0d0")
+    assert result == "3a392b49adf4b306976fb0d0"
+
+
+def test_hash_id_invalid_value():
+    with pytest.raises(TypeError):
+        hash_util.to_12_byte_hex_hash(555)

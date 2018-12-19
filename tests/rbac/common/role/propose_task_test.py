@@ -20,6 +20,7 @@ import pytest
 
 from rbac.common import rbac
 from rbac.common import protobuf
+from rbac.common.crypto import hash_util
 from tests.rbac.common import helper
 
 LOGGER = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ def test_make():
     """Test making the message"""
     task_id = helper.task.id()
     role_id = helper.role.id()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.proposal.reason()
     message = rbac.role.task.propose.make(
         proposal_id=proposal_id,
@@ -55,7 +56,7 @@ def test_make_addresses():
     task_address = rbac.task.address(task_id)
     role_id = helper.role.id()
     role_address = rbac.role.address(role_id)
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.proposal.reason()
     relationship_address = rbac.role.task.address(role_id, task_id)
     proposal_address = rbac.role.task.propose.address(role_id, task_id)
@@ -89,7 +90,7 @@ def test_make_addresses():
 def test_create():
     """Test executing the message on the blockchain"""
     role, _, role_owner_key = helper.role.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = hash_util.generate_12_byte_random_hex()
     reason = helper.proposal.reason()
     task, _, _ = helper.task.create()
 
