@@ -26,16 +26,18 @@ PATTERN_12_BYTE_HASH = regex.compile(r"^" + PATTERN_12_HEX_BYTES + r"$")
 
 
 def unique_id():
-    """Generates a random 12-byte hexidecimal string"""
+    """Generates a random 12-byte hexadecimal string"""
     return os.urandom(12).hex()
 
 
 def hash_id(value):
-    """Returns a 12-byte hash of a given string, unless it is already a
-    12-byte hexadecimal string (e.g. as returned by the unique_id function).
+    """Returns a 12-byte hash of a given string (lowercased),
+    unless it is already a 12-byte hexadecimal string
+    (e.g. as returned by the unique_id function).
     Returns zero bytes if the value is None or falsey"""
     if not value:
         return PATTERN_ZERO_BYTE * 12
+    value = str(value).lower()
     if PATTERN_12_BYTE_HASH.match(value):
         return value
     return sha512(value.encode()).hexdigest()[:24]
