@@ -26,37 +26,36 @@ import * as utils from '../services/Utils';
 //
 //
 const { Types, Creators } = createActions({
-  baseRequest:          null,
-  baseSuccess:          ['base'],
-  baseFailure:          ['error'],
+  allRolesRequest:      null,
+  allRolesSuccess:      ['roles'],
+  allRolesFailure:      ['error'],
 
   roleRequest:          ['id'],
   rolesRequest:         ['ids'],
   roleSuccess:          ['role'],
   roleFailure:          ['error'],
 
+  baseRequest:          null,
+  baseSuccess:          ['base'],
+  baseFailure:          ['error'],
+
   packRequest:          ['id'],
   packsRequest:         ['ids'],
   packSuccess:          ['pack'],
   packFailure:          ['error'],
 
-  allrolesRequest:      null,
-  allrolesSuccess:      ['roles'],
-  allrolesFailure:      ['error'],
-
   proposalRequest:      ['id'],
   proposalSuccess:      ['proposal'],
   proposalFailure:      ['error'],
-
   proposalsRequest:     ['ids'],
-
-  roleAccessRequest:    ['id', 'userId', 'reason'],
-  roleAccessSuccess:    null,
-  roleAccessFailure:    null,
 
   packAccessRequest:    ['id', 'userId', 'reason'],
   packAccessSuccess:    null,
   packAccessFailure:    null,
+
+  roleAccessRequest:    ['id', 'userId', 'reason'],
+  roleAccessSuccess:    null,
+  roleAccessFailure:    null,
 
   resetAll:             null,
 });
@@ -77,6 +76,7 @@ export const INITIAL_STATE = Immutable({
   error:            null,
   fetching:         null,
   packs:            null,
+  recommended:      null,
   requests:         null,
   roles:            null,
 });
@@ -94,9 +94,9 @@ export const RequesterSelectors = {
 
   // Retrieve recommended roles
   recommendedRoles: (state) =>
-    state.requester.roles &&
+    state.requester.recommended &&
     state.user.me &&
-    state.requester.roles.filter(role =>
+    state.requester.recommended.filter(role =>
       role.packs && role.packs.length === 0 &&
       !state.user.me.proposals.find(proposal =>
         proposal.object_id === role.id
@@ -104,8 +104,8 @@ export const RequesterSelectors = {
     ).slice(0, 3),
   // Retrieve recommended packs
   recommendedPacks: (state) => {
-    if (!state.requester.roles || !state.user.me) return null;
-    const roles = state.requester.roles.filter(
+    if (!state.requester.recommended || !state.user.me) return null;
+    const roles = state.requester.recommended.filter(
         item => !state.user.me.proposals.find(e => e.object_id === item.id)
       ),
       recommend = Object.keys(utils.groupBy(roles, 'packs')).filter(item => {
@@ -153,8 +153,7 @@ export const RequesterSelectors = {
     if (
       !state.requester.requests ||
       !state.user.me ||
-      !state.requester.roles ||
-      !state.requester.packs
+      !state.requester.roles
     )
       return null;
 
@@ -165,7 +164,12 @@ export const RequesterSelectors = {
         const merge = { ...request, ...state.requester.roles
           .find(role => role.id === request.object),
         };
-        if (merge && merge.packs && merge.packs.length > 0) {
+        if (
+          state.requester.packs &&
+          merge &&
+          merge.packs &&
+          merge.packs.length > 0
+        ) {
           open.push(state.requester.packs.find(pack =>
             pack.id === merge.packs[0]
           ));
@@ -255,12 +259,12 @@ export const RequesterSelectors = {
    */
   idFromSlug: (state, collection, slug) => {
     if (!collection) return null;
-    const result = collection.find((item) =>
-      utils.createSlug(item.name) === slug);
+    const result = collection.find((item) => {
+      return utils.createSlug(item.name) === slug;
+    });
     return result && result.id;
   },
 };
-
 
 //
 // Reducers
@@ -284,44 +288,49 @@ export const resetAll = () => {
 //
 //
 //
-export const roleSuccess = (state, { role }) => {
-  return state.merge({
-    fetching: false,
-    roles: utils.merge(state.roles || [], [role]),
-  });
-};
-
-export const packSuccess = (state, { pack }) => {
-  return state.merge({
-    fetching: false,
-    packs: utils.merge(state.packs || [], [pack]),
-  });
-};
-
-export const allrolesSuccess = (state, { roles }) => {
-  return state.merge({
-    fetching: false,
-    roles: roles,
-  });
-};
-
-export const proposalSuccess = (state, { proposal }) => {
-  return state.merge({
-    fetching: false,
-    requests: utils.merge(state.requests || [], [proposal]),
-  });
-};
-
-export const baseSuccess = (state, { base }) => {
-  return state.merge({
-    fetching: false,
-    roles: utils.merge(state.roles || [], base[0].data.data || []),
-    packs: utils.merge(state.packs || [], base[1].data.data || []),
-  });
-};
-
-export const accessSuccess = (state) => {
-  return state.merge({ fetching: false });
+export const success = {
+  access: (state) =>
+    state.merge({
+      fetching: false,
+    }),
+  allRoles: (state, { roles }) =>
+    state.merge({
+      fetching: false,
+      roles: utils.merge(
+        state.roles || [], roles || []
+      ),
+    }),
+  base: (state, { base }) =>
+    state.merge({
+      fetching: false,
+      recommended: utils.merge(
+        state.recommended || [], base[0].data.data || []
+      ),
+      roles: utils.merge(
+        state.roles || [], base[0].data.data || []
+      ),
+    }),
+  pack: (state, { pack }) =>
+    state.merge({
+      fetching: false,
+      packs: utils.merge(
+        state.packs || [], [pack]
+      ),
+    }),
+  proposal: (state, { proposal }) =>
+    state.merge({
+      fetching: false,
+      requests: utils.merge(
+        state.requests || [], [proposal]
+      ),
+    }),
+  role: (state, { role }) =>
+    state.merge({
+      fetching: false,
+      roles: utils.merge(
+        state.roles || [], [role]
+      ),
+    }),
 };
 
 //
@@ -331,36 +340,35 @@ export const accessSuccess = (state) => {
 //
 //
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.RESET_ALL]: resetAll,
+  [Types.RESET_ALL]:              resetAll,
+  [Types.BASE_REQUEST]:           request,
+  [Types.BASE_SUCCESS]:           success.base,
+  [Types.BASE_FAILURE]:           failure,
 
-  [Types.BASE_REQUEST]: request,
-  [Types.BASE_SUCCESS]: baseSuccess,
-  [Types.BASE_FAILURE]: failure,
+  // Roles
+  [Types.ALL_ROLES_REQUEST]:      request,
+  [Types.ALL_ROLES_SUCCESS]:      success.allRoles,
+  [Types.ALL_ROLES_FAILURE]:      failure,
+  [Types.ROLES_REQUEST]:          request,
+  [Types.ROLE_REQUEST]:           request,
+  [Types.ROLE_SUCCESS]:           success.role,
+  [Types.ROLE_FAILURE]:           failure,
+  [Types.ROLE_ACCESS_REQUEST]:    request,
+  [Types.ROLE_ACCESS_SUCCESS]:    success.access,
+  [Types.ROLE_ACCESS_FAILURE]:    failure,
 
-  [Types.ROLE_REQUEST]: request,
-  [Types.ROLES_REQUEST]: request,
-  [Types.ROLE_SUCCESS]: roleSuccess,
-  [Types.ROLE_FAILURE]: failure,
+  // Packs
+  [Types.PACKS_REQUEST]:          request,
+  [Types.PACK_REQUEST]:           request,
+  [Types.PACK_SUCCESS]:           success.pack,
+  [Types.PACK_FAILURE]:           failure,
+  [Types.PACK_ACCESS_REQUEST]:    request,
+  [Types.PACK_ACCESS_SUCCESS]:    success.access,
+  [Types.PACK_ACCESS_FAILURE]:    failure,
 
-  [Types.PACK_REQUEST]: request,
-  [Types.PACKS_REQUEST]: request,
-  [Types.PACK_SUCCESS]: packSuccess,
-  [Types.PACK_FAILURE]: failure,
-
-  [Types.ALLROLES_REQUEST]: request,
-  [Types.ALLROLES_SUCCESS]: allrolesSuccess,
-  [Types.ALLROLES_FAILURE]: failure,
-
-  [Types.PROPOSAL_REQUEST]: request,
-  [Types.PROPOSALS_REQUEST]: request,
-  [Types.PROPOSAL_SUCCESS]: proposalSuccess,
-  [Types.PROPOSAL_FAILURE]: failure,
-
-  [Types.ROLE_ACCESS_REQUEST]: request,
-  [Types.ROLE_ACCESS_SUCCESS]: accessSuccess,
-  [Types.ROLE_ACCESS_FAILURE]: failure,
-
-  [Types.PACK_ACCESS_REQUEST]: request,
-  [Types.PACK_ACCESS_SUCCESS]: accessSuccess,
-  [Types.PACK_ACCESS_FAILURE]: failure,
+  // Proposals
+  [Types.PROPOSALS_REQUEST]:      request,
+  [Types.PROPOSAL_REQUEST]:       request,
+  [Types.PROPOSAL_SUCCESS]:       success.proposal,
+  [Types.PROPOSAL_FAILURE]:       failure,
 });

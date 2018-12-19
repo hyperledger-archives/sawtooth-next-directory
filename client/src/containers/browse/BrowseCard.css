@@ -15,11 +15,11 @@ limitations under the License.
 
 
 .browse-tile {
-  height: 100px;
-  margin-bottom: 0.5rem;
-  border-radius: 10px;
-  background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
-  padding: 15px 20px;
+  height: 150px;
+  margin-bottom: 1.1rem;
+  border-radius: 15px;
+  background: linear-gradient(to bottom, #9600e8 0%,#f70597 100%);
+  padding: 22px 25px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -37,18 +37,23 @@ limitations under the License.
   overflow: hidden;
 }
 
-.browse-tile-expanded > .browse-tile-title{
-  background: -webkit-linear-gradient(top, #7a26a8 0%,#e51e96 100%);
+.browse-tile-expanded > .browse-tile-title {
+  background: linear-gradient(to bottom, #9600e8 0%,#f70597 100%);
   padding: 5px;
   overflow: hidden;
 }
 
-.browse-tile-title {
+.browse-tile-title-container {
   color: #fff;
   font-weight: bold;
   margin-bottom: 5px;
   display: flex;
   justify-content: space-between;
+}
+
+.browse-tile-title {
+  font-weight: 400;
+  word-break: break-word;
 }
 
 .browse-tile-desc {
@@ -61,8 +66,9 @@ limitations under the License.
 }
 
 .browse-tile-pinned-icon {
-  transform: rotate(45deg);
   cursor: pointer;
+  margin-left: 15px;
+  transform: rotate(45deg);
 }
 
 .browse-tile-category {

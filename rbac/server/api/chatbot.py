@@ -55,14 +55,14 @@ async def create_response(request, recv):
 
 async def create_conversation(request, recv):
     head_block = await utils.get_request_block(request)
-    recommended_resource = await roles_query.fetch_recommended_resources(
-        request.app.config.DB_CONN, recv.get("user_id"), head_block.get("num"), 0, 1
+    recommended_resource = await roles_query.fetch_recommended_resource(
+        request.app.config.DB_CONN, recv.get("user_id"), head_block.get("num")
     )
     await create_event(request, recv, "token", utils.extract_request_token(request))
+    await create_event(request, recv, "resource_name", recommended_resource.get("name"))
     await create_event(
         request, recv, "resource_id", recommended_resource.get("role_id")
     )
-    await create_event(request, recv, "resource_name", recommended_resource.get("name"))
 
 
 async def create_event(request, recv, name, value):

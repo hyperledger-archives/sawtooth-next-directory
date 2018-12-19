@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import StackedAvatar from '../avatar/StackedAvatar';
+import StackedAvatar from './StackedAvatar';
 import { Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './BrowseCard.css';
@@ -55,20 +55,18 @@ class BrowseCard extends Component {
 
     return (
       <div className='browse-tile'>
-        <div className='browse-tile-title'>
-          <div>
-            <div>{details.name}</div>
+        <div className='browse-tile-title-container'>
+          <div className='browse-tile-title'>
+            {details.name}
           </div>
-          <div className='browse-tile-pinned-icon'>
-            <Icon
-              id='browse-tile-pinned-icon'
-              disabled={!isPinned}
-              onClick={this.togglePinned}
-              inverted name='pin' size='small' />
-          </div>
+          <Icon
+            className='browse-tile-pinned-icon'
+            disabled={!isPinned}
+            onClick={this.togglePinned}
+            inverted name='pin' size='small'/>
         </div>
         <div className='browse-tile-members'>
-          <StackedAvatar list={details.owners || []} />
+          <StackedAvatar list={details.owners || []}/>
         </div>
       </div>
     );

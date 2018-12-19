@@ -14,15 +14,12 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid {
-  margin-top: 0;
-}
 #next-browse-grid > .column {
-  padding: 0.3rem;
+  padding: 0.6rem;
 }
 
 #next-browse-container {
-  margin-top: 25px;
+  margin-top: 50px;
 }
 
 .next-browse-search .ui {
@@ -30,7 +27,8 @@ limitations under the License.
 }
 
 #next-browse-wrapper {
-  background: var(--browse-bg-color);
   height: 100%;
+  margin: 0 auto;
   padding-top: 40px;
+  width: 90%;
 }

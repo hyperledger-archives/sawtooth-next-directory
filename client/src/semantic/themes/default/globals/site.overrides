@@ -22,3 +22,7 @@ body,
 .pull-right {
   float: right;
 }
+
+.dark {
+  background: @darkBackground;
+}

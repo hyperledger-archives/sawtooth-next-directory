@@ -102,16 +102,16 @@ function * sagas () {
     takeLatest(ChatTypes.MESSAGE_SEND, sendMessage),
 
     // Requester
+    takeLatest(RequesterTypes.ALL_ROLES_REQUEST, getAllRoles, api),
     takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
-    takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),
-    takeLatest(RequesterTypes.ROLES_REQUEST, getRoles, api),
     takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
     takeLatest(RequesterTypes.PACKS_REQUEST, getPacks, api),
-    takeLatest(RequesterTypes.ALLROLES_REQUEST, getAllRoles, api),
+    takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),
+    takeLatest(RequesterTypes.ROLES_REQUEST, getRoles, api),
     takeLatest(RequesterTypes.PROPOSAL_REQUEST, getProposal, api),
     takeLatest(RequesterTypes.PROPOSALS_REQUEST, getProposals, api),
-    takeLatest(RequesterTypes.ROLE_ACCESS_REQUEST, roleAccess, api),
     takeLatest(RequesterTypes.PACK_ACCESS_REQUEST, packAccess, api),
+    takeLatest(RequesterTypes.ROLE_ACCESS_REQUEST, roleAccess, api),
 
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),

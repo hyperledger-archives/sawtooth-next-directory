@@ -43,6 +43,7 @@ limitations under the License.
 #next-header-actions i {
   font-size: 1.1em;
   margin-left: 22px;
+  position: relative;
 }
 
 #next-header-actions img.avatar {

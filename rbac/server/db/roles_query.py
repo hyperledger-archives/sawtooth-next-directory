@@ -96,6 +96,49 @@ async def fetch_role_resource(conn, role_id, head_block_num):
 
 
 async def fetch_recommended_resources(conn, identifier, head_block_num, start, limit):
+    """Fetch recommended roles for a user"""
+    resources = (
+        await r.table("roles")
+        .outer_join(r.table("role_members"), lambda a, b: a["role_id"].eq(b["role_id"]))
+        .zip()
+        .filter(
+            lambda c: c.has_fields("identifiers").not_()
+            | c["identifiers"].contains(identifier).not_()
+        )
+        .map(
+            lambda role: role.merge(
+                {
+                    "id": role["role_id"],
+                    "owners": fetch_relationships(
+                        "role_owners", "role_id", role["role_id"], head_block_num
+                    ),
+                    "administrators": fetch_relationships(
+                        "role_admins", "role_id", role["role_id"], head_block_num
+                    ),
+                    "members": fetch_relationships(
+                        "role_members", "role_id", role["role_id"], head_block_num
+                    ),
+                    "tasks": fetch_relationships(
+                        "role_tasks", "role_id", role["role_id"], head_block_num
+                    ),
+                    "proposals": fetch_proposal_ids_by_opener(
+                        role["role_id"], head_block_num
+                    ),
+                    "packs": fetch_relationships(
+                        "role_packs", "role_id", role["role_id"], head_block_num
+                    ),
+                }
+            )
+        )
+        .slice(start, start + limit)
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resources
+
+
+async def fetch_recommended_resource(conn, identifier, head_block_num):
+    """Fetch a recommended role for a user"""
     resource = (
         await r.table("roles")
         .outer_join(r.table("role_members"), lambda a, b: a["role_id"].eq(b["role_id"]))
@@ -104,7 +147,7 @@ async def fetch_recommended_resources(conn, identifier, head_block_num, start, l
             lambda c: c.has_fields("identifiers").not_()
             | c["identifiers"].contains(identifier).not_()
         )
-        .slice(start, start + limit)
+        .slice(0, 1)
         .coerce_to("array")
         .run(conn)
     )

@@ -588,7 +588,7 @@ h5 {
   font-family: 'Rubik', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   line-height: 1.28571429em;
   margin: calc(2rem -  0.14285714em ) 0em 1rem;
-  font-weight: bold;
+  font-weight: normal;
   padding: 0em;
 }
 
@@ -764,6 +764,10 @@ body,
 
 .pull-right {
   float: right;
+}
+
+.dark {
+  background: #273544;
 }
 
 /*******************************
@@ -6904,7 +6908,7 @@ i.flag.zimbabwe:before {
   margin: calc(2rem -  0.14285714em ) 0em 1rem;
   padding: 0em 0em;
   font-family: 'Rubik', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  font-weight: bold;
+  font-weight: normal;
   line-height: 1.28571429em;
   text-transform: none;
   color: rgba(0, 0, 0, 0.87);
@@ -16694,7 +16698,7 @@ ol.ui.list ol li,
 .ui.selection.list > .item {
   cursor: pointer;
   background: transparent;
-  padding: 0.5em 0.5em;
+  padding: 0.8em 0.5em;
   margin: 0em;
   color: rgba(0, 0, 0, 0.4);
   border-radius: 0em;
@@ -17920,7 +17924,7 @@ ol.ui.horizontal.list li:before,
 .ui.inverted.placeholder .image.header:after,
 .ui.inverted.placeholder .line,
 .ui.inverted.placeholder .line:after {
-  background-color: #1B1C1D;
+  background-color: #273544;
 }
 
 /*******************************
@@ -19450,9 +19454,10 @@ ol.ui.horizontal.list li:before,
 
 .floated.segment.compact.left {
   border-bottom-left-radius: 0;
-  -webkit-box-shadow: 0px 12px 18px #d2cece45;
-  box-shadow: 0px 12px 18px #d2cece45;
-  color: #212c3a;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  color: #505356;
+  font-size: 1em;
   margin-left: 15px;
 }
 

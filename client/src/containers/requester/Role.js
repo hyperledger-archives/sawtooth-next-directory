@@ -48,13 +48,26 @@ export class Role extends Component {
   };
 
 
+  isOwner = () => {
+    const { me } = this.props;
+    return me && !!this.role.owners.find(owner => owner === me.id);
+  };
+
+
+  subtitle = () => {
+    const membersCount = [...this.role.members, ...this.role.owners].length;
+    return `${membersCount} ${membersCount > 1 || membersCount === 0 ?
+      'members' :
+      'member'}`;
+  };
+
+
   /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
     const {
-      me,
       proposalFromId,
       proposalId,
       roleId,
@@ -63,12 +76,6 @@ export class Role extends Component {
     this.role = roleFromId(roleId);
     if (!this.role) return null;
     this.proposal = proposalFromId(proposalId);
-
-    const membersCount = [...this.role.members, ...this.role.owners].length;
-    const isOwner = me && !!this.role.owners.find(owner => owner === me.id);
-    const subtitle = `${membersCount} ${membersCount > 1 ?
-      'members' :
-      'member'}`;
 
     return (
       <Grid id='next-requester-grid'>
@@ -80,7 +87,7 @@ export class Role extends Component {
             glyph={glyph}
             waves
             title={this.role.name}
-            subtitle={subtitle}
+            subtitle={this.subtitle()}
             {...this.props}/>
           <div id='next-requester-roles-content'>
             { this.proposal &&
@@ -91,7 +98,8 @@ export class Role extends Component {
             }
             <Container id='next-requester-roles-description-container'>
               <div id='next-requester-roles-description'>
-                Lorem ipsum dolor sit amet.
+                <h5>DESCRIPTION</h5>
+                {this.role.description || 'No description available.'}
               </div>
             </Container>
             <MemberList {...this.props}
@@ -105,7 +113,7 @@ export class Role extends Component {
           width={4}>
           <Chat
             type='REQUESTER'
-            disabled={isOwner}
+            disabled={this.isOwner()}
             title={this.role.name + ' Conversations'}
             activeRole={this.role} {...this.props}/>
         </Grid.Column>

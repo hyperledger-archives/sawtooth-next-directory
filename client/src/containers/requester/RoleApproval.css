@@ -17,7 +17,10 @@ limitations under the License.
 #next-role-approval-container {
   margin: 0 auto;
   padding: 30px 0 10px 0;
-  width: 70%;
+}
+
+#next-role-approval-container .ui.fluid.card {
+  border-radius: 0;
 }
 
 #next-role-approval-status-emoji {
@@ -25,7 +28,7 @@ limitations under the License.
 }
 
 #next-role-approval-status {
-  padding: 54px 0 20px 0;
+  padding: 90px 0 20px 0;
   text-align: center;
 }
 

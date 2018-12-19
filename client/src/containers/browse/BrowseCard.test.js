@@ -50,7 +50,5 @@ describe('BrowseCard component', () => {
     };
 
     const wrapper = shallow(<BrowseCard {...props} />);
-    wrapper.find('#browse-tile-pinned-icon').simulate('click');
-
   });
 });

@@ -40,8 +40,9 @@
 
 .floated.segment.compact.left {
   border-bottom-left-radius: 0;
-  box-shadow: 0px 12px 18px #d2cece45;
-  color: #212c3a;
+  box-shadow: none;
+  color: #505356;
+  font-size: 1em;
   margin-left: 15px;
 }
 

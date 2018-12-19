@@ -21,7 +21,7 @@ limitations under the License.
 }
 
 .next-approver-nav-search {
-  padding: var(--nav-list-padding);
+  padding: 14px var(--nav-list-padding);
 }
 
 #next-approver-nav-lists-container {
@@ -30,6 +30,12 @@ limitations under the License.
 
 #next-approver-nav-lists-container h4 a {
   color: var(--nav-heading-color);
+}
+
+#next-approver-nav-snapshot {
+  display: block;
+  padding: var(--nav-list-padding);
+  padding-bottom: 0;
 }
 
 .next-approver-nav-search .ui.input input {

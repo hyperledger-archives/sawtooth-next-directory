@@ -22,6 +22,15 @@ limitations under the License.
   color: var(--nav-heading-color);
 }
 
+.next-nav-list-content  {
+  width: 85% !important;
+}
+
+.next-nav-list-content .header {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .next-nav-list-empty {
   color: var(--nav-list-color);
   font-size: 12px;

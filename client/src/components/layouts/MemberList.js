@@ -129,7 +129,7 @@ class MemberList extends Component {
 
     return (
       <div>
-        <Grid columns={3} stackable>
+        <Grid columns={3} padded stackable>
           { owners && owners.map((owner) => (
             this.renderUserSegment(owner, true)
           )) }

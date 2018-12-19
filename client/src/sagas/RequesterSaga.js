@@ -21,6 +21,7 @@ API to retrieve data required to hydrate the UI. */
 
 
 import { all, call, fork, put } from 'redux-saga/effects';
+import { showLoading, hideLoading } from 'react-redux-loading-bar';
 import RequesterActions from '../redux/RequesterRedux';
 import UserActions from '../redux/UserRedux';
 
@@ -33,13 +34,15 @@ import UserActions from '../redux/UserRedux';
  */
 export function * getBase (api, action) {
   try {
+    yield put(showLoading());
     const res = yield all([
-      call(api.getRoles),
-      call(api.getPacks),
+      call(api.getRecommended),
     ]);
     yield put(RequesterActions.baseSuccess(res));
   } catch (err) {
     console.error(err);
+  } finally {
+    yield put(hideLoading());
   }
 }
 
@@ -116,15 +119,17 @@ export function * getPacks (api, action) {
  */
 export function * getAllRoles (api) {
   try {
+    yield put(showLoading());
     const res = yield call(api.getRoles);
-    if (res.ok) {
-      yield put(RequesterActions.allrolesSuccess(res.data.data));
-    } else {
-      alert(res.data.error);
-      yield put(RequesterActions.allrolesFailure(res.data.error));
-    }
+    if (res.ok)
+      yield put(RequesterActions.allRolesSuccess(res.data.data));
+    else
+      yield put(RequesterActions.allRolesFailure(res.data.error));
+
   } catch (err) {
     console.error(err);
+  } finally {
+    yield put(hideLoading());
   }
 }
 
