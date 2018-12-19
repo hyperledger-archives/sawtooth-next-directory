@@ -116,19 +116,12 @@ class LoginForm extends Component {
                 <Input
                   id='next-username-input'
                   autoFocus
-                  placeholder='User ID'
+                  placeholder='Username'
                   error={validUsername === false}
                   name='username'
                   type='text'
                   value={username}
                   onChange={this.handleChange} />
-                <Label>
-                  <Button
-                    className='link'
-                    type='button'>
-                    Forgot User ID?
-                  </Button>
-                </Label>
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button

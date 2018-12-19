@@ -103,9 +103,9 @@ class NavList extends Component {
           as={Link}
           to={this.createNavLink(item)}>
 
-          <Image src=''/>
+          <Image floated='left' src=''/>
 
-          <List.Content id='next-nav-list-content'>
+          <List.Content className='pull-left next-nav-list-content'>
             <List.Header>{item.name}</List.Header>
           </List.Content>
 

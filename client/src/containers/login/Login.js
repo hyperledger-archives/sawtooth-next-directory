@@ -17,7 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Container, Grid, Header, Image } from 'semantic-ui-react';
+import { Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -100,10 +100,9 @@ class Login extends Component {
             <LoginForm submit={login}/>
           </Grid.Column>
         </Grid>
-        <Container id='next-login-new-account-container' textAlign='center'>
-          <span>New to NEXT Directory?</span>
+        <div id='next-login-new-account-container'>
           <Link to='/signup'>Create an account</Link>
-        </Container>
+        </div>
       </div>
     );
   }

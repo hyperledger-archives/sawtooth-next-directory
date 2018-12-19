@@ -15,6 +15,7 @@ limitations under the License.
 
 
 import apisauce from 'apisauce';
+import { toast } from 'react-toastify';
 import * as storage from '../services/Storage';
 import * as AuthActions from '../redux/AuthRedux';
 
@@ -64,13 +65,13 @@ const create = (baseURL =
   api.addResponseTransform(res => {
     switch (res.problem) {
       case 'TIMEOUT_ERROR':
-        alert('Server is not responding. Please try again later.');
+        toast('Server is not responding. Please try again later.');
         return;
       case 'NETWORK_ERROR':
-        alert('Server currently unavailable. Please try again later.');
+        toast('Server currently unavailable. Please try again later.');
         return;
       case 'CONNECTION_ERROR':
-        alert('Cannot connect to server. Please try again later.');
+        toast('Cannot connect to server. Please try again later.');
         return;
       default:
         break;
@@ -82,7 +83,7 @@ const create = (baseURL =
         AuthActions.logout();
         break;
       default:
-        alert(res.data.message);
+        toast(res.data.message);
         break;
     }
   });
@@ -105,13 +106,17 @@ const create = (baseURL =
     const id = storage.get('user_id');
     return api.get(`users/${id}/proposals/open`);
   };
+  const getRecommended = () => {
+    const id = storage.get('user_id');
+    return api.get(`users/${id}/roles/recommended`);
+  };
 
   const approveProposals = (id, body) => api.patch(`proposals/${id}`, body);
   const createPack = (payload) => api.post('packs', payload);
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
-  const getRequesterBase = () => api.get('me/base');
+  // Const getRequesterBase = () => api.get('me/base');
   const getRole = (id) => api.get(`roles/${id}`);
   const getRoles = () => api.get('roles');
   const getPack = (id) => api.get(`packs/${id}`);
@@ -132,7 +137,7 @@ const create = (baseURL =
     getConfirmedProposals,
     getOpenProposals,
     getProposal,
-    getRequesterBase,
+    getRecommended,
     getRole,
     getRoles,
     getPack,

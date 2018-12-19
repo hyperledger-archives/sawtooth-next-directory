@@ -16,15 +16,16 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Header } from 'semantic-ui-react';
+import { Container, Grid, Header, Placeholder } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import BrowseCard from '../../components/cards/BrowseCard';
 import RequesterActions from '../../redux/RequesterRedux';
 
 
 import './Browse.css';
+import BrowseCard from './BrowseCard';
+
 
 /**
  *
@@ -35,8 +36,9 @@ import './Browse.css';
 class Browse extends Component {
 
   static propTypes = {
-    allRoles:            PropTypes.array,
-    getAllRoles:         PropTypes.func,
+    allRoles:           PropTypes.array,
+    fetching:           PropTypes.bool,
+    getAllRoles:        PropTypes.func,
   };
 
 
@@ -47,10 +49,19 @@ class Browse extends Component {
    * Entry point to perform tasks required to render
    * component. On load, get roles
    */
-  componentDidMount (){
+  componentDidMount () {
     const { getAllRoles } = this.props;
     // TODO: Pagination
     getAllRoles();
+    document.querySelector('body').classList.add('dark');
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    document.querySelector('body').classList.remove('dark');
   }
 
 
@@ -70,7 +81,7 @@ class Browse extends Component {
    * @param {array} value ?
    */
   formatData = (value) => {
-    let arr=[[], [], [], []];
+    let arr = [[], [], [], []];
     value.forEach((ele, index) => {
       arr[index % 4].push(ele);
     });
@@ -108,20 +119,39 @@ class Browse extends Component {
   }
 
 
+  renderPlaceholder = () => {
+    return Array(4).fill(0).map((item, index) => (
+      <Grid.Column key={index}>
+        <Placeholder inverted>
+          <Placeholder.Header image>
+            <Placeholder.Line/>
+            <Placeholder.Line/>
+          </Placeholder.Header>
+          <Placeholder.Paragraph>
+            <Placeholder.Line length='medium'/>
+            <Placeholder.Line length='short'/>
+          </Placeholder.Paragraph>
+        </Placeholder>
+      </Grid.Column>
+    ));
+  }
+
+
   /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
+    const { fetching } = this.props;
     const { rolesData } = this.state;
+
     return (
       <div id='next-browse-wrapper'>
-        <Container id='next-browse-container'>
-          { rolesData &&
-            <Grid relaxed stackable columns={4} id='next-browse-grid'>
-              {this.renderLayout()}
-            </Grid>
-          }
+        <Container fluid id='next-browse-container'>
+          <Grid stackable columns={4} id='next-browse-grid'>
+            { fetching && this.renderPlaceholder()}
+            { rolesData && this.renderLayout()}
+          </Grid>
           { rolesData && rolesData.every(item => !item.length) &&
             <Header as='h3' textAlign='center' color='grey'>
               <Header.Content>No roles or packs</Header.Content>
@@ -138,12 +168,13 @@ class Browse extends Component {
 const mapStateToProps = (state) => {
   return {
     allRoles: state.requester.roles,
+    fetching: state.requester.fetching,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getAllRoles: () => dispatch(RequesterActions.allrolesRequest()),
+    getAllRoles: () => dispatch(RequesterActions.allRolesRequest()),
   };
 };
 

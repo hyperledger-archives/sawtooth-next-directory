@@ -31,6 +31,7 @@ from rbac.server.api.proposals import compile_proposal_resource
 
 from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
+from rbac.server.db import roles_query
 from rbac.server.db import users_query
 
 from rbac.transaction_creation.common import Key
@@ -207,6 +208,24 @@ async def fetch_confirmed_proposals(request, user_id):
         request.app.config.DB_CONN,
         request.url,
         confirmed_proposals,
+        head_block,
+        start=start,
+        limit=limit,
+    )
+
+
+@USERS_BP.get("api/users/<user_id>/roles/recommended")
+@authorized()
+async def fetch_recommended_roles(request, user_id):
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
+    recommended_resources = await roles_query.fetch_recommended_resources(
+        request.app.config.DB_CONN, user_id, head_block.get("num"), 0, 6
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        recommended_resources,
         head_block,
         start=start,
         limit=limit,

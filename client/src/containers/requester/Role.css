@@ -15,16 +15,22 @@ limitations under the License.
 
 
 #next-requester-roles-content {
-  padding: 0 var(--page-content-padding);
-  position: relative;
-  top: 190px;
-  width: calc(100% - 65px) !important;
+    position: relative;
+    top: 120px;
+    width: calc(100% - 61px) !important;
+    z-index: 98;
 }
 
 #next-requester-roles-description-container {
-  margin: 30px 0;
+  margin: 80px 0 40px 0;
+  padding: 0 30px;
 }
 
 #next-requester-roles-description {
   padding: 20px 10px;
+}
+
+#next-requester-roles-description h5 {
+  font-weight: bold;
+  margin-bottom: 15px;
 }

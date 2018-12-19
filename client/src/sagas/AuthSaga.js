@@ -33,7 +33,6 @@ import AuthActions from '../redux/AuthRedux';
  */
 export function * login (api, action) {
   try {
-    yield put(showLoading());
     const { username, password } = action;
     const res = yield call(api.login, {
       id: username,
@@ -45,8 +44,6 @@ export function * login (api, action) {
       yield put(AuthActions.loginFailure(res.data.message));
   } catch (err) {
     console.error(err);
-  } finally {
-    yield put(hideLoading());
   }
 }
 

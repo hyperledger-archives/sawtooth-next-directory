@@ -15,7 +15,7 @@ limitations under the License.
 
 
 #next-login-column {
-  margin-top: 85px;
+  margin-top: 130px;
   max-width: 450px;
 }
 
@@ -27,6 +27,7 @@ limitations under the License.
 #next-login-container {
   background: var(--auth-bg-color);
   height: 100%;
+  overflow: auto;
 }
 
 #next-login-logo {
@@ -52,15 +53,25 @@ limitations under the License.
 }
 
 #next-login-new-account-container {
-  bottom: 30px;
   color: var(--auth-fg-highlight-color);
-  left: 0;
-  position: absolute;
+  position: fixed;
   right: 0;
+  top: 0;
+  z-index: 1111;
+  width: 170px;
 }
 
 #next-login-new-account-container a {
   color: var(--nav-heading-color);
+  background: #8b8ea916;
+  display: block;
+  height: 40px;
+  padding: 10px;
+  text-align: center;
+}
+
+#next-login-new-account-container a:hover {
+  background: #8b8ea91c;
 }
 
 #next-login-new-account-container span {

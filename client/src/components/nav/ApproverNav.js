@@ -104,6 +104,12 @@ class ApproverNav extends Component {
       startAnimation } = this.props;
     return (
       <Container>
+        <Link to='/' id='next-approver-nav-snapshot'>
+          <Button animated primary fluid>
+            <Button.Content visible>SNAPSHOT</Button.Content>
+            <Button.Content hidden><Icon name='arrow right'/></Button.Content>
+          </Button>
+        </Link>
         <Search
           input={() => <Input icon='search' placeholder='Search...'/>}
           className='next-approver-nav-search'

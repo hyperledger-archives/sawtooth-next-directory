@@ -45,7 +45,6 @@ class CreatePack extends Component {
       name:           name,
       owners:         [userId],
     });
-    alert('Created pack');
   }
 
 

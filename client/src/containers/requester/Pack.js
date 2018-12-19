@@ -51,7 +51,11 @@ export class Pack extends Component {
    * @returns {JSX}
    */
   render () {
-    const { packId, packFromId, proposalsFromIds, proposalIds } = this.props;
+    const {
+      packId,
+      packFromId,
+      proposalsFromIds,
+      proposalIds } = this.props;
 
     this.pack = packFromId(packId);
     if (!this.pack) return null;

@@ -81,8 +81,9 @@ limitations under the License.
 }
 
 #next-chat-header i.mini {
-  font-size: 1.1em;
+  font-size: 1em;
   margin: 0;
+  transform: rotate(45deg);
 }
 
 #next-chat-messages-container {
@@ -94,7 +95,7 @@ limitations under the License.
 }
 
 #next-chat-messages-container:before {
-  background: linear-gradient(#f6f7f8 50%, transparent);
+  background: linear-gradient(#eff0f3 50%, transparent);
   content: "";
   height: 30px;
   left: 0;
