@@ -33,7 +33,7 @@ class TestUserAddresser(TestAssertions):
         user_address = addresser.user.address(user_id)
         self.assertIsAddress(user_address)
         self.assertEqual(
-            addresser.address_is(user_address), addresser.AddressSpace.USER
+            addresser.get_address_type(user_address), addresser.AddressSpace.USER
         )
 
     def test_unique_id(self):
@@ -44,34 +44,22 @@ class TestUserAddresser(TestAssertions):
         self.assertIsIdentifier(id2)
         self.assertNotEqual(id1, id2)
 
-    def test_address_is(self):
-        """Tests that address_is returns AddressSpace.USER if it is a user
-        address, and None if it is of another address type"""
-        user_address = addresser.user.address(addresser.user.unique_id())
-        role_address = addresser.role.address(addresser.role.unique_id())
-        self.assertEqual(
-            addresser.address_is(user_address), addresser.AddressSpace.USER
-        )
-        self.assertEqual(
-            addresser.user.address_is(user_address), addresser.AddressSpace.USER
-        )
-        self.assertIsNone(addresser.user.address_is(role_address))
-        self.assertEqual(
-            addresser.address_is(role_address), addresser.AddressSpace.ROLES_ATTRIBUTES
-        )
-
     def test_get_address_type(self):
         """Tests that get_address_type returns AddressSpace.USER if it is a user
         address, and None if it is of another address type"""
         user_address = addresser.user.address(addresser.user.unique_id())
-        other_address = addresser.role.address(addresser.role.unique_id())
+        role_address = addresser.role.address(addresser.role.unique_id())
         self.assertEqual(
             addresser.get_address_type(user_address), addresser.AddressSpace.USER
         )
         self.assertEqual(
             addresser.user.get_address_type(user_address), addresser.AddressSpace.USER
         )
-        self.assertIsNone(addresser.user.get_address_type(other_address))
+        self.assertIsNone(addresser.user.get_address_type(role_address))
+        self.assertEqual(
+            addresser.get_address_type(role_address),
+            addresser.AddressSpace.ROLES_ATTRIBUTES,
+        )
 
     def test_get_addresser(self):
         """Test that get_addresser returns the addresser class if it is a
@@ -93,7 +81,7 @@ class TestUserAddresser(TestAssertions):
         parsed = addresser.user.parse(user_address)
 
         self.assertEqual(parsed.object_type, addresser.ObjectType.USER)
-        self.assertEqual(parsed.related_type, addresser.ObjectType.SELF)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.NONE)
         self.assertEqual(
             parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
@@ -108,7 +96,7 @@ class TestUserAddresser(TestAssertions):
         parsed = addresser.parse(user_address)
 
         self.assertEqual(parsed.object_type, addresser.ObjectType.USER)
-        self.assertEqual(parsed.related_type, addresser.ObjectType.SELF)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.NONE)
         self.assertEqual(
             parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
@@ -143,7 +131,7 @@ class TestUserAddresser(TestAssertions):
         self.assertIsAddress(user_address2)
         self.assertEqual(user_address1, user_address2)
         self.assertEqual(
-            addresser.address_is(user_address1), addresser.AddressSpace.USER
+            addresser.get_address_type(user_address1), addresser.AddressSpace.USER
         )
 
     def test_address_random(self):
@@ -156,21 +144,8 @@ class TestUserAddresser(TestAssertions):
         self.assertIsAddress(user_address2)
         self.assertNotEqual(user_address1, user_address2)
         self.assertEqual(
-            addresser.address_is(user_address1), addresser.AddressSpace.USER
+            addresser.get_address_type(user_address1), addresser.AddressSpace.USER
         )
         self.assertEqual(
-            addresser.address_is(user_address2), addresser.AddressSpace.USER
-        )
-
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = (
-            "bac00100003333e7570f3f6f7d2c1635f6deea1111ff00000000000000000000000000"
-        )
-        user_address = addresser.user.address(user_id)
-        self.assertIsAddress(user_address)
-        self.assertEqual(user_address, expected_address)
-        self.assertEqual(
-            addresser.address_is(user_address), addresser.AddressSpace.USER
+            addresser.get_address_type(user_address2), addresser.AddressSpace.USER
         )

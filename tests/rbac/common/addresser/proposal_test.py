@@ -36,7 +36,8 @@ class TestProposalAddresser(TestAssertions):
         )
         self.assertIsAddress(proposal_address)
         self.assertEqual(
-            addresser.address_is(proposal_address), addresser.AddressSpace.PROPOSALS
+            addresser.get_address_type(proposal_address),
+            addresser.AddressSpace.PROPOSALS,
         )
 
     def test_address_deterministic(self):
@@ -53,7 +54,8 @@ class TestProposalAddresser(TestAssertions):
         self.assertIsAddress(proposal_address2)
         self.assertEqual(proposal_address1, proposal_address2)
         self.assertEqual(
-            addresser.address_is(proposal_address1), addresser.AddressSpace.PROPOSALS
+            addresser.get_address_type(proposal_address1),
+            addresser.AddressSpace.PROPOSALS,
         )
 
     def test_address_random(self):
@@ -72,24 +74,26 @@ class TestProposalAddresser(TestAssertions):
         self.assertIsAddress(proposal_address2)
         self.assertNotEqual(proposal_address1, proposal_address2)
         self.assertEqual(
-            addresser.address_is(proposal_address1), addresser.AddressSpace.PROPOSALS
+            addresser.get_address_type(proposal_address1),
+            addresser.AddressSpace.PROPOSALS,
         )
         self.assertEqual(
-            addresser.address_is(proposal_address2), addresser.AddressSpace.PROPOSALS
+            addresser.get_address_type(proposal_address2),
+            addresser.AddressSpace.PROPOSALS,
         )
 
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        object_id = "cb048d507eec42a5845e20eed982d5d2"
-        related_id = "f1e916b663164211a9ac34516324681a"
-        expected_address = (
-            "bac00100004444b874e90b2bcf58e65e0727911111ff3ee52fc9d0449fc1e41f77d400"
-        )
-        proposal_address = addresser.proposal.address(
-            object_id=object_id, related_id=related_id
-        )
-        self.assertIsAddress(proposal_address)
-        self.assertEqual(proposal_address, expected_address)
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        proposal_id = addresser.proposal.unique_id()
+        proposal_address = addresser.proposal.address(proposal_id)
+
+        parsed = addresser.parse(proposal_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.PROPOSAL)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.NONE)
         self.assertEqual(
-            addresser.address_is(proposal_address), addresser.AddressSpace.PROPOSALS
+            parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.PROPOSALS)
+        self.assertEqual(parsed.object_id, proposal_id)
+        self.assertEqual(parsed.related_id, None)

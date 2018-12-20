@@ -41,35 +41,6 @@ TABLE_NAMES = {
     AddressSpace.TASKS_ADMINS: "task_admins",
 }
 
-FILTER_KEYS = {
-    AddressSpace.USER: ["user_id"],
-    AddressSpace.PROPOSALS: ["proposal_id"],
-    AddressSpace.SYSADMIN_ATTRIBUTES: ["role_id"],
-    AddressSpace.SYSADMIN_MEMBERS: ["role_id", "suffix"],
-    AddressSpace.SYSADMIN_OWNERS: ["role_id", "suffix"],
-    AddressSpace.SYSADMIN_ADMINS: ["role_id", "suffix"],
-    AddressSpace.ROLES_ATTRIBUTES: ["role_id"],
-    AddressSpace.ROLES_MEMBERS: ["role_id", "suffix"],
-    AddressSpace.ROLES_OWNERS: ["role_id", "suffix"],
-    AddressSpace.ROLES_ADMINS: ["role_id", "suffix"],
-    AddressSpace.ROLES_TASKS: ["role_id", "suffix"],
-    AddressSpace.TASKS_ATTRIBUTES: ["task_id"],
-    AddressSpace.TASKS_OWNERS: ["task_id", "suffix"],
-    AddressSpace.TASKS_ADMINS: ["task_id", "suffix"],
-}
-
-ADD_SUFFIX = {
-    AddressSpace.SYSADMIN_MEMBERS: True,
-    AddressSpace.SYSADMIN_OWNERS: True,
-    AddressSpace.SYSADMIN_ADMINS: True,
-    AddressSpace.ROLES_MEMBERS: True,
-    AddressSpace.ROLES_OWNERS: True,
-    AddressSpace.ROLES_ADMINS: True,
-    AddressSpace.ROLES_TASKS: True,
-    AddressSpace.TASKS_OWNERS: True,
-    AddressSpace.TASKS_ADMINS: True,
-}
-
 
 def get_updater(database, block_num):
     """Returns an updater function, which can be used to update the database
@@ -158,30 +129,38 @@ def _update_state(database, block_num, address, resource):
 
 
 def _update_legacy(database, block_num, address, resource):
-    data_type = addresser.address_is(address)
     try:
-        data = {
-            "id": address,
-            "start_block_num": int(block_num),
-            "end_block_num": int(sys.maxsize),
-            **resource,
-        }
+        data_type = addresser.get_address_type(address)
+        if data_type in TABLE_NAMES:
+            data = {
+                "id": address,
+                "start_block_num": int(block_num),
+                "end_block_num": int(sys.maxsize),
+                **resource,
+            }
 
-        table_query = database.get_table(TABLE_NAMES[data_type])
-        query = table_query.get(address).replace(
-            lambda doc: r.branch(
-                # pylint: disable=singleton-comparison
-                (doc == None),  # noqa
-                r.expr(data),
-                doc.merge(resource),
+            table_query = database.get_table(TABLE_NAMES[data_type])
+            query = table_query.get(address).replace(
+                lambda doc: r.branch(
+                    # pylint: disable=singleton-comparison
+                    (doc == None),  # noqa
+                    r.expr(data),
+                    doc.merge(resource),
+                )
             )
-        )
-        return database.run_query(query)
+            result = database.run_query(query)
+            if (not result["inserted"] and not result["replaced"]) or result[
+                "errors"
+            ] > 0:
+                LOGGER.warning(
+                    "error updating legacy state table:\n%s\n%s", result, query
+                )
 
-    except KeyError:
-        raise TypeError("Unknown data type: {}".format(data_type))
+    except Exception as err:  # pylint: disable=broad-except
+        LOGGER.warning("_update_legacy %s error:", type(err))
+        LOGGER.warning(err)
 
 
 def _update(database, block_num, address, resource):
     _update_state(database, block_num, address, resource)
-    return _update_legacy(database, block_num, address, resource)
+    _update_legacy(database, block_num, address, resource)

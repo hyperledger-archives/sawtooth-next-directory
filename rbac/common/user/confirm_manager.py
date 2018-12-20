@@ -51,20 +51,17 @@ class ConfirmUpdateUserManager(ProposalConfirm):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
+        inputs, outputs = super().make_addresses(message, signer_keypair)
 
         proposal_address = addresser.proposal.address(
             object_id=message.user_id, related_id=message.manager_id
         )
+        inputs.add(proposal_address)
+        outputs.add(proposal_address)
+
         user_address = addresser.user.address(message.user_id)
-        signer_user_address = addresser.user.address(signer_keypair.public_key)
-
-        inputs = [proposal_address, user_address]
-        if signer_user_address != user_address:
-            inputs.append(signer_user_address)
-
-        outputs = [proposal_address, user_address]
+        inputs.add(user_address)
+        outputs.add(user_address)
 
         return inputs, outputs
 

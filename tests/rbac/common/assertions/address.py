@@ -24,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 
 PATTERN_ADDRESS = regex.compile(r"^[0-9a-f]{70}$")
 PATTERN_IDENTIFIER = regex.compile(r"^[0-9a-f]{24}$")
-ADDRESS_CLASS_METHODS = ["address", "address_is", "hash", "unique_id"]
+ADDRESS_CLASS_METHODS = ["address", "get_address_type", "hash", "unique_id"]
 ADDRESS_CLASS_PROPS = ["address_type"]
 
 

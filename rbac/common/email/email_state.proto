@@ -16,29 +16,17 @@
 syntax = "proto3";
 
 
-message UserContainer {
+message EmailContainer {
 
-   repeated User users = 2;
+   repeated Email emails = 2;
 
 }
 
 
-message User {
+message Email {
 
     string user_id = 1;
 
-    string name = 2;
-
-    string manager_id = 3;
-
-    string metadata = 4;
-
-    string email = 5;
-
-    string remote_id = 6;
-
-    string username = 7;
-
-    string key = 8;
+    string email = 2;
 
 }

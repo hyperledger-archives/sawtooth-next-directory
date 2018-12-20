@@ -51,20 +51,24 @@ class ProposeAddTaskOwner(ProposalPropose):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
+        inputs, outputs = super().make_addresses(message, signer_keypair)
+
+        user_address = addresser.user.address(message.user_id)
+        inputs.add(user_address)
+
+        task_address = addresser.task.address(message.task_id)
+        inputs.add(task_address)
 
         relationship_address = addresser.task.owner.address(
             message.task_id, message.user_id
         )
-        user_address = addresser.user.address(message.user_id)
-        task_address = addresser.task.address(message.task_id)
+        inputs.add(relationship_address)
+
         proposal_address = self.address(
             object_id=message.task_id, related_id=message.user_id
         )
-
-        inputs = [relationship_address, task_address, user_address, proposal_address]
-        outputs = [proposal_address]
+        inputs.add(proposal_address)
+        outputs.add(proposal_address)
 
         return inputs, outputs
 

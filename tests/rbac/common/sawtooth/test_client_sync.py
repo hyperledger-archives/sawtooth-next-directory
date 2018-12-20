@@ -42,7 +42,9 @@ class TestRestClient(TestAssertions):
         """Grab the entire blockchain state and deserialize it"""
         subtree = addresser.family.namespace
         for item in client.list_state(subtree=subtree)["data"]:
-            address_type = item["address_type"] = addresser.address_is(item["address"])
+            address_type = item["address_type"] = addresser.get_address_type(
+                item["address"]
+            )
             if address_type == addresser.AddressSpace.USER:
                 content = user_state_pb2.UserContainer()
                 content.ParseFromString(b64decode(item["data"]))

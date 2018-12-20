@@ -52,7 +52,7 @@ class ImportsRole(BaseMessage):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.SELF
+        return ObjectType.NONE
 
     @property
     def relationship_type(self):
@@ -76,30 +76,22 @@ class ImportsRole(BaseMessage):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
+        inputs, _ = super().make_addresses(message, signer_keypair)
 
-        inputs = [
-            # addresser.sysadmin.member.address(signer_public_key),
-            addresser.role.address(message.role_id)
-        ]
-        inputs.extend([addresser.user.address(u) for u in message.admins])
-        inputs.extend(
-            [
+        inputs.update(
+            {addresser.role.address(message.role_id)}
+            | {addresser.role.admin.address(message.role_id, a) for a in message.admins}
+            | {addresser.role.owner.address(message.role_id, o) for o in message.owners}
+            | {
+                addresser.role.member.address(message.role_id, o)
+                for o in message.members
+            }
+            | {
                 addresser.user.address(u)
-                for u in message.owners
-                if u not in message.admins
-            ]
+                for u in set(message.admins) | set(message.owners)
+            }
         )
-        inputs.extend(
-            [addresser.role.admin.address(message.role_id, a) for a in message.admins]
-        )
-        inputs.extend(
-            [addresser.role.owner.address(message.role_id, o) for o in message.owners]
-        )
-        inputs.extend(
-            [addresser.role.member.address(message.role_id, o) for o in message.members]
-        )
+
         outputs = inputs
         return inputs, outputs
 

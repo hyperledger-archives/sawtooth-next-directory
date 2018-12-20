@@ -45,11 +45,12 @@ def test_make_message():
 def test_make_payload():
     """Test making a payload with a message"""
     name = helper.user.name()
-    user_id = helper.user.id()
+    user_key = helper.user.key()
+    user_id = user_key.public_key
     user_address = rbac.user.address(object_id=user_id)
     message = rbac.user.make(user_id=user_id, name=name)
 
-    payload = rbac.user.make_payload(message=message)
+    payload = rbac.user.make_payload(message=message, signer_keypair=user_key)
     inputs = list(payload.inputs)
     outputs = list(payload.outputs)
 
@@ -271,8 +272,9 @@ def test_create_with_message():
 @pytest.mark.base_message
 def test_make_payload_with_wrong_message_type():
     """Test making a payload with a wrong message type"""
+    signer_keypair = helper.user.key()
     message = protobuf.user_state_pb2.User(
         user_id=helper.user.id(), name=helper.user.name(), metadata=None
     )
     with pytest.raises(TypeError):
-        rbac.user.make_payload(message=message)
+        rbac.user.make_payload(message=message, signer_keypair=signer_keypair)

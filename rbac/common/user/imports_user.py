@@ -49,7 +49,7 @@ class ImportsUser(BaseMessage):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.SELF
+        return addresser.ObjectType.NONE
 
     @property
     def relationship_type(self):
@@ -58,21 +58,22 @@ class ImportsUser(BaseMessage):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError(
-                "Expected message to be {}, got {}".format(
-                    self.message_proto, type(message).__name__
-                )
-            )
+        inputs, _ = super().make_addresses(message, signer_keypair)
 
         user_address = self.address(object_id=message.user_id)
-        if message.manager_id:
-            manager_address = self.address(object_id=message.manager_id)
+        inputs.add(user_address)
 
         if message.manager_id:
-            inputs = {user_address, manager_address}
-        else:
-            inputs = {user_address}
+            manager_address = self.address(object_id=message.manager_id)
+            inputs.add(manager_address)
+
+        if message.key:
+            key_address = addresser.key.address(object_id=message.key)
+            user_key_address = addresser.user.key.address(
+                object_id=message.user_id, related_id=message.key
+            )
+            inputs.add(key_address)
+            inputs.add(user_key_address)
 
         outputs = inputs
         return inputs, outputs
@@ -101,4 +102,22 @@ class ImportsUser(BaseMessage):
                 # import is replayable, we'll verify information is up-to-date instead
                 "User with id %s already exists in state",
                 message.user_id,
+            )
+
+    def apply_update(
+        self, message, object_id, related_id, outputs, output_state, signer
+    ):
+        """Stores data beyond the user record"""
+        if message.key:
+            addresser.key.store(
+                object_id=message.key,
+                message=message,
+                outputs=outputs,
+                output_state=output_state,
+            )
+            addresser.user.key.create_relationship(
+                object_id=object_id,
+                related_id=message.key,
+                outputs=outputs,
+                output_state=output_state,
             )

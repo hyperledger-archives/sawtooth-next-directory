@@ -32,19 +32,24 @@ class TestSysAdminAddresser(TestAssertions):
         sysadmin_address = addresser.sysadmin.address()
         self.assertIsAddress(sysadmin_address)
         self.assertEqual(
-            addresser.address_is(sysadmin_address),
+            addresser.get_address_type(sysadmin_address),
             addresser.AddressSpace.SYSADMIN_ATTRIBUTES,
         )
 
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        expected_address = (
-            "bac001000022220000000000000000000000001111ff00000000000000000000000000"
-        )
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        user_id = addresser.user.unique_id()
         sysadmin_address = addresser.sysadmin.address()
-        self.assertIsAddress(sysadmin_address)
-        self.assertEqual(sysadmin_address, expected_address)
+
+        parsed = addresser.parse(sysadmin_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.SYSADMIN)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.NONE)
         self.assertEqual(
-            addresser.address_is(sysadmin_address),
-            addresser.AddressSpace.SYSADMIN_ATTRIBUTES,
+            parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
+        self.assertEqual(
+            parsed.address_type, addresser.AddressSpace.SYSADMIN_ATTRIBUTES
+        )
+        self.assertEqual(parsed.object_id, "000000000000000000000000")
+        self.assertEqual(parsed.related_id, None)

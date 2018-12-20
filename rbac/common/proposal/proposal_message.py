@@ -36,7 +36,7 @@ class ProposalMessage(BaseMessage):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.SELF
+        return addresser.ObjectType.NONE
 
     @property
     def relationship_type(self):
@@ -47,12 +47,6 @@ class ProposalMessage(BaseMessage):
     def _state_container_prefix(self):
         """Proposal state container name is plural (ProposalsContainer)"""
         return self._name_camel_plural
-
-    def make_addresses(self, message, signer_keypair):
-        """Make addresses returns the inputs (read) and output (write)
-        addresses that may be required in order to validate the message
-        and store the resulting data of a successful or failed execution"""
-        raise NotImplementedError("Class must implement this method")
 
     def validate_state(self, context, message, inputs, input_state, store, signer):
         """Validates that:

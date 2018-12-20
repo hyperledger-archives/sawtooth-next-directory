@@ -13,9 +13,13 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Addresses and accesses task objects on the blockchain"""
+# pylint: disable=unused-import
+
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
 from rbac.common.base.base_relationship import BaseRelationship
+from rbac.common.protobuf import task_state_pb2
+from rbac.common.protobuf import task_transaction_pb2
 
 
 class TaskOwnerAddress(BaseRelationship):
@@ -96,7 +100,7 @@ class TaskAddress(AddressBase):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.SELF
+        return addresser.ObjectType.NONE
 
     @property
     def relationship_type(self):

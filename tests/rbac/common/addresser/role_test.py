@@ -33,7 +33,8 @@ class TestRoleAddresser(TestAssertions):
         role_address = addresser.role.address(object_id=role_id)
         self.assertIsAddress(role_address)
         self.assertEqual(
-            addresser.address_is(role_address), addresser.AddressSpace.ROLES_ATTRIBUTES
+            addresser.get_address_type(role_address),
+            addresser.AddressSpace.ROLES_ATTRIBUTES,
         )
 
     def test_get_address_type(self):
@@ -73,7 +74,8 @@ class TestRoleAddresser(TestAssertions):
         self.assertIsAddress(role_address2)
         self.assertEqual(role_address1, role_address2)
         self.assertEqual(
-            addresser.address_is(role_address1), addresser.AddressSpace.ROLES_ATTRIBUTES
+            addresser.get_address_type(role_address1),
+            addresser.AddressSpace.ROLES_ATTRIBUTES,
         )
 
     def test_address_random(self):
@@ -86,21 +88,26 @@ class TestRoleAddresser(TestAssertions):
         self.assertIsAddress(role_address2)
         self.assertNotEqual(role_address1, role_address2)
         self.assertEqual(
-            addresser.address_is(role_address1), addresser.AddressSpace.ROLES_ATTRIBUTES
+            addresser.get_address_type(role_address1),
+            addresser.AddressSpace.ROLES_ATTRIBUTES,
         )
         self.assertEqual(
-            addresser.address_is(role_address2), addresser.AddressSpace.ROLES_ATTRIBUTES
+            addresser.get_address_type(role_address2),
+            addresser.AddressSpace.ROLES_ATTRIBUTES,
         )
 
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        role_id = "99968acb8f1a48b3a4bc21e2cd252e67"
-        expected_address = (
-            "bac00100005555326a1713a905b26359fc8da21111ff00000000000000000000000000"
-        )
-        role_address = addresser.role.address(object_id=role_id)
-        self.assertIsAddress(role_address)
-        self.assertEqual(role_address, expected_address)
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        role_id = addresser.role.unique_id()
+        role_address = addresser.role.address(role_id)
+
+        parsed = addresser.parse(role_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.ROLE)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.NONE)
         self.assertEqual(
-            addresser.address_is(role_address), addresser.AddressSpace.ROLES_ATTRIBUTES
+            parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.ROLES_ATTRIBUTES)
+        self.assertEqual(parsed.object_id, role_id)
+        self.assertEqual(parsed.related_id, None)

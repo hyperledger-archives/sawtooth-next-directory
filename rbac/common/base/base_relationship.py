@@ -18,6 +18,7 @@ information."""
 import logging
 
 from rbac.common import protobuf
+from rbac.common.protobuf import relationship_state_pb2
 from rbac.common.sawtooth import client
 from rbac.common.base.base_address import AddressBase
 
@@ -56,24 +57,34 @@ class BaseRelationship(AddressBase):
         return "relationships"
 
     @property
+    def _state_object(self):
+        """The state object (protobuf) used by this object type
+        New relationships use the generic stre relationship_state_pb2.Relationship
+        Legacy derives name of the protobuf class from the object type name
+        Example: ObjectType.USER -> protobuf.user_state_pb2.UserRelationship"""
+        if not hasattr(protobuf, self._name_lower + "_state_pb2"):
+            return relationship_state_pb2.Relationship
+        if not hasattr(
+            getattr(protobuf, self._name_lower + "_state_pb2"), self._state_object_name
+        ):
+            return relationship_state_pb2.Relationship
+        return getattr(
+            getattr(protobuf, self._name_lower + "_state_pb2"), self._state_object_name
+        )
+
+    @property
     def _state_container(self):
         """The state container (protobuf) used by this object type
-        Derives name of the protobuf class from the object type name
-        Example: ObjectType.USER -> protobuf.user_state_pb2.UserContainer
-        Override where behavior differs from this norm"""
+        New relationships use the generic container relationship_state_pb2.RelationshipContainer
+        Legacy derives name of the protobuf class from the object type name
+        Example: ObjectType.USER -> protobuf.user_state_pb2.UserRelationshipContainer"""
         if not hasattr(protobuf, self._name_lower + "_state_pb2"):
-            raise AttributeError(
-                "Could not find protobuf.{}_state_pb2".format(self._name_lower)
-            )
+            return relationship_state_pb2.RelationshipContainer
         if not hasattr(
             getattr(protobuf, self._name_lower + "_state_pb2"),
             self._name_camel + "RelationshipContainer",
         ):
-            raise AttributeError(
-                "Could not find protobuf.{}_state_pb2.{}Container".format(
-                    self._name_lower, self._state_container_prefix
-                )
-            )
+            return relationship_state_pb2.RelationshipContainer
         return getattr(
             getattr(protobuf, self._name_lower + "_state_pb2"),
             self._name_camel + "RelationshipContainer",
@@ -85,10 +96,18 @@ class BaseRelationship(AddressBase):
         container = self._state_container()
         address = self.address(object_id=object_id, related_id=related_id)
         container.ParseFromString(client.get_address(address=address))
-        items = list(container.relationships)
-        if not items:
+        stores = list(container.relationships)
+        if not stores:
+            LOGGER.warning(
+                "%s %s relationship container for %s %s at address %s has no records",
+                self.object_type.name.title(),
+                object_id,
+                self.related_type.name.lower(),
+                related_id,
+                address,
+            )
             return False
-        if len(items) > 1:
+        if len(stores) > 1:
             LOGGER.warning(
                 "%s %s relationship container for %s %s at address %s has more than one record",
                 self.object_type.name.title(),
@@ -97,25 +116,5 @@ class BaseRelationship(AddressBase):
                 related_id,
                 address,
             )
-        item = items[0]
-        identifiers = list(item.identifiers)
-        if not identifiers:
-            LOGGER.warning(
-                "%s %s relationship container for user %s %s at address %s has no identifiers",
-                self.object_type.name.title(),
-                object_id,
-                self.related_type.name.lower(),
-                related_id,
-                address,
-            )
-            return False
-        if len(identifiers) > 1:
-            LOGGER.warning(
-                "%s %s relationship container for user %s %s at address %s has more than one identifier",
-                self.object_type.name.title(),
-                object_id,
-                self.related_type.name.lower(),
-                related_id,
-                address,
-            )
-        return bool(related_id in item.identifiers)
+        store = stores[0]
+        return bool(store.object_id == object_id and store.related_id == related_id)

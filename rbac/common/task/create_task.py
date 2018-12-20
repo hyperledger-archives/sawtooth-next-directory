@@ -47,11 +47,11 @@ class CreateTask(BaseMessage):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.SELF
+        return addresser.ObjectType.NONE
 
     @property
     def relationship_type(self):
-        """The related type from AddressSpace implemented by this class"""
+        """The relationship type from AddressSpace implemented by this class"""
         return addresser.RelationshipType.ATTRIBUTES
 
     @property
@@ -71,33 +71,24 @@ class CreateTask(BaseMessage):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
+        inputs, _ = super().make_addresses(message, signer_keypair)
 
-        inputs = [
-            # addresser.sysadmin.member.address(signer_public_key),
-            addresser.task.address(message.task_id)
-        ]
-        inputs.extend([addresser.user.address(u) for u in message.admins])
-        inputs.extend(
-            [
+        inputs.update(
+            {addresser.task.address(message.task_id)}
+            | {addresser.task.admin.address(message.task_id, a) for a in message.admins}
+            | {addresser.task.owner.address(message.task_id, o) for o in message.owners}
+            | {
                 addresser.user.address(u)
-                for u in message.owners
-                if u not in message.admins
-            ]
+                for u in set(message.owners) | set(message.admins)
+            }
         )
-        inputs.extend(
-            [addresser.task.admin.address(message.task_id, a) for a in message.admins]
-        )
-        inputs.extend(
-            [addresser.task.owner.address(message.task_id, o) for o in message.owners]
-        )
+
         outputs = inputs
         return inputs, outputs
 
     def validate(self, message, signer=None):
         """Validates the message values"""
-        signer = super().validate(message=message, signer=signer)
+        super().validate(message=message, signer=signer)
         if not message.admins:
             raise ValueError("New tasks must have administrators.")
         if not message.owners:

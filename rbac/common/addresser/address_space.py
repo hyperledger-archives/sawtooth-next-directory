@@ -18,39 +18,34 @@ import enum
 
 @enum.unique
 class ObjectType(enum.Enum):
-    """Enumerates all the different object types stored
-    in the blockchain addressing space
-
-    Two bytes (00000-FFFF) are available to use as needed.
-    Chosen enum values for address readability in hex
+    """ Enumerates all the different object types stored
+        in the blockchain addressing space. 2 bytes
     """
 
-    NONE = 0  # 0000
-    SELF = 4369  # 1111
-    SYSADMIN = 8738  # 2222
-    USER = 13107  # 3333
-    PROPOSAL = 17476  # 4444
-    ROLE = 21845  # 5555
-    TASK = 26214  # 6666
-    EMAIL = 30583  # 7777
-    KEY = 34952  # 8888
+    NONE = 0
+    SYSADMIN = 20
+    USER = 30
+    PROPOSAL = 40
+    ROLE = 50
+    TASK = 60
+    EMAIL = 70
+    KEY = 80
+    UUID = 90
 
 
 @enum.unique
 class RelationshipType(enum.Enum):
-    """Enumerates all the different relationship types stored
-    in the blockchain addressing space
-
-    One byte (00-FF) available to use
-    Chosen enum values for address readability in hex
+    """ Enumerates all the different relationship types stored
+        in the blockchain addressing space. 1 byte
     """
 
-    SELF = 0  # 00
-    MANAGER = 136  # 88
-    MEMBER = 187  # bb
-    OWNER = 204  # cc
-    ADMIN = 238  # ee
-    ATTRIBUTES = 255  # ff
+    NONE = 0
+    ATTRIBUTES = 10
+    MEMBER = 20
+    OWNER = 30
+    ADMIN = 40
+    MANAGER = 50
+    DIRECT_REPORT = 60
 
 
 @enum.unique
@@ -94,3 +89,10 @@ class AddressSpace(enum.Enum):
     TASKS_ATTRIBUTES = 12
     TASKS_OWNERS = 13
     TASKS_ADMINS = 14
+
+    EMAIL = 16
+    USER_EMAIL = 17
+    USER_KEY = 18
+    USER_MANAGER = 19
+    USER_DIRECT_REPORT = 20
+    KEY = 21

@@ -13,9 +13,13 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Addresses and accesses role objects on the blockchain"""
+# pylint: disable=unused-import
+
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
 from rbac.common.base.base_relationship import BaseRelationship
+from rbac.common.protobuf import role_state_pb2
+from rbac.common.protobuf import role_transaction_pb2
 
 
 class RoleOwnerAddress(BaseRelationship):
@@ -154,7 +158,7 @@ class RoleAddress(AddressBase):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.SELF
+        return addresser.ObjectType.NONE
 
     @property
     def relationship_type(self):

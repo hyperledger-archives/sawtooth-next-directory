@@ -31,7 +31,7 @@ def get_address_type(address):
         if result:
             return result
     raise ValueError(
-        "get_address_type error, no addreser found for address {}".format(
+        "get_address_type error, no addresser found for address {}".format(
             parse(address)
         )
     )
@@ -44,7 +44,7 @@ def get_addresser(address):
         if result:
             return result
     raise ValueError(
-        "get_addresser error, no addreser found for address {}".format(parse(address))
+        "get_addresser error, no addresser found for address {}".format(parse(address))
     )
 
 
@@ -54,7 +54,7 @@ def parse(address):
         result = addresser.parse(address=address)
         if result:
             return result
-    raise ValueError("parse error, no addreser found for address {}".format(address))
+    raise ValueError("parse error, no addresser found for address {}".format(address))
 
 
 def parse_addresses(addresses):
@@ -69,5 +69,18 @@ def deserialize(address, data):
         if result:
             return result
     raise ValueError(
-        "deserialize error, no addreser found for address {}".format(parse(address))
+        "deserialize error, no addresser found for address {}".format(parse(address))
+    )
+
+
+def deserialize_list(address, data):
+    """Deserializes the container of a given an address and returns the store list"""
+    for _, addresser in ADDRESSERS.items():
+        result = addresser.deserialize_list(address=address, data=data)
+        if result:
+            return result
+    raise ValueError(
+        "deserialize_list error, no addresser found for address {}".format(
+            parse(address)
+        )
     )

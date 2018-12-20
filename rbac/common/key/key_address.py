@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Addresses and accesses proposal objects on the blockchain"""
+"""Addresses and accesses user objects on the blockchain"""
 # pylint: disable=unused-import
 
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
-from rbac.common.protobuf import proposal_state_pb2
-from rbac.common.protobuf import proposal_transaction_pb2
+from rbac.common.protobuf import key_state_pb2
 
 
-class ProposalAddress(AddressBase):
-    """Addresses and accesses proposal objects on the blockchain"""
+class KeyAddress(AddressBase):
+    """Addresses public key objects on the blockchain"""
 
     def __init__(self):
         super().__init__()
@@ -31,12 +30,12 @@ class ProposalAddress(AddressBase):
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return addresser.AddressSpace.PROPOSALS
+        return addresser.AddressSpace.KEY
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.PROPOSAL
+        return addresser.ObjectType.KEY
 
     @property
     def related_type(self):
@@ -45,15 +44,10 @@ class ProposalAddress(AddressBase):
 
     @property
     def relationship_type(self):
-        """The related type from AddressSpace implemented by this class"""
-        return addresser.RelationshipType.ATTRIBUTES
-
-    @property
-    def _state_container_prefix(self):
-        """Proposal container is plural (ProposalsContainer)"""
-        return self._state_object_name + "s"
+        """The relationship type from AddressSpace implemented by this class"""
+        return addresser.RelationshipType.NONE
 
 
-PROPOSAL_ADDRESS = ProposalAddress()
+KEY_ADDRESS = KeyAddress()
 
-__all__ = ["PROPOSAL_ADDRESS"]
+__all__ = ["KEY_ADDRESS"]

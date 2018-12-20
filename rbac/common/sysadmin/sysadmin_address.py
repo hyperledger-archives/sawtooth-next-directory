@@ -13,6 +13,8 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Addresses and accesses sysadmin objects on the blockchain"""
+# pylint: disable=unused-import
+
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
 
@@ -21,7 +23,7 @@ class SysAdminOwnerAddress(AddressBase):
     """Addresses and accesses the sysadmin owner relationship"""
 
     def __init__(self):
-        AddressBase.__init__(self)
+        super().__init__()
         self._register()
 
     @property
@@ -49,7 +51,7 @@ class SysAdminAdminAddress(AddressBase):
     """Addresses and accesses the sysadmin admin relationship"""
 
     def __init__(self):
-        AddressBase.__init__(self)
+        super().__init__()
         self._register()
 
     @property
@@ -77,7 +79,7 @@ class SysAdminMemberAddress(AddressBase):
     """Addresses and accesses the sysadmin member relationship"""
 
     def __init__(self):
-        AddressBase.__init__(self)
+        super().__init__()
         self._register()
 
     @property
@@ -105,7 +107,7 @@ class SysAdminAddress(AddressBase):
     """Addresses and accesses sysadmin objects on the blockchain"""
 
     def __init__(self):
-        AddressBase.__init__(self)
+        super().__init__()
         self._register()
         self.owner = SysAdminOwnerAddress()
         self.admin = SysAdminAdminAddress()
@@ -124,7 +126,7 @@ class SysAdminAddress(AddressBase):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return addresser.ObjectType.SELF
+        return addresser.ObjectType.NONE
 
     @property
     def relationship_type(self):

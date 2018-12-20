@@ -15,6 +15,7 @@
 """Addresses and accesses email objects on the blockchain"""
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
+from rbac.common.protobuf import email_state_pb2  # pylint: disable=unused-import
 
 
 class EmailAddress(AddressBase):

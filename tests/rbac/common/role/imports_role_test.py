@@ -78,7 +78,6 @@ def test_make_addresses():
     assert admin_address in outputs
 
 
-@pytest.mark.library
 @pytest.mark.role
 @pytest.mark.imports_role
 def test_create():

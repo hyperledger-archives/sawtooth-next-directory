@@ -36,7 +36,7 @@ class TestRoleAdminAddresser(TestAssertions):
         )
         self.assertIsAddress(rel_address)
         self.assertEqual(
-            addresser.address_is(rel_address), addresser.AddressSpace.ROLES_ADMINS
+            addresser.get_address_type(rel_address), addresser.AddressSpace.ROLES_ADMINS
         )
 
     def test_address_deterministic(self):
@@ -53,7 +53,8 @@ class TestRoleAdminAddresser(TestAssertions):
         self.assertIsAddress(rel_address2)
         self.assertEqual(rel_address1, rel_address2)
         self.assertEqual(
-            addresser.address_is(rel_address1), addresser.AddressSpace.ROLES_ADMINS
+            addresser.get_address_type(rel_address1),
+            addresser.AddressSpace.ROLES_ADMINS,
         )
 
     def test_address_random(self):
@@ -72,24 +73,25 @@ class TestRoleAdminAddresser(TestAssertions):
         self.assertIsAddress(rel_address2)
         self.assertNotEqual(rel_address1, rel_address2)
         self.assertEqual(
-            addresser.address_is(rel_address1), addresser.AddressSpace.ROLES_ADMINS
+            addresser.get_address_type(rel_address1),
+            addresser.AddressSpace.ROLES_ADMINS,
         )
         self.assertEqual(
-            addresser.address_is(rel_address2), addresser.AddressSpace.ROLES_ADMINS
+            addresser.get_address_type(rel_address2),
+            addresser.AddressSpace.ROLES_ADMINS,
         )
 
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        role_id = "99968acb8f1a48b3a4bc21e2cd252e67"
-        user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = (
-            "bac00100005555326a1713a905b26359fc8da23333eee7570f3f6f7d2c1635f6deea00"
-        )
-        rel_address = addresser.role.admin.address(
-            object_id=role_id, related_id=user_id
-        )
-        self.assertIsAddress(rel_address)
-        self.assertEqual(rel_address, expected_address)
-        self.assertEqual(
-            addresser.address_is(rel_address), addresser.AddressSpace.ROLES_ADMINS
-        )
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        role_id = addresser.role.unique_id()
+        user_id = addresser.user.unique_id()
+        rel_address = addresser.role.admin.address(role_id, user_id)
+
+        parsed = addresser.parse(rel_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.ROLE)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.USER)
+        self.assertEqual(parsed.relationship_type, addresser.RelationshipType.ADMIN)
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.ROLES_ADMINS)
+        self.assertEqual(parsed.object_id, role_id)
+        self.assertEqual(parsed.related_id, user_id)
