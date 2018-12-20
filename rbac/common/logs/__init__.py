@@ -16,8 +16,6 @@
 
 import logging
 
-# from sanic.log import logger
-
 LIB_LEVELS = {"asyncio": logging.WARNING}
 LOGGER_FORMAT = "%(levelname)s %(asctime)s %(name)s %(module)s %(pathname)s %(message)s"
 
@@ -27,7 +25,6 @@ for lib, level in LIB_LEVELS.items():
     logging.getLogger(lib).setLevel(level)
 
 
-# pylint: disable=invalid-name, unused-argument
 def getLogger(name):
     """Return the logger
     Written to match the standard python logging.getLogger
