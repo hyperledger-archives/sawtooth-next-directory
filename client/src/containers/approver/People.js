@@ -19,11 +19,14 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
-import './People.css';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
 import PeopleNav from '../../components/nav/PeopleNav';
 import Organization from '../../components/layouts/Organization';
+
+
+import './People.css';
+import glyph from '../../images/header-glyph-individual.png';
 
 
 /**
@@ -89,7 +92,11 @@ class People extends Component {
         <Grid.Column
           id='next-approver-grid-track-column'
           width={12}>
-          <TrackHeader title='People' {...this.props}/>
+          <TrackHeader
+            inverted
+            glyph={glyph}
+            title='People'
+            {...this.props}/>
           <div id='next-approver-people-content'>
             <PeopleNav
               activeIndex={activeIndex}

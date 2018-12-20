@@ -63,9 +63,20 @@ limitations under the License.
 }
 
 .next-global-loading-bar {
-  background-color: #323449;
+  background: linear-gradient(to right, #393f5844 0%, #393f5887 95%, #212c3a00 100%);
   height: 39px;
   left: 0;
   position: absolute;
   top: 0;
+}
+
+#next-header-menu:before {
+  background: #212c3a;
+  content: '';
+  height: 40px;
+  position: absolute;
+  right: 1px;
+  top: -40px;
+  width: 60px;
+  z-index: -1;
 }

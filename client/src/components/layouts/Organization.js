@@ -214,7 +214,7 @@ class Organization extends Component {
       <div>
         <Container
           id='next-organization-toggle-manager-button-container'
-          textAlign='center'>
+          textAlign='right'>
           <Button
             onClick={() => this.toggleManagers()}>
             {showManagers ? 'Hide Managers' : 'Show Managers'}

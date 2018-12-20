@@ -2,3 +2,6 @@
          Theme Overrides
 *******************************/
 
+.ui.header .sub.header {
+  margin-top: 7px;
+}

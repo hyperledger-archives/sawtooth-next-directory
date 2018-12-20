@@ -23,8 +23,10 @@
 }
 
 .ui.compact.menu {
+  background: none;
   border-color: @magenta;
   border-radius: 1em;
+  height: 37px;
 }
 
 .ui.compact.menu a.item:not(.active) {

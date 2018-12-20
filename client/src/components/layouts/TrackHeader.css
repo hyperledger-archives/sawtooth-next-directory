@@ -25,7 +25,7 @@ limitations under the License.
   align-items: center;
   color: var(--header-color);
   display: flex;
-  height: 140px;
+  height: 120px;
   padding: 0 var(--page-content-padding);
   position: fixed;
   width: 100%;
@@ -33,7 +33,12 @@ limitations under the License.
 
 .dark.minimal #next-track-header {
   background: #273544;
+  border-bottom: 1px solid #1f2830;
   width: calc(75% - 245px);
+}
+
+.minimal #next-track-header {
+  border-bottom: 1px solid #eff0f3;
 }
 
 #next-track-header .ui.header {
@@ -44,5 +49,5 @@ limitations under the License.
 }
 
 #next-track-header .ui.header .content {
-  margin: 4px;
+  margin: 4px 4px 4px 18px;
 }

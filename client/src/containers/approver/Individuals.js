@@ -60,6 +60,15 @@ class Individuals extends Component {
   componentDidMount () {
     const { getOpenProposals, openProposals } = this.props;
     !openProposals && getOpenProposals();
+    document.querySelector('body').classList.add('minimal');
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    document.querySelector('body').classList.remove('minimal');
   }
 
 

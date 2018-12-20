@@ -90,12 +90,12 @@ class MemberList extends Component {
       if (!user) {
         return (
           <Grid.Column key={userId} largeScreen={8} widescreen={5}>
-            <Segment padded className='minimal'>
+            <Segment className='secondary no-padding minimal'>
               <Header as='h4' className='next-member-list-user-info'>
                 <div>
                   <Image src='http://i.pravatar.cc/300' avatar />
                 </div>
-                <div>Unknown</div>
+                <div>Unavailable</div>
               </Header>
             </Segment>
           </Grid.Column>
@@ -105,15 +105,15 @@ class MemberList extends Component {
       return (
         user &&
         <Grid.Column key={userId} largeScreen={8} widescreen={5}>
-          <Segment padded className='minimal'>
+          <Segment className='no-padding minimal'>
             { isOwner ?
               <Icon
                 name='shield'
-                className='pull-left'
+                className='pull-right'
                 color='green'/> :
               <Icon
                 name='key'
-                className='pull-left'
+                className='pull-right'
                 color='grey'/>
             }
             <Header as='h4' className='next-member-list-user-info'>
@@ -143,7 +143,7 @@ class MemberList extends Component {
 
     return (
       <div>
-        <Grid columns={3} padded stackable>
+        <Grid columns={3} stackable>
           { owners && owners.map((owner) => (
             this.renderUserSegment(owner, true)
           )) }

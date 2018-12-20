@@ -131,11 +131,11 @@ class Header extends Component {
               </MenuHeader>
             </Menu.Item>
           }
-          <Menu.Item onClick={() => {}}>
+          <Menu.Item as={Link} to='/approval/manage' onClick={this.toggleMenu}>
             <MenuHeader as='h5'>
               <Icon name='setting' color='grey'/>
               <MenuHeader.Content>
-                Settings
+                Manage
               </MenuHeader.Content>
             </MenuHeader>
           </Menu.Item>

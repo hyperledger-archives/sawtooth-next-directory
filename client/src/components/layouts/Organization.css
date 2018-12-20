@@ -16,13 +16,18 @@ limitations under the License.
 
 #next-organization-container {
   padding: 0 30px;
-  transform: translateY(-217px);
+  transform: translateY(-305px);
 }
 
 #next-organization-toggle-manager-button-container {
   position: absolute;
   top: -39px;
   z-index: 999;
+}
+
+#next-organization-toggle-manager-button-container button {
+  background: none;
+  color: white;
 }
 
 .next-organization-managers-hide {
@@ -34,13 +39,13 @@ limitations under the License.
 }
 
 @keyframes managers-show {
-  0% { transform: translateY(-217px); }
+  0% { transform: translateY(-305px); }
   25%, 100% { transform: translateY(0); }
 }
 
 @keyframes managers-hide {
   0% { transform: translateY(0); }
-  25%, 100% { transform: translateY(-217px); }
+  25%, 100% { transform: translateY(-305px); }
 }
 
 .next-organization-user-info {
@@ -90,16 +95,22 @@ limitations under the License.
 
 .next-organization-peer-item {
   margin-left: 30px;
+  position: relative;
+  top: 110px;
 }
 
 .next-organization-direct-report-item {
   margin-bottom: 20px;
 }
 
+.next-organization-manager-item:first-child {
+  margin-top: 50px;
+}
+
 #next-organization-managers:after {
   border-left: 1px solid #516073;
   content: '';
-  height: 53.2%;
+  height: 56.4%;
   margin-left: 22px;
   position: absolute;
   top: 35px;
@@ -111,7 +122,7 @@ limitations under the License.
   content: '';
   margin-top: 22px;
   position: absolute;
-  width: 90%;
+  width: calc(100% - 86px);
   z-index: -1;
 }
 
@@ -139,4 +150,13 @@ limitations under the License.
   margin-left: -48px;
   position: absolute;
   width: 59px;
+}
+
+.next-organization-peer-item:before {
+  content: '';
+  border-left: 1px solid #516073;
+  position: absolute;
+  height: 110px;
+  margin-top: -88px;
+  margin-left: 21px;
 }

@@ -15,10 +15,15 @@ limitations under the License.
 
 
 #next-chat-container {
+  background: linear-gradient(to bottom, #de3a6f 0%, transparent 16%);
   display: flex;
   flex-direction: column;
   height: 100%;
   padding-top: 40px;
+}
+
+.dark #next-chat-container {
+  background: none;
 }
 
 #next-chat-conversation-dock {

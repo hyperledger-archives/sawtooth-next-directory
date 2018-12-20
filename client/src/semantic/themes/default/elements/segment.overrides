@@ -24,12 +24,17 @@
 }
 
 .ui.segment.minimal {
-  box-shadow: none;
+  border: 1px solid #eee;
+  box-shadow: 0 3px 13px #98989814;
 }
 
 .ui.segment.light {
   background: #f7f7f7;
   box-shadow: none;
+}
+
+.ui.segment.secondary {
+  opacity: .6;
 }
 
 .floated.segment.compact {
@@ -47,5 +52,11 @@
 }
 
 .floated.segment.compact.right {
+   background: linear-gradient(to bottom, #f20083, #ca07cd);
    border-bottom-right-radius: 0;
+   font-size: 1em;
+}
+
+.ui.segment.no-padding {
+  padding: 10px;
 }

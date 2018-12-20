@@ -76,8 +76,8 @@
 @tinyFontSize   : unit(@h5, em);
 
 /* Sub Header */
-@h1SubHeaderFontSize: @large;
-@h2SubHeaderFontSize: @large;
+@h1SubHeaderFontSize: @medium;
+@h2SubHeaderFontSize: @medium;
 @h3SubHeaderFontSize: @medium;
 @h4SubHeaderFontSize: @medium;
 @h5SubHeaderFontSize: @small;
