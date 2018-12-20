@@ -17,7 +17,7 @@
 
 import datetime
 import rethinkdb as r
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
 from rbac.providers.common.provider_transforms import (
     GROUP_TRANSFORM,
@@ -25,7 +25,7 @@ from rbac.providers.common.provider_transforms import (
     STANDARD_USER_TRANSFORM,
 )
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def inbound_user_filter(entry, provider):

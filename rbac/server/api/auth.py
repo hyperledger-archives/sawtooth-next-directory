@@ -24,11 +24,11 @@ from rbac.server.api.errors import ApiNotFound, ApiUnauthorized
 from rbac.server.api import utils
 
 from rbac.server.db import auth_query
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.common.crypto.secrets import generate_api_key
 from rbac.common.crypto.secrets import deserialize_api_key
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 AUTH_BP = Blueprint("auth")
 
 

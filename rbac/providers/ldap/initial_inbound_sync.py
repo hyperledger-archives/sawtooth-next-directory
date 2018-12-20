@@ -22,7 +22,7 @@ import threading
 import time
 import ldap3
 import rethinkdb as r
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.providers.common import ldap_connector
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
@@ -33,7 +33,7 @@ from rbac.providers.common.inbound_filters import (
 from rbac.providers.common.rbac_transactions import add_transaction
 from rbac.providers.ldap.delta_inbound_sync import inbound_delta_sync
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 DB_HOST = os.getenv("DB_HOST", "rethink")
 DB_PORT = int(os.getenv("DB_PORT", "28015"))

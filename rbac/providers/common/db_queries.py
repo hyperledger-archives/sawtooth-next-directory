@@ -20,11 +20,11 @@ from datetime import timezone
 from datetime import datetime as dt
 import rethinkdb as r
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.provider_errors import DatabaseConnectionException
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 CHANGELOG = os.getenv("CHANGELOG", "changelog")
 DB_HOST = os.getenv("DB_HOST", "rethink")

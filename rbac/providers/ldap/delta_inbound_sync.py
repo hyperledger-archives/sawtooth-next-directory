@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 import rethinkdb as r
 import ldap3
 from rbac.providers.common import ldap_connector
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
 from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
@@ -35,7 +35,7 @@ LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
 DELTA_SYNC_INTERVAL_SECONDS = int(os.getenv("DELTA_SYNC_INTERVAL_SECONDS", "3600"))
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def fetch_ldap_data():

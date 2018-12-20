@@ -16,9 +16,9 @@
 """
 import threading
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class DeltaSyncThread(threading.Thread):

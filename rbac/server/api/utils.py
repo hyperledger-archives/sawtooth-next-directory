@@ -20,7 +20,7 @@ from sanic.response import json
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import validator_pb2
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.common.crypto.secrets import decrypt_private_key
 from rbac.common.crypto.secrets import deserialize_api_key
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthorized
@@ -28,7 +28,7 @@ from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
 from rbac.transaction_creation.common import Key
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 SIGNATURE_KEY = "RBAC_AUTH_SIGNATURE"
 PAYLOAD_KEY = "RBAC_AUTH_HEADER_PAYLOAD"

@@ -18,9 +18,9 @@ import time
 import rethinkdb as r
 
 from rbac.common.config import get_config
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 DB_HOST = get_config("DB_HOST")
 DB_PORT = get_config("DB_PORT")
 DB_NAME = get_config("DB_NAME")

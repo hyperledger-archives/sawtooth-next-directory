@@ -25,7 +25,7 @@ for lib, level in LIB_LEVELS.items():
     logging.getLogger(lib).setLevel(level)
 
 
-def getLogger(name):
+def get_logger(name):
     """Return the logger
     Written to match the standard python logging.getLogger
     function for ease of migration

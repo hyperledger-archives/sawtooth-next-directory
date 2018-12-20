@@ -22,7 +22,7 @@ import rbac.common.logs as logging
 
 
 ERRORS_BP = Blueprint("errors")
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.get_logger(__name__)
 DEFAULT_MSGS = {
     400: "Bad Request",
     401: "Unauthorized",

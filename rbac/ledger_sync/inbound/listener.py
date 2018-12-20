@@ -18,12 +18,12 @@
 from rethinkdb import r
 from sawtooth_sdk.protobuf import batch_pb2
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.common.sawtooth import client
 from rbac.common.sawtooth import batcher
 from rbac.ledger_sync.database import Database
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def process(rec, database):

@@ -21,7 +21,7 @@ from sanic import Blueprint
 from sanic.response import json
 
 from rbac.common import rbac
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
 
@@ -38,7 +38,7 @@ from rbac.server.db import users_query
 from rbac.transaction_creation.manager_transaction_creation import propose_manager
 from rbac.common.crypto.secrets import generate_api_key
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 USERS_BP = Blueprint("users")
 
 
