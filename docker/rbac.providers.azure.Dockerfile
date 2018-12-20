@@ -47,6 +47,8 @@ WORKDIR /project/hyperledger-rbac
 # Container-specific dependencies are installed separately for
 # optimizing caching
 RUN pip3 install \
+        pyasn1==0.4.4 \
+        pytz==2018.6 \
         azure-eventhub==1.2.0
 
 CMD [ "./bin/rbac-providers-azure" ]

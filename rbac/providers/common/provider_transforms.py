@@ -31,7 +31,7 @@ USER_TRANSFORM = {
     "given_name": {"azure": "givenName", "ldap": "givenName"},
     "job_title": {"azure": "jobTitle", "ldap": "title"},
     "email": {"azure": "mail", "ldap": "mail"},
-    "user_nickname": {"azure": "mailNickname", "ldap": "cn"},
+    "username": {"azure": "mailNickname", "ldap": "cn"},
     "manager_id": {"azure": "manager", "ldap": "manager"},
     "mobile_phone": {"azure": "mobilePhone", "ldap": "mobile"},
     "distinguished_name": {

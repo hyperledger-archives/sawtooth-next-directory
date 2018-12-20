@@ -13,14 +13,24 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Start the Azure provider with initial sync and two listeners for inbound and outbound deltas."""
+
+from rbac.common.config import get_config
+from rbac.common.logs import getLogger
 from rbac.providers.azure.initial_inbound_sync import initialize_aad_sync
 from rbac.providers.azure.delta_outbound_sync import outbound_sync_listener
 from rbac.providers.azure.delta_inbound_sync import inbound_sync_listener
 from rbac.providers.common.threading import DeltaSyncThread
 
+LOGGER = getLogger(__name__)
+
 
 def main():
     """Start the initial sync and two delta threads."""
+    TENANT_ID = get_config("TENANT_ID")
+    if not TENANT_ID:
+        LOGGER.warning("No Azure provider configured, exiting...")
+        return
+
     initialize_aad_sync()
     # Create sync listener threads.
     inbound_sync_thread = DeltaSyncThread("Azure Inbound", inbound_sync_listener)

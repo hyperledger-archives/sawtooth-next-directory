@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-"""Threading classes used for provider syncs"""
-import logging
+""" Threading classes used for provider syncs
+"""
 import threading
 
-# LOGGER levels: info, debug, warning, exception, error
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+from rbac.common.logs import getLogger
+
+LOGGER = getLogger(__name__)
 
 
 class DeltaSyncThread(threading.Thread):

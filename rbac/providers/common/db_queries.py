@@ -12,23 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
+""" Database (RethinkDB) helper functions
+"""
 import time
 import os
-import sys
-import logging
 from datetime import timezone
 from datetime import datetime as dt
 import rethinkdb as r
 
+from rbac.common.logs import getLogger
 from rbac.providers.common.expected_errors import (
     ExpectedError,
     DatabaseConnectionException,
 )
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = getLogger(__name__)
 
 CHANGELOG = os.getenv("CHANGELOG", "changelog")
 DB_HOST = os.getenv("DB_HOST", "rethink")
@@ -115,9 +113,8 @@ def peek_at_queue(table_name, provider_id=None):
                 .run()
             )
             return queue_entry
-        else:
-            queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run()
-            return queue_entry
+        queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run()
+        return queue_entry
     except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError) as err:
         raise ExpectedError(err)
     except Exception as err:

@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-"""Outbound payload filters for transforming data into provider compatible schema."""
+""" Outbound payload filters for transforming data into provider compatible schema.
+"""
 from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
 
 
@@ -21,7 +22,7 @@ def outbound_user_filter(sawtooth_user, provider):
     :param: user > dict > a dictionary representing a user
     :param: provider > str > inbound provider type (azure, ldap)
     """
-    if provider != "azure" and provider != "ldap":
+    if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
     user = {}
     for key, value in USER_TRANSFORM.items():
@@ -35,7 +36,7 @@ def outbound_group_filter(sawtooth_group, provider):
     :param: group > dict > a dictionary representing a group
     :param: provider > str > inbound provider type (azure, ldap)
     """
-    if provider != "azure" and provider != "ldap":
+    if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
     group = {}
     for key, value in GROUP_TRANSFORM.items():
