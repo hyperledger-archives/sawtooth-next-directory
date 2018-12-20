@@ -36,7 +36,7 @@ limitations under the License.
 #next-wave-container {
   background: -webkit-linear-gradient(top, #870bcc 0%,#f7007f 89%);
   display: flex;
-  height: 143px;
+  height: 135px;
   flex-direction: column-reverse;
   position: fixed;
   top: 40px;
@@ -48,14 +48,18 @@ limitations under the License.
   display: none;
 }
 
+.minimal #next-wave-container {
+  background: none;
+}
+
 .next-waves-animate-down {
-  animation: waves-down 2.5s ease-in forwards;
-  transform-origin: bottom;
+  animation: waves-down 3.5s ease-in forwards;
+  transform-origin: center;
 }
 
 @keyframes waves-down {
-  0% { transform: scale(1, 1); }
-  25%, 100% { transform: scale(1, 0); }
+  0% { transform: scale(1, 1); opacity: 1; }
+  25%, 100% { transform: scale(1, 0); opacity: 0; }
 }
 
 .next-waves-animate-up {

@@ -67,6 +67,7 @@ export class Pack extends Component {
           id='next-requester-grid-track-column'
           width={12}>
           <TrackHeader
+            inverted
             glyph={glyph}
             waves
             title={this.pack.name}

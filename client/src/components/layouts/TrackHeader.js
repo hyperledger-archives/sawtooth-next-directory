@@ -32,6 +32,7 @@ export default class TrackHeader extends Component {
   static propTypes = {
     button:             PropTypes.func,
     glyph:              PropTypes.string,
+    inverted:           PropTypes.bool,
     subtitle:           PropTypes.string,
     title:              PropTypes.string,
   }
@@ -42,7 +43,7 @@ export default class TrackHeader extends Component {
    * @returns {JSX}
    */
   render () {
-    const { button, glyph, subtitle, title } = this.props;
+    const { button, glyph, inverted, subtitle, title } = this.props;
 
     return (
       <Grid>
@@ -50,7 +51,7 @@ export default class TrackHeader extends Component {
           <div id='next-track-header-container'>
             <div id='next-track-header'>
               { title &&
-                <Header as='h1' inverted>
+                <Header as='h1' inverted={inverted}>
                   { glyph &&
                     <Image size='large' src={glyph}/>
                   }

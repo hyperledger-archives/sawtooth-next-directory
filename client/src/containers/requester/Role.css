@@ -22,15 +22,29 @@ limitations under the License.
 }
 
 #next-requester-roles-description-container {
-  margin: 80px 0 40px 0;
-  padding: 0 30px;
+  /* margin: 80px 0 40px 0;
+  padding: 0 30px; */
+
+  margin: 0 0 40px 0;
+  padding: 16px 30px 24px 30px;
+  /* background: #b9c0ca1f; */
+  border-bottom: 1px solid #eee;
+}
+
+#next-requester-roles-member-list-container {
+  padding: 0 40px;
 }
 
 #next-requester-roles-description {
   padding: 20px 10px;
 }
 
-#next-requester-roles-description h5 {
+#next-requester-roles-content h5 {
+  color: #b1b3b3;
   font-weight: bold;
   margin-bottom: 15px;
+}
+
+.next-margin-1 {
+  margin-top: 80px !important;
 }
