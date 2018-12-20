@@ -95,10 +95,10 @@ class BatchAssertions(AddressAssertions):
             self.assertEqual(len(inputs), 1)
             self.assertEqual(len(outputs), 1)
             self.assertEqual(
-                addresser.address_is(inputs[0]), addresser.AddressSpace.USER
+                addresser.get_address_type(inputs[0]), addresser.AddressSpace.USER
             )
             self.assertEqual(
-                addresser.address_is(outputs[0]), addresser.AddressSpace.USER
+                addresser.get_address_type(outputs[0]), addresser.AddressSpace.USER
             )
         else:
             raise Exception(

@@ -21,14 +21,19 @@ from rbac.common.user.propose_manager import ProposeUpdateUserManager
 from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
 from rbac.common.user.reject_manager import RejectUpdateUserManager
 from rbac.common.user.imports_user import ImportsUser
+from rbac.common.user.user_address import UserManagerAddress
+from rbac.common.user.user_address import UserDirectReportAddress
+from rbac.common.user.user_address import UserEmailAddress
+from rbac.common.user.user_address import UserKeyAddress
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Manager:
+class Manager(UserManagerAddress):
     """Implements the User Manager library: rbac.user.manager.*"""
 
     def __init__(self):
+        super().__init__()
         self.propose = ProposeUpdateUserManager()
         self.confirm = ConfirmUpdateUserManager()
         self.reject = RejectUpdateUserManager()
@@ -41,6 +46,9 @@ class User(CreateUser):
         CreateUser.__init__(self)
         self.manager = Manager()
         self.imports = ImportsUser()
+        self.email = UserEmailAddress()
+        self.key = UserKeyAddress()
+        self.direct_report = UserDirectReportAddress()
 
 
 USER = User()

@@ -50,4 +50,8 @@ message TaskRelationship {
 
     repeated string identifiers = 2;
 
+    string object_id = 3;
+
+    string related_id = 4;
+
 }

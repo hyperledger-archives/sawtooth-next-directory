@@ -73,8 +73,12 @@ class TestBatchClient(TestAssertions):
         self.assertIsInstance(outputs, list)
         self.assertEqual(len(inputs), 1)
         self.assertEqual(len(outputs), 1)
-        self.assertEqual(addresser.address_is(inputs[0]), addresser.AddressSpace.USER)
-        self.assertEqual(addresser.address_is(outputs[0]), addresser.AddressSpace.USER)
+        self.assertEqual(
+            addresser.get_address_type(inputs[0]), addresser.AddressSpace.USER
+        )
+        self.assertEqual(
+            addresser.get_address_type(outputs[0]), addresser.AddressSpace.USER
+        )
 
     def test_make_payload(self):
         """Test the make payload batch function"""

@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------------------
 """ Create User Test
 """
+# pylint: disable=invalid-name
 
 import requests
 import pytest
@@ -39,16 +40,7 @@ LOGGER = getLogger(__name__)
                 "email": helper.api.user.create.email(),
                 "password": helper.api.user.create.password(),
             }
-        ),
-        (
-            {
-                "name": helper.api.user.create.name(),
-                "username": helper.api.user.create.username(),
-                "email": helper.api.user.create.email(),
-                "password": helper.api.user.create.password(),
-                "manager": helper.api.user.current["user_id"],
-            }
-        ),
+        )
     ],
 )
 def test_api_create_user(data):
@@ -66,3 +58,36 @@ def test_api_create_user(data):
     assert "password" not in result["data"]["user"]
     if "manager" in data:
         assert result["data"]["user"]["manager"] == data["manager"]
+
+
+@pytest.mark.api
+@pytest.mark.api_user
+@pytest.mark.api_create_user
+@pytest.mark.parametrize(
+    "data",
+    [
+        (
+            {
+                "name": helper.api.user.create.name(),
+                "username": helper.api.user.create.username(),
+                "email": helper.api.user.create.email(),
+                "password": helper.api.user.create.password(),
+            }
+        )
+    ],
+)
+def test_api_create_user_with_manager(data):
+    """ Test creating a user
+    """
+    url = helper.api.user.create.url
+    data["manager"] = helper.api.user.current["user_id"]
+    response = requests.post(url=url, headers=None, json=data)
+    result = assert_api_success(response)
+    assert result["data"]
+    assert result["data"]["message"] == "Authorization successful"
+    assert isinstance(result["data"]["user"], dict)
+    assert result["data"]["user"]["email"] == data["email"]
+    assert result["data"]["user"]["username"] == data["username"]
+    assert result["data"]["user"]["name"] == data["name"]
+    assert "password" not in result["data"]["user"]
+    assert result["data"]["user"]["manager"] == data["manager"]

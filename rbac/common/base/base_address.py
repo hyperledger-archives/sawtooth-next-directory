@@ -208,27 +208,20 @@ class AddressBase(StateBase):
         """Makes a blockchain address of this address type"""
         return self._address(object_id=object_id, related_id=related_id)
 
-    def address_is(self, address):
-        """Returns the address type if the address is of the address type
-        implemented by this class, otherewise returns None"""
-        if self._pattern.match(address):
-            return self.address_type
-        return None
-
     def addresses_are(self, addresses):
         """Determines if all addresses given are of the classes' address type"""
-        return all([self.address_is(a) for a in addresses])
+        return all([self.get_address_type(a) for a in addresses])
 
     def get_address_type(self, address):
         """Returns the address type if the address is of the address type
-        implemented by this class, otherewise returns None"""
+        implemented by this class, otherwise returns None"""
         if self._pattern.match(address):
             return self.address_type
         return None
 
     def get_addresser(self, address):
         """Returns the self if the address is of the address type
-        implemented by this class, otherewise returns None"""
+        implemented by this class, otherwise returns None"""
         if self._pattern.match(address):
             return self
         return None
@@ -248,7 +241,14 @@ class AddressBase(StateBase):
 
     def deserialize(self, address, data):
         """Returns the deserialized content if the address is of the address type
-        implemented by this class or a child class, otherewise returns None"""
+        implemented by this class or a child class, otherwise returns None"""
         if self._pattern.match(address):
             return super().deserialize(address=address, data=data)
+        return None
+
+    def deserialize_list(self, address, data):
+        """Returns the deserialized content if the address is of the address type
+        implemented by this class or a child class, otherwise returns None"""
+        if self._pattern.match(address):
+            return super().deserialize_list(address=address, data=data)
         return None

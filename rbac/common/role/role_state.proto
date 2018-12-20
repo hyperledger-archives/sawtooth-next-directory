@@ -16,7 +16,6 @@
 syntax = "proto3";
 
 
-// This container is only needed for hash collisions.
 message RoleAttributesContainer {
 
     repeated RoleAttributes role_attributes = 1;
@@ -51,4 +50,8 @@ message RoleRelationship {
     string role_id = 1;
 
     repeated string identifiers = 2;
+
+    string object_id = 3;
+
+    string related_id = 4;
 }

@@ -48,6 +48,28 @@ class BaseMessage(AddressBase):
         processor.unregister_message_handler(self)
 
     @property
+    def address_type(self):
+        """The address type from AddressSpace implemented by this class"""
+        raise NotImplementedError("Class must implement this property")
+
+    @property
+    def object_type(self):
+        """The object type from AddressSpace implemented by this class"""
+        raise NotImplementedError("Class must implement this property")
+
+    @property
+    def related_type(self):
+        """The related type from AddressSpace implemented by this class,
+        if it is an address type that stores relationships"""
+        raise NotImplementedError("Class must implement this property")
+
+    @property
+    def relationship_type(self):
+        """The relationship type from AddressSpace implemented by this class,
+        if it is an address type that stores relationships"""
+        raise NotImplementedError("Class must implement this property")
+
+    @property
     def message_action_type(self):
         """The action type performed by this message"""
         return None
@@ -165,7 +187,7 @@ class BaseMessage(AddressBase):
 
     @property
     def message_type(self):
-        """The message type of this message, an atrribute enum of RBACPayload
+        """The message type of this message, an attribute enum of RBACPayload
         Defaults to protobuf.rbac_payload_pb2.{message_type_name}
         (see message_type_name) Override message_type_name where behavior differs"""
         if not self.message_action_type:
@@ -238,8 +260,23 @@ class BaseMessage(AddressBase):
     def make_addresses(self, message, signer_keypair):
         """Make addresses returns the inputs (read) and output (write)
         addresses that may be required in order to validate the message
-        and store the resulting data of a successful or failed execution"""
-        raise NotImplementedError("Class must implement this method")
+        and store the resulting data of a successful or failed execution.
+        Messages will override this method and add all the input/output
+        addresses they require to read and write to."""
+        if not isinstance(message, self.message_proto):
+            raise TypeError("Expected message to be {}".format(self.message_proto))
+        if not isinstance(signer_keypair, Key):
+            raise TypeError(
+                "Expected signer_keypair to be a key, not {}".format(
+                    type(signer_keypair)
+                )
+            )
+
+        user_key_address = addresser.user.address(object_id=signer_keypair.public_key)
+        key_address = addresser.key.address(object_id=signer_keypair.public_key)
+        inputs = {user_key_address, key_address}
+        outputs = set({})
+        return inputs, outputs
 
     def validate(self, message, signer=None):
         """Commmon validation for all messages"""
@@ -265,13 +302,25 @@ class BaseMessage(AddressBase):
         if not isinstance(inputs, list) and not isinstance(inputs, set):
             raise ValueError("Inputs is required and expected to be a list or a set")
         if not isinstance(input_state, dict):
-            raise ValueError("Input state was expecte to be a dictionary")
+            raise ValueError("Input state was expected to be a dictionary")
         if not isinstance(signer, str) and PUBLIC_KEY_PATTERN.match(signer):
             raise TypeError("Expected signer to be a public key")
         if context is None:
             raise ValueError("State context is required")
 
-    def make_payload(self, message, signer_keypair=None):
+    def validate_signer(self, message, inputs, input_state, signer):
+        """Validates the transaction signer has a valid key"""
+        key_address = addresser.key.address(object_id=signer)
+        if key_address not in inputs:
+            LOGGER.warning("Signer key address was not included in inputs")
+        if (
+            key_address in inputs
+            and key_address not in input_state
+            and not self.allow_signer_not_in_state
+        ):
+            raise ValueError("Signer key not found in state")
+
+    def make_payload(self, message, signer_keypair):
         """Make a payload for the given message type"""
         self.validate(message=message, signer=signer_keypair)
 
@@ -510,6 +559,7 @@ class BaseMessage(AddressBase):
         """Check to see if the signer of the transaction is
         eligible to perform the action"""
         signer_address = addresser.user.address(object_id=signer)
+        key_address = addresser.key.address(object_id=signer)
         if signer_address not in inputs:
             raise ValueError(
                 "{}: address {} for signer's public key {} was not sent as an input address".format(

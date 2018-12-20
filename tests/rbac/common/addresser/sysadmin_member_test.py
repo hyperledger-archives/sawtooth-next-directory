@@ -33,7 +33,8 @@ class TestSysAdminMemberAddresser(TestAssertions):
         rel_address = addresser.sysadmin.member.address(object_id=user_id)
         self.assertIsAddress(rel_address)
         self.assertEqual(
-            addresser.address_is(rel_address), addresser.AddressSpace.SYSADMIN_MEMBERS
+            addresser.get_address_type(rel_address),
+            addresser.AddressSpace.SYSADMIN_MEMBERS,
         )
 
     def test_address_deterministic(self):
@@ -45,7 +46,8 @@ class TestSysAdminMemberAddresser(TestAssertions):
         self.assertIsAddress(rel_address2)
         self.assertEqual(rel_address1, rel_address2)
         self.assertEqual(
-            addresser.address_is(rel_address1), addresser.AddressSpace.SYSADMIN_MEMBERS
+            addresser.get_address_type(rel_address1),
+            addresser.AddressSpace.SYSADMIN_MEMBERS,
         )
 
     def test_address_random(self):
@@ -58,21 +60,25 @@ class TestSysAdminMemberAddresser(TestAssertions):
         self.assertIsAddress(rel_address2)
         self.assertNotEqual(rel_address1, rel_address2)
         self.assertEqual(
-            addresser.address_is(rel_address1), addresser.AddressSpace.SYSADMIN_MEMBERS
+            addresser.get_address_type(rel_address1),
+            addresser.AddressSpace.SYSADMIN_MEMBERS,
         )
         self.assertEqual(
-            addresser.address_is(rel_address2), addresser.AddressSpace.SYSADMIN_MEMBERS
+            addresser.get_address_type(rel_address2),
+            addresser.AddressSpace.SYSADMIN_MEMBERS,
         )
 
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = (
-            "bac00100002222e7570f3f6f7d2c1635f6deea3333bb00000000000000000000000000"
-        )
-        rel_address = addresser.sysadmin.member.address(object_id=user_id)
-        self.assertIsAddress(rel_address)
-        self.assertEqual(rel_address, expected_address)
-        self.assertEqual(
-            addresser.address_is(rel_address), addresser.AddressSpace.SYSADMIN_MEMBERS
-        )
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        role_id = addresser.sysadmin.address()
+        user_id = addresser.user.unique_id()
+        rel_address = addresser.sysadmin.member.address(user_id)
+
+        parsed = addresser.parse(rel_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.SYSADMIN)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.USER)
+        self.assertEqual(parsed.relationship_type, addresser.RelationshipType.MEMBER)
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.SYSADMIN_MEMBERS)
+        self.assertEqual(parsed.object_id, user_id)
+        self.assertEqual(parsed.related_id, None)

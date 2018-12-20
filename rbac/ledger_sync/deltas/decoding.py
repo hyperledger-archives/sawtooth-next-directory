@@ -18,75 +18,16 @@
 from google.protobuf.json_format import MessageToDict
 
 from rbac.common import addresser
-from rbac.common.addresser import AddressSpace
-from rbac.common.protobuf.proposal_state_pb2 import ProposalsContainer
-from rbac.common.protobuf.role_state_pb2 import RoleAttributesContainer
-from rbac.common.protobuf.role_state_pb2 import RoleRelationshipContainer
-from rbac.common.protobuf.task_state_pb2 import TaskAttributesContainer
-from rbac.common.protobuf.task_state_pb2 import TaskRelationshipContainer
-from rbac.common.protobuf.user_state_pb2 import UserContainer
-
-
-DESERIALIZERS = {
-    AddressSpace.USER: lambda d: _parse_proto(UserContainer, d).users,
-    AddressSpace.PROPOSALS: lambda d: _parse_proto(ProposalsContainer, d).proposals,
-    AddressSpace.SYSADMIN_ATTRIBUTES: lambda d: _parse_proto(
-        RoleAttributesContainer, d
-    ).role_attributes,
-    AddressSpace.SYSADMIN_MEMBERS: lambda d: _parse_proto(
-        RoleRelationshipContainer, d
-    ).relationships,
-    AddressSpace.SYSADMIN_OWNERS: lambda d: _parse_proto(
-        RoleRelationshipContainer, d
-    ).relationships,
-    AddressSpace.SYSADMIN_ADMINS: lambda d: _parse_proto(
-        RoleRelationshipContainer, d
-    ).relationships,
-    AddressSpace.ROLES_ATTRIBUTES: lambda d: _parse_proto(
-        RoleAttributesContainer, d
-    ).role_attributes,
-    AddressSpace.ROLES_MEMBERS: lambda d: _parse_proto(
-        RoleRelationshipContainer, d
-    ).relationships,
-    AddressSpace.ROLES_OWNERS: lambda d: _parse_proto(
-        RoleRelationshipContainer, d
-    ).relationships,
-    AddressSpace.ROLES_ADMINS: lambda d: _parse_proto(
-        RoleRelationshipContainer, d
-    ).relationships,
-    AddressSpace.ROLES_TASKS: lambda d: _parse_proto(
-        RoleRelationshipContainer, d
-    ).relationships,
-    AddressSpace.TASKS_ATTRIBUTES: lambda d: _parse_proto(
-        TaskAttributesContainer, d
-    ).task_attributes,
-    AddressSpace.TASKS_OWNERS: lambda d: _parse_proto(
-        TaskRelationshipContainer, d
-    ).relationships,
-    AddressSpace.TASKS_ADMINS: lambda d: _parse_proto(
-        TaskRelationshipContainer, d
-    ).relationships,
-}
 
 
 def data_to_dicts(address, data):
     """Deserializes a protobuf binary based on its address. Returns a list of
     the decoded objects which were stored at that address.
     """
-    data_type = addresser.get_address_type(address)
-
-    try:
-        deserializer = DESERIALIZERS[data_type]
-    except KeyError:
-        raise TypeError("Unknown data type: {}".format(data_type))
-
-    return [_proto_to_dict(pb) for pb in deserializer(data)]
-
-
-def _parse_proto(proto_class, data):
-    deserialized = proto_class()
-    deserialized.ParseFromString(data)
-    return deserialized
+    return [
+        _proto_to_dict(pb)
+        for pb in addresser.deserialize_list(address=address, data=data)
+    ]
 
 
 def _proto_to_dict(proto):

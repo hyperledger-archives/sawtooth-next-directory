@@ -19,6 +19,7 @@ import logging
 
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.common.user.propose_manager_helper import ProposeManagerTestHelper
+from tests.rbac.testdata.user import UserTestData
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,37 +31,14 @@ class UserManangerTestHelper:
         self.propose = ProposeManagerTestHelper()
 
 
-class UserTestHelper:
+class UserTestHelper(UserTestData):
     """User Test Helper"""
 
     def __init__(self):
         """User Test Helper"""
+        super().__init__()
         self.create_user = CreateUserTestHelper()
         self.manager = UserManangerTestHelper()
-
-    def id(self):
-        """Returns a random unique identifier"""
-        return self.create_user.id()
-
-    def key(self):
-        """Returns a random keypair"""
-        return self.create_user.key()
-
-    def name(self):
-        """Returns a random name"""
-        return self.create_user.name()
-
-    def username(self):
-        """Returns a random username"""
-        return self.create_user.username()
-
-    def email(self):
-        """Get a random email"""
-        return self.create_user.email()
-
-    def reason(self):
-        """Returns a random reason"""
-        return self.create_user.reason()
 
     def message(self):
         """Return a create user message"""

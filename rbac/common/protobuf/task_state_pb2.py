@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10task_state.proto\"C\n\x17TaskAttributesContainer\x12(\n\x0ftask_attributes\x18\x01 \x03(\x0b\x32\x0f.TaskAttributes\"A\n\x0eTaskAttributes\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08metadata\x18\x03 \x01(\t\"E\n\x19TaskRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.TaskRelationship\"8\n\x10TaskRelationship\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\tb\x06proto3')
+  serialized_pb=_b('\n\x10task_state.proto\"C\n\x17TaskAttributesContainer\x12(\n\x0ftask_attributes\x18\x01 \x03(\x0b\x32\x0f.TaskAttributes\"A\n\x0eTaskAttributes\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08metadata\x18\x03 \x01(\t\"E\n\x19TaskRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.TaskRelationship\"_\n\x10TaskRelationship\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\t\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\tb\x06proto3')
 )
 
 
@@ -153,6 +153,20 @@ _TASKRELATIONSHIP = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='object_id', full_name='TaskRelationship.object_id', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='related_id', full_name='TaskRelationship.related_id', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -166,7 +180,7 @@ _TASKRELATIONSHIP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=227,
-  serialized_end=283,
+  serialized_end=322,
 )
 
 _TASKATTRIBUTESCONTAINER.fields_by_name['task_attributes'].message_type = _TASKATTRIBUTES

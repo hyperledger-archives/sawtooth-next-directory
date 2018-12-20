@@ -18,10 +18,13 @@ It is a common base class for both Base Address and Base Message classes.
 From the object_type name, it is able to infer information about how
 the object is stored on the blockchain: the state and container protubufs,
 and the unique identifier name"""
+# pylint: disable=too-many-public-methods
+
 import logging
 
 from rbac.common import protobuf
 from rbac.common.crypto.hash import unique_id, hash_id
+from rbac.common.sawtooth import batcher
 from rbac.common.sawtooth import state_client
 
 LOGGER = logging.getLogger(__name__)
@@ -91,7 +94,7 @@ class StateBase:
 
     @property
     def _name_upper_plural(self):
-        """The upppercase plural name of the object type
+        """The uppercase plural name of the object type
         Example: ObjectType.USER -> 'USERS'
         Override for irregular grammar"""
         if self._is_plural:
@@ -109,7 +112,7 @@ class StateBase:
 
     @property
     def _name_title_plural(self):
-        """The upppercase plural name of the object type
+        """The uppercase plural name of the object type
         Example: ObjectType.USER -> 'Users'
         Override for irregular grammar"""
         if self._is_plural:
@@ -192,7 +195,7 @@ class StateBase:
         )
 
     def unique_id(self):
-        """Generates a random 12-byte hexidecimal string
+        """Generates a random 12-byte hexadecimal string
         Override where desired behavior differs"""
         return unique_id()
 
@@ -201,8 +204,6 @@ class StateBase:
         12-byte hexadecimal string (e.g. as returned by the unique_id function).
         Returns zero bytes if the value is None or falsey
         Override where desired behavior differs"""
-        if isinstance(value, str):
-            value = value.lower()
         return hash_id(value)
 
     def address(self, object_id, related_id):
@@ -262,12 +263,37 @@ class StateBase:
         )
         return None
 
-    def deserialize(self, address, data):  # pylint: disable=unused-argument
+    def deserialize(self, address, data):
         """Deserialize the data of a blockchain address"""
         # pylint: disable=not-callable
-        container = self._state_container()
-        container.ParseFromString(data)
-        return container
+        try:
+            container = self._state_container()
+            container.ParseFromString(data)
+            return container
+        except Exception:  # pylint: disable=broad-except
+            LOGGER.warning(
+                "%s data at address %s could not be deserialized \n%s",
+                self._name_title,
+                address,
+                data,
+            )
+            return None
+
+    def deserialize_list(self, address, data):
+        """Deserialize the data of a blockchain address and return the store list"""
+        # pylint: disable=not-callable
+        try:
+            container = self._state_container()
+            container.ParseFromString(data)
+            return list(getattr(container, self._state_container_list_name))
+        except Exception:  # pylint: disable=broad-except
+            LOGGER.warning(
+                "%s data at address %s could not be deserialized \n%s",
+                self._name_title,
+                address,
+                data,
+            )
+            return None
 
     def get_address(self, context, address):
         """Get the deserialized data of a blockchain address"""
@@ -356,6 +382,38 @@ class StateBase:
             object_id=object_id,
             related_id=related_id,
         )
+
+    def store(self, message, outputs, output_state, object_id, related_id=None):
+        """Copies a dictionary or message to the state object of this address"""
+        address = self.address(object_id=object_id, related_id=related_id)
+        if address not in outputs:
+            raise ValueError(
+                "{} address {} for {} {} target {} was not sent as an output address".format(
+                    self._name_title, address, self._name_id, object_id, related_id
+                )
+            )
+        if address in output_state:
+            container = output_state[address]
+            store = self._find_in_state_container(
+                container=container,
+                address=address,
+                object_id=object_id,
+                related_id=related_id,
+            )
+            if not store:
+                raise ValueError(
+                    "{} store for {} {} target {} was not found in container".format(
+                        self._name_title, self._name_id, object_id, related_id
+                    )
+                )
+        else:
+            container, store = self._get_new_state()
+            output_state[address] = container
+
+        batcher.message_to_message(
+            message_to=store, message_from=message, message_name=self._name_camel
+        )
+        output_state["changed"].add(address)
 
     def set_output_state_attribute(
         self, name, value, outputs, output_state, object_id, related_id=None
@@ -468,7 +526,8 @@ class StateBase:
         return all_exist, not_found
 
     def create_relationship(self, object_id, related_id, outputs, output_state):
-        """Creates a relationship record in the output state for a transaction"""
+        """Creates a relationship record in the output state for a transaction
+        (Legacy relationship format)"""
         address = self.address(object_id=object_id, related_id=related_id)
         if address not in outputs:
             raise ValueError(
@@ -479,8 +538,14 @@ class StateBase:
         # pylint: disable=not-callable
         container = self._state_container()
         store = self._state_object()
-        setattr(store, self._name_id, object_id)
-        store.identifiers.append(related_id)
+        if hasattr(store, "object_id"):
+            store.object_id = object_id
+        if hasattr(store, "related_id"):
+            store.related_id = related_id
+        if self._name_id != "object_id" and hasattr(store, self._name_id):
+            setattr(store, self._name_id, object_id)
+        if hasattr(store, "identifiers"):
+            store.identifiers.append(related_id)
         container = self._state_container()
         getattr(container, self._state_container_list_name).extend([store])
         output_state[address] = container

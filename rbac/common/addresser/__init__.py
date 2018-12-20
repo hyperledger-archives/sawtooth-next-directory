@@ -22,22 +22,19 @@ from rbac.common.addresser.address_space import MessageActionType
 from rbac.common.addresser.addressers import get_address_type
 from rbac.common.addresser.addressers import get_addresser
 from rbac.common.addresser.addressers import deserialize
+from rbac.common.addresser.addressers import deserialize_list
 from rbac.common.addresser.addressers import parse
 from rbac.common.addresser.addressers import parse_addresses
 from rbac.common.addresser.family_address import family
+from rbac.common.key.key_address import KEY_ADDRESS as key
 from rbac.common.user.user_address import USER_ADDRESS as user
 from rbac.common.role.role_address import ROLE_ADDRESS as role
 from rbac.common.task.task_address import TASK_ADDRESS as task
+from rbac.common.email.email_address import EMAIL_ADDRESS as email
 from rbac.common.proposal.proposal_address import PROPOSAL_ADDRESS as proposal
 from rbac.common.sysadmin.sysadmin_address import SYSADMIN_ADDRESS as sysadmin
 
 LOGGER = logging.getLogger(__name__)
-
-
-def address_is(address):
-    """Returns the address type of the address from AddressSpace
-    (soon to be deprecated alias for get_address_type"""
-    return get_address_type(address=address)
 
 
 __all__ = [
@@ -45,16 +42,18 @@ __all__ = [
     "ObjectType",
     "RelationshipType",
     "MessageActionType",
-    "address_is",
     "get_address_type",
     "get_addresser",
     "deserialize",
+    "deserialize_list",
     "parse",
     "parse_addresses",
     "family",
+    "key",
     "user",
     "role",
     "task",
+    "email",
     "proposal",
     "sysadmin",
 ]

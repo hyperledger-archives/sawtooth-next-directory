@@ -56,21 +56,19 @@ class ProposeUpdateUserManager(ProposalPropose):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
+        inputs, outputs = super().make_addresses(message, signer_keypair)
 
         user_address = addresser.user.address(message.user_id)
+        inputs.add(user_address)
+
         manager_address = addresser.user.address(message.new_manager_id)
+        inputs.add(manager_address)
+
         proposal_address = addresser.proposal.address(
             object_id=message.user_id, related_id=message.new_manager_id
         )
-        signer_user_address = addresser.user.address(signer_keypair.public_key)
-
-        inputs = [user_address, manager_address, proposal_address]
-        if signer_user_address not in (user_address, manager_address):
-            inputs.append(signer_user_address)
-
-        outputs = [proposal_address]
+        inputs.add(proposal_address)
+        outputs.add(proposal_address)
 
         return inputs, outputs
 

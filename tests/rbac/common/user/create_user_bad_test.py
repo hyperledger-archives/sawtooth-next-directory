@@ -28,7 +28,7 @@ LOGGER = logging.getLogger(__name__)
 
 @pytest.mark.user
 @pytest.mark.library
-def test_unit_with_self_manager():
+def test_make_with_self_manager():
     """Test creating a user with self as manager"""
     user_key = helper.user.key()
     user_id = user_key.public_key
@@ -42,7 +42,7 @@ def test_unit_with_self_manager():
         user_id=user_id, name=name, metadata=None, manager_id=user_id
     )
     with pytest.raises(ValueError):
-        rbac.user.make_payload(message=message)
+        rbac.user.make_payload(message=message, signer_keypair=user_key)
 
     with pytest.raises(ValueError):
         rbac.user.create(signer_keypair=user_key, message=message)
@@ -98,7 +98,7 @@ def test_with_manager_not_in_state():
 
 @pytest.mark.user
 @pytest.mark.library
-def test_unit_with_other_signer():
+def test_make_payload_with_other_signer():
     """Test with signer is neither user nor manager"""
     user_key = helper.user.key()
     user_id = user_key.public_key
@@ -113,11 +113,6 @@ def test_unit_with_other_signer():
 
     rbac.user.make_payload(message=message, signer_keypair=user_key)
     rbac.user.make_payload(message=message, signer_keypair=manager_key)
-
-    with pytest.raises(ValueError):
-        rbac.user.make_payload(message=message, signer_keypair=other_key)
-    with pytest.raises(ValueError):
-        rbac.user.create(signer_keypair=other_key, message=message)
 
 
 @pytest.mark.user

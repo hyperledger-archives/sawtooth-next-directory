@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Base Family acts as a base class for all transaction families.
+Sawtooth applications may have one or more transaction families."""
 import logging
 import re as regex
 
@@ -22,8 +23,9 @@ PATTERN_32_HEX_BYTES = r"[0-9a-f]{64}"
 
 
 class BaseFamily:
+    """The Sawtooth Application Transaction Family base class"""
+
     def __init__(self):
-        """The Sawtooth Application Transaction Family base class"""
         self._pattern = regex.compile(
             r"^" + self.namespace + PATTERN_32_HEX_BYTES + r"$"
         )

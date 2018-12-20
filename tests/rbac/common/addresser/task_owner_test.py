@@ -36,7 +36,7 @@ class TestTaskOwnerAddresser(TestAssertions):
         )
         self.assertIsAddress(rel_address)
         self.assertEqual(
-            addresser.address_is(rel_address), addresser.AddressSpace.TASKS_OWNERS
+            addresser.get_address_type(rel_address), addresser.AddressSpace.TASKS_OWNERS
         )
 
     def test_address_deterministic(self):
@@ -53,7 +53,8 @@ class TestTaskOwnerAddresser(TestAssertions):
         self.assertIsAddress(rel_address2)
         self.assertEqual(rel_address1, rel_address2)
         self.assertEqual(
-            addresser.address_is(rel_address1), addresser.AddressSpace.TASKS_OWNERS
+            addresser.get_address_type(rel_address1),
+            addresser.AddressSpace.TASKS_OWNERS,
         )
 
     def test_address_random(self):
@@ -72,24 +73,25 @@ class TestTaskOwnerAddresser(TestAssertions):
         self.assertIsAddress(rel_address2)
         self.assertNotEqual(rel_address1, rel_address2)
         self.assertEqual(
-            addresser.address_is(rel_address1), addresser.AddressSpace.TASKS_OWNERS
+            addresser.get_address_type(rel_address1),
+            addresser.AddressSpace.TASKS_OWNERS,
         )
         self.assertEqual(
-            addresser.address_is(rel_address2), addresser.AddressSpace.TASKS_OWNERS
+            addresser.get_address_type(rel_address2),
+            addresser.AddressSpace.TASKS_OWNERS,
         )
 
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        task_id = "99968acb8f1a48b3a4bc21e2cd252e67"
-        user_id = "966ab67317234df489adb4bc1f517b88"
-        expected_address = (
-            "bac00100006666326a1713a905b26359fc8da23333cce7570f3f6f7d2c1635f6deea00"
-        )
-        rel_address = addresser.task.owner.address(
-            object_id=task_id, related_id=user_id
-        )
-        self.assertIsAddress(rel_address)
-        self.assertEqual(rel_address, expected_address)
-        self.assertEqual(
-            addresser.address_is(rel_address), addresser.AddressSpace.TASKS_OWNERS
-        )
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        task_id = addresser.task.unique_id()
+        user_id = addresser.user.unique_id()
+        rel_address = addresser.task.owner.address(task_id, user_id)
+
+        parsed = addresser.parse(rel_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.TASK)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.USER)
+        self.assertEqual(parsed.relationship_type, addresser.RelationshipType.OWNER)
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.TASKS_OWNERS)
+        self.assertEqual(parsed.object_id, task_id)
+        self.assertEqual(parsed.related_id, user_id)

@@ -51,7 +51,7 @@ class CreateRole(BaseMessage):
     @property
     def related_type(self):
         """The related type from AddressSpace implemented by this class"""
-        return ObjectType.SELF
+        return ObjectType.NONE
 
     @property
     def relationship_type(self):
@@ -75,33 +75,23 @@ class CreateRole(BaseMessage):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message type"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
+        inputs, _ = super().make_addresses(message, signer_keypair)
 
-        inputs = [
-            # addresser.sysadmin.member.address(signer_public_key),
-            addresser.role.address(message.role_id)
-        ]
-        inputs.extend([addresser.user.address(u) for u in message.admins])
-        inputs.extend(
-            [
+        inputs.update(
+            {addresser.role.address(message.role_id)}
+            | {addresser.role.admin.address(message.role_id, a) for a in message.admins}
+            | {addresser.role.owner.address(message.role_id, o) for o in message.owners}
+            | {
                 addresser.user.address(u)
-                for u in message.owners
-                if u not in message.admins
-            ]
-        )
-        inputs.extend(
-            [addresser.role.admin.address(message.role_id, a) for a in message.admins]
-        )
-        inputs.extend(
-            [addresser.role.owner.address(message.role_id, o) for o in message.owners]
+                for u in set(message.owners) | set(message.admins)
+            }
         )
         outputs = inputs
         return inputs, outputs
 
     def validate(self, message, signer=None):
         """Validates the message values"""
-        signer = super().validate(message=message, signer=signer)
+        super().validate(message=message, signer=signer)
         if not message.admins:
             raise ValueError("New roles must have administrators.")
         if not message.owners:

@@ -56,16 +56,13 @@ class RejectUpdateUserManager(ProposalReject):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
+        inputs, outputs = super().make_addresses(message, signer_keypair)
 
         proposal_address = addresser.proposal.address(
             object_id=message.user_id, related_id=message.manager_id
         )
-        signer_user_address = addresser.user.address(signer_keypair.public_key)
-
-        inputs = [signer_user_address, proposal_address]
-        outputs = [proposal_address]
+        inputs.add(proposal_address)
+        outputs.add(proposal_address)
 
         return inputs, outputs
 

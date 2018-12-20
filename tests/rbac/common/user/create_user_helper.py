@@ -16,41 +16,17 @@
 # pylint: disable=no-member,too-few-public-methods,invalid-name
 
 import logging
-import random
 
 from rbac.common import rbac
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
+from tests.rbac.testdata.user import UserTestData
 
 LOGGER = logging.getLogger(__name__)
 
 
-class CreateUserTestHelper:
+class CreateUserTestHelper(UserTestData):
     """Create User Test Helper"""
-
-    def id(self):
-        """Get a test user_id (not created)"""
-        return Key().public_key
-
-    def key(self):
-        """Get a test keypair (not created)"""
-        return Key()
-
-    def name(self):
-        """Get a random name"""
-        return "User" + str(random.randint(1000, 10000))
-
-    def username(self):
-        """Get a random username"""
-        return "user" + str(random.randint(10000, 100000))
-
-    def email(self):
-        """Get a random email"""
-        return "email" + str(random.randint(10000, 100000)) + "@example.com"
-
-    def reason(self):
-        """Get a random reason"""
-        return "Because" + str(random.randint(10000, 100000))
 
     def message(self):
         """Get a test data CreateUser message with a new keypair"""

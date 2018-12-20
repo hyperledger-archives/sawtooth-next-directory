@@ -42,14 +42,22 @@ def test_address():
 def test_make():
     """Test making a create user message"""
     name = helper.user.name()
+    username = helper.user.username()
     email = helper.user.email()
     keypair = helper.user.key()
-    message = rbac.user.make(user_id=keypair.public_key, name=name, email=email)
+    message = rbac.user.make(
+        user_id=keypair.public_key,
+        name=name,
+        username=username,
+        email=email,
+        key=keypair.public_key,
+    )
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
     assert message.user_id == keypair.public_key
     assert message.name == name
+    assert message.username == username
     assert message.email == email
 
 
@@ -78,14 +86,18 @@ def test_make_with_metadata():
 def test_make_with_key():
     """Test making a create user message with key generation"""
     name = helper.user.name()
+    username = helper.user.username()
     email = helper.user.email()
-    message, keypair = rbac.user.make_with_key(name=name, email=email)
+    message, keypair = rbac.user.make_with_key(
+        name=name, username=username, email=email
+    )
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
     assert isinstance(keypair, Key)
     assert message.user_id == keypair.public_key
     assert message.name == name
+    assert message.username == username
     assert message.email == email
 
 
@@ -139,12 +151,18 @@ def test_make_addresses_with_manager():
 def test_create_user():
     """Test creating a user on the blockchain"""
     name = helper.user.name()
+    username = helper.user.username()
     email = helper.user.email()
     user_key = helper.user.key()
     user_id = user_key.public_key
 
     _, status = rbac.user.create(
-        signer_keypair=user_key, user_id=user_id, name=name, email=email
+        signer_keypair=user_key,
+        user_id=user_id,
+        name=name,
+        username=username,
+        email=email,
+        key=user_key.public_key,
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -152,19 +170,22 @@ def test_create_user():
     user = rbac.user.get(object_id=user_id)
     assert user.user_id == user_id
     assert user.name == name
+    assert user.username == username
     assert user.email == email
 
 
 @pytest.mark.user
-@pytest.mark.integration
+@pytest.mark.create_user_with_manager
 def test_create_with_manager():
     """Test creating a user with a manager on the blockchain"""
     user_key = helper.user.key()
     user_id = user_key.public_key
+    username = helper.user.username()
     name = helper.user.name()
     email = helper.user.email()
     manager_key = helper.user.key()
     manager_id = manager_key.public_key
+    manager_username = helper.user.username()
     manager_name = helper.user.name()
     manager_email = helper.user.email()
 
@@ -172,13 +193,16 @@ def test_create_with_manager():
         signer_keypair=manager_key,
         user_id=manager_id,
         name=manager_name,
+        username=manager_username,
         email=manager_email,
+        key=manager_key.public_key,
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     manager = rbac.user.get(object_id=manager_id)
     assert manager.user_id == manager_id
+    assert manager.username == manager_username
     assert manager.name == manager_name
     assert manager.email == manager_email
 
@@ -186,14 +210,22 @@ def test_create_with_manager():
         signer_keypair=user_key,
         user_id=user_id,
         name=name,
+        username=username,
         email=email,
         manager_id=manager_id,
+        key=user_key.public_key,
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     user = rbac.user.get(object_id=user_id)
     assert user.user_id == user_id
+    assert user.username == username
     assert user.name == name
     assert user.email == email
     assert user.manager_id == manager_id
+
+    # assert rbac.user.manager.exists(object_id=user.user_id, related_id=user.manager_id)
+    # assert rbac.user.direct_report.exists(object_id=user.manager_id, related_id=user.user_id)
+    # assert rbac.user.email.exists(object_id=user.user_id, related_id=user.email)
+    # assert rbac.user.key.exists(object_id=user.user_id, related_id=user_key.public_key)

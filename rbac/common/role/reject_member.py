@@ -16,7 +16,6 @@
 usage: rbac.role.member.reject.create()"""
 import logging
 from rbac.common import addresser
-from rbac.common.crypto.keys import Key
 from rbac.common.proposal.proposal_reject import ProposalReject
 
 LOGGER = logging.getLogger(__name__)
@@ -57,31 +56,24 @@ class RejectAddRoleMember(ProposalReject):
 
     def make_addresses(self, message, signer_keypair):
         """Makes the appropriate inputs & output addresses for the message"""
-        if not isinstance(message, self.message_proto):
-            raise TypeError("Expected message to be {}".format(self.message_proto))
-        if not isinstance(signer_keypair, Key):
-            raise TypeError("Expected signer_keypair to be provided")
+        inputs, outputs = super().make_addresses(message, signer_keypair)
 
         # should be owner not admin
         signer_admin_address = addresser.role.admin.address(
             message.role_id, signer_keypair.public_key
         )
+        inputs.add(signer_admin_address)
+
         signer_owner_address = addresser.role.owner.address(
             message.role_id, signer_keypair.public_key
         )
-        signer_user_address = addresser.user.address(signer_keypair.public_key)
+        inputs.add(signer_owner_address)
 
         proposal_address = self.address(
             object_id=message.role_id, related_id=message.user_id
         )
-
-        inputs = [
-            proposal_address,
-            signer_admin_address,
-            signer_owner_address,
-            signer_user_address,
-        ]
-        outputs = [proposal_address]
+        inputs.add(proposal_address)
+        outputs.add(proposal_address)
 
         return inputs, outputs
 

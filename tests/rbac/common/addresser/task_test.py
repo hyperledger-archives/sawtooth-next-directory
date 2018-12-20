@@ -33,7 +33,8 @@ class TestTaskAddresser(TestAssertions):
         task_address = addresser.task.address(object_id=task_id)
         self.assertIsAddress(task_address)
         self.assertEqual(
-            addresser.address_is(task_address), addresser.AddressSpace.TASKS_ATTRIBUTES
+            addresser.get_address_type(task_address),
+            addresser.AddressSpace.TASKS_ATTRIBUTES,
         )
 
     def test_address_deterministic(self):
@@ -45,7 +46,8 @@ class TestTaskAddresser(TestAssertions):
         self.assertIsAddress(task_address2)
         self.assertEqual(task_address1, task_address2)
         self.assertEqual(
-            addresser.address_is(task_address1), addresser.AddressSpace.TASKS_ATTRIBUTES
+            addresser.get_address_type(task_address1),
+            addresser.AddressSpace.TASKS_ATTRIBUTES,
         )
 
     def test_address_random(self):
@@ -58,21 +60,26 @@ class TestTaskAddresser(TestAssertions):
         self.assertIsAddress(task_address2)
         self.assertNotEqual(task_address1, task_address2)
         self.assertEqual(
-            addresser.address_is(task_address1), addresser.AddressSpace.TASKS_ATTRIBUTES
+            addresser.get_address_type(task_address1),
+            addresser.AddressSpace.TASKS_ATTRIBUTES,
         )
         self.assertEqual(
-            addresser.address_is(task_address2), addresser.AddressSpace.TASKS_ATTRIBUTES
+            addresser.get_address_type(task_address2),
+            addresser.AddressSpace.TASKS_ATTRIBUTES,
         )
 
-    def test_address_static(self):
-        """Tests address makes the expected output given a specific input"""
-        task_id = "99968acb8f1a48b3a4bc21e2cd252e67"
-        expected_address = (
-            "bac00100006666326a1713a905b26359fc8da21111ff00000000000000000000000000"
-        )
-        task_address = addresser.task.address(object_id=task_id)
-        self.assertIsAddress(task_address)
-        self.assertEqual(task_address, expected_address)
+    def test_addresser_parse(self):
+        """Test addresser.parse returns a parsed address"""
+        task_id = addresser.task.unique_id()
+        task_address = addresser.task.address(task_id)
+
+        parsed = addresser.parse(task_address)
+
+        self.assertEqual(parsed.object_type, addresser.ObjectType.TASK)
+        self.assertEqual(parsed.related_type, addresser.ObjectType.NONE)
         self.assertEqual(
-            addresser.address_is(task_address), addresser.AddressSpace.TASKS_ATTRIBUTES
+            parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
+        self.assertEqual(parsed.address_type, addresser.AddressSpace.TASKS_ATTRIBUTES)
+        self.assertEqual(parsed.object_id, task_id)
+        self.assertEqual(parsed.related_id, None)
