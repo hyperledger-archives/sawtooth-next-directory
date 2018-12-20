@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-import sys
-import logging
+""" Validate LDAP messages
+"""
+from rbac.common.logs import getLogger
 from rbac.providers.common.expected_errors import ValidationException
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = getLogger(__name__)
 
 
 def validate_create_entry(payload, data_type):

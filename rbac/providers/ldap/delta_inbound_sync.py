@@ -12,15 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+""" LDAP Delta Inbound Sync
+"""
 import os
 import json
-import logging
 import time
 from datetime import datetime, timezone
 import rethinkdb as r
 import ldap3
 from ldap3 import ALL, Connection, Server
 
+from rbac.common.logs import getLogger
 from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
@@ -33,9 +35,7 @@ LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
 DELTA_SYNC_INTERVAL_SECONDS = int(os.getenv("DELTA_SYNC_INTERVAL_SECONDS", "3600"))
 
-# LOGGER levels: info, debug, warning, exception, error
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+LOGGER = getLogger(__name__)
 
 
 def fetch_ldap_data():

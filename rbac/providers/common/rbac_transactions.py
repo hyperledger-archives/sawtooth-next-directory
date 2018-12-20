@@ -14,14 +14,13 @@
 # ------------------------------------------------------------------------------
 """ LDAP Sawtooth Transaction Creation
 """
-import logging
-
 from rbac.common import rbac
+from rbac.common.logs import getLogger
 from rbac.common.crypto.keys import Key
 from rbac.common.util import bytes_from_hex
 
 SIGNER_KEYPAIR = Key()
-LOGGER = logging.getLogger(__name__)
+LOGGER = getLogger(__name__)
 
 # These field names may not be contained in metadata, as they conflict with official field names.
 # If they appear, they will be prefixed with "remote_"

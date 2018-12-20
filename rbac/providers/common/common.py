@@ -14,17 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Functions that are common to all providers."""
-import logging
-import sys
+""" Functions that are common to all providers.
+"""
 import time
 
+from rbac.common.logs import getLogger
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import get_last_sync
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = getLogger(__name__)
 
 
 def check_last_sync(sync_source, sync_type):
