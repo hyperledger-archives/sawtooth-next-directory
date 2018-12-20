@@ -26,8 +26,8 @@ LOGGER = getLogger(__name__)
 
 def main():
     """Start the initial sync and two delta threads."""
-    TENANT_ID = get_config("TENANT_ID")
-    if not TENANT_ID:
+    tenant_id = get_config("TENANT_ID")
+    if not tenant_id:
         LOGGER.warning("No Azure provider configured, exiting...")
         return
 

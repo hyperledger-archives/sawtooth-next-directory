@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 import pytest
 
-from rbac.providers.common.expected_errors import ValidationException
+from rbac.providers.common.provider_errors import ValidationException
 from rbac.providers.ldap.ldap_validator import (
     validate_create_entry,
     validate_update_entry,

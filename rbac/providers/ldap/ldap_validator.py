@@ -15,7 +15,7 @@
 """ Validate LDAP messages
 """
 from rbac.common.logs import getLogger
-from rbac.providers.common.expected_errors import ValidationException
+from rbac.providers.common.provider_errors import ValidationException
 
 LOGGER = getLogger(__name__)
 

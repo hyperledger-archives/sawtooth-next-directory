@@ -19,6 +19,7 @@ import time
 from ldap3 import Connection, Server, ALL
 from ldap3.core.exceptions import LDAPSocketOpenError
 
+from rbac.providers.common.provider_errors import LdapBindException
 from rbac.common.logs import getLogger
 
 LOGGER = getLogger(__name__)
@@ -41,8 +42,10 @@ def create_connection(server, user, password):
 
     try:
         if not connection.bind():
-            LOGGER.error(
-                "Error binding to LDAP server %s : %s", server, connection.result
+            raise LdapBindException(
+                "Error binding to LDAP server {}. Result: {}".format(
+                    server, connection.result
+                )
             )
     except LDAPSocketOpenError as lsoe:
         LOGGER.warning("Error opening LDAP socket to server %s. %s", server, lsoe)

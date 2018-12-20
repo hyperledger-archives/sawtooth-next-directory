@@ -19,8 +19,8 @@ import time
 
 import ldap3
 from ldap3 import MODIFY_REPLACE
-
 from rbac.common.logs import getLogger
+
 from rbac.providers.common.db_queries import (
     connect_to_db,
     peek_at_queue,
@@ -28,7 +28,8 @@ from rbac.providers.common.db_queries import (
     delete_entry_queue,
 )
 from rbac.providers.common import ldap_connector
-from rbac.providers.common.expected_errors import ExpectedError, ValidationException
+from rbac.providers.common.expected_errors import ExpectedError
+from rbac.providers.common.provider_errors import ValidationException
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
     outbound_group_filter,

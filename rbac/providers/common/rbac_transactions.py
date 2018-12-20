@@ -14,8 +14,9 @@
 # ------------------------------------------------------------------------------
 """ LDAP Sawtooth Transaction Creation
 """
-from rbac.common import rbac
 from rbac.common.logs import getLogger
+
+from rbac.common import rbac
 from rbac.common.crypto.keys import Key
 from rbac.common.util import bytes_from_hex
 
