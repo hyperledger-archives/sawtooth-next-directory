@@ -31,6 +31,11 @@ limitations under the License.
   width: 100%;
 }
 
+.dark.minimal #next-track-header {
+  background: #273544;
+  width: calc(75% - 245px);
+}
+
 #next-track-header .ui.header {
   align-items: end;
   display: flex;

@@ -14,8 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-approver-people-content {
-  margin-top: 236px;
-  position: relative;
-  width: calc(100% - 65px) !important;
-}
+import React from 'react';
+
+
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+
+
+import PeopleNav from './PeopleNav';
+
+
+describe('PeopleNav component', () => {
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    ReactDOM.render(
+      <BrowserRouter><PeopleNav/></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+});

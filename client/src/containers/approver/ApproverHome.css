@@ -31,3 +31,7 @@ limitations under the License.
   right: 0;
   z-index: 10;
 }
+
+.dark #next-approver-grid-converse-column {
+  background: #2c3c4d;
+}

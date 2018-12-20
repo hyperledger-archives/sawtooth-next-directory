@@ -177,3 +177,22 @@ export function * rejectProposal (api, id) {
     console.error(err);
   }
 }
+
+
+/**
+ * Get organization
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * getOrganization (api, action) {
+  try {
+    const { id } = action;
+    const res = yield call(api.getOrganization, id);
+    res.ok ?
+      yield put(ApproverActions.organizationSuccess(res.data)) :
+      yield put(ApproverActions.organizationFailure(res.data.error));
+  } catch (err) {
+    console.error(err);
+  }
+}

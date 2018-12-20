@@ -17,6 +17,7 @@ limitations under the License.
 import base from '../mock_data/base.json';
 import roles from '../mock_data/all_roles.json';
 import packs from '../mock_data/packs.json';
+import organization from '../mock_data/organization.json';
 
 
 import cloudOnboardingPack from '../mock_data/pack_cloud_onboarding.json';
@@ -118,8 +119,6 @@ export default {
     };
   },
 
-
-
   logout: () => {
     return {
       ok: true,
@@ -133,6 +132,7 @@ export default {
       data: roles,
     };
   },
+
   me: () => {
     return {
       ok: true,
@@ -153,10 +153,18 @@ export default {
       data: {},
     };
   },
+
   getPacks: () => {
     return {
       ok: true,
       data: packs,
+    };
+  },
+
+  getOrganization: (id) => {
+    return {
+      ok: true,
+      data: organization,
     };
   },
 };

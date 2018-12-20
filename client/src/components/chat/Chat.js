@@ -16,7 +16,9 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
+  Button,
   Checkbox,
   Header,
   List,
@@ -159,8 +161,10 @@ class Chat extends Component {
    */
   render () {
     const {
+      activeUser,
       disabled,
       handleChange,
+      organization,
       selectedProposal,
       selectedRoles,
       selectedUsers,
@@ -189,6 +193,25 @@ class Chat extends Component {
               {title}
               <Header.Subheader>{subtitle}</Header.Subheader>
             </Header>
+          </div>
+        }
+
+        { type === 'APPROVER' && organization &&
+          <div id='next-chat-users-selection-container'>
+            { activeUser &&
+              <div id='next-chat-organization-heading'>
+                <Image
+                  size='small'
+                  src={`http://i.pravatar.cc/150?u=${activeUser}`}
+                  avatar/>
+                <Header as='h2' inverted>{this.userName(activeUser)}</Header>
+                <div>
+                  <Button as={Link} to='pending/individual'>
+                    Pending Approvals
+                  </Button>
+                </div>
+              </div>
+            }
           </div>
         }
 

@@ -45,6 +45,7 @@ export const appState = (state) => {
     openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
     openProposalsCount:  ApproverSelectors.openProposalsCount(state),
+    organization:        ApproverSelectors.organization(state),
     openProposalFromId:  (id) =>
       ApproverSelectors.openProposalFromId(state, id),
 
@@ -111,6 +112,8 @@ export const appDispatch = (dispatch) => {
       dispatch(ApproverActions.createRoleRequest(payload)),
     createPack: (payload) =>
       dispatch(ApproverActions.createPackRequest(payload)),
+    getOrganization:   (id)    =>
+      dispatch(ApproverActions.organizationRequest(id)),
 
     // Chat
     resetChat:         ()    => dispatch(ChatActions.clearMessages()),

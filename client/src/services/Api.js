@@ -82,6 +82,8 @@ const create = (baseURL =
       case 401:
         AuthActions.logout();
         break;
+      case 404:
+        break;
       default:
         toast(res.data.message);
         break;

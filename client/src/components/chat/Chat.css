@@ -80,6 +80,10 @@ limitations under the License.
   flex: 0 0 131px;
 }
 
+#next-chat-organization-heading {
+  text-align: center;
+}
+
 #next-chat-header i.mini {
   font-size: 1em;
   margin: 0;

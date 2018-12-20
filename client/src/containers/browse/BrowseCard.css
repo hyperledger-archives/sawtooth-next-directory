@@ -28,7 +28,6 @@ limitations under the License.
 .browse-tile-expanded {
   height: 209px;
   display: flex;
-  color:var(--background-dark);
   flex-direction: column;
   justify-content: space-between;
   background: #fff;
