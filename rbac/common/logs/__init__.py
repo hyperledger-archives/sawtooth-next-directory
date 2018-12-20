@@ -13,7 +13,18 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Sets up a standard logging format and setting"""
-from sanic.log import logger
+
+import logging
+
+# from sanic.log import logger
+
+LIB_LEVELS = {"asyncio": logging.WARNING}
+LOGGER_FORMAT = "%(levelname)s %(asctime)s %(name)s %(module)s %(pathname)s %(message)s"
+
+logging.basicConfig(level=logging.DEBUG, format=LOGGER_FORMAT)
+
+for lib, level in LIB_LEVELS.items():
+    logging.getLogger(lib).setLevel(level)
 
 
 # pylint: disable=invalid-name, unused-argument
@@ -22,4 +33,5 @@ def getLogger(name):
     Written to match the standard python logging.getLogger
     function for ease of migration
     """
+    logger = logging.getLogger(name)
     return logger
