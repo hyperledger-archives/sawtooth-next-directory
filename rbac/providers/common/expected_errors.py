@@ -42,11 +42,3 @@ class ExpectedError(Exception):
     def __str__(self):
         super(ExpectedError, self).__str__()
         return self.message
-
-
-class DatabaseConnectionException(Exception):
-    """Thrown when all attempts to connect to the database have failed"""
-
-
-class ValidationException(Exception):
-    """Thrown when an LDAP-formatted message fails a validation"""

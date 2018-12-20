@@ -20,9 +20,9 @@ import time
 from datetime import datetime, timezone
 import rethinkdb as r
 import ldap3
-from ldap3 import ALL, Connection, Server
-
+from rbac.providers.common import ldap_connector
 from rbac.common.logs import getLogger
+
 from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
@@ -61,13 +61,10 @@ def fetch_ldap_data():
         "(&(|(objectClass=person)(objectClass=group))(whenChanged>=%s))"
         % last_sync_time_formatted
     )
-    server = Server(LDAP_SERVER, get_info=ALL)
-    ldap_conn = Connection(server, user=LDAP_USER, password=LDAP_PASS)
-    if not ldap_conn.bind():
-        LOGGER.error(
-            "Error connecting to LDAP server %s : %s", LDAP_SERVER, ldap_conn.result
-        )
-    ldap_conn.search(
+
+    ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
+
+    ldap_connection.search(
         search_base=LDAP_DC,
         search_filter=search_filter,
         attributes=ldap3.ALL_ATTRIBUTES,
@@ -76,7 +73,7 @@ def fetch_ldap_data():
     parsed_last_sync_time = datetime.strptime(
         last_sync_time.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f"
     ).replace(tzinfo=timezone.utc)
-    insert_to_db(data_dict=ldap_conn.entries, when_changed=parsed_last_sync_time)
+    insert_to_db(data_dict=ldap_connection.entries, when_changed=parsed_last_sync_time)
 
 
 def to_date_ldap_query(rethink_timestamp):

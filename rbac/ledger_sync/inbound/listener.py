@@ -84,7 +84,7 @@ def process(rec, database):
             )
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
-            "%s exeption proccessing inbound record:\n%s", type(err).__name__, rec
+            "%s exception processing inbound record:\n%s", type(err).__name__, rec
         )
         LOGGER.exception(err)
 

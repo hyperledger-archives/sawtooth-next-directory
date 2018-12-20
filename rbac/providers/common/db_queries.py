@@ -21,10 +21,8 @@ from datetime import datetime as dt
 import rethinkdb as r
 
 from rbac.common.logs import getLogger
-from rbac.providers.common.expected_errors import (
-    ExpectedError,
-    DatabaseConnectionException,
-)
+from rbac.providers.common.expected_errors import ExpectedError
+from rbac.providers.common.provider_errors import DatabaseConnectionException
 
 LOGGER = getLogger(__name__)
 
