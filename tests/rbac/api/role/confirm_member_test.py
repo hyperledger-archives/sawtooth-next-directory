@@ -18,12 +18,12 @@
 import pytest
 
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
 from tests.rbac import helper
 from tests.rbac.api.config import api_wait
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 @pytest.mark.api

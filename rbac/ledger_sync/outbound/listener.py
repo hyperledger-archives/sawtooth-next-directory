@@ -16,13 +16,13 @@
 """
 
 from rbac.common.config import get_config
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
 from rbac.ledger_sync.database import Database
 from rbac.ledger_sync.deltas.handlers import get_delta_handler
 from rbac.ledger_sync.subscriber import Subscriber
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 VALIDATOR = get_config("VALIDATOR")
 
 

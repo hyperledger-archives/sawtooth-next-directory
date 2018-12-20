@@ -15,13 +15,13 @@
 """Start the Azure provider with initial sync and two listeners for inbound and outbound deltas."""
 
 from rbac.common.config import get_config
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.providers.azure.initial_inbound_sync import initialize_aad_sync
 from rbac.providers.azure.delta_outbound_sync import outbound_sync_listener
 from rbac.providers.azure.delta_inbound_sync import inbound_sync_listener
 from rbac.providers.common.threading import DeltaSyncThread
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def main():

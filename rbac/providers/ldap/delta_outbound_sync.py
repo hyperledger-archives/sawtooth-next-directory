@@ -19,7 +19,7 @@ import time
 
 import ldap3
 from ldap3 import MODIFY_REPLACE
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
 from rbac.providers.common.db_queries import (
     connect_to_db,
@@ -38,7 +38,7 @@ from rbac.providers.ldap.ldap_validator import (
     validate_update_entry,
 )
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 LISTENER_POLLING_DELAY = int(os.getenv("LISTENER_POLLING_DELAY", "1"))
 LDAP_DC = os.getenv("LDAP_DC")

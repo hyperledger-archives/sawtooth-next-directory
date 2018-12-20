@@ -19,14 +19,14 @@ import time
 import requests
 import pytest
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
 from tests.rbac import helper
 from tests.rbac.api.assertions import assert_api_error
 from tests.rbac.api.assertions import assert_api_success
 from tests.rbac.api.assertions import assert_api_post_requires_auth
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 @pytest.mark.api

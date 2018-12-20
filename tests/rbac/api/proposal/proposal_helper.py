@@ -17,11 +17,11 @@
 import random
 import requests
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from tests.rbac.api.base.base_helper import BaseApiHelper
 from tests.rbac.api.assertions import assert_api_success
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class Status:  # pylint: disable=too-few-public-methods

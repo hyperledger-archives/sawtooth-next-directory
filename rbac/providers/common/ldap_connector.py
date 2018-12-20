@@ -20,9 +20,9 @@ from ldap3 import Connection, Server, ALL
 from ldap3.core.exceptions import LDAPSocketOpenError
 
 from rbac.providers.common.provider_errors import LdapBindException
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 LDAP_READ_TIMEOUT_SECS = 10
 LDAP_CONNECT_TIMEOUT_SECS = 6

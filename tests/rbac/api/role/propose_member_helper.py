@@ -18,7 +18,7 @@
 import random
 import requests
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from tests.rbac.api.base.base_helper import BaseApiHelper
 from tests.rbac.api.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.api.role.create_role_helper import CreateRoleTestHelper
@@ -26,7 +26,7 @@ from tests.rbac.api.proposal.proposal_helper import ProposalTestHelper
 from tests.rbac.api.assertions import assert_api_success
 from tests.rbac.api.config import api_wait
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class StubTestHelper:

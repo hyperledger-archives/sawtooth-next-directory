@@ -18,11 +18,11 @@
 """
 import time
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import get_last_sync
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def check_last_sync(sync_source, sync_type):

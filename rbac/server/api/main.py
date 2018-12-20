@@ -23,7 +23,7 @@ from sanic import Sanic
 from sanic_cors import CORS
 from zmq.asyncio import ZMQEventLoop
 
-from rbac.common.logs import getLogger
+from rbac.common.logs import get_logger
 from rbac.common.config import get_config
 from rbac.common.crypto.keys import Key
 from rbac.common.sawtooth.messaging import Connection
@@ -41,7 +41,7 @@ from rbac.server.db import db_utils
 
 APP_BP = Blueprint("utils")
 
-LOGGER = getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 async def init(app, loop):
