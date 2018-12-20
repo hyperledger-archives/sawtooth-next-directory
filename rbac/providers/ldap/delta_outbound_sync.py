@@ -28,7 +28,6 @@ from rbac.providers.common.db_queries import (
     delete_entry_queue,
 )
 from rbac.providers.common import ldap_connector
-from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.provider_errors import ValidationException
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
@@ -183,31 +182,30 @@ def ldap_outbound_listener():
     ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
 
     while True:
-        try:
-            queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
-            LOGGER.info(
-                "Received queue entry %s from outbound queue...", queue_entry["id"]
-            )
 
-            data_type = queue_entry["data_type"]
-            LOGGER.info("Putting %s into ad...", data_type)
+        queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
+
+        while queue_entry is None:
+            queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
+            time.sleep(LISTENER_POLLING_DELAY)
+
+        LOGGER.info("Received queue entry %s from outbound queue...", queue_entry["id"])
+
+        LOGGER.debug("Putting queue entry into changelog...")
+        put_entry_changelog(queue_entry, "outbound")
+
+        data_type = queue_entry["data_type"]
+        LOGGER.debug("Putting %s into ad...", data_type)
+
+        try:
             if is_entry_in_ad(queue_entry, ldap_connection):
                 update_entry_ldap(queue_entry, ldap_connection)
             else:
                 create_entry_ldap(queue_entry, ldap_connection)
 
-            LOGGER.info("Putting queue entry into changelog...")
-            put_entry_changelog(queue_entry, "outbound")
-
-            LOGGER.info("Deleting queue entry from outbound queue...")
-            entry_id = queue_entry["id"]
-            delete_entry_queue(entry_id, "outbound_queue")
         except ValidationException as err:
-            LOGGER.info(err)
-            LOGGER.info("No outbound payload possible.  Deleting entry %s", queue_entry)
-            delete_entry_queue(queue_entry["id"], "outbound_queue")
-        except ExpectedError as err:
-            time.sleep(LISTENER_POLLING_DELAY)
-        except Exception as err:
-            LOGGER.exception(err)
-            raise err
+            LOGGER.warning("Outbound payload failed validation")
+            LOGGER.warning(err)
+
+        LOGGER.debug("Deleting queue entry from outbound queue...")
+        delete_entry_queue(queue_entry["id"], "outbound_queue")
