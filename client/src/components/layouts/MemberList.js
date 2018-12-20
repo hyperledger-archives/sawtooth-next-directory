@@ -33,7 +33,7 @@ class MemberList extends Component {
     getUsers:           PropTypes.func,
     members:            PropTypes.array,
     owners:             PropTypes.array,
-    users:               PropTypes.array,
+    users:              PropTypes.array,
   }
 
 
@@ -87,6 +87,20 @@ class MemberList extends Component {
 
     if (users) {
       const user = users.find((user) => user.id === userId);
+      if (!user) {
+        return (
+          <Grid.Column key={userId} largeScreen={8} widescreen={5}>
+            <Segment padded className='minimal'>
+              <Header as='h4' className='next-member-list-user-info'>
+                <div>
+                  <Image src='http://i.pravatar.cc/300' avatar />
+                </div>
+                <div>Unknown</div>
+              </Header>
+            </Segment>
+          </Grid.Column>
+        );
+      }
 
       return (
         user &&

@@ -1,0 +1,142 @@
+/* Copyright 2018 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+
+
+#next-organization-container {
+  padding: 0 30px;
+  transform: translateY(-217px);
+}
+
+#next-organization-toggle-manager-button-container {
+  position: absolute;
+  top: -39px;
+  z-index: 999;
+}
+
+.next-organization-managers-hide {
+  animation: managers-hide 1.5s ease-in forwards;
+}
+
+.next-organization-managers-show {
+  animation: managers-show 1.5s ease-in forwards;
+}
+
+@keyframes managers-show {
+  0% { transform: translateY(-217px); }
+  25%, 100% { transform: translateY(0); }
+}
+
+@keyframes managers-hide {
+  0% { transform: translateY(0); }
+  25%, 100% { transform: translateY(-217px); }
+}
+
+.next-organization-user-info {
+  background: var(--dark-bg);
+  color: var(--magenta);
+  margin: 0 10px;
+  padding: 0 10px;
+}
+
+.next-organization-user-info h4 {
+  color: white;
+}
+
+#next-organization-current-person-user-info-container,
+.next-organization-direct-report-item,
+.next-organization-manager-item .pull-left {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
+#next-organization-container .avatar.mini {
+  width: 45px;
+}
+
+#next-organization-managers {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#next-organization-peers {
+  display: flex;
+  flex-direction: row;
+}
+
+#next-organization-direct-reports {
+  margin: 22px 0 0 70px;
+}
+
+#next-organization-current-person {
+  margin: 50px 0 0 70px;
+}
+
+.next-organization-manager-item {
+  margin-bottom: 20px;
+}
+
+.next-organization-peer-item {
+  margin-left: 30px;
+}
+
+.next-organization-direct-report-item {
+  margin-bottom: 20px;
+}
+
+#next-organization-managers:after {
+  border-left: 1px solid #516073;
+  content: '';
+  height: 53.2%;
+  margin-left: 22px;
+  position: absolute;
+  top: 35px;
+  z-index: -1;
+}
+
+.next-organization-manager-item:first-child:before {
+  border-bottom: 1px solid #516073;
+  content: '';
+  margin-top: 22px;
+  position: absolute;
+  width: 90%;
+  z-index: -1;
+}
+
+#next-organization-direct-reports:after {
+  border-left: 1px solid #516073;
+  bottom: 22px;
+  content: '';
+  height: 37%;
+  margin-left: -48px;
+  position: absolute;
+  z-index: -1;
+}
+
+.next-organization-direct-report-item:before {
+  border-bottom: 1px solid #516073;
+  content: '';
+  margin-left: -48px;
+  position: absolute;
+  width: 65px;
+}
+
+#next-organization-current-person-user-info-container:before {
+  border-bottom: 1px solid #516073;
+  content: '';
+  margin-left: -48px;
+  position: absolute;
+  width: 59px;
+}

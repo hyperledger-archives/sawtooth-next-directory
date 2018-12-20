@@ -14,8 +14,35 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-approver-people-content {
-  margin-top: 236px;
-  position: relative;
-  width: calc(100% - 65px) !important;
+#next-people-nav {
+  background: var(--component-nav-bg);
+  display: flex;
+  padding: var(--page-content-padding);
+  position: fixed;
+  top: 96px;
+  width: calc(75% - 245px);
+  z-index: 2;
+}
+
+.dark #next-people-nav {
+  background: var(--dark-bg);
+}
+
+.dark .next-people-search .ui.large.fluid.icon.input input {
+  background: #2b3c4d;
+  border: 2px solid #2b3c4d;
+}
+
+.next-people-search {
+  flex: 1;
+  margin-left: 27px;
+}
+
+.next-people-search .fluid.search {
+  height: 100%;
+}
+
+.next-people-search .ui.large.fluid.icon.input input {
+  background: #eceef1;
+  border: 2px solid #eceef1;
 }

@@ -44,6 +44,10 @@ limitations under the License.
   z-index: 1;
 }
 
+.dark #next-wave-container {
+  display: none;
+}
+
 .next-waves-animate-down {
   animation: waves-down 2.5s ease-in forwards;
   transform-origin: bottom;

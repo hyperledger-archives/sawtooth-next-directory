@@ -34,6 +34,7 @@ limitations under the License.
   --avatar-count: #fff;
   --browse-bg-color: #273544;
   --browse-text-color: rgba(255, 255, 255, 0.5);
-  --background-dark: #000;
+  --dark-bg: #273544;
   --text-light: #fff;
+  --component-nav-bg: #fff;
 }

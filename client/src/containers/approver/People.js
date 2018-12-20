@@ -22,6 +22,8 @@ import { Grid } from 'semantic-ui-react';
 import './People.css';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
+import PeopleNav from '../../components/nav/PeopleNav';
+import Organization from '../../components/layouts/Organization';
 
 
 /**
@@ -32,22 +34,87 @@ import TrackHeader from '../../components/layouts/TrackHeader';
  */
 class People extends Component {
 
+  state = {
+    activeIndex:    0,
+    activeUser:     null,
+  };
+
+
+  /**
+   * Entry point to perform tasks required to render
+   * component.
+   */
+  componentDidMount () {
+    document.querySelector('body').classList.add('dark');
+    document.querySelector('body').classList.add('minimal');
+  }
+
+
+  /**
+  * Component teardown
+  */
+  componentWillUnmount () {
+    document.querySelector('body').classList.remove('dark');
+    document.querySelector('body').classList.remove('minimal');
+  }
+
+
+  /**
+   * Switch between Roles and People views
+   * @param {number} activeIndex Current screen index
+   */
+  setFlow = (activeIndex) => {
+    this.setState({ activeIndex });
+  };
+
+
+  /**
+   * Handle user change event
+   * @param {object} activeUser User ID
+   */
+  handleUserSelect = (activeUser) => {
+    console.log(activeUser);
+    this.setState({ activeUser });
+  };
+
+
   /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
+    const { activeIndex, activeUser } = this.state;
     return (
       <Grid id='next-approver-grid'>
         <Grid.Column
           id='next-approver-grid-track-column'
           width={12}>
           <TrackHeader title='People' {...this.props}/>
+          <div id='next-approver-people-content'>
+            <PeopleNav
+              activeIndex={activeIndex}
+              setFlow={this.setFlow}/>
+            <div>
+              { activeIndex === 0 &&
+                <Organization
+                  handleUserSelect={this.handleUserSelect}
+                  {...this.props}/>
+              }
+              { activeIndex === 1 &&
+                <h1>All people</h1>
+              }
+            </div>
+          </div>
         </Grid.Column>
         <Grid.Column
           id='next-approver-grid-converse-column'
           width={4}>
-          <Chat {...this.props}/>
+          <Chat
+            disabled
+            type='APPROVER'
+            organization
+            activeUser={activeUser}
+            {...this.props}/>
         </Grid.Column>
       </Grid>
     );

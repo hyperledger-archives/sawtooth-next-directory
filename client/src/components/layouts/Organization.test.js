@@ -16,32 +16,32 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
-import People from './People';
+import Organization from './Organization';
 
 
-const store = customStore.create();
+describe('Organization component', () => {
 
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    const props = {
+      getOrganization:    () => {},
+      handleUserSelect:   () => {},
+      getUsers:           () => {},
+      userFromId:         () => {},
+    };
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
+    ReactDOM.render(
+      <BrowserRouter><Organization {...props} /></BrowserRouter>, div
+    );
 
-  const props = {
-    getOrganization:    () => {},
-    handleUserSelect:   () => {},
-    getUsers:           () => {},
-    userFromId:         () => {},
-  };
+    ReactDOM.unmountComponentAtNode(div);
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><People {...props}/></BrowserRouter>
-    </Provider>, div
-  );
+    const wrapper = shallow(<Organization {...props} />);
+    wrapper.instance().componentDidUpdate(props);
+  });
 
-  ReactDOM.unmountComponentAtNode(div);
 });

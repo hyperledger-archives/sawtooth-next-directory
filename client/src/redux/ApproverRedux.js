@@ -50,6 +50,10 @@ const { Types, Creators } = createActions({
   rejectProposalsSuccess:     ['closedProposal'],
   rejectProposalsFailure:     ['error'],
 
+  organizationRequest:        ['id'],
+  organizationSuccess:        ['organization'],
+  organizationFailure:        ['error'],
+
   resetAll:                   null,
 });
 
@@ -64,10 +68,11 @@ export default Creators;
 //
 //
 export const INITIAL_STATE = Immutable({
-  fetching:           null,
-  error:              null,
-  openProposals:      null,
-  confirmedProposals: null,
+  confirmedProposals:   null,
+  error:                null,
+  fetching:             null,
+  openProposals:        null,
+  organization:         null,
 });
 
 //
@@ -77,8 +82,8 @@ export const INITIAL_STATE = Immutable({
 //
 //
 export const ApproverSelectors = {
-  openProposals:         (state) => state.approver.openProposals,
   confirmedProposals:    (state) => state.approver.confirmedProposals,
+  openProposals:         (state) => state.approver.openProposals,
   openProposalsByUser:   (state) =>
     utils.groupBy(state.approver.openProposals, 'opener'),
   openProposalsByRole:   (state) =>
@@ -89,6 +94,7 @@ export const ApproverSelectors = {
   openProposalFromId:    (state, id) =>
     state.approver.openProposals &&
     state.approver.openProposals.find(proposal => proposal.id === id),
+  organization:          (state) => state.approver.organization,
 };
 
 //
@@ -113,33 +119,48 @@ export const resetAll = () => {
 //
 //
 //
-export const openProposalsSuccess = (state, { openProposals }) => {
-  return state.merge({ fetching: false, openProposals: openProposals.data });
-};
-export const confirmedProposalsSuccess = (state, { confirmedProposals }) => {
-  return state.merge({
-    fetching: false, confirmedProposals: confirmedProposals.data,
-  });
-};
-export const createRoleSuccess = (state) => {
-  return state.merge({ fetching: false });
-};
-export const createPackSuccess = (state) => {
-  return state.merge({ fetching: false });
-};
-export const approveProposalsSuccess = (state, { closedProposal }) => {
-  return state.merge({
-    fetching: false,
-    openProposals: state.openProposals
-      .filter(proposal => proposal.id !== closedProposal.proposal_id),
-  });
-};
-export const rejectProposalsSuccess = (state, { closedProposal }) => {
-  return state.merge({
-    fetching: false,
-    openProposals: state.openProposals
-      .filter(proposal => proposal.id !== closedProposal.proposal_id),
-  });
+export const success = {
+
+  // Proposals
+  openProposals: (state, { openProposals }) =>
+    state.merge({
+      fetching: false,
+      openProposals: openProposals.data,
+    }),
+  confirmedProposals: (state, { confirmedProposals }) =>
+    state.merge({
+      fetching: false,
+      confirmedProposals: confirmedProposals.data,
+    }),
+  approveProposals: (state, { closedProposal }) =>
+    state.merge({
+      fetching: false,
+      openProposals: state.openProposals.filter(
+        proposal => proposal.id !== closedProposal.proposal_id
+      ),
+    }),
+  rejectProposals: (state, { closedProposal }) =>
+    state.merge({
+      fetching: false,
+      openProposals: state.openProposals.filter(
+        proposal => proposal.id !== closedProposal.proposal_id
+      ),
+    }),
+
+  // Create
+  createRole: (state) =>
+    state.merge({ fetching: false }),
+  createPack: (state) =>
+    state.merge({ fetching: false }),
+
+  // People
+  organization: (state, { organization }) => {
+    console.log(organization);
+    return state.merge({
+      fetching: false,
+      organization: organization,
+    });
+  },
 };
 
 //
@@ -151,27 +172,30 @@ export const rejectProposalsSuccess = (state, { closedProposal }) => {
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]: resetAll,
 
-  [Types.OPEN_PROPOSALS_REQUEST]: request,
-  [Types.OPEN_PROPOSALS_SUCCESS]: openProposalsSuccess,
-  [Types.OPEN_PROPOSALS_FAILURE]: failure,
+  // Proposals
+  [Types.CONFIRMED_PROPOSALS_REQUEST]:  request,
+  [Types.CONFIRMED_PROPOSALS_SUCCESS]:  success.confirmedProposals,
+  [Types.CONFIRMED_PROPOSALS_FAILURE]:  failure,
+  [Types.OPEN_PROPOSALS_REQUEST]:       request,
+  [Types.OPEN_PROPOSALS_SUCCESS]:       success.openProposals,
+  [Types.OPEN_PROPOSALS_FAILURE]:       failure,
+  [Types.APPROVE_PROPOSALS_REQUEST]:    request,
+  [Types.APPROVE_PROPOSALS_SUCCESS]:    success.approveProposals,
+  [Types.APPROVE_PROPOSALS_FAILURE]:    failure,
+  [Types.REJECT_PROPOSALS_REQUEST]:     request,
+  [Types.REJECT_PROPOSALS_SUCCESS]:     success.rejectProposals,
+  [Types.REJECT_PROPOSALS_FAILURE]:     failure,
 
-  [Types.CONFIRMED_PROPOSALS_REQUEST]: request,
-  [Types.CONFIRMED_PROPOSALS_SUCCESS]: confirmedProposalsSuccess,
-  [Types.CONFIRMED_PROPOSALS_FAILURE]: failure,
+  // Create
+  [Types.CREATE_ROLE_REQUEST]:          request,
+  [Types.CREATE_ROLE_SUCCESS]:          success.createRole,
+  [Types.CREATE_ROLE_FAILURE]:          failure,
+  [Types.CREATE_PACK_REQUEST]:          request,
+  [Types.CREATE_PACK_SUCCESS]:          success.createPack,
+  [Types.CREATE_PACK_FAILURE]:          failure,
 
-  [Types.CREATE_ROLE_REQUEST]: request,
-  [Types.CREATE_ROLE_SUCCESS]: createRoleSuccess,
-  [Types.CREATE_ROLE_FAILURE]: failure,
-
-  [Types.CREATE_PACK_REQUEST]: request,
-  [Types.CREATE_PACK_SUCCESS]: createPackSuccess,
-  [Types.CREATE_PACK_FAILURE]: failure,
-
-  [Types.APPROVE_PROPOSALS_REQUEST]: request,
-  [Types.APPROVE_PROPOSALS_SUCCESS]: approveProposalsSuccess,
-  [Types.APPROVE_PROPOSALS_FAILURE]: failure,
-
-  [Types.REJECT_PROPOSALS_REQUEST]: request,
-  [Types.REJECT_PROPOSALS_SUCCESS]: rejectProposalsSuccess,
-  [Types.REJECT_PROPOSALS_FAILURE]: failure,
+  // People
+  [Types.ORGANIZATION_REQUEST]:          request,
+  [Types.ORGANIZATION_SUCCESS]:          success.organization,
+  [Types.ORGANIZATION_FAILURE]:          failure,
 });

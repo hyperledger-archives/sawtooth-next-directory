@@ -15,13 +15,17 @@ limitations under the License.
 
 
 #next-approved-nav {
-  background: white;
+  background: var(--component-nav-bg);
   display: flex;
   padding: var(--page-content-padding);
   position: fixed;
   top: 183px;
   width: calc(75% - 245px);
   z-index: 2;
+}
+
+.dark #next-people-nav {
+  background: var(--dark-bg);
 }
 
 .next-approved-search {

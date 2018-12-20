@@ -1,0 +1,21 @@
+{
+  "id": "fcb9a003-75d4-48ad-a5fd-aef5c8a56744",
+  "managers": [
+    "CN=prdadsazrtst01,CN=Computers,DC=clouddev,DC=corporate,DC=t-mobile,DC=com",
+    "2a8434a7-522f-4580-96c6-8d1923b52a20",
+    "abdd0f73-1ee2-4582-a35a-f51c298062e5",
+    "6cb07b5f-bd13-4338-b6f5-9be2b849b2ed",
+    "CN=Raymond Gong,OU=Production,OU=Users,OU=Accounts,DC=clouddev,DC=corporate,DC=t-mobile,DC=com"
+  ],
+  "peers": [
+    "9dcac4e1-8d6c-4f7c-9a80-bff2533c0182",
+    "CN=adm_test2,OU=Previleged_Test,OU=Users,OU=Accounts,DC=clouddev,DC=corporate,DC=t-mobile,DC=com",
+    "994fdc9e-bc96-4f28-80cd-ac53efe046ee"
+  ],
+  "direct_reports": [
+    "CN=da_cspanto,OU=Privileged,OU=Users,OU=Accounts,DC=clouddev,DC=corporate,DC=t-mobile,DC=com",
+    "710d480a-fc6d-4b9f-a15a-902e184365ee",
+    "ae884fde-e2f1-43f2-98a9-aff1dc10a8f4",
+    "CN=ZBurgess,OU=Production,OU=Users,OU=Accounts,DC=clouddev,DC=corporate,DC=t-mobile,DC=com"
+  ]
+}
