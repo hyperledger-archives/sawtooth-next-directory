@@ -82,14 +82,17 @@ class RejectAddRoleTask(ProposalReject):
             store=store,
             signer=signer,
         )
-        if not addresser.task.owner.exists_in_state_inputs(
-            inputs=inputs,
-            input_state=input_state,
-            object_id=message.related_id,
-            related_id=signer,
-        ):
-            raise ValueError(
-                "Signer {} must be an owner of the task {}".format(
-                    signer, message.object_id
-                )
-            )
+        # TODO: change to verify proposal assignment and hierarchy
+
+
+#        if not addresser.task.owner.exists_in_state_inputs(
+#            inputs=inputs,
+#            input_state=input_state,
+#            object_id=message.related_id,
+#            related_id=signer,
+#        ):
+#            raise ValueError(
+#                "Signer {} must be an owner of the task {}".format(
+#                    signer, message.object_id
+#                )
+#            )

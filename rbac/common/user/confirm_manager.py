@@ -86,12 +86,14 @@ class ConfirmUpdateUserManager(ProposalConfirm):
         user = addresser.user.get_from_input_state(
             inputs=inputs, input_state=input_state, object_id=message.object_id
         )
-        if message.related_id != signer:
-            raise ValueError(
-                "Proposed manager {} is not the transaction signer".format(
-                    message.related_id
-                )
-            )
+        # TODO: change to verify proposal assignment and hierarchy
+
+    #        if message.related_id != signer:
+    #            raise ValueError(
+    #                "Proposed manager {} is not the transaction signer".format(
+    #                    message.related_id
+    #                )
+    #            )
 
     def store_message(
         self, object_id, related_id, store, message, outputs, output_state, signer
