@@ -29,6 +29,7 @@ import './RoleList.css';
 class RoleList extends Component {
 
   static propTypes = {
+    getRoles:              PropTypes.func,
     getUsers:              PropTypes.func,
     handleChange:          PropTypes.func,
     openProposalsByRole:   PropTypes.object,
@@ -36,16 +37,24 @@ class RoleList extends Component {
     roleFromId:            PropTypes.func,
     selectedRoles:         PropTypes.array,
     selectedProposals:     PropTypes.array,
+    roles:                 PropTypes.array,
     users:                 PropTypes.array,
   };
 
 
+  // TODO: Refactor
   /**
    * Entry point to perform tasks required to render
    * component. Get users not loaded in client.
    */
   componentDidMount  () {
-    const { getUsers, openProposalsByUser, users } = this.props;
+    const {
+      getRoles,
+      getUsers,
+      openProposalsByRole,
+      openProposalsByUser,
+      roles,
+      users } = this.props;
 
     if (!openProposalsByUser) return;
     let collection;
@@ -57,6 +66,14 @@ class RoleList extends Component {
       collection = newUsers;
 
     getUsers(collection);
+
+    const newRoles = Object.keys(openProposalsByRole);
+    roles ?
+      collection = newRoles.filter(newRole =>
+        !roles.find(role => newRole === role.id)) :
+      collection = newRoles;
+
+    getRoles(collection);
   }
 
 
@@ -71,6 +88,7 @@ class RoleList extends Component {
     const newUsers = Object.keys(openProposalsByUser);
     const oldUsers = Object.keys(prevProps.openProposalsByUser);
 
+    // ?
     if (newUsers.length > prevProps.length) {
       const diff = newUsers.filter(user => !oldUsers.includes(user));
       getUsers(diff);
@@ -83,6 +101,8 @@ class RoleList extends Component {
    * @returns {string}
    */
   roleName = (roleId) => {
+    // Debugger;;
+    console.log('hit');
     const { roleFromId } = this.props;
     const role = roleFromId(roleId);
     return role && role.name;

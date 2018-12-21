@@ -80,12 +80,6 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
             lambda user: user.merge(
                 {
                     "id": user["user_id"],
-                    "email": r.db("rbac")
-                    .table("auth")
-                    .filter({"user_id": user["user_id"]})
-                    .get_field("email")
-                    .coerce_to("array")
-                    .nth(0),
                     "subordinates": fetch_user_ids_by_manager(
                         user["user_id"], head_block_num
                     ),

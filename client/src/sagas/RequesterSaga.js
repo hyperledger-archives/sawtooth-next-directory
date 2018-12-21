@@ -225,9 +225,11 @@ export function * packAccess (api, action) {
 export function * fetchRole (api, id) {
   try {
     const res = yield call(api.getRole, id);
-    res.ok ?
-      yield put(RequesterActions.roleSuccess(res.data.data)) :
+    if (res.ok)
+      yield put(RequesterActions.roleSuccess(res.data.data));
+    else
       yield put(RequesterActions.roleFailure(res.data.error));
+
   } catch (err) {
     console.error(err);
   }

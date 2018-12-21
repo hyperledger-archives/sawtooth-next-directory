@@ -41,7 +41,7 @@ class Manage extends Component {
         <Grid.Column
           id='next-approver-grid-track-column'
           width={16}>
-          <TrackHeader title='Manage' {...this.props}/>
+          <TrackHeader inverted title='Manage' {...this.props}/>
           <div id='next-approver-manage-content'>
             <Grid stackable>
               <Grid.Row columns={3}>

@@ -26,7 +26,7 @@ import * as utils from '../services/Utils';
 //
 //
 const { Types, Creators } = createActions({
-  openProposalsRequest:       null,
+  openProposalsRequest:       ['id'],
   openProposalsSuccess:       ['openProposals'],
   openProposalsFailure:       ['error'],
 
@@ -55,6 +55,7 @@ const { Types, Creators } = createActions({
   organizationFailure:        ['error'],
 
   resetAll:                   null,
+  onBehalfOfSet:              ['id'],
 });
 
 
@@ -73,6 +74,7 @@ export const INITIAL_STATE = Immutable({
   fetching:             null,
   openProposals:        null,
   organization:         null,
+  onBehalfOf:           null,
 });
 
 //
@@ -95,6 +97,7 @@ export const ApproverSelectors = {
     state.approver.openProposals &&
     state.approver.openProposals.find(proposal => proposal.id === id),
   organization:          (state) => state.approver.organization,
+  onBehalfOf:            (state) => state.approver.onBehalfOf,
 };
 
 //
@@ -154,13 +157,13 @@ export const success = {
     state.merge({ fetching: false }),
 
   // People
-  organization: (state, { organization }) => {
-    console.log(organization);
-    return state.merge({
+  organization: (state, { organization }) =>
+    state.merge({
       fetching: false,
       organization: organization,
-    });
-  },
+    }),
+  onBehalfOf: (state, { id }) =>
+    state.merge({ onBehalfOf: id }),
 };
 
 //
@@ -198,4 +201,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ORGANIZATION_REQUEST]:          request,
   [Types.ORGANIZATION_SUCCESS]:          success.organization,
   [Types.ORGANIZATION_FAILURE]:          failure,
+  [Types.ON_BEHALF_OF_SET]:              success.onBehalfOf,
+
 });

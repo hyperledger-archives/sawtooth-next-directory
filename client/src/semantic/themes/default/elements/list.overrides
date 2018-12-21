@@ -31,3 +31,7 @@
   padding: 0 10px !important;
   text-indent: 0;
 }
+
+.ui.inverted.link.list .item {
+  display: flex !important;
+}

@@ -109,7 +109,8 @@ export const RequesterSelectors = {
         item => !state.user.me.proposals.find(e => e.object_id === item.id)
       ),
       recommend = Object.keys(utils.groupBy(roles, 'packs')).filter(item => {
-        const cond1 = 0 === item.length && item.includes('undefined'),
+        const cond1 = !item ||
+          (0 === item.length && item.includes('undefined')),
           cond2 =
             RequesterSelectors.requests(state) &&
             RequesterSelectors.requests(state).find(obj => obj.id === item),
@@ -128,7 +129,7 @@ export const RequesterSelectors = {
     state.requester.roles.find(role =>
       role.id === id
     ),
-  // Retrieve proposal by ID
+  // Retrieve pack by ID
   packFromId: (state, id) =>
     state.requester.packs &&
     state.requester.packs.find(pack =>
@@ -144,7 +145,7 @@ export const RequesterSelectors = {
   proposalsFromIds: (state, ids) =>
     state.requester.requests &&
     state.requester.requests.filter(request =>
-      ids.includes(request.id)
+      ids && ids.includes(request.id)
     ),
 
 
@@ -187,13 +188,14 @@ export const RequesterSelectors = {
     if (
       !state.requester.requests ||
       !state.user.me ||
-      !state.requester.roles ||
-      !state.requester.packs
+      !state.requester.roles
     )
       return null;
 
     let confirmed = [];
     let unconfirmed = [];
+
+    // Debugger;;
 
     // Iterating over open proposals, constructing an object
     // for each request with info about its corresponding role
@@ -201,7 +203,12 @@ export const RequesterSelectors = {
       const merge = { ...request, ...state.requester.roles
         .find(role => role.id === request.object),
       };
-      if (merge && merge.packs && merge.packs.length > 0) {
+      if (
+        state.requester.packs &&
+        merge &&
+        merge.packs &&
+        merge.packs.length > 0
+      ) {
         let pack = state.requester.packs.find(pack =>
           pack.id === merge.packs[0]
         );
@@ -212,9 +219,14 @@ export const RequesterSelectors = {
       }
     });
 
-    // Create a new array of the form [{ pack }, {role}, ...],
+    // Create a new array of the form [{pack}, {role}, ...],
     // removing duplicates and unconfirmed proposals
     let unique = [...new Set(confirmed)];
+
+    console.log('mine:');
+    console.log(unique.filter(item => !unconfirmed.includes(item.id)));
+
+
     return unique.filter(item => !unconfirmed.includes(item.id));
   },
 
@@ -324,13 +336,14 @@ export const success = {
         state.requests || [], [proposal]
       ),
     }),
-  role: (state, { role }) =>
-    state.merge({
+  role: (state, { role }) => {
+    return state.merge({
       fetching: false,
       roles: utils.merge(
         state.roles || [], [role]
       ),
-    }),
+    });
+  },
 };
 
 //

@@ -1,3 +1,4 @@
+
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,30 +19,49 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-
+import { shallow } from 'enzyme';
 
 import * as customStore from '../../customStore';
-import People from './People';
+import Expired from './Expired';
 
 
 const store = customStore.create();
+const props = {
+  getOpenProposals: () => { },
+  userFromId: () => { },
+  openProposals: [''],
+};
+
+const newprops = {
+  getOpenProposals: () => { },
+  userFromId: () => { },
+  openProposals: [],
+};
+const wrapper = shallow(<Expired {...props} store={store} />);
 
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
 
-  const props = {
-    getOrganization:    () => {},
-    handleUserSelect:   () => {},
-    getUsers:           () => {},
-    userFromId:         () => {},
-  };
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Expired {...props} /></BrowserRouter>
+    </Provider>, div
+  );
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><People {...props}/></BrowserRouter>
+      <BrowserRouter><Expired {...newprops} /></BrowserRouter>
     </Provider>, div
   );
 
   ReactDOM.unmountComponentAtNode(div);
+});
+
+it('calls reset function', () => {
+  wrapper.dive().instance().reset();
+});
+
+it('calls setFlow function', () => {
+  wrapper.dive().instance().setFlow();
 });

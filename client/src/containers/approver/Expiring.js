@@ -33,6 +33,23 @@ import TrackHeader from '../../components/layouts/TrackHeader';
 class Expiring extends Component {
 
   /**
+   * Entry point to perform tasks required to render
+   * component. On load, get open proposals.
+   */
+  componentDidMount () {
+    document.querySelector('body').classList.add('minimal');
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    document.querySelector('body').classList.remove('minimal');
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */

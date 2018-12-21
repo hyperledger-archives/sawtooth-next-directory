@@ -16,37 +16,41 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
 import { shallow } from 'enzyme';
+import { BrowserRouter } from 'react-router-dom';
 
 
-import RoleList from './RoleList';
+import OrganizationList from './OrganizationList';
 
 
-describe('RoleList component', () => {
+describe('OrganizationList component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
     const props = {
-      getRoles: () => {},
-      getUsers: (collection) => { },
-      openProposalsByUser: { proposal1: '', proposal2: '' },
+      getAllUsers: () => {},
+      getUsers: (collection) => {  },
+      members: ['props'],
+      owners: [''],
       users: [{ id: 'proposal1' }],
-      openProposalsByRole: { roleProposal1: [{ id: 'roleid' }] },
-      handleChange: () => { },
-      selectedProposals: ['roleid'],
-      selectedRoles: ['roleid'],
-      roleFromId: () => {  },
+
+    };
+    const newProps = {
+      getAllUsers: () => {},
+      getUsers: (collection) => {  },
+      members: ['newProps'],
+      owners: [''],
+      users: [{ id: 'proposal1' }],
+
     };
 
     ReactDOM.render(
-      <BrowserRouter><RoleList {...props} /></BrowserRouter>, div
+      <BrowserRouter><OrganizationList {...props} /></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
-    const wrapper = shallow(
-      <RoleList {...props} />);
+
+    const wrapper = shallow(<OrganizationList {...newProps} />);
     wrapper.instance().componentDidUpdate(props);
   });
 

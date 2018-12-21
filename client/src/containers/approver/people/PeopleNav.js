@@ -50,13 +50,13 @@ class PeopleNav extends Component {
             name='organization'
             active={activeIndex === 0}
             onClick={() => setFlow(0)}>
-            Organization
+            All People
           </Menu.Item>
           <Menu.Item
             name='people'
             active={activeIndex === 1}
             onClick={() => setFlow(1)}>
-            All People
+            Organization
           </Menu.Item>
         </Menu>
         <Search

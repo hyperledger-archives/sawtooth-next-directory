@@ -85,6 +85,7 @@ class CreatePack extends Component {
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
+            inverted
             title='Packs'
             button={() =>
               <Button as={Link} to='/approval/manage/packs'>Exit</Button>}

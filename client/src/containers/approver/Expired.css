@@ -14,25 +14,8 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { createSlug, groupBy, merge } from './Utils';
-
-
-describe('Utils Service', () => {
-
-  test('create slug', () => {
-    expect(createSlug('1234')).toBe('1234');
-    expect(createSlug('', { id: '1234' }))
-      .toBe('1234');
-  });
-
-  test('test groupby', () => {
-    groupBy([{ group: '' }], 'group');
-  });
-
-  test('test merge', () => {
-    const array1 = ['firstname'], array2 = ['lastname'];
-    expect(merge(array1, array2)).toEqual([...array1, ...array2]);
-
-  });
-
-});
+#next-approver-expired-content {
+  margin-top: 300px;
+  position: relative;
+  width: calc(100% - 65px) !important;
+}

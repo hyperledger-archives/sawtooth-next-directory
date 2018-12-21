@@ -42,6 +42,7 @@ class Approved extends Component {
    */
   componentDidMount () {
     const { confirmedProposals, getConfirmedProposals } = this.props;
+    document.querySelector('body').classList.add('minimal');
     !confirmedProposals && getConfirmedProposals();
     this.init();
   }
@@ -55,6 +56,14 @@ class Approved extends Component {
   componentDidUpdate (prevProps) {
     const { confirmedProposals } = this.props;
     if (prevProps.confirmedProposals !== confirmedProposals) this.init();
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    document.querySelector('body').classList.remove('minimal');
   }
 
 

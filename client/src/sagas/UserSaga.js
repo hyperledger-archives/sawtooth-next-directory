@@ -76,3 +76,21 @@ export function * getUsers (api, action) {
     console.error(err);
   }
 }
+
+
+/**
+ * Get all users in pagination form
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * getAllUsers (api, action) {
+  try {
+    const res = yield call(api.getUsers);
+    res.ok ?
+      yield put(UserActions.allUsersSuccess(res.data.data)) :
+      yield put(UserActions.allUsersFailure(res.data.message));
+  } catch (err) {
+    console.error(err);
+  }
+}

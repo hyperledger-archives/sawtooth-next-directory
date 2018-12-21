@@ -16,41 +16,33 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { shallow } from 'enzyme';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import BrowseCard from './BrowseCard';
+import * as customStore from '../../../customStore';
+import People from './People';
 
 
-describe('BrowseCard component', () => {
+const store = customStore.create();
 
-  it('renders without crashing', () => {
-    const div = document.createElement('div');
 
-    const props = {
-      details: {
-        name: '',
-        category: '',
-        admins: [],
-      },
-    };
+it('renders without crashing', () => {
+  const div = document.createElement('div');
 
-    ReactDOM.render(
-      <BrowserRouter><BrowseCard {...props} /></BrowserRouter>, div
-    );
-    ReactDOM.unmountComponentAtNode(div);
-  });
+  const props = {
+    getAllUsers:        () => {},
+    getOrganization:    () => {},
+    handleUserSelect:   () => {},
+    getUsers:           () => {},
+    userFromId:         () => {},
+  };
 
-  it('calls prop `onToggle` when icon clicked', () => {
-    const props = {
-      details: {
-        name: '',
-        category: '',
-        admins: [],
-      },
-    };
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><People {...props}/></BrowserRouter>
+    </Provider>, div
+  );
 
-    const wrapper = shallow(<BrowseCard {...props} />);
-  });
+  ReactDOM.unmountComponentAtNode(div);
 });

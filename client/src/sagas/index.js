@@ -34,7 +34,7 @@ import {
   rejectProposals,
   getOpenProposals,
   getConfirmedProposals,
-  getOrganization,
+  getRelationships,
   createPack,
   createRole } from './ApproverSaga';
 import {
@@ -53,7 +53,7 @@ import {
 import { closeSocket, openSocket } from './AppSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation, sendMessage } from './ChatSaga';
-import { me, getUser, getUsers } from './UserSaga';
+import { me, getUser, getUsers, getAllUsers } from './UserSaga';
 
 
 const api = API.create();
@@ -84,7 +84,6 @@ function * sagas () {
     takeLatest(AppTypes.SOCKET_CLOSE, closeSocket),
 
     // Approver
-    takeLatest(ApproverTypes.ORGANIZATION_REQUEST, getOrganization, FixtureAPI),
     takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
     takeLatest(ApproverTypes.CREATE_PACK_REQUEST, createPack, api),
     takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
@@ -92,6 +91,9 @@ function * sagas () {
     takeLatest(ApproverTypes.REJECT_PROPOSALS_REQUEST, rejectProposals, api),
     takeLatest(
       ApproverTypes.CONFIRMED_PROPOSALS_REQUEST, getConfirmedProposals, api
+    ),
+    takeLatest(
+      ApproverTypes.ORGANIZATION_REQUEST, getRelationships, FixtureAPI
     ),
 
     // Auth
@@ -119,6 +121,7 @@ function * sagas () {
     takeLatest(UserTypes.ME_REQUEST, me, api),
     takeLatest(UserTypes.USER_REQUEST, getUser, api),
     takeLatest(UserTypes.USERS_REQUEST, getUsers, api),
+    takeLatest(UserTypes.ALL_USERS_REQUEST, getAllUsers, api),
 
   ]);
 }

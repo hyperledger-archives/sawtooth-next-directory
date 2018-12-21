@@ -15,10 +15,13 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import StackedAvatar from './StackedAvatar';
-import { Icon } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Icon, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+
+
 import './BrowseCard.css';
+import StackedAvatar from './StackedAvatar';
 
 
 /**
@@ -54,7 +57,10 @@ class BrowseCard extends Component {
     const { isPinned } = this.state;
 
     return (
-      <div className='browse-tile'>
+      <Segment
+        as={Link}
+        to={`/roles/${details.id}`}
+        className='gradient'>
         <div className='browse-tile-title-container'>
           <div className='browse-tile-title'>
             {details.name}
@@ -68,7 +74,7 @@ class BrowseCard extends Component {
         <div className='browse-tile-members'>
           <StackedAvatar list={details.owners || []}/>
         </div>
-      </div>
+      </Segment>
     );
   }
 

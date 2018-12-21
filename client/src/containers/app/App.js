@@ -125,8 +125,8 @@ class App extends Component {
   hydrateSidebar () {
     const { getProposals, getRoles, me, roles } = this.props;
 
-    // * (1) Map proposals and memberOf to ID array
-    let foo = [
+    // Map proposals and memberOf to ID array
+    let ids = [
       ...me.proposals,
       ...me.memberOf,
     ].map((item) =>
@@ -134,19 +134,18 @@ class App extends Component {
         item.object_id :
         item);
 
-    // * (2) Find roles we don't already have loaded in
+    // Find roles we don't already have loaded in
     if (roles) {
-      foo = foo.filter(item =>
-        roles.find(role => role.id === item));
+      ids = ids.filter(item =>
+        roles.find(role => role.id !== item));
     }
-
 
     let bar = me.proposals.map(item =>
       item.proposal_id);
 
-    // * (3) Load roles not in
+    // Load roles not in
     getProposals(bar);
-    getRoles(foo);
+    getRoles(ids);
   }
 
 

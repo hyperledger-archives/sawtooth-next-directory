@@ -17310,6 +17310,12 @@ ol.ui.horizontal.list li:before,
   text-indent: 0;
 }
 
+.ui.inverted.link.list .item {
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
 /*******************************
     User Variable Overrides
 *******************************/
@@ -19445,6 +19451,13 @@ ol.ui.horizontal.list li:before,
   box-shadow: 0 3px 13px #98989814;
 }
 
+.dark .ui.segment.minimal {
+  background: #212c3a;
+  border: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
 .ui.segment.light {
   background: #f7f7f7;
   -webkit-box-shadow: none;
@@ -19480,6 +19493,26 @@ ol.ui.horizontal.list li:before,
 
 .ui.segment.no-padding {
   padding: 10px;
+}
+
+.ui.segment.gradient {
+  background: -webkit-gradient(linear, left top, left bottom, from(#9600e8), to(#f70597));
+  background: -webkit-linear-gradient(top, #9600e8 0%, #f70597 100%);
+  background: linear-gradient(to bottom, #9600e8 0%, #f70597 100%);
+  border-radius: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  height: 150px;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+  padding: 22px 25px;
 }
 
 /*******************************

@@ -27,17 +27,20 @@ import * as storage from '../services/Storage';
 //
 //
 const { Types, Creators } = createActions({
-  resetAll:      null,
+  meRequest:       null,
+  meSuccess:       ['me'],
+  meFailure:       ['error'],
 
-  meRequest:     null,
-  meSuccess:     ['me'],
-  meFailure:     ['error'],
+  usersRequest:    ['ids'],
+  userRequest:     ['id'],
+  userSuccess:     ['user'],
+  userFailure:     ['error'],
 
-  userRequest:   ['id'],
-  userSuccess:   ['user'],
-  userFailure:   ['error'],
+  allUsersRequest: null,
+  allUsersSuccess: ['users'],
+  allUsersFailure: ['error'],
 
-  usersRequest:  ['ids'],
+  resetAll:        null,
 });
 
 
@@ -51,7 +54,11 @@ export default Creators;
 //
 //
 export const INITIAL_STATE = Immutable({
-  fetching:         null,
+  fetchingMe:       null,
+  fetchingUser:     null,
+  fetchingUsers:    null,
+  fetchingAllUsers: null,
+
   error:            null,
   me:               null,
   users:            null,
@@ -69,7 +76,7 @@ export const UserSelectors = {
     (state.user.me && state.user.me.id) || storage.getUserId(),
   users:      (state) => state.user.users,
   memberOf:   (state) => state.user.me && state.user.me.memberOf,
-  userFromId:   (state, id) =>
+  userFromId: (state, id) =>
     state.user.users &&
     state.user.users.find(user => user.id === id),
 };
@@ -80,9 +87,13 @@ export const UserSelectors = {
 //
 //
 //
-export const request = (state) => {
-  return state.merge({ fetching: true });
+export const request = {
+  allUsers:   (state) => state.merge({ fetchingAllUsers: true }),
+  me:         (state) => state.merge({ fetchingMe: true }),
+  user:       (state) => state.merge({ fetchingUser: true }),
+  users:      (state) => state.merge({ fetchingUsers: true }),
 };
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 };
@@ -96,19 +107,24 @@ export const resetAll = (state) => {
 //
 //
 //
-export const meSuccess = (state, { me }) => {
-  return state.merge({
-    fetching: false,
-    me: me,
-    users: utils.merge(state.users || [], [me]),
-  });
-};
-
-export const userSuccess = (state, { user }) => {
-  return state.merge({
-    fetching: false,
-    users: utils.merge(state.users || [], [user]),
-  });
+export const success = {
+  me: (state, { me }) =>
+    state.merge({
+      fetching: false,
+      me: me,
+      users: utils.merge(state.users || [], [me]),
+    }),
+  user: (state, { user }) =>
+    state.merge({
+      fetching: false,
+      users: utils.merge(state.users || [], [user]),
+    }),
+  allUsers: (state, { users }) => {
+    return state.merge({
+      fetchingAllUsers: false,
+      users: utils.merge(state.users || [], users),
+    });
+  },
 };
 
 //
@@ -118,15 +134,18 @@ export const userSuccess = (state, { user }) => {
 //
 //
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.RESET_ALL]: resetAll,
+  [Types.RESET_ALL]:          resetAll,
 
-  [Types.ME_REQUEST]: request,
-  [Types.ME_SUCCESS]: meSuccess,
-  [Types.ME_FAILURE]: failure,
+  [Types.ME_REQUEST]:         request.me,
+  [Types.ME_SUCCESS]:         success.me,
+  [Types.ME_FAILURE]:         failure,
 
-  [Types.USER_REQUEST]: request,
-  [Types.USER_SUCCESS]: userSuccess,
-  [Types.USER_FAILURE]: failure,
+  [Types.USERS_REQUEST]:      request.users,
+  [Types.USER_REQUEST]:       request.user,
+  [Types.USER_SUCCESS]:       success.user,
+  [Types.USER_FAILURE]:       failure,
 
-  [Types.USERS_REQUEST]: request,
+  [Types.ALL_USERS_REQUEST]:  request.allUsers,
+  [Types.ALL_USERS_SUCCESS]:  success.allUsers,
+  [Types.ALL_USERS_FAILURE]:  failure,
 });
