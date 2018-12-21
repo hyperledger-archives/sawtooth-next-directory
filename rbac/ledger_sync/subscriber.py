@@ -112,10 +112,6 @@ class Subscriber(object):
 
                 delta_count = len(event.state_changes)
                 if delta_count > 0:
-                    LOGGER.debug(
-                        "Received %d deltas for block: %s", delta_count, event.block_id
-                    )
-
                     for handler in self._delta_handlers:
                         handler(event)
 
