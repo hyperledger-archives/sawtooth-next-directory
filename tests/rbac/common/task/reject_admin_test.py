@@ -84,14 +84,21 @@ def test_create():
         user_id=proposal.related_id,
         reason=reason,
     )
-    reject, status = rbac.task.admin.reject.create(
+
+    status = rbac.task.admin.reject.new(
         signer_keypair=task_admin_key,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
+    reject = rbac.task.admin.propose.get(
+        object_id=proposal.object_id, related_id=proposal.related_id
+    )
+
     assert isinstance(reject, protobuf.proposal_state_pb2.Proposal)
     assert reject.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_TASK_ADMIN
     assert reject.proposal_id == proposal.proposal_id

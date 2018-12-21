@@ -45,7 +45,7 @@ def test_make_with_self_manager():
         rbac.user.make_payload(message=message, signer_keypair=user_key)
 
     with pytest.raises(ValueError):
-        rbac.user.create(signer_keypair=user_key, message=message)
+        rbac.user.new(signer_keypair=user_key, message=message)
 
 
 @pytest.mark.user
@@ -66,7 +66,9 @@ def test_with_self_manager():
         inputs=inputs,
         outputs=outputs,
     )
-    _, status = rbac.user.send(signer_keypair=user_key, payload=payload)
+
+    status = rbac.user.send(signer_keypair=user_key, payload=payload)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -91,7 +93,9 @@ def test_with_manager_not_in_state():
         inputs=inputs,
         outputs=outputs,
     )
-    _, status = rbac.user.send(signer_keypair=user_key, payload=payload)
+
+    status = rbac.user.send(signer_keypair=user_key, payload=payload)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -138,6 +142,8 @@ def test_with_other_signer():
         inputs=inputs,
         outputs=outputs,
     )
-    _, status = rbac.user.send(signer_keypair=other_key, payload=payload)
+
+    status = rbac.user.send(signer_keypair=other_key, payload=payload)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"

@@ -388,11 +388,9 @@ class BaseMessage(AddressBase):
         outputs = set(list(payload.outputs))
         return message, message_type, inputs, outputs
 
-    def create(self, signer_keypair, **kwargs):
-        """Send a message to the blockchain"""
+    def new(self, signer_keypair, **kwargs):
+        """Creates and send a message to the blockchain"""
         message = kwargs.get("message")
-        object_id = kwargs.get("object_id")
-        related_id = kwargs.get("related_id")
         if not message:
             message = self.make(**kwargs)
         else:
@@ -400,11 +398,9 @@ class BaseMessage(AddressBase):
         return self.send(
             signer_keypair=signer_keypair,
             payload=self.make_payload(message=message, signer_keypair=signer_keypair),
-            object_id=object_id,
-            related_id=related_id,
         )
 
-    def send(self, signer_keypair, payload, object_id=None, related_id=None):
+    def send(self, signer_keypair, payload):
         """Sends a payload to the validator API"""
         if not isinstance(signer_keypair, Key):
             raise TypeError("Expected signer_keypair to be a Key")
@@ -414,13 +410,8 @@ class BaseMessage(AddressBase):
         _, _, batch_list, _ = batcher.make(
             payload=payload, signer_keypair=signer_keypair
         )
-        got = None
         status = client.send_batches_get_status(batch_list=batch_list)
-
-        if object_id is not None:
-            got = self.get(object_id=object_id, related_id=related_id)
-
-        return got, status
+        return status
 
     def get(self, object_id, related_id=None):
         """Gets an address from the blockchain from the validator API"""

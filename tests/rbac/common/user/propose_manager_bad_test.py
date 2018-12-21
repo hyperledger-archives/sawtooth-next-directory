@@ -39,9 +39,7 @@ def test_manager_not_in_state():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=user_key, message=message
-    )
+    status = rbac.user.manager.propose.new(signer_keypair=user_key, message=message)
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -61,9 +59,9 @@ def test_user_not_in_state():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=user_key, message=message
-    )
+
+    status = rbac.user.manager.propose.new(signer_keypair=user_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -82,9 +80,9 @@ def test_user_proposes_manager_change():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=user_key, message=message
-    )
+
+    status = rbac.user.manager.propose.new(signer_keypair=user_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
@@ -103,9 +101,9 @@ def test_another_proposes_manager_change():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=other_key, message=message
-    )
+
+    status = rbac.user.manager.propose.new(signer_keypair=other_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -126,9 +124,9 @@ def test_other_propose_manager_has_no_manager():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=other_key, message=message
-    )
+
+    status = rbac.user.manager.propose.new(signer_keypair=other_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -148,9 +146,9 @@ def test_manager_already_is_manager():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=manager_key, message=message
-    )
+
+    status = rbac.user.manager.propose.new(signer_keypair=manager_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -170,9 +168,9 @@ def test_proposed_manager_is_self():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=manager_key, message=message
-    )
+
+    status = rbac.user.manager.propose.new(signer_keypair=manager_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
 
@@ -191,8 +189,8 @@ def test_proposed_manager_is_already_proposed():
         reason=reason,
         metadata=None,
     )
-    _, status = rbac.user.manager.propose.create(
-        signer_keypair=manager_key, message=message
-    )
+
+    status = rbac.user.manager.propose.new(signer_keypair=manager_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"

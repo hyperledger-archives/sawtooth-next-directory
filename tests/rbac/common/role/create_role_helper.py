@@ -72,11 +72,14 @@ class CreateRoleTestHelper:
         message = rbac.role.make(
             role_id=role_id, name=name, owners=[user.user_id], admins=[user.user_id]
         )
-        _, status = rbac.role.create(signer_keypair=keypair, message=message)
+
+        status = rbac.role.new(signer_keypair=keypair, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         role = rbac.role.get(object_id=message.role_id)
+
         assert role.role_id == message.role_id
         assert role.name == message.name
         assert rbac.role.owner.exists(object_id=role.role_id, related_id=user.user_id)

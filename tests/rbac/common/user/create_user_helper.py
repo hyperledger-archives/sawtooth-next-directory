@@ -51,11 +51,12 @@ class CreateUserTestHelper(UserTestData):
         """Create a test user"""
         message, keypair = self.message()
 
-        user, status = rbac.user.create(
-            signer_keypair=keypair, message=message, object_id=message.user_id
-        )
+        status = rbac.user.new(signer_keypair=keypair, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
+
+        user = rbac.user.get(object_id=message.user_id)
 
         assert user.user_id == message.user_id
         assert user.name == message.name
@@ -68,11 +69,13 @@ class CreateUserTestHelper(UserTestData):
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        _, status = rbac.user.create(signer_keypair=manager_key, message=message)
+        status = rbac.user.new(signer_keypair=manager_key, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         user = rbac.user.get(object_id=message.user_id)
+
         assert user.user_id == message.user_id
         assert user.name == message.name
         assert user.manager_id == manager.user_id
@@ -85,7 +88,8 @@ class CreateUserTestHelper(UserTestData):
         message, manager_key = self.message()
         message.manager_id = grandmgr.user_id
 
-        _, status = rbac.user.create(signer_keypair=grandmgr_key, message=message)
+        status = rbac.user.new(signer_keypair=grandmgr_key, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
@@ -97,11 +101,13 @@ class CreateUserTestHelper(UserTestData):
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        _, status = rbac.user.create(signer_keypair=manager_key, message=message)
+        status = rbac.user.new(signer_keypair=manager_key, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         user = rbac.user.get(object_id=message.user_id)
+
         assert user.user_id == message.user_id
         assert user.name == message.name
         assert user.manager_id == manager.user_id

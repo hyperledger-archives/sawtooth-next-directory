@@ -63,14 +63,21 @@ class ProposeTaskAdminTestHelper:
             reason=reason,
             metadata=None,
         )
-        proposal, status = rbac.task.admin.propose.create(
+
+        status = rbac.task.admin.propose.new(
             signer_keypair=user_key,
             message=message,
             object_id=task.task_id,
             related_id=user.user_id,
         )
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
+
+        proposal = rbac.task.admin.propose.get(
+            object_id=task.task_id, related_id=user.user_id
+        )
+
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
         assert (
             proposal.proposal_type

@@ -86,7 +86,7 @@ def test_create():
     name = helper.role.name()
     role_id = helper.role.id()
 
-    _, status = rbac.role.imports.create(
+    status = rbac.role.imports.new(
         signer_keypair=keypair,
         role_id=role_id,
         name=name,

@@ -100,14 +100,16 @@ def test_create():
         reason=reason,
         metadata=None,
     )
-    proposal, status = rbac.role.task.propose.create(
-        signer_keypair=role_owner_key,
-        message=message,
-        object_id=role.role_id,
-        related_id=task.task_id,
-    )
+
+    status = rbac.role.task.propose.new(signer_keypair=role_owner_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
+    proposal = rbac.role.task.propose.get(
+        object_id=role.role_id, related_id=task.task_id
+    )
+
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert proposal.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_ROLE_TASK
     assert proposal.proposal_id == proposal_id

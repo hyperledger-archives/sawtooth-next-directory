@@ -156,7 +156,7 @@ def test_create_user():
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    _, status = rbac.user.create(
+    status = rbac.user.new(
         signer_keypair=user_key,
         user_id=user_id,
         name=name,
@@ -164,10 +164,12 @@ def test_create_user():
         email=email,
         key=user_key.public_key,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     user = rbac.user.get(object_id=user_id)
+
     assert user.user_id == user_id
     assert user.name == name
     assert user.username == username
@@ -189,7 +191,7 @@ def test_create_with_manager():
     manager_name = helper.user.name()
     manager_email = helper.user.email()
 
-    _, status = rbac.user.create(
+    status = rbac.user.new(
         signer_keypair=manager_key,
         user_id=manager_id,
         name=manager_name,
@@ -197,16 +199,18 @@ def test_create_with_manager():
         email=manager_email,
         key=manager_key.public_key,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     manager = rbac.user.get(object_id=manager_id)
+
     assert manager.user_id == manager_id
     assert manager.username == manager_username
     assert manager.name == manager_name
     assert manager.email == manager_email
 
-    _, status = rbac.user.create(
+    status = rbac.user.new(
         signer_keypair=user_key,
         user_id=user_id,
         name=name,
@@ -215,10 +219,12 @@ def test_create_with_manager():
         manager_id=manager_id,
         key=user_key.public_key,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     user = rbac.user.get(object_id=user_id)
+
     assert user.user_id == user_id
     assert user.username == username
     assert user.name == name
