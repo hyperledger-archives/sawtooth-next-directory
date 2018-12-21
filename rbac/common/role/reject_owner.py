@@ -88,15 +88,18 @@ class RejectAddRoleOwner(ProposalReject):
             store=store,
             signer=signer,
         )
+        # TODO: change to verify proposal assignment and hierarchy
         # TODO: should be owners
-        if not addresser.role.admin.exists_in_state_inputs(
-            inputs=inputs,
-            input_state=input_state,
-            object_id=message.object_id,
-            related_id=signer,
-        ):
-            raise ValueError(
-                "Signer {} must be an admin of the role {}".format(
-                    signer, message.object_id
-                )
-            )
+
+
+#        if not addresser.role.admin.exists_in_state_inputs(
+#            inputs=inputs,
+#            input_state=input_state,
+#            object_id=message.object_id,
+#            related_id=signer,
+#        ):
+#            raise ValueError(
+#                "Signer {} must be an admin of the role {}".format(
+#                    signer, message.object_id
+#                )
+#            )

@@ -92,18 +92,20 @@ class ConfirmAddRoleOwner(ProposalConfirm):
             store=store,
             signer=signer,
         )
+        # TODO: change to verify proposal assignment and hierarchy
         # TODO: should be owners?
-        if not addresser.role.admin.exists_in_state_inputs(
-            inputs=inputs,
-            input_state=input_state,
-            object_id=message.object_id,
-            related_id=signer,
-        ):
-            raise ValueError(
-                "Signer {} must be an admin of the role {}\n{}".format(
-                    signer, message.object_id, input_state
-                )
-            )
+
+    #        if not addresser.role.admin.exists_in_state_inputs(
+    #            inputs=inputs,
+    #            input_state=input_state,
+    #            object_id=message.object_id,
+    #            related_id=signer,
+    #        ):
+    #            raise ValueError(
+    #                "Signer {} must be an admin of the role {}\n{}".format(
+    #                    signer, message.object_id, input_state
+    #                )
+    #            )
 
     def apply_update(
         self, message, object_id, related_id, outputs, output_state, signer
