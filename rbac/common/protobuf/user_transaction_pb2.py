@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16user_transaction.proto\"z\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"d\n\x18\x43onfirmUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"c\n\x17RejectUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\"\x7f\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x0b\n\x03key\x18\x07 \x01(\t\"\x93\x01\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x11\n\tremote_id\x18\x07 \x01(\t\x12\x0b\n\x03key\x18\x08 \x01(\t\"r\n\nUpdateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16user_transaction.proto\"z\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"\x7f\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x0b\n\x03key\x18\x07 \x01(\t\"\x93\x01\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x11\n\tremote_id\x18\x07 \x01(\t\x12\x0b\n\x03key\x18\x08 \x01(\t\"r\n\nUpdateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\tb\x06proto3')
 )
 
 
@@ -81,110 +81,6 @@ _PROPOSEUPDATEUSERMANAGER = _descriptor.Descriptor(
   ],
   serialized_start=26,
   serialized_end=148,
-)
-
-
-_CONFIRMUPDATEUSERMANAGER = _descriptor.Descriptor(
-  name='ConfirmUpdateUserManager',
-  full_name='ConfirmUpdateUserManager',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='proposal_id', full_name='ConfirmUpdateUserManager.proposal_id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='user_id', full_name='ConfirmUpdateUserManager.user_id', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='manager_id', full_name='ConfirmUpdateUserManager.manager_id', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='reason', full_name='ConfirmUpdateUserManager.reason', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=150,
-  serialized_end=250,
-)
-
-
-_REJECTUPDATEUSERMANAGER = _descriptor.Descriptor(
-  name='RejectUpdateUserManager',
-  full_name='RejectUpdateUserManager',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='proposal_id', full_name='RejectUpdateUserManager.proposal_id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='user_id', full_name='RejectUpdateUserManager.user_id', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='manager_id', full_name='RejectUpdateUserManager.manager_id', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='reason', full_name='RejectUpdateUserManager.reason', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=252,
-  serialized_end=351,
 )
 
 
@@ -256,8 +152,8 @@ _CREATEUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=353,
-  serialized_end=480,
+  serialized_start=150,
+  serialized_end=277,
 )
 
 
@@ -336,8 +232,8 @@ _IMPORTSUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=483,
-  serialized_end=630,
+  serialized_start=280,
+  serialized_end=427,
 )
 
 
@@ -402,13 +298,11 @@ _UPDATEUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=632,
-  serialized_end=746,
+  serialized_start=429,
+  serialized_end=543,
 )
 
 DESCRIPTOR.message_types_by_name['ProposeUpdateUserManager'] = _PROPOSEUPDATEUSERMANAGER
-DESCRIPTOR.message_types_by_name['ConfirmUpdateUserManager'] = _CONFIRMUPDATEUSERMANAGER
-DESCRIPTOR.message_types_by_name['RejectUpdateUserManager'] = _REJECTUPDATEUSERMANAGER
 DESCRIPTOR.message_types_by_name['CreateUser'] = _CREATEUSER
 DESCRIPTOR.message_types_by_name['ImportsUser'] = _IMPORTSUSER
 DESCRIPTOR.message_types_by_name['UpdateUser'] = _UPDATEUSER
@@ -420,20 +314,6 @@ ProposeUpdateUserManager = _reflection.GeneratedProtocolMessageType('ProposeUpda
   # @@protoc_insertion_point(class_scope:ProposeUpdateUserManager)
   ))
 _sym_db.RegisterMessage(ProposeUpdateUserManager)
-
-ConfirmUpdateUserManager = _reflection.GeneratedProtocolMessageType('ConfirmUpdateUserManager', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIRMUPDATEUSERMANAGER,
-  __module__ = 'user_transaction_pb2'
-  # @@protoc_insertion_point(class_scope:ConfirmUpdateUserManager)
-  ))
-_sym_db.RegisterMessage(ConfirmUpdateUserManager)
-
-RejectUpdateUserManager = _reflection.GeneratedProtocolMessageType('RejectUpdateUserManager', (_message.Message,), dict(
-  DESCRIPTOR = _REJECTUPDATEUSERMANAGER,
-  __module__ = 'user_transaction_pb2'
-  # @@protoc_insertion_point(class_scope:RejectUpdateUserManager)
-  ))
-_sym_db.RegisterMessage(RejectUpdateUserManager)
 
 CreateUser = _reflection.GeneratedProtocolMessageType('CreateUser', (_message.Message,), dict(
   DESCRIPTOR = _CREATEUSER,

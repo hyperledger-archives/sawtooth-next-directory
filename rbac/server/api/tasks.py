@@ -18,13 +18,13 @@ from uuid import uuid4
 from sanic import Blueprint
 from sanic.response import json
 
+from rbac.common import rbac
+
 from rbac.server.api.errors import ApiNotImplemented
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 
 from rbac.server.db import tasks_query
-
-from rbac.transaction_creation import task_transaction_creation
 
 TASKS_BP = Blueprint("tasks")
 
@@ -55,14 +55,13 @@ async def create_new_task(request):
 
     txn_key = await utils.get_transactor_key(request)
     task_id = str(uuid4())
-    batch_list, _ = task_transaction_creation.create_task(
-        txn_key,
-        request.app.config.BATCHER_KEY_PAIR,
-        task_id,
-        request.json.get("name"),
-        request.json.get("administrators"),
-        request.json.get("owners"),
-        request.json.get("metadata"),
+    batch_list = rbac.task.batch_list(
+        signer_keypair=txn_key,
+        task_id=task_id,
+        name=request.json.get("name"),
+        admins=request.json.get("administrators"),
+        owners=request.json.get("owners"),
+        metdata=request.json.get("metadata"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -96,9 +95,8 @@ async def add_task_admin(request, task_id):
 
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list, _ = task_transaction_creation.propose_add_task_admins(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
+    batch_list = rbac.task.admin.propose.batch_list(
+        signer_keypair=txn_key,
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=request.json.get("id"),
@@ -114,24 +112,7 @@ async def add_task_admin(request, task_id):
 @TASKS_BP.delete("api/tasks/<task_id>/admins")
 @authorized()
 async def remove_task_admin(request, task_id):
-    required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-
-    txn_key = await utils.get_transactor_key(request)
-    proposal_id = str(uuid4())
-    batch_list, _ = task_transaction_creation.propose_remove_task_admins(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=request.json.get("id"),
-        reason=request.json.get("reason"),
-        metadata=request.json.get("metadata"),
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
-    return json({"proposal_id": proposal_id})
+    raise ApiNotImplemented()
 
 
 @TASKS_BP.post("api/tasks/<task_id>/owners")
@@ -142,9 +123,8 @@ async def add_task_owner(request, task_id):
 
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list, _ = task_transaction_creation.propose_add_task_owner(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
+    batch_list = rbac.task.owner.propose.batch_list(
+        signer_keypair=txn_key,
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=request.json.get("id"),
@@ -160,24 +140,7 @@ async def add_task_owner(request, task_id):
 @TASKS_BP.delete("api/tasks/<task_id>/owners")
 @authorized()
 async def remove_task_owner(request, task_id):
-    required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-
-    txn_key = await utils.get_transactor_key(request)
-    proposal_id = str(uuid4())
-    batch_list, _ = task_transaction_creation.propose_remove_task_owners(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
-        proposal_id=proposal_id,
-        task_id=task_id,
-        user_id=request.json.get("id"),
-        reason=request.json.get("reason"),
-        metadata=request.json.get("metadata"),
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
-    return json({"proposal_id": proposal_id})
+    raise ApiNotImplemented()
 
 
 def create_task_response(request, task_id):

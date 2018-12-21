@@ -15,12 +15,17 @@
 
 syntax = "proto3";
 
+
 message UpdateProposal {
 
     string proposal_id = 1;
 
-    string old_metadata_sha512 = 2;
+    string object_id = 2;
 
-    string new_metadata = 3;
+    string related_id = 3;
+
+    string reason = 4;
+
+    repeated string on_behalf_of = 5;
 
 }

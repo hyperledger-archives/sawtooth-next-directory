@@ -19,15 +19,12 @@ from uuid import uuid4
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from urllib.error import URLError
-import sawtooth_signing
-from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
-from rbac.transaction_creation.common import Key
+from rbac.common.crypto.keys import Key
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-BATCHER_PRIVATE_KEY = Secp256k1PrivateKey.new_random().as_hex()
-BATCHER_KEY = Key(BATCHER_PRIVATE_KEY)
+BATCHER_KEY = Key()
 
 
 class IntegrationTestHelper:
@@ -57,12 +54,7 @@ class IntegrationTestHelper:
 
     @staticmethod
     def make_key_and_name():
-        context = sawtooth_signing.create_context("secp256k1")
-        private_key = context.new_random_private_key()
-        pubkey = context.get_public_key(private_key)
-
-        key = Key(public_key=pubkey.as_hex(), private_key=private_key.as_hex())
-        return key, uuid4().hex
+        return Key(), uuid4().hex
 
     def __init__(self):
         if IntegrationTestHelper.__instance is None:

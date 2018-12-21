@@ -123,29 +123,25 @@ class TestOrgHierarchy(unittest.TestCase):
             "The transaction is invalid because the User already exists.",
         )
 
-        self.assertEqual(
+        with self.assertRaises(ValueError) as err:
             self.client.create_user(
                 key=self.key2a,
                 name=self.user2b,
                 username=self.user2b,
                 user_id=self.key_manager.public_key,
                 manager_id=self.key1.public_key,
-            )[0]["status"],
-            "INVALID",
-            "The signing key does not belong to the user or manager.",
-        )
+            )
+        assert str(err.exception) == "Signer must be the user or their manager"
 
-        self.assertEqual(
+        with self.assertRaises(ValueError) as err:
             self.client.create_user(
                 key=self.key_invalid,
                 name=self.user_invalid[:4],
                 username=self.user_invalid[:4],
                 user_id=self.key_invalid.public_key,
                 manager_id=None,
-            )[0]["status"],
-            "INVALID",
-            "The User's name must be at least 5 characters long.",
-        )
+            )
+        assert str(err.exception) == "Users must have names longer than 4 characters"
 
         self.assertEqual(
             self.client.create_user(
@@ -1760,156 +1756,4 @@ class TestOrgHierarchy(unittest.TestCase):
             )[0]["status"],
             "INVALID",
             "The proposal must be open.",
-        )
-
-    def test_24_propose_remove_task_admins(self):
-        """Tests the ProposeRemoveTaskAdmins txn validation rules.
-
-        Notes:
-            ProposeRemoveTaskAdmins validation rules
-                - No open proposal for the same change exists.
-                - The user is an admin of the task.
-                - The Task exists
-                - The User exists.
-                - The txn signer is the User, the User's manager, or the Task Admin/Owner.
-        """
-
-        self.assertEqual(
-            self.client.propose_delete_task_admins(
-                key=self.key1,
-                proposal_id=str(uuid4()),
-                task_id=str(uuid4()),
-                user_id=self.key1.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The Task must exist.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_admins(
-                key=self.key1,
-                proposal_id=str(uuid4()),
-                task_id=self.task_id1,
-                user_id=str(uuid4()),
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The User must exist.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_admins(
-                key=self.key2a,
-                proposal_id=str(uuid4()),
-                task_id=self.task_id1,
-                user_id=self.key2a.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The User must be an Admin of the Task.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_admins(
-                key=self.key_manager,
-                proposal_id=str(uuid4()),
-                task_id=self.task_id2,
-                user_id=self.key1.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The txn signer must be the User, User's manager, or the Task Admin/Owner.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_admins(
-                key=self.key1,
-                proposal_id=self.remove_task_admins_proposal_id,
-                task_id=self.task_id1,
-                user_id=self.key1.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "COMMITTED",
-        )
-
-    def test_25_propose_remove_task_owners(self):
-        """Tests the ProposeRemoveTaskOwners txn validation rules.
-
-        Notes:
-            ProposeRemoveTaskAdmins validation rules
-                - No open proposal for the same change exists.
-                - The user is an Owner of the task.
-                - The Task exists.
-                - The User exists.
-                - The txn signer is the User, the User's manager, or the Task Admin/Owner.
-        """
-
-        self.assertEqual(
-            self.client.propose_delete_task_owners(
-                key=self.key1,
-                proposal_id=str(uuid4()),
-                task_id=str(uuid4()),
-                user_id=self.key1.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The Task must exist.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_owners(
-                key=self.key1,
-                proposal_id=str(uuid4()),
-                task_id=self.task_id1,
-                user_id=str(uuid4()),
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The User must exist.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_owners(
-                key=self.key3b,
-                proposal_id=str(uuid4()),
-                task_id=self.task_id1,
-                user_id=self.key3b.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The User must be an Owner of the Task.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_owners(
-                key=self.key_manager,
-                proposal_id=str(uuid4()),
-                task_id=self.task_id2,
-                user_id=self.key1.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "INVALID",
-            "The txn signer must be the User, User's manager, or the Task Admin/Owner.",
-        )
-
-        self.assertEqual(
-            self.client.propose_delete_task_owners(
-                key=self.key1,
-                proposal_id=self.remove_task_owners_proposal_id,
-                task_id=self.task_id1,
-                user_id=self.key1.public_key,
-                reason=uuid4().hex,
-                metadata=uuid4().hex,
-            )[0]["status"],
-            "COMMITTED",
         )

@@ -53,22 +53,22 @@ class ConfirmAddRoleAdmin(ProposalConfirm):
         """Makes the appropriate inputs & output addresses for the message"""
         inputs, outputs = super().make_addresses(message, signer_keypair)
 
-        user_address = addresser.user.address(message.user_id)
+        user_address = addresser.user.address(message.related_id)
         inputs.add(user_address)
 
         signer_admin_address = addresser.role.admin.address(
-            message.role_id, signer_keypair.public_key
+            message.object_id, signer_keypair.public_key
         )
         inputs.add(signer_admin_address)
 
         relationship_address = addresser.role.admin.address(
-            message.role_id, message.user_id
+            message.object_id, message.related_id
         )
         inputs.add(relationship_address)
         outputs.add(relationship_address)
 
         proposal_address = self.address(
-            object_id=message.role_id, related_id=message.user_id
+            object_id=message.object_id, related_id=message.related_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -89,12 +89,12 @@ class ConfirmAddRoleAdmin(ProposalConfirm):
         if not addresser.role.admin.exists_in_state_inputs(
             inputs=inputs,
             input_state=input_state,
-            object_id=message.role_id,
+            object_id=message.object_id,
             related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an admin of the role {}".format(
-                    signer, message.role_id
+                    signer, message.object_id
                 )
             )
 

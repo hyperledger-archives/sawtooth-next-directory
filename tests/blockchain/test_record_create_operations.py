@@ -53,12 +53,13 @@ class TestUserOperations(unittest.TestCase):
         )
 
     def test_create_role_no_admin(self):
-        response = self.client.create_role(
-            key=self.role_key,
-            role_name=self.role_name,
-            role_id="role_id",
-            metadata="",
-            admins=[],
-            owners=[],
-        )[0]
-        self.assertIn("must have", response["invalid_transactions"][0]["message"])
+        with self.assertRaises(ValueError) as err:
+            self.client.create_role(
+                key=self.role_key,
+                role_name=self.role_name,
+                role_id="role_id",
+                metadata="",
+                admins=[],
+                owners=[],
+            )
+        assert str(err.exception) == "New roles must have administrators."

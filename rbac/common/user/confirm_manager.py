@@ -54,12 +54,12 @@ class ConfirmUpdateUserManager(ProposalConfirm):
         inputs, outputs = super().make_addresses(message, signer_keypair)
 
         proposal_address = addresser.proposal.address(
-            object_id=message.user_id, related_id=message.manager_id
+            object_id=message.object_id, related_id=message.related_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
 
-        user_address = addresser.user.address(message.user_id)
+        user_address = addresser.user.address(message.object_id)
         inputs.add(user_address)
         outputs.add(user_address)
 
@@ -77,19 +77,19 @@ class ConfirmUpdateUserManager(ProposalConfirm):
             store=store,
             signer=signer,
         )
-        if message.manager_id and not addresser.user.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.manager_id
+        if message.related_id and not addresser.user.exists_in_state_inputs(
+            inputs=inputs, input_state=input_state, object_id=message.related_id
         ):
             raise ValueError(
-                "Manager with id {} does not exist in state".format(message.manager_id)
+                "Manager with id {} does not exist in state".format(message.related_id)
             )
         user = addresser.user.get_from_input_state(
-            inputs=inputs, input_state=input_state, object_id=message.user_id
+            inputs=inputs, input_state=input_state, object_id=message.object_id
         )
-        if message.manager_id != signer:
+        if message.related_id != signer:
             raise ValueError(
                 "Proposed manager {} is not the transaction signer".format(
-                    user.manager_id
+                    message.related_id
                 )
             )
 
@@ -101,9 +101,9 @@ class ConfirmUpdateUserManager(ProposalConfirm):
         )
         addresser.user.set_output_state_attribute(
             name="manager_id",
-            value=message.manager_id,
+            value=message.related_id,
             outputs=outputs,
             output_state=output_state,
-            object_id=message.user_id,
+            object_id=message.object_id,
             related_id=None,
         )

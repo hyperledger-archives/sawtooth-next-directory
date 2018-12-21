@@ -60,17 +60,17 @@ class RejectAddRoleMember(ProposalReject):
 
         # should be owner not admin
         signer_admin_address = addresser.role.admin.address(
-            message.role_id, signer_keypair.public_key
+            message.object_id, signer_keypair.public_key
         )
         inputs.add(signer_admin_address)
 
         signer_owner_address = addresser.role.owner.address(
-            message.role_id, signer_keypair.public_key
+            message.object_id, signer_keypair.public_key
         )
         inputs.add(signer_owner_address)
 
         proposal_address = self.address(
-            object_id=message.role_id, related_id=message.user_id
+            object_id=message.object_id, related_id=message.related_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -91,11 +91,11 @@ class RejectAddRoleMember(ProposalReject):
         if not addresser.role.owner.exists_in_state_inputs(
             inputs=inputs,
             input_state=input_state,
-            object_id=message.role_id,
+            object_id=message.object_id,
             related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an owner of the role {}".format(
-                    signer, message.role_id
+                    signer, message.object_id
                 )
             )

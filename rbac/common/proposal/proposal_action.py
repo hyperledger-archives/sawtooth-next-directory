@@ -16,12 +16,17 @@
 import logging
 from rbac.common import protobuf
 from rbac.common.proposal.proposal_message import ProposalMessage
+from rbac.common.protobuf import proposal_transaction_pb2
 
 LOGGER = logging.getLogger(__name__)
 
 
 class ProposalAction(ProposalMessage):
     """A base for all proposal rejection message types"""
+
+    @property
+    def message_proto(self):
+        return proposal_transaction_pb2.UpdateProposal
 
     def validate_state(self, context, message, inputs, input_state, store, signer):
         """Validates that:

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1aproposal_transaction.proto\"X\n\x0eUpdateProposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x1b\n\x13old_metadata_sha512\x18\x02 \x01(\t\x12\x14\n\x0cnew_metadata\x18\x03 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x1aproposal_transaction.proto\"r\n\x0eUpdateProposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x11\n\tobject_id\x18\x02 \x01(\t\x12\x12\n\nrelated_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x14\n\x0con_behalf_of\x18\x05 \x03(\tb\x06proto3')
 )
 
 
@@ -40,16 +40,30 @@ _UPDATEPROPOSAL = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='old_metadata_sha512', full_name='UpdateProposal.old_metadata_sha512', index=1,
+      name='object_id', full_name='UpdateProposal.object_id', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='new_metadata', full_name='UpdateProposal.new_metadata', index=2,
+      name='related_id', full_name='UpdateProposal.related_id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='reason', full_name='UpdateProposal.reason', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='on_behalf_of', full_name='UpdateProposal.on_behalf_of', index=4,
+      number=5, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -66,7 +80,7 @@ _UPDATEPROPOSAL = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=30,
-  serialized_end=118,
+  serialized_end=144,
 )
 
 DESCRIPTOR.message_types_by_name['UpdateProposal'] = _UPDATEPROPOSAL

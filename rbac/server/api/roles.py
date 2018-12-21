@@ -18,13 +18,13 @@ from uuid import uuid4
 from sanic import Blueprint
 from sanic.response import json
 
+from rbac.common import rbac
+
 from rbac.server.api.errors import ApiNotImplemented
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 
 from rbac.server.db import roles_query
-
-from rbac.transaction_creation import role_transaction_creation
 
 ROLES_BP = Blueprint("roles")
 
@@ -55,17 +55,16 @@ async def create_new_role(request):
 
     txn_key = await utils.get_transactor_key(request)
     role_id = str(uuid4())
-    batch_list = role_transaction_creation.create_role(
-        txn_key,
-        request.app.config.BATCHER_KEY_PAIR,
-        request.json.get("name"),
-        role_id,
-        request.json.get("metadata"),
-        request.json.get("administrators"),
-        request.json.get("owners"),
+    batch_list = rbac.role.batch_list(
+        signer_keypair=txn_key,
+        name=request.json.get("name"),
+        role_id=role_id,
+        metadata=request.json.get("metadata"),
+        admins=request.json.get("administrators"),
+        owners=request.json.get("owners"),
     )
     await utils.send(
-        request.app.config.VAL_CONN, batch_list[0], request.app.config.TIMEOUT
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     return create_role_response(request, role_id)
 
@@ -96,9 +95,8 @@ async def add_role_admin(request, role_id):
 
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_add_role_admins(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
+    batch_list = rbac.role.admin.propose.batch_list(
+        signer_keypair=txn_key,
         proposal_id=proposal_id,
         role_id=role_id,
         user_id=request.json.get("id"),
@@ -114,24 +112,7 @@ async def add_role_admin(request, role_id):
 @ROLES_BP.delete("api/roles/<role_id>/admins")
 @authorized()
 async def delete_role_admin(request, role_id):
-    required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-
-    txn_key = await utils.get_transactor_key(request)
-    proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_remove_role_admins(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
-        proposal_id=proposal_id,
-        role_id=role_id,
-        user_id=request.json.get("id"),
-        reason=request.json.get("reason"),
-        metadata=request.json.get("metadata"),
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
-    return json({"proposal_id": proposal_id})
+    raise ApiNotImplemented()
 
 
 @ROLES_BP.post("api/roles/<role_id>/members")
@@ -141,9 +122,8 @@ async def add_role_member(request, role_id):
     utils.validate_fields(required_fields, request.json)
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_add_role_members(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
+    batch_list = rbac.role.member.propose.batch_list(
+        signer_keypair=txn_key,
         proposal_id=proposal_id,
         role_id=role_id,
         user_id=request.json.get("id"),
@@ -159,24 +139,7 @@ async def add_role_member(request, role_id):
 @ROLES_BP.delete("api/roles/<role_id>/members")
 @authorized()
 async def delete_role_member(request, role_id):
-    required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-
-    txn_key = await utils.get_transactor_key(request)
-    proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_remove_role_members(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
-        proposal_id=proposal_id,
-        role_id=role_id,
-        user_id=request.json.get("id"),
-        reason=request.json.get("reason"),
-        metadata=request.json.get("metadata"),
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
-    return json({"proposal_id": proposal_id})
+    raise ApiNotImplemented()
 
 
 @ROLES_BP.post("api/roles/<role_id>/owners")
@@ -187,9 +150,8 @@ async def add_role_owner(request, role_id):
 
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_add_role_owners(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
+    batch_list = rbac.role.owner.propose.batch_list(
+        signer_keypair=txn_key,
         proposal_id=proposal_id,
         role_id=role_id,
         user_id=request.json.get("id"),
@@ -205,24 +167,7 @@ async def add_role_owner(request, role_id):
 @ROLES_BP.delete("api/roles/<role_id>/owners")
 @authorized()
 async def delete_role_owner(request, role_id):
-    required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-
-    txn_key = await utils.get_transactor_key(request)
-    proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_remove_role_owners(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
-        proposal_id=proposal_id,
-        role_id=role_id,
-        user_id=request.json.get("id"),
-        reason=request.json.get("reason"),
-        metadata=request.json.get("metadata"),
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
-    return json({"proposal_id": proposal_id})
+    raise ApiNotImplemented()
 
 
 @ROLES_BP.post("api/roles/<role_id>/tasks")
@@ -233,9 +178,8 @@ async def add_role_task(request, role_id):
 
     txn_key = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_add_role_tasks(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
+    batch_list = rbac.role.task.propose.batch_list(
+        signer_keypair=txn_key,
         proposal_id=proposal_id,
         role_id=role_id,
         task_id=request.json.get("id"),
@@ -251,24 +195,7 @@ async def add_role_task(request, role_id):
 @ROLES_BP.delete("api/roles/<role_id>/tasks")
 @authorized()
 async def delete_role_task(request, role_id):
-    required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-
-    txn_key = await utils.get_transactor_key(request)
-    proposal_id = str(uuid4())
-    batch_list, _ = role_transaction_creation.propose_remove_role_tasks(
-        txn_key=txn_key,
-        batch_key=request.app.config.BATCHER_KEY_PAIR,
-        proposal_id=proposal_id,
-        role_id=role_id,
-        task_id=request.json.get("id"),
-        reason=request.json.get("reason"),
-        metadata=request.json.get("metadata"),
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
-    return json({"proposal_id": proposal_id})
+    raise ApiNotImplemented()
 
 
 def create_role_response(request, role_id):

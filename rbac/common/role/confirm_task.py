@@ -54,18 +54,18 @@ class ConfirmAddRoleTask(ProposalConfirm):
         inputs, outputs = super().make_addresses(message, signer_keypair)
 
         signer_task_owner_address = addresser.task.owner.address(
-            message.task_id, signer_keypair.public_key
+            message.related_id, signer_keypair.public_key
         )
         inputs.add(signer_task_owner_address)
 
         relationship_address = addresser.role.task.address(
-            message.role_id, message.task_id
+            message.object_id, message.related_id
         )
         inputs.add(relationship_address)
         outputs.add(relationship_address)
 
         proposal_address = self.address(
-            object_id=message.role_id, related_id=message.task_id
+            object_id=message.object_id, related_id=message.related_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -86,12 +86,12 @@ class ConfirmAddRoleTask(ProposalConfirm):
         if not addresser.task.owner.exists_in_state_inputs(
             inputs=inputs,
             input_state=input_state,
-            object_id=message.task_id,
+            object_id=message.related_id,
             related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an owner of the task {}".format(
-                    signer, message.role_id
+                    signer, message.object_id
                 )
             )
 
