@@ -29,7 +29,7 @@ import { syncAll } from './IndividualsHelper';
 
 
 import './Delegated.css';
-import glyph from '../../images/header-glyph-individual.png';
+import glyph from '../../images/header-glyph-individual-inverted.png';
 
 
 /**

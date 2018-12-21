@@ -28,7 +28,7 @@
 @checkboxCheckSize: @checkboxSize;
 
 /* Label */
-@labelFontSize: @relativeMedium;
+@labelFontSize: 1.1em;
 @labelColor: @textColor;
 @labelTransition: color @defaultDuration @defaultEasing;
 

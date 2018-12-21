@@ -34,6 +34,7 @@
   box-shadow: none;
 }
 
+.dark .ui.segment.minimal h3,
 .dark .ui.segment.minimal h4 {
   color: white;
 }

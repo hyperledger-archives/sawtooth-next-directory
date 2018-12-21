@@ -84,8 +84,6 @@ class People extends Component {
   handleOnBehalfOf = () => {
     const { setOnBehalfOf } = this.props;
     const { activeUser } = this.state;
-    console.log('activeUser: ');
-    console.log(activeUser);
     setOnBehalfOf(activeUser);
   }
 

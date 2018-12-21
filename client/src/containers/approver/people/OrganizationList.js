@@ -74,7 +74,7 @@ class OrganizationList extends Component {
           key={index}
           onClick={() => handleUserSelect(user.id)}
           className='no-padding minimal'>
-          <Header as='h4' className='next-member-list-user-info'>
+          <Header as='h3' className='next-member-list-user-info'>
             <div>
               <Image src={`http://i.pravatar.cc/150?u=${user.id}`} avatar/>
             </div>

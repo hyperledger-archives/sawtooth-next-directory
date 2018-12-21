@@ -19458,6 +19458,7 @@ ol.ui.horizontal.list li:before,
   box-shadow: none;
 }
 
+.dark .ui.segment.minimal h3,
 .dark .ui.segment.minimal h4 {
   color: white;
 }
@@ -31580,7 +31581,7 @@ a.ui.card:hover,
   display: block;
   padding-left: 36px;
   outline: none;
-  font-size: 0.92857143em;
+  font-size: 1.1em;
 }
 
 .ui.checkbox .box:before,

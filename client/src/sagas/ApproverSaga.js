@@ -33,7 +33,8 @@ import { toast } from 'react-toastify';
  */
 export function * getOpenProposals (api, action) {
   try {
-    const res = yield call(api.getOpenProposals);
+    const { id } = action;
+    const res = yield call(api.getOpenProposals, id);
     yield put(ApproverActions.openProposalsSuccess(res.data));
   } catch (err) {
     console.error(err);

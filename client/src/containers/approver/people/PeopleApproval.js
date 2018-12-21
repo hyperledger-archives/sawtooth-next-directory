@@ -20,25 +20,25 @@ import { Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import Chat from '../../components/chat/Chat';
-import TrackHeader from '../../components/layouts/TrackHeader';
-import IndividualsNav from '../../components/nav/IndividualsNav';
-import PeopleList from '../../components/layouts/proposals/PeopleList';
-import RoleList from '../../components/layouts/proposals/RoleList';
-import { syncAll } from './IndividualsHelper';
+import Chat from '../../../components/chat/Chat';
+import TrackHeader from '../../../components/layouts/TrackHeader';
+import PeopleApprovalNav from '../../../components/nav/IndividualsNav';
+import PeopleList from '../../../components/layouts/proposals/PeopleList';
+import RoleList from '../../../components/layouts/proposals/RoleList';
+import { syncAll } from '../IndividualsHelper';
 
 
-import './Expired.css';
-import glyph from '../../images/header-glyph-individual-inverted.png';
+import './PeopleApproval.css';
+import glyph from '../../../images/header-glyph-individual-inverted.png';
 
 
 /**
  *
- * @class         Expired
+ * @class         PeopleApproval
  * @description   Individual requests component
  *
  */
-class Expired extends Component {
+class PeopleApproval extends Component {
 
   static propTypes = {
     getOpenProposals: PropTypes.func,
@@ -58,8 +58,8 @@ class Expired extends Component {
    * component. On load, get open proposals.
    */
   componentDidMount () {
-    const { getOpenProposals, openProposals, onBehalfOf } = this.props;
-    !openProposals && getOpenProposals(onBehalfOf);
+    const { getOpenProposals, onBehalfOf } = this.props;
+    getOpenProposals(onBehalfOf);
     document.querySelector('body').classList.add('minimal');
   }
 
@@ -123,7 +123,7 @@ class Expired extends Component {
    * @returns {JSX}
    */
   render () {
-    const { openProposals, userFromId } = this.props;
+    const { openProposals, onBehalfOf, users, userFromId } = this.props;
     const {
       activeIndex,
       selectedProposals,
@@ -136,17 +136,19 @@ class Expired extends Component {
       ${selectedProposals.length > 1 ? 'requests' : 'request'}
       selected`;
 
+    let foo = users && users.find(user => user.id === onBehalfOf);
+
     return (
       <Grid id='next-approver-grid'>
 
         <Grid.Column id='next-approver-grid-track-column' width={12}>
           <TrackHeader
             glyph={glyph}
-            title='Expired Requests'
+            title={foo && foo.name + '\'s Pending Requests'}
             subtitle={openProposals && openProposals.length + ' pending'}
             {...this.props}/>
-          <div id='next-approver-expired-content'>
-            <IndividualsNav
+          <div id='next-approver-people-approval-content'>
+            <PeopleApprovalNav
               activeIndex={activeIndex}
               setFlow={this.setFlow}/>
             { openProposals && openProposals.length !== 0 &&
@@ -208,5 +210,5 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Expired);
+export default connect(mapStateToProps, mapDispatchToProps)(PeopleApproval);
 

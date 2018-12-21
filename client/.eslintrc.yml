@@ -62,3 +62,7 @@ rules:
     }
   }]
   no-debugger: error
+  no-console: [error, { allow: [warn, error] }]
+  no-empty: error
+  no-extra-boolean-cast: error
+  no-mixed-operators: error

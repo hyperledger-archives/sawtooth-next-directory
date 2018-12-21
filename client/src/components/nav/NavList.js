@@ -46,6 +46,7 @@ class NavList extends Component {
     list:             PropTypes.array,
     listTitle:        PropTypes.string,
     route:            PropTypes.string,
+    titleIsLink:      PropTypes.bool,
   };
 
 
@@ -127,11 +128,14 @@ class NavList extends Component {
    * @returns {JSX}
    */
   render () {
-    const { list, listTitle } = this.props;
+    const { list, listTitle, route, titleIsLink } = this.props;
 
     return (
       <div className='next-nav-list-container'>
-        <h4>{listTitle}</h4>
+        { titleIsLink ?
+          <h4><Link to={route}>{listTitle}</Link></h4> :
+          <h4>{listTitle}</h4>
+        }
 
         { list && list.length !== 0 ?
           <Transition.Group
@@ -142,6 +146,7 @@ class NavList extends Component {
             selection>
             { this.renderList(list) }
           </Transition.Group> :
+          !titleIsLink &&
           <span className='next-nav-list-empty'>
             No items
           </span>

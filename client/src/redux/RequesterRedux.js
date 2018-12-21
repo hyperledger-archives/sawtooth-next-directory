@@ -222,11 +222,6 @@ export const RequesterSelectors = {
     // Create a new array of the form [{pack}, {role}, ...],
     // removing duplicates and unconfirmed proposals
     let unique = [...new Set(confirmed)];
-
-    console.log('mine:');
-    console.log(unique.filter(item => !unconfirmed.includes(item.id)));
-
-
     return unique.filter(item => !unconfirmed.includes(item.id));
   },
 

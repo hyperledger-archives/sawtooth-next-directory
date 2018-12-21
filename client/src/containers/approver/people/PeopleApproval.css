@@ -14,10 +14,8 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-approver-people-list-container {
-  padding: 0 30px;
-}
-
-#next-approver-people-list-container .ui.segment {
-  cursor: pointer;
+#next-approver-people-approval-content {
+  margin-top: 300px;
+  position: relative;
+  width: calc(100% - 65px) !important;
 }

@@ -208,7 +208,7 @@ class Chat extends Component {
                 <div>
                   <Button
                     as={Link}
-                    to='pending/individual'
+                    to={`people/${activeUser}/pending`}
                     onClick={handleOnBehalfOf}>
                     Pending Approvals
                   </Button>
@@ -225,14 +225,14 @@ class Chat extends Component {
               horizontal
               animation='fade right'
               duration={{hide: 0, show: 1000}}>
-              { selectedUsers.map(user => (
+              { selectedUsers.map(user =>
                 <Image
                   key={user}
                   size='tiny'
                   className='pull-left'
                   src='http://i.pravatar.cc/150'
                   avatar/>
-              )) }
+              ) }
             </Transition.Group>
             <Transition
               visible={selectedUsers.length > 0}
@@ -252,7 +252,7 @@ class Chat extends Component {
               as={List}
               animation='fade down'
               duration={{hide: 300, show: 300}}>
-              { selectedUsers.map(user => (
+              { selectedUsers.map(user =>
                 <Segment className='minimal' padded='very' key={user}>
                   <Checkbox
                     checked={!!user}
@@ -260,7 +260,7 @@ class Chat extends Component {
                     label={this.userName(user)}
                     onChange={handleChange}/>
                 </Segment>
-              )) }
+              ) }
             </Transition.Group>
           </div>
         }
@@ -271,7 +271,7 @@ class Chat extends Component {
               as={List}
               animation='fade down'
               duration={{hide: 300, show: 300}}>
-              { [...new Set(selectedRoles)].map(role => (
+              { [...new Set(selectedRoles)].map(role =>
                 <Segment className='minimal' padded='very' key={role}>
                   <Checkbox
                     checked={!!role}
@@ -279,7 +279,7 @@ class Chat extends Component {
                     label={this.roleName(role)}
                     onChange={handleChange}/>
                 </Segment>
-              )) }
+              ) }
             </Transition.Group>
           </div>
         }

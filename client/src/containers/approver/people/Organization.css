@@ -89,6 +89,7 @@ limitations under the License.
 
 #next-organization-direct-reports {
   margin: 22px 0 0 70px;
+  max-width: 300px;
   position: relative;
 }
 
@@ -107,6 +108,7 @@ limitations under the License.
 }
 
 .next-organization-direct-report-item {
+  cursor: pointer;
   margin-bottom: 20px;
 }
 

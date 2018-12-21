@@ -32,7 +32,7 @@ limitations under the License.
  */
 
 export const createSlug = (id, parent) => {
-  let slug = (parent && parent.id) ? parent.id : id;
+  let slug = parent && parent.id ? parent.id : id;
   try {
     return slug;
   } catch (error) {
@@ -87,3 +87,6 @@ export const arraysEqual = (array1, array2) => {
 
   return true;
 };
+
+
+export const noop = () => {};

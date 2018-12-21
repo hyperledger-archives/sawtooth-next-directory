@@ -22,6 +22,7 @@ import { Grid } from 'semantic-ui-react';
 import './Expiring.css';
 import Chat from '../../components/chat/Chat';
 import TrackHeader from '../../components/layouts/TrackHeader';
+import glyph from '../../images/header-glyph-individual-inverted.png';
 
 
 /**
@@ -59,7 +60,7 @@ class Expiring extends Component {
         <Grid.Column
           id='next-approver-grid-track-column'
           width={12}>
-          <TrackHeader title='About to Expire' {...this.props}/>
+          <TrackHeader glyph={glyph} title='About to Expire' {...this.props}/>
         </Grid.Column>
         <Grid.Column
           id='next-approver-grid-converse-column'

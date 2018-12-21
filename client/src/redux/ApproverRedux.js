@@ -90,9 +90,15 @@ export const ApproverSelectors = {
     utils.groupBy(state.approver.openProposals, 'opener'),
   openProposalsByRole:   (state) =>
     utils.groupBy(state.approver.openProposals, 'object'),
-  openProposalsCount:    (state) =>
-    (state.approver.openProposals && state.approver.openProposals.length) ||
-    null,
+  openProposalsCount:    (state) => {
+    return (
+      state.user.me &&
+      state.approver.openProposals &&
+      state.approver.openProposals
+        .filter(proposal => proposal.approvers.includes(state.user.me.id))
+        .length
+    ) || null;
+  },
   openProposalFromId:    (state, id) =>
     state.approver.openProposals &&
     state.approver.openProposals.find(proposal => proposal.id === id),
