@@ -16,6 +16,9 @@
 from sanic import Blueprint
 from sanic.response import json
 
+from rbac.common import rbac
+from rbac.common.logs import get_logger
+
 from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
@@ -24,11 +27,7 @@ from rbac.server.db import proposals_query
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.users_query import fetch_user_resource
 
-from rbac.transaction_creation import (
-    task_transaction_creation,
-    role_transaction_creation,
-    manager_transaction_creation,
-)
+LOGGER = get_logger(__name__)
 
 PROPOSALS_BP = Blueprint("proposals")
 
@@ -77,56 +76,32 @@ class ProposalType(object):  # pylint: disable=too-few-public-methods
 
 PROPOSAL_TRANSACTION = {
     ProposalType.ADD_ROLE_TASK: {
-        Status.REJECTED: role_transaction_creation.reject_add_role_tasks,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_tasks,
+        Status.REJECTED: rbac.role.task.reject.batch_list,
+        Status.APPROVED: rbac.role.task.confirm.batch_list,
     },
     ProposalType.ADD_ROLE_MEMBER: {
-        Status.REJECTED: role_transaction_creation.reject_add_role_members,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_members,
+        Status.REJECTED: rbac.role.member.reject.batch_list,
+        Status.APPROVED: rbac.role.member.confirm.batch_list,
     },
     ProposalType.ADD_ROLE_OWNER: {
-        Status.REJECTED: role_transaction_creation.reject_add_role_owners,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_owners,
+        Status.REJECTED: rbac.role.owner.reject.batch_list,
+        Status.APPROVED: rbac.role.owner.confirm.batch_list,
     },
     ProposalType.ADD_ROLE_ADMIN: {
-        Status.REJECTED: role_transaction_creation.reject_add_role_admins,
-        Status.APPROVED: role_transaction_creation.confirm_add_role_admins,
-    },
-    ProposalType.REMOVE_ROLE_TASK: {
-        Status.REJECTED: role_transaction_creation.reject_remove_role_tasks,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_tasks,
-    },
-    ProposalType.REMOVE_ROLE_MEMBER: {
-        Status.REJECTED: role_transaction_creation.reject_remove_role_members,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_members,
-    },
-    ProposalType.REMOVE_ROLE_OWNER: {
-        Status.REJECTED: role_transaction_creation.reject_remove_role_owners,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_owners,
-    },
-    ProposalType.REMOVE_ROLE_ADMIN: {
-        Status.REJECTED: role_transaction_creation.reject_remove_role_admins,
-        Status.APPROVED: role_transaction_creation.confirm_remove_role_admins,
+        Status.REJECTED: rbac.role.admin.reject.batch_list,
+        Status.APPROVED: rbac.role.admin.confirm.batch_list,
     },
     ProposalType.ADD_TASK_OWNER: {
-        Status.REJECTED: task_transaction_creation.reject_add_task_owners,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_owners,
+        Status.REJECTED: rbac.task.owner.reject.batch_list,
+        Status.APPROVED: rbac.task.owner.confirm.batch_list,
     },
     ProposalType.ADD_TASK_ADMIN: {
-        Status.REJECTED: task_transaction_creation.reject_add_task_admins,
-        Status.APPROVED: task_transaction_creation.confirm_add_task_admins,
-    },
-    ProposalType.REMOVE_TASK_OWNER: {
-        Status.REJECTED: task_transaction_creation.reject_remove_task_owners,
-        Status.APPROVED: task_transaction_creation.confirm_remove_task_owners,
-    },
-    ProposalType.REMOVE_TASK_ADMIN: {
-        Status.REJECTED: task_transaction_creation.reject_remove_task_admins,
-        Status.APPROVED: task_transaction_creation.confirm_remove_task_admins,
+        Status.REJECTED: rbac.task.admin.reject.batch_list,
+        Status.APPROVED: rbac.task.admin.confirm.batch_list,
     },
     ProposalType.UPDATE_USER_MANAGER: {
-        Status.REJECTED: manager_transaction_creation.reject_manager,
-        Status.APPROVED: manager_transaction_creation.confirm_manager,
+        Status.REJECTED: rbac.user.manager.reject.batch_list,
+        Status.APPROVED: rbac.user.manager.confirm.batch_list,
     },
 }
 
@@ -173,6 +148,7 @@ async def get_proposal(request, proposal_id):
 @PROPOSALS_BP.patch("api/proposals/<proposal_id>")
 @authorized()
 async def update_proposal(request, proposal_id):
+    LOGGER.debug("update proposal %s\n%s", proposal_id, request.json)
     required_fields = ["reason", "status"]
     utils.validate_fields(required_fields, request.json)
     if request.json["status"] not in [Status.REJECTED, Status.APPROVED]:
@@ -187,15 +163,14 @@ async def update_proposal(request, proposal_id):
         head_block_num=block.get("num"),
     )
 
-    batch_list, _ = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
+    batch_list = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
         request.json["status"]
     ](
-        txn_key,
-        request.app.config.BATCHER_KEY_PAIR,
-        proposal_id,
-        proposal_resource.get("object"),
-        proposal_resource.get("target"),
-        request.json.get("reason"),
+        signer_keypair=txn_key,
+        proposal_id=proposal_id,
+        object_id=proposal_resource.get("object"),
+        related_id=proposal_resource.get("target"),
+        reason=request.json.get("reason"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT

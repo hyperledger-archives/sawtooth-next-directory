@@ -59,7 +59,7 @@ class RejectUpdateUserManager(ProposalReject):
         inputs, outputs = super().make_addresses(message, signer_keypair)
 
         proposal_address = addresser.proposal.address(
-            object_id=message.user_id, related_id=message.manager_id
+            object_id=message.object_id, related_id=message.related_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -77,9 +77,9 @@ class RejectUpdateUserManager(ProposalReject):
             store=store,
             signer=signer,
         )
-        if message.manager_id != signer:
+        if message.related_id != signer:
             raise ValueError(
                 "Proposed manager {} is not the transaction signer {}".format(
-                    message.manager_id, signer
+                    message.related_id, signer
                 )
             )

@@ -30,17 +30,20 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.library
 def test_make():
     """Test making the message"""
-    task_id = helper.task.id()
-    role_id = helper.role.id()
+    related_id = helper.task.id()
+    object_id = helper.role.id()
     proposal_id = helper.proposal.id()
     reason = helper.proposal.reason()
     message = rbac.role.task.confirm.make(
-        proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
+        proposal_id=proposal_id,
+        related_id=related_id,
+        object_id=object_id,
+        reason=reason,
     )
-    assert isinstance(message, protobuf.role_transaction_pb2.ConfirmAddRoleTask)
+    assert isinstance(message, protobuf.proposal_transaction_pb2.UpdateProposal)
     assert message.proposal_id == proposal_id
-    assert message.task_id == task_id
-    assert message.role_id == role_id
+    assert message.related_id == related_id
+    assert message.object_id == object_id
     assert message.reason == reason
 
 
@@ -48,17 +51,22 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses():
     """Test making the message addresses"""
-    task_id = helper.task.id()
-    role_id = helper.role.id()
+    related_id = helper.task.id()
+    object_id = helper.role.id()
     proposal_id = helper.proposal.id()
-    proposal_address = rbac.role.task.propose.address(role_id, task_id)
+    proposal_address = rbac.role.task.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
-    relationship_address = rbac.role.task.address(role_id, task_id)
+    relationship_address = rbac.role.task.address(object_id, related_id)
     task_owner_keypair = helper.user.key()
-    task_owner_address = rbac.task.owner.address(task_id, task_owner_keypair.public_key)
+    task_owner_address = rbac.task.owner.address(
+        related_id, task_owner_keypair.public_key
+    )
     signer_user_address = rbac.user.address(task_owner_keypair.public_key)
     message = rbac.role.task.confirm.make(
-        proposal_id=proposal_id, task_id=task_id, role_id=role_id, reason=reason
+        proposal_id=proposal_id,
+        related_id=related_id,
+        object_id=object_id,
+        reason=reason,
     )
 
     inputs, outputs = rbac.role.task.confirm.make_addresses(
@@ -83,8 +91,8 @@ def test_create():
     reason = helper.role.task.propose.reason()
     message = rbac.role.task.confirm.make(
         proposal_id=proposal.proposal_id,
-        role_id=proposal.object_id,
-        task_id=proposal.related_id,
+        object_id=proposal.object_id,
+        related_id=proposal.related_id,
         reason=reason,
     )
 

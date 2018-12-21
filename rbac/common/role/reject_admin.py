@@ -59,12 +59,12 @@ class RejectAddRoleAdmin(ProposalReject):
         inputs, outputs = super().make_addresses(message, signer_keypair)
 
         signer_admin_address = addresser.role.admin.address(
-            message.role_id, signer_keypair.public_key
+            message.object_id, signer_keypair.public_key
         )
         inputs.add(signer_admin_address)
 
         proposal_address = self.address(
-            object_id=message.role_id, related_id=message.user_id
+            object_id=message.object_id, related_id=message.related_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -85,11 +85,11 @@ class RejectAddRoleAdmin(ProposalReject):
         if not addresser.role.admin.exists_in_state_inputs(
             inputs=inputs,
             input_state=input_state,
-            object_id=message.role_id,
+            object_id=message.object_id,
             related_id=signer,
         ):
             raise ValueError(
                 "Signer {} must be an admin of the role {}".format(
-                    signer, message.role_id
+                    signer, message.object_id
                 )
             )

@@ -29,17 +29,20 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.library
 def test_make():
     """Test making the message"""
-    user_id = helper.user.id()
-    task_id = helper.task.id()
+    related_id = helper.user.id()
+    object_id = helper.task.id()
     proposal_id = helper.proposal.id()
     reason = helper.proposal.reason()
     message = rbac.task.owner.confirm.make(
-        proposal_id=proposal_id, user_id=user_id, task_id=task_id, reason=reason
+        proposal_id=proposal_id,
+        related_id=related_id,
+        object_id=object_id,
+        reason=reason,
     )
-    assert isinstance(message, protobuf.task_transaction_pb2.ConfirmAddTaskOwner)
+    assert isinstance(message, protobuf.proposal_transaction_pb2.UpdateProposal)
     assert message.proposal_id == proposal_id
-    assert message.user_id == user_id
-    assert message.task_id == task_id
+    assert message.related_id == related_id
+    assert message.object_id == object_id
     assert message.reason == reason
 
 
@@ -47,20 +50,23 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses():
     """Test making the message addresses"""
-    user_id = helper.user.id()
-    task_id = helper.task.id()
+    related_id = helper.user.id()
+    object_id = helper.task.id()
     proposal_id = helper.proposal.id()
-    proposal_address = rbac.task.owner.propose.address(task_id, user_id)
+    proposal_address = rbac.task.owner.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
-    relationship_address = rbac.task.owner.address(task_id, user_id)
+    relationship_address = rbac.task.owner.address(object_id, related_id)
     signer_keypair = helper.user.key()
 
-    user_address = rbac.user.address(user_id)
-    signer_admin_address = rbac.task.admin.address(task_id, signer_keypair.public_key)
-    signer_owner_address = rbac.task.owner.address(task_id, signer_keypair.public_key)
+    user_address = rbac.user.address(related_id)
+    signer_admin_address = rbac.task.admin.address(object_id, signer_keypair.public_key)
+    signer_owner_address = rbac.task.owner.address(object_id, signer_keypair.public_key)
     signer_user_address = rbac.user.address(signer_keypair.public_key)
     message = rbac.task.owner.confirm.make(
-        proposal_id=proposal_id, user_id=user_id, task_id=task_id, reason=reason
+        proposal_id=proposal_id,
+        related_id=related_id,
+        object_id=object_id,
+        reason=reason,
     )
 
     inputs, outputs = rbac.task.owner.confirm.make_addresses(
@@ -87,8 +93,8 @@ def test_create():
     reason = helper.task.owner.propose.reason()
     message = rbac.task.owner.confirm.make(
         proposal_id=proposal.proposal_id,
-        task_id=proposal.object_id,
-        user_id=proposal.related_id,
+        object_id=proposal.object_id,
+        related_id=proposal.related_id,
         reason=reason,
     )
 
