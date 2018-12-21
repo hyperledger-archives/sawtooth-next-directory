@@ -17,6 +17,7 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
@@ -25,22 +26,28 @@ import Signup from './Signup';
 
 
 const store = customStore.create();
-
-
-it('renders without crashing', () => {
-  const div = document.createElement('div');
+describe('signup component', () => {
 
   const props = {
     history: { push: () => { } },
     isAuthenticated: true,
     recommended: [{ id: '', name: '' }],
+    recommendedPacks: [],
+    recommendedRoles: [],
+    signup: () => {},
   };
+  const wrapper = shallow(<Signup {...props} store={store}/>);
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><Signup {...props} /></BrowserRouter>
-    </Provider>, div
-  );
 
-  ReactDOM.unmountComponentAtNode(div);
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    ReactDOM.render(
+      <BrowserRouter><Signup {...props} store={store}/></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+
+  });
+  wrapper.dive().instance().init();
+  wrapper.dive().instance().componentDidUpdate(props);
 });

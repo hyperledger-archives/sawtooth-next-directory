@@ -14,43 +14,28 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import Actions, { reducer, INITIAL_STATE } from './AuthRedux';
+import Actions, { reducer, INITIAL_STATE } from './UserRedux';
 
-
-test('loginRequest', () => {
-  const username = 'hello';
-  const password = 'world';
-  const state = reducer(INITIAL_STATE,
-    Actions.loginRequest(username, password));
-
-  expect(state.fetching).toBe(true);
-});
-
-
-test('loginSuccess', () => {
-  const isAuthenticated = true;
-  const authData = {
-    authorization: '',
-    user_id: '',
-  };
-  const state = reducer(INITIAL_STATE,
-    Actions.loginSuccess(isAuthenticated, authData));
-
-  expect(state.fetching).toBe(false);
-  expect(state.isAuthenticated).toBe(true);
-  expect(state.error).toBeNull();
-});
-
-
-test('loginFailure', () => {
+test('meFailure', () => {
   const error = '';
-  const state = reducer(INITIAL_STATE, Actions.loginFailure(error));
-
+  const state = reducer(INITIAL_STATE, Actions.userFailure(error));
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');
 });
 
-test('logout', () => {
-  const state = reducer(INITIAL_STATE, Actions.logoutSuccess(null));
+test('resetAll', () => {
+  const state = reducer(INITIAL_STATE, Actions.resetAll(null));
+});
+
+test('meSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.meSuccess([]));
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+test('userSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.userSuccess([]));
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
 });
 

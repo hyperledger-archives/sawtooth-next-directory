@@ -48,12 +48,14 @@ class IndividualsNav extends Component {
         <Menu compact>
           <Menu.Item
             name='roles'
+            id='next-individuals-nav-roles-click'
             active={activeIndex === 0}
             onClick={() => setFlow(0)}>
             Roles
           </Menu.Item>
           <Menu.Item
             name='people'
+            id='next-individuals-nav-people-click'
             active={activeIndex === 1}
             onClick={() => setFlow(1)}>
             People

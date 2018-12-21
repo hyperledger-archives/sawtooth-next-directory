@@ -14,29 +14,23 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import Actions, { reducer, INITIAL_STATE } from './ChatRedux';
 
-import StackedAvatar from './StackedAvatar';
+test('clearMessages', () => {
+  const state = reducer(INITIAL_STATE, Actions.clearMessages(null));
+  expect(state.messages).toBe(null);
+});
 
 
-describe('StackedAvatar component', () => {
+test('messageSend', () => {
+  const argument =  {payload: { message: { text: 'userid' }}};
+  const state = reducer(INITIAL_STATE, Actions.messageSend(argument));
+  expect(state.fetching).toBe(true);
+});
 
-  it('Renders more than 3 components', () => {
-    const div = document.createElement('div');
-
-    const props = {
-      list: ['one', 'two', 'three', 'four', 'five'],
-    };
-
-    ReactDOM.render(
-      <StackedAvatar {...props} />, div
-    );
-    ReactDOM.render(
-      <StackedAvatar list={[]} />, div
-    );
-
-    ReactDOM.unmountComponentAtNode(div);
-  });
-
+test('messageReceive', () => {
+  const Message = JSON.stringify({ message: { length: 'userid' }});
+  const state = reducer(INITIAL_STATE, Actions.messageReceive(Message));
+  expect(state.fetching).toBe(false);
+  expect(state.messages).toBe(null);
 });

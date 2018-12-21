@@ -249,6 +249,7 @@ class ChatForm extends Component {
           <Form id='next-placeholder-chat'
             onSubmit={() => this.handleSend(message)}>
             <Form.Input
+              id='next-chat-change'
               icon
               fluid
               placeholder='Say something...'

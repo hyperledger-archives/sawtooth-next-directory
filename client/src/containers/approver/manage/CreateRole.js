@@ -94,6 +94,7 @@ class CreateRole extends Component {
           <div id='next-approver-manage-content'>
             <Form>
               <Form.Input
+                id='next-approver-manage-content-form'
                 autoFocus
                 error={validName === false}
                 name='name'

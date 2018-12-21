@@ -19,24 +19,29 @@ import React from 'react';
 
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { shallow } from 'enzyme';
 
 
 import RequesterNav from './RequesterNav';
 
 
 describe('RequesterNav component', () => {
+  const props = {
+    activeRole: null,
+    getBase: () => {},
+    getRole: (id) => {},
+    isAuthenticated: true,
+    requests: null,
+    routes: () => {},
+    recommendedPacks: ['packId'],
+    recommendedRoles: [],
+    packs: [{id: 'newPackId'}],
+    getPacks: () => {},
+  };
+  const wrapper = shallow(<RequesterNav {...props} />);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
-    const props = {
-      activeRole: null,
-      getBase: () => {},
-      getRole: (id) => {},
-      isAuthenticated: true,
-      requests: null,
-      routes: () => {},
-    };
 
     ReactDOM.render(
       <BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
@@ -44,4 +49,5 @@ describe('RequesterNav component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
+  wrapper.instance().componentDidUpdate(props);
 });

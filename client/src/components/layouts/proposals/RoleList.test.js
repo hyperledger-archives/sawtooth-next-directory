@@ -38,16 +38,28 @@ describe('RoleList component', () => {
       selectedProposals: ['roleid'],
       selectedRoles: ['roleid'],
       roleFromId: () => {  },
+      userFromId: (userId) => {},
+    };
+
+    const newProps = {
+      getUsers: (collection) => { },
+      openProposalsByUser: { proposal1: '' },
+      users: [{ id: 'proposal1' }],
+      openProposalsByRole: { roleProposal1: [{ id: 'roleid' }] },
+      handleChange: () => { },
+      selectedProposals: ['roleid'],
+      selectedRoles: ['roleid'],
+      roleFromId: () => {  },
     };
 
     ReactDOM.render(
-      <BrowserRouter><RoleList {...props} /></BrowserRouter>, div
+      <BrowserRouter><RoleList {...props} {...newProps}/></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
     const wrapper = shallow(
       <RoleList {...props} />);
-    wrapper.instance().componentDidUpdate(props);
+    wrapper.instance().componentDidUpdate(newProps);
   });
 
 });

@@ -71,9 +71,10 @@ class Signup extends Component {
       isAuthenticated,
       recommendedPacks,
       recommendedRoles } = this.props;
-    isAuthenticated && history.push(
-      utils.createHomeLink(recommendedPacks, recommendedRoles)
-    );
+    if(isAuthenticated) {
+      history.push(utils.createHomeLink(recommendedPacks,
+        recommendedRoles));
+    }
   }
 
 

@@ -17,22 +17,27 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { shallow } from 'enzyme';
 
 
 import RolesList from './RolesList';
 
 
 describe('RolesList component', () => {
+  const props = {
+    activePack: {
+      description: 'pack description',
+      roles: [{ name: 'role name' }],
+    },
+    userFromId: () => {},
+    users: [{ id: 'proposal2'}],
+    roles: [{ id: 'role' }],
+    getRoles: () => {},
+  };
+  const wrapper = shallow(<RolesList {...props} />);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
-    const props = {
-      activeRole: {
-        description: 'pack description',
-        roles: [{ name: 'role name' }],
-      },
-    };
 
     ReactDOM.render(
       <BrowserRouter><RolesList {...props} /></BrowserRouter>, div
@@ -40,5 +45,7 @@ describe('RolesList component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
+  wrapper.instance().componentDidUpdate(props);
+  wrapper.instance().renderUserInfo();
+  wrapper.instance().renderRoleSegment();
 });

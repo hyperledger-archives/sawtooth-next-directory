@@ -14,7 +14,11 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { createSlug, groupBy, merge } from './Utils';
+import { createSlug,
+  groupBy,
+  merge,
+  createHomeLink,
+  arraysEqual } from './Utils';
 
 
 describe('Utils Service', () => {
@@ -32,6 +36,15 @@ describe('Utils Service', () => {
   test('test merge', () => {
     const array1 = ['firstname'], array2 = ['lastname'];
     expect(merge(array1, array2)).toEqual([...array1, ...array2]);
+
+  });
+
+  test('test arraysEqual', () => {
+    const array1 = ['one'], array2 = ['two'], array3 = ['three', 'four'];
+    expect(arraysEqual([], [])).toEqual(true);
+    expect(arraysEqual(array1, array2)).toEqual(false);
+    expect(arraysEqual(array1, null)).toEqual(false);
+    expect(arraysEqual(array1, array3)).toEqual(false);
 
   });
 

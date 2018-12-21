@@ -27,6 +27,8 @@ describe('ChatForm component', () => {
   const props = {
     submit: (username, password) => { },
     send: () => {},
+    messages: [{buttons: [{title: 'title', payload: 'payload'}]}],
+    approve: () => jest.fn,
   };
   const wrapper = shallow(<ChatForm {...props} />);
   it('renders without crashing', () => {
@@ -44,6 +46,27 @@ describe('ChatForm component', () => {
 
   test('form  button click event', () => {
     wrapper.find('#next-name-chat-submit').simulate('click');
+  });
+
+  test('form input handle change event', () => {
+    const spy = jest.spyOn(wrapper.instance(), 'handleChange');
+    const args = {name: '', value: ''}, event = {};
+
+    wrapper.instance().handleChange(event, args);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('approve action change event', () => {
+    const spy = jest.spyOn(wrapper.instance(), 'handleApprove');
+    wrapper.instance().handleApprove(1);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('create payload function', () => {
+    const spy = jest.spyOn(wrapper.instance(), 'createPayload');
+    wrapper.instance()
+      .createPayload('/send_recommended{"reason": "I need access."}');
+    expect(spy).toHaveBeenCalled();
   });
 
 });

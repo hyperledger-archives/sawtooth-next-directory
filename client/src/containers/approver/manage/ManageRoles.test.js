@@ -21,7 +21,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 
 import * as customStore from '../../../customStore';
-import Manage from './Manage';
+import ManageRoles from './ManageRoles';
 
 
 const store = customStore.create();
@@ -32,7 +32,7 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Manage/></BrowserRouter>
+      <BrowserRouter><ManageRoles/></BrowserRouter>
     </Provider>, div
   );
 

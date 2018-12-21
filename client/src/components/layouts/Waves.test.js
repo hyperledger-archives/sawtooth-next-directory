@@ -17,6 +17,7 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import {shallow } from 'enzyme';
 
 
 
@@ -24,20 +25,29 @@ import Waves from './Waves';
 
 
 describe('Waves component', () => {
+  const props = {
+    location: { pathname: 'route' },
+    isAnimating: false,
+    stopAnimation: () => { },
+  };
+
+  const newProps = {
+    location: { pathname: 'alternate/route' },
+    isAnimating: false,
+    stopAnimation: () => { },
+  };
+
+  const wrapper = shallow(<BrowserRouter><Waves {...props} /> </BrowserRouter>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    const props = {
-      location: { pathname: 'route' },
-      isAnimating: false,
-      stopAnimation: () => { },
-    };
 
     ReactDOM.render(
       <BrowserRouter><Waves {...props} /></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
+    wrapper.instance().setState({});
   });
 
 });

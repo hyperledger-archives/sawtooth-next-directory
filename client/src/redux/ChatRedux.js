@@ -49,6 +49,7 @@ export default Creators;
 export const INITIAL_STATE = Immutable({
   fetching:         null,
   messages:         null,
+  error:            null,
 });
 
 
