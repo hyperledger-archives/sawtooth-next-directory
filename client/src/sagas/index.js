@@ -93,7 +93,7 @@ function * sagas () {
       ApproverTypes.CONFIRMED_PROPOSALS_REQUEST, getConfirmedProposals, api
     ),
     takeLatest(
-      ApproverTypes.ORGANIZATION_REQUEST, getRelationships, FixtureAPI
+      ApproverTypes.ORGANIZATION_REQUEST, getRelationships, api
     ),
 
     // Auth

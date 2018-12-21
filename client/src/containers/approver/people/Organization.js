@@ -30,6 +30,7 @@ import './Organization.css';
 class Organization extends Component {
 
   static propTypes = {
+    id:                 PropTypes.string,
     getOrganization:    PropTypes.func,
     handleUserSelect:   PropTypes.func,
     getUsers:           PropTypes.func,
@@ -45,11 +46,9 @@ class Organization extends Component {
    * Entry point to perform tasks required to render component.
    */
   componentDidMount () {
-    const { getOrganization, handleUserSelect } = this.props;
-
-    // TODO: Use until endpoint ready
-    getOrganization('fcb9a003-75d4-48ad-a5fd-aef5c8a56744');
-    handleUserSelect('fcb9a003-75d4-48ad-a5fd-aef5c8a56744');
+    const { getOrganization, handleUserSelect, id } = this.props;
+    getOrganization(id);
+    handleUserSelect(id);
   }
 
 
@@ -62,7 +61,6 @@ class Organization extends Component {
     const { getUsers, organization } = this.props;
     if (prevProps.organization !== organization)
       getUsers(Object.values(organization).flat());
-
   }
 
 
@@ -105,8 +103,8 @@ class Organization extends Component {
     const { organization } = this.props;
     return (
       <div className='pull-right' id='next-organization-peers'>
-        { organization.peers.map((userId, index) => (
-          <div className='next-organization-peer-item' key={userId}>
+        { organization.peers && organization.peers.map((userId, index) => (
+          <div className='next-organization-peer-item' key={index}>
             <Image
               src={`http://i.pravatar.cc/300?img=${index}`}
               avatar
@@ -126,21 +124,22 @@ class Organization extends Component {
     const { organization } = this.props;
     return (
       <div id='next-organization-managers'>
-        { organization.managers.map((userId, index) => (
-          <div key={userId} className='next-organization-manager-item'>
-            <div className='pull-left'>
-              <Image
-                src={`http://i.pravatar.cc/300?img=${index}`}
-                avatar
-                size='mini'/>
-              <div className='next-organization-user-info'>
-                <h4>{this.userName(userId)}</h4>
-                {this.userEmail(userId)}
+        { organization.managers &&
+          organization.managers.map((userId, index) => (
+            <div key={index} className='next-organization-manager-item'>
+              <div className='pull-left'>
+                <Image
+                  src={`http://i.pravatar.cc/300?img=${index}`}
+                  avatar
+                  size='mini'/>
+                <div className='next-organization-user-info'>
+                  <h4>{this.userName(userId)}</h4>
+                  {this.userEmail(userId)}
+                </div>
               </div>
+              { index === 0 && this.renderPeers() }
             </div>
-            { index === 0 && this.renderPeers() }
-          </div>
-        ))}
+          ))}
       </div>
     );
   }
@@ -154,21 +153,22 @@ class Organization extends Component {
     const { handleUserSelect, organization } = this.props;
     return (
       <div id='next-organization-direct-reports'>
-        { organization.direct_reports.map((userId, index) => (
-          <div
-            onClick={() => handleUserSelect(userId)}
-            className='next-organization-direct-report-item'
-            key={userId}>
-            <Image
-              src={`http://i.pravatar.cc/300?img=${index}`}
-              avatar
-              size='mini'/>
-            <div className='next-organization-user-info'>
-              <h4>{this.userName(userId)}</h4>
-              {this.userEmail(userId)}
+        { organization.direct_reports &&
+          organization.direct_reports.map((userId, index) => (
+            <div
+              onClick={() => handleUserSelect(userId)}
+              className='next-organization-direct-report-item'
+              key={index}>
+              <Image
+                src={`http://i.pravatar.cc/300?img=${index}`}
+                avatar
+                size='mini'/>
+              <div className='next-organization-user-info'>
+                <h4>{this.userName(userId)}</h4>
+                {this.userEmail(userId)}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     );
   }
@@ -208,7 +208,6 @@ class Organization extends Component {
       transition ='next-organization-managers-show';
     else if (showManagers !== null)
       transition = 'next-organization-managers-hide';
-
 
     return (
       <div>

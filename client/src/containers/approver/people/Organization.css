@@ -55,6 +55,9 @@ limitations under the License.
   color: var(--magenta);
   margin: 0 10px;
   padding: 0 10px;
+  max-width: 246px;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .next-organization-user-info h4 {

@@ -112,8 +112,9 @@ class People extends Component {
               setFlow={this.setFlow}/>
             <div>
               { activeIndex === 0 &&
-                <OrganizationList {...this.props}/>
-                // <h1>All people</h1>
+                <OrganizationList
+                  handleUserSelect={this.handleUserSelect}
+                  {...this.props}/>
               }
               { activeIndex === 1 &&
                 <Organization
@@ -128,8 +129,7 @@ class People extends Component {
           width={4}>
           <Chat
             disabled
-            type='APPROVER'
-            organization
+            type='PEOPLE'
             handleOnBehalfOf={this.handleOnBehalfOf}
             activeUser={activeUser}
             {...this.props}/>

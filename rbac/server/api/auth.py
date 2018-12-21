@@ -59,7 +59,6 @@ async def authorize(request):
     """
     required_fields = ["id", "password"]
     utils.validate_fields(required_fields, request.json)
-
     password = request.json.get("password")
     hashed_pwd = hashlib.sha256(password.encode("utf-8")).hexdigest()
     auth_info = await auth_query.fetch_info_by_username(

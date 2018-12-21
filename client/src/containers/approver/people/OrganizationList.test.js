@@ -30,6 +30,7 @@ describe('OrganizationList component', () => {
     const props = {
       getAllUsers: () => {},
       getUsers: (collection) => {  },
+      handleUserSelect: () => {},
       members: ['props'],
       owners: [''],
       users: [{ id: 'proposal1' }],
@@ -38,6 +39,7 @@ describe('OrganizationList component', () => {
     const newProps = {
       getAllUsers: () => {},
       getUsers: (collection) => {  },
+      handleUserSelect: () => {},
       members: ['newProps'],
       owners: [''],
       users: [{ id: 'proposal1' }],

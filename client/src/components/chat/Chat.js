@@ -165,7 +165,6 @@ class Chat extends Component {
       disabled,
       handleChange,
       handleOnBehalfOf,
-      organization,
       selectedProposal,
       selectedRoles,
       selectedUsers,
@@ -197,7 +196,7 @@ class Chat extends Component {
           </div>
         }
 
-        { type === 'APPROVER' && organization &&
+        { type === 'PEOPLE' &&
           <div id='next-chat-users-selection-container'>
             { activeUser &&
               <div id='next-chat-organization-heading'>
@@ -301,14 +300,16 @@ class Chat extends Component {
           </div>
         }
 
-        <div id='next-chat-conversation-dock'>
-          <ChatForm
-            {...this.props}
-            disabled={disabled}
-            approve={this.manualApprove}
-            reject={this.manualReject}
-            send={(message) => this.send(message)}/>
-        </div>
+        { type !== 'PEOPLE' &&
+          <div id='next-chat-conversation-dock'>
+            <ChatForm
+              {...this.props}
+              disabled={disabled}
+              approve={this.manualApprove}
+              reject={this.manualReject}
+              send={(message) => this.send(message)}/>
+          </div>
+        }
       </div>
     );
   }

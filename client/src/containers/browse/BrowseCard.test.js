@@ -33,6 +33,8 @@ describe('BrowseCard component', () => {
         name: '',
         category: '',
         admins: [],
+        members: [],
+        owners: [],
       },
     };
 
@@ -48,6 +50,8 @@ describe('BrowseCard component', () => {
         name: '',
         category: '',
         admins: [],
+        members: [],
+        owners: [],
       },
     };
 

@@ -19458,6 +19458,10 @@ ol.ui.horizontal.list li:before,
   box-shadow: none;
 }
 
+.dark .ui.segment.minimal h4 {
+  color: white;
+}
+
 .ui.segment.light {
   background: #f7f7f7;
   -webkit-box-shadow: none;
@@ -21556,6 +21560,22 @@ ol.ui.horizontal.list li:before,
 .form-inverted .ui.form .field .error input[type="text"],
 .form-inverted .ui.form .field .error input[type="email"] {
   border-color: #E0B4B4;
+}
+
+.ui.form .icon input::-webkit-input-placeholder {
+  color: #00000059;
+}
+
+.ui.form .icon input:-ms-input-placeholder {
+  color: #00000059;
+}
+
+.ui.form .icon input::-ms-input-placeholder {
+  color: #00000059;
+}
+
+.ui.form .icon input::placeholder {
+  color: #00000059;
 }
 
 /*******************************
