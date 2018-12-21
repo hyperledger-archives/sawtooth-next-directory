@@ -23,6 +23,7 @@ functionality is required */
 import React, { Component } from 'react';
 import { Button, Form, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+import * as utils from '../../services/Utils';
 
 
 /**
@@ -65,7 +66,9 @@ class ChatForm extends Component {
         this.setState({
           isDraft: messages[0].buttons[0].payload.startsWith('/send'),
         });
-      } catch {}
+      } catch {
+        utils.noop();
+      }
     }
 
   }

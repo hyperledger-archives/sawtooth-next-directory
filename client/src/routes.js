@@ -43,6 +43,7 @@ import ManageRoles from './containers/approver/manage/ManageRoles';
 import People from './containers/approver/people/People';
 import Delegated from './containers/approver/Delegated';
 import Expired from './containers/approver/Expired';
+import PeopleApproval from './containers/approver/people/PeopleApproval';
 
 
 const routes = (props) => [
@@ -129,6 +130,12 @@ const routes = (props) => [
   {
     path:   '/approval/people',
     main:   (rest) => <People {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/people/:id/pending',
+    main:   (rest) => <PeopleApproval {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

@@ -24,12 +24,20 @@ LOGGER = logging.getLogger(__name__)
 
 
 async def fetch_user_resource(conn, user_id, head_block_num):
+    """Database quesry to get data on an individual user."""
+    # user = r.table("auth".get_all(user_id, index="user_id")).coerce_to('object').run(conn)
+    # user = r.table("metadata").get_all(user['email'], index="user_principal_name").coerce_to('object').run(conn)
     resource = (
         await r.table("users")
         .get_all(user_id, index="user_id")
         .merge(
             {
                 "id": r.row["user_id"],
+                "email": r.db("rbac")
+                .table("auth")
+                .filter({"user_id": user_id})
+                .get_field("email")
+                .coerce_to("array"),
                 "subordinates": fetch_user_ids_by_manager(user_id, head_block_num),
                 "ownerOf": r.union(
                     fetch_relationships_by_id(
@@ -72,6 +80,7 @@ async def fetch_user_resource(conn, user_id, head_block_num):
 
 
 async def fetch_all_user_resources(conn, head_block_num, start, limit):
+    """Database query to compile general data on all user's in database."""
     return (
         await r.table("users")
         .order_by(index="user_id")
@@ -80,6 +89,12 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
             lambda user: user.merge(
                 {
                     "id": user["user_id"],
+                    "next_id": user["id"],
+                    "email": r.db("rbac")
+                    .table("metadata")
+                    .filter({"user_id": user["user_id"]})
+                    .get_field("user_principal_name")
+                    .coerce_to("array"),
                     "subordinates": fetch_user_ids_by_manager(
                         user["user_id"], head_block_num
                     ),
@@ -123,9 +138,104 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
 
 
 def fetch_user_ids_by_manager(manager_id, head_block_num):
+    """Fetch all users that have the same manager."""
     return (
         r.table("users")
         .filter(lambda user: (manager_id == user["manager_id"]))
         .get_field("user_id")
         .coerce_to("array")
     )
+
+
+async def fetch_peers(conn, user_id):
+    """Fetch a user's peers."""
+    user_object = await (
+        r.db("rbac")
+        .table("users")
+        .filter({"user_id": user_id})
+        .coerce_to("array")
+        .run(conn)
+    )
+    if "manager_id" in user_object[0]:
+        if user_object[0]["manager_id"]:
+            manager_id = user_object[0]["manager_id"]
+            peers = await (
+                r.db("rbac")
+                .table("users")
+                .filter({"manager_id": manager_id})
+                .coerce_to("array")
+                .run(conn)
+            )
+            peer_list = []
+            for peer in peers:
+                if peer["user_id"] != user_id:
+                    peer_list.append(peer["user_id"])
+            return peer_list
+    return []
+
+
+async def fetch_manager_chain(conn, user_id):
+    """Get a user's manager chain up to 5 manager's high."""
+    manager_chain = []
+    for i in range(5):
+        user_object = await (
+            r.db("rbac")
+            .table("users")
+            .filter({"user_id": user_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        if "manager_id" in user_object[0]:
+            if user_object[0]["manager_id"]:
+                manager_id = user_object[0]["manager_id"]
+                manager_chain.append(manager_id)
+                user_id = manager_id
+            else:
+                break
+        else:
+            break
+    return manager_chain
+
+
+def get_internal_id(next_id):
+    """Function to grab the NEXT user_id from an id."""
+    return (
+        r.table("users").filter({"id": next_id}).get_field("user_id").coerce_to("array")
+    )
+
+
+async def fetch_user_relationships(conn, user_id, head_block_num):
+    """Database Query to get an indivdual's surounding org connections."""
+    resource = (
+        await r.table("users")
+        .get_all(user_id, index="user_id")
+        .merge(
+            {
+                "id": r.row["user_id"],
+                "direct_reports": fetch_user_ids_by_manager(user_id, head_block_num),
+            }
+        )
+        .without(
+            "user_id",
+            "start_block_num",
+            "end_block_num",
+            "metadata",
+            "email",
+            "key",
+            "manager_id",
+            "name",
+            "remote_id",
+            "username",
+        )
+        .coerce_to("array")
+        .run(conn)
+    )
+    peers = await fetch_peers(conn, user_id)
+    managers = await fetch_manager_chain(conn, user_id)
+
+    resource[0]["peers"] = peers
+    resource[0]["managers"] = managers
+    try:
+        return resource[0]
+    except IndexError:
+        raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))

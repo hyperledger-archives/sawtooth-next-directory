@@ -34,6 +34,11 @@
   box-shadow: none;
 }
 
+.dark .ui.segment.minimal h3,
+.dark .ui.segment.minimal h4 {
+  color: white;
+}
+
 .ui.segment.light {
   background: #f7f7f7;
   box-shadow: none;

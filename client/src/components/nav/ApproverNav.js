@@ -35,10 +35,12 @@ import * as utils from '../../services/Utils';
 class ApproverNav extends Component {
 
   static propTypes = {
+    onBehalfOf:             PropTypes.string,
     openProposalsCount:     PropTypes.number,
     recommendedPacks:       PropTypes.array,
     recommendedRoles:       PropTypes.array,
     startAnimation:         PropTypes.func,
+    users:                  PropTypes.array,
   };
 
 
@@ -48,7 +50,13 @@ class ApproverNav extends Component {
    * @returns {JSX}
    */
   renderLists () {
-    const { openProposalsCount } = this.props;
+    const { openProposalsCount, onBehalfOf, users } = this.props;
+
+    let foo = users && users.find(user => user.id === onBehalfOf);
+
+    let bar = foo ? [
+      { name: foo && foo.name, slug: foo && `${foo.id}/pending` },
+    ] : [];
 
     return (
       <div id='next-approver-nav-lists-container'>
@@ -79,9 +87,11 @@ class ApproverNav extends Component {
           </Link>
         </h4>
         <h4>
-          <Link to='/approval/people'>
-            People
-          </Link>
+          <NavList
+            titleIsLink
+            listTitle='People'
+            list={bar}
+            route='/approval/people'/>
         </h4>
         <h4>
           <Link to='/approval/manage'>

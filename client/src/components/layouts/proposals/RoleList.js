@@ -101,8 +101,6 @@ class RoleList extends Component {
    * @returns {string}
    */
   roleName = (roleId) => {
-    // Debugger;;
-    console.log('hit');
     const { roleFromId } = this.props;
     const role = roleFromId(roleId);
     return role && role.name;

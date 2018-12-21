@@ -55,6 +55,9 @@ limitations under the License.
   color: var(--magenta);
   margin: 0 10px;
   padding: 0 10px;
+  max-width: 246px;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .next-organization-user-info h4 {
@@ -86,6 +89,7 @@ limitations under the License.
 
 #next-organization-direct-reports {
   margin: 22px 0 0 70px;
+  max-width: 300px;
   position: relative;
 }
 
@@ -104,6 +108,7 @@ limitations under the License.
 }
 
 .next-organization-direct-report-item {
+  cursor: pointer;
   margin-bottom: 20px;
 }
 

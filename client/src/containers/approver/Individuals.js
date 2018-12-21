@@ -29,7 +29,7 @@ import { syncAll } from './IndividualsHelper';
 
 
 import './Individuals.css';
-import glyph from '../../images/header-glyph-individual.png';
+import glyph from '../../images/header-glyph-individual-inverted.png';
 
 
 /**
@@ -58,8 +58,8 @@ class Individuals extends Component {
    * component. On load, get open proposals.
    */
   componentDidMount () {
-    const { getOpenProposals, openProposals, onBehalfOf } = this.props;
-    !openProposals && getOpenProposals(onBehalfOf);
+    const { getOpenProposals } = this.props;
+    getOpenProposals();
     document.querySelector('body').classList.add('minimal');
   }
 

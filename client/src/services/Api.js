@@ -104,8 +104,8 @@ const create = (baseURL =
     const id = storage.get('user_id');
     return api.get(`users/${id}/proposals/confirmed`);
   };
-  const getOpenProposals = () => {
-    const id = storage.get('user_id');
+  const getOpenProposals = (id) => {
+    id = id || storage.get('user_id');
     return api.get(`users/${id}/proposals/open`);
   };
   const getRecommended = () => {
@@ -125,7 +125,7 @@ const create = (baseURL =
   const getRelationships = (id) => api.get(`users/${id}/relationships`);
   const getRoot = () => api.get('');
   const getUser = (id) => api.get(`users/${id}`);
-  const getUsers = () => api.get('users');
+  const getUsers = () => api.get('users', { limit: 15 });
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const search = (query) => api.post('', { q: query });

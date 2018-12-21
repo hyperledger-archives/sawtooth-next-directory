@@ -53,7 +53,7 @@ class ChatMessage extends Component {
 
     return (
       messages &&
-      messages.map((message, index) => (
+      messages.map((message, index) =>
         this.isMe(message) ?
           message.text &&
           <div className='next-chat-message-right' key={index}>
@@ -75,7 +75,7 @@ class ChatMessage extends Component {
               <div>{message.text}</div>
             </Segment>
           </div>
-      ))
+      )
     );
   }
 }

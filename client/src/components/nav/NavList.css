@@ -28,6 +28,8 @@ limitations under the License.
 
 .next-nav-list-content .header {
   overflow: hidden;
+  padding-left: 20px;
+  text-indent: 0;
   text-overflow: ellipsis;
 }
 

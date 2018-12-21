@@ -33,7 +33,8 @@ import { toast } from 'react-toastify';
  */
 export function * getOpenProposals (api, action) {
   try {
-    const res = yield call(api.getOpenProposals);
+    const { id } = action;
+    const res = yield call(api.getOpenProposals, id);
     yield put(ApproverActions.openProposalsSuccess(res.data));
   } catch (err) {
     console.error(err);
@@ -190,7 +191,7 @@ export function * getRelationships (api, action) {
     const { id } = action;
     const res = yield call(api.getRelationships, id);
     res.ok ?
-      yield put(ApproverActions.organizationSuccess(res.data)) :
+      yield put(ApproverActions.organizationSuccess(res.data.data)) :
       yield put(ApproverActions.organizationFailure(res.data.error));
   } catch (err) {
     console.error(err);

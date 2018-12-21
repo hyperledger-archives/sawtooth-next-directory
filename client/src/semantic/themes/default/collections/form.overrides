@@ -29,3 +29,7 @@
 .form-inverted .ui.form .field .error input[type="email"] {
   border-color: @formErrorBorder;
 }
+
+.ui.form .icon input::placeholder {
+  color: #00000059;
+}

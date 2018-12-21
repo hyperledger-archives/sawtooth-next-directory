@@ -33,6 +33,8 @@ class OrganizationList extends Component {
     fetchingAllUsers:   PropTypes.bool,
     getAllUsers:        PropTypes.func,
     getUsers:           PropTypes.func,
+    handleUserSelect:   PropTypes.func,
+    id:                 PropTypes.string,
     members:            PropTypes.array,
     owners:             PropTypes.array,
     users:              PropTypes.array,
@@ -44,8 +46,9 @@ class OrganizationList extends Component {
    * Get first page of all users.
    */
   componentDidMount   () {
-    const { getAllUsers, users } = this.props;
+    const { getAllUsers, handleUserSelect, id, users } = this.props;
     (!users || (users && users.length < 99)) && getAllUsers();
+    handleUserSelect(id);
   }
 
 
@@ -61,22 +64,29 @@ class OrganizationList extends Component {
 
   /**
    * Render segment containing user info
-   * @param {object} user User object
    * @returns {JSX}
    */
-  renderUserSegment (user) {
+  renderUserSegment () {
+    const { handleUserSelect, users } = this.props;
     return (
-      <Segment key={user.id} className='no-padding minimal'>
-        <Header as='h4' className='next-member-list-user-info'>
-          <div>
-            <Image src={`http://i.pravatar.cc/150?u=${user.id}`} avatar/>
-          </div>
-          <div>
-            {user.name}
-            <Header.Subheader>{user.email}</Header.Subheader>
-          </div>
-        </Header>
-      </Segment>
+      users && users.map((user, index) => (
+        <Segment
+          key={index}
+          onClick={() => handleUserSelect(user.id)}
+          className='no-padding minimal'>
+          <Header as='h3' className='next-member-list-user-info'>
+            <div>
+              <Image src={`http://i.pravatar.cc/150?u=${user.id}`} avatar/>
+            </div>
+            <div>
+              {user.name}
+              {user.email &&
+                <Header.Subheader>{user.email}</Header.Subheader>
+              }
+            </div>
+          </Header>
+        </Segment>
+      ))
     );
   }
 
@@ -86,7 +96,7 @@ class OrganizationList extends Component {
    * @returns {JSX}
    */
   render () {
-    const { fetchingAllUsers, users } = this.props;
+    const { fetchingAllUsers } = this.props;
 
     if (fetchingAllUsers) {
       return (
@@ -98,9 +108,7 @@ class OrganizationList extends Component {
 
     return (
       <div id='next-approver-people-list-container'>
-        { users && users.map((user) => (
-          this.renderUserSegment(user)
-        )) }
+        {this.renderUserSegment()}
       </div>
     );
   }

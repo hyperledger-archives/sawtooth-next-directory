@@ -14,14 +14,13 @@
 # ------------------------------------------------------------------------------
 
 from uuid import uuid4
-
+import logging
 import hashlib
 
 from sanic import Blueprint
 from sanic.response import json
 
 from rbac.common import rbac
-from rbac.common.logs import get_logger
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
 
@@ -37,7 +36,7 @@ from rbac.server.db import users_query
 
 from rbac.common.crypto.secrets import generate_api_key
 
-LOGGER = get_logger(__name__)
+LOGGER = logging.getLogger(__name__)
 USERS_BP = Blueprint("users")
 
 
@@ -45,6 +44,7 @@ USERS_BP = Blueprint("users")
 @authorized()
 async def fetch_all_users(request):
     head_block = await utils.get_request_block(request)
+    LOGGER.info(head_block)
     start, limit = utils.get_request_paging_info(request)
     user_resources = await users_query.fetch_all_user_resources(
         request.app.config.DB_CONN, head_block.get("num"), start, limit
@@ -105,11 +105,48 @@ async def create_new_user(request):
     return create_user_response(request, txn_key.public_key)
 
 
+@USERS_BP.post("api/demo/users")
+async def create_new_user_demo(request):
+    """Creating a user for authorization table from existing entries."""
+    required_fields = ["name", "username", "password", "email", "id", "user_id"]
+    utils.validate_fields(required_fields, request.json)
+
+    hashed_password = hashlib.sha256(
+        request.json.get("password").encode("utf-8")
+    ).hexdigest()
+
+    auth_entry = {
+        "user_id": request.json.get("user_id"),
+        "id": request.json.get("id"),
+        "hashed_password": hashed_password,
+        # "encrypted_private_key": encrypted_private_key,
+        "username": request.json.get("username"),
+        "email": request.json.get("email"),
+    }
+    LOGGER.info(auth_entry)
+    await auth_query.create_auth_entry(request.app.config.DB_CONN, auth_entry)
+
+    # Send back success response
+    return create_user_response(request, request.get("id"))
+
+
 @USERS_BP.get("api/users/<user_id>")
 @authorized()
 async def get_user(request, user_id):
     head_block = await utils.get_request_block(request)
     user_resource = await users_query.fetch_user_resource(
+        request.app.config.DB_CONN, user_id, head_block.get("num")
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN, request.url, user_resource, head_block
+    )
+
+
+@USERS_BP.get("api/users/<user_id>/relationships")
+@authorized()
+async def get_user_realtionships(request, user_id):
+    head_block = await utils.get_request_block(request)
+    user_resource = await users_query.fetch_user_relationships(
         request.app.config.DB_CONN, user_id, head_block.get("num")
     )
     return await utils.create_response(

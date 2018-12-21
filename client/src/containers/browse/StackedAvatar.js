@@ -47,7 +47,7 @@ export default class StackedAvatar extends Component {
         if (index === 3) {
           return (
             <div key={index} className='next-avatar-element'>
-              <Icon inverted name='add' size='tiny' />
+              <Icon inverted name='add' size='tiny'/>
             </div>
           );
         }
@@ -55,7 +55,7 @@ export default class StackedAvatar extends Component {
           <div key={index} className='next-avatar-element'>
             <Image
               avatar
-              src='http://i.pravatar.cc/500' />
+              src={`http://i.pravatar.cc/150?u=${index}`}/>
           </div>
         );
 
