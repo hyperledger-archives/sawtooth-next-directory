@@ -19,88 +19,9 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.base.base_processor import BaseTransactionProcessor
-from rbac.processor.role import role_admins, roles, role_members, role_owners
-from rbac.processor.role import role_tasks
-from rbac.processor.task import task_admins
-from rbac.processor.task import task_owners, tasks
-from rbac.processor.user import users
-from rbac.processor.user.user_manager_proposal import apply_user_confirm
-from rbac.processor.user.user_manager_proposal import apply_user_propose
-from rbac.processor.user.user_manager_proposal import apply_user_reject
 
 
 LOGGER = logging.getLogger(__name__)
-
-ROLE_PROPOSE = [
-    RBACPayload.PROPOSE_ADD_ROLE_TASK,
-    RBACPayload.PROPOSE_ADD_ROLE_MEMBER,
-    RBACPayload.PROPOSE_ADD_ROLE_OWNER,
-    RBACPayload.PROPOSE_ADD_ROLE_ADMIN,
-    RBACPayload.PROPOSE_REMOVE_ROLE_TASK,
-    RBACPayload.PROPOSE_REMOVE_ROLE_MEMBER,
-    RBACPayload.PROPOSE_REMOVE_ROLE_OWNER,
-    RBACPayload.PROPOSE_REMOVE_ROLE_ADMIN,
-]
-
-
-ROLE_CONFIRM = [
-    RBACPayload.CONFIRM_ADD_ROLE_TASK,
-    RBACPayload.CONFIRM_ADD_ROLE_MEMBER,
-    RBACPayload.CONFIRM_ADD_ROLE_OWNER,
-    RBACPayload.CONFIRM_ADD_ROLE_ADMIN,
-    RBACPayload.CONFIRM_REMOVE_ROLE_TASK,
-    RBACPayload.CONFIRM_REMOVE_ROLE_MEMBER,
-    RBACPayload.CONFIRM_REMOVE_ROLE_OWNER,
-    RBACPayload.CONFIRM_REMOVE_ROLE_ADMIN,
-]
-
-
-ROLE_REJECT = [
-    RBACPayload.REJECT_ADD_ROLE_TASK,
-    RBACPayload.REJECT_ADD_ROLE_MEMBER,
-    RBACPayload.REJECT_ADD_ROLE_OWNER,
-    RBACPayload.REJECT_ADD_ROLE_ADMIN,
-    RBACPayload.REJECT_REMOVE_ROLE_TASK,
-    RBACPayload.REJECT_REMOVE_ROLE_MEMBER,
-    RBACPayload.REJECT_REMOVE_ROLE_OWNER,
-    RBACPayload.REJECT_REMOVE_ROLE_ADMIN,
-]
-
-
-TASK_PROPOSE = [
-    RBACPayload.PROPOSE_ADD_TASK_ADMIN,
-    RBACPayload.PROPOSE_ADD_TASK_OWNER,
-    RBACPayload.PROPOSE_REMOVE_TASK_OWNER,
-    RBACPayload.PROPOSE_REMOVE_TASK_ADMIN,
-]
-
-
-TASK_CONFIRM = [
-    RBACPayload.CONFIRM_ADD_TASK_ADMIN,
-    RBACPayload.CONFIRM_ADD_TASK_OWNER,
-    RBACPayload.CONFIRM_REMOVE_TASK_OWNER,
-    RBACPayload.CONFIRM_REMOVE_TASK_ADMIN,
-]
-
-
-TASK_REJECT = [
-    RBACPayload.REJECT_ADD_TASK_ADMIN,
-    RBACPayload.REJECT_ADD_TASK_OWNER,
-    RBACPayload.REJECT_REMOVE_TASK_OWNER,
-    RBACPayload.REJECT_REMOVE_TASK_ADMIN,
-]
-
-
-USER_PROPOSE = [RBACPayload.PROPOSE_UPDATE_USER_MANAGER]
-
-
-USER_CONFIRM = [RBACPayload.CONFIRM_UPDATE_USER_MANAGER]
-
-
-USER_REJECT = [RBACPayload.REJECT_UPDATE_USER_MANAGER]
-
-
-CREATE = [RBACPayload.CREATE_USER, RBACPayload.CREATE_ROLE, RBACPayload.CREATE_TASK]
 
 
 class RBACTransactionHandler(object):
@@ -126,6 +47,9 @@ class RBACTransactionHandler(object):
 
     def apply(self, transaction, state):
         try:
+            if transaction.payload == "ping".encode("utf-8"):
+                LOGGER.info("Got a ping!")
+                return
             payload = RBACPayload()
             payload.ParseFromString(transaction.payload)
 
@@ -133,188 +57,14 @@ class RBACTransactionHandler(object):
                 return self._processor.handle_message(
                     header=transaction.header, payload=payload, context=state
                 )
+            raise InvalidTransaction(
+                "Transaction processor has no registered handler for message type {}".format(
+                    payload.message_type
+                )
+            )
         except (ValueError, KeyError) as err:
             raise InvalidTransaction(err)
         except Exception as err:  # pylint: disable=broad-except
             LOGGER.exception("Unexpected processor %s exception", type(err))
             LOGGER.exception(err)
             raise InvalidTransaction(err)
-
-        if payload.message_type in CREATE:
-            apply_create(transaction.header, payload, state)
-
-        elif payload.message_type in USER_PROPOSE:
-            apply_user_propose(transaction.header, payload, state)
-
-        elif payload.message_type in USER_CONFIRM:
-            apply_user_confirm(transaction.header, payload, state)
-
-        elif payload.message_type in USER_REJECT:
-            apply_user_reject(transaction.header, payload, state)
-
-        elif payload.message_type in ROLE_PROPOSE:
-            apply_role_propose(transaction.header, payload, state)
-
-        elif payload.message_type in ROLE_CONFIRM:
-            apply_role_confirm(transaction.header, payload, state)
-
-        elif payload.message_type in ROLE_REJECT:
-            apply_role_reject(transaction.header, payload, state)
-
-        elif payload.message_type in TASK_PROPOSE:
-            apply_task_propose(transaction.header, payload, state)
-
-        elif payload.message_type in TASK_CONFIRM:
-            apply_task_confirm(transaction.header, payload, state)
-
-        elif payload.message_type in TASK_REJECT:
-            apply_task_reject(transaction.header, payload, state)
-
-        else:
-            raise InvalidTransaction("Message type unknown.")
-
-
-def apply_create(header, payload, state):
-    if payload.message_type == RBACPayload.CREATE_USER:
-        users.new_user(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CREATE_ROLE:
-        roles.new_role(payload, state)
-
-    elif payload.message_type == RBACPayload.CREATE_TASK:
-        tasks.new_task(payload, state)
-
-    else:
-        raise InvalidTransaction("Message type unknown.")
-
-
-def apply_role_propose(header, payload, state):
-    if payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_ADMIN:
-        role_admins.apply_propose(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_OWNER:
-        role_owners.apply_propose(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_MEMBER:
-        role_members.apply_propose(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_ROLE_TASK:
-        role_tasks.apply_propose(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_ADMIN:
-        role_admins.apply_propose_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_OWNER:
-        role_owners.apply_propose_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_MEMBER:
-        role_members.apply_propose_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_ROLE_TASK:
-        role_tasks.apply_propose_remove(header, payload, state)
-
-    else:
-        raise InvalidTransaction("Message type unknown.")
-
-
-def apply_role_confirm(header, payload, state):
-    if payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_ADMIN:
-        role_admins.apply_confirm(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_OWNER:
-        role_owners.apply_confirm(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_MEMBER:
-        role_members.apply_confirm(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_ROLE_TASK:
-        role_tasks.apply_confirm(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_ADMIN:
-        role_admins.apply_confirm_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_OWNER:
-        role_owners.apply_confirm_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_MEMBER:
-        role_members.apply_confirm_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_ROLE_TASK:
-        role_tasks.apply_confirm_remove(header, payload, state)
-
-    else:
-        raise InvalidTransaction("Message type unknown.")
-
-
-def apply_role_reject(header, payload, state):
-    if payload.message_type == RBACPayload.REJECT_ADD_ROLE_ADMIN:
-        role_admins.apply_reject(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_OWNER:
-        role_owners.apply_reject(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_MEMBER:
-        role_members.apply_reject(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_ADD_ROLE_TASK:
-        role_tasks.apply_reject(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_ADMIN:
-        role_admins.apply_reject_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_OWNER:
-        role_owners.apply_reject_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_MEMBER:
-        role_members.apply_reject_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_REMOVE_ROLE_TASK:
-        role_tasks.apply_reject_remove(header, payload, state)
-
-    else:
-        raise InvalidTransaction("Message type unknown.")
-
-
-def apply_task_propose(header, payload, state):
-    if payload.message_type == RBACPayload.PROPOSE_ADD_TASK_ADMIN:
-        task_admins.apply_propose(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_ADD_TASK_OWNER:
-        task_owners.apply_propose(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_ADMIN:
-        task_admins.apply_propose_remove(header, payload, state)
-
-    elif payload.message_type == RBACPayload.PROPOSE_REMOVE_TASK_OWNER:
-        task_owners.apply_propose_remove(header, payload, state)
-
-    else:
-        raise InvalidTransaction("Message type unknown.")
-
-
-def apply_task_confirm(header, payload, state):
-    if payload.message_type == RBACPayload.CONFIRM_ADD_TASK_ADMIN:
-        task_admins.apply_confirm(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_ADD_TASK_OWNER:
-        task_owners.apply_confirm(header, payload, state)
-
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_ADMIN:
-        task_admins.apply_confirm(header, payload, state, True)
-
-    elif payload.message_type == RBACPayload.CONFIRM_REMOVE_TASK_OWNER:
-        task_owners.apply_confirm(header, payload, state, True)
-
-    else:
-        raise InvalidTransaction("Message type unknown.")
-
-
-def apply_task_reject(header, payload, state):
-    if payload.message_type == RBACPayload.REJECT_ADD_TASK_ADMIN:
-        task_admins.apply_reject(header, payload, state)
-
-    elif payload.message_type == RBACPayload.REJECT_ADD_TASK_OWNER:
-        task_owners.apply_reject(header, payload, state)
-
-    else:
-        raise InvalidTransaction("Message type unknown.")

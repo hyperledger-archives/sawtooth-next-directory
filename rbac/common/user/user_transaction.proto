@@ -32,32 +32,6 @@ message ProposeUpdateUserManager {
 }
 
 
-message ConfirmUpdateUserManager {
-
-    string proposal_id = 1;
-
-    string user_id = 2;
-
-    string manager_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message RejectUpdateUserManager {
-
-    string proposal_id = 1;
-
-    string user_id = 2;
-
-    string manager_id = 3;
-
-    string reason = 4;
-
-}
-
-
 message CreateUser {
 
     string name = 1;
