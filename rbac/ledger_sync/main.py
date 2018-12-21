@@ -37,7 +37,7 @@ def main():
         sys.exit(0)
 
     except Exception as err:  # pylint: disable=broad-except
-        LOGGER.exception("Exception occured in Ledger Sync!")
+        LOGGER.exception("Exception occurred in Ledger Sync!")
         LOGGER.exception(err)
         sys.exit(1)
 
