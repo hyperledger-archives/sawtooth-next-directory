@@ -97,14 +97,16 @@ def test_create():
         reason=reason,
         metadata=None,
     )
-    proposal, status = rbac.role.admin.propose.create(
-        signer_keypair=signer_keypair,
-        message=message,
-        object_id=role.role_id,
-        related_id=user.user_id,
-    )
+
+    status = rbac.role.admin.propose.new(signer_keypair=signer_keypair, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
+    proposal = rbac.role.admin.propose.get(
+        object_id=role.role_id, related_id=user.user_id
+    )
+
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert proposal.proposal_type, protobuf.proposal_state_pb2.Proposal.ADD_ROLE_ADMIN
     assert proposal.proposal_id == proposal_id

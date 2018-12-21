@@ -79,21 +79,23 @@ def test_make_addresses():
 def test_create():
     """Test confirming a manager proposal"""
     proposal, _, _, _, manager_key = helper.user.manager.propose.create()
-
     reason = helper.user.manager.propose.reason()
-    _, status = rbac.user.manager.confirm.create(
+
+    status = rbac.user.manager.confirm.new(
         signer_keypair=manager_key,
         proposal_id=proposal.proposal_id,
         user_id=proposal.object_id,
         manager_id=proposal.related_id,
         reason=reason,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     confirm = rbac.user.manager.confirm.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
+
     assert isinstance(confirm, protobuf.proposal_state_pb2.Proposal)
     assert (
         confirm.proposal_type

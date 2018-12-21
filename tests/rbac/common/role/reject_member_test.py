@@ -85,14 +85,21 @@ def test_create():
         user_id=proposal.related_id,
         reason=reason,
     )
-    reject, status = rbac.role.member.reject.create(
+
+    status = rbac.role.member.reject.new(
         signer_keypair=role_owner_key,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
+    reject = rbac.role.member.propose.get(
+        object_id=proposal.object_id, related_id=proposal.related_id
+    )
+
     assert isinstance(reject, protobuf.proposal_state_pb2.Proposal)
     assert reject.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_ROLE_MEMBER
     assert reject.proposal_id == proposal.proposal_id

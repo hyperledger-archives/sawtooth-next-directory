@@ -60,15 +60,16 @@ class ProposeManagerTestHelper:
             reason=reason,
             metadata=None,
         )
-        _, status = rbac.user.manager.propose.create(
-            signer_keypair=user_key, message=message
-        )
+
+        status = rbac.user.manager.propose.new(signer_keypair=user_key, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         proposal = rbac.user.manager.propose.get(
             object_id=user.user_id, related_id=manager.user_id
         )
+
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
         assert (
             proposal.proposal_type

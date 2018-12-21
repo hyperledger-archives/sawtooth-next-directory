@@ -96,14 +96,21 @@ def test_create():
         reason=reason,
         metadata=None,
     )
-    proposal, status = rbac.task.owner.propose.create(
+
+    status = rbac.task.owner.propose.new(
         signer_keypair=signer_keypair,
         message=message,
         object_id=task.task_id,
         related_id=user.user_id,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
+    proposal = rbac.task.owner.propose.get(
+        object_id=task.task_id, related_id=user.user_id
+    )
+
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert proposal.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNER
     assert proposal.proposal_id == proposal_id

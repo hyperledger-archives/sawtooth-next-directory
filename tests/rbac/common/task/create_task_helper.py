@@ -72,13 +72,14 @@ class CreateTaskTestHelper:
         message = rbac.task.make(
             task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
         )
-        _, status = rbac.task.create(
-            signer_keypair=keypair, message=message, object_id=message.task_id
-        )
+
+        status = rbac.task.new(signer_keypair=keypair, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         task = rbac.task.get(object_id=message.task_id)
+
         assert task.task_id == message.task_id
         assert task.name == message.name
         assert rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)

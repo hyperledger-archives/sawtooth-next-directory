@@ -89,15 +89,16 @@ def test_create():
         user_id=proposal.related_id,
         reason=reason,
     )
-    _, status = rbac.task.admin.confirm.create(
-        signer_keypair=task_admin_key, message=message
-    )
+
+    status = rbac.task.admin.confirm.new(signer_keypair=task_admin_key, message=message)
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     confirm = rbac.task.admin.confirm.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
+
     assert isinstance(confirm, protobuf.proposal_state_pb2.Proposal)
     assert confirm.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_TASK_ADMIN
     assert confirm.proposal_id == proposal.proposal_id

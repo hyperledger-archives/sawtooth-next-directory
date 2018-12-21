@@ -242,7 +242,7 @@ def test_create_with_kargs():
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    _, status = rbac.user.create(signer_keypair=user_key, user_id=user_id, name=name)
+    status = rbac.user.new(signer_keypair=user_key, user_id=user_id, name=name)
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
@@ -259,7 +259,7 @@ def test_create_with_message():
     user_id = user_key.public_key
     message = rbac.user.make(user_id=user_id, name=name)
 
-    _, status = rbac.user.create(signer_keypair=user_key, message=message)
+    status = rbac.user.new(signer_keypair=user_key, message=message)
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 

@@ -63,14 +63,16 @@ class ProposeRoleMemberTestHelper:
             reason=reason,
             metadata=None,
         )
-        proposal, status = rbac.role.member.propose.create(
-            signer_keypair=user_key,
-            message=message,
-            object_id=role.role_id,
-            related_id=user.user_id,
-        )
+
+        status = rbac.role.member.propose.new(signer_keypair=user_key, message=message)
+
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
+
+        proposal = rbac.role.member.propose.get(
+            object_id=role.role_id, related_id=user.user_id
+        )
+
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
         assert (
             proposal.proposal_type

@@ -84,13 +84,14 @@ def test_create():
 
     reason = helper.role.admin.propose.reason()
 
-    confirm, status = rbac.role.admin.confirm.create(
+    status = rbac.role.admin.confirm.new(
         signer_keypair=role_admin_key,
         proposal_id=proposal.proposal_id,
         role_id=proposal.object_id,
         user_id=proposal.related_id,
         reason=reason,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 

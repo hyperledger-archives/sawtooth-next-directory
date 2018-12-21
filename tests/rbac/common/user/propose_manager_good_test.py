@@ -161,7 +161,8 @@ def test_user_propose_manager_has_no_manager():
     manager, _ = helper.user.create()
     proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
-    _, status = rbac.user.manager.propose.create(
+
+    status = rbac.user.manager.propose.new(
         signer_keypair=user_key,
         proposal_id=proposal_id,
         user_id=user.user_id,
@@ -169,11 +170,14 @@ def test_user_propose_manager_has_no_manager():
         reason=reason,
         metadata=None,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
     proposal = rbac.user.manager.propose.get(
         object_id=user.user_id, related_id=manager.user_id
     )
+
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert (
         proposal.proposal_type
@@ -195,7 +199,8 @@ def test_manager_propose_manager_has_no_manager():
     manager, manager_key = helper.user.create()
     proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
-    _, status = rbac.user.manager.propose.create(
+
+    status = rbac.user.manager.propose.new(
         signer_keypair=manager_key,
         proposal_id=proposal_id,
         user_id=user.user_id,
@@ -203,11 +208,14 @@ def test_manager_propose_manager_has_no_manager():
         reason=reason,
         metadata=None,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
     proposal = rbac.user.manager.propose.get(
         object_id=user.user_id, related_id=manager.user_id
     )
+
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert (
         proposal.proposal_type
@@ -229,7 +237,8 @@ def test_changing_propose_manager():
     new_manager, _ = helper.user.create()
     proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.user.reason()
-    _, status = rbac.user.manager.propose.create(
+
+    status = rbac.user.manager.propose.new(
         signer_keypair=user_key,
         proposal_id=proposal_id,
         user_id=proposal.object_id,
@@ -237,11 +246,14 @@ def test_changing_propose_manager():
         reason=reason,
         metadata=None,
     )
+
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
+
     new_proposal = rbac.user.manager.propose.get(
         object_id=user.user_id, related_id=new_manager.user_id
     )
+
     assert isinstance(new_proposal, protobuf.proposal_state_pb2.Proposal)
     assert (
         new_proposal.proposal_type
