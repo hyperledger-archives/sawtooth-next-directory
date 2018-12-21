@@ -40,7 +40,9 @@ import Individuals from './containers/approver/Individuals';
 import Manage from './containers/approver/manage/Manage';
 import ManagePacks from './containers/approver/manage/ManagePacks';
 import ManageRoles from './containers/approver/manage/ManageRoles';
-import People from './containers/approver/People';
+import People from './containers/approver/people/People';
+import Delegated from './containers/approver/Delegated';
+import Expired from './containers/approver/Expired';
 
 
 const routes = (props) => [
@@ -133,6 +135,18 @@ const routes = (props) => [
   {
     path:   '/approval/approved',
     main:   (rest) => <Approved {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/delegated',
+    main:   (rest) => <Delegated {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/expired',
+    main:   (rest) => <Expired {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

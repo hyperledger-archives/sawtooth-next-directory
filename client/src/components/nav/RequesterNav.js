@@ -102,6 +102,8 @@ class RequesterNav extends Component {
       mine,
       requests } = this.props;
 
+    // Recommendedations are all roles. Format a separate array of
+    // recommended packs to mirror roles and hydrate the sidebar
     const packList = packs && recommendedPacks ?
       packs.filter((pack) => recommendedPacks.includes(pack.id)) :
       [];

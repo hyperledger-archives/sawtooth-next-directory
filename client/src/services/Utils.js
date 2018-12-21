@@ -31,27 +31,24 @@ limitations under the License.
  *
  */
 
-export const createSlug = (name, parent) => {
-  let slug = (parent && parent.name) ? parent.name : name;
+export const createSlug = (id, parent) => {
+  let slug = (parent && parent.id) ? parent.id : id;
   try {
-    return slug && slug
-      .toLowerCase()
-      .replace(/ /g, '-')
-      .replace(/[^\w-]+/g, '');
+    return slug;
   } catch (error) {
-    console.error(`Invalid resource name: ${name}. Expected a string.`);
-    return 'Error loading resource name';
+    console.error('Invalid resource ID.');
+    return '';
   }
 };
 
 
 export const createHomeLink = (packs = [], roles = []) => {
   try {
-    // TODO: Get name for pack
-    if (packs && packs.length > 0 && packs[0].name)
-      return `/packs/${createSlug(packs[0].name)}`;
-    else if (roles && roles.length > 0 )
-      return `/roles/${createSlug(roles[0].name)}`;
+    if (packs && packs.length > 0)
+      return `/packs/${createSlug(packs[0])}`;
+
+    else if (roles && roles.length > 0)
+      return `/roles/${createSlug(roles[0].id)}`;
     return '/';
   } catch (error) {
     console.error(error);

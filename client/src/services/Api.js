@@ -118,13 +118,14 @@ const create = (baseURL =
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
-  // Const getRequesterBase = () => api.get('me/base');
   const getRole = (id) => api.get(`roles/${id}`);
   const getRoles = () => api.get('roles');
   const getPack = (id) => api.get(`packs/${id}`);
   const getPacks = () => api.get('packs');
+  const getRelationships = (id) => api.get(`users/${id}/relationships`);
   const getRoot = () => api.get('');
   const getUser = (id) => api.get(`users/${id}`);
+  const getUsers = () => api.get('users');
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const search = (query) => api.post('', { q: query });
@@ -140,12 +141,14 @@ const create = (baseURL =
     getOpenProposals,
     getProposal,
     getRecommended,
+    getRelationships,
     getRole,
     getRoles,
     getPack,
     getPacks,
     getRoot,
     getUser,
+    getUsers,
     me,
     requestPackAccess,
     requestRoleAccess,

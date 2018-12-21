@@ -19,14 +19,15 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
-import Chat from '../../components/chat/Chat';
-import TrackHeader from '../../components/layouts/TrackHeader';
-import PeopleNav from '../../components/nav/PeopleNav';
-import Organization from '../../components/layouts/Organization';
+import Chat from '../../../components/chat/Chat';
+import TrackHeader from '../../../components/layouts/TrackHeader';
+import PeopleNav from './PeopleNav';
+import Organization from './Organization';
+import OrganizationList from './OrganizationList';
 
 
 import './People.css';
-import glyph from '../../images/header-glyph-individual.png';
+import glyph from '../../../images/header-glyph-individual.png';
 
 
 /**
@@ -76,9 +77,17 @@ class People extends Component {
    * @param {object} activeUser User ID
    */
   handleUserSelect = (activeUser) => {
-    console.log(activeUser);
     this.setState({ activeUser });
   };
+
+
+  handleOnBehalfOf = () => {
+    const { setOnBehalfOf } = this.props;
+    const { activeUser } = this.state;
+    console.log('activeUser: ');
+    console.log(activeUser);
+    setOnBehalfOf(activeUser);
+  }
 
 
   /**
@@ -103,12 +112,13 @@ class People extends Component {
               setFlow={this.setFlow}/>
             <div>
               { activeIndex === 0 &&
+                <OrganizationList {...this.props}/>
+                // <h1>All people</h1>
+              }
+              { activeIndex === 1 &&
                 <Organization
                   handleUserSelect={this.handleUserSelect}
                   {...this.props}/>
-              }
-              { activeIndex === 1 &&
-                <h1>All people</h1>
               }
             </div>
           </div>
@@ -120,6 +130,7 @@ class People extends Component {
             disabled
             type='APPROVER'
             organization
+            handleOnBehalfOf={this.handleOnBehalfOf}
             activeUser={activeUser}
             {...this.props}/>
         </Grid.Column>
@@ -131,7 +142,9 @@ class People extends Component {
 
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    fetchingAllUsers: state.user.fetchingAllUsers,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {

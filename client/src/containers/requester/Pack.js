@@ -47,6 +47,32 @@ export class Pack extends Component {
 
 
   /**
+   * Entry point to perform tasks required to render component.
+   * Fetch pack if not loaded in client.
+   */
+  componentDidMount () {
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const { packId } = this.props;
+    if (prevProps.packId !== packId) this.init();
+  }
+
+
+  init = () => {
+    const { getPack, packId, packFromId } = this.props;
+    packId && !packFromId(packId) && getPack(packId);
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
@@ -111,7 +137,7 @@ const mapStateToProps = (state, ownProps) => {
   const { packs } = state.requester;
 
   return {
-    packId: RequesterSelectors.idFromSlug(state, packs, id),
+    packId: id,
     proposalIds: RequesterSelectors.proposalIdFromSlug(
       state, packs, id, 'pack'
     ),

@@ -86,6 +86,7 @@ class CreateRole extends Component {
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
+            inverted
             title='Roles'
             button={() =>
               <Button as={Link} to='/approval/manage/roles'>Exit</Button>}

@@ -46,6 +46,7 @@ export const appState = (state) => {
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
     openProposalsCount:  ApproverSelectors.openProposalsCount(state),
     organization:        ApproverSelectors.organization(state),
+    onBehalfOf:          ApproverSelectors.onBehalfOf(state),
     openProposalFromId:  (id) =>
       ApproverSelectors.openProposalFromId(state, id),
 
@@ -112,8 +113,10 @@ export const appDispatch = (dispatch) => {
       dispatch(ApproverActions.createRoleRequest(payload)),
     createPack: (payload) =>
       dispatch(ApproverActions.createPackRequest(payload)),
-    getOrganization:   (id)    =>
+    getOrganization:  (id) =>
       dispatch(ApproverActions.organizationRequest(id)),
+    setOnBehalfOf:    (id) =>
+      dispatch(ApproverActions.onBehalfOfSet(id)),
 
     // Chat
     resetChat:         ()    => dispatch(ChatActions.clearMessages()),
@@ -139,6 +142,7 @@ export const appDispatch = (dispatch) => {
     getMe:             ()    => dispatch(UserActions.meRequest()),
     getUser:           (id)  => dispatch(UserActions.userRequest(id)),
     getUsers:          (ids) => dispatch(UserActions.usersRequest(ids)),
+    getAllUsers:       ()    => dispatch(UserActions.allUsersRequest()),
     logout:            ()    => logout(dispatch),
 
   };

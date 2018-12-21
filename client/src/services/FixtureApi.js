@@ -161,7 +161,7 @@ export default {
     };
   },
 
-  getOrganization: (id) => {
+  getRelationships: (id) => {
     return {
       ok: true,
       data: organization,

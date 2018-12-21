@@ -29,12 +29,15 @@ import './PeopleList.css';
 class PeopleList extends Component {
 
   static propTypes = {
+    getRoles:                 PropTypes.func,
     getUsers:                 PropTypes.func,
     handleChange:             PropTypes.func,
+    openProposalsByRole:      PropTypes.object,
     openProposalsByUser:      PropTypes.object,
     roleFromId:               PropTypes.func,
     selectedProposals:        PropTypes.array,
     selectedUsers:            PropTypes.array,
+    roles:                    PropTypes.array,
     users:                    PropTypes.array,
   };
 
@@ -44,7 +47,13 @@ class PeopleList extends Component {
    * component. Get users not loaded in client.
    */
   componentDidMount () {
-    const { getUsers, openProposalsByUser, users } = this.props;
+    const {
+      getRoles,
+      getUsers,
+      openProposalsByRole,
+      openProposalsByUser,
+      roles,
+      users } = this.props;
 
     if (!openProposalsByUser) return;
     let collection;
@@ -56,6 +65,14 @@ class PeopleList extends Component {
       collection = newUsers;
 
     getUsers(collection);
+
+    const newRoles = Object.keys(openProposalsByRole);
+    roles ?
+      collection = newRoles.filter(newRole =>
+        !roles.find(role => newRole === role.id)) :
+      collection = newRoles;
+
+    getRoles(collection);
   }
 
 

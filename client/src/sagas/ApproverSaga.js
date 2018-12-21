@@ -185,10 +185,10 @@ export function * rejectProposal (api, id) {
  * @param {object} action Redux action
  * @generator
  */
-export function * getOrganization (api, action) {
+export function * getRelationships (api, action) {
   try {
     const { id } = action;
-    const res = yield call(api.getOrganization, id);
+    const res = yield call(api.getRelationships, id);
     res.ok ?
       yield put(ApproverActions.organizationSuccess(res.data)) :
       yield put(ApproverActions.organizationFailure(res.data.error));

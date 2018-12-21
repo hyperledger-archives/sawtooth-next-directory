@@ -47,6 +47,31 @@ export class Role extends Component {
     getRole: PropTypes.func,
   };
 
+  /**
+   * Entry point to perform tasks required to render component.
+   * Fetch role if not loaded in client.
+   */
+  componentDidMount () {
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const { roleId } = this.props;
+    if (prevProps.roleId !== roleId) this.init();
+  }
+
+
+  init = () => {
+    const { getRole, roleId, roleFromId } = this.props;
+    roleId && !roleFromId(roleId) && getRole(roleId);
+  }
+
 
   isOwner = () => {
     const { me } = this.props;
@@ -136,7 +161,7 @@ const mapStateToProps = (state, ownProps) => {
   const { roles } = state.requester;
 
   return {
-    roleId: RequesterSelectors.idFromSlug(state, roles, id),
+    roleId: id,
     proposalId: RequesterSelectors.proposalIdFromSlug(state, roles, id, 'role'),
   };
 };

@@ -59,8 +59,8 @@ class ApproverNav extends Component {
             null,
           ]}
           list={[
-            { name: 'Individual' },
-            { name: 'About to Expire' },
+            { name: 'Individual', slug: 'individual' },
+            { name: 'About to Expire', slug: 'about-to-expire' },
           ]}
           route='/approval/pending'/>
         <h4>

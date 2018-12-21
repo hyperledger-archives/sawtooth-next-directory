@@ -28,17 +28,17 @@ import RoleList from '../../components/layouts/proposals/RoleList';
 import { syncAll } from './IndividualsHelper';
 
 
-import './Individuals.css';
+import './Delegated.css';
 import glyph from '../../images/header-glyph-individual.png';
 
 
 /**
  *
- * @class         Individuals
+ * @class         Delegated
  * @description   Individual requests component
  *
  */
-class Individuals extends Component {
+class Delegated extends Component {
 
   static propTypes = {
     getOpenProposals: PropTypes.func,
@@ -142,10 +142,10 @@ class Individuals extends Component {
         <Grid.Column id='next-approver-grid-track-column' width={12}>
           <TrackHeader
             glyph={glyph}
-            title='Individual Requests'
+            title='Delegated Requests'
             subtitle={openProposals && openProposals.length + ' pending'}
             {...this.props}/>
-          <div id='next-approver-individuals-content'>
+          <div id='next-approver-delegated-content'>
             <IndividualsNav
               activeIndex={activeIndex}
               setFlow={this.setFlow}/>
@@ -208,5 +208,5 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Individuals);
+export default connect(mapStateToProps, mapDispatchToProps)(Delegated);
 

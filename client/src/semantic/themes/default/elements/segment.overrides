@@ -28,6 +28,12 @@
   box-shadow: 0 3px 13px #98989814;
 }
 
+.dark .ui.segment.minimal {
+  background: #212c3a;
+  border: 0;
+  box-shadow: none;
+}
+
 .ui.segment.light {
   background: #f7f7f7;
   box-shadow: none;
@@ -59,4 +65,15 @@
 
 .ui.segment.no-padding {
   padding: 10px;
+}
+
+.ui.segment.gradient {
+  background: linear-gradient(to bottom, #9600e8 0%,#f70597 100%);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 150px;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+  padding: 22px 25px;
 }

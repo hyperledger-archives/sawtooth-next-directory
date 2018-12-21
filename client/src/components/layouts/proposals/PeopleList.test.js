@@ -29,6 +29,7 @@ describe('PeopleList component', () => {
     const div = document.createElement('div');
 
     const props = {
+      getRoles: () => {},
       getUsers: (collection) => { },
       openProposalsByUser: { proposal1: [{name: 'prop', id: 'proposal1'}] },
       users: [{ id: 'proposal1', name: 'username',

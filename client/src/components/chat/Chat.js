@@ -164,6 +164,7 @@ class Chat extends Component {
       activeUser,
       disabled,
       handleChange,
+      handleOnBehalfOf,
       organization,
       selectedProposal,
       selectedRoles,
@@ -206,7 +207,10 @@ class Chat extends Component {
                   avatar/>
                 <Header as='h2' inverted>{this.userName(activeUser)}</Header>
                 <div>
-                  <Button as={Link} to='pending/individual'>
+                  <Button
+                    as={Link}
+                    to='pending/individual'
+                    onClick={handleOnBehalfOf}>
                     Pending Approvals
                   </Button>
                 </div>

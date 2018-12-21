@@ -20,14 +20,16 @@ limitations under the License.
 }
 
 #next-organization-toggle-manager-button-container {
-  position: absolute;
-  top: -39px;
+  position: fixed;
+  top: 248px;
   z-index: 999;
+  width: calc(75% - 245px);
 }
 
 #next-organization-toggle-manager-button-container button {
   background: none;
   color: white;
+  width: 153px;
 }
 
 .next-organization-managers-hide {
@@ -74,6 +76,7 @@ limitations under the License.
 #next-organization-managers {
   display: flex;
   flex-direction: column-reverse;
+  position: relative;
 }
 
 #next-organization-peers {
@@ -83,6 +86,7 @@ limitations under the License.
 
 #next-organization-direct-reports {
   margin: 22px 0 0 70px;
+  position: relative;
 }
 
 #next-organization-current-person {
@@ -110,7 +114,7 @@ limitations under the License.
 #next-organization-managers:after {
   border-left: 1px solid #516073;
   content: '';
-  height: 56.4%;
+  height: calc(100% + 38px);
   margin-left: 22px;
   position: absolute;
   top: 35px;
@@ -122,7 +126,7 @@ limitations under the License.
   content: '';
   margin-top: 22px;
   position: absolute;
-  width: calc(100% - 86px);
+  width: calc(100% - 26px);
   z-index: -1;
 }
 
@@ -130,7 +134,7 @@ limitations under the License.
   border-left: 1px solid #516073;
   bottom: 22px;
   content: '';
-  height: 37%;
+  height: 100%;
   margin-left: -48px;
   position: absolute;
   z-index: -1;

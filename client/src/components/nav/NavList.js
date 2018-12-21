@@ -57,7 +57,7 @@ class NavList extends Component {
   isItemActive = (item) => {
     const { location } = this.props;
 
-    const slug = utils.createSlug(item.name, item);
+    const slug = utils.createSlug(item.slug, item);
     return location.pathname.includes(`/${slug}`);
   };
 
@@ -73,7 +73,7 @@ class NavList extends Component {
       (item.roles && item.roles.length > 0 ? '/packs' : '/roles');
     return item.slug ?
       `${root}/${item.slug}` :
-      `${root}/${utils.createSlug(item.name, item)}`;
+      `${root}/${utils.createSlug(item.id, item)}`;
   };
 
 

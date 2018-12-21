@@ -19,7 +19,7 @@ limitations under the License.
   display: flex;
   padding: var(--page-content-padding);
   position: fixed;
-  top: 183px;
+  top: 160px;
   width: calc(75% - 245px);
   z-index: 2;
 }
@@ -32,11 +32,11 @@ limitations under the License.
   flex: 1;
 }
 
-.next-individual-approved .fluid.search {
+.next-approved-search .fluid.search {
   height: 100%;
 }
 
-.next-individual-approved .ui.large.fluid.icon.input input {
+.next-approved-search .ui.large.fluid.icon.input input {
   background: #eceef1;
   border: 2px solid #eceef1;
 }
