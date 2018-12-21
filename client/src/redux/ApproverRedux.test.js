@@ -15,6 +15,14 @@ limitations under the License.
 
 
 import Actions, { reducer, INITIAL_STATE } from './ApproverRedux';
+import Immutable from 'seamless-immutable';
+
+const UPDATED_STATE = Immutable({
+  fetching:           null,
+  error:              null,
+  openProposals:      [{id: 'openProposalId'}],
+  confirmedProposals: null,
+});
 
 
 test('openProposalsRequest', () => {
@@ -37,4 +45,44 @@ test('openProposalsFailure', () => {
 
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');
+});
+
+
+test('confirmedProposalsSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.confirmedProposalsSuccess([]));
+
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+
+test('createRoleSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.createRoleSuccess([]));
+
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+
+test('createPackSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.createPackSuccess([]));
+
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+
+test('approveProposalsSuccess', () => {
+  const state = reducer(UPDATED_STATE, Actions.approveProposalsSuccess([]));
+
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+
+test('rejectProposalsSuccess', () => {
+  const state = reducer(UPDATED_STATE, Actions.rejectProposalsSuccess([]));
+
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
 });

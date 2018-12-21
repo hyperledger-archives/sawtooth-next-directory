@@ -18,6 +18,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { shallow } from 'enzyme';
 
 
 import * as customStore from '../../customStore';
@@ -25,22 +26,48 @@ import Approved from './Approved';
 
 
 const store = customStore.create();
-
-
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-
+describe('Approved component', () => {
   const props = {
     getConfirmedProposals: () => {},
     roleFromId: () => {},
     userFromId: () => {},
+    getRoles: () => {},
+    getUsers: () => {},
+    selectedProposal: [{object: ''}],
+    confirmedProposals: [{ id: 'roleid' }],
+    roles: [{ id: 'role' }],
+    userFromId: (userId) => {
+      return { email: '' };
+    },
+    users: [],
   };
+  const newProps = {
+    getConfirmedProposals: () => {},
+    roleFromId: () => {},
+    userFromId: () => {},
+    getRoles: () => {},
+    getUsers: () => {},
+    selectedProposal: [{id: 'qwerty'}],
+    confirmedProposals: [{ id: 'roleid' }],
+    userFromId: (userId) => {
+      return { email: '' };
+    },
+  };
+  const wrapper = shallow(<Approved {...props} store={store}/>);
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><Approved {...props}/></BrowserRouter>
-    </Provider>, div
-  );
 
-  ReactDOM.unmountComponentAtNode(div);
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    ReactDOM.render(
+      <BrowserRouter><Approved {...props} store={store} /></BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+  wrapper.dive().instance().componentDidUpdate(props);
+  wrapper.dive().instance().componentDidUpdate(newProps);
+  wrapper.dive().instance().userEmail(props);
+  wrapper.dive().instance().handleSort();
+  wrapper.dive().instance().setSelectedProposal(props);
 });

@@ -53,7 +53,8 @@ describe('Chat component', () => {
       submit: (username, password) => { },
       title: 'defaultTitle',
       type: '1',
-      selectedUsers: ['userID'],
+      selectedUsers: [{ user: 'roleid' }],
+      selectedRoles: [{ role: 'roleid' }],
       groupBy: 1,
       userFromId: (userId) => {
         return { name: '' };
@@ -64,7 +65,7 @@ describe('Chat component', () => {
       type: '1',
       groupBy: 1,
       selectedRoles: [{ id: 'roleid' }],
-      roleFromId: () => {
+      roleFromId: (roleId) => {
         return { name: '' };
       },
     };
@@ -93,8 +94,23 @@ describe('Chat component', () => {
       sendMessage: () => { },
       type: '0',
       activeRole: { id: 'abc' },
+      activePack: { id: 'abc' },
       me: { id: 'asdf' },
       requestAccess: () => { },
+      roleFromId: (roleId) => {
+        return { name: '' };
+      },
+      userFromId: (userId) => {
+        return { name: '' };
+      },
+      requestRoleAccess: () =>{},
+      requestPackAccess: () => {},
+      approveProposals: () => { },
+      selectedProposals: () =>{},
+      reset: () => { },
+      rejectProposals: () => {},
+      selectedUsers: [{ user: 'roleid' }],
+      selectedRoles: [{ role: 'roleid' }],
     };
 
     const newProps = {
@@ -103,7 +119,9 @@ describe('Chat component', () => {
       activeRole: { id: 'abc' },
       me: { id: 'asdf' },
       approveProposals: () => { },
+      selectedProposals: () =>{},
       reset: () => { },
+      rejectProposals: () => {},
     };
 
     const wrapper = shallow(<Chat {...props}  store={store} />);
@@ -113,8 +131,11 @@ describe('Chat component', () => {
     wrapper.dive().instance().send(props, { type: 1 });
     wrapper.dive().instance().send(props, { type: null });
     newWrapper.dive().instance().send(newProps, { type: 0 });
-
-
+    wrapper.dive().instance().roleName(props);
+    wrapper.dive().instance().userName(props);
+    wrapper.dive().instance().manualRequestRole(props);
+    wrapper.dive().instance().manualRequestPack(props);
+    wrapper.dive().instance().manualApprove(props);
+    wrapper.dive().instance().manualReject(props);
   });
-
 });

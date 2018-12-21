@@ -94,6 +94,7 @@ class CreatePack extends Component {
             <Form>
               <Form.Input
                 autoFocus
+                id='next-approver-manage-content-pack-form'
                 error={validName === false}
                 name='name'
                 placeholder='Name'

@@ -17,12 +17,21 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-
+import { shallow } from 'enzyme';
 
 import PackApprovalList from './PackApprovalList';
 
 
 describe('PackApprovalList component', () => {
+  const props = {
+    proposals: [{appprovers: []}],
+    getUser: () => {},
+    users: [{ id: 'proposal2'}],
+    userFromId: (userId) => {
+      return { email: ''};
+    },
+  };
+  const wrapper = shallow(<PackApprovalList {...props} />);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
@@ -33,5 +42,6 @@ describe('PackApprovalList component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
+  wrapper.instance().componentDidUpdate(props);
+  wrapper.instance().renderUserInfo(props);
 });

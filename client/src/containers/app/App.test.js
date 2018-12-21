@@ -31,6 +31,8 @@ const props = {
   getOpenProposals: () => { },
   getProposals: () => { },
   getRoles: () => { },
+  openSocket: () => {},
+  closeSocket: () => {},
   me: {
     proposals: [{ id: 'proposalID' }],
     memberOf: [''],
@@ -84,7 +86,8 @@ it('calls the hydrate function', () => {
   wrapper.dive().instance().hydrate();
 });
 
-test.skip('calls the hydrate sidebar function', () => {
-  const wrapper = shallow(<App routes={() => { }} me='' store={store} />);
+test('calls the hydrate sidebar function', () => {
+  const wrapper = shallow(<App defaultUser = {props.me}
+    routes={() => { }} store={store} />);
   wrapper.dive().instance().hydrateSidebar();
 });

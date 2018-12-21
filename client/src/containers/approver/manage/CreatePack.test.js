@@ -18,6 +18,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { shallow } from 'enzyme';
 
 
 import * as customStore from '../../../customStore';
@@ -25,16 +26,32 @@ import CreatePack from './CreatePack';
 
 
 const store = customStore.create();
+describe('CreateRole component', () => {
+  const props = {
+    submit: (username, password) => { },
+    CreateRole: () => { },
+    userId: '',
+    createPack: {
+      name: 'name',
+      owners: 'id1',
+    },
+    createPack: () =>{},
+  };
+  const wrapper = shallow(<CreatePack {...props} />);
 
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter><CreatePack/></BrowserRouter>
-    </Provider>, div
-  );
+    ReactDOM.render(
+      <Provider store={store}>
+        <BrowserRouter><CreatePack/></BrowserRouter>
+      </Provider>, div
+    );
 
-  ReactDOM.unmountComponentAtNode(div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
+  wrapper.find('#next-approver-manage-content-pack-form').simulate('change',
+    { event: {} }, { name: 'name', value: '' });
+  wrapper.instance().createPack(props);
 });

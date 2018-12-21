@@ -17,12 +17,21 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { shallow } from 'enzyme';
 
 
 import RoleApproval from './RoleApproval';
 
 
 describe('RoleApproval component', () => {
+  const props = {
+    getUser: () => {},
+    proposal: { appprovers: [{ id: 'proposal1'}] },
+    users: [{ id: 'proposal2'}],
+
+  };
+
+  const wrapper = shallow(<RoleApproval {...props} />);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
@@ -33,5 +42,5 @@ describe('RoleApproval component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
-
+  wrapper.instance().renderApprover(props);
 });

@@ -123,12 +123,12 @@ class App extends Component {
    * resource names in the navbar
    */
   hydrateSidebar () {
-    const { getProposals, getRoles, me, roles } = this.props;
-
-    // Map proposals and memberOf to ID array
+    const { getProposals, getRoles, me, roles, defaultUser } = this.props;
+    const Me = defaultUser? defaultUser : me;
+    // * (1) Map proposals and memberOf to ID array
     let ids = [
-      ...me.proposals,
-      ...me.memberOf,
+      ...Me.proposals,
+      ...Me.memberOf,
     ].map((item) =>
       typeof item  === 'object' ?
         item.object_id :
@@ -140,7 +140,8 @@ class App extends Component {
         roles.find(role => role.id !== item));
     }
 
-    let bar = me.proposals.map(item =>
+
+    let bar = Me.proposals.map(item =>
       item.proposal_id);
 
     // Load roles not in

@@ -17,54 +17,44 @@ limitations under the License.
 import Actions, { reducer, INITIAL_STATE } from './RequesterRedux';
 
 
-test.skip('baseRequest', () => {
-  const state = reducer(INITIAL_STATE, Actions.baseRequest(null));
-
-  expect(state.fetching).toBe(true);
-});
-
-test('roleRequest', () => {
-  const id = 'abc123';
-  const state = reducer(INITIAL_STATE, Actions.roleRequest(id));
-
-  expect(state.fetching).toBe(true);
-});
-
-
-
-
-test.skip('baseSuccess', () => {
-  const base = { recommended: [] };
-  const state = reducer(INITIAL_STATE, Actions.baseSuccess(base));
+test('roleSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.roleSuccess([]));
 
   expect(state.fetching).toBe(false);
-  expect(state.recommended).toEqual([]);
   expect(state.error).toBeNull();
 });
-
-test.skip('roleSuccess', () => {
-  const activeRole = {};
-  const state = reducer(INITIAL_STATE, Actions.roleSuccess(activeRole));
+test('packSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.packSuccess([]));
 
   expect(state.fetching).toBe(false);
-  expect(state.activeRole).toEqual({});
   expect(state.error).toBeNull();
 });
-
-
-
-test.skip('baseFailure', () => {
+test('packFailure', () => {
   const error = '';
-  const state = reducer(INITIAL_STATE, Actions.baseFailure(error));
+  const state = reducer(INITIAL_STATE, Actions.packFailure(error));
 
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');
 });
-
-test('roleFailure', () => {
-  const error = '';
-  const state = reducer(INITIAL_STATE, Actions.roleFailure(error));
+test('proposalSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.proposalSuccess([]));
 
   expect(state.fetching).toBe(false);
-  expect(state.error).toBe('');
+  expect(state.error).toBeNull();
+});
+test('allrolesSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.allRolesSuccess([]));
+
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+test('accessSuccess', () => {
+  const state = reducer(INITIAL_STATE, Actions.packAccessSuccess([]));
+
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+test('resetAll', () => {
+  const state = reducer(INITIAL_STATE, Actions.resetAll(null));
 });
