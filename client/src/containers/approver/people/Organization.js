@@ -45,11 +45,14 @@ class Organization extends Component {
    * Entry point to perform tasks required to render component.
    */
   componentDidMount () {
-    const { getOrganization, handleUserSelect } = this.props;
+    const { getOrganization, handleUserSelect, id } = this.props;
 
     // TODO: Use until endpoint ready
-    getOrganization('fcb9a003-75d4-48ad-a5fd-aef5c8a56744');
-    handleUserSelect('fcb9a003-75d4-48ad-a5fd-aef5c8a56744');
+    // getOrganization('fcb9a003-75d4-48ad-a5fd-aef5c8a56744');
+    // handleUserSelect('fcb9a003-75d4-48ad-a5fd-aef5c8a56744');
+
+    getOrganization(id);
+    handleUserSelect(id);
   }
 
 
