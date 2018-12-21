@@ -26,7 +26,7 @@ from rbac.common.crypto.secrets import deserialize_api_key
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthorized
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
-from rbac.transaction_creation.common import Key
+from rbac.common.crypto.keys import Key
 
 LOGGER = get_logger(__name__)
 

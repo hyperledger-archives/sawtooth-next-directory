@@ -77,110 +77,6 @@ message ProposeRemoveTaskAdmin {
 }
 
 
-message ConfirmAddTaskOwner {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message ConfirmRemoveTaskOwner {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message ConfirmAddTaskAdmin {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message ConfirmRemoveTaskAdmin {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message RejectAddTaskOwner {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message RejectRemoveTaskOwner {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message RejectAddTaskAdmin {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
-message RejectRemoveTaskAdmin {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-}
-
-
 message CreateTask {
 
     string task_id = 1;
@@ -192,18 +88,5 @@ message CreateTask {
     repeated string owners = 4;
 
     string metadata = 5;
-
-}
-
-
-message UpdateTask {
-
-    string task_id = 1;
-
-    string new_name = 2;
-
-    string old_metadata_sha512 = 3;
-
-    string new_metadata = 4;
 
 }

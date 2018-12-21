@@ -60,7 +60,6 @@ do
     "processor"            ) lint rbac/processor || ret_val=1;;
     "providers"            ) lint rbac/providers || ret_val=1;;
     "server"               ) lint rbac/server || ret_val=1;;
-    "transaction_creation" ) lint rbac/transaction_creation || ret_val=1;;
     "tests"                ) lint tests || ret_val=1;;
     *                   ) echo "ERROR: Invalid option: \""$var"\"" >&2
     esac
@@ -72,7 +71,6 @@ if [ $ARGS -eq 0 ]; then
     lint rbac/processor || ret_val=1
     lint rbac/providers || ret_val=1
     lint rbac/server || ret_val=1
-    lint rbac/transaction_creation || ret_val=1
     lint tests || ret_val=1
 fi
 
