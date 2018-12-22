@@ -19,6 +19,7 @@ import time
 
 import ldap3
 from ldap3 import MODIFY_REPLACE
+from ldap3.core.exceptions import LDAPSessionTerminatedByServerError
 from rbac.common.logs import get_logger
 
 from rbac.providers.common.db_queries import (
@@ -183,29 +184,40 @@ def ldap_outbound_listener():
 
     while True:
 
-        queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
-
-        while queue_entry is None:
-            queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
-            time.sleep(LISTENER_POLLING_DELAY)
-
-        LOGGER.info("Received queue entry %s from outbound queue...", queue_entry["id"])
-
-        LOGGER.debug("Putting queue entry into changelog...")
-        put_entry_changelog(queue_entry, "outbound")
-
-        data_type = queue_entry["data_type"]
-        LOGGER.debug("Putting %s into ad...", data_type)
-
         try:
-            if is_entry_in_ad(queue_entry, ldap_connection):
-                update_entry_ldap(queue_entry, ldap_connection)
-            else:
-                create_entry_ldap(queue_entry, ldap_connection)
+            queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
 
-        except ValidationException as err:
-            LOGGER.warning("Outbound payload failed validation")
-            LOGGER.warning(err)
+            while queue_entry is None:
+                queue_entry = peek_at_queue("outbound_queue", LDAP_DC)
+                time.sleep(LISTENER_POLLING_DELAY)
 
-        LOGGER.debug("Deleting queue entry from outbound queue...")
-        delete_entry_queue(queue_entry["id"], "outbound_queue")
+            LOGGER.info(
+                "Received queue entry %s from outbound queue...", queue_entry["id"]
+            )
+
+            LOGGER.debug("Putting queue entry into changelog...")
+            put_entry_changelog(queue_entry, "outbound")
+
+            data_type = queue_entry["data_type"]
+            LOGGER.debug("Putting %s into ad...", data_type)
+
+            try:
+                if is_entry_in_ad(queue_entry, ldap_connection):
+                    update_entry_ldap(queue_entry, ldap_connection)
+                else:
+                    create_entry_ldap(queue_entry, ldap_connection)
+
+            except ValidationException as err:
+                LOGGER.warning("Outbound payload failed validation")
+                LOGGER.warning(err)
+
+            LOGGER.debug("Deleting queue entry from outbound queue...")
+            delete_entry_queue(queue_entry["id"], "outbound_queue")
+
+        except LDAPSessionTerminatedByServerError:
+            LOGGER.warning(
+                "Ldap connection was terminated by the server. Attempting to reconnect..."
+            )
+            ldap_connection = ldap_connector.await_connection(
+                LDAP_SERVER, LDAP_USER, LDAP_PASS
+            )
