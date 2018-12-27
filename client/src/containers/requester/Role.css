@@ -18,17 +18,12 @@ limitations under the License.
     position: relative;
     top: 120px;
     width: calc(100% - 61px) !important;
-    z-index: 98;
 }
 
 #next-requester-roles-description-container {
-  /* margin: 80px 0 40px 0;
-  padding: 0 30px; */
-
+  border-bottom: 1px solid #eee;
   margin: 0 0 40px 0;
   padding: 16px 30px 24px 30px;
-  /* background: #b9c0ca1f; */
-  border-bottom: 1px solid #eee;
 }
 
 #next-requester-roles-member-list-container {
