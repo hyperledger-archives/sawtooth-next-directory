@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Image, Segment } from 'semantic-ui-react';
+import { Header, Loader, Image, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import chatbotAvatar from '../../images/chatbot-avatar.png';
 
@@ -29,7 +29,9 @@ import chatbotAvatar from '../../images/chatbot-avatar.png';
 class ChatMessage extends Component {
 
   static propTypes = {
-    messages: PropTypes.array,
+    messages:                 PropTypes.array,
+    socketError:              PropTypes.bool,
+    socketMaxAttemptsReached: PropTypes.bool,
   }
 
 
@@ -48,34 +50,58 @@ class ChatMessage extends Component {
    * @returns {JSX}
    */
   render () {
-    const { messages } = this.props;
+    const {
+      messages,
+      socketError,
+      socketMaxAttemptsReached } = this.props;
+
     if (!messages) return null;
 
+    if (socketMaxAttemptsReached) {
+      return (
+        <div id='next-chat-message-error-container'>
+          <Header
+            as='h2'
+            content='Nex is feeling shy...'
+            subheader={`In the meantime, you can draft a message
+                        and request access for a role or pack below.`}/>
+        </div>
+      );
+    }
+
     return (
-      messages &&
-      messages.map((message, index) =>
-        this.isMe(message) ?
-          message.text &&
-          <div className='next-chat-message-right' key={index}>
-            <Segment compact inverted
-              floated='right'
-              color='purple'
-              size='small'>
-              <div>{message.text}</div>
-            </Segment>
-          </div> :
-          <div className='next-chat-message-left' key={index}>
-            { message.from ?
-              <Image src='http://i.pravatar.cc/150' size='mini' avatar/> :
-              <Image src={chatbotAvatar} size='mini'/>
-            }
-            <Segment compact
-              floated='left'
-              size='small'>
-              <div>{message.text}</div>
-            </Segment>
-          </div>
-      )
+      <div>
+        <Loader
+          active={!socketMaxAttemptsReached && socketError}
+          size='large'>
+          Retrying
+        </Loader>
+        { messages && !socketError &&
+          messages.map((message, index) =>
+            this.isMe(message) ?
+              message.text &&
+              <div className='next-chat-message-right' key={index}>
+                <Segment compact inverted
+                  floated='right'
+                  color='purple'
+                  size='small'>
+                  <div>{message.text}</div>
+                </Segment>
+              </div> :
+              <div className='next-chat-message-left' key={index}>
+                { message.from ?
+                  <Image src='http://i.pravatar.cc/150' size='mini' avatar/> :
+                  <Image src={chatbotAvatar} size='mini'/>
+                }
+                <Segment compact
+                  floated='left'
+                  size='small'>
+                  <div>{message.text}</div>
+                </Segment>
+              </div>
+          )
+        }
+      </div>
     );
   }
 }

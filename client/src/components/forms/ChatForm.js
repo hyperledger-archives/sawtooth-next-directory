@@ -42,10 +42,15 @@ class ChatForm extends Component {
     approve:              PropTypes.func,
     disabled:             PropTypes.bool,
     messages:             PropTypes.array,
-    refreshOnNextSocketReceive: PropTypes.func,
     reject:               PropTypes.func,
+    requestPack:          PropTypes.func,
+    requestRole:          PropTypes.func,
     send:                 PropTypes.func.isRequired,
     type:                 PropTypes.string,
+    refreshOnNextSocketReceive:
+      PropTypes.func,
+    socketMaxAttemptsReached:
+      PropTypes.bool,
   };
 
 
@@ -98,6 +103,18 @@ class ChatForm extends Component {
 
 
   /**
+   * Given the socket is experiencing errors, send manual
+   * request to parent handler
+   * @param {string} message Message to send
+   */
+  handleManualSend = (message) => {
+    const { activePack, requestRole, requestPack } = this.props;
+    activePack ? requestPack(message) : requestRole(message);
+    this.reset();
+  }
+
+
+  /**
    * Handle approval action
    * @param {number} action 0 (Reject) or 1 (Approve)
    */
@@ -142,7 +159,6 @@ class ChatForm extends Component {
     let parsed = JSON.parse(
       payload.substring(demarcation, payload.length)
     );
-    // Debugger;;
 
     if (parsed.resource_id) {
       parsed.resource_id = (activePack && activePack.id) ||
@@ -165,12 +181,17 @@ class ChatForm extends Component {
    * @returns {JSX}
    */
   renderRequesterActions () {
-    const { disabled, messages } = this.props;
-    const { isDraft } = this.state;
+    const {
+      disabled,
+      messages,
+      socketMaxAttemptsReached } = this.props;
+
+    const { isDraft, message } = this.state;
 
     return (
       <div id='next-chat-actions'>
         { messages && messages[0] && messages[0].buttons &&
+          !socketMaxAttemptsReached &&
           messages[0].buttons.map((button, index) => (
             <Button
               key={index}
@@ -189,6 +210,11 @@ class ChatForm extends Component {
               }
             </Button>
           ))
+        }
+        { socketMaxAttemptsReached &&
+          <Button fluid onClick={() => this.handleManualSend(message)}>
+            Send Request
+          </Button>
         }
       </div>
     );
@@ -242,12 +268,13 @@ class ChatForm extends Component {
    * @returns {JSX}
    */
   render () {
-    const { type } = this.props;
+    const { socketMaxAttemptsReached, type } = this.props;
     const { message, isDraft } = this.state;
+    const isManual = type === 'REQUESTER' && socketMaxAttemptsReached;
 
     return (
       <div>
-        { !isDraft &&
+        { !isDraft && !socketMaxAttemptsReached &&
         <div>
           <Form id='next-placeholder-chat'
             onSubmit={() => this.handleSend(message)}>
@@ -269,7 +296,7 @@ class ChatForm extends Component {
           </Form>
         </div>
         }
-        { isDraft &&
+        { (isDraft || isManual) &&
         <div id='next-chat-form-draft-container'>
           <Form
             onSubmit={() =>

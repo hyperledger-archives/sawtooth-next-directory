@@ -14,11 +14,15 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { eventChannel } from 'redux-saga';
+import { delay, eventChannel } from 'redux-saga';
 import { call, put, take } from 'redux-saga/effects';
+
+
 import AppActions from '../redux/AppRedux';
 import ChatActions from '../redux/ChatRedux';
-import Socket from '../services/Socket';
+import Socket, {
+  SOCKET_RECONNECT_TIMEOUT,
+  incrementSocketAttempt } from '../services/Socket';
 
 
 let channel;
@@ -27,8 +31,13 @@ let channel;
 export function * openSocket () {
   channel = yield call(createChannel, Socket.create());
   while (true) {
-    const action = yield take(channel);
-    yield put(action);
+    try {
+      const action = yield take(channel);
+      yield put(action);
+    } catch (error) {
+      console.error('Encountered unexpected socket error.');
+      yield call(reconnect);
+    }
   }
 }
 
@@ -38,9 +47,28 @@ export function * closeSocket () {
 }
 
 
+export function * reconnect () {
+  if (incrementSocketAttempt() === -1)
+    yield put(AppActions.socketMaxAttemptsReached());
+  yield call(delay, SOCKET_RECONNECT_TIMEOUT);
+  yield call(openSocket);
+}
+
+
 const createChannel = (socket) =>
   eventChannel(emit => {
-    socket.onerror = (event) => emit(AppActions.socketError(event));
+    socket.onerror = (event) => {
+      if (event && event.code === 'ECONNREFUSED') {
+        emit(AppActions.socketError(event));
+        emit(new Error(event.reason));
+      }
+    };
+    socket.onclose = (event) => {
+      if (event.code !== 1e3 && event.code !== 1005) {
+        emit(AppActions.socketError(event));
+        emit(new Error(event.reason));
+      }
+    };
     socket.onmessage = (event) => emit(ChatActions.messageReceive(event.data));
     socket.onopen = () => emit(AppActions.socketOpenSuccess(socket));
 

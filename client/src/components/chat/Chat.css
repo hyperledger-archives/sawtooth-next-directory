@@ -163,3 +163,9 @@ limitations under the License.
 #next-chat-form-draft-textarea {
   resize: none;
 }
+
+#next-chat-message-error-container {
+  position: absolute;
+  text-align: center;
+  top: 45%;
+}

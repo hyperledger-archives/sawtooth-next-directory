@@ -29,6 +29,7 @@ const { Types, Creators } = createActions({
   animationEnd:                      null,
 
   socketError:                       ['error'],
+  socketMaxAttemptsReached:          null,
   socketOpen:                        null,
   socketOpenSuccess:                 null,
   socketClose:                       null,
@@ -51,6 +52,8 @@ export default Creators;
 //
 export const INITIAL_STATE = Immutable({
   error:                              null,
+  socketError:                        null,
+  socketMaxAttemptsReached:           null,
   isAnimating:                        null,
   isRefreshing:                       null,
   shouldRefreshOnNextSocketReceive:   null,
@@ -67,6 +70,9 @@ export const AppSelectors = {
   isAnimating:     (state) => state.app.isAnimating,
   isRefreshing:    (state) => state.app.isRefreshing,
   isSocketOpen:    (state) => state.app.isSocketOpen,
+  socketError:     (state) => state.app.socketError,
+  socketMaxAttemptsReached: (state) =>
+    state.app.socketMaxAttemptsReached,
   shouldRefreshOnNextSocketReceive: (state) =>
     state.app.shouldRefreshOnNextSocketReceive,
 };
@@ -87,7 +93,7 @@ export const socketOpen = (state) => {
   return state.merge({});
 };
 export const socketOpenSuccess = (state) => {
-  return state.merge({ isSocketOpen: true });
+  return state.merge({ isSocketOpen: true, socketError: false });
 };
 export const socketClose = (state) => {
   return state.merge({});
@@ -96,7 +102,10 @@ export const socketCloseSuccess = (state) => {
   return state.merge({ isSocketOpen: false });
 };
 export const socketError = (state, { error }) => {
-  return state.merge({ error });
+  return state.merge({ socketError: true });
+};
+export const socketMaxAttemptsReached = (state) => {
+  return state.merge({ socketMaxAttemptsReached: true });
 };
 export const refreshBegin = (state) => {
   return state.merge({ isRefreshing: true });
@@ -123,6 +132,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.REFRESH_ON_NEXT_SOCKET_RECEIVE]: refreshOnNextSocketReceive,
 
   [Types.SOCKET_ERROR]: socketError,
+  [Types.SOCKET_MAX_ATTEMPTS_REACHED]: socketMaxAttemptsReached,
 
   [Types.SOCKET_OPEN]: socketOpen,
   [Types.SOCKET_OPEN_SUCCESS]: socketOpenSuccess,
