@@ -2062,6 +2062,13 @@ Floated Menu / Item
 }
 .ui.huge.inverted.vertical.menu .ui.header .content {
   color: #FFFFFF;
+}
+.ui.huge.inverted.vertical.menu .ui.header .content p {
+  color: lightslategray;
+  font-size: 0.85em;
+  margin-top: 7px;
+}
+.ui.huge.inverted.vertical.menu .item:first-child .ui.header .content {
   max-width: 12em;
 }
 .ui.compact.menu {

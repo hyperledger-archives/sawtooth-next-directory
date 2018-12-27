@@ -21,13 +21,14 @@ import { Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
+import './Login.css';
+import logo from '../../images/next-logo-billboard.png';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import LoginForm from '../../components/forms/LoginForm';
 
 
-import './Login.css';
-import logo from '../../images/next-logo-billboard.png';
 import * as utils from '../../services/Utils';
+import * as storage from '../../services/Storage';
 
 
 /**
@@ -77,7 +78,9 @@ class Login extends Component {
       recommendedPacks,
       recommendedRoles } = this.props;
     isAuthenticated && history.push(
-      utils.createHomeLink(recommendedPacks, recommendedRoles)
+      storage.getViewState() ?
+        '/approval/pending/individual' :
+        utils.createHomeLink(recommendedPacks, recommendedRoles)
     );
   }
 

@@ -35,6 +35,19 @@ limitations under the License.
   margin-right: 10px;
 }
 
+#next-header-menu-view-toggle .content {
+  width: 100%;
+}
+
+#next-header-menu-view-toggle .ui.header > .icon {
+  vertical-align: top;
+}
+
+#next-header-menu .next-toggle-state-label {
+  color: coral;
+  margin-left: 7px;
+}
+
 #next-header-actions {
   align-items: center;
   display: flex;
