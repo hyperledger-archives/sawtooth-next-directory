@@ -77,6 +77,7 @@ class CreateUser(BaseMessage):
             email=email,
             metadata=metadata,
             manager_id=manager_id,
+            key=keypair.public_key,
         )
         return message, keypair
 
@@ -117,9 +118,6 @@ class CreateUser(BaseMessage):
         if message.manager_id is not None:
             if message.user_id == message.manager_id:
                 raise ValueError("User cannot be their own manager")
-        if signer is not None:
-            if signer not in [message.user_id, message.manager_id]:
-                raise ValueError("Signer must be the user or their manager")
 
     def validate_state(self, context, message, inputs, input_state, store, signer):
         """Validates the message against state"""

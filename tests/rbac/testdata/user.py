@@ -18,6 +18,7 @@
 import random
 import string
 
+from rbac.common.crypto.hash import unique_id
 from rbac.common.crypto.hash import hash_id
 from rbac.common.crypto.keys import Key
 
@@ -38,7 +39,7 @@ class UserTestData:
 
     def id(self):
         """Get a test user_id (not created)"""
-        self.last_id = Key().public_key
+        self.last_id = unique_id()
         return self.last_id
 
     def key(self):

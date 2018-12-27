@@ -18,6 +18,7 @@
 from rbac.common import addresser
 from rbac.common.base.base_address import AddressBase
 from rbac.common.protobuf import key_state_pb2
+from rbac.common.protobuf import key_transaction_pb2
 
 
 class KeyAddress(AddressBase):

@@ -222,6 +222,9 @@ class StateBase:
             return getattr(item, "object_id")
         if hasattr(item, self._name_id):
             return getattr(item, self._name_id)
+        if hasattr(item, self._name_lower):
+            return getattr(item, self._name_lower)
+        LOGGER.warning("Could not find object_id on message\n%s", item)
         return None
 
     def _get_related_id(self, item):

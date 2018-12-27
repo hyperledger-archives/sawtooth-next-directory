@@ -519,7 +519,7 @@ class BaseMessage(AddressBase):
             exclude_fields=self.message_fields_not_in_state,
         )
 
-    def save_state(self, context, output_state):
+    def save_state(self, context, outputs, output_state):
         """Save the output state to the blockchain"""
         changed = [
             address
@@ -528,6 +528,10 @@ class BaseMessage(AddressBase):
         ]
         entries = {}
         for address in changed:
+            if address not in outputs:
+                raise ValueError(
+                    "Address {} not in listed outputs".format(addresser.parse(address))
+                )
             entries[address] = output_state[address].SerializeToString()
         state_client.set_state(context=context, entries=entries)
 
@@ -610,4 +614,4 @@ class BaseMessage(AddressBase):
             output_state=output_state,
             signer=signer,
         )
-        self.save_state(context=context, output_state=output_state)
+        self.save_state(context=context, outputs=outputs, output_state=output_state)

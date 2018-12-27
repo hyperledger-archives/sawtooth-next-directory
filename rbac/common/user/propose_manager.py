@@ -95,9 +95,12 @@ class ProposeUpdateUserManager(ProposalPropose):
         user = addresser.user.get_from_input_state(
             inputs=inputs, input_state=input_state, object_id=message.user_id
         )
-        if user.manager_id and user.manager_id != signer:
-            raise ValueError(
-                "Existing manager {} is not the transaction signer".format(
-                    user.manager_id
-                )
-            )
+
+
+# TODO: change to verify proposal assignment and hierarchy
+#        if user.manager_id and user.manager_id != signer:
+#            raise ValueError(
+#                "Existing manager {} is not the transaction signer".format(
+#                    user.manager_id
+#                )
+#            )

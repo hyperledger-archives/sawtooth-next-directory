@@ -38,6 +38,16 @@ class CreateUserTestHelper(UserTestData):
         assert user.name == name
         return user, keypair
 
+    def imports_message(self):
+        """ Get a test data ImportsUser message
+        """
+        name = self.name()
+        user = rbac.user.imports.make(name=name)
+
+        assert isinstance(user, protobuf.user_transaction_pb2.ImportsUser)
+        assert user.name == name
+        return user
+
     def message_with_manager(self):
         """Get a test data CreateUser message for user and manager"""
         manager, manager_key = self.message()
@@ -61,6 +71,25 @@ class CreateUserTestHelper(UserTestData):
         assert user.user_id == message.user_id
         assert user.name == message.name
         return user, keypair
+
+    def imports(self):
+        """ Imports a test user
+            Imported user has no key assignment
+        """
+        signer_keypair = Key()  # TODO: will need to change to a provider key
+
+        message = self.imports_message()
+
+        status = rbac.user.imports.new(signer_keypair=signer_keypair, message=message)
+
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+
+        user = rbac.user.get(object_id=message.user_id)
+
+        assert user.user_id == message.user_id
+        assert user.name == message.name
+        return user
 
     def create_with_manager(self):
         """Create a test user with manager"""

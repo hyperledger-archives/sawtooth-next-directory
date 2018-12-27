@@ -52,6 +52,11 @@ class UserTestHelper(UserTestData):
         """Create a test user"""
         return self.create_user.create()
 
+    def imports(self):
+        """ Imports a test user (no key)
+        """
+        return self.create_user.imports()
+
     def create_with_manager(self):
         """Create a test user and their manager"""
         return self.create_user.create_with_manager()

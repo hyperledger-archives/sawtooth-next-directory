@@ -35,8 +35,6 @@ def test_id():
     user_id2 = helper.user.id()
     assert isinstance(user_id1, str)
     assert isinstance(user_id2, str)
-    assert PUBLIC_KEY_PATTERN.match(user_id1)
-    assert PUBLIC_KEY_PATTERN.match(user_id2)
     assert user_id1 != user_id2
 
 
@@ -136,6 +134,15 @@ def test_create():
     assert isinstance(user.name, str)
     assert isinstance(keypair, Key)
     assert user.user_id == keypair.public_key
+
+
+@pytest.mark.user
+def test_imports():
+    """Test getting a created test user"""
+    user = helper.user.imports()
+    assert isinstance(user, protobuf.user_state_pb2.User)
+    assert isinstance(user.user_id, str)
+    assert isinstance(user.name, str)
 
 
 @pytest.mark.user

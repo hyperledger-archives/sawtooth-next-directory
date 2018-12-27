@@ -13,17 +13,11 @@
 // limitations under the License.
 // -----------------------------------------------------------------------------
 
+
 syntax = "proto3";
 
 
-message KeyContainer {
-
-   repeated Key keys = 2;
-
-}
-
-
-message Key {
+message AddKey {
 
     string key_id = 1;
 
