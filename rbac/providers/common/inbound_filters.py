@@ -41,6 +41,8 @@ def inbound_user_filter(entry, provider):
             value = inbound_value_filter(entry[alias[provider]])
             if value:
                 standard_entry[key] = value
+    if "email" not in standard_entry and "user_principal_name" in standard_entry:
+        standard_entry["email"] = standard_entry["user_principal_name"]
     for key, aliases in STANDARD_USER_TRANSFORM.items():
         if key not in standard_entry:
             for alias in aliases:
