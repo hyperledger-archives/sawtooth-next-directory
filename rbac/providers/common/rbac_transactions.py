@@ -15,10 +15,11 @@
 """ LDAP Sawtooth Transaction Creation
 """
 from rbac.common.logs import get_logger
-
 from rbac.common import rbac
 from rbac.common.crypto.keys import Key
 from rbac.common.util import bytes_from_hex
+from rbac.providers.common.rbac_uuid_mapper import get_uuid
+from rbac.providers.common.rbac_uuid_mapper import map_uuid_identifiers
 
 SIGNER_KEYPAIR = Key()
 LOGGER = get_logger(__name__)
@@ -43,19 +44,43 @@ def add_transaction(inbound_entry):
     """ Adds transactional entries onto inbound_entry
     """
     try:
-        data = inbound_entry["data"]
-        if not data or "relationship_id" not in data:
-            raise KeyError("relationship_id not found")
+        data = inbound_entry.get("data")
+        if not data:
+            raise KeyError("data not found on inbound entry")
+        data_type = inbound_entry.get("data_type")
+        if data_type not in ("user", "group"):
+            raise KeyError("unhandled inbound data type {}".format(data_type))
+        relationship_id = data.get("relationship_id")
+        if not relationship_id:
+            raise KeyError("relationship_id not found in inbound data")
+        else:
+            del data["relationship_id"]
+        remote_id = data.get("remote_id")
+        if not remote_id:
+            raise KeyError("remote_id not found in inbound data")
+
+        object_id = get_uuid(relationship_id)
+
+        if "uuid" in data:
+            uuid = data["uuid"]
+            if uuid:
+                uuid.remove(relationship_id)
+                uuid.remove(remote_id)
+            del data["uuid"]
 
         if inbound_entry["data_type"] == "user":
 
-            user_id = data["relationship_id"]
-            object_id = rbac.user.hash(user_id)
+            user_id = object_id
             address = rbac.user.address(object_id=object_id)
 
             inbound_entry["address"] = bytes_from_hex(address)
             inbound_entry["object_id"] = bytes_from_hex(object_id)
             inbound_entry["object_type"] = rbac.addresser.ObjectType.USER.value
+
+            if "manager_id" in data:
+                data["manager_id"] = map_uuid_identifiers(data["manager_id"])
+            if "member_of" in data:
+                data["member_of"] = map_uuid_identifiers(data["member_of"])
 
             message = rbac.user.imports.make(
                 signer_keypair=SIGNER_KEYPAIR, user_id=user_id, **data
@@ -68,13 +93,17 @@ def add_transaction(inbound_entry):
 
         elif inbound_entry["data_type"] == "group":
 
-            role_id = data["relationship_id"]
-            object_id = rbac.role.hash(role_id)
+            role_id = object_id
             address = rbac.role.address(object_id=object_id)
 
             inbound_entry["address"] = bytes_from_hex(address)
             inbound_entry["object_id"] = bytes_from_hex(object_id)
             inbound_entry["object_type"] = rbac.addresser.ObjectType.ROLE.value
+
+            if "members" in data:
+                data["members"] = map_uuid_identifiers(data["members"])
+            if "owners" in data:
+                data["owners"] = map_uuid_identifiers(data["owners"])
 
             message = rbac.role.imports.make(
                 signer_keypair=SIGNER_KEYPAIR, role_id=role_id, **data
@@ -85,6 +114,12 @@ def add_transaction(inbound_entry):
             inbound_entry["batch"] = batch.SerializeToString()
             add_metadata(inbound_entry, message)
 
+    except KeyError as err:
+        LOGGER.exception(
+            "Unable to create transaction for inbound data:\n%s\n%s",
+            str(err),
+            inbound_entry,
+        )
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
             "Unable to create transaction for inbound data:\n%s", inbound_entry

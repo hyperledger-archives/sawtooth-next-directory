@@ -59,6 +59,7 @@ LIST_OF_INVALID_INPUT = [
 ]
 
 
+@pytest.mark.filters
 def test_outbound_user_filter():
     """ Test outbound user filter with valid user """
     result = outbound_user_filter({"remote_id": 1234}, "azure")
@@ -67,12 +68,14 @@ def test_outbound_user_filter():
     assert "job_title" not in result
 
 
+@pytest.mark.filters
 def test_outbound_user_filter_bad_provider():
     """ Test outbound user filter with bad provider throws error"""
     with pytest.raises(TypeError):
         outbound_user_filter({"remote_id": 1234}, "test_run")
 
 
+@pytest.mark.filters
 def test_outbound_group_filter():
     """ Test outbound group filter with valid user """
     result = outbound_group_filter({"remote_id": 1234}, "ldap")
@@ -80,12 +83,14 @@ def test_outbound_group_filter():
     assert "id" not in result
 
 
+@pytest.mark.filters
 def test_outbound_group_filter_bad_provider():
     """ Test outbound group filter with bad provider throws error"""
     with pytest.raises(TypeError):
         outbound_group_filter({"remote_id": 1234}, "test_run")
 
 
+@pytest.mark.filters
 @pytest.mark.parametrize(
     "test_input, provider, field_to_test, expected", LIST_OF_VALID_INPUT
 )
@@ -96,6 +101,7 @@ def test_outbound_user_creation(test_input, provider, field_to_test, expected):
     )
 
 
+@pytest.mark.filters
 @pytest.mark.parametrize("test_input, provider, errorType", LIST_OF_INVALID_INPUT)
 def test_outbound_user_creation_with_bad_input(test_input, provider, errorType):
     """ Test outbound group creation with bad provider throws error"""
@@ -103,6 +109,7 @@ def test_outbound_user_creation_with_bad_input(test_input, provider, errorType):
         outbound_user_creation_filter(test_input, provider)
 
 
+@pytest.mark.filters
 def test_outbound_group_creation():
     """ Test outbound group creation with valid provider and group"""
     user = {"group_nickname": "test_group"}
@@ -112,6 +119,7 @@ def test_outbound_group_creation():
     assert "mail" not in result
 
 
+@pytest.mark.filters
 @pytest.mark.parametrize("test_input, provider, errorType", LIST_OF_INVALID_INPUT)
 def test_outbound_group_creation_with_bad_input(test_input, provider, errorType):
     """ Test outbound group creation without valid provider throws error"""

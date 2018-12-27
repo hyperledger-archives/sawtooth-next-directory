@@ -15,57 +15,60 @@
 """ Filters for inbound data fields
 """
 
+import re as regex
 import datetime
 import rethinkdb as r
 from rbac.common.logs import get_logger
 
-from rbac.providers.common.provider_transforms import (
-    GROUP_TRANSFORM,
-    USER_TRANSFORM,
-    STANDARD_USER_TRANSFORM,
-)
+from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
 
+EMAIL_PATTERN = regex.compile(
+    r"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+)
 LOGGER = get_logger(__name__)
 
 
-def inbound_user_filter(entry, provider):
-    """Takes in a user dict from a provider and standardizes the dict and returns it.
-    :param: user > dict > a dictionary representing a user
-    :param: provider > str > inbound provider type (azure, ldap)
+def inbound_filter(entry, provider, transforms):
+    """ Takes in a dict or object from a provider and returns a standardizes dict.
+        :param: entry > dict > a dictionary representing a provider object
+        :param: provider > str > inbound provider type (azure, ldap)
     """
     if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
     standard_entry = {}
-    for key, alias in USER_TRANSFORM.items():
-        if alias[provider] in entry:
-            value = inbound_value_filter(entry[alias[provider]])
-            if value:
-                standard_entry[key] = value
-    for key, aliases in STANDARD_USER_TRANSFORM.items():
-        if key not in standard_entry:
-            for alias in aliases:
-                if alias in entry:
-                    value = inbound_value_filter(entry[alias])
+    for local_key, transform in transforms.items():
+        keys = transform[provider]
+        if isinstance(keys, str):
+            keys = [keys]
+        if isinstance(keys, list):  # take first value found
+            for key in keys:
+                if key in entry:
+                    value = inbound_value_filter(local_key, entry[key])
                     if value:
-                        standard_entry[key] = value
+                        standard_entry[local_key] = value
                         break
+        elif isinstance(keys, set):  # take all unique values found
+            values = set({})
+            for key in keys:
+                if key in entry:
+                    value = inbound_value_filter(local_key, entry[key])
+                    if value:
+                        values.add(value)
+            if values:
+                standard_entry[local_key] = values
     return standard_entry
+
+
+def inbound_user_filter(entry, provider):
+    """ Execute user inbound filter transformation
+    """
+    return inbound_filter(entry, provider, USER_TRANSFORM)
 
 
 def inbound_group_filter(entry, provider):
-    """Takes in a group dict from a provider and standardizes the dict and returns it.
-    :param: group > dict > a dictionary representing a group
-    :param: provider > str > inbound provider type (azure, ldap)
+    """ Executes group inbound filter transformation
     """
-    if provider not in ("azure", "ldap"):
-        raise TypeError("Provider must be specified with a valid option.")
-    standard_entry = {}
-    for key, alias in GROUP_TRANSFORM.items():
-        if alias[provider] in entry:
-            value = inbound_value_filter(entry[alias[provider]])
-            if value:
-                standard_entry[key] = value
-    return standard_entry
+    return inbound_filter(entry, provider, GROUP_TRANSFORM)
 
 
 def rethink_datetime(value):
@@ -81,12 +84,13 @@ def rethink_datetime(value):
     return r.epoch_time(seconds * 1000)
 
 
-def inbound_value_filter(value):
+def inbound_value_filter(key, value):
     """Cleans up data values
     1. Unwraps LDAP attributes
     2. Removes empty arrays
     3. Unwraps single value arrays
     4. Converts datetime.datetime to rethink compatible datetime
+    5. Validates email addresses
     """
     if hasattr(value, "value"):
         value = value.value
@@ -94,10 +98,13 @@ def inbound_value_filter(value):
         if not value:
             return None
         if len(value) == 1:
-            return value[0]
+            return inbound_value_filter(key, value[0])
     elif isinstance(value, datetime.datetime):
         # TODO: we can store a date but we have to reconvert it
         # anytime we move the record, apparently. Use string for now.
         # return rethink_datetime(value)
         return str(value)
+    elif key == "email":
+        if not isinstance(value, str) or not EMAIL_PATTERN.match(value):
+            return None
     return value
