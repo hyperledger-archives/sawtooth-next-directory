@@ -54,7 +54,8 @@ def setup_db(host, port, name):
         r.db_create(name).run(conn)
 
         LOGGER.info('Creating table: auth')
-        r.db(name).table_create('auth', primary_key='user_id').run(conn)
+        r.db(name).table_create("auth", primary_key="user_id").run(conn)
+        r.db(name).table("auth").index_create("username").run(conn)
 
         LOGGER.info('Creating table: blocks')
         r.db(name).table_create('blocks', primary_key='block_num').run(conn)
@@ -76,6 +77,8 @@ def setup_db(host, port, name):
         LOGGER.info('Creating table: users')
         r.db(name).table_create('users').run(conn)
         r.db(name).table('users').index_create('user_id').run(conn)
+        r.db(name).table("users").index_create("username").run(conn)
+        r.db(name).table("users").index_create("email").run(conn)
 
         LOGGER.info('Creating table: sync_tracker')
         r.db(name).table_create('sync_tracker').run(conn)

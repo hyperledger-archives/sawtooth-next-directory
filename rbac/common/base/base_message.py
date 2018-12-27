@@ -313,12 +313,12 @@ class BaseMessage(AddressBase):
         key_address = addresser.key.address(object_id=signer)
         if key_address not in inputs:
             LOGGER.warning("Signer key address was not included in inputs")
-        if (
-            key_address in inputs
-            and key_address not in input_state
-            and not self.allow_signer_not_in_state
-        ):
-            raise ValueError("Signer key not found in state")
+        # if (
+        #    key_address in inputs
+        #    and key_address not in input_state
+        #    and not self.allow_signer_not_in_state
+        # ):
+        #    raise ValueError("Signer key not found in state")
 
     def make_payload(self, message, signer_keypair):
         """Make a payload for the given message type"""
@@ -557,12 +557,12 @@ class BaseMessage(AddressBase):
                     self._name_title, signer_address, signer
                 )
             )
-        if not self.allow_signer_not_in_state and signer_address not in input_state:
-            raise ValueError(
-                "{}: address {} for signer's public key {} was not found in state".format(
-                    self._name_title, signer_address, signer
-                )
-            )
+        # if not self.allow_signer_not_in_state and signer_address not in input_state:
+        #    raise ValueError(
+        #        "{}: address {} for signer's public key {} was not found in state".format(
+        #            self._name_title, signer_address, signer
+        #        )
+        #    )
 
     def apply(self, header, payload, context):
         """Handles a message in the transaction processor"""

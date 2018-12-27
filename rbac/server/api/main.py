@@ -73,7 +73,7 @@ def finish(app):
 
 
 def load_config(app):
-    """Load configuration (alpabetical)"""
+    """Load configuration (alphabetical)"""
     app.config.AES_KEY = get_config("AES_KEY")
     app.config.AIOHTTP_CONN_LIMIT = int(get_config("AIOHTTP_CONN_LIMIT"))
     app.config.AIOHTTP_DNS_TTL = int(get_config("AIOHTTP_DNS_TTL"))
@@ -90,6 +90,7 @@ def load_config(app):
     app.config.PORT = get_config("SERVER_PORT")
     app.config.TIMEOUT = int(get_config("TIMEOUT"))
     app.config.VALIDATOR = get_config("VALIDATOR")
+    app.config.DEMO_MODE = bool(get_config("DEMO_MODE"))
 
 
 def main():
