@@ -115,12 +115,7 @@ def main():
         app,
         automatic_options=True,
         supports_credentials=True,
-        resources={
-            r"/api/*": {
-                "origins": app.config.CLIENT_HOST + ":" + app.config.CLIENT_PORT
-            },
-            r"/webhooks/*": {"origins": "*"},
-        },
+        resources={r"/api/*": {"origins": "*"}, r"/webhooks/*": {"origins": "*"}},
     )
 
     zmq = ZMQEventLoop()
