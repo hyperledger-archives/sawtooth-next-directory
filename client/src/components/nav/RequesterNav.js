@@ -134,7 +134,6 @@ class RequesterNav extends Component {
    * @returns {JSX}
    */
   render () {
-    const { startAnimation } = this.props;
     return (
       <Container>
         <Link to='/browse' id='next-requester-nav-browse'>
@@ -149,17 +148,6 @@ class RequesterNav extends Component {
           category
           loading={false}/>
         { this.renderLists() }
-        <div id='next-requester-switch-container'>
-          <Button
-            icon
-            as={Link}
-            labelPosition='right'
-            onClick={startAnimation}
-            to='/approval/pending/individual'>
-            Switch to Approver
-            <Icon name='right arrow'/>
-          </Button>
-        </div>
       </Container>
     );
   }

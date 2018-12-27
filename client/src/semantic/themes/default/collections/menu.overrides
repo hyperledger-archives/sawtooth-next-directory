@@ -19,6 +19,15 @@
 
 .ui.huge.inverted.vertical.menu .ui.header .content {
   color: @white;
+}
+
+.ui.huge.inverted.vertical.menu .ui.header .content p {
+  color: lightslategray;
+  font-size: .85em;
+  margin-top: 7px;
+}
+
+.ui.huge.inverted.vertical.menu .item:first-child .ui.header .content {
   max-width: 12em;
 }
 

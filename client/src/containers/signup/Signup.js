@@ -23,8 +23,11 @@ import PropTypes from 'prop-types';
 import './Signup.css';
 import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
 import SignupForm from '../../components/forms/SignupForm';
-import * as utils from '../../services/Utils';
 import logo from '../../images/next-logo-billboard.png';
+
+
+import * as storage from '../../services/Storage';
+import * as utils from '../../services/Utils';
 
 
 /**
@@ -72,8 +75,11 @@ class Signup extends Component {
       recommendedPacks,
       recommendedRoles } = this.props;
     if(isAuthenticated) {
-      history.push(utils.createHomeLink(recommendedPacks,
-        recommendedRoles));
+      history.push(
+        storage.getViewState() ?
+          '/approval/pending/individual' :
+          utils.createHomeLink(recommendedPacks, recommendedRoles)
+      );
     }
   }
 

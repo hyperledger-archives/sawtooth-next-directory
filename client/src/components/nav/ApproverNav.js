@@ -22,7 +22,6 @@ import PropTypes from 'prop-types';
 
 import './ApproverNav.css';
 import NavList from './NavList';
-import * as utils from '../../services/Utils';
 
 
 /**
@@ -108,10 +107,6 @@ class ApproverNav extends Component {
    * @returns {JSX}
    */
   render () {
-    const {
-      recommendedPacks,
-      recommendedRoles,
-      startAnimation } = this.props;
     return (
       <Container>
         <Link to='/' id='next-approver-nav-snapshot'>
@@ -126,17 +121,6 @@ class ApproverNav extends Component {
           category
           loading={false}/>
         { this.renderLists() }
-        <h4 id='next-approver-switch-container'>
-          <Button
-            icon
-            as={Link}
-            labelPosition='left'
-            onClick={startAnimation}
-            to={utils.createHomeLink(recommendedPacks, recommendedRoles)}>
-            Switch to Requester
-            <Icon name='left arrow'/>
-          </Button>
-        </h4>
       </Container>
     );
   }
