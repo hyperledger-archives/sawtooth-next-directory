@@ -40,6 +40,48 @@ export default {
     };
   },
 
+  getOpenProposals: (id) => {
+    return {
+      ok: true,
+      data: [],
+    };
+  },
+
+  getConfirmedProposals: () => {
+    return {
+      ok: true,
+      data: [],
+    };
+  },
+
+  requestRoleAccess: () => {
+    return {
+      ok: true,
+      data: [],
+    };
+  },
+
+  requestPackAccess: () => {
+    return {
+      ok: true,
+      data: [],
+    };
+  },
+
+  getRecommended: () => {
+    return {
+      ok: true,
+      data: base,
+    };
+  },
+
+  getProposal: () => {
+    return {
+      ok: true,
+      data: base,
+    };
+  },
+
   getPack: (id) => {
     let data;
 
@@ -141,6 +183,13 @@ export default {
   },
 
   getUser: (id) => {
+    return {
+      ok: true,
+      data: {},
+    };
+  },
+
+  getUsers: (id) => {
     return {
       ok: true,
       data: {},
