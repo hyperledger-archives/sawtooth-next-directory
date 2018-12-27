@@ -24,20 +24,15 @@ LOGGER = logging.getLogger(__name__)
 
 
 async def fetch_user_resource(conn, user_id, head_block_num):
-    """Database quesry to get data on an individual user."""
-    # user = r.table("auth".get_all(user_id, index="user_id")).coerce_to('object').run(conn)
-    # user = r.table("metadata").get_all(user['email'], index="user_principal_name").coerce_to('object').run(conn)
+    """Database query to get data on an individual user."""
     resource = (
         await r.table("users")
         .get_all(user_id, index="user_id")
         .merge(
             {
                 "id": r.row["user_id"],
-                "email": r.db("rbac")
-                .table("auth")
-                .filter({"user_id": user_id})
-                .get_field("email")
-                .coerce_to("array"),
+                "name": r.row["name"],
+                "email": r.row["email"],
                 "subordinates": fetch_user_ids_by_manager(user_id, head_block_num),
                 "ownerOf": r.union(
                     fetch_relationships_by_id(
@@ -89,12 +84,8 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
             lambda user: user.merge(
                 {
                     "id": user["user_id"],
-                    "next_id": user["id"],
-                    "email": r.db("rbac")
-                    .table("metadata")
-                    .filter({"user_id": user["user_id"]})
-                    .get_field("user_principal_name")
-                    .coerce_to("array"),
+                    "name": user["name"],
+                    "email": user["email"],
                     "subordinates": fetch_user_ids_by_manager(
                         user["user_id"], head_block_num
                     ),
@@ -197,15 +188,8 @@ async def fetch_manager_chain(conn, user_id):
     return manager_chain
 
 
-def get_internal_id(next_id):
-    """Function to grab the NEXT user_id from an id."""
-    return (
-        r.table("users").filter({"id": next_id}).get_field("user_id").coerce_to("array")
-    )
-
-
 async def fetch_user_relationships(conn, user_id, head_block_num):
-    """Database Query to get an indivdual's surounding org connections."""
+    """Database Query to get an individual's surrounding org connections."""
     resource = (
         await r.table("users")
         .get_all(user_id, index="user_id")
