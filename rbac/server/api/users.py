@@ -105,31 +105,6 @@ async def create_new_user(request):
     return create_user_response(request, txn_key.public_key)
 
 
-@USERS_BP.post("api/demo/users")
-async def create_new_user_demo(request):
-    """Creating a user for authorization table from existing entries."""
-    required_fields = ["name", "username", "password", "email", "id", "user_id"]
-    utils.validate_fields(required_fields, request.json)
-
-    hashed_password = hashlib.sha256(
-        request.json.get("password").encode("utf-8")
-    ).hexdigest()
-
-    auth_entry = {
-        "user_id": request.json.get("user_id"),
-        "id": request.json.get("id"),
-        "hashed_password": hashed_password,
-        # "encrypted_private_key": encrypted_private_key,
-        "username": request.json.get("username"),
-        "email": request.json.get("email"),
-    }
-    LOGGER.info(auth_entry)
-    await auth_query.create_auth_entry(request.app.config.DB_CONN, auth_entry)
-
-    # Send back success response
-    return create_user_response(request, request.get("id"))
-
-
 @USERS_BP.get("api/users/<user_id>")
 @authorized()
 async def get_user(request, user_id):
@@ -144,7 +119,7 @@ async def get_user(request, user_id):
 
 @USERS_BP.get("api/users/<user_id>/relationships")
 @authorized()
-async def get_user_realtionships(request, user_id):
+async def get_user_relationships(request, user_id):
     head_block = await utils.get_request_block(request)
     user_resource = await users_query.fetch_user_relationships(
         request.app.config.DB_CONN, user_id, head_block.get("num")

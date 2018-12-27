@@ -62,9 +62,7 @@ def test_api_user_login():
         ),
         (
             {"id": helper.api.user.username(), "password": helper.api.user.password()},
-            "Not Found: No user with name '{}' exists.".format(
-                helper.api.user.last_username
-            ),
+            "No user with username '{}' exists.".format(helper.api.user.last_username),
             404,
         ),
     ],
@@ -86,6 +84,4 @@ def test_api_user_login_bad_password():
     user = helper.api.user.current
     data = {"id": user["username"], "password": "oops" + user["password"]}
     response = requests.post(url=url, headers=None, json=data)
-    assert assert_api_error(
-        response, "Unauthorized: Incorrect user ID or password", 401
-    )
+    assert assert_api_error(response, "Unauthorized: Incorrect password", 401)

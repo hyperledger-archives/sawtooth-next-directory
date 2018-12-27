@@ -102,6 +102,7 @@ services:
       - AES_KEY=${AES_KEY}
       - CLIENT_HOST=${CLIENT_HOST}
       - CLIENT_PORT=${CLIENT_PORT}
+      - DEMO_MODE=${DEMO_MODE:-False}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:

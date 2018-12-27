@@ -61,11 +61,29 @@ async def authorize(request):
     utils.validate_fields(required_fields, request.json)
     password = request.json.get("password")
     hashed_pwd = hashlib.sha256(password.encode("utf-8")).hexdigest()
-    auth_info = await auth_query.fetch_info_by_username(
-        request.app.config.DB_CONN, request.json.get("id")
-    )
-    if auth_info is None or auth_info.get("hashed_password") != hashed_pwd:
-        raise ApiUnauthorized("Unauthorized: Incorrect user ID or password")
+    auth_info = await auth_query.fetch_info_by_username(request)
+    email = auth_info.get("email")
+    if auth_info.get("hashed_password") is None:
+        if request.app.config.DEMO_MODE:
+            token = generate_api_key(
+                request.app.config.SECRET_KEY, auth_info.get("user_id")
+            )
+            return utils.create_authorization_response(
+                token,
+                {
+                    "message": "Authorization (demo mode) successful",
+                    "user_id": auth_info.get("user_id"),
+                },
+            )
+        if not email:
+            raise ApiUnauthorized(
+                "Unauthorized: No password nor email is set on this account"
+            )
+        # TODO: send email confirmation with password set link
+        raise ApiUnauthorized("Unauthorized: No password is set")
+    if auth_info.get("hashed_password") != hashed_pwd:
+        # TODO: rate limit password attempts
+        raise ApiUnauthorized("Unauthorized: Incorrect password")
     token = generate_api_key(request.app.config.SECRET_KEY, auth_info.get("user_id"))
     return utils.create_authorization_response(
         token,
