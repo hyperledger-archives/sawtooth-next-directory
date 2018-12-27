@@ -127,17 +127,23 @@ class Chat extends Component {
   }
 
 
-  // * Needed for debugging
-  manualRequestRole = () => {
+  /**
+   * Send manual access request for current role
+   * @param {string} message Message body
+   */
+  manualRequestRole = (message) => {
     const { activeRole, me, requestRoleAccess } = this.props;
-    requestRoleAccess(activeRole.id, me.id, 'some reason');
+    requestRoleAccess(activeRole.id, me.id, message);
   }
 
 
-  // * Needed for debugging
-  manualRequestPack = () => {
+  /**
+   * Send manual access request for current pack
+   * @param {string} message Message body
+   */
+  manualRequestPack = (message) => {
     const { activePack, me, requestPackAccess } = this.props;
-    requestPackAccess(activePack.id, me.id, 'some reason');
+    requestPackAccess(activePack.id, me.id, message);
   }
 
 
@@ -152,6 +158,15 @@ class Chat extends Component {
     const { rejectProposals, selectedProposals, reset } = this.props;
     rejectProposals(selectedProposals);
     reset();
+  }
+
+
+  // * Needed for debugging
+  manualErrorTest = () => {
+    const { sendMessage } = this.props;
+    sendMessage({
+      fail: 'yes', do: 'CREATE', message: { text: '/recommend' }, user_id: '?',
+    });
   }
 
 
@@ -307,6 +322,8 @@ class Chat extends Component {
               disabled={disabled}
               approve={this.manualApprove}
               reject={this.manualReject}
+              requestRole={(message) => this.manualRequestRole(message)}
+              requestPack={(message) => this.manualRequestPack(message)}
               send={(message) => this.send(message)}/>
           </div>
         }
@@ -319,7 +336,8 @@ class Chat extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    fetching: state.chat.fetching,
+    fetching:      state.chat.fetching,
+    socketError:   state.app.socketError,
   };
 };
 

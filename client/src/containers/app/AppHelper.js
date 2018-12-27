@@ -36,6 +36,8 @@ export const appState = (state) => {
     isAnimating:         AppSelectors.isAnimating(state),
     isRefreshing:        AppSelectors.isRefreshing(state),
     isSocketOpen:        AppSelectors.isSocketOpen(state),
+    socketMaxAttemptsReached:
+      AppSelectors.socketMaxAttemptsReached(state),
     shouldRefreshOnNextSocketReceive:
       AppSelectors.shouldRefreshOnNextSocketReceive(state),
 
