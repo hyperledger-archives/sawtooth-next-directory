@@ -28,7 +28,6 @@ from tests.rbac.api.config import api_wait
 LOGGER = get_logger(__name__)
 
 
-@pytest.mark.skip("Getting an intermittent index out of bound error")
 @pytest.mark.api
 @pytest.mark.api_user
 def test_api_user_get_self():
@@ -36,15 +35,17 @@ def test_api_user_get_self():
     """
     user = helper.api.user.current
     url = helper.api.user.get_url(user_id=user["user_id"])
+
     assert assert_api_get_requires_auth(url)
+
     api_wait()  # temporary, see config
     response = requests.get(url=url, headers={"Authorization": user["token"]})
     result = assert_api_success(response)
+
     assert result["data"]["email"] == user["email"]
     assert result["data"]["name"] == user["name"]
 
 
-@pytest.mark.skip("Getting an intermittent index out of bound error")
 @pytest.mark.api
 @pytest.mark.api_user
 def test_api_user_get_other():
@@ -53,9 +54,12 @@ def test_api_user_get_other():
     other = helper.api.user.current
     user = helper.api.user.current2
     url = helper.api.user.get_url(user_id=other["user_id"])
+
     assert assert_api_get_requires_auth(url)
+
     api_wait()  # temporary, see config
     response = requests.get(url=url, headers={"Authorization": user["token"]})
     result = assert_api_success(response)
+
     assert result["data"]["email"] == other["email"]
     assert result["data"]["name"] == other["name"]
