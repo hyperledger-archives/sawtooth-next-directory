@@ -16,19 +16,21 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import {
+  Checkbox,
   Icon,
   Image,
   Label,
   Menu,
   Header as MenuHeader } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import LoadingBar from 'react-redux-loading-bar';
 import PropTypes from 'prop-types';
 
 
 import './Header.css';
-import * as utils from '../../services/Utils';
 import logo from '../../images/next-logo-primary.png';
+import * as utils from '../../services/Utils';
+import * as storage from '../../services/Storage';
 
 
 /**
@@ -40,6 +42,7 @@ import logo from '../../images/next-logo-primary.png';
 class Header extends Component {
 
   static propTypes = {
+    history:                PropTypes.object,
     logout:                 PropTypes.func,
     me:                     PropTypes.object,
     startAnimation:         PropTypes.func,
@@ -49,7 +52,7 @@ class Header extends Component {
   }
 
 
-  state = { menuVisible: false };
+  state = { approverViewEnabled: null, menuVisible: false };
 
 
 
@@ -61,6 +64,9 @@ class Header extends Component {
     document.addEventListener(
       'mousedown', this.handleClickOutside
     );
+    this.setState({
+      approverViewEnabled: !!storage.getViewState(),
+    });
   }
 
 
@@ -101,6 +107,34 @@ class Header extends Component {
   }
 
 
+  /**
+   * Toggle approver view. When enabled, add setting to
+   * browser storage and navigate to view.
+   * @param {object} event Event passed by Semantic UI
+   * @param {object} data  Attributes passed on change
+   */
+  toggleApproverView = (event, data) => {
+    const {
+      history,
+      recommendedPacks,
+      recommendedRoles,
+      startAnimation } = this.props;
+
+    if (data.checked) {
+      storage.setViewState(1);
+      this.setState({ approverViewEnabled: true });
+      history.push('/approval/pending/individual');
+    } else {
+      storage.removeViewState();
+      this.setState({ approverViewEnabled: false });
+      startAnimation();
+      history.push(
+        utils.createHomeLink(recommendedPacks, recommendedRoles)
+      );
+    }
+  }
+
+
   logout = () => {
     const { logout } = this.props;
     this.toggleMenu();
@@ -114,6 +148,7 @@ class Header extends Component {
    */
   renderMenu () {
     const { me } = this.props;
+    const { approverViewEnabled } = this.state;
 
     return (
       <div id='next-header-menu'>
@@ -131,6 +166,28 @@ class Header extends Component {
               </MenuHeader>
             </Menu.Item>
           }
+          <Menu.Item id='next-header-menu-view-toggle'>
+            <MenuHeader as='h5'>
+              <Icon name='window maximize outline' color='grey'/>
+              <MenuHeader.Content>
+                <span>
+                  Approver View:
+                  <span className='next-toggle-state-label'>
+                    {approverViewEnabled ? 'ON' : 'OFF'}
+                  </span>
+                </span>
+                <Checkbox
+                  slider
+                  className='pull-right'
+                  checked={approverViewEnabled}
+                  onChange={this.toggleApproverView}/>
+                <p>
+                  Approver View adjusts the default experience to
+                  enable role and pack approvals.
+                </p>
+              </MenuHeader.Content>
+            </MenuHeader>
+          </Menu.Item>
           <Menu.Item as={Link} to='/approval/manage' onClick={this.toggleMenu}>
             <MenuHeader as='h5'>
               <Icon name='setting' color='grey'/>
@@ -205,4 +262,4 @@ class Header extends Component {
 }
 
 
-export default Header;
+export default withRouter(Header);

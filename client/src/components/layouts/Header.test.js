@@ -55,7 +55,9 @@ describe('Header component', () => {
       logout: () => { },
     };
 
-    const wrapper = shallow(<Header {...props} store={store}/>);
+    const wrapper = shallow(
+      <Header.WrappedComponent {...props} store={store}/>
+    );
 
     wrapper.instance().logout();
   });
