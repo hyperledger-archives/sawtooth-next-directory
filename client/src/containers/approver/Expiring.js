@@ -20,9 +20,10 @@ import { Grid } from 'semantic-ui-react';
 
 
 import './Expiring.css';
-import Chat from '../../components/chat/Chat';
-import TrackHeader from '../../components/layouts/TrackHeader';
-import glyph from '../../images/header-glyph-individual-inverted.png';
+import Chat from 'components/chat/Chat';
+import TrackHeader from 'components/layouts/TrackHeader';
+import glyph from 'images/header-glyph-individual-inverted.png';
+import * as theme from 'services/Theme';
 
 
 /**
@@ -33,12 +34,15 @@ import glyph from '../../images/header-glyph-individual-inverted.png';
  */
 class Expiring extends Component {
 
+  themes = ['minimal'];
+
+
   /**
    * Entry point to perform tasks required to render
    * component. On load, get open proposals.
    */
   componentDidMount () {
-    document.querySelector('body').classList.add('minimal');
+    theme.apply(this.themes);
   }
 
 
@@ -46,7 +50,7 @@ class Expiring extends Component {
    * Component teardown
    */
   componentWillUnmount () {
-    document.querySelector('body').classList.remove('minimal');
+    theme.remove(this.themes);
   }
 
 

@@ -17,12 +17,10 @@ limitations under the License.
 import { call, put } from 'redux-saga/effects';
 
 
-import FixtureAPI from '../services/FixtureApi';
-import socket from '../services/Socket';
-
-
-import ChatActions from '../redux/ChatRedux';
-import { getConversation, sendMessage } from '../sagas/ChatSaga';
+import FixtureAPI from 'services/FixtureApi';
+import socket from 'services/Socket';
+import ChatActions from 'redux/ChatRedux';
+import { getConversation, sendMessage } from 'sagas/ChatSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;

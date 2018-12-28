@@ -20,16 +20,16 @@ import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import { RequesterSelectors } from '../../../redux/RequesterRedux';
-import Chat from '../../../components/chat/Chat';
-import TrackHeader from '../../../components/layouts/TrackHeader';
+import { RequesterSelectors } from 'redux/RequesterRedux';
+import Chat from 'components/chat/Chat';
+import TrackHeader from 'components/layouts/TrackHeader';
 import PackApproval from './PackApproval';
 import PackApprovalList from './PackApprovalList';
 import RolesList from './RolesList';
 
 
 import './Pack.css';
-import glyph from '../../../images/header-glyph-pack.png';
+import glyph from 'images/header-glyph-pack.png';
 
 
 /**

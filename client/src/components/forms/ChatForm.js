@@ -12,18 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-Chat form
-Component encapsulating a reusable chat form
-suitable for composing within containers where chat
-functionality is required */
 
 
 import React, { Component } from 'react';
 import { Button, Form, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import * as utils from '../../services/Utils';
+import * as utils from 'services/Utils';
 
 
 /**

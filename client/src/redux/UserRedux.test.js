@@ -16,6 +16,7 @@ limitations under the License.
 
 import Actions, { reducer, INITIAL_STATE } from './UserRedux';
 
+
 test('meFailure', () => {
   const error = '';
   const state = reducer(INITIAL_STATE, Actions.userFailure(error));

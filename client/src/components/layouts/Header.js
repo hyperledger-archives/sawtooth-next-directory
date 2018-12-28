@@ -29,9 +29,9 @@ import PropTypes from 'prop-types';
 
 import './Header.css';
 import Avatar from './Avatar';
-import logo from '../../images/next-logo-primary.png';
-import * as utils from '../../services/Utils';
-import * as storage from '../../services/Storage';
+import logo from 'images/next-logo-primary.png';
+import * as utils from 'services/Utils';
+import * as storage from 'services/Storage';
 
 
 /**
@@ -220,7 +220,7 @@ class Header extends Component {
       recommendedPacks,
       recommendedRoles,
       startAnimation } = this.props;
-    const { menuVisible } = this.state;
+    const { approverViewEnabled, menuVisible } = this.state;
 
     return (
       <header className='next-header' ref={this.setRef}>
@@ -228,7 +228,9 @@ class Header extends Component {
         <div id='next-header-logo'>
           <Image
             as={Link}
-            to={utils.createHomeLink(recommendedPacks, recommendedRoles)}
+            to={approverViewEnabled ?
+              '/approval/pending/individual' :
+              utils.createHomeLink(recommendedPacks, recommendedRoles)}
             src={logo}
             onClick={startAnimation}
             size='tiny'/>

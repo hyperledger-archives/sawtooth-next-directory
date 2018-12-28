@@ -21,13 +21,13 @@ import PropTypes from 'prop-types';
 
 
 import './Signup.css';
-import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
-import SignupForm from '../../components/forms/SignupForm';
-import logo from '../../images/next-logo-billboard.png';
+import AuthActions, { AuthSelectors } from 'redux/AuthRedux';
+import SignupForm from 'components/forms/SignupForm';
+import logo from 'images/next-logo-billboard.png';
 
 
-import * as storage from '../../services/Storage';
-import * as utils from '../../services/Utils';
+import * as storage from 'services/Storage';
+import * as utils from 'services/Utils';
 
 
 /**

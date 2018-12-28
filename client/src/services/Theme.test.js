@@ -14,13 +14,10 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import socket from './Socket';
+describe('Theme Service', () => {
 
+  test('apply', () => {
 
-describe('Socket Service', () => {
-
-  test('create socket', () => {
-    socket.create();
   });
 
 });

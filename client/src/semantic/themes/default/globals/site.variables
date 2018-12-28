@@ -59,6 +59,7 @@
 @lightSecondaryColor : @lightBlack;
 
 @darkBackground      : #273544;
+@contrastBackground  : #fbfcfd;
 
 /*--------------
   Page Heading

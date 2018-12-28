@@ -17,16 +17,16 @@ limitations under the License.
 import { all, takeLatest } from 'redux-saga/effects';
 
 
-import API from '../services/Api';
-import FixtureAPI from '../services/FixtureApi';
+import API from 'services/Api';
+import FixtureAPI from 'services/FixtureApi';
 
 
-import { AppTypes } from '../redux/AppRedux';
-import { ApproverTypes } from '../redux/ApproverRedux';
-import { AuthTypes } from '../redux/AuthRedux';
-import { ChatTypes } from '../redux/ChatRedux';
-import { RequesterTypes } from '../redux/RequesterRedux';
-import { UserTypes } from '../redux/UserRedux';
+import { AppTypes } from 'redux/AppRedux';
+import { ApproverTypes } from 'redux/ApproverRedux';
+import { AuthTypes } from 'redux/AuthRedux';
+import { ChatTypes } from 'redux/ChatRedux';
+import { RequesterTypes } from 'redux/RequesterRedux';
+import { UserTypes } from 'redux/UserRedux';
 
 
 import {

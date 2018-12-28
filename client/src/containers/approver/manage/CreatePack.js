@@ -20,7 +20,7 @@ import { Button, Form, Grid } from 'semantic-ui-react';
 
 
 import './CreatePack.css';
-import TrackHeader from '../../../components/layouts/TrackHeader';
+import TrackHeader from 'components/layouts/TrackHeader';
 
 
 /**

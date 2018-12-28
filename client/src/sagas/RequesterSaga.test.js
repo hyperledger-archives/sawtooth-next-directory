@@ -14,24 +14,22 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
+import { put } from 'redux-saga/effects';
 
 
-import FixtureAPI from '../services/FixtureApi';
-
-
-import RequesterActions from '../redux/RequesterRedux';
-
+import FixtureAPI from 'services/FixtureApi';
+import RequesterActions from 'redux/RequesterRedux';
 import { getBase,
   fetchPack,
   fetchRole,
   fetchProposal,
   getAllRoles,
   roleAccess,
-  packAccess } from '../sagas/RequesterSaga';
+  packAccess } from 'sagas/RequesterSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;
+
 
 test('getBase: success path', () => {
   const res = { ok: true, data: {} };

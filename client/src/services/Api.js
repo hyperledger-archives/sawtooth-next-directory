@@ -18,9 +18,9 @@ import apisauce from 'apisauce';
 import { toast } from 'react-toastify';
 
 
-import { store } from '../customStore';
-import AuthActions from '../redux/AuthRedux';
-import * as storage from '../services/Storage';
+import { store } from 'customStore';
+import AuthActions from 'redux/AuthRedux';
+import * as storage from 'services/Storage';
 
 
 /**

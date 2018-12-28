@@ -14,16 +14,18 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import * as customStore from '../../customStore';
+
+import * as customStore from 'customStore';
 import ChatMessage from './Chat';
 
+
 const store = customStore.create();
+
 
 describe('ChatMessage component', () => {
 

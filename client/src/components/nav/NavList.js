@@ -12,11 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-NavList
-Component encapsulating a reusable, selectable list suitable
-for displaying options in navigation components */
 
 
 import React, { Component } from 'react';

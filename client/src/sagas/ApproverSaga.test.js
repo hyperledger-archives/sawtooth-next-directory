@@ -14,18 +14,16 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
+import { put } from 'redux-saga/effects';
 
 
-import FixtureAPI from '../services/FixtureApi';
-
-
-import ApproverActions from '../redux/ApproverRedux';
-
-import { getOpenProposals, getConfirmedProposals } from '../sagas/ApproverSaga';
+import FixtureAPI from 'services/FixtureApi';
+import ApproverActions from 'redux/ApproverRedux';
+import { getOpenProposals, getConfirmedProposals } from 'sagas/ApproverSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;
+
 
 test('getOpenProposals: call API', () => {
   const res = { ok: true, data: {} };
@@ -38,6 +36,7 @@ test('getOpenProposals: call API', () => {
   expect(stepRes).toEqual(put(ApproverActions.openProposalsSuccess(res.data)));
 });
 
+
 test('getConfirmedProposals: call API', () => {
   const res = { ok: true, data: {} };
 
@@ -49,4 +48,3 @@ test('getConfirmedProposals: call API', () => {
   expect(stepRes)
     .toEqual(put(ApproverActions.confirmedProposalsSuccess(res.data)));
 });
-

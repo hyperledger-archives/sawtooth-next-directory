@@ -16,6 +16,7 @@ limitations under the License.
 
 import Actions, { reducer, INITIAL_STATE } from './ChatRedux';
 
+
 test('clearMessages', () => {
   const state = reducer(INITIAL_STATE, Actions.clearMessages(null));
   expect(state.messages).toBe(null);

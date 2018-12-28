@@ -12,16 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-
-User saga
-Each generator function executes a request to the
-API to retrieve data required to hydrate the UI. */
 
 
 import { all, call, fork, put } from 'redux-saga/effects';
-import UserActions from '../redux/UserRedux';
+import UserActions from 'redux/UserRedux';
 
 
 /**

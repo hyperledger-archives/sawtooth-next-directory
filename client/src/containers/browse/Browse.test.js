@@ -21,7 +21,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
+import * as customStore from 'customStore';
 import Browse from './Browse';
 
 

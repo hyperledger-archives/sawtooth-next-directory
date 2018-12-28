@@ -16,8 +16,8 @@ limitations under the License.
 
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
-import * as utils from '../services/Utils';
-import * as storage from '../services/Storage';
+import * as utils from 'services/Utils';
+import * as storage from 'services/Storage';
 
 
 //

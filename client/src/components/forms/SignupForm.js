@@ -15,7 +15,12 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Container, Form, Label, Input, Transition } from 'semantic-ui-react';
+import {
+  Container,
+  Form,
+  Label,
+  Input,
+  Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
