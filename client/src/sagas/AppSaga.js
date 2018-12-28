@@ -22,12 +22,18 @@ import AppActions from '../redux/AppRedux';
 import ChatActions from '../redux/ChatRedux';
 import Socket, {
   SOCKET_RECONNECT_TIMEOUT,
+  SOCKET_NORMAL_CLOSURE_ERROR_CODE,
+  SOCKET_NO_STATUS_RECEIVED_ERROR_CODE,
   incrementSocketAttempt } from '../services/Socket';
 
 
 let channel;
 
 
+/**
+ * Open socket
+ * @generator
+ */
 export function * openSocket () {
   channel = yield call(createChannel, Socket.create());
   while (true) {
@@ -42,11 +48,19 @@ export function * openSocket () {
 }
 
 
+/**
+ * Close socket
+ * @generator
+ */
 export function * closeSocket () {
   yield channel.close();
 }
 
 
+/**
+ * Attempt socket reconnect
+ * @generator
+ */
 export function * reconnect () {
   if (incrementSocketAttempt() === -1)
     yield put(AppActions.socketMaxAttemptsReached());
@@ -55,6 +69,12 @@ export function * reconnect () {
 }
 
 
+/**
+ * Create saga channel to communicate with an external
+ * WebSocket event source.
+ * @param {object} socket WebSocket object
+ * @returns {object}
+ */
 const createChannel = (socket) =>
   eventChannel(emit => {
     socket.onerror = (event) => {
@@ -64,7 +84,8 @@ const createChannel = (socket) =>
       }
     };
     socket.onclose = (event) => {
-      if (event.code !== 1e3 && event.code !== 1005) {
+      if (event.code !== SOCKET_NORMAL_CLOSURE_ERROR_CODE &&
+          event.code !== SOCKET_NO_STATUS_RECEIVED_ERROR_CODE) {
         emit(AppActions.socketError(event));
         emit(new Error(event.reason));
       }

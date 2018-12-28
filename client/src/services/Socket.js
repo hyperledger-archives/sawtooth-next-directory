@@ -18,9 +18,11 @@ export let socket;
 
 
 export const SOCKET_RECONNECT_TIMEOUT = 1e3;
+export const SOCKET_NORMAL_CLOSURE_ERROR_CODE = 1e3;
+export const SOCKET_NO_STATUS_RECEIVED_ERROR_CODE = 1005;
+
+
 const MAX_ATTEMPTS = 5;
-
-
 let attempt = 0;
 
 
