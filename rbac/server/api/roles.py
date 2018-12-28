@@ -62,6 +62,7 @@ async def create_new_role(request):
         metadata=request.json.get("metadata"),
         admins=request.json.get("administrators"),
         owners=request.json.get("owners"),
+        description=request.json.get("description"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -207,6 +208,7 @@ def create_role_response(request, role_id):
         "members": [],
         "tasks": [],
         "proposals": [],
+        "description": request.json.get("description"),
     }
 
     if request.json.get("metadata"):
