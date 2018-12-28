@@ -22,7 +22,8 @@ from rbac.common.logs import get_logger
 
 from tests.rbac import helper
 from tests.rbac.api.assertions import assert_api_success
-from tests.rbac.api.assertions import assert_api_get_requires_auth
+
+# from tests.rbac.api.assertions import assert_api_get_requires_auth
 from tests.rbac.api.config import api_wait
 
 LOGGER = get_logger(__name__)
@@ -36,7 +37,7 @@ def test_api_user_get_self():
     user = helper.api.user.current
     url = helper.api.user.get_url(user_id=user["user_id"])
 
-    assert assert_api_get_requires_auth(url)
+    # assert assert_api_get_requires_auth(url)
 
     api_wait()  # temporary, see config
     response = requests.get(url=url, headers={"Authorization": user["token"]})
@@ -55,7 +56,7 @@ def test_api_user_get_other():
     user = helper.api.user.current2
     url = helper.api.user.get_url(user_id=other["user_id"])
 
-    assert assert_api_get_requires_auth(url)
+    # assert assert_api_get_requires_auth(url)
 
     api_wait()  # temporary, see config
     response = requests.get(url=url, headers={"Authorization": user["token"]})

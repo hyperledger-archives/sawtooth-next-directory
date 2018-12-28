@@ -73,7 +73,9 @@ class CreateTaskTestHelper:
             task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
         )
 
-        status = rbac.task.new(signer_keypair=keypair, message=message)
+        status = rbac.task.new(
+            signer_keypair=keypair, signer_user_id=user.user_id, message=message
+        )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"

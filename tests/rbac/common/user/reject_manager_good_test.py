@@ -33,11 +33,13 @@ def test_make():
     related_id = helper.user.id()
     reason = helper.user.manager.propose.reason()
     proposal_id = helper.user.manager.propose.id()
+    signer_user_id = helper.user.id()
     message = rbac.user.manager.reject.make(
         proposal_id=proposal_id,
         object_id=object_id,
         related_id=related_id,
         reason=reason,
+        signer_user_id=signer_user_id,
     )
     assert isinstance(message, protobuf.proposal_transaction_pb2.UpdateProposal)
     assert message.proposal_id == proposal_id
@@ -51,28 +53,26 @@ def test_make():
 def test_make_addresses():
     """Test making a propose manager message"""
     user_key = helper.user.key()
-    object_id = user_key.public_key
+    object_id = helper.user.id()
     related_id = helper.user.id()
     reason = helper.user.manager.propose.reason()
     proposal_id = helper.user.manager.propose.id()
     proposal_address = rbac.user.manager.reject.address(
         object_id=object_id, related_id=related_id
     )
-    signer_user_address = rbac.user.address(user_key.public_key)
     message = rbac.user.manager.reject.make(
         proposal_id=proposal_id,
         object_id=object_id,
         related_id=related_id,
         reason=reason,
+        signer_user_id=object_id,
     )
 
     inputs, outputs = rbac.user.manager.reject.make_addresses(
-        message=message, signer_keypair=user_key
+        message=message, signer_user_id=object_id
     )
 
     assert proposal_address in inputs
-    assert signer_user_address in inputs
-
     assert proposal_address in outputs
 
 
@@ -80,10 +80,11 @@ def test_make_addresses():
 @pytest.mark.reject_user_manager
 def test_create():
     """Test rejecting a manager proposal"""
-    proposal, _, _, _, manager_key = helper.user.manager.propose.create()
+    proposal, _, _, manager, manager_key = helper.user.manager.propose.create()
     reason = helper.user.manager.propose.reason()
 
     status = rbac.user.manager.reject.new(
+        signer_user_id=manager.user_id,
         signer_keypair=manager_key,
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,

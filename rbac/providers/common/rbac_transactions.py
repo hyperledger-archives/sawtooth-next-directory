@@ -21,6 +21,8 @@ from rbac.common.crypto.keys import Key
 from rbac.common.util import bytes_from_hex
 
 SIGNER_KEYPAIR = Key()
+SIGNER_USER_ID = SIGNER_KEYPAIR.public_key
+
 LOGGER = get_logger(__name__)
 
 # These field names may not be contained in metadata, as they conflict with official field names.
@@ -61,7 +63,9 @@ def add_transaction(inbound_entry):
                 signer_keypair=SIGNER_KEYPAIR, user_id=user_id, **data
             )
             batch = rbac.user.imports.batch(
-                signer_keypair=SIGNER_KEYPAIR, message=message
+                signer_keypair=SIGNER_KEYPAIR,
+                signer_user_id=SIGNER_USER_ID,
+                message=message,
             )
             inbound_entry["batch"] = batch.SerializeToString()
             add_metadata(inbound_entry, message)
@@ -80,7 +84,9 @@ def add_transaction(inbound_entry):
                 signer_keypair=SIGNER_KEYPAIR, role_id=role_id, **data
             )
             batch = rbac.role.imports.batch(
-                signer_keypair=SIGNER_KEYPAIR, message=message
+                signer_keypair=SIGNER_KEYPAIR,
+                signer_user_id=SIGNER_USER_ID,
+                message=message,
             )
             inbound_entry["batch"] = batch.SerializeToString()
             add_metadata(inbound_entry, message)

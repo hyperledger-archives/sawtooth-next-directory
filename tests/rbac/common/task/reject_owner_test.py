@@ -55,10 +55,10 @@ def test_make_addresses():
     proposal_id = helper.proposal.id()
     proposal_address = rbac.task.owner.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
-    signer_admin_address = rbac.task.admin.address(object_id, signer_keypair.public_key)
-    signer_owner_address = rbac.task.owner.address(object_id, signer_keypair.public_key)
-    signer_user_address = rbac.user.address(signer_keypair.public_key)
+    signer_admin_address = rbac.task.admin.address(object_id, signer_user_id)
+    signer_owner_address = rbac.task.owner.address(object_id, signer_user_id)
     message = rbac.task.owner.reject.make(
         proposal_id=proposal_id,
         related_id=related_id,
@@ -67,13 +67,12 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.task.owner.reject.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert proposal_address in inputs
     assert signer_admin_address in inputs
     assert signer_owner_address in inputs
-    assert signer_user_address in inputs
 
     assert proposal_address in outputs
 
@@ -82,7 +81,7 @@ def test_make_addresses():
 @pytest.mark.reject_task_owner
 def test_create():
     """Test executing the message on the blockchain"""
-    proposal, _, _, task_owner_key, _, _ = helper.task.owner.propose.create()
+    proposal, _, task_owner, task_owner_key, _, _ = helper.task.owner.propose.create()
 
     reason = helper.task.owner.propose.reason()
     message = rbac.task.owner.reject.make(
@@ -94,6 +93,7 @@ def test_create():
 
     status = rbac.task.owner.reject.new(
         signer_keypair=task_owner_key,
+        signer_user_id=task_owner.user_id,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -112,5 +112,5 @@ def test_create():
     assert reject.object_id == proposal.object_id
     assert reject.related_id == proposal.related_id
     assert reject.close_reason == reason
-    assert reject.closer == task_owner_key.public_key
+    assert reject.closer == task_owner.user_id
     assert reject.status == protobuf.proposal_state_pb2.Proposal.REJECTED

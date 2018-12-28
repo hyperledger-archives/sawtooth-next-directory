@@ -22,6 +22,7 @@ from tests.rbac.common.role.propose_admin_helper import ProposeRoleAdminTestHelp
 from tests.rbac.common.role.propose_owner_helper import ProposeRoleOwnerTestHelper
 from tests.rbac.common.role.propose_member_helper import ProposeRoleMemberTestHelper
 from tests.rbac.common.role.propose_task_helper import ProposeRoleTaskTestHelper
+from tests.rbac.testdata.role import RoleTestData
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,28 +59,17 @@ class RoleTaskTestHelper:
         self.propose = ProposeRoleTaskTestHelper()
 
 
-class RoleTestHelper:
+class RoleTestHelper(RoleTestData):
     """Role Test Helper"""
 
     def __init__(self):
         """Role Test Helper"""
+        super().__init__()
         self.create_role = CreateRoleTestHelper()
         self.admin = RoleAdminTestHelper()
         self.owner = RoleOwnerTestHelper()
         self.member = RoleMemberTestHelper()
         self.task = RoleTaskTestHelper()
-
-    def id(self):
-        """Returns a unique identifier"""
-        return self.create_role.id()
-
-    def name(self):
-        """Returns a random name"""
-        return self.create_role.name()
-
-    def reason(self):
-        """Returns a random reason"""
-        return self.create_role.reason()
 
     def message(self):
         """Return a create role message"""

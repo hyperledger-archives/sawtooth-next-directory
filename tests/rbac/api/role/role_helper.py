@@ -15,12 +15,11 @@
 """ Role Test Helper """
 # pylint: disable=too-few-public-methods
 
-import random
-
 from tests.rbac.api.base.base_helper import BaseApiHelper
 from tests.rbac.api.user.user_helper import UserTestHelper
 from tests.rbac.api.role.create_role_helper import CreateRoleTestHelper
 from tests.rbac.api.role.propose_member_helper import ProposeRoleMemberTestHelper
+from tests.rbac.testdata.role import RoleTestData
 
 
 class RoleMemberTestHelper:
@@ -44,17 +43,13 @@ class StubTestHelper(BaseApiHelper):
 helper = StubTestHelper()
 
 
-class RoleTestHelper(BaseApiHelper):
+class RoleTestHelper(RoleTestData, BaseApiHelper):
     """ Role Test Helper """
 
     def __init__(self):
         super().__init__()
         self.create = CreateRoleTestHelper()
         self.member = RoleMemberTestHelper()
-
-    def name(self):
-        """ Get a random name """
-        return "Role" + str(random.randint(1000, 10000))
 
     @property
     def current(self):

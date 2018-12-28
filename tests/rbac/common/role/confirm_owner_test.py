@@ -57,12 +57,12 @@ def test_make_addresses():
     proposal_address = rbac.role.owner.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
     relationship_address = rbac.role.owner.address(object_id, related_id)
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
 
     user_address = rbac.user.address(related_id)
-    signer_admin_address = rbac.role.admin.address(object_id, signer_keypair.public_key)
-    signer_owner_address = rbac.role.owner.address(object_id, signer_keypair.public_key)
-    signer_user_address = rbac.user.address(signer_keypair.public_key)
+    signer_admin_address = rbac.role.admin.address(object_id, signer_user_id)
+    signer_owner_address = rbac.role.owner.address(object_id, signer_user_id)
     message = rbac.role.owner.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,
@@ -71,13 +71,12 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.role.owner.confirm.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert user_address in inputs
     assert signer_owner_address in inputs
     assert signer_admin_address in inputs
-    assert signer_user_address in inputs
     assert proposal_address in inputs
     assert relationship_address in inputs
 
@@ -89,7 +88,7 @@ def test_make_addresses():
 @pytest.mark.confirm_role_owner
 def test_create():
     """Test executing the message on the blockchain"""
-    proposal, _, _, role_owner_key, _, _ = helper.role.owner.propose.create()
+    proposal, _, role_owner, role_owner_key, _, _ = helper.role.owner.propose.create()
 
     reason = helper.role.owner.propose.reason()
     message = rbac.role.owner.confirm.make(
@@ -101,6 +100,7 @@ def test_create():
 
     status = rbac.role.owner.confirm.new(
         signer_keypair=role_owner_key,
+        signer_user_id=role_owner.user_id,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -119,6 +119,7 @@ def test_create():
     assert confirm.object_id == proposal.object_id
     assert confirm.related_id == proposal.related_id
     assert confirm.close_reason == reason
+    assert confirm.closer == role_owner.user_id
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
     assert rbac.role.owner.exists(
         object_id=proposal.object_id, related_id=proposal.related_id

@@ -69,9 +69,9 @@ class CreateTask(BaseMessage):
         """Fields that are on the message but not stored on the state object"""
         return ["owners", "admins"]
 
-    def make_addresses(self, message, signer_keypair):
+    def make_addresses(self, message, signer_user_id):
         """Makes the appropriate inputs & output addresses for the message type"""
-        inputs, _ = super().make_addresses(message, signer_keypair)
+        inputs, _ = super().make_addresses(message, signer_user_id)
 
         inputs.update(
             {addresser.task.address(message.task_id)}

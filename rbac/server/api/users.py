@@ -66,6 +66,7 @@ async def create_new_user(request):
 
     # Generate keys
     txn_key = Key()
+    txn_user_id = rbac.user.unique_id()
     encrypted_private_key = encrypt_private_key(
         request.app.config.AES_KEY, txn_key.public_key, txn_key.private_key_bytes
     )
@@ -73,7 +74,8 @@ async def create_new_user(request):
     # Build create user transaction
     batch_list = rbac.user.batch_list(
         signer_keypair=txn_key,
-        user_id=txn_key.public_key,
+        signer_user_id=txn_user_id,
+        user_id=txn_user_id,
         name=request.json.get("name"),
         username=request.json.get("username"),
         email=request.json.get("email"),
@@ -93,7 +95,7 @@ async def create_new_user(request):
     ).hexdigest()
 
     auth_entry = {
-        "user_id": txn_key.public_key,
+        "user_id": txn_user_id,
         "hashed_password": hashed_password,
         "encrypted_private_key": encrypted_private_key,
         "username": request.json.get("username"),
@@ -141,10 +143,11 @@ async def update_manager(request, user_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = rbac.user.manager.propose.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         user_id=user_id,
         new_manager_id=request.json.get("id"),

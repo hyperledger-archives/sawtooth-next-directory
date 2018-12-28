@@ -42,10 +42,15 @@ def test_address():
 def test_make():
     """Test making a message"""
     name = helper.role.name()
+    description = helper.role.description()
     role_id = helper.role.id()
     user_id = helper.user.id()
     message = rbac.role.make(
-        role_id=role_id, name=name, owners=[user_id], admins=[user_id]
+        role_id=role_id,
+        name=name,
+        owners=[user_id],
+        admins=[user_id],
+        description=description,
     )
     assert isinstance(message, protobuf.role_transaction_pb2.CreateRole)
     assert isinstance(message.role_id, str)
@@ -54,6 +59,7 @@ def test_make():
     assert message.name == name
     assert message.owners == [user_id]
     assert message.admins == [user_id]
+    assert message.description == description
 
 
 @pytest.mark.role
@@ -65,6 +71,7 @@ def test_make_addresses():
     role_address = rbac.role.address(role_id)
     user_id = helper.user.id()
     user_address = rbac.user.address(user_id)
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
     owner_address = rbac.role.owner.address(role_id, user_id)
     admin_address = rbac.role.admin.address(role_id, user_id)
@@ -73,7 +80,7 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.role.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert role_address in inputs
@@ -93,12 +100,19 @@ def test_create():
     """Test creating a role"""
     user, keypair = helper.user.create()
     name = helper.role.name()
+    description = helper.role.description()
     role_id = helper.role.id()
     message = rbac.role.make(
-        role_id=role_id, name=name, owners=[user.user_id], admins=[user.user_id]
+        role_id=role_id,
+        name=name,
+        owners=[user.user_id],
+        admins=[user.user_id],
+        description=description,
     )
 
-    status = rbac.role.new(signer_keypair=keypair, message=message)
+    status = rbac.role.new(
+        signer_keypair=keypair, signer_user_id=user.user_id, message=message
+    )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -107,5 +121,6 @@ def test_create():
 
     assert role.role_id == message.role_id
     assert role.name == message.name
+    assert role.description == message.description
     assert rbac.role.owner.exists(object_id=role.role_id, related_id=user.user_id)
     assert rbac.role.admin.exists(object_id=role.role_id, related_id=user.user_id)

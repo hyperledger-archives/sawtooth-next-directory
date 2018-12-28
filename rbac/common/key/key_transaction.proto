@@ -1,4 +1,4 @@
-// Copyright 2017 Intel Corporation
+// Copyright 2018 Contributors to Hyperledger Sawtooth
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,46 +17,10 @@
 syntax = "proto3";
 
 
-message ProposeAddTaskOwner {
+message AddKey {
 
-    string proposal_id = 1;
+    string key_id = 1;
 
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-    string metadata = 5;
-
-}
-
-
-message ProposeAddTaskAdmin {
-
-    string proposal_id = 1;
-
-    string task_id = 2;
-
-    string user_id = 3;
-
-    string reason = 4;
-
-    string metadata = 5;
-
-}
-
-
-message CreateTask {
-
-    string task_id = 1;
-
-    string name = 2;
-
-    repeated string admins = 3;
-
-    repeated string owners = 4;
-
-    string metadata = 5;
+    string user_id = 2;
 
 }

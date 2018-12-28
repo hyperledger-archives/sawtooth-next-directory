@@ -56,6 +56,7 @@ def test_make_addresses():
     role_address = rbac.role.address(role_id)
     user_id = helper.user.id()
     user_address = rbac.user.address(user_id)
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
     owner_address = rbac.role.owner.address(role_id, user_id)
     admin_address = rbac.role.admin.address(role_id, user_id)
@@ -64,7 +65,7 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.role.imports.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert role_address in inputs
@@ -88,6 +89,7 @@ def test_create():
 
     status = rbac.role.imports.new(
         signer_keypair=keypair,
+        signer_user_id=user.user_id,
         role_id=role_id,
         name=name,
         owners=[user.user_id],

@@ -36,4 +36,4 @@ class ProposalReject(ProposalAction):
         # pylint: disable=no-member
         store.status = protobuf.proposal_state_pb2.Proposal.REJECTED
         store.close_reason = message.reason
-        store.closer = signer
+        store.closer = signer.user_id

@@ -29,6 +29,7 @@ from rbac.common import addresser
 from rbac.common.crypto.keys import Key
 from rbac.common.sawtooth import rbac_payload
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
+from rbac.common.protobuf.rbac_payload_pb2 import Signer
 
 LOGGER = logging.getLogger(__name__)
 BATCHER_KEY_PAIR = Key()
@@ -61,11 +62,17 @@ def make_transaction_header(
     return header, signature
 
 
-def make_payload(message, message_type, inputs, outputs):
+def make_payload(
+    message, message_type, inputs, outputs, signer_user_id, signer_public_key
+):
     """ Turn a message into a payload
     """
     return rbac_payload.make_payload(
-        message=message, message_type=message_type, inputs=inputs, outputs=outputs
+        message=message,
+        message_type=message_type,
+        inputs=inputs,
+        outputs=outputs,
+        signer=Signer(user_id=signer_user_id, public_key=signer_public_key),
     )
 
 
@@ -210,7 +217,7 @@ def unmake_item(batch_object, signer_public_key=None):
         payload.ParseFromString(batch_object.payload)
         batch_object = payload
     if isinstance(batch_object, RBACPayload):
-        _, message, _, _ = unmake_payload(payload=batch_object)
+        _, message, _, _, _ = unmake_payload(payload=batch_object)
         return message
     raise Exception(
         "unmake doesn't handle type {}\n{}".format(type(batch_object), batch_object)

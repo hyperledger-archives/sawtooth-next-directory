@@ -66,6 +66,7 @@ class ProposeTaskOwnerTestHelper:
 
         status = rbac.task.owner.propose.new(
             signer_keypair=user_key,
+            signer_user_id=user.user_id,
             message=message,
             object_id=task.task_id,
             related_id=user.user_id,

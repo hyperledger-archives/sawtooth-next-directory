@@ -50,7 +50,9 @@ def test_make_payload():
     user_address = rbac.user.address(object_id=user_id)
     message = rbac.user.make(user_id=user_id, name=name)
 
-    payload = rbac.user.make_payload(message=message, signer_keypair=user_key)
+    payload = rbac.user.make_payload(
+        message=message, signer_user_id=user_id, signer_keypair=user_key
+    )
     inputs = list(payload.inputs)
     outputs = list(payload.outputs)
 
@@ -68,7 +70,9 @@ def test_batch_with_message():
     user_id = user_key.public_key
     message = rbac.user.make(user_id=user_id, name=name)
 
-    batch = rbac.user.batch(signer_keypair=user_key, message=message)
+    batch = rbac.user.batch(
+        signer_user_id=user_id, signer_keypair=user_key, message=message
+    )
 
     messages = batcher.unmake(batch)
     assert len(messages) == 1
@@ -84,7 +88,9 @@ def test_batch_with_kargs():
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    batch = rbac.user.batch(signer_keypair=user_key, user_id=user_id, name=name)
+    batch = rbac.user.batch(
+        signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
+    )
 
     messages = batcher.unmake(batch)
     assert len(messages) == 1
@@ -106,9 +112,13 @@ def test_batch_add_with_message():
     user_id2 = user_key2.public_key
     message2 = rbac.user.make(user_id=user_id2, name=name2)
 
-    batch = rbac.user.batch(signer_keypair=user_key1, message=message1)
+    batch = rbac.user.batch(
+        signer_user_id=user_id1, signer_keypair=user_key1, message=message1
+    )
 
-    batch = rbac.user.batch(signer_keypair=user_key2, message=message2, batch=batch)
+    batch = rbac.user.batch(
+        signer_user_id=user_id2, signer_keypair=user_key2, message=message2, batch=batch
+    )
 
     messages = batcher.unmake(batch)
     assert len(messages) == 2
@@ -130,10 +140,16 @@ def test_batch_add_with_kargs():
     user_key2 = helper.user.key()
     user_id2 = user_key2.public_key
 
-    batch = rbac.user.batch(signer_keypair=user_key1, user_id=user_id1, name=name1)
+    batch = rbac.user.batch(
+        signer_user_id=user_id1, signer_keypair=user_key1, user_id=user_id1, name=name1
+    )
 
     batch = rbac.user.batch(
-        signer_keypair=user_key2, user_id=user_id2, name=name2, batch=batch
+        signer_user_id=user_id2,
+        signer_keypair=user_key2,
+        user_id=user_id2,
+        name=name2,
+        batch=batch,
     )
 
     messages = batcher.unmake(batch)
@@ -153,7 +169,9 @@ def test_batch_list_with_message():
     user_id = user_key.public_key
     message = rbac.user.make(user_id=user_id, name=name)
 
-    batch_list = rbac.user.batch_list(signer_keypair=user_key, message=message)
+    batch_list = rbac.user.batch_list(
+        signer_user_id=user_id, signer_keypair=user_key, message=message
+    )
 
     messages = batcher.unmake(batch_list)
     assert len(messages) == 1
@@ -170,7 +188,7 @@ def test_batch_list_with_kargs():
     user_id = user_key.public_key
 
     batch_list = rbac.user.batch_list(
-        signer_keypair=user_key, user_id=user_id, name=name
+        signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
     )
 
     messages = batcher.unmake(batch_list)
@@ -193,10 +211,15 @@ def test_batch_list_add_with_message():
     user_id2 = user_key2.public_key
     message2 = rbac.user.make(user_id=user_id2, name=name2)
 
-    batch_list = rbac.user.batch_list(signer_keypair=user_key1, message=message1)
+    batch_list = rbac.user.batch_list(
+        signer_user_id=user_id2, signer_keypair=user_key1, message=message1
+    )
 
     batch_list = rbac.user.batch_list(
-        signer_keypair=user_key2, message=message2, batch_list=batch_list
+        signer_user_id=user_id2,
+        signer_keypair=user_key2,
+        message=message2,
+        batch_list=batch_list,
     )
 
     messages = batcher.unmake(batch_list)
@@ -220,11 +243,15 @@ def test_batch_list_add_with_kargs():
     user_id2 = user_key2.public_key
 
     batch_list = rbac.user.batch_list(
-        signer_keypair=user_key1, user_id=user_id1, name=name1
+        signer_user_id=user_id1, signer_keypair=user_key1, user_id=user_id1, name=name1
     )
 
     batch_list = rbac.user.batch_list(
-        signer_keypair=user_key2, user_id=user_id2, name=name2, batch_list=batch_list
+        signer_user_id=user_id2,
+        signer_keypair=user_key2,
+        user_id=user_id2,
+        name=name2,
+        batch_list=batch_list,
     )
 
     messages = batcher.unmake(batch_list)
@@ -242,7 +269,9 @@ def test_create_with_kargs():
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    status = rbac.user.new(signer_keypair=user_key, user_id=user_id, name=name)
+    status = rbac.user.new(
+        signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
+    )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
@@ -259,7 +288,9 @@ def test_create_with_message():
     user_id = user_key.public_key
     message = rbac.user.make(user_id=user_id, name=name)
 
-    status = rbac.user.new(signer_keypair=user_key, message=message)
+    status = rbac.user.new(
+        signer_user_id=user_id, signer_keypair=user_key, message=message
+    )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
@@ -273,8 +304,11 @@ def test_create_with_message():
 def test_make_payload_with_wrong_message_type():
     """Test making a payload with a wrong message type"""
     signer_keypair = helper.user.key()
+    user_id = helper.user.id()
     message = protobuf.user_state_pb2.User(
-        user_id=helper.user.id(), name=helper.user.name(), metadata=None
+        user_id=user_id, name=helper.user.name(), metadata=None
     )
     with pytest.raises(TypeError):
-        rbac.user.make_payload(message=message, signer_keypair=signer_keypair)
+        rbac.user.make_payload(
+            message=message, signer_user_id=user_id, signer_keypair=signer_keypair
+        )

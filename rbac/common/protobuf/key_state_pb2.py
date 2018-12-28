@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0fkey_state.proto\"\"\n\x0cKeyContainer\x12\x12\n\x04keys\x18\x02 \x03(\x0b\x32\x04.Key\"#\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x0fkey_state.proto\"\"\n\x0cKeyContainer\x12\x12\n\x04keys\x18\x02 \x03(\x0b\x32\x04.Key\"&\n\x03Key\x12\x0e\n\x06key_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\tb\x06proto3')
 )
 
 
@@ -64,7 +64,7 @@ _KEY = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='Key.key', index=0,
+      name='key_id', full_name='Key.key_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -90,7 +90,7 @@ _KEY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=55,
-  serialized_end=90,
+  serialized_end=93,
 )
 
 _KEYCONTAINER.fields_by_name['keys'].message_type = _KEY

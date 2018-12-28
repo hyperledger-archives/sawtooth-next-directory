@@ -51,7 +51,7 @@ def test_make_addresses():
     signer_keypair = helper.user.key()
     message = rbac.user.imports.make(user_id=user_id, name=name)
     inputs, outputs = rbac.user.imports.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=user_id
     )
     user_address = rbac.user.address(object_id=message.user_id)
     assert isinstance(inputs, set)
@@ -71,7 +71,10 @@ def test_batch():
     signer_keypair = helper.user.key()
 
     batch = rbac.user.imports.batch(
-        signer_keypair=signer_keypair, user_id=user_id, name=name
+        signer_user_id=user_id,
+        signer_keypair=signer_keypair,
+        user_id=user_id,
+        name=name,
     )
     messages = batcher.unmake(batch)
     assert isinstance(messages, list)
@@ -89,7 +92,10 @@ def test_imports_user():
     signer_keypair = helper.user.key()
 
     status = rbac.user.imports.new(
-        signer_keypair=signer_keypair, user_id=user_id, name=name
+        signer_user_id=user_id,
+        signer_keypair=signer_keypair,
+        user_id=user_id,
+        name=name,
     )
 
     assert len(status) == 1
@@ -112,7 +118,10 @@ def test_create_with_manager():
     manager_name = helper.user.name()
 
     status = rbac.user.imports.new(
-        signer_keypair=signer_keypair, user_id=manager_id, name=manager_name
+        signer_user_id=user_id,
+        signer_keypair=signer_keypair,
+        user_id=manager_id,
+        name=manager_name,
     )
 
     assert len(status) == 1
@@ -124,7 +133,11 @@ def test_create_with_manager():
     assert manager.name == manager_name
 
     status = rbac.user.imports.new(
-        signer_keypair=signer_keypair, user_id=user_id, name=name, manager_id=manager_id
+        signer_user_id=user_id,
+        signer_keypair=signer_keypair,
+        user_id=user_id,
+        name=name,
+        manager_id=manager_id,
     )
 
     assert len(status) == 1
@@ -147,7 +160,11 @@ def test_create_with_manager_not_in_state():
     manager_id = helper.user.id()
 
     status = rbac.user.imports.new(
-        signer_keypair=signer_keypair, user_id=user_id, name=name, manager_id=manager_id
+        signer_user_id=user_id,
+        signer_keypair=signer_keypair,
+        user_id=user_id,
+        name=name,
+        manager_id=manager_id,
     )
 
     assert len(status) == 1
@@ -163,13 +180,16 @@ def test_create_with_manager_not_in_state():
 @pytest.mark.user
 @pytest.mark.imports_user
 def test_reimport_user():
-    """Test running import user twice with same data (reimport)"""
+    """Test running import user twice with same data (re-import)"""
     user_id = helper.user.id()
     name = helper.user.name()
     signer_keypair = helper.user.key()
 
     status = rbac.user.imports.new(
-        signer_keypair=signer_keypair, user_id=user_id, name=name
+        signer_user_id=user_id,
+        signer_keypair=signer_keypair,
+        user_id=user_id,
+        name=name,
     )
 
     assert len(status) == 1
@@ -180,7 +200,10 @@ def test_reimport_user():
     assert user.name == name
 
     status = rbac.user.imports.new(
-        signer_keypair=signer_keypair, user_id=user_id, name=name
+        signer_user_id=user_id,
+        signer_keypair=signer_keypair,
+        user_id=user_id,
+        name=name,
     )
 
     user = rbac.user.get(object_id=user_id)

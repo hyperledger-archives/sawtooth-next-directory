@@ -54,9 +54,9 @@ class RejectUpdateUserManager(ProposalReject):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.MANAGER
 
-    def make_addresses(self, message, signer_keypair):
+    def make_addresses(self, message, signer_user_id):
         """Makes the appropriate inputs & output addresses for the message"""
-        inputs, outputs = super().make_addresses(message, signer_keypair)
+        inputs, outputs = super().make_addresses(message, signer_user_id)
 
         proposal_address = addresser.proposal.address(
             object_id=message.object_id, related_id=message.related_id

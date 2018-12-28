@@ -53,15 +53,17 @@ async def create_new_role(request):
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     role_id = str(uuid4())
     batch_list = rbac.role.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         name=request.json.get("name"),
         role_id=role_id,
         metadata=request.json.get("metadata"),
         admins=request.json.get("administrators"),
         owners=request.json.get("owners"),
+        description=request.json.get("description"),
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -93,10 +95,11 @@ async def add_role_admin(request, role_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = rbac.role.admin.propose.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
         user_id=request.json.get("id"),
@@ -120,10 +123,11 @@ async def delete_role_admin(request, role_id):
 async def add_role_member(request, role_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = rbac.role.member.propose.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
         user_id=request.json.get("id"),
@@ -148,10 +152,11 @@ async def add_role_owner(request, role_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = rbac.role.owner.propose.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
         user_id=request.json.get("id"),
@@ -176,10 +181,11 @@ async def add_role_task(request, role_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = rbac.role.task.propose.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
         task_id=request.json.get("id"),
@@ -207,6 +213,7 @@ def create_role_response(request, role_id):
         "members": [],
         "tasks": [],
         "proposals": [],
+        "description": request.json.get("description"),
     }
 
     if request.json.get("metadata"):

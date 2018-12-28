@@ -57,11 +57,9 @@ def test_make_addresses():
     proposal_address = rbac.role.task.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
     relationship_address = rbac.role.task.address(object_id, related_id)
-    task_owner_keypair = helper.user.key()
-    task_owner_address = rbac.task.owner.address(
-        related_id, task_owner_keypair.public_key
-    )
-    signer_user_address = rbac.user.address(task_owner_keypair.public_key)
+    signer_user_id = helper.user.id()
+    signer_keypair = helper.user.key()
+    task_owner_address = rbac.task.owner.address(related_id, signer_user_id)
     message = rbac.role.task.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,
@@ -70,13 +68,12 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.role.task.confirm.make_addresses(
-        message=message, signer_keypair=task_owner_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert task_owner_address in inputs
     assert proposal_address in inputs
     assert relationship_address in inputs
-    assert signer_user_address in inputs
 
     assert proposal_address in outputs
     assert relationship_address in outputs
@@ -86,7 +83,7 @@ def test_make_addresses():
 @pytest.mark.confirm_role_task
 def test_create():
     """Test executing the message on the blockchain"""
-    proposal, _, _, _, _, _, task_owner_key = helper.role.task.propose.create()
+    proposal, _, _, _, _, task_owner, task_owner_key = helper.role.task.propose.create()
 
     reason = helper.role.task.propose.reason()
     message = rbac.role.task.confirm.make(
@@ -98,6 +95,7 @@ def test_create():
 
     status = rbac.role.task.confirm.new(
         signer_keypair=task_owner_key,
+        signer_user_id=task_owner.user_id,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -116,6 +114,7 @@ def test_create():
     assert confirm.object_id == proposal.object_id
     assert confirm.related_id == proposal.related_id
     assert confirm.close_reason == reason
+    assert confirm.closer == task_owner.user_id
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
     assert rbac.role.task.exists(
         object_id=proposal.object_id, related_id=proposal.related_id

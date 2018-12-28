@@ -56,9 +56,9 @@ class ImportsUser(BaseMessage):
         """The related type from AddressSpace implemented by this class"""
         return addresser.RelationshipType.ATTRIBUTES
 
-    def make_addresses(self, message, signer_keypair):
+    def make_addresses(self, message, signer_user_id):
         """Makes the appropriate inputs & output addresses for the message type"""
-        inputs, _ = super().make_addresses(message, signer_keypair)
+        inputs, _ = super().make_addresses(message, signer_user_id)
 
         user_address = self.address(object_id=message.user_id)
         inputs.add(user_address)

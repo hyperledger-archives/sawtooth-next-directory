@@ -16,11 +16,11 @@
 # pylint: disable=no-member,too-few-public-methods
 
 import logging
-import random
 
 from rbac.common import rbac
 from rbac.common import protobuf
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
+from tests.rbac.testdata.role import RoleTestData
 
 LOGGER = logging.getLogger(__name__)
 
@@ -36,20 +36,8 @@ class StubTestHelper:
 helper = StubTestHelper()
 
 
-class CreateRoleTestHelper:
+class CreateRoleTestHelper(RoleTestData):
     """Create Role test helper"""
-
-    def id(self):
-        """Get a test role_id (not created)"""
-        return rbac.addresser.role.unique_id()
-
-    def name(self):
-        """Get a random name"""
-        return "Role" + str(random.randint(1000, 10000))
-
-    def reason(self):
-        """Get a random reason"""
-        return "Because" + str(random.randint(10000, 100000))
 
     def message(self):
         """Get a test data CreateRole message"""
@@ -73,7 +61,9 @@ class CreateRoleTestHelper:
             role_id=role_id, name=name, owners=[user.user_id], admins=[user.user_id]
         )
 
-        status = rbac.role.new(signer_keypair=keypair, message=message)
+        status = rbac.role.new(
+            signer_keypair=keypair, signer_user_id=user.user_id, message=message
+        )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
