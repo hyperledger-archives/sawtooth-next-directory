@@ -20,16 +20,17 @@ import { Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import Chat from '../../../components/chat/Chat';
-import TrackHeader from '../../../components/layouts/TrackHeader';
-import PeopleApprovalNav from '../../../components/nav/IndividualsNav';
-import PeopleList from '../../../components/layouts/proposals/PeopleList';
-import RoleList from '../../../components/layouts/proposals/RoleList';
+import Chat from 'components/chat/Chat';
+import TrackHeader from 'components/layouts/TrackHeader';
+import PeopleApprovalNav from 'components/nav/IndividualsNav';
+import PeopleList from 'components/layouts/proposals/PeopleList';
+import RoleList from 'components/layouts/proposals/RoleList';
 import { syncAll } from '../IndividualsHelper';
 
 
 import './PeopleApproval.css';
-import glyph from '../../../images/header-glyph-individual-inverted.png';
+import glyph from 'images/header-glyph-individual-inverted.png';
+import * as theme from 'services/Theme';
 
 
 /**
@@ -43,6 +44,9 @@ class PeopleApproval extends Component {
   static propTypes = {
     getOpenProposals: PropTypes.func,
   };
+
+
+  themes = ['minimal'];
 
 
   state = {
@@ -60,7 +64,7 @@ class PeopleApproval extends Component {
   componentDidMount () {
     const { getOpenProposals, onBehalfOf } = this.props;
     getOpenProposals(onBehalfOf);
-    document.querySelector('body').classList.add('minimal');
+    theme.apply(this.themes);
   }
 
 
@@ -68,7 +72,7 @@ class PeopleApproval extends Component {
    * Component teardown
    */
   componentWillUnmount () {
-    document.querySelector('body').classList.remove('minimal');
+    theme.remove(this.themes);
   }
 
 

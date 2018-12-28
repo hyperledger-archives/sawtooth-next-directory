@@ -206,6 +206,9 @@ body,
 .dark {
   background: #273544;
 }
+.contrast {
+  background: #fbfcfd;
+}
 .avatar-palette-1 {
   background: #ffb5e8;
   color: #ff69d0;

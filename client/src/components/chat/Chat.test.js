@@ -19,17 +19,18 @@ import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
-import * as customStore from '../../customStore';
 
+import * as customStore from 'customStore';
 import Chat from './Chat';
 
+
 const store = customStore.create();
+
 
 describe('Chat component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
     const props = {
       submit: (username, password) => { },
       title: 'defaultTitle',
@@ -46,9 +47,9 @@ describe('Chat component', () => {
     ReactDOM.unmountComponentAtNode(div);
   });
 
+
   it('renders without crashing with different props', () => {
     const div = document.createElement('div');
-
     const props = {
       submit: (username, password) => { },
       title: 'defaultTitle',
@@ -60,7 +61,6 @@ describe('Chat component', () => {
         return { name: '' };
       },
     };
-
     const newProps = {
       type: '1',
       groupBy: 1,
@@ -89,6 +89,8 @@ describe('Chat component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
+
+
   test('expect send function to be called', () => {
     const props = {
       sendMessage: () => { },
@@ -138,4 +140,5 @@ describe('Chat component', () => {
     wrapper.dive().instance().manualApprove(props);
     wrapper.dive().instance().manualReject(props);
   });
+
 });

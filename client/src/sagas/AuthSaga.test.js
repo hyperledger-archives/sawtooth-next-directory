@@ -17,12 +17,9 @@ limitations under the License.
 import { call, put } from 'redux-saga/effects';
 
 
-import FixtureAPI from '../services/FixtureApi';
-
-
-import AuthActions from '../redux/AuthRedux';
-import { login, signup, logout } from '../sagas/AuthSaga';
-import { Item } from 'semantic-ui-react';
+import FixtureAPI from 'services/FixtureApi';
+import AuthActions from 'redux/AuthRedux';
+import { login, signup, logout } from 'sagas/AuthSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;

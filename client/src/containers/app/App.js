@@ -26,11 +26,11 @@ import PropTypes from 'prop-types';
 
 
 import './App.css';
-import Browse from '../browse/Browse';
-import Header from '../../components/layouts/Header';
-import Login from '../login/Login';
-import Signup from '../signup/Signup';
-import Waves from '../../components/layouts/Waves';
+import Browse from 'containers/browse/Browse';
+import Login from 'containers/login/Login';
+import Signup from 'containers/signup/Signup';
+import Header from 'components/layouts/Header';
+import Waves from 'components/layouts/Waves';
 
 
 import { appDispatch, appState } from './AppHelper';

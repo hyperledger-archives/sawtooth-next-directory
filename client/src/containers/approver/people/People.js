@@ -19,15 +19,16 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 
-import Chat from '../../../components/chat/Chat';
-import TrackHeader from '../../../components/layouts/TrackHeader';
+import Chat from 'components/chat/Chat';
+import TrackHeader from 'components/layouts/TrackHeader';
 import PeopleNav from './PeopleNav';
 import Organization from './Organization';
 import OrganizationList from './OrganizationList';
 
 
 import './People.css';
-import glyph from '../../../images/header-glyph-individual.png';
+import glyph from 'images/header-glyph-individual.png';
+import * as theme from 'services/Theme';
 
 
 /**
@@ -37,6 +38,9 @@ import glyph from '../../../images/header-glyph-individual.png';
  *
  */
 class People extends Component {
+
+  themes = ['minimal', 'dark'];
+
 
   state = {
     activeIndex:    0,
@@ -49,8 +53,7 @@ class People extends Component {
    * component.
    */
   componentDidMount () {
-    document.querySelector('body').classList.add('dark');
-    document.querySelector('body').classList.add('minimal');
+    theme.apply(this.themes);
   }
 
 
@@ -58,8 +61,7 @@ class People extends Component {
   * Component teardown
   */
   componentWillUnmount () {
-    document.querySelector('body').classList.remove('dark');
-    document.querySelector('body').classList.remove('minimal');
+    theme.remove(this.themes);
   }
 
 

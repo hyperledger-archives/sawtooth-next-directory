@@ -16,7 +16,7 @@ limitations under the License.
 
 import { createReducer, createActions } from 'reduxsauce';
 import Immutable from 'seamless-immutable';
-import ping from '../sounds/ping.mp3';
+import ping from 'sounds/ping.mp3';
 
 
 //

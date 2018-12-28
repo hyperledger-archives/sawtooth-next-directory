@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import { Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './StackedAvatar.css';
-import Avatar from '../../components/layouts/Avatar';
+import Avatar from 'components/layouts/Avatar';
 
 
 /**

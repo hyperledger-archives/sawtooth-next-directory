@@ -14,13 +14,15 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import socket from './Socket';
+export const apply = (themes) => {
+  themes.forEach(
+    theme => document.querySelector('body').classList.add(theme)
+  );
+};
 
 
-describe('Socket Service', () => {
-
-  test('create socket', () => {
-    socket.create();
-  });
-
-});
+export const remove = (themes) => {
+  themes.forEach(
+    theme => document.querySelector('body').classList.remove(theme)
+  );
+};

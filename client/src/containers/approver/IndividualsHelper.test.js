@@ -13,10 +13,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
 
-import { syncAll, syncFromCategory, syncFromItem,
+
+import {
+  syncAll,
+  syncFromCategory,
+  syncFromItem,
   syncUsers } from './IndividualsHelper';
 
+
 describe('Individuals helper test', () => {
+
   it('should call syncAll function', function () {
     const checked = true, roleId = 'roleID',
       proposalId = 'proposalID', userId = 'userID';
@@ -35,6 +41,7 @@ describe('Individuals helper test', () => {
     expect(generator.next().value).toEqual({ 'proposals': '',
       'roles': ['roleID'] });
   });
+
 
   it('should call syncFromCategory function', function () {
     const checked = true, roleId = 'roleID',
@@ -55,6 +62,7 @@ describe('Individuals helper test', () => {
       'proposals': ['userID'], 'roles': ['roleID'] });
   });
 
+
   it('should call syncFromItem function', function () {
     const checked = true, proposalId = 'proposalID', userId = 'userID';
     let self = this;
@@ -72,6 +80,7 @@ describe('Individuals helper test', () => {
     expect(generator.next().value).toEqual({ changedUsers: ['userID'],
       'proposals': '', 'roles': [undefined] });
   });
+
 
   it('should call syncUsers function', function () {
     const checked = true, proposalId = 'proposalID', userId = 'userID';

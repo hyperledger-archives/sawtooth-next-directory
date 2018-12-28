@@ -12,13 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-/*
-
-
-Routes
-Routes are destructured from the declarative syntax due to for
-increased flexibility. State is sent top-down via propsto the main
-and nav components. */
 
 
 import React from 'react';

@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import { Grid, Header, Image, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './RolesList.css';
-import glyph from '../../../images/header-glyph-role.png';
+import glyph from 'images/header-glyph-role.png';
 
 
 /**

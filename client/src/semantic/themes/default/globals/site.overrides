@@ -27,6 +27,10 @@ body,
   background: @darkBackground;
 }
 
+.contrast {
+  background: @contrastBackground;
+}
+
 .avatar-palette-1 {
   background: @avatarPalette1;
   color: @avatarPalette1TextColor;

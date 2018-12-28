@@ -29,9 +29,9 @@ import {
 
 
 import './Chat.css';
-import ChatForm from '../forms/ChatForm';
 import ChatMessage from './ChatMessage';
-import Avatar from '../layouts/Avatar';
+import ChatForm from 'components/forms/ChatForm';
+import Avatar from 'components/layouts/Avatar';
 
 
 // TODO: Break out into child components

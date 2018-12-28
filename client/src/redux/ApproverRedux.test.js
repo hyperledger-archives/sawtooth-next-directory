@@ -17,6 +17,7 @@ limitations under the License.
 import Actions, { reducer, INITIAL_STATE } from './ApproverRedux';
 import Immutable from 'seamless-immutable';
 
+
 const UPDATED_STATE = Immutable({
   fetching:           null,
   error:              null,

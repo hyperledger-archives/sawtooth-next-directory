@@ -20,11 +20,12 @@ import { Container, Grid, Header, Placeholder } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import RequesterActions from '../../redux/RequesterRedux';
+import RequesterActions from 'redux/RequesterRedux';
 
 
 import './Browse.css';
 import BrowseCard from './BrowseCard';
+import * as theme from 'services/Theme';
 
 
 /**
@@ -42,6 +43,9 @@ class Browse extends Component {
   };
 
 
+  themes = ['dark'];
+
+
   state = { rolesData: null };
 
 
@@ -53,7 +57,7 @@ class Browse extends Component {
     const { getAllRoles } = this.props;
     // TODO: Pagination
     getAllRoles();
-    document.querySelector('body').classList.add('dark');
+    theme.apply(this.themes);
   }
 
 
@@ -61,7 +65,7 @@ class Browse extends Component {
    * Component teardown
    */
   componentWillUnmount () {
-    document.querySelector('body').classList.remove('dark');
+    theme.remove(this.themes);
   }
 
 

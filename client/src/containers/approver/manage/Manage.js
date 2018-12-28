@@ -20,7 +20,8 @@ import { Card, Grid } from 'semantic-ui-react';
 
 
 import './Manage.css';
-import TrackHeader from '../../../components/layouts/TrackHeader';
+import TrackHeader from 'components/layouts/TrackHeader';
+import * as theme from 'services/Theme';
 
 
 /**
@@ -30,6 +31,26 @@ import TrackHeader from '../../../components/layouts/TrackHeader';
  *
  */
 class Manage extends Component {
+
+  themes = ['minimal', 'contast'];
+
+
+  /**
+   * Entry point to perform tasks required to render
+   * component.
+   */
+  componentDidMount () {
+    theme.apply(this.themes);
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    theme.remove(this.themes);
+  }
+
 
   /**
    * Render entrypoint
@@ -41,7 +62,7 @@ class Manage extends Component {
         <Grid.Column
           id='next-approver-grid-track-column'
           width={16}>
-          <TrackHeader inverted title='Manage' {...this.props}/>
+          <TrackHeader title='Manage' {...this.props}/>
           <div id='next-approver-manage-content'>
             <Grid stackable>
               <Grid.Row columns={3}>
@@ -51,6 +72,7 @@ class Manage extends Component {
                     as={Link}
                     to='manage/roles'
                     header='Roles'
+                    className='minimal huge'
                     description={`
                       Create a new role, modify an existing one,
                       or delete one.
@@ -62,6 +84,7 @@ class Manage extends Component {
                     as={Link}
                     to='manage/packs'
                     header='Packs'
+                    className='minimal huge'
                     description={`
                       Create, modify, or delete an existing pack.
                     `}/>
@@ -72,6 +95,7 @@ class Manage extends Component {
                     as={Link}
                     to='manage/delegations'
                     header='Delegations'
+                    className='minimal huge'
                     description={`
                       Setup or modify a temporary or permanent delegation.
                     `}/>
@@ -84,6 +108,7 @@ class Manage extends Component {
                     as={Link}
                     to='manage/hierarchical'
                     header='Hierarchical'
+                    className='minimal huge'
                     description={`
                       Setup who can approve on your behalf.
                     `}/>
@@ -94,6 +119,7 @@ class Manage extends Component {
                     as={Link}
                     to='/manage/alerts'
                     header='Alerts'
+                    className='minimal huge'
                     description={`
                       Manage what you get alerts for and alert frequency.
                     `}/>

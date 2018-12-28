@@ -15,10 +15,9 @@ limitations under the License.
 
 
 /**
- *
  * Create a URL-friendly string
  *
- * @param {string} name    String used to create slug
+ * @param {string} id Object ID
  * @param {object} parent
  *        Object containing name field to poll on
  *        availability.
@@ -26,11 +25,8 @@ limitations under the License.
  *        If an object is passed before it is ready
  *        to render, the function will be polled by Redux
  *        until a name field exists and a slug can be created
- *
  * @returns {string}
- *
  */
-
 export const createSlug = (id, parent) => {
   let slug = parent && parent.id ? parent.id : id;
   try {

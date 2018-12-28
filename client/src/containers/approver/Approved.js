@@ -20,9 +20,10 @@ import { Grid, Header, Icon, Table } from 'semantic-ui-react';
 
 
 import './Approved.css';
-import Chat from '../../components/chat/Chat';
-import TrackHeader from '../../components/layouts/TrackHeader';
-import ApprovedNav from '../../components/nav/ApprovedNav';
+import Chat from 'components/chat/Chat';
+import TrackHeader from 'components/layouts/TrackHeader';
+import ApprovedNav from 'components/nav/ApprovedNav';
+import * as theme from 'services/Theme';
 
 
 /**
@@ -33,6 +34,7 @@ import ApprovedNav from '../../components/nav/ApprovedNav';
  */
 class Approved extends Component {
 
+  themes = ['minimal'];
   state = { column: null, direction: null, selectedProposal: {} };
 
 
@@ -42,7 +44,7 @@ class Approved extends Component {
    */
   componentDidMount () {
     const { confirmedProposals, getConfirmedProposals } = this.props;
-    document.querySelector('body').classList.add('minimal');
+    theme.apply(this.themes);
     !confirmedProposals && getConfirmedProposals();
     this.init();
   }
@@ -63,7 +65,7 @@ class Approved extends Component {
    * Component teardown
    */
   componentWillUnmount () {
-    document.querySelector('body').classList.remove('minimal');
+    theme.remove(this.themes);
   }
 
 

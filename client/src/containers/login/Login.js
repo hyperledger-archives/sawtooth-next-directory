@@ -22,13 +22,13 @@ import PropTypes from 'prop-types';
 
 
 import './Login.css';
-import logo from '../../images/next-logo-billboard.png';
-import AuthActions, { AuthSelectors } from '../../redux/AuthRedux';
-import LoginForm from '../../components/forms/LoginForm';
+import logo from 'images/next-logo-billboard.png';
+import AuthActions, { AuthSelectors } from 'redux/AuthRedux';
+import LoginForm from 'components/forms/LoginForm';
 
 
-import * as utils from '../../services/Utils';
-import * as storage from '../../services/Storage';
+import * as utils from 'services/Utils';
+import * as storage from 'services/Storage';
 
 
 /**

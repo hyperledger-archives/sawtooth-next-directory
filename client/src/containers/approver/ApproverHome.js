@@ -19,7 +19,7 @@ import { Grid } from 'semantic-ui-react';
 
 
 import './ApproverHome.css';
-import TrackHeader from '../../components/layouts/TrackHeader';
+import TrackHeader from 'components/layouts/TrackHeader';
 
 
 /**

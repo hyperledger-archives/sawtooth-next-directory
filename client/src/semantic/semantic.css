@@ -770,6 +770,10 @@ body,
   background: #273544;
 }
 
+.contrast {
+  background: #fbfcfd;
+}
+
 .avatar-palette-1 {
   background: #ffb5e8;
   color: #ff69d0;
@@ -29557,8 +29561,24 @@ a.ui.card:hover,
 *******************************/
 
 .ui.stackable.grid .column .ui.card {
-  height: 200px;
-  padding: 1em;
+  height: 250px;
+}
+
+.ui.stackable.grid .column .ui.card.minimal {
+  background: white;
+  border: 1px solid #eee;
+  -webkit-box-shadow: 0 3px 13px #98989814;
+  box-shadow: 0 3px 13px #98989814;
+}
+
+.ui.stackable.grid .column .ui.card.huge .content:first-child {
+  padding: 15%;
+}
+
+.ui.stackable.grid .column .ui.card.huge .content .header {
+  color: #E40073;
+  font-size: 1.7em;
+  font-weight: 400;
 }
 
 .ui.stackable.grid .column .ui.card .content {

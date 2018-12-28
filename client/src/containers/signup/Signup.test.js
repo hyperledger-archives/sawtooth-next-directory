@@ -21,7 +21,7 @@ import { shallow } from 'enzyme';
 import { BrowserRouter } from 'react-router-dom';
 
 
-import * as customStore from '../../customStore';
+import * as customStore from 'customStore';
 import Signup from './Signup';
 
 

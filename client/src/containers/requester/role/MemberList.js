@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import { Grid, Header, Icon, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './MemberList.css';
-import Avatar from '../../../components/layouts/Avatar';
+import Avatar from 'components/layouts/Avatar';
 
 
 /**

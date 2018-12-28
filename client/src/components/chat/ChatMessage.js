@@ -17,7 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Header, Loader, Image, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import chatbotAvatar from '../../images/chatbot-avatar.png';
+import chatbotAvatar from 'images/chatbot-avatar.png';
 
 
 /**

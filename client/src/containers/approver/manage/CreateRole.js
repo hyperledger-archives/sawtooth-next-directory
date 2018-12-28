@@ -20,7 +20,7 @@ import { Button, Form, Grid } from 'semantic-ui-react';
 
 
 import './CreateRole.css';
-import TrackHeader from '../../../components/layouts/TrackHeader';
+import TrackHeader from 'components/layouts/TrackHeader';
 
 
 /**

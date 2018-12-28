@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 
 
 import './PackApproval.css';
-import * as utils from '../../../services/Utils';
+import * as utils from 'services/Utils';
 
 
 /**

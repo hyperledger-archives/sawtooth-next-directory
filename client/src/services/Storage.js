@@ -14,13 +14,6 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-/**
- *
- * Extensible storage service
- *
- *
- *
- */
 const tokenKey = 'RBAC_AUTH_HEADER_PAYLOAD';
 const viewKey = 'RBAC_APPROVER_VIEW_ENABLED';
 const userIdKey = 'user_id';

@@ -15,6 +15,8 @@ jobs:
         - bin/run_lint
         - bin/build -t
     - stage: frontend
+      env:
+        - NODE_PATH=src/
       language: node_js
       cache:
         yarn: true
