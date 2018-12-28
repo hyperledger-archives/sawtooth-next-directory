@@ -113,7 +113,7 @@ class Browse extends Component {
   renderColumns = (columnData) => {
     if(columnData) {
       return columnData.map( (item, index) =>{
-        return <BrowseCard key={index} details={item}/> ;
+        return <BrowseCard key={index} details={item} {...this.props}/> ;
       });
     }
   }

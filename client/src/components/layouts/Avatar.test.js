@@ -16,25 +16,24 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { shallow } from 'enzyme';
+import { BrowserRouter } from 'react-router-dom';
 
-import StackedAvatar from './StackedAvatar';
+
+import Avatar from './Avatar';
 
 
-describe('StackedAvatar component', () => {
+describe('Avatar component', () => {
 
-  it('Renders more than 3 components', () => {
+  it('renders without crashing', () => {
     const div = document.createElement('div');
-    const list = ['one', 'two', 'three', 'four', 'five'];
-
     const props = {
-      users: [],
+      userId: '1234',
+      users:  [],
     };
 
     ReactDOM.render(
-      <StackedAvatar list={list} {...props}/>, div
-    );
-    ReactDOM.render(
-      <StackedAvatar list={[]} {...props}/>, div
+      <BrowserRouter><Avatar {...props}/></BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

@@ -223,7 +223,10 @@ class App extends Component {
             <Route exact path='/login' component={Login}/>
             <Route exact path='/signup' component={Signup}/>
             { !isAuthenticated && <Redirect to='/login'/> }
-            <Route exact path='/browse' component={Browse}/>
+            <Route
+              exact
+              path='/browse'
+              render={() => <Browse {...this.props}/>}/>
             <Route render={() => ( this.renderGrid() )}/>
           </Switch>
         </div>

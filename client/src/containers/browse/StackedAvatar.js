@@ -15,9 +15,10 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Image, Icon } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './StackedAvatar.css';
+import Avatar from '../../components/layouts/Avatar';
 
 
 /**
@@ -53,9 +54,10 @@ export default class StackedAvatar extends Component {
         }
         return (
           <div key={index} className='next-avatar-element'>
-            <Image
-              avatar
-              src={`http://i.pravatar.cc/150?u=${index}`}/>
+            <Avatar
+              userId={item}
+              size='small'
+              {...this.props}/>
           </div>
         );
 

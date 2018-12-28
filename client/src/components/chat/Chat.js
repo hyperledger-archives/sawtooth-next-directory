@@ -31,6 +31,7 @@ import {
 import './Chat.css';
 import ChatForm from '../forms/ChatForm';
 import ChatMessage from './ChatMessage';
+import Avatar from '../layouts/Avatar';
 
 
 // TODO: Break out into child components
@@ -199,11 +200,11 @@ class Chat extends Component {
 
         { type === 'APPROVER' && selectedProposal && title && subtitle &&
           <div id='next-chat-selection-heading-container'>
-            <Image
-              size='tiny'
+            <Avatar
+              userId={selectedProposal.opener}
+              size='medium'
               className='pull-left'
-              src='http://i.pravatar.cc/150'
-              avatar/>
+              {...this.props}/>
             <Header as='h3' inverted>
               {title}
               <Header.Subheader>{subtitle}</Header.Subheader>
@@ -241,12 +242,12 @@ class Chat extends Component {
               animation='fade right'
               duration={{hide: 0, show: 1000}}>
               { selectedUsers.map(user =>
-                <Image
+                <Avatar
                   key={user}
-                  size='tiny'
+                  userId={user}
+                  size='medium'
                   className='pull-left'
-                  src='http://i.pravatar.cc/150'
-                  avatar/>
+                  {...this.props}/>
               ) }
             </Transition.Group>
             <Transition

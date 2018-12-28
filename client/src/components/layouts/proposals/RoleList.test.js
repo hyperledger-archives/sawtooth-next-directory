@@ -33,7 +33,9 @@ describe('RoleList component', () => {
       getUsers: (collection) => { },
       openProposalsByUser: { proposal1: '', proposal2: '' },
       users: [{ id: 'proposal1' }],
-      openProposalsByRole: { roleProposal1: [{ id: 'roleid' }] },
+      openProposalsByRole: {
+        roleProposal1: [{ id: 'roleid', opener: '1234' }],
+      },
       handleChange: () => { },
       selectedProposals: ['roleid'],
       selectedRoles: ['roleid'],
@@ -45,7 +47,9 @@ describe('RoleList component', () => {
       getUsers: (collection) => { },
       openProposalsByUser: { proposal1: '' },
       users: [{ id: 'proposal1' }],
-      openProposalsByRole: { roleProposal1: [{ id: 'roleid' }] },
+      openProposalsByRole: {
+        roleProposal1: [{ id: 'roleid', opener: '1234' }],
+      },
       handleChange: () => { },
       selectedProposals: ['roleid'],
       selectedRoles: ['roleid'],

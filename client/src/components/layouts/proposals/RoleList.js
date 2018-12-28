@@ -15,9 +15,10 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Checkbox, Image, Segment } from 'semantic-ui-react';
+import { Checkbox, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './RoleList.css';
+import Avatar from '../Avatar';
 
 
 /**
@@ -112,16 +113,16 @@ class RoleList extends Component {
    * @param {string} roleId Role ID
    * @returns {JSX}
    */
-  renderUsers  (roleId) {
+  renderUsers (roleId) {
     const { openProposalsByRole } = this.props;
     return (
       <div className='pull-right'>
         {  openProposalsByRole[roleId].map(proposal => (
-          <Image
+          <Avatar
             key={proposal.id}
-            src={'http://i.pravatar.cc/150?' + proposal.id}
-            size='mini'
-            avatar />
+            userId={proposal.opener}
+            size='medium'
+            {...this.props}/>
         ))}
       </div>
     );

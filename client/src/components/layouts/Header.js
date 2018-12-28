@@ -28,6 +28,7 @@ import PropTypes from 'prop-types';
 
 
 import './Header.css';
+import Avatar from './Avatar';
 import logo from '../../images/next-logo-primary.png';
 import * as utils from '../../services/Utils';
 import * as storage from '../../services/Storage';
@@ -147,19 +148,16 @@ class Header extends Component {
    * @returns {JSX}
    */
   renderMenu () {
-    const { me } = this.props;
+    const { id, me } = this.props;
     const { approverViewEnabled } = this.state;
 
     return (
       <div id='next-header-menu'>
         <Menu inverted size='huge' vertical>
           { me &&
-            <Menu.Item>
+            <Menu.Item id='next-header-menu-profile'>
               <MenuHeader as='h3'>
-                <Image
-                  avatar
-                  src='http://i.pravatar.cc/300'
-                  size='large'/>
+                <Avatar userId={id} size='medium' {...this.props}/>
                 <MenuHeader.Content>
                   {me.name}
                 </MenuHeader.Content>
@@ -216,6 +214,7 @@ class Header extends Component {
    */
   render () {
     const {
+      id,
       me,
       openProposalsCount,
       recommendedPacks,
@@ -236,22 +235,24 @@ class Header extends Component {
         </div>
         { me &&
         <div id='next-header-actions'>
-          <Icon inverted name='search'/>
+          {/* <Icon inverted name='search'/> */}
           <div id='next-header-bell'>
             <Link to='/approval/pending/individual'>
               <Icon inverted name='bell'/>
               { openProposalsCount &&
-                <Label circular color='blue' floating size='mini'>
+                <Label circular color='red' floating size='mini'>
                   {openProposalsCount}
                 </Label>
               }
             </Link>
           </div>
           { me &&
-            <Image
-              avatar
-              src='http://i.pravatar.cc/300'
-              onClick={this.toggleMenu}/> }
+            <Avatar
+              userId={id}
+              size='small'
+              onClick={this.toggleMenu}
+              {...this.props}/>
+          }
         </div>
         }
         { menuVisible && this.renderMenu() }
