@@ -1,3 +1,4 @@
+
 /* Copyright 2018 Contributors to Hyperledger Sawtooth
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,42 +15,33 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-role-approval-container {
-  margin: 0 auto;
-  padding: 30px 0 10px 0;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
-#next-role-approval-container .ui.fluid.card {
-  border-radius: 0;
-}
 
-#next-role-approval-status-emoji {
-  font-size: 4.3em;
-}
+import * as customStore from '../../../customStore';
+import Pack from './Pack';
 
-#next-role-approval-status {
-  padding: 130px 0 20px 0;
-  text-align: center;
-}
 
-#next-role-approval-open {
-  color: #ffb338;
-}
+const store = customStore.create();
 
-#next-role-approval-rejected {
-  color: red;
-}
 
-#next-role-approval-status h3 {
-  margin-top: 10px;
-}
+it('renders without crashing', () => {
+  const div = document.createElement('div');
 
-#next-role-approval-approver {
-  color: black;
-  font-weight: bold;
-}
+  const props = {
+    getPack: () => {},
+    packFromId: () => {},
+    match: { params: {} },
+  };
 
-#next-role-approval-details {
-  font-size: .9em;
-  text-align: center;
-}
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter><Pack {...props}/></BrowserRouter>
+    </Provider>, div
+  );
+
+  ReactDOM.unmountComponentAtNode(div);
+});

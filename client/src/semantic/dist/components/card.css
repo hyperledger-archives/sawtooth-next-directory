@@ -1005,6 +1005,10 @@ a.ui.card:hover,
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
+.ui.cards > .card > .extra,
+.ui.card > .extra {
+  border-top: 1px solid #0000000f !important;
+}
 
 
 /*******************************

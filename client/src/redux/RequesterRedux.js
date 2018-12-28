@@ -228,48 +228,29 @@ export const RequesterSelectors = {
 
   /**
    * Find the proposal ID(s) of a resource in the store provided
-   * the URL slug of the resource
+   * the ID of the resource
    * @param   {object} state      Redux state
-   * @param   {array}  collection Redux entity
-   * @param   {string} slug       URL slug
+   * @param   {array}  entity     Redux entity
+   * @param   {string} id         Object ID
    * @param   {string} type       Entity group type (e.g., role)
    * @returns {string|array}
    */
-  proposalIdFromSlug: (state, collection, slug, type) => {
-    if (!collection || !state.user.me) return null;
+  proposalIdFromObjectId: (state, entity, id, type) => {
+    if (!entity || !state.user.me) return null;
     let result = null;
-    const entity = collection.find((item) =>
-      utils.createSlug(item.name) === slug);
 
     if (type === 'pack') {
-      result = entity && state.user.me.proposals
+      result = state.user.me.proposals
         .filter(item => entity.roles.includes(item.object_id))
         .map(item => item.proposal_id);
     }
     if (type === 'role') {
-      const proposal = entity && state.user.me.proposals
-        .find(item => item.object_id === entity.id);
+      const proposal = state.user.me.proposals
+        .find(item => item.object_id === id);
       result = proposal && proposal.proposal_id;
     }
 
     return result;
-  },
-
-
-  /**
-   * Find the ID of a resource in the store provided
-   * the URL slug of the resource
-   * @param   {object} state      Redux state
-   * @param   {array}  collection Redux entity
-   * @param   {string} slug       URL slug
-   * @returns {string}
-   */
-  idFromSlug: (state, collection, slug) => {
-    if (!collection) return null;
-    const result = collection.find((item) => {
-      return utils.createSlug(item.name) === slug;
-    });
-    return result && result.id;
   },
 };
 
