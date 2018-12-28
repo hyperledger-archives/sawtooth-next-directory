@@ -39,6 +39,7 @@ def test_api_create_role():
         "name": helper.api.role.name(),
         "owners": [user["user_id"]],
         "administrators": [user["user_id"]],
+        "description": helper.api.role.description(),
     }
     assert assert_api_post_requires_auth(url=url, json=data)
     response = requests.post(
@@ -49,6 +50,7 @@ def test_api_create_role():
     assert result["data"]["name"] == data["name"]
     assert result["data"]["owners"] == data["owners"]
     assert result["data"]["administrators"] == data["administrators"]
+    assert result["data"]["description"] == data["description"]
 
 
 @pytest.mark.api

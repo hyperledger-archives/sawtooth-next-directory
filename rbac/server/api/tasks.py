@@ -53,10 +53,11 @@ async def create_new_task(request):
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     task_id = str(uuid4())
     batch_list = rbac.task.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         task_id=task_id,
         name=request.json.get("name"),
         admins=request.json.get("administrators"),
@@ -93,10 +94,11 @@ async def add_task_admin(request, task_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = rbac.task.admin.propose.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=request.json.get("id"),
@@ -121,10 +123,11 @@ async def add_task_owner(request, task_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = rbac.task.owner.propose.batch_list(
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         task_id=task_id,
         user_id=request.json.get("id"),

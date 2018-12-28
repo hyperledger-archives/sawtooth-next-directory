@@ -30,19 +30,37 @@ class CreateUserTestHelper(UserTestData):
 
     def message(self):
         """Get a test data CreateUser message with a new keypair"""
+        user_id = self.id()
         name = self.name()
-        user, keypair = rbac.user.make_with_key(name=name)
+        keypair = self.key()
+        user = rbac.user.make(user_id=user_id, name=name, key=keypair.public_key)
         assert isinstance(user, protobuf.user_transaction_pb2.CreateUser)
-        assert isinstance(keypair, Key)
-        assert user.user_id == keypair.public_key
+        assert user.user_id == user_id
         assert user.name == name
+        assert user.key == keypair.public_key
         return user, keypair
+
+    def imports_message(self):
+        """ Get a test data ImportsUser message
+        """
+        user_id = self.id()
+        name = self.name()
+        user = rbac.user.imports.make(name=name)
+
+        assert isinstance(user, protobuf.user_transaction_pb2.ImportsUser)
+        assert user.name == name
+        return user
 
     def message_with_manager(self):
         """Get a test data CreateUser message for user and manager"""
         manager, manager_key = self.message()
-        user, user_key = rbac.user.make_with_key(
-            name=self.name(), manager_id=manager.user_id
+        user_id = self.id()
+        user_key = self.key()
+        user = rbac.user.make(
+            user_id=user_id,
+            name=self.name(),
+            manager_id=manager.user_id,
+            key=user_key.public_key,
         )
         assert manager.user_id == user.manager_id
         return user, user_key, manager, manager_key
@@ -51,7 +69,9 @@ class CreateUserTestHelper(UserTestData):
         """Create a test user"""
         message, keypair = self.message()
 
-        status = rbac.user.new(signer_keypair=keypair, message=message)
+        status = rbac.user.new(
+            signer_user_id=message.user_id, signer_keypair=keypair, message=message
+        )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
@@ -62,6 +82,29 @@ class CreateUserTestHelper(UserTestData):
         assert user.name == message.name
         return user, keypair
 
+    def imports(self):
+        """ Imports a test user
+            Imported user has no key assignment
+        """
+        signer_keypair = Key()  # TODO: will need to change to a provider key
+
+        message = self.imports_message()
+
+        status = rbac.user.imports.new(
+            signer_user_id=message.user_id,
+            signer_keypair=signer_keypair,
+            message=message,
+        )
+
+        assert len(status) == 1
+        assert status[0]["status"] == "COMMITTED"
+
+        user = rbac.user.get(object_id=message.user_id)
+
+        assert user.user_id == message.user_id
+        assert user.name == message.name
+        return user
+
     def create_with_manager(self):
         """Create a test user with manager"""
         manager, manager_key = self.create()
@@ -69,7 +112,11 @@ class CreateUserTestHelper(UserTestData):
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        status = rbac.user.new(signer_keypair=manager_key, message=message)
+        status = rbac.user.new(
+            signer_user_id=message.manager_id,
+            signer_keypair=manager_key,
+            message=message,
+        )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
@@ -88,7 +135,11 @@ class CreateUserTestHelper(UserTestData):
         message, manager_key = self.message()
         message.manager_id = grandmgr.user_id
 
-        status = rbac.user.new(signer_keypair=grandmgr_key, message=message)
+        status = rbac.user.new(
+            signer_user_id=grandmgr.user_id,
+            signer_keypair=grandmgr_key,
+            message=message,
+        )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
@@ -101,7 +152,9 @@ class CreateUserTestHelper(UserTestData):
         message, user_key = self.message()
         message.manager_id = manager.user_id
 
-        status = rbac.user.new(signer_keypair=manager_key, message=message)
+        status = rbac.user.new(
+            signer_user_id=manager.user_id, signer_keypair=manager_key, message=message
+        )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"

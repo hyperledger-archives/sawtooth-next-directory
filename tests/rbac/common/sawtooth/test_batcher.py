@@ -58,6 +58,8 @@ class TestBatchClient(TestAssertions):
                 message_type=message_type,
                 inputs=inputs,
                 outputs=outputs,
+                signer_user_id=message.user_id,
+                signer_public_key=signer.public_key,
             ),
             signer,
         )
@@ -84,7 +86,12 @@ class TestBatchClient(TestAssertions):
         """Test the make payload batch function"""
         message, message_type, inputs, outputs, signer = self.get_test_inputs()
         payload = batcher.make_payload(
-            message=message, message_type=message_type, inputs=inputs, outputs=outputs
+            message=message,
+            message_type=message_type,
+            inputs=inputs,
+            outputs=outputs,
+            signer_user_id=message.user_id,
+            signer_public_key=signer.public_key,
         )
         self.assertIsInstance(payload, RBACPayload)
         self.assertEqual(payload.message_type, message_type)
@@ -99,7 +106,12 @@ class TestBatchClient(TestAssertions):
         """Test the unmake batch function"""
         message, message_type, inputs, outputs, signer = self.get_test_inputs()
         payload = batcher.make_payload(
-            message=message, message_type=message_type, inputs=inputs, outputs=outputs
+            message=message,
+            message_type=message_type,
+            inputs=inputs,
+            outputs=outputs,
+            signer_user_id=message.user_id,
+            signer_public_key=signer.public_key,
         )
         messages = batcher.unmake(
             batch_object=payload, signer_public_key=signer.public_key
@@ -117,7 +129,12 @@ class TestBatchClient(TestAssertions):
         """Test the unmake batch function with a single message"""
         message, message_type, inputs, outputs, signer_keypair = self.get_test_inputs()
         payload = batcher.make_payload(
-            message=message, message_type=message_type, inputs=inputs, outputs=outputs
+            message=message,
+            message_type=message_type,
+            inputs=inputs,
+            outputs=outputs,
+            signer_user_id=message.user_id,
+            signer_public_key=signer_keypair.public_key,
         )
         transaction, batch, batch_list, batch_request = batcher.make(
             payload=payload, signer_keypair=signer_keypair

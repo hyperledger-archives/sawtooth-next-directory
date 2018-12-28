@@ -55,10 +55,10 @@ def test_make_addresses():
     proposal_id = helper.proposal.id()
     proposal_address = rbac.role.owner.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
-    signer_admin_address = rbac.role.admin.address(object_id, signer_keypair.public_key)
-    signer_owner_address = rbac.role.owner.address(object_id, signer_keypair.public_key)
-    signer_user_address = rbac.user.address(signer_keypair.public_key)
+    signer_admin_address = rbac.role.admin.address(object_id, signer_user_id)
+    signer_owner_address = rbac.role.owner.address(object_id, signer_user_id)
     message = rbac.role.owner.reject.make(
         proposal_id=proposal_id,
         related_id=related_id,
@@ -67,12 +67,11 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.role.owner.reject.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert signer_owner_address in inputs
     assert signer_admin_address in inputs
-    assert signer_user_address in inputs
     assert proposal_address in inputs
 
     assert proposal_address in outputs
@@ -82,7 +81,7 @@ def test_make_addresses():
 @pytest.mark.reject_role_owner
 def test_create():
     """Test executing the message on the blockchain"""
-    proposal, _, _, role_owner_key, _, _ = helper.role.owner.propose.create()
+    proposal, _, role_owner, role_owner_key, _, _ = helper.role.owner.propose.create()
 
     reason = helper.role.owner.propose.reason()
     message = rbac.role.owner.reject.make(
@@ -92,7 +91,11 @@ def test_create():
         reason=reason,
     )
 
-    status = rbac.role.owner.reject.new(signer_keypair=role_owner_key, message=message)
+    status = rbac.role.owner.reject.new(
+        signer_keypair=role_owner_key,
+        signer_user_id=role_owner.user_id,
+        message=message,
+    )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -107,5 +110,5 @@ def test_create():
     assert reject.object_id == proposal.object_id
     assert reject.related_id == proposal.related_id
     assert reject.close_reason == reason
-    assert reject.closer == role_owner_key.public_key
+    assert reject.closer == role_owner.user_id
     assert reject.status == protobuf.proposal_state_pb2.Proposal.REJECTED

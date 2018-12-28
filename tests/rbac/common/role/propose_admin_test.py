@@ -60,6 +60,7 @@ def test_make_addresses():
     reason = helper.proposal.reason()
     relationship_address = rbac.role.admin.address(role_id, user_id)
     proposal_address = rbac.role.admin.propose.address(role_id, user_id)
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
     message = rbac.role.admin.propose.make(
         proposal_id=proposal_id,
@@ -70,7 +71,7 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.role.admin.propose.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert relationship_address in inputs
@@ -98,7 +99,9 @@ def test_create():
         metadata=None,
     )
 
-    status = rbac.role.admin.propose.new(signer_keypair=signer_keypair, message=message)
+    status = rbac.role.admin.propose.new(
+        signer_keypair=signer_keypair, signer_user_id=user.user_id, message=message
+    )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -112,5 +115,5 @@ def test_create():
     assert proposal.proposal_id == proposal_id
     assert proposal.object_id == role.role_id
     assert proposal.related_id == user.user_id
-    assert proposal.opener == signer_keypair.public_key
+    assert proposal.opener == user.user_id
     assert proposal.open_reason == reason

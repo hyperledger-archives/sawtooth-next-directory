@@ -59,9 +59,9 @@ def test_make_addresses():
     reason = helper.proposal.reason()
     relationship_address = rbac.role.task.address(role_id, task_id)
     proposal_address = rbac.role.task.propose.address(role_id, task_id)
-    role_owner_keypair = helper.user.key()
-    role_owner_address = rbac.role.owner.address(role_id, role_owner_keypair.public_key)
-    role_owner_user_address = rbac.user.address(role_owner_keypair.public_key)
+    signer_keypair = helper.user.key()
+    signer_user_id = helper.user.id()
+    role_owner_address = rbac.role.owner.address(role_id, signer_user_id)
     message = rbac.role.task.propose.make(
         proposal_id=proposal_id,
         task_id=task_id,
@@ -71,7 +71,7 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.role.task.propose.make_addresses(
-        message=message, signer_keypair=role_owner_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert relationship_address in inputs
@@ -79,7 +79,6 @@ def test_make_addresses():
     assert role_address in inputs
     assert proposal_address in inputs
     assert role_owner_address in inputs
-    assert role_owner_user_address in inputs
 
     assert proposal_address in outputs
 
@@ -88,7 +87,7 @@ def test_make_addresses():
 @pytest.mark.propose_role_task
 def test_create():
     """Test executing the message on the blockchain"""
-    role, _, role_owner_key = helper.role.create()
+    role, role_owner, role_owner_key = helper.role.create()
     proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     task, _, _ = helper.task.create()
@@ -101,7 +100,11 @@ def test_create():
         metadata=None,
     )
 
-    status = rbac.role.task.propose.new(signer_keypair=role_owner_key, message=message)
+    status = rbac.role.task.propose.new(
+        signer_keypair=role_owner_key,
+        signer_user_id=role_owner.user_id,
+        message=message,
+    )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -115,5 +118,5 @@ def test_create():
     assert proposal.proposal_id == proposal_id
     assert proposal.object_id == role.role_id
     assert proposal.related_id == task.task_id
-    assert proposal.opener == role_owner_key.public_key
+    assert proposal.opener == role_owner.user_id
     assert proposal.open_reason == reason

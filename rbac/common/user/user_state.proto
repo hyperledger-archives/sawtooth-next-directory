@@ -39,6 +39,4 @@ message User {
 
     string username = 7;
 
-    string key = 8;
-
 }

@@ -64,6 +64,7 @@ def test_make_addresses():
     task_address = rbac.task.address(task_id)
     user_id = helper.user.id()
     user_address = rbac.user.address(user_id)
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
     owner_address = rbac.task.owner.address(task_id, user_id)
     admin_address = rbac.task.admin.address(task_id, user_id)
@@ -72,7 +73,7 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.task.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert task_address in inputs
@@ -97,7 +98,9 @@ def test_create():
         task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
     )
 
-    status = rbac.task.new(signer_keypair=keypair, message=message)
+    status = rbac.task.new(
+        signer_keypair=keypair, signer_user_id=user.user_id, message=message
+    )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -124,7 +127,9 @@ def test_create_two_owners():
         admins=[user.user_id, user2.user_id],
     )
 
-    status = rbac.task.new(signer_keypair=keypair, message=message)
+    status = rbac.task.new(
+        signer_keypair=keypair, signer_user_id=user.user_id, message=message
+    )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"

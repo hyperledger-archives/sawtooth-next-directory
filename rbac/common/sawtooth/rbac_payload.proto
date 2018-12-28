@@ -15,7 +15,10 @@
 
 syntax = "proto3";
 
-
+message Signer {
+    string user_id = 1;
+    string public_key = 2;
+}
 
 
 message RBACPayload {
@@ -78,6 +81,8 @@ message RBACPayload {
         IMPORTS_REMOVE_ROLE_OWNER = 51;
         IMPORTS_REMOVE_ROLE_ADMIN = 52;
         IMPORTS_REMOVE_ROLE_MEMBER = 53;
+
+        ADD_KEY = 54;
         
     }
 
@@ -89,5 +94,7 @@ message RBACPayload {
     repeated string inputs = 3;
 
     repeated string outputs = 4;
+
+    Signer signer = 5;
 
 }

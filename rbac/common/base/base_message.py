@@ -26,6 +26,7 @@ from rbac.common.sawtooth import client
 from rbac.common.sawtooth import state_client
 from rbac.common.base import base_processor as processor
 from rbac.common.base.base_address import AddressBase
+from rbac.common.protobuf.rbac_payload_pb2 import Signer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -257,7 +258,8 @@ class BaseMessage(AddressBase):
         self.validate(message=message)
         return message
 
-    def make_addresses(self, message, signer_keypair):
+    # pylint: disable=unused-argument
+    def make_addresses(self, message, signer_user_id):
         """Make addresses returns the inputs (read) and output (write)
         addresses that may be required in order to validate the message
         and store the resulting data of a successful or failed execution.
@@ -265,16 +267,8 @@ class BaseMessage(AddressBase):
         addresses they require to read and write to."""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
-        if not isinstance(signer_keypair, Key):
-            raise TypeError(
-                "Expected signer_keypair to be a key, not {}".format(
-                    type(signer_keypair)
-                )
-            )
 
-        user_key_address = addresser.user.address(object_id=signer_keypair.public_key)
-        key_address = addresser.key.address(object_id=signer_keypair.public_key)
-        inputs = {user_key_address, key_address}
+        inputs = set({})
         outputs = set({})
         return inputs, outputs
 
@@ -282,37 +276,34 @@ class BaseMessage(AddressBase):
         """Commmon validation for all messages"""
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
-        if (
-            signer is not None
-            and not isinstance(signer, Key)
-            and not (isinstance(signer, str) and PUBLIC_KEY_PATTERN.match(signer))
-        ):
-            raise TypeError("Expected signer to be a keypair or a public key")
-        if isinstance(signer, Key):
-            signer = signer.public_key
-        return signer
 
     # pylint: disable=unused-argument
     def validate_state(self, context, message, inputs, input_state, store, signer):
         """Common state validation for all messages"""
-        if signer is None:
-            raise ValueError("Signer is required")
+        if signer.public_key is None:
+            raise ValueError("Signer public key is required")
+        if signer.user_id is None:
+            raise ValueError("Signer user id is required")
         if message is None:
             raise ValueError("Message is required")
         if not isinstance(inputs, list) and not isinstance(inputs, set):
             raise ValueError("Inputs is required and expected to be a list or a set")
         if not isinstance(input_state, dict):
             raise ValueError("Input state was expected to be a dictionary")
-        if not isinstance(signer, str) and PUBLIC_KEY_PATTERN.match(signer):
-            raise TypeError("Expected signer to be a public key")
+        if not isinstance(signer.public_key, str) and PUBLIC_KEY_PATTERN.match(
+            signer.public_key
+        ):
+            raise TypeError("Expected signer public key to be a public key")
         if context is None:
             raise ValueError("State context is required")
 
-    def validate_signer(self, message, inputs, input_state, signer):
+    def validate_signer(
+        self, message, inputs, input_state, signer_user_id, signer_public_key
+    ):
         """Validates the transaction signer has a valid key"""
-        key_address = addresser.key.address(object_id=signer)
-        if key_address not in inputs:
-            LOGGER.warning("Signer key address was not included in inputs")
+        # key_address = addresser.key.address(object_id=signer)
+        # if key_address not in inputs:
+        #    LOGGER.warning("Signer key address was not included in inputs")
         # if (
         #    key_address in inputs
         #    and key_address not in input_state
@@ -320,19 +311,35 @@ class BaseMessage(AddressBase):
         # ):
         #    raise ValueError("Signer key not found in state")
 
-    def make_payload(self, message, signer_keypair):
+    def make_payload(self, message, signer_user_id, signer_keypair):
         """Make a payload for the given message type"""
-        self.validate(message=message, signer=signer_keypair)
+        if not signer_keypair:
+            raise ValueError(
+                "{} signer_keypair is required".format(self.message_type_name)
+            )
+        if not signer_user_id:
+            raise ValueError(
+                "{} signer_user_id is required".format(self.message_type_name)
+            )
+        self.validate(
+            message=message,
+            signer=Signer(user_id=signer_user_id, public_key=signer_keypair.public_key),
+        )
 
         message_type = self.message_type
         inputs, outputs = self.make_addresses(
-            message=message, signer_keypair=signer_keypair
+            message=message, signer_user_id=signer_user_id
         )
         inputs = set(inputs)
         outputs = set(outputs)
 
-        if signer_keypair:
-            inputs.add(addresser.user.address(object_id=signer_keypair.public_key))
+        inputs.add(addresser.key.address(object_id=signer_keypair.public_key))
+        inputs.add(addresser.user.address(object_id=signer_user_id))
+        inputs.add(
+            addresser.user.key.address(
+                object_id=signer_user_id, related_id=signer_keypair.public_key
+            )
+        )
 
         if not outputs.issubset(inputs):
             raise ValueError(
@@ -343,17 +350,31 @@ class BaseMessage(AddressBase):
             )
 
         return batcher.make_payload(
-            message=message, message_type=message_type, inputs=inputs, outputs=outputs
+            message=message,
+            message_type=message_type,
+            inputs=inputs,
+            outputs=outputs,
+            signer_user_id=signer_user_id,
+            signer_public_key=signer_keypair.public_key,
         )
 
-    def batch(self, signer_keypair, batch=None, **kwargs):
+    def batch(self, signer_user_id, signer_keypair, batch=None, **kwargs):
         """Adds a new message to an existing or new batch"""
         message = kwargs.get("message")
         if not message:
             message = self.make(**kwargs)
         else:
-            self.validate(message=message, signer=signer_keypair)
-        payload = self.make_payload(message=message, signer_keypair=signer_keypair)
+            self.validate(
+                message=message,
+                signer=Signer(
+                    user_id=signer_user_id, public_key=signer_keypair.public_key
+                ),
+            )
+        payload = self.make_payload(
+            message=message,
+            signer_keypair=signer_keypair,
+            signer_user_id=signer_user_id,
+        )
         transaction, new_batch, _, _ = batcher.make(
             payload=payload, signer_keypair=signer_keypair
         )
@@ -362,14 +383,23 @@ class BaseMessage(AddressBase):
             return batch
         return new_batch
 
-    def batch_list(self, signer_keypair, batch_list=None, **kwargs):
+    def batch_list(self, signer_user_id, signer_keypair, batch_list=None, **kwargs):
         """Adds a new message to an existing or new batch list"""
         message = kwargs.get("message")
         if not message:
             message = self.make(**kwargs)
         else:
-            self.validate(message=message, signer=signer_keypair)
-        payload = self.make_payload(message=message, signer_keypair=signer_keypair)
+            self.validate(
+                message=message,
+                signer=Signer(
+                    user_id=signer_user_id, public_key=signer_keypair.public_key
+                ),
+            )
+        payload = self.make_payload(
+            message=message,
+            signer_user_id=signer_user_id,
+            signer_keypair=signer_keypair,
+        )
         _, new_batch, new_batch_list, _ = batcher.make(
             payload=payload, signer_keypair=signer_keypair
         )
@@ -386,18 +416,28 @@ class BaseMessage(AddressBase):
         message.ParseFromString(payload.content)
         inputs = set(list(payload.inputs))
         outputs = set(list(payload.outputs))
-        return message, message_type, inputs, outputs
+        signer = payload.signer
+        return message, message_type, inputs, outputs, signer
 
-    def new(self, signer_keypair, **kwargs):
+    def new(self, signer_keypair, signer_user_id, **kwargs):
         """Creates and send a message to the blockchain"""
         message = kwargs.get("message")
         if not message:
             message = self.make(**kwargs)
         else:
-            self.validate(message=message, signer=signer_keypair)
+            self.validate(
+                message=message,
+                signer=Signer(
+                    user_id=signer_user_id, public_key=signer_keypair.public_key
+                ),
+            )
         return self.send(
             signer_keypair=signer_keypair,
-            payload=self.make_payload(message=message, signer_keypair=signer_keypair),
+            payload=self.make_payload(
+                message=message,
+                signer_keypair=signer_keypair,
+                signer_user_id=signer_user_id,
+            ),
         )
 
     def send(self, signer_keypair, payload):
@@ -519,7 +559,7 @@ class BaseMessage(AddressBase):
             exclude_fields=self.message_fields_not_in_state,
         )
 
-    def save_state(self, context, output_state):
+    def save_state(self, context, outputs, output_state):
         """Save the output state to the blockchain"""
         changed = [
             address
@@ -528,6 +568,10 @@ class BaseMessage(AddressBase):
         ]
         entries = {}
         for address in changed:
+            if address not in outputs:
+                raise ValueError(
+                    "Address {} not in listed outputs".format(addresser.parse(address))
+                )
             entries[address] = output_state[address].SerializeToString()
         state_client.set_state(context=context, entries=entries)
 
@@ -549,26 +593,32 @@ class BaseMessage(AddressBase):
     def authenticate_state(self, message, inputs, input_state, signer):
         """Check to see if the signer of the transaction is
         eligible to perform the action"""
-        signer_address = addresser.user.address(object_id=signer)
-        key_address = addresser.key.address(object_id=signer)
-        if signer_address not in inputs:
-            raise ValueError(
-                "{}: address {} for signer's public key {} was not sent as an input address".format(
-                    self._name_title, signer_address, signer
-                )
-            )
+        # signer_address = addresser.user.address(object_id=signer)
+        # key_address = addresser.key.address(object_id=signer)
+        # if signer_address not in inputs:
+        #    raise ValueError(
+        #        "{}: address {} for signer's public key {} was not sent as an input address".format(
+        #            self._name_title, signer_address, signer
+        #        )
+        #    )
         # if not self.allow_signer_not_in_state and signer_address not in input_state:
         #    raise ValueError(
         #        "{}: address {} for signer's public key {} was not found in state".format(
         #            self._name_title, signer_address, signer
         #        )
         #    )
+        pass
 
     def apply(self, header, payload, context):
         """Handles a message in the transaction processor"""
         # pylint: disable=not-callable
-        message, _, inputs, outputs = self.unmake_payload(payload=payload)
-        signer = header.signer_public_key
+        message, _, inputs, outputs, signer = self.unmake_payload(payload=payload)
+        if signer.public_key != header.signer_public_key:
+            raise ValueError(
+                "Signer public key {} does not match claimed public key {}".format(
+                    header.signer_public_key, signer.public_key
+                )
+            )
         object_id = self._get_object_id(item=message)
         related_id = self._get_related_id(item=message)
 
@@ -610,4 +660,4 @@ class BaseMessage(AddressBase):
             output_state=output_state,
             signer=signer,
         )
-        self.save_state(context=context, output_state=output_state)
+        self.save_state(context=context, outputs=outputs, output_state=output_state)

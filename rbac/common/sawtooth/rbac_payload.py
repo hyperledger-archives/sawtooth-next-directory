@@ -21,7 +21,7 @@ sent to the RBAC Sawtooth validator / transaction processor
 import logging
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
-
+from rbac.common.protobuf.rbac_payload_pb2 import Signer
 
 LOGGER = logging.getLogger(__name__)
 MESSAGE_NAMES = RBACPayload.MessageType.DESCRIPTOR.values_by_name.items()
@@ -36,7 +36,13 @@ def get_message_type_name(message_type):
     return None
 
 
-def make_payload(message, message_type, inputs, outputs):
+def make_signer(user_id, public_key):
+    """Make a signer object
+    """
+    return Signer(user_id=user_id, public_key=public_key)
+
+
+def make_payload(message, message_type, inputs, outputs, signer):
     """Make a payload from a message and its attributes
     """
     return RBACPayload(
@@ -44,6 +50,7 @@ def make_payload(message, message_type, inputs, outputs):
         message_type=message_type,
         inputs=inputs,
         outputs=outputs,
+        signer=signer,
     )
 
 
@@ -94,4 +101,6 @@ def unmake_payload(payload):
     message = get_proto(message_type)
     message.ParseFromString(payload.content)
 
-    return message_type, message, inputs, outputs
+    signer = payload.signer
+
+    return message_type, message, inputs, outputs, signer

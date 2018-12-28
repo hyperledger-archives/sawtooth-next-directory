@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12rbac_payload.proto\"\xcd\x0c\n\x0bRBACPayload\x12.\n\x0cmessage_type\x18\x01 \x01(\x0e\x32\x18.RBACPayload.MessageType\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\x12\x0e\n\x06inputs\x18\x03 \x03(\t\x12\x0f\n\x07outputs\x18\x04 \x03(\t\"\xdb\x0b\n\x0bMessageType\x12\x19\n\x15PROPOSE_ADD_ROLE_TASK\x10\x00\x12\x1b\n\x17PROPOSE_ADD_ROLE_MEMBER\x10\x01\x12\x1a\n\x16PROPOSE_ADD_ROLE_OWNER\x10\x02\x12\x1a\n\x16PROPOSE_ADD_ROLE_ADMIN\x10\x03\x12\x1c\n\x18PROPOSE_REMOVE_ROLE_TASK\x10\x04\x12\x1e\n\x1aPROPOSE_REMOVE_ROLE_MEMBER\x10\x05\x12\x1d\n\x19PROPOSE_REMOVE_ROLE_OWNER\x10\x06\x12\x1d\n\x19PROPOSE_REMOVE_ROLE_ADMIN\x10\x07\x12\x19\n\x15\x43ONFIRM_ADD_ROLE_TASK\x10\x08\x12\x1b\n\x17\x43ONFIRM_ADD_ROLE_MEMBER\x10\t\x12\x1a\n\x16\x43ONFIRM_ADD_ROLE_OWNER\x10\n\x12\x1a\n\x16\x43ONFIRM_ADD_ROLE_ADMIN\x10\x0b\x12\x1c\n\x18\x43ONFIRM_REMOVE_ROLE_TASK\x10\x0c\x12\x1e\n\x1a\x43ONFIRM_REMOVE_ROLE_MEMBER\x10\r\x12\x1d\n\x19\x43ONFIRM_REMOVE_ROLE_OWNER\x10\x0e\x12\x1d\n\x19\x43ONFIRM_REMOVE_ROLE_ADMIN\x10\x0f\x12\x18\n\x14REJECT_ADD_ROLE_TASK\x10\x10\x12\x1a\n\x16REJECT_ADD_ROLE_MEMBER\x10\x11\x12\x19\n\x15REJECT_ADD_ROLE_OWNER\x10\x12\x12\x19\n\x15REJECT_ADD_ROLE_ADMIN\x10\x13\x12\x1b\n\x17REJECT_REMOVE_ROLE_TASK\x10\x14\x12\x1d\n\x19REJECT_REMOVE_ROLE_MEMBER\x10\x15\x12\x1c\n\x18REJECT_REMOVE_ROLE_OWNER\x10\x16\x12\x1c\n\x18REJECT_REMOVE_ROLE_ADMIN\x10\x17\x12\x1a\n\x16PROPOSE_ADD_TASK_OWNER\x10\x18\x12\x1a\n\x16PROPOSE_ADD_TASK_ADMIN\x10\x19\x12\x1d\n\x19PROPOSE_REMOVE_TASK_OWNER\x10\x1a\x12\x1d\n\x19PROPOSE_REMOVE_TASK_ADMIN\x10\x1b\x12\x1a\n\x16\x43ONFIRM_ADD_TASK_OWNER\x10\x1c\x12\x1a\n\x16\x43ONFIRM_ADD_TASK_ADMIN\x10\x1d\x12\x1d\n\x19\x43ONFIRM_REMOVE_TASK_OWNER\x10\x1e\x12\x1d\n\x19\x43ONFIRM_REMOVE_TASK_ADMIN\x10\x1f\x12\x19\n\x15REJECT_ADD_TASK_OWNER\x10 \x12\x19\n\x15REJECT_ADD_TASK_ADMIN\x10!\x12\x1c\n\x18REJECT_REMOVE_TASK_OWNER\x10\"\x12\x1c\n\x18REJECT_REMOVE_TASK_ADMIN\x10#\x12\x1f\n\x1bPROPOSE_UPDATE_USER_MANAGER\x10$\x12\x1f\n\x1b\x43ONFIRM_UPDATE_USER_MANAGER\x10%\x12\x1e\n\x1aREJECT_UPDATE_USER_MANAGER\x10&\x12\x0f\n\x0b\x43REATE_ROLE\x10\'\x12\x0f\n\x0b\x43REATE_USER\x10(\x12\x0f\n\x0b\x43REATE_TASK\x10)\x12\x0f\n\x0bUPDATE_ROLE\x10*\x12\x13\n\x0fUPDATE_PROPOSAL\x10+\x12\x0f\n\x0bUPDATE_TASK\x10,\x12\x0f\n\x0bUPDATE_USER\x10-\x12\x10\n\x0cIMPORTS_USER\x10.\x12\x10\n\x0cIMPORTS_ROLE\x10/\x12\x1a\n\x16IMPORTS_ADD_ROLE_OWNER\x10\x30\x12\x1a\n\x16IMPORTS_ADD_ROLE_ADMIN\x10\x31\x12\x1b\n\x17IMPORTS_ADD_ROLE_MEMBER\x10\x32\x12\x1d\n\x19IMPORTS_REMOVE_ROLE_OWNER\x10\x33\x12\x1d\n\x19IMPORTS_REMOVE_ROLE_ADMIN\x10\x34\x12\x1e\n\x1aIMPORTS_REMOVE_ROLE_MEMBER\x10\x35\x62\x06proto3')
+  serialized_pb=_b('\n\x12rbac_payload.proto\"-\n\x06Signer\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\x12\n\npublic_key\x18\x02 \x01(\t\"\xf3\x0c\n\x0bRBACPayload\x12.\n\x0cmessage_type\x18\x01 \x01(\x0e\x32\x18.RBACPayload.MessageType\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\x12\x0e\n\x06inputs\x18\x03 \x03(\t\x12\x0f\n\x07outputs\x18\x04 \x03(\t\x12\x17\n\x06signer\x18\x05 \x01(\x0b\x32\x07.Signer\"\xe8\x0b\n\x0bMessageType\x12\x19\n\x15PROPOSE_ADD_ROLE_TASK\x10\x00\x12\x1b\n\x17PROPOSE_ADD_ROLE_MEMBER\x10\x01\x12\x1a\n\x16PROPOSE_ADD_ROLE_OWNER\x10\x02\x12\x1a\n\x16PROPOSE_ADD_ROLE_ADMIN\x10\x03\x12\x1c\n\x18PROPOSE_REMOVE_ROLE_TASK\x10\x04\x12\x1e\n\x1aPROPOSE_REMOVE_ROLE_MEMBER\x10\x05\x12\x1d\n\x19PROPOSE_REMOVE_ROLE_OWNER\x10\x06\x12\x1d\n\x19PROPOSE_REMOVE_ROLE_ADMIN\x10\x07\x12\x19\n\x15\x43ONFIRM_ADD_ROLE_TASK\x10\x08\x12\x1b\n\x17\x43ONFIRM_ADD_ROLE_MEMBER\x10\t\x12\x1a\n\x16\x43ONFIRM_ADD_ROLE_OWNER\x10\n\x12\x1a\n\x16\x43ONFIRM_ADD_ROLE_ADMIN\x10\x0b\x12\x1c\n\x18\x43ONFIRM_REMOVE_ROLE_TASK\x10\x0c\x12\x1e\n\x1a\x43ONFIRM_REMOVE_ROLE_MEMBER\x10\r\x12\x1d\n\x19\x43ONFIRM_REMOVE_ROLE_OWNER\x10\x0e\x12\x1d\n\x19\x43ONFIRM_REMOVE_ROLE_ADMIN\x10\x0f\x12\x18\n\x14REJECT_ADD_ROLE_TASK\x10\x10\x12\x1a\n\x16REJECT_ADD_ROLE_MEMBER\x10\x11\x12\x19\n\x15REJECT_ADD_ROLE_OWNER\x10\x12\x12\x19\n\x15REJECT_ADD_ROLE_ADMIN\x10\x13\x12\x1b\n\x17REJECT_REMOVE_ROLE_TASK\x10\x14\x12\x1d\n\x19REJECT_REMOVE_ROLE_MEMBER\x10\x15\x12\x1c\n\x18REJECT_REMOVE_ROLE_OWNER\x10\x16\x12\x1c\n\x18REJECT_REMOVE_ROLE_ADMIN\x10\x17\x12\x1a\n\x16PROPOSE_ADD_TASK_OWNER\x10\x18\x12\x1a\n\x16PROPOSE_ADD_TASK_ADMIN\x10\x19\x12\x1d\n\x19PROPOSE_REMOVE_TASK_OWNER\x10\x1a\x12\x1d\n\x19PROPOSE_REMOVE_TASK_ADMIN\x10\x1b\x12\x1a\n\x16\x43ONFIRM_ADD_TASK_OWNER\x10\x1c\x12\x1a\n\x16\x43ONFIRM_ADD_TASK_ADMIN\x10\x1d\x12\x1d\n\x19\x43ONFIRM_REMOVE_TASK_OWNER\x10\x1e\x12\x1d\n\x19\x43ONFIRM_REMOVE_TASK_ADMIN\x10\x1f\x12\x19\n\x15REJECT_ADD_TASK_OWNER\x10 \x12\x19\n\x15REJECT_ADD_TASK_ADMIN\x10!\x12\x1c\n\x18REJECT_REMOVE_TASK_OWNER\x10\"\x12\x1c\n\x18REJECT_REMOVE_TASK_ADMIN\x10#\x12\x1f\n\x1bPROPOSE_UPDATE_USER_MANAGER\x10$\x12\x1f\n\x1b\x43ONFIRM_UPDATE_USER_MANAGER\x10%\x12\x1e\n\x1aREJECT_UPDATE_USER_MANAGER\x10&\x12\x0f\n\x0b\x43REATE_ROLE\x10\'\x12\x0f\n\x0b\x43REATE_USER\x10(\x12\x0f\n\x0b\x43REATE_TASK\x10)\x12\x0f\n\x0bUPDATE_ROLE\x10*\x12\x13\n\x0fUPDATE_PROPOSAL\x10+\x12\x0f\n\x0bUPDATE_TASK\x10,\x12\x0f\n\x0bUPDATE_USER\x10-\x12\x10\n\x0cIMPORTS_USER\x10.\x12\x10\n\x0cIMPORTS_ROLE\x10/\x12\x1a\n\x16IMPORTS_ADD_ROLE_OWNER\x10\x30\x12\x1a\n\x16IMPORTS_ADD_ROLE_ADMIN\x10\x31\x12\x1b\n\x17IMPORTS_ADD_ROLE_MEMBER\x10\x32\x12\x1d\n\x19IMPORTS_REMOVE_ROLE_OWNER\x10\x33\x12\x1d\n\x19IMPORTS_REMOVE_ROLE_ADMIN\x10\x34\x12\x1e\n\x1aIMPORTS_REMOVE_ROLE_MEMBER\x10\x35\x12\x0b\n\x07\x41\x44\x44_KEY\x10\x36\x62\x06proto3')
 )
 
 
@@ -246,13 +246,55 @@ _RBACPAYLOAD_MESSAGETYPE = _descriptor.EnumDescriptor(
       name='IMPORTS_REMOVE_ROLE_MEMBER', index=53, number=53,
       serialized_options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='ADD_KEY', index=54, number=54,
+      serialized_options=None,
+      type=None),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=137,
-  serialized_end=1636,
+  serialized_start=209,
+  serialized_end=1721,
 )
 _sym_db.RegisterEnumDescriptor(_RBACPAYLOAD_MESSAGETYPE)
+
+
+_SIGNER = _descriptor.Descriptor(
+  name='Signer',
+  full_name='Signer',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='user_id', full_name='Signer.user_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='public_key', full_name='Signer.public_key', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=22,
+  serialized_end=67,
+)
 
 
 _RBACPAYLOAD = _descriptor.Descriptor(
@@ -290,6 +332,13 @@ _RBACPAYLOAD = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='signer', full_name='RBACPayload.signer', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -303,14 +352,23 @@ _RBACPAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23,
-  serialized_end=1636,
+  serialized_start=70,
+  serialized_end=1721,
 )
 
 _RBACPAYLOAD.fields_by_name['message_type'].enum_type = _RBACPAYLOAD_MESSAGETYPE
+_RBACPAYLOAD.fields_by_name['signer'].message_type = _SIGNER
 _RBACPAYLOAD_MESSAGETYPE.containing_type = _RBACPAYLOAD
+DESCRIPTOR.message_types_by_name['Signer'] = _SIGNER
 DESCRIPTOR.message_types_by_name['RBACPayload'] = _RBACPAYLOAD
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
+Signer = _reflection.GeneratedProtocolMessageType('Signer', (_message.Message,), dict(
+  DESCRIPTOR = _SIGNER,
+  __module__ = 'rbac_payload_pb2'
+  # @@protoc_insertion_point(class_scope:Signer)
+  ))
+_sym_db.RegisterMessage(Signer)
 
 RBACPayload = _reflection.GeneratedProtocolMessageType('RBACPayload', (_message.Message,), dict(
   DESCRIPTOR = _RBACPAYLOAD,

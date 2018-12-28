@@ -32,6 +32,7 @@ class RbacClient(object):
     def create_user(self, key, name, username, user_id, manager_id=None):
         batch_list = rbac.user.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             name=name,
             username=username,
             user_id=user_id,
@@ -45,6 +46,7 @@ class RbacClient(object):
     def create_role(self, key, role_name, role_id, metadata, admins, owners):
         batch_list = rbac.role.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             name=role_name,
             role_id=role_id,
             metadata=metadata,
@@ -61,6 +63,7 @@ class RbacClient(object):
 
         batch_list = rbac.user.manager.propose.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             user_id=user_id,
             new_manager_id=new_manager_id,
@@ -74,6 +77,7 @@ class RbacClient(object):
     def confirm_update_manager(self, key, proposal_id, reason, user_id, manager_id):
         batch_list = rbac.user.manager.confirm.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             reason=reason,
             object_id=user_id,
@@ -86,6 +90,7 @@ class RbacClient(object):
     def reject_update_manager(self, key, proposal_id, reason, user_id, manager_id):
         batch_list = rbac.user.manager.reject.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             reason=reason,
             object_id=user_id,
@@ -100,6 +105,7 @@ class RbacClient(object):
     ):
         batch_list = rbac.role.admin.propose.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
@@ -113,6 +119,7 @@ class RbacClient(object):
     def confirm_add_role_admins(self, key, proposal_id, role_id, user_id, reason):
         batch_list = rbac.role.admin.confirm.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=user_id,
@@ -126,6 +133,7 @@ class RbacClient(object):
 
         batch_list = rbac.role.admin.reject.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=user_id,
@@ -140,6 +148,7 @@ class RbacClient(object):
     ):
         batch_list = rbac.role.owner.propose.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
@@ -153,6 +162,7 @@ class RbacClient(object):
     def confirm_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
         batch_list = rbac.role.owner.confirm.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=user_id,
@@ -165,6 +175,7 @@ class RbacClient(object):
     def reject_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
         batch_list = rbac.role.owner.reject.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=user_id,
@@ -179,6 +190,7 @@ class RbacClient(object):
     ):
         batch_list = rbac.role.member.propose.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             role_id=role_id,
             user_id=user_id,
@@ -192,6 +204,7 @@ class RbacClient(object):
     def confirm_add_role_members(self, key, proposal_id, role_id, user_id, reason):
         batch_list = rbac.role.member.confirm.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=user_id,
@@ -204,6 +217,7 @@ class RbacClient(object):
     def reject_add_role_members(self, key, proposal_id, role_id, user_id, reason):
         batch_list = rbac.role.member.reject.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=user_id,
@@ -218,6 +232,7 @@ class RbacClient(object):
     ):
         batch_list = rbac.role.task.propose.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             role_id=role_id,
             task_id=task_id,
@@ -231,6 +246,7 @@ class RbacClient(object):
     def confirm_add_role_tasks(self, key, proposal_id, role_id, task_id, reason):
         batch_list = rbac.role.task.confirm.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=task_id,
@@ -243,6 +259,7 @@ class RbacClient(object):
     def reject_add_role_tasks(self, key, proposal_id, role_id, task_id, reason):
         batch_list = rbac.role.task.reject.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
             related_id=task_id,
@@ -256,6 +273,7 @@ class RbacClient(object):
 
         batch_list = rbac.task.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             task_id=task_id,
             name=task_name,
             admins=admins,
@@ -271,6 +289,7 @@ class RbacClient(object):
     ):
         batch_list = rbac.task.admin.propose.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             task_id=task_id,
             user_id=user_id,
@@ -284,6 +303,7 @@ class RbacClient(object):
     def confirm_add_task_admins(self, key, proposal_id, task_id, user_id, reason):
         batch_list = rbac.task.admin.confirm.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
             related_id=user_id,
@@ -296,6 +316,7 @@ class RbacClient(object):
     def reject_add_task_admins(self, key, proposal_id, task_id, user_id, reason):
         batch_list = rbac.task.admin.reject.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
             related_id=user_id,
@@ -310,6 +331,7 @@ class RbacClient(object):
     ):
         batch_list = rbac.task.owner.propose.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             task_id=task_id,
             user_id=user_id,
@@ -323,6 +345,7 @@ class RbacClient(object):
     def confirm_add_task_owners(self, key, proposal_id, task_id, user_id, reason):
         batch_list = rbac.task.owner.confirm.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
             related_id=user_id,
@@ -335,6 +358,7 @@ class RbacClient(object):
     def reject_add_task_owners(self, key, proposal_id, task_id, user_id, reason):
         batch_list = rbac.task.owner.reject.batch_list(
             signer_keypair=key,
+            signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
             related_id=user_id,

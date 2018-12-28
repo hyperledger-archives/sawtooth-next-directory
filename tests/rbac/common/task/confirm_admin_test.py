@@ -56,11 +56,12 @@ def test_make_addresses():
     proposal_address = rbac.task.admin.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
     relationship_address = rbac.task.admin.address(object_id, related_id)
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
 
     user_address = rbac.user.address(related_id)
-    signer_admin_address = rbac.task.admin.address(object_id, signer_keypair.public_key)
-    signer_user_address = rbac.user.address(signer_keypair.public_key)
+    signer_admin_address = rbac.task.admin.address(object_id, signer_user_id)
+    signer_user_address = rbac.user.address(signer_user_id)
     message = rbac.task.admin.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,
@@ -69,14 +70,13 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.task.admin.confirm.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert user_address in inputs
     assert signer_admin_address in inputs
     assert proposal_address in inputs
     assert relationship_address in inputs
-    assert signer_user_address in inputs
 
     assert proposal_address in outputs
     assert relationship_address in outputs
@@ -86,7 +86,7 @@ def test_make_addresses():
 @pytest.mark.confirm_task_admin
 def test_create():
     """Test executing the message on the blockchain"""
-    proposal, _, _, task_admin_key, _, _ = helper.task.admin.propose.create()
+    proposal, _, task_admin, task_admin_key, _, _ = helper.task.admin.propose.create()
 
     reason = helper.task.admin.propose.reason()
     message = rbac.task.admin.confirm.make(
@@ -96,7 +96,11 @@ def test_create():
         reason=reason,
     )
 
-    status = rbac.task.admin.confirm.new(signer_keypair=task_admin_key, message=message)
+    status = rbac.task.admin.confirm.new(
+        signer_keypair=task_admin_key,
+        signer_user_id=task_admin.user_id,
+        message=message,
+    )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
@@ -111,6 +115,7 @@ def test_create():
     assert confirm.object_id == proposal.object_id
     assert confirm.related_id == proposal.related_id
     assert confirm.close_reason == reason
+    assert confirm.closer == task_admin.user_id
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
     assert rbac.task.admin.exists(
         object_id=proposal.object_id, related_id=proposal.related_id

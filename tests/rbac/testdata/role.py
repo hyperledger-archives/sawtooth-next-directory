@@ -16,35 +16,50 @@
 # pylint: disable=too-many-instance-attributes,invalid-name
 
 import random
-import string
 
 from rbac.common import rbac
-from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_logger
+
+LOGGER = get_logger(__name__)
+WORDS = (
+    "awesome group hyperledger sawtooth jazz pacbot t-mobile intel microsoft "
+    "opensource AWS azure access grants role manager permissions development "
+    "friday database access SQL blockchain active directory read write data "
+    "on a the elevated super admin for gives make this"
+).split()
 
 
-class UserTestData:
-    """ User test data generator """
+def _word():
+    """Gets a random word"""
+    return random.choice(WORDS)
+
+
+def _sentence():
+    """Gets a random sentence"""
+    n = random.randint(5, 10)
+    s = " ".join(_word() for _ in range(n))
+    return s[0].upper() + s[1:] + "."
+
+
+def _paragraph():
+    n = random.randint(2, 4)
+    p = " ".join(_sentence() for _ in range(n))
+    return p
+
+
+class RoleTestData:
+    """ Role test data generator """
 
     def __init__(self):
         """Last values provide access to the last value generated"""
         self.last_id = None
-        self.last_key = None
         self.last_hash = None
         self.last_name = None
-        self.last_username = None
-        self.last_email = None
-        self.last_reason = None
-        self.last_password = None
 
     def id(self):
-        """Get a test user_id (not created)"""
-        self.last_id = rbac.addresser.user.unique_id()
+        """Get a test role_id (not created)"""
+        self.last_id = rbac.addresser.role.unique_id()
         return self.last_id
-
-    def key(self):
-        """Get a test keypair (not created)"""
-        self.last_key = Key()
-        return self.last_key
 
     def hash(self, value):
         """Returns a 12-byte hash of a given string, unless it is already a
@@ -54,28 +69,16 @@ class UserTestData:
         return self.last_hash
 
     def name(self):
-        """Get a random name"""
-        self.last_name = "User" + str(random.randint(1000, 10000))
+        """Get a random role name"""
+        self.last_name = (
+            "Role " + _word() + _word() + " " + str(random.randint(1000, 10000))
+        )
         return self.last_name
-
-    def username(self):
-        """Get a random username"""
-        self.last_username = "user" + str(random.randint(10000, 100000))
-        return self.last_username
-
-    def email(self):
-        """Get a random email address"""
-        self.last_email = "email" + str(random.randint(10000, 100000)) + "@example.com"
-        return self.last_email
 
     def reason(self):
         """Get a random reason"""
-        self.last_reason = "Because" + str(random.randint(10000, 100000))
-        return self.last_reason
+        return "Because I need " + _word() + _word() + _word() + "."
 
-    def password(self, length=32, chars=string.ascii_uppercase + string.digits):
-        """Generates a random password"""
-        self.last_password = "".join(
-            random.SystemRandom().choice(chars) for _ in range(length)
-        )
-        return self.last_password
+    def description(self):
+        """Get a random role description"""
+        return _paragraph()

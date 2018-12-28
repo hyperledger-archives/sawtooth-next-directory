@@ -64,7 +64,9 @@ class ProposeRoleMemberTestHelper:
             metadata=None,
         )
 
-        status = rbac.role.member.propose.new(signer_keypair=user_key, message=message)
+        status = rbac.role.member.propose.new(
+            signer_keypair=user_key, signer_user_id=user.user_id, message=message
+        )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"

@@ -25,7 +25,7 @@ message KeyContainer {
 
 message Key {
 
-    string key = 1;
+    string key_id = 1;
 
     string user_id = 2;
 

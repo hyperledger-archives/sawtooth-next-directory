@@ -49,9 +49,9 @@ class ProposeAddTaskAdmin(ProposalPropose):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.ADMIN
 
-    def make_addresses(self, message, signer_keypair=None):
+    def make_addresses(self, message, signer_user_id=None):
         """Makes the appropriate inputs & output addresses for the message"""
-        inputs, outputs = super().make_addresses(message, signer_keypair)
+        inputs, outputs = super().make_addresses(message, signer_user_id)
 
         user_address = addresser.user.address(message.user_id)
         inputs.add(user_address)

@@ -166,7 +166,7 @@ async def get_transactor_key(request):
         request.app.config.AES_KEY, user_id, encrypted_private_key
     )
     hex_private_key = binascii.hexlify(private_key)
-    return Key(hex_private_key)
+    return Key(hex_private_key), user_id
 
 
 async def send(conn, batch_list, timeout):

@@ -60,7 +60,6 @@ def test_make_addresses():
     proposal_address = rbac.user.manager.confirm.address(
         object_id=object_id, related_id=related_id
     )
-    signer_user_address = rbac.user.address(signer_keypair.public_key)
     message = rbac.user.manager.confirm.make(
         proposal_id=proposal_id,
         object_id=object_id,
@@ -69,12 +68,11 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.user.manager.confirm.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=object_id
     )
 
     assert user_address in inputs
     assert proposal_address in inputs
-    assert signer_user_address in inputs
 
     assert user_address in outputs
     assert proposal_address in outputs
@@ -84,10 +82,11 @@ def test_make_addresses():
 @pytest.mark.confirm_user_manager
 def test_create():
     """Test confirming a manager proposal"""
-    proposal, _, _, _, manager_key = helper.user.manager.propose.create()
+    proposal, _, _, manager, manager_key = helper.user.manager.propose.create()
     reason = helper.user.manager.propose.reason()
 
     status = rbac.user.manager.confirm.new(
+        signer_user_id=manager.user_id,
         signer_keypair=manager_key,
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,

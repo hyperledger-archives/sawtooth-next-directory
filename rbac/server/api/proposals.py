@@ -155,7 +155,7 @@ async def update_proposal(request, proposal_id):
         raise ApiBadRequest(
             "Bad Request: status must be either 'REJECTED' or 'APPROVED'"
         )
-    txn_key = await utils.get_transactor_key(request=request)
+    txn_key, txn_user_id = await utils.get_transactor_key(request=request)
     block = await utils.get_request_block(request)
     proposal_resource = await proposals_query.fetch_proposal_resource(
         request.app.config.DB_CONN,
@@ -167,6 +167,7 @@ async def update_proposal(request, proposal_id):
         request.json["status"]
     ](
         signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         object_id=proposal_resource.get("object"),
         related_id=proposal_resource.get("target"),

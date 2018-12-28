@@ -49,21 +49,21 @@ class ConfirmAddRoleOwner(ProposalConfirm):
         """The relationship type this message acts upon"""
         return addresser.RelationshipType.OWNER
 
-    def make_addresses(self, message, signer_keypair):
+    def make_addresses(self, message, signer_user_id):
         """Makes the appropriate inputs & output addresses for the message"""
-        inputs, outputs = super().make_addresses(message, signer_keypair)
+        inputs, outputs = super().make_addresses(message, signer_user_id)
 
         user_address = addresser.user.address(message.related_id)
         inputs.add(user_address)
 
         # should be owner not admin
         signer_admin_address = addresser.role.admin.address(
-            message.object_id, signer_keypair.public_key
+            message.object_id, signer_user_id
         )
         inputs.add(signer_admin_address)
 
         signer_owner_address = addresser.role.owner.address(
-            message.object_id, signer_keypair.public_key
+            message.object_id, signer_user_id
         )
         inputs.add(signer_owner_address)
 

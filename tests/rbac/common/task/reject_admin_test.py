@@ -55,9 +55,9 @@ def test_make_addresses():
     proposal_id = helper.proposal.id()
     proposal_address = rbac.task.admin.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
+    signer_user_id = helper.user.id()
     signer_keypair = helper.user.key()
-    signer_admin_address = rbac.task.admin.address(object_id, signer_keypair.public_key)
-    signer_user_address = rbac.user.address(signer_keypair.public_key)
+    signer_admin_address = rbac.task.admin.address(object_id, signer_user_id)
 
     message = rbac.task.admin.reject.make(
         proposal_id=proposal_id,
@@ -67,12 +67,11 @@ def test_make_addresses():
     )
 
     inputs, outputs = rbac.task.admin.reject.make_addresses(
-        message=message, signer_keypair=signer_keypair
+        message=message, signer_user_id=signer_user_id
     )
 
     assert proposal_address in inputs
     assert signer_admin_address in inputs
-    assert signer_user_address in inputs
 
     assert proposal_address in outputs
 
@@ -81,7 +80,7 @@ def test_make_addresses():
 @pytest.mark.reject_task_admin
 def test_create():
     """Test executing the message on the blockchain"""
-    proposal, _, _, task_admin_key, _, _ = helper.task.admin.propose.create()
+    proposal, _, task_admin, task_admin_key, _, _ = helper.task.admin.propose.create()
 
     reason = helper.task.admin.propose.reason()
     message = rbac.task.admin.reject.make(
@@ -93,6 +92,7 @@ def test_create():
 
     status = rbac.task.admin.reject.new(
         signer_keypair=task_admin_key,
+        signer_user_id=task_admin.user_id,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -111,5 +111,5 @@ def test_create():
     assert reject.object_id == proposal.object_id
     assert reject.related_id == proposal.related_id
     assert reject.close_reason == reason
-    assert reject.closer == task_admin_key.public_key
+    assert reject.closer == task_admin.user_id
     assert reject.status == protobuf.proposal_state_pb2.Proposal.REJECTED

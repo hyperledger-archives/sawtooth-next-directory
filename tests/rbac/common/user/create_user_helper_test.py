@@ -35,8 +35,6 @@ def test_id():
     user_id2 = helper.user.id()
     assert isinstance(user_id1, str)
     assert isinstance(user_id2, str)
-    assert PUBLIC_KEY_PATTERN.match(user_id1)
-    assert PUBLIC_KEY_PATTERN.match(user_id2)
     assert user_id1 != user_id2
 
 
@@ -100,11 +98,11 @@ def test_reason():
 def test_message():
     """Test getting a test create user message with key"""
     message, keypair = helper.user.message()
+
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
     assert isinstance(keypair, Key)
-    assert message.user_id == keypair.public_key
 
 
 @pytest.mark.user
@@ -112,6 +110,7 @@ def test_message():
 def test_message_with_manager():
     """Test getting a test create user and manager message"""
     user, user_key, manager, manager_key = helper.user.message_with_manager()
+
     assert isinstance(user, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(manager, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(user.user_id, str)
@@ -120,8 +119,6 @@ def test_message_with_manager():
     assert isinstance(manager.name, str)
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
-    assert user.user_id == user_key.public_key
-    assert manager.user_id == manager_key.public_key
     assert user.manager_id == manager.user_id
     assert user.user_id != manager.user_id
 
@@ -131,11 +128,21 @@ def test_message_with_manager():
 def test_create():
     """Test getting a created test user"""
     user, keypair = helper.user.create()
+
     assert isinstance(user, protobuf.user_state_pb2.User)
     assert isinstance(user.user_id, str)
     assert isinstance(user.name, str)
     assert isinstance(keypair, Key)
-    assert user.user_id == keypair.public_key
+
+
+@pytest.mark.user
+def test_imports():
+    """Test getting a created test user"""
+    user = helper.user.imports()
+
+    assert isinstance(user, protobuf.user_state_pb2.User)
+    assert isinstance(user.user_id, str)
+    assert isinstance(user.name, str)
 
 
 @pytest.mark.user
@@ -143,6 +150,7 @@ def test_create():
 def test_create_with_manager():
     """Test getting a created test user with manager"""
     user, user_key, manager, manager_key = helper.user.create_with_manager()
+
     assert isinstance(user, protobuf.user_state_pb2.User)
     assert isinstance(manager, protobuf.user_state_pb2.User)
     assert isinstance(user.user_id, str)
@@ -151,8 +159,6 @@ def test_create_with_manager():
     assert isinstance(manager.name, str)
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
-    assert user.user_id == user_key.public_key
-    assert manager.user_id == manager_key.public_key
     assert user.manager_id == manager.user_id
     assert user.user_id != manager.user_id
 
@@ -164,6 +170,7 @@ def test_create_with_grand_manager():
     user, user_key, manager, manager_key, grandmgr, grandmgr_key = (
         helper.user.create_with_grand_manager()
     )
+
     assert isinstance(user, protobuf.user_state_pb2.User)
     assert isinstance(manager, protobuf.user_state_pb2.User)
     assert isinstance(grandmgr, protobuf.user_state_pb2.User)
@@ -176,9 +183,6 @@ def test_create_with_grand_manager():
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
     assert isinstance(grandmgr_key, Key)
-    assert user.user_id == user_key.public_key
-    assert manager.user_id == manager_key.public_key
-    assert grandmgr.user_id == grandmgr_key.public_key
     assert user.manager_id == manager.user_id
     assert manager.manager_id == grandmgr.user_id
     assert user.user_id != manager.user_id

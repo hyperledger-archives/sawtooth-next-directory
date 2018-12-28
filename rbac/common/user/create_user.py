@@ -18,7 +18,6 @@ import logging
 
 from rbac.common import addresser
 from rbac.common.base.base_message import BaseMessage
-from rbac.common.crypto.keys import Key
 
 LOGGER = logging.getLogger(__name__)
 
@@ -56,33 +55,9 @@ class CreateUser(BaseMessage):
         """The related type from AddressSpace implemented by this class"""
         return addresser.RelationshipType.ATTRIBUTES
 
-    def make_with_key(
-        self,
-        name,
-        user_id=None,
-        username=None,
-        email=None,
-        metadata=None,
-        manager_id=None,
-    ):
-        """Makes a CreateUser message with a new keypair"""
-        keypair = Key()
-        if user_id is None:
-            user_id = keypair.public_key
-
-        message = self.make(
-            user_id=user_id,
-            name=name,
-            username=username,
-            email=email,
-            metadata=metadata,
-            manager_id=manager_id,
-        )
-        return message, keypair
-
-    def make_addresses(self, message, signer_keypair):
+    def make_addresses(self, message, signer_user_id):
         """Makes the appropriate inputs & output addresses for the message type"""
-        inputs, _ = super().make_addresses(message, signer_keypair)
+        inputs, _ = super().make_addresses(message, signer_user_id)
 
         user_address = self.address(object_id=message.user_id)
         inputs.add(user_address)
@@ -111,15 +86,12 @@ class CreateUser(BaseMessage):
 
     def validate(self, message, signer=None):
         """Validates the message values"""
-        signer = super().validate(message=message, signer=signer)
+        super().validate(message=message, signer=signer)
         if len(message.name) < 5:
             raise ValueError("Users must have names longer than 4 characters")
         if message.manager_id is not None:
             if message.user_id == message.manager_id:
                 raise ValueError("User cannot be their own manager")
-        if signer is not None:
-            if signer not in [message.user_id, message.manager_id]:
-                raise ValueError("Signer must be the user or their manager")
 
     def validate_state(self, context, message, inputs, input_state, store, signer):
         """Validates the message against state"""
