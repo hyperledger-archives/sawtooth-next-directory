@@ -770,6 +770,66 @@ body,
   background: #273544;
 }
 
+.avatar-palette-1 {
+  background: #ffb5e8;
+  color: #ff69d0;
+}
+
+.avatar-palette-2 {
+  background: #ff9cee;
+  color: #ff50e1;
+}
+
+.avatar-palette-3 {
+  background: #b28dff;
+  color: #7e41ff;
+}
+
+.avatar-palette-4 {
+  background: #d5aaff;
+  color: #af5dff;
+}
+
+.avatar-palette-5 {
+  background: #ebe4ff;
+  color: #b298ff;
+}
+
+.avatar-palette-6 {
+  background: #aff8db;
+  color: #5efcbd;
+}
+
+.avatar-palette-7 {
+  background: #85e3ff;
+  color: #38d1ff;
+}
+
+.avatar-palette-8 {
+  background: #6eb5ff;
+  color: #218eff;
+}
+
+.avatar-palette-9 {
+  background: #bffccb;
+  color: #70ff8c;
+}
+
+.avatar-palette-10 {
+  background: #ffabab;
+  color: #ff5e5e;
+}
+
+.avatar-palette-11 {
+  background: #ffcbc1;
+  color: #ff8b74;
+}
+
+.avatar-palette-12 {
+  background: #fff58a;
+  color: #ffee3d;
+}
+
 /*******************************
          Site Overrides
 *******************************/
@@ -16197,7 +16257,7 @@ a.ui.basic.label:hover {
   line-height: 0.7em;
   min-height: 1em;
   min-width: 1em;
-  padding: 0.4em 0.45em !important;
+  padding: 0.4em 0.5em !important;
   top: 0.9em;
 }
 

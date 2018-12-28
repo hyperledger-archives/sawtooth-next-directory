@@ -976,3 +976,34 @@
 @whiteActive               : darken(@white, 5);
 @offWhiteActive            : darken(@offWhite, 5);
 @darkWhiteActive           : darken(@darkWhite, 5);
+
+
+/*-------------------
+        Avatar
+--------------------*/
+
+/*---  Colors  ---*/
+@avatarPalette1           : #ffb5e8;
+@avatarPalette1TextColor  : saturate(darken(@avatarPalette1, 15), 15, relative);
+@avatarPalette2           : #ff9cee;
+@avatarPalette2TextColor  : saturate(darken(@avatarPalette2, 15), 15, relative);
+@avatarPalette3           : #b28dff;
+@avatarPalette3TextColor  : saturate(darken(@avatarPalette3, 15), 15, relative);
+@avatarPalette4           : #d5aaff;
+@avatarPalette4TextColor  : saturate(darken(@avatarPalette4, 15), 15, relative);
+@avatarPalette5           : #ebe4ff;
+@avatarPalette5TextColor  : saturate(darken(@avatarPalette5, 15), 15, relative);
+@avatarPalette6           : #aff8db;
+@avatarPalette6TextColor  : saturate(darken(@avatarPalette6, 15), 15, relative);
+@avatarPalette7           : #85e3ff;
+@avatarPalette7TextColor  : saturate(darken(@avatarPalette7, 15), 15, relative);
+@avatarPalette8           : #6eb5ff;
+@avatarPalette8TextColor  : saturate(darken(@avatarPalette8, 15), 15, relative);
+@avatarPalette9           : #bffccb;
+@avatarPalette9TextColor  : saturate(darken(@avatarPalette9, 15), 15, relative);
+@avatarPalette10          : #ffabab;
+@avatarPalette10TextColor : saturate(darken(@avatarPalette10, 15), 15, relative);
+@avatarPalette11          : #ffcbc1;
+@avatarPalette11TextColor : saturate(darken(@avatarPalette11, 15), 15, relative);
+@avatarPalette12          : #fff58a;
+@avatarPalette12TextColor : saturate(darken(@avatarPalette12, 15), 15, relative);

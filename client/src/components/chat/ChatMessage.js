@@ -70,7 +70,7 @@ class ChatMessage extends Component {
     }
 
     return (
-      <div>
+      <div id='next-chat-messages'>
         <Loader
           active={!socketMaxAttemptsReached && socketError}
           size='large'>

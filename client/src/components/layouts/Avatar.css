@@ -14,30 +14,27 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+.next-avatar-container {
+  border-radius: 500rem;
+  display: inline-block;
+  font-size: 1.5em;
+  height: 2em;
+  padding-top: .6em;
+  text-align: center;
+  width: 2em;
+}
 
-import StackedAvatar from './StackedAvatar';
+.next-avatar-container.medium {
+  font-size: 1.5em;
+  height: 2em;
+  padding-top: .6em;
+  width: 2em;
+}
 
-
-describe('StackedAvatar component', () => {
-
-  it('Renders more than 3 components', () => {
-    const div = document.createElement('div');
-    const list = ['one', 'two', 'three', 'four', 'five'];
-
-    const props = {
-      users: [],
-    };
-
-    ReactDOM.render(
-      <StackedAvatar list={list} {...props}/>, div
-    );
-    ReactDOM.render(
-      <StackedAvatar list={[]} {...props}/>, div
-    );
-
-    ReactDOM.unmountComponentAtNode(div);
-  });
-
-});
+.next-avatar-container.small {
+  font-size: 1.1em;
+  height: 1.8em;
+  width: 1.8em;
+  padding-top: .25em;
+  line-height: 1.4em;
+}

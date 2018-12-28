@@ -72,7 +72,9 @@ class BrowseCard extends Component {
             inverted name='pin' size='small'/>
         </div>
         <div className='browse-tile-members'>
-          <StackedAvatar list={[...details.owners, ...details.members]}/>
+          <StackedAvatar
+            list={[...details.owners, ...details.members]}
+            {...this.props}/>
         </div>
       </Segment>
     );

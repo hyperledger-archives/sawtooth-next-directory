@@ -43,6 +43,17 @@ limitations under the License.
   vertical-align: top;
 }
 
+#next-header-menu-profile .ui.header {
+  display: flex;
+  align-items: center;
+}
+
+#next-header-menu-profile .ui.header .content {
+  overflow: hidden;
+  padding-left: 16px;
+  text-overflow: ellipsis;
+}
+
 #next-header-menu .next-toggle-state-label {
   color: coral;
   margin-left: 7px;
@@ -55,13 +66,12 @@ limitations under the License.
 
 #next-header-actions i {
   font-size: 1.1em;
-  margin-left: 22px;
-  position: relative;
+  padding: 1px;
 }
 
-#next-header-actions img.avatar {
+#next-header-actions .next-avatar-container {
   cursor: pointer;
-  margin-left: 22px;
+  margin: 0 3px 0 26px;
 }
 
 #next-header-menu {

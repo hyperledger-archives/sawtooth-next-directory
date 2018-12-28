@@ -33,10 +33,12 @@ describe('Header component', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     const props = {
+      id: '1234',
       me: { name: 'username' },
       openProposalsCount: 5,
       renderMenu: () => {  },
       logout: () => { },
+      users: [],
     };
     ReactDOM.render(
       <Provider store={store}>

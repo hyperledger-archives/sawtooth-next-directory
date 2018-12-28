@@ -71,13 +71,17 @@ limitations under the License.
   padding-left: calc(5% + 21px);
 }
 
-#next-chat-selection-heading-container img {
+#next-chat-selection-heading-container .next-avatar-container {
+  border: 1px solid;
   margin-left: -24px;
-  max-width: 44px;
 }
 
 #next-chat-selection-heading-container h3 {
   margin: 0 0 0 10px;
+}
+
+#next-chat-selection-heading-container .ui.list {
+  font-size: 1.1em;
 }
 
 #next-chat-header {
@@ -97,11 +101,15 @@ limitations under the License.
 }
 
 #next-chat-messages-container {
-  display: flex;
   flex: 1;
-  flex-direction: column-reverse;
   overflow-y: scroll;
   padding: 1.3rem;
+}
+
+#next-chat-messages-container,
+#next-chat-messages {
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 #next-chat-messages-container:before {

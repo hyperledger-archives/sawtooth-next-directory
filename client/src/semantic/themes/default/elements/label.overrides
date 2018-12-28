@@ -7,6 +7,6 @@
   line-height: .7em;
   min-height: 1em;
   min-width: 1em;
-  padding: 0.4em 0.45em !important;
+  padding: 0.4em 0.5em !important;
   top: .9em;
 }

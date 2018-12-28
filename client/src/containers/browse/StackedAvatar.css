@@ -28,14 +28,14 @@ limitations under the License.
   height: 75%;
 }
 
-.next-avatar-element{
+.next-avatar-element {
+  bottom: 0;
   height: max-content;
   position: absolute;
-  bottom: 0px;
 }
 
 .next-avatar-element:nth-child(1) {
-  left: 0px;
+  left: 0;
   z-index: 2;
 }
 
@@ -50,6 +50,6 @@ limitations under the License.
 }
 
 .next-avatar-element:nth-child(4) {
-  left: 50px;
   bottom: 5px;
+  left: 50px;
 }

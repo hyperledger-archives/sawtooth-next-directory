@@ -15,9 +15,10 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Grid, Header, Icon, Image, Segment } from 'semantic-ui-react';
+import { Grid, Header, Icon, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './MemberList.css';
+import Avatar from '../../../components/layouts/Avatar';
 
 
 /**
@@ -93,7 +94,7 @@ class MemberList extends Component {
             <Segment className='secondary no-padding minimal'>
               <Header as='h4' className='next-member-list-user-info'>
                 <div>
-                  <Image src='http://i.pravatar.cc/300' avatar />
+                  <Avatar userId={userId} size='medium' {...this.props}/>
                 </div>
                 <div>Unavailable</div>
               </Header>
@@ -118,7 +119,7 @@ class MemberList extends Component {
             }
             <Header as='h4' className='next-member-list-user-info'>
               <div>
-                <Image src='http://i.pravatar.cc/300' avatar />
+                <Avatar userId={userId} size='medium' {...this.props}/>
               </div>
               <div>
                 {user && user.name}
