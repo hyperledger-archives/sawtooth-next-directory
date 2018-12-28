@@ -21,7 +21,7 @@ limitations under the License.
 }
 
 #next-requester-roles-description-container {
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--hr-light-color);
   margin: 0 0 40px 0;
   padding: 16px 30px 24px 30px;
 }

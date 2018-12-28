@@ -12,3 +12,8 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+.ui.cards > .card > .extra,
+.ui.card > .extra {
+  border-top: 1px solid #0000000f !important
+}

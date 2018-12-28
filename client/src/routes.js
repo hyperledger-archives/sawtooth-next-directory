@@ -27,8 +27,8 @@ import React from 'react';
 import ApproverNav from './components/nav/ApproverNav';
 import RequesterHome from './containers/requester/RequesterHome';
 import RequesterNav from './components/nav/RequesterNav';
-import Role from './containers/requester/Role';
-import Pack from './containers/requester/Pack';
+import Role from './containers/requester/role/Role';
+import Pack from './containers/requester/pack/Pack';
 
 
 import Approved from './containers/approver/Approved';

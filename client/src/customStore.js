@@ -22,9 +22,12 @@ import sagas from './sagas';
 import reducers from './redux';
 
 
+export let store;
+
+
 export const create = () => {
   const sagaMiddleware = createSagaMiddleware();
-  const store = createStore(reducers, compose(applyMiddleware(sagaMiddleware)));
+  store = createStore(reducers, compose(applyMiddleware(sagaMiddleware)));
 
   sagaMiddleware.run(sagas);
   return store;

@@ -20,17 +20,17 @@ import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import { RequesterSelectors } from '../../redux/RequesterRedux';
+import { RequesterSelectors } from '../../../redux/RequesterRedux';
 
 
-import Chat from '../../components/chat/Chat';
-import TrackHeader from '../../components/layouts/TrackHeader';
+import Chat from '../../../components/chat/Chat';
+import TrackHeader from '../../../components/layouts/TrackHeader';
 import RoleApproval from './RoleApproval';
-import MemberList from '../../components/layouts/MemberList';
+import MemberList from './MemberList';
 
 
 import './Role.css';
-import glyph from '../../images/header-glyph-role.png';
+import glyph from '../../../images/header-glyph-role.png';
 
 
 /**
@@ -162,7 +162,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     roleId: id,
-    proposalId: RequesterSelectors.proposalIdFromSlug(state, roles, id, 'role'),
+    proposalId: RequesterSelectors.proposalIdFromObjectId(
+      state, roles, id, 'role'
+    ),
   };
 };
 

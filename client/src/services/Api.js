@@ -16,8 +16,11 @@ limitations under the License.
 
 import apisauce from 'apisauce';
 import { toast } from 'react-toastify';
+
+
+import { store } from '../customStore';
+import AuthActions from '../redux/AuthRedux';
 import * as storage from '../services/Storage';
-import * as AuthActions from '../redux/AuthRedux';
 
 
 /**
@@ -40,7 +43,6 @@ import * as AuthActions from '../redux/AuthRedux';
  * @returns {object}
  *
  */
-
 const create = (baseURL =
 (process.env.REACT_APP_HTTP_PROTOCOL || 'http://') +
   (process.env.REACT_APP_SERVER_HOST || 'localhost') + ':' +
@@ -80,7 +82,7 @@ const create = (baseURL =
       case 200:
         break;
       case 401:
-        AuthActions.logout();
+        store.dispatch(AuthActions.logoutRequest());
         break;
       case 404:
         break;
