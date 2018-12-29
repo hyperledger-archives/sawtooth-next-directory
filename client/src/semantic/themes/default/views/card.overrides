@@ -16,6 +16,10 @@
   padding: 15%;
 }
 
+.ui.stackable.grid .column .ui.card.disabled {
+  opacity: .4;
+}
+
 .ui.stackable.grid .column .ui.card.huge .content .header {
   color: @magenta;
   font-size: 1.7em;

@@ -141,7 +141,7 @@ class App extends Component {
     }
 
 
-    let bar = Me.proposals.map(item =>
+    const bar = Me.proposals.map(item =>
       item.proposal_id);
 
     // Load roles not in
@@ -155,7 +155,7 @@ class App extends Component {
    * for each top-level container
    * @returns {JSX}
    */
-  renderNav() {
+  renderNav () {
     return this.routes.map((route, index) => (
       route.nav &&
       <Route
@@ -173,7 +173,7 @@ class App extends Component {
    * for each top-level container
    * @returns {JSX}
    */
-  renderMain() {
+  renderMain () {
     return this.routes.map((route, index) => (
       <Route
         key={index}

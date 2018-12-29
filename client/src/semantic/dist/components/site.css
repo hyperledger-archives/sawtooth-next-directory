@@ -257,6 +257,10 @@ body,
   background: #fff58a;
   color: #ffee3d;
 }
+.toast {
+  border-radius: 1em !important;
+  padding: 20px !important;
+}
 
 
 /*******************************

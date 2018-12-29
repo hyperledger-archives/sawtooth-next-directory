@@ -46,10 +46,13 @@ async def fetch_all_pack_resources(conn, head_block_num, start, limit):
     return resources
 
 
-async def create_pack_resource(conn, pack_id, name):
+async def create_pack_resource(conn, pack_id, owners, name):
     """Create a new pack resource"""
     resource = (
-        await r.table("packs").insert({"pack_id": pack_id, "name": name}).run(conn)
+        await r.table("packs").insert({"pack_id": pack_id, "name": name}).run(conn),
+        await r.table("pack_owners")
+        .insert({"pack_id": pack_id, "identifiers": owners})
+        .run(conn),
     )
     return resource
 

@@ -53,7 +53,7 @@ limitations under the License.
 }
 
 .next-waves-animate-down {
-  animation: waves-down 1s ease-in forwards;
+  animation: waves-down 0s ease-in forwards;
   transform-origin: center;
 }
 

@@ -35,11 +35,11 @@ const { Types, Creators } = createActions({
   confirmedProposalsFailure:  ['error'],
 
   createRoleRequest:          ['payload'],
-  createRoleSuccess:          ['success'],
+  createRoleSuccess:          ['role'],
   createRoleFailure:          ['error'],
 
   createPackRequest:          ['payload'],
-  createPackSuccess:          ['success'],
+  createPackSuccess:          ['pack'],
   createPackFailure:          ['error'],
 
   approveProposalsRequest:    ['ids'],
@@ -70,6 +70,8 @@ export default Creators;
 //
 export const INITIAL_STATE = Immutable({
   confirmedProposals:   null,
+  createdPacks:         null,
+  createdRoles:         null,
   error:                null,
   fetching:             null,
   openProposals:        null,
@@ -104,6 +106,20 @@ export const ApproverSelectors = {
     state.approver.openProposals.find(proposal => proposal.id === id),
   organization:          (state) => state.approver.organization,
   onBehalfOf:            (state) => state.approver.onBehalfOf,
+  ownedPacks:            (state) => {
+    if (!state.user.me) return null;
+    return utils.merge(
+      (state.approver.createdPacks || []).map(pack => pack.id),
+      state.user.me.ownerOf.packs,
+    );
+  },
+  ownedRoles:            (state) => {
+    if (!state.user.me) return null;
+    return utils.merge(
+      (state.approver.createdRoles || []).map(role => role.id),
+      state.user.me.ownerOf.roles,
+    );
+  },
 };
 
 //
@@ -157,16 +173,26 @@ export const success = {
     }),
 
   // Create
-  createRole: (state) =>
-    state.merge({ fetching: false }),
-  createPack: (state) =>
-    state.merge({ fetching: false }),
+  createRole: (state, { role }) =>
+    state.merge({
+      fetching: false,
+      createdRoles: utils.merge(
+        state.createdRoles || [], [role]
+      ),
+    }),
+  createPack: (state, { pack }) =>
+    state.merge({
+      fetching: false,
+      createdPacks: utils.merge(
+        state.createdPacks || [], [pack]
+      ),
+    }),
 
   // People
   organization: (state, { organization }) =>
     state.merge({
       fetching: false,
-      organization: organization,
+      organization,
     }),
   onBehalfOf: (state, { id }) =>
     state.merge({ onBehalfOf: id }),

@@ -834,6 +834,11 @@ body,
   color: #ffee3d;
 }
 
+.toast {
+  border-radius: 1em !important;
+  padding: 20px !important;
+}
+
 /*******************************
          Site Overrides
 *******************************/
@@ -17380,6 +17385,26 @@ ol.ui.horizontal.list li:before,
   display: flex !important;
 }
 
+.nav-list h4 {
+  margin-top: 1rem;
+}
+
+.nav-list h4.hover:not(.active):hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.nav-list h4 a {
+  height: 100%;
+  display: inline-block;
+  padding: 0.8em 0.5em;
+  text-indent: 22px;
+  width: 100%;
+}
+
+.nav-list h4.active {
+  background: #E40073;
+}
+
 /*******************************
     User Variable Overrides
 *******************************/
@@ -19498,7 +19523,7 @@ ol.ui.horizontal.list li:before,
   width: 3em;
 }
 
-.ui.segment .ui.header div:first-child {
+.ui.segment.avatar .ui.header div:first-child {
   -webkit-box-flex: 0;
   -ms-flex: 0 0 4em;
   flex: 0 0 4em;
@@ -20520,9 +20545,9 @@ ol.ui.horizontal.list li:before,
   padding: 0.67857143em 1em;
   font-size: 1.6em;
   background: #FFFFFF;
-  border: 0 solid rgba(34, 36, 38, 0.15);
+  border: 1px solid rgba(34, 36, 38, 0.15);
   color: #525252;
-  border-radius: 0;
+  border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
   box-shadow: 0em 0em 0em 0em transparent inset;
   -webkit-transition: color 0.1s ease, border-color 0.1s ease;
@@ -20537,10 +20562,10 @@ ol.ui.horizontal.list li:before,
   tap-highlight-color: rgba(255, 255, 255, 0);
   padding: 0.78571429em 1em;
   background: #FFFFFF;
-  border: 0 solid rgba(34, 36, 38, 0.15);
+  border: 1px solid rgba(34, 36, 38, 0.15);
   outline: none;
   color: #525252;
-  border-radius: 0;
+  border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
   box-shadow: 0em 0em 0em 0em transparent inset;
   -webkit-transition: color 0.1s ease, border-color 0.1s ease;
@@ -20578,8 +20603,8 @@ ol.ui.horizontal.list li:before,
   height: auto;
   width: 100%;
   background: #FFFFFF;
-  border: 0 solid rgba(34, 36, 38, 0.15);
-  border-radius: 0;
+  border: 1px solid rgba(34, 36, 38, 0.15);
+  border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
   box-shadow: 0em 0em 0em 0em transparent inset;
   padding: 0.62em 1em;
@@ -20805,7 +20830,7 @@ ol.ui.horizontal.list li:before,
 .ui.form input[type="url"]:focus {
   color: rgba(0, 0, 0, 0.95);
   border-color: #85B7D9;
-  border-radius: 0;
+  border-radius: 0.4em;
   background: #FFFFFF;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
   box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
@@ -20814,7 +20839,7 @@ ol.ui.horizontal.list li:before,
 .ui.form textarea:focus {
   color: rgba(0, 0, 0, 0.95);
   border-color: #85B7D9;
-  border-radius: 0;
+  border-radius: 0.4em;
   background: #FFFFFF;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
   box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
@@ -21588,7 +21613,9 @@ ol.ui.horizontal.list li:before,
 .form-inverted .ui.form .field input[type="password"],
 .form-inverted .ui.form .field input[type="text"] {
   background: transparent;
+  border: 0;
   border-bottom: 1px solid #FFFFFF;
+  border-radius: 0;
 }
 
 .form-inverted .ui.form .field input::-webkit-input-placeholder,
@@ -21627,19 +21654,23 @@ ol.ui.horizontal.list li:before,
   border-color: #E0B4B4;
 }
 
-.ui.form .icon input::-webkit-input-placeholder {
+.ui.form input::-webkit-input-placeholder,
+.ui.form textarea::-webkit-input-placeholder {
   color: #00000059;
 }
 
-.ui.form .icon input:-ms-input-placeholder {
+.ui.form input:-ms-input-placeholder,
+.ui.form textarea:-ms-input-placeholder {
   color: #00000059;
 }
 
-.ui.form .icon input::-ms-input-placeholder {
+.ui.form input::-ms-input-placeholder,
+.ui.form textarea::-ms-input-placeholder {
   color: #00000059;
 }
 
-.ui.form .icon input::placeholder {
+.ui.form input::placeholder,
+.ui.form textarea::placeholder {
   color: #00000059;
 }
 
@@ -29573,6 +29604,10 @@ a.ui.card:hover,
 
 .ui.stackable.grid .column .ui.card.huge .content:first-child {
   padding: 15%;
+}
+
+.ui.stackable.grid .column .ui.card.disabled {
+  opacity: 0.4;
 }
 
 .ui.stackable.grid .column .ui.card.huge .content .header {

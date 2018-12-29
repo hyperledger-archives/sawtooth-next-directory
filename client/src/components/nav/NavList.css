@@ -18,6 +18,10 @@ limitations under the License.
   margin-top: 20px;
 }
 
+.next-list-item-disabled {
+  text-indent: var(--nav-list-padding);
+}
+
 .next-nav-list-container h4 {
   color: var(--nav-heading-color);
 }
@@ -36,7 +40,7 @@ limitations under the License.
 .next-nav-list-empty {
   color: var(--nav-list-color);
   font-size: 12px;
-  margin-left: var(--nav-list-padding);
+  margin-left: calc(var(--nav-list-padding) * 2);
 }
 
 .next-nav-list-label {

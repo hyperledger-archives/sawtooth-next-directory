@@ -24,10 +24,6 @@ limitations under the License.
   padding: 14px var(--nav-list-padding);
 }
 
-#next-approver-nav-lists-container {
-  text-indent: var(--nav-list-padding);
-}
-
 #next-approver-nav-lists-container h4 a {
   color: var(--nav-heading-color);
 }

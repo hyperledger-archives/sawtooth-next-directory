@@ -33,9 +33,9 @@
 @inputWidth: 100%;
 @inputFontSize: 1.6em;
 @inputPadding: (@inputVerticalPadding + ((1em - @inputLineHeight) / 2)) @inputHorizontalPadding;
-@inputBorder: 0 solid @borderColor;
+@inputBorder: 1px solid @borderColor;
 @inputBorderColor: @white;
-@inputBorderRadius: 0;
+@inputBorderRadius: .4em;
 @inputColor: @inputTextColor;
 @inputTransition:
   color @defaultDuration @defaultEasing,

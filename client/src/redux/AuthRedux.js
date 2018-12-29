@@ -99,7 +99,6 @@ export const failure = (state, { error }) => {
 export const logout = (state) => {
   storage.removeToken();
   storage.removeUserId();
-
   return INITIAL_STATE;
 };
 

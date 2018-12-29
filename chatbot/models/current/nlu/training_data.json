@@ -27,6 +27,30 @@
       },
       {
         "intent": "access",
+        "text": "access"
+      },
+      {
+        "intent": "access",
+        "text": "access please"
+      },
+      {
+        "intent": "access",
+        "text": "may i get access?"
+      },
+      {
+        "intent": "access",
+        "text": "Can I have access?"
+      },
+      {
+        "intent": "access",
+        "text": "i need access"
+      },
+      {
+        "intent": "access",
+        "text": "grant me access"
+      },
+      {
+        "intent": "access",
         "text": "i want access to this pack"
       },
       {

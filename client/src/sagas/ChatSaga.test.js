@@ -41,7 +41,7 @@ test('conversation success', () => {
   const res = FixtureAPI.getConversation(id);
 
   const step = stepper(getConversation(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();
@@ -55,7 +55,7 @@ test('conversation failure', () => {
   const id = '';
 
   const step = stepper(getConversation(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();

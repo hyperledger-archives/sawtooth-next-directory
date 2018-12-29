@@ -113,7 +113,7 @@ export default {
 
     return {
       ok: true,
-      data: data,
+      data,
     };
   },
 
@@ -136,7 +136,7 @@ export default {
 
     return {
       ok: true,
-      data: data,
+      data,
     };
   },
 

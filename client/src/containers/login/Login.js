@@ -89,7 +89,7 @@ class Login extends Component {
    * Render entrypoint
    * @returns {JSX}
    */
-  render() {
+  render () {
     const { login } = this.props;
 
     return (

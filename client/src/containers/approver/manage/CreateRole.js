@@ -21,6 +21,7 @@ import { Button, Form, Grid } from 'semantic-ui-react';
 
 import './CreateRole.css';
 import TrackHeader from 'components/layouts/TrackHeader';
+import * as theme from 'services/Theme';
 
 
 /**
@@ -32,6 +33,24 @@ import TrackHeader from 'components/layouts/TrackHeader';
 class CreateRole extends Component {
 
   state = { name: '', validName: null };
+  themes = ['minimal', 'contrast'];
+
+
+  /**
+   * Entry point to perform tasks required to render
+   * component.
+   */
+  componentDidMount () {
+    theme.apply(this.themes);
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    theme.remove(this.themes);
+  }
 
 
   /**
@@ -42,7 +61,7 @@ class CreateRole extends Component {
     const { name } = this.state;
     const { createRole, id } = this.props;
     createRole({
-      name:           name,
+      name,
       owners:         [id],
       administrators: [id],
     });
@@ -86,28 +105,42 @@ class CreateRole extends Component {
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
-            inverted
             title='Roles'
             button={() =>
-              <Button as={Link} to='/approval/manage/roles'>Exit</Button>}
+              <Button
+                id='next-approver-manage-exit-button'
+                as={Link}
+                icon='close'
+                size='huge'
+                to='/approval/manage/roles'/>}
             {...this.props}/>
           <div id='next-approver-manage-content'>
             <Form>
               <Form.Input
                 id='next-approver-manage-content-form'
+                label='Title'
                 autoFocus
                 error={validName === false}
                 name='name'
-                placeholder='Name'
+                placeholder='Title'
                 onChange={this.handleChange}/>
+              <Form.TextArea
+                label='Description'
+                name='description'
+                placeholder='Description'/>
             </Form>
-            <Button
-              as={Link}
-              to='/approval/manage/roles'
-              disabled={!validName}
-              onClick={this.createRole}>
-                Done
-            </Button>
+            <div id='next-approver-manage-create-role-toolbar'>
+              <Button
+                primary
+                as={Link}
+                size='large'
+                to='/approval/manage/roles'
+                id='next-approver-manage-create-role-done-button'
+                disabled={!validName}
+                onClick={this.createRole}>
+                  Done
+              </Button>
+            </div>
           </div>
         </Grid.Column>
       </Grid>

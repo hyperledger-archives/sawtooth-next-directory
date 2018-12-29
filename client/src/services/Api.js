@@ -19,8 +19,9 @@ import { toast } from 'react-toastify';
 
 
 import { store } from 'customStore';
-import AuthActions from 'redux/AuthRedux';
+import { logout } from 'containers/app/AppHelper';
 import * as storage from 'services/Storage';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -67,13 +68,13 @@ const create = (baseURL =
   api.addResponseTransform(res => {
     switch (res.problem) {
       case 'TIMEOUT_ERROR':
-        toast('Server is not responding. Please try again later.');
+        toast.error('Server is not responding. Please try again later.');
         return;
       case 'NETWORK_ERROR':
-        toast('Server currently unavailable. Please try again later.');
+        toast.error('Server currently unavailable. Please try again later.');
         return;
       case 'CONNECTION_ERROR':
-        toast('Cannot connect to server. Please try again later.');
+        toast.error('Cannot connect to server. Please try again later.');
         return;
       default:
         break;
@@ -82,7 +83,10 @@ const create = (baseURL =
       case 200:
         break;
       case 401:
-        store.dispatch(AuthActions.logoutRequest());
+        toast.warn('For security reasons, your session has expired.', {
+          toastId: utils.nearestMinute(),
+        });
+        logout(store.dispatch);
         break;
       case 404:
         break;

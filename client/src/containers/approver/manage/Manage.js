@@ -32,7 +32,7 @@ import * as theme from 'services/Theme';
  */
 class Manage extends Component {
 
-  themes = ['minimal', 'contast'];
+  themes = ['minimal', 'contrast'];
 
 
   /**
@@ -92,10 +92,8 @@ class Manage extends Component {
                 <Grid.Column>
                   <Card
                     fluid
-                    as={Link}
-                    to='manage/delegations'
                     header='Delegations'
-                    className='minimal huge'
+                    className='minimal huge disabled'
                     description={`
                       Setup or modify a temporary or permanent delegation.
                     `}/>
@@ -105,10 +103,8 @@ class Manage extends Component {
                 <Grid.Column>
                   <Card
                     fluid
-                    as={Link}
-                    to='manage/hierarchical'
                     header='Hierarchical'
-                    className='minimal huge'
+                    className='minimal huge disabled'
                     description={`
                       Setup who can approve on your behalf.
                     `}/>
@@ -116,10 +112,8 @@ class Manage extends Component {
                 <Grid.Column>
                   <Card
                     fluid
-                    as={Link}
-                    to='/manage/alerts'
                     header='Alerts'
-                    className='minimal huge'
+                    className='minimal huge disabled'
                     description={`
                       Manage what you get alerts for and alert frequency.
                     `}/>

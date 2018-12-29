@@ -11,6 +11,12 @@
 - /send_recommended
 
 ## intent:access
+- access
+- access please
+- may i get access?
+- Can I have access?
+- i need access
+- grant me access
 - i want access to this pack
 - No give me access to this role
 - i need access to this

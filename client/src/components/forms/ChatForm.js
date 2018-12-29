@@ -149,8 +149,8 @@ class ChatForm extends Component {
     const { message } = this.state;
     if (!payload.startsWith('/') || payload.indexOf('{') === -1) return payload;
 
-    let demarcation = payload.indexOf('{');
-    let parsed = JSON.parse(
+    const demarcation = payload.indexOf('{');
+    const parsed = JSON.parse(
       payload.substring(demarcation, payload.length)
     );
 

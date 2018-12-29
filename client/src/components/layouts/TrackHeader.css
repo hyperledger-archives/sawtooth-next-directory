@@ -25,7 +25,7 @@ limitations under the License.
   align-items: center;
   color: var(--header-color);
   display: flex;
-  height: 120px;
+  height: 90px;
   padding: 0 var(--page-content-padding);
   position: fixed;
   width: 100%;
@@ -39,6 +39,11 @@ limitations under the License.
 
 .minimal #next-track-header {
   border-bottom: 1px solid #eff0f3;
+}
+
+.contrast.minimal #next-track-header {
+  background: #ffffff;
+  box-shadow: 0 3px 25px #c0c0c024;
 }
 
 #next-track-header .ui.header {

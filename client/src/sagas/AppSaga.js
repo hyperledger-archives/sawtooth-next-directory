@@ -41,7 +41,7 @@ export function * openSocket () {
       const action = yield take(channel);
       yield put(action);
     } catch (error) {
-      console.error('Encountered unexpected socket error.');
+      console.error('Encountered unexpected socket close. Reconnecting...');
       yield call(reconnect);
     }
   }

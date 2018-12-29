@@ -88,8 +88,14 @@ export const INITIAL_STATE = Immutable({
 //
 //
 export const RequesterSelectors = {
-  roles: (state) => state.requester.roles,
-  packs: (state) => state.requester.packs,
+  roles: (state) => [
+    ...state.requester.roles || [],
+    ...state.approver.createdRoles || [],
+  ],
+  packs: (state) => [
+    ...state.requester.packs || [],
+    ...state.approver.createdPacks || [],
+  ],
 
 
   // Retrieve recommended roles
@@ -125,16 +131,20 @@ export const RequesterSelectors = {
 
   // Retrieve role by ID
   roleFromId: (state, id) =>
-    state.requester.roles &&
-    state.requester.roles.find(role =>
-      role.id === id
-    ),
+    [
+      ...state.requester.roles || [],
+      ...state.approver.createdRoles || [],
+    ]
+      .find(role => role.id === id),
+
   // Retrieve pack by ID
   packFromId: (state, id) =>
-    state.requester.packs &&
-    state.requester.packs.find(pack =>
-      pack.id === id
-    ),
+    [
+      ...state.requester.packs || [],
+      ...state.approver.createdPacks || [],
+    ]
+      .find(pack => pack.id === id),
+
   // Retrieve proposal by ID
   proposalFromId: (state, id) =>
     state.requester.requests &&
@@ -158,7 +168,7 @@ export const RequesterSelectors = {
     )
       return null;
 
-    let open = [];
+    const open = [];
     state.requester.requests
       .filter(request => request.status !== 'CONFIRMED')
       .forEach(request => {
@@ -192,8 +202,8 @@ export const RequesterSelectors = {
     )
       return null;
 
-    let confirmed = [];
-    let unconfirmed = [];
+    const confirmed = [];
+    const unconfirmed = [];
 
     // Debugger;;
 
@@ -209,7 +219,7 @@ export const RequesterSelectors = {
         merge.packs &&
         merge.packs.length > 0
       ) {
-        let pack = state.requester.packs.find(pack =>
+        const pack = state.requester.packs.find(pack =>
           pack.id === merge.packs[0]
         );
         merge.status !== 'CONFIRMED' && unconfirmed.push(pack.id);
@@ -221,7 +231,7 @@ export const RequesterSelectors = {
 
     // Create a new array of the form [{pack}, {role}, ...],
     // removing duplicates and unconfirmed proposals
-    let unique = [...new Set(confirmed)];
+    const unique = [...new Set(confirmed)];
     return unique.filter(item => !unconfirmed.includes(item.id));
   },
 

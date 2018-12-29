@@ -49,10 +49,10 @@ export function * syncAll (checked, roleId, proposalId, userId) {
 export function * syncFromCategory (checked, roleId) {
   const { openProposalsByRole} = this.props;
   let { selectedProposals: proposals, selectedRoles: roles } = this.state;
-  let changedUsers = [];
+  const changedUsers = [];
 
   openProposalsByRole[roleId].forEach(proposal => {
-    let index = proposals.indexOf(proposal.id);
+    const index = proposals.indexOf(proposal.id);
     changedUsers.push(proposal.opener);
     checked ?
       (proposals = index === -1 ? [...proposals, proposal.id] : proposals) :
@@ -78,7 +78,7 @@ export function * syncFromItem (checked, proposalId, userId) {
   const { openProposalsByUser, openProposalFromId } = this.props;
   let { selectedProposals: proposals, selectedRoles: roles } = this.state;
 
-  let scope = proposalId ? [openProposalFromId(proposalId)] :
+  const scope = proposalId ? [openProposalFromId(proposalId)] :
     openProposalsByUser[userId];
 
   scope.forEach(proposal => {

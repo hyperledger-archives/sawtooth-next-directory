@@ -30,13 +30,13 @@ test.skip('first calls API', () => {
   const password = 'world';
 
   const step = stepper(login(FixtureAPI, {
-    username: username,
-    password: password,
+    username,
+    password,
   }));
 
   expect(step()).toEqual(call(FixtureAPI.login, {
     id: username,
-    password: password,
+    password,
   }));
 });
 
@@ -47,8 +47,8 @@ test('success path', () => {
 
   const res = FixtureAPI.login(username, password);
   const step = stepper(login(FixtureAPI, {
-    username: username,
-    password: password,
+    username,
+    password,
   }));
 
   step();
@@ -65,8 +65,8 @@ test('failure path', () => {
   const password = 'world';
 
   const step = stepper(login(FixtureAPI, {
-    username: username,
-    password: password,
+    username,
+    password,
   }));
 
   step();
@@ -103,10 +103,10 @@ test('signup success path', () => {
 
   const res = FixtureAPI.signup(name, username, password, email);
   const step = stepper(signup(FixtureAPI, {
-    name: name,
-    username: username,
-    password: password,
-    email: email,
+    name,
+    username,
+    password,
+    email,
   }));
 
   step();
@@ -125,10 +125,10 @@ test('signup failure path', () => {
   const name = 'name';
 
   const step = stepper(signup(FixtureAPI, {
-    username: username,
-    password: password,
-    name: name,
-    email: email,
+    username,
+    password,
+    name,
+    email,
 
   }));
 

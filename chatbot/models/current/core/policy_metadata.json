@@ -2,54 +2,54 @@
   "action_fingerprints": {
     "action_listen": {
       "slots": [
-        "reason",
         "resource_type",
-        "resource_id"
+        "resource_id",
+        "reason"
       ]
     },
-    "utter_greet": {
-      "slots": []
-    },
     "utter_request_bye": {
-      "slots": []
-    },
-    "utter_bye": {
-      "slots": []
-    },
-    "utter_current_draft": {
-      "slots": []
-    },
-    "utter_standby": {
-      "slots": []
-    },
-    "utter_feeling": {
-      "slots": []
-    },
-    "utter_awe": {
-      "slots": []
-    },
-    "utter_thank": {
-      "slots": []
-    },
-    "utter_name": {
-      "slots": []
-    },
-    "utter_recommended_draft": {
-      "slots": []
-    },
-    "utter_whoami": {
-      "slots": []
-    },
-    "utter_insult": {
       "slots": []
     },
     "utter_ask_request_access": {
       "slots": []
     },
+    "utter_insult": {
+      "slots": []
+    },
+    "utter_standby": {
+      "slots": []
+    },
+    "utter_whoami": {
+      "slots": []
+    },
+    "utter_greet": {
+      "slots": []
+    },
     "utter_help": {
       "slots": []
     },
+    "utter_bye": {
+      "slots": []
+    },
+    "utter_awe": {
+      "slots": []
+    },
+    "utter_name": {
+      "slots": []
+    },
     "utter_laugh": {
+      "slots": []
+    },
+    "utter_recommended_draft": {
+      "slots": []
+    },
+    "utter_feeling": {
+      "slots": []
+    },
+    "utter_current_draft": {
+      "slots": []
+    },
+    "utter_thank": {
       "slots": []
     }
   },
@@ -66,5 +66,5 @@
     "rasa_core.policies.keras_policy.KerasPolicy",
     "rasa_core.policies.fallback.FallbackPolicy"
   ],
-  "trained_at": "20181210-032441"
+  "trained_at": "20181229-175417"
 }

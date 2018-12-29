@@ -49,6 +49,19 @@ class LoginForm extends Component {
 
 
   /**
+   * Called whenever Redux state changes. Set password field
+   * focus manually after transition.
+   * @param {object} prevProps Props before update
+   * @param {object} prevState State before update
+   */
+  componentDidUpdate (prevProps, prevState) {
+    const { activeIndex } = this.state;
+    if (prevState.activeIndex === 0 && activeIndex === 1)
+      setTimeout(() => this.passwordRef.focus(), 300);
+  }
+
+
+  /**
    * Handle form change event
    * @param {object} event Event passed by Semantic UI
    * @param {string} name  Name of form element derived from
@@ -157,7 +170,7 @@ class LoginForm extends Component {
                 onClick={() => this.setFlow(0)}/>
               <Form.Field id='next-login-form-password'>
                 <Input
-                  autoFocus
+                  ref={ref => this.passwordRef = ref}
                   error={validPassword === false}
                   name='password'
                   type='password'

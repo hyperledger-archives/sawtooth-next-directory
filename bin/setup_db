@@ -116,9 +116,10 @@ def setup_db(host, port, name):
         role_tables.for_each(r.db(name).table_create(r.row)).run(conn)
         role_tables.for_each(r.db(name).table(r.row).index_create('role_id')).run(conn)
 
-        LOGGER.info('Creating table: packs')
-        r.db(name).table_create('packs').run(conn)
-        r.db(name).table('packs').index_create('pack_id').run(conn)
+        LOGGER.info('Creating table and sub-tables: packs')
+        pack_tables = r.expr(['packs', 'pack_owners'])
+        pack_tables.for_each(r.db(name).table_create(r.row)).run(conn)
+        pack_tables.for_each(r.db(name).table(r.row).index_create('pack_id')).run(conn)
 
     except ReqlRuntimeError as err:
         LOGGER.info('Rethink exception %s', err)

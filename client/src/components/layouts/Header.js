@@ -237,7 +237,6 @@ class Header extends Component {
         </div>
         { me &&
         <div id='next-header-actions'>
-          {/* <Icon inverted name='search'/> */}
           <div id='next-header-bell'>
             <Link to='/approval/pending/individual'>
               <Icon inverted name='bell'/>
@@ -249,11 +248,14 @@ class Header extends Component {
             </Link>
           </div>
           { me &&
-            <Avatar
-              userId={id}
-              size='small'
-              onClick={this.toggleMenu}
-              {...this.props}/>
+            <div
+              id='next-header-actions-profile'
+              onClick={this.toggleMenu}>
+              <Avatar
+                userId={id}
+                size='small'
+                {...this.props}/>
+            </div>
           }
         </div>
         }

@@ -50,7 +50,7 @@ class RequesterNav extends Component {
    * Entry point to perform tasks required to render
    * component
    */
-  componentDidMount() {
+  componentDidMount () {
     this.init();
   }
 

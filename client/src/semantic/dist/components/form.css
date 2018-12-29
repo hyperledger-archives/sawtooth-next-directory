@@ -108,9 +108,9 @@
   padding: 0.67857143em 1em;
   font-size: 1.6em;
   background: #FFFFFF;
-  border: 0 solid rgba(34, 36, 38, 0.15);
+  border: 1px solid rgba(34, 36, 38, 0.15);
   color: #525252;
-  border-radius: 0;
+  border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
           box-shadow: 0em 0em 0em 0em transparent inset;
   -webkit-transition: color 0.1s ease, border-color 0.1s ease;
@@ -124,10 +124,10 @@
   tap-highlight-color: rgba(255, 255, 255, 0);
   padding: 0.78571429em 1em;
   background: #FFFFFF;
-  border: 0 solid rgba(34, 36, 38, 0.15);
+  border: 1px solid rgba(34, 36, 38, 0.15);
   outline: none;
   color: #525252;
-  border-radius: 0;
+  border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
           box-shadow: 0em 0em 0em 0em transparent inset;
   -webkit-transition: color 0.1s ease, border-color 0.1s ease;
@@ -163,8 +163,8 @@
   height: auto;
   width: 100%;
   background: #FFFFFF;
-  border: 0 solid rgba(34, 36, 38, 0.15);
-  border-radius: 0;
+  border: 1px solid rgba(34, 36, 38, 0.15);
+  border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
           box-shadow: 0em 0em 0em 0em transparent inset;
   padding: 0.62em 1em;
@@ -370,7 +370,7 @@
 .ui.form input[type="url"]:focus {
   color: rgba(0, 0, 0, 0.95);
   border-color: #85B7D9;
-  border-radius: 0;
+  border-radius: 0.4em;
   background: #FFFFFF;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
           box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
@@ -378,7 +378,7 @@
 .ui.form textarea:focus {
   color: rgba(0, 0, 0, 0.95);
   border-color: #85B7D9;
-  border-radius: 0;
+  border-radius: 0.4em;
   background: #FFFFFF;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
           box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
@@ -1076,7 +1076,9 @@
 .form-inverted .ui.form .field input[type="password"],
 .form-inverted .ui.form .field input[type="text"] {
   background: transparent;
+  border: 0;
   border-bottom: 1px solid #FFFFFF;
+  border-radius: 0;
 }
 .form-inverted .ui.form .field input::-webkit-input-placeholder,
 .form-inverted .ui.form .field input:focus::-webkit-input-placeholder {
@@ -1107,16 +1109,20 @@
 .form-inverted .ui.form .field .error input[type="email"] {
   border-color: #E0B4B4;
 }
-.ui.form .icon input::-webkit-input-placeholder {
+.ui.form input::-webkit-input-placeholder,
+.ui.form textarea::-webkit-input-placeholder {
   color: #00000059;
 }
-.ui.form .icon input:-ms-input-placeholder {
+.ui.form input:-ms-input-placeholder,
+.ui.form textarea:-ms-input-placeholder {
   color: #00000059;
 }
-.ui.form .icon input::-ms-input-placeholder {
+.ui.form input::-ms-input-placeholder,
+.ui.form textarea::-ms-input-placeholder {
   color: #00000059;
 }
-.ui.form .icon input::placeholder {
+.ui.form input::placeholder,
+.ui.form textarea::placeholder {
   color: #00000059;
 }
 

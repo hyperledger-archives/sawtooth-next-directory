@@ -55,7 +55,7 @@ describe('FixtureApi Service', () => {
   });
 
   test('get pack', () => {
-    let id= ['e15a71ee-58d2-49e8-a8e4-21888144be1f',
+    const id= ['e15a71ee-58d2-49e8-a8e4-21888144be1f',
       '539d9dd3-6b4d-4136-ab67-b6ff6b307c9f',
       'd1ea7166-9c0f-428a-b684-9d73935e9211',
       '3e542e8d-2e04-4125-b7f6-5b362dcc8a60',
