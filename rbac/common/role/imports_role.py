@@ -15,6 +15,7 @@
 """Implements the IMPORTS_ROLE message
 usage: rbac.role.import.create()"""
 
+import time
 import logging
 from rbac.common import addresser
 from rbac.common.protobuf import role_transaction_pb2  # pylint: disable=unused-import
@@ -124,6 +125,13 @@ class ImportsRole(BaseMessage):
         self, message, object_id, related_id, outputs, output_state, signer
     ):
         """Create admin, owner and member addresses"""
+        # set membership expiration on the 1 year anniversary of the role creation date
+        epoch_time = int(time.time())
+        expiration_date = int(
+            epoch_time
+            + (12 - (epoch_time - int(message.created_date)) / 2628000 % 12) * 2628000
+        )
+
         for admin in message.admins:
             addresser.role.admin.create_relationship(
                 object_id=object_id,
@@ -144,4 +152,5 @@ class ImportsRole(BaseMessage):
                 related_id=member,
                 outputs=outputs,
                 output_state=output_state,
+                expiration_date=expiration_date,
             )

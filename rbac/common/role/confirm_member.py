@@ -14,6 +14,8 @@
 # -----------------------------------------------------------------------------
 """Implements the CONFIRM_ADD_ROLE_MEMBER message
 usage: rbac.role.member.confirm.create()"""
+
+import time
 import logging
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
@@ -110,9 +112,13 @@ class ConfirmAddRoleMember(ProposalConfirm):
         self, message, object_id, related_id, outputs, output_state, signer
     ):
         """Create admin address"""
+        # set membership expiration 6 months from now
+        expiration_date = int(time.time() + 2628000 * 6)
+
         addresser.role.member.create_relationship(
             object_id=object_id,
             related_id=related_id,
             outputs=outputs,
             output_state=output_state,
+            expiration_date=expiration_date,
         )

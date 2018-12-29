@@ -93,6 +93,8 @@ message CreateRole {
 
     string metadata = 7;
 
+    int64 created_date = 8;
+
 }
 
 message ImportsRole {
@@ -112,5 +114,7 @@ message ImportsRole {
     string metadata = 7;
 
     string remote_id = 8;
+
+    int64 created_date = 9;
 }
 

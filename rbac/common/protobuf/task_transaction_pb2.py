@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16task_transaction.proto\"n\n\x13ProposeAddTaskOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"q\n\x16ProposeRemoveTaskOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddTaskAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"q\n\x16ProposeRemoveTaskAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"]\n\nCreateTask\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0e\n\x06owners\x18\x04 \x03(\t\x12\x10\n\x08metadata\x18\x05 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16task_transaction.proto\"n\n\x13ProposeAddTaskOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddTaskAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"]\n\nCreateTask\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0e\n\x06owners\x18\x04 \x03(\t\x12\x10\n\x08metadata\x18\x05 \x01(\tb\x06proto3')
 )
 
 
@@ -84,65 +84,6 @@ _PROPOSEADDTASKOWNER = _descriptor.Descriptor(
 )
 
 
-_PROPOSEREMOVETASKOWNER = _descriptor.Descriptor(
-  name='ProposeRemoveTaskOwner',
-  full_name='ProposeRemoveTaskOwner',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='proposal_id', full_name='ProposeRemoveTaskOwner.proposal_id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='task_id', full_name='ProposeRemoveTaskOwner.task_id', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='user_id', full_name='ProposeRemoveTaskOwner.user_id', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='reason', full_name='ProposeRemoveTaskOwner.reason', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='metadata', full_name='ProposeRemoveTaskOwner.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=138,
-  serialized_end=251,
-)
-
-
 _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
   name='ProposeAddTaskAdmin',
   full_name='ProposeAddTaskAdmin',
@@ -197,67 +138,8 @@ _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=253,
-  serialized_end=363,
-)
-
-
-_PROPOSEREMOVETASKADMIN = _descriptor.Descriptor(
-  name='ProposeRemoveTaskAdmin',
-  full_name='ProposeRemoveTaskAdmin',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='proposal_id', full_name='ProposeRemoveTaskAdmin.proposal_id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='task_id', full_name='ProposeRemoveTaskAdmin.task_id', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='user_id', full_name='ProposeRemoveTaskAdmin.user_id', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='reason', full_name='ProposeRemoveTaskAdmin.reason', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='metadata', full_name='ProposeRemoveTaskAdmin.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=365,
-  serialized_end=478,
+  serialized_start=138,
+  serialized_end=248,
 )
 
 
@@ -315,14 +197,12 @@ _CREATETASK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=480,
-  serialized_end=573,
+  serialized_start=250,
+  serialized_end=343,
 )
 
 DESCRIPTOR.message_types_by_name['ProposeAddTaskOwner'] = _PROPOSEADDTASKOWNER
-DESCRIPTOR.message_types_by_name['ProposeRemoveTaskOwner'] = _PROPOSEREMOVETASKOWNER
 DESCRIPTOR.message_types_by_name['ProposeAddTaskAdmin'] = _PROPOSEADDTASKADMIN
-DESCRIPTOR.message_types_by_name['ProposeRemoveTaskAdmin'] = _PROPOSEREMOVETASKADMIN
 DESCRIPTOR.message_types_by_name['CreateTask'] = _CREATETASK
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -333,26 +213,12 @@ ProposeAddTaskOwner = _reflection.GeneratedProtocolMessageType('ProposeAddTaskOw
   ))
 _sym_db.RegisterMessage(ProposeAddTaskOwner)
 
-ProposeRemoveTaskOwner = _reflection.GeneratedProtocolMessageType('ProposeRemoveTaskOwner', (_message.Message,), dict(
-  DESCRIPTOR = _PROPOSEREMOVETASKOWNER,
-  __module__ = 'task_transaction_pb2'
-  # @@protoc_insertion_point(class_scope:ProposeRemoveTaskOwner)
-  ))
-_sym_db.RegisterMessage(ProposeRemoveTaskOwner)
-
 ProposeAddTaskAdmin = _reflection.GeneratedProtocolMessageType('ProposeAddTaskAdmin', (_message.Message,), dict(
   DESCRIPTOR = _PROPOSEADDTASKADMIN,
   __module__ = 'task_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeAddTaskAdmin)
   ))
 _sym_db.RegisterMessage(ProposeAddTaskAdmin)
-
-ProposeRemoveTaskAdmin = _reflection.GeneratedProtocolMessageType('ProposeRemoveTaskAdmin', (_message.Message,), dict(
-  DESCRIPTOR = _PROPOSEREMOVETASKADMIN,
-  __module__ = 'task_transaction_pb2'
-  # @@protoc_insertion_point(class_scope:ProposeRemoveTaskAdmin)
-  ))
-_sym_db.RegisterMessage(ProposeRemoveTaskAdmin)
 
 CreateTask = _reflection.GeneratedProtocolMessageType('CreateTask', (_message.Message,), dict(
   DESCRIPTOR = _CREATETASK,

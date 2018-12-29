@@ -35,6 +35,8 @@ message RoleAttributes {
 
     string remote_id = 6;
 
+    int64 created_date = 7;
+
 }
 
 message RoleRelationshipContainer {
@@ -54,4 +56,8 @@ message RoleRelationship {
     string object_id = 3;
 
     string related_id = 4;
+
+    int64 created_date = 5;
+
+    int64 expiration_date = 6;
 }

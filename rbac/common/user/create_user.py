@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Implements the CREATE_USER message
-usage: rbac.user.create()"""
+""" Implements the CREATE_USER message
+    usage: rbac.user.new()
+"""
+import time
 import logging
 
 from rbac.common import addresser
@@ -23,8 +25,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CreateUser(BaseMessage):
-    """Implements the CREATE_USER message
-    usage: rbac.user.create()"""
+    """ Implements the CREATE_USER message
+        usage: rbac.user.new()
+    """
 
     def __init__(self):
         super().__init__()
@@ -115,6 +118,7 @@ class CreateUser(BaseMessage):
             raise ValueError(
                 "Manager with id {} does not exist in state".format(message.manager_id)
             )
+        message.created_date = int(time.time())
 
     def apply_update(
         self, message, object_id, related_id, outputs, output_state, signer

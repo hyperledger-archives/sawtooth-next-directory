@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Implements the CREATE_ROLE message
-usage: rbac.role.create()"""
-
+""" Implements the CREATE_ROLE message
+    usage: rbac.role.new()
+"""
+import time
 import logging
+
 from rbac.common import addresser
 from rbac.common.addresser.address_space import AddressSpace
 from rbac.common.addresser.address_space import ObjectType
@@ -26,8 +28,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CreateRole(BaseMessage):
-    """Implements the CREATE_ROLE message
-    usage: rbac.role.create()"""
+    """ Implements the CREATE_ROLE message
+        usage: rbac.role.new()
+    """
 
     def __init__(self):
         super().__init__()
@@ -117,6 +120,7 @@ class CreateRole(BaseMessage):
         )
         if not all_users_exist:
             raise ValueError("The users {} were not found".format(users_not_found))
+        message.created_date = int(time.time())
 
     def apply_update(
         self, message, object_id, related_id, outputs, output_state, signer
