@@ -17,10 +17,11 @@ FROM node:8
 WORKDIR /client
 
 COPY ./client/package.json ./client/yarn.lock ./client/semantic.json ./
-RUN yarn global add gulp@4.0 \
- && yarn install
+RUN yarn
+# RUN yarn global add gulp@4.0 \
+#  && yarn install
 
-COPY ./client/src/semantic ./src/semantic
-RUN yarn build:semantic
+# COPY ./client/src/semantic ./src/semantic
+# RUN yarn build:semantic
 
 CMD ["./entrypoint"]

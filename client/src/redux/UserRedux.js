@@ -111,7 +111,7 @@ export const success = {
   me: (state, { me }) =>
     state.merge({
       fetching: false,
-      me: me,
+      me,
       users: utils.merge(state.users || [], [me]),
     }),
   user: (state, { user }) =>

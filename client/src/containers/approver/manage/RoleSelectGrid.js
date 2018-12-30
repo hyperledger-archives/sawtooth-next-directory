@@ -18,17 +18,31 @@ import React, { Component } from 'react';
 import { Grid } from 'semantic-ui-react';
 
 
-import './ApproverHome.css';
-import TrackHeader from 'components/layouts/TrackHeader';
+import './RoleSelectGrid.css';
 
 
 /**
  *
- * @class         ApproverHome
- * @description   Approver view fallback landing page
+ * @class         RoleSelectGrid
+ * @description   Create new pack component
  *
  */
-class ApproverHome extends Component {
+class RoleSelectGrid extends Component {
+
+  state = {  };
+
+
+  /**
+   * Handle change event
+   * @param {object} event Event passed by Semantic UI
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
+   */
+  handleChange = (event, { name, value }) => {
+    this.setState({ [name]: value });
+  }
+
 
   /**
    * Render entrypoint
@@ -36,11 +50,11 @@ class ApproverHome extends Component {
    */
   render () {
     return (
-      <Grid id='next-approver-grid'>
+      <Grid id='next-role-select-grid'>
         <Grid.Column
           id='next-approver-grid-track-column'
           width={16}>
-          <TrackHeader title='Approval Home' {...this.props}/>
+          <h1>Role select grid</h1>
         </Grid.Column>
       </Grid>
     );
@@ -49,4 +63,4 @@ class ApproverHome extends Component {
 }
 
 
-export default ApproverHome;
+export default RoleSelectGrid;

@@ -88,7 +88,7 @@ class Signup extends Component {
    * Render entrypoint
    * @returns {JSX}
    */
-  render() {
+  render () {
     const { signup } = this.props;
 
     return (

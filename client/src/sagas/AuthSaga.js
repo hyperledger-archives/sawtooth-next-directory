@@ -30,7 +30,7 @@ export function * login (api, action) {
     const { username, password } = action;
     const res = yield call(api.login, {
       id: username,
-      password: password,
+      password,
     });
 
     res.ok ?
@@ -53,10 +53,10 @@ export function * signup (api, action) {
     yield put(showLoading());
     const { username, password, name, email } = action;
     const res = yield call(api.signup, {
-      username: username,
-      password: password,
-      email: email,
-      name: name,
+      username,
+      password,
+      email,
+      name,
     });
 
     res.ok ?

@@ -140,7 +140,7 @@ class PeopleApproval extends Component {
       ${selectedProposals.length > 1 ? 'requests' : 'request'}
       selected`;
 
-    let foo = users && users.find(user => user.id === onBehalfOf);
+    const foo = users && users.find(user => user.id === onBehalfOf);
 
     return (
       <Grid id='next-approver-grid'>

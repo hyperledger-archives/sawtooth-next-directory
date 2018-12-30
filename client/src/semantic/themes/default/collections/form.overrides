@@ -6,7 +6,9 @@
 .form-inverted .ui.form .field input[type="password"],
 .form-inverted .ui.form .field input[type="text"] {
   background: transparent;
+  border: 0;
   border-bottom: 1px solid @inputBorderColor;
+  border-radius: 0;
 }
 
 .form-inverted .ui.form .field input::placeholder,
@@ -30,6 +32,7 @@
   border-color: @formErrorBorder;
 }
 
-.ui.form .icon input::placeholder {
+.ui.form input::placeholder,
+.ui.form textarea::placeholder {
   color: #00000059;
 }

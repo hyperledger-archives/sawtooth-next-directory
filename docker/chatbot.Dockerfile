@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
 FROM rasa/rasa_core:0.12.3
 
 RUN apt-get update \

@@ -105,10 +105,10 @@ describe('Chat component', () => {
       userFromId: (userId) => {
         return { name: '' };
       },
-      requestRoleAccess: () =>{},
+      requestRoleAccess: () => {},
       requestPackAccess: () => {},
       approveProposals: () => { },
-      selectedProposals: () =>{},
+      selectedProposals: () => {},
       reset: () => { },
       rejectProposals: () => {},
       selectedUsers: [{ user: 'roleid' }],
@@ -121,7 +121,7 @@ describe('Chat component', () => {
       activeRole: { id: 'abc' },
       me: { id: 'asdf' },
       approveProposals: () => { },
-      selectedProposals: () =>{},
+      selectedProposals: () => {},
       reset: () => { },
       rejectProposals: () => {},
     };

@@ -49,6 +49,8 @@ export const appState = (state) => {
     openProposalsCount:  ApproverSelectors.openProposalsCount(state),
     organization:        ApproverSelectors.organization(state),
     onBehalfOf:          ApproverSelectors.onBehalfOf(state),
+    ownedPacks:          ApproverSelectors.ownedPacks(state),
+    ownedRoles:          ApproverSelectors.ownedRoles(state),
     openProposalFromId:  (id) =>
       ApproverSelectors.openProposalFromId(state, id),
 
@@ -151,7 +153,7 @@ export const appDispatch = (dispatch) => {
 };
 
 
-const logout = (dispatch) => {
+export const logout = (dispatch) => {
   return dispatch(AuthActions.logoutRequest()) &&
     dispatch(ChatActions.clearMessages()) &&
     dispatch(UserActions.resetAll()) &&

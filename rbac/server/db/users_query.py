@@ -34,22 +34,25 @@ async def fetch_user_resource(conn, user_id, head_block_num):
                 "name": r.row["name"],
                 "email": r.row["email"],
                 "subordinates": fetch_user_ids_by_manager(user_id, head_block_num),
-                "ownerOf": r.union(
-                    fetch_relationships_by_id(
+                "ownerOf": {
+                    "tasks": fetch_relationships_by_id(
                         "task_owners", user_id, "task_id", head_block_num
                     ),
-                    fetch_relationships_by_id(
+                    "roles": fetch_relationships_by_id(
                         "role_owners", user_id, "role_id", head_block_num
                     ),
-                ),
-                "administratorOf": r.union(
-                    fetch_relationships_by_id(
+                    "packs": fetch_relationships_by_id(
+                        "pack_owners", user_id, "pack_id", head_block_num
+                    ),
+                },
+                "administratorOf": {
+                    "tasks": fetch_relationships_by_id(
                         "task_admins", user_id, "task_id", head_block_num
                     ),
-                    fetch_relationships_by_id(
+                    "roles": fetch_relationships_by_id(
                         "role_admins", user_id, "role_id", head_block_num
                     ),
-                ),
+                },
                 "memberOf": fetch_relationships_by_id(
                     "role_members", user_id, "role_id", head_block_num
                 ),
@@ -89,22 +92,25 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
                     "subordinates": fetch_user_ids_by_manager(
                         user["user_id"], head_block_num
                     ),
-                    "ownerOf": r.union(
-                        fetch_relationships_by_id(
+                    "ownerOf": {
+                        "tasks": fetch_relationships_by_id(
                             "task_owners", user["user_id"], "task_id", head_block_num
                         ),
-                        fetch_relationships_by_id(
+                        "roles": fetch_relationships_by_id(
                             "role_owners", user["user_id"], "role_id", head_block_num
                         ),
-                    ),
-                    "administratorOf": r.union(
-                        fetch_relationships_by_id(
+                        "packs": fetch_relationships_by_id(
+                            "pack_owners", user["user_id"], "pack_id", head_block_num
+                        ),
+                    },
+                    "administratorOf": {
+                        "tasks": fetch_relationships_by_id(
                             "task_admins", user["user_id"], "task_id", head_block_num
                         ),
-                        fetch_relationships_by_id(
+                        "roles": fetch_relationships_by_id(
                             "role_admins", user["user_id"], "role_id", head_block_num
                         ),
-                    ),
+                    },
                     "memberOf": fetch_relationships_by_id(
                         "role_members", user["user_id"], "role_id", head_block_num
                     ),

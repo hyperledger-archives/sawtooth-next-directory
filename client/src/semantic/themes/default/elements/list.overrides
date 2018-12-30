@@ -35,3 +35,23 @@
 .ui.inverted.link.list .item {
   display: flex !important;
 }
+
+.nav-list h4 {
+  margin-top: 1rem;
+}
+
+.nav-list h4.hover:not(.active):hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.nav-list h4 a {
+  height: 100%;
+  display: inline-block;
+  padding: 0.8em 0.5em;
+  text-indent: 22px;
+  width: 100%;
+}
+
+.nav-list h4.active {
+  background: @magenta;
+}

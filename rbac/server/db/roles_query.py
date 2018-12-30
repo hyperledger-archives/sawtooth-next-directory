@@ -131,6 +131,7 @@ async def fetch_recommended_resources(conn, identifier, head_block_num, start, l
             )
         )
         .slice(start, start + limit)
+        .without("role_id")
         .coerce_to("array")
         .run(conn)
     )

@@ -1001,6 +1001,9 @@ a.ui.card:hover,
 .ui.stackable.grid .column .ui.card.huge .content:first-child {
   padding: 15%;
 }
+.ui.stackable.grid .column .ui.card.disabled {
+  opacity: 0.4;
+}
 .ui.stackable.grid .column .ui.card.huge .content .header {
   color: #E40073;
   font-size: 1.7em;

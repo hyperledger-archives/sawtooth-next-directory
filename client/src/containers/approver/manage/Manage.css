@@ -19,3 +19,13 @@ limitations under the License.
   position: relative;
   top: 190px;
 }
+
+#next-approver-manage-exit-button {
+  position: fixed;
+  right: 18px;
+}
+
+#next-approver-manage-content .ui.form {
+  margin: 0 auto;
+  width: 60%;
+}

@@ -49,12 +49,15 @@ async def get_all_packs(request):
 @authorized()
 async def create_new_pack(request):
     """Create a new pack"""
-    required_fields = ["name"]
+    required_fields = ["owners", "name"]
     utils.validate_fields(required_fields, request.json)
 
     pack_id = str(uuid4())
     await packs_query.create_pack_resource(
-        request.app.config.DB_CONN, pack_id, request.json.get("name")
+        request.app.config.DB_CONN,
+        pack_id,
+        request.json.get("owners"),
+        request.json.get("name"),
     )
     return create_pack_response(request, pack_id)
 
@@ -102,5 +105,10 @@ async def add_pack_role(request, pack_id):
 
 def create_pack_response(request, pack_id):
     """Create pack response"""
-    pack_resource = {"id": pack_id}
+    pack_resource = {
+        "id": pack_id,
+        "name": request.json.get("name"),
+        "owners": request.json.get("owners"),
+    }
+
     return json({"data": pack_resource})

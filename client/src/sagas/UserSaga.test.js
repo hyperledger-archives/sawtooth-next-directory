@@ -69,7 +69,7 @@ test('getUser success path', () => {
 
   const res = FixtureAPI.getUser(id);
   const step = stepper(getUser(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();
@@ -84,7 +84,7 @@ test('getUser failure path', () => {
   const id = 'hello';
 
   const step = stepper(getUser(FixtureAPI, {
-    id: id,
+    id,
   }));
 
   step();

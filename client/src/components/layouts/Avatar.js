@@ -49,7 +49,7 @@ export default class Avatar extends Component {
     const user = users.find(user => user.id === userId);
 
     if (!user) return '?';
-    let names = user.name.split(' ');
+    const names = user.name.split(' ');
     let initials = names[0]
       .substring(0, 1)
       .toUpperCase();

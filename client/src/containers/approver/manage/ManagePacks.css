@@ -14,7 +14,29 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+#next-approver-manage-packs-content {
+  padding: 0 17% 130px 17%;
+  position: relative;
+  top: 185px;
+  z-index: -3;
+}
+
+#next-approver-manage-packs-content h2 {
+  color: var(--magenta);
+  margin-bottom: 50px;
+}
+
+#next-approver-manage-packs-content .ui.segment h3 img {
+  margin-right: 20px;
+}
+
 #next-approver-manage-packs-create-button {
+  background: #ffffff;
+  border-radius: 100em;
+  box-shadow: 0 3px 13px #98989814;
+  color: #e20074;
+  font-size: 1em;
+  padding: 15px;
   position: fixed;
-  right: 0;
+  right: 18px;
 }

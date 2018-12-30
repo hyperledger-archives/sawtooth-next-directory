@@ -38,7 +38,9 @@ ReactDOM.render(
   <div id='next-root'>
     <Provider store={store}><App routes={routes}/></Provider>
     <ToastContainer
-      autoClose={2000}
+      autoClose={2500}
+      toastClassName='toast'
+      closeButton={false}
       hideProgressBar
       position='bottom-left'
       transition={Slide}/>

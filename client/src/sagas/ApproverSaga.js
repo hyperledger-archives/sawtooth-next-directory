@@ -63,10 +63,10 @@ export function * createPack (api, action) {
     const { payload } = action;
     const res = yield call(api.createPack, payload);
     if (res.ok) {
-      toast('Successfully created a new pack.');
-      yield put(ApproverActions.createPackSuccess(res.data));
+      toast.success('Successfully created a new pack.');
+      yield put(ApproverActions.createPackSuccess(res.data.data));
     } else {
-      yield put(ApproverActions.createPackFailure(res.data));
+      yield put(ApproverActions.createPackFailure(res.data.error));
     }
 
   } catch (err) {
@@ -86,8 +86,8 @@ export function * createRole (api, action) {
     const { payload } = action;
     const res = yield call(api.createRole, payload);
     if (res.ok) {
-      toast('Successfully created a new role.');
-      yield put(ApproverActions.createRoleSuccess(res.data));
+      toast.success('Successfully created a new role.');
+      yield put(ApproverActions.createRoleSuccess(res.data.data));
     } else {
       yield put(ApproverActions.createRoleFailure(res.data.error));
     }

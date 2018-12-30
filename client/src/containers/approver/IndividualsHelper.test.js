@@ -26,7 +26,7 @@ describe('Individuals helper test', () => {
   it('should call syncAll function', function () {
     const checked = true, roleId = 'roleID',
       proposalId = 'proposalID', userId = 'userID';
-    let self = this;
+    const self = this;
     self.props = { openProposalsByRole: { 'roleID': [] } };
     self.state = { selectedProposals: '', selectedRoles: '' };
 
@@ -46,7 +46,7 @@ describe('Individuals helper test', () => {
   it('should call syncFromCategory function', function () {
     const checked = true, roleId = 'roleID',
       proposalId = 'proposalID', userId = 'userID';
-    let self = this;
+    const self = this;
     self.props = { openProposalsByRole: { 'roleID': [{ id: 'userID' }] } };
     self.state = { selectedProposals: '', selectedRoles: '' };
 
@@ -65,7 +65,7 @@ describe('Individuals helper test', () => {
 
   it('should call syncFromItem function', function () {
     const checked = true, proposalId = 'proposalID', userId = 'userID';
-    let self = this;
+    const self = this;
     self.props = { openProposalsByUser: { 'userID': [{ id: '' }] },
       openProposalFromId: () => { } };
     self.state = { selectedProposals: '', selectedRoles: '' };
@@ -84,7 +84,7 @@ describe('Individuals helper test', () => {
 
   it('should call syncUsers function', function () {
     const checked = true, proposalId = 'proposalID', userId = 'userID';
-    let self = this;
+    const self = this;
     self.props = { openProposalsByUser: { 'userID': [{ id: '' }] },
       openProposalFromId: () => { } };
     self.state = { selectedUsers: '' };

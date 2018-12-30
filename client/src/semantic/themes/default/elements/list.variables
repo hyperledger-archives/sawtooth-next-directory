@@ -6,7 +6,7 @@
          View
 --------------------*/
 
-@navListTextColor: #727c85;
+@navListTextColor: #778899;
 
 /* List */
 @listStyleType: none;

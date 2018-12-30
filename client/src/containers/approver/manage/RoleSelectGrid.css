@@ -12,10 +12,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-
-
-#next-approver-expiring-content {
-  margin-top: 300px;
-  position: relative;
-  width: calc(100% - 65px) !important;
-}

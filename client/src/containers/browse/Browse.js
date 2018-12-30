@@ -85,7 +85,7 @@ class Browse extends Component {
    * @param {array} value ?
    */
   formatData = (value) => {
-    let arr = [[], [], [], []];
+    const arr = [[], [], [], []];
     value.forEach((ele, index) => {
       arr[index % 4].push(ele);
     });
@@ -99,7 +99,7 @@ class Browse extends Component {
    */
   renderLayout (layoutData) {
     const{ rolesData } = this.state;
-    let data = layoutData ? layoutData : rolesData;
+    const data = layoutData ? layoutData : rolesData;
 
     return data.map((column, index) => {
       return (<Grid.Column key={index}>
@@ -116,7 +116,7 @@ class Browse extends Component {
    */
   renderColumns = (columnData) => {
     if(columnData) {
-      return columnData.map( (item, index) =>{
+      return columnData.map( (item, index) => {
         return <BrowseCard key={index} details={item} {...this.props}/> ;
       });
     }

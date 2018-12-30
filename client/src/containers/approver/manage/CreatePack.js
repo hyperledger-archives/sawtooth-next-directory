@@ -16,22 +16,42 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Form, Grid } from 'semantic-ui-react';
+import { Button, Form, Grid, Transition } from 'semantic-ui-react';
 
 
 import './CreatePack.css';
 import TrackHeader from 'components/layouts/TrackHeader';
+import RoleSelectGrid from './RoleSelectGrid';
+import * as theme from 'services/Theme';
 
 
 /**
  *
  * @class         CreatePack
- * @description   Create new role component
+ * @description   Create new pack component
  *
  */
 class CreatePack extends Component {
 
-  state = { name: '', validName: null };
+  state = { activeIndex: 0, name: '', validName: null };
+  themes = ['minimal', 'contrast'];
+
+
+  /**
+   * Entry point to perform tasks required to render
+   * component.
+   */
+  componentDidMount () {
+    theme.apply(this.themes);
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    theme.remove(this.themes);
+  }
 
 
   /**
@@ -40,10 +60,11 @@ class CreatePack extends Component {
    */
   createPack = () => {
     const { name } = this.state;
-    const { createPack, userId } = this.props;
+    const { createPack, id } = this.props;
     createPack({
-      name:           name,
-      owners:         [userId],
+      name,
+      owners:         [id],
+      administrators: [id],
     });
   }
 
@@ -62,7 +83,16 @@ class CreatePack extends Component {
 
 
   /**
-   * Validate create role form
+   * Set current view
+   * @param {number} index View index
+   */
+  setFlow = (index) => {
+    this.setState({ activeIndex: index });
+  }
+
+
+  /**
+   * Validate create pack form
    * @param {string} name  Name of form element derived from
    *                       HTML attribute 'name'
    * @param {string} value Value of form field
@@ -78,35 +108,87 @@ class CreatePack extends Component {
    * @returns {JSX}
    */
   render () {
-    const { validName } = this.state;
+    const { activeIndex, validName } = this.state;
+
+    const hide = 0;
+    const show = 300;
+
     return (
       <Grid id='next-approver-grid'>
         <Grid.Column
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
-            inverted
             title='Packs'
             button={() =>
-              <Button as={Link} to='/approval/manage/packs'>Exit</Button>}
+              <Button
+                id='next-approver-manage-exit-button'
+                as={Link}
+                icon='close'
+                size='huge'
+                to='/approval/manage/packs'/>}
             {...this.props}/>
           <div id='next-approver-manage-content'>
-            <Form>
-              <Form.Input
-                autoFocus
-                id='next-approver-manage-content-pack-form'
-                error={validName === false}
-                name='name'
-                placeholder='Name'
-                onChange={this.handleChange}/>
-            </Form>
-            <Button
-              as={Link}
-              to='/approval/manage/packs'
-              disabled={!validName}
-              onClick={this.createPack}>
-                Done
-            </Button>
+            {/* <CreatePackForm/>
+          </div> */}
+            <Transition
+              visible={activeIndex === 0}
+              animation='fade right'
+              duration={{ hide, show }}>
+              <div id='next-approver-manage-create-pack-view-1'>
+                <Form>
+                  <Form.Input
+                    id='next-approver-manage-content-form'
+                    label='Title'
+                    autoFocus
+                    error={validName === false}
+                    name='name'
+                    placeholder='Title'
+                    onChange={this.handleChange}/>
+                  <Form.TextArea
+                    label='Description'
+                    name='description'
+                    placeholder='Description'/>
+                </Form>
+              </div>
+            </Transition>
+            <Transition
+              visible={activeIndex === 1}
+              animation='fade left'
+              duration={{ hide, show }}>
+              <div id='next-approver-manage-create-pack-view-2'>
+                <RoleSelectGrid/>
+              </div>
+            </Transition>
+            <div id='next-approver-manage-create-pack-toolbar'>
+              { activeIndex === 0 &&
+                <Button
+                  primary
+                  size='large'
+                  id='next-approver-manage-create-pack-done-button'
+                  disabled={!validName}
+                  content='Next'
+                  onClick={() => this.setFlow(1)}/>
+              }
+              { activeIndex === 1 &&
+                <div>
+                  <Button
+                    size='large'
+                    id='next-approver-manage-create-pack-back-button'
+                    content='Back'
+                    onClick={() => this.setFlow(0)}/>
+                  <Button
+                    primary
+                    size='large'
+                    as={Link}
+                    to={'/approval/manage/packs'}
+                    id='next-approver-manage-create-pack-done-button'
+                    disabled={!validName}
+                    content='Done'
+                    onClick={this.createPack}/>
+                </div>
+              }
+            </div>
           </div>
         </Grid.Column>
       </Grid>

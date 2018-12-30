@@ -90,3 +90,8 @@ body,
   background: @avatarPalette12;
   color: @avatarPalette12TextColor;
 }
+
+.toast {
+  border-radius: 1em !important;
+  padding: 20px !important;
+}

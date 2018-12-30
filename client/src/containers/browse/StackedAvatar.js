@@ -71,7 +71,7 @@ export default class StackedAvatar extends Component {
    * Render entrypoint
    * @returns {JSX}
    */
-  render() {
+  render () {
     const { list } = this.props;
     const memberLabel = list && (list.length > 1 || list.length === 0) ?
       `${list.length} members` :

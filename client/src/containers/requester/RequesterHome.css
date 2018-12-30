@@ -24,7 +24,7 @@ limitations under the License.
 }
 
 #next-requester-grid-converse-column {
-  background: var(--chat-bg-color);
+  background: var(--chat-requester-bg-color);
   height: 100%;
   padding: 0;
   position: fixed;

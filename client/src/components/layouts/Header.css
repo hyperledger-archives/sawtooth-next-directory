@@ -19,7 +19,6 @@ limitations under the License.
   background: var(--header-bg-color);
   display: flex;
   height: 40px;
-  padding: 10px 18px;
   position: fixed;
   width: 100%;
   z-index: 999;
@@ -27,12 +26,19 @@ limitations under the License.
 
 #next-header-logo {
   flex: 1;
-  padding-left: 4px;
+  padding-left: 22px;
 }
 
 #next-header-username {
   color: var(--header-color);
   margin-right: 10px;
+}
+
+#next-header-actions-profile {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  padding: 0 22px 0 26px;
 }
 
 #next-header-menu-view-toggle .content {
@@ -62,6 +68,7 @@ limitations under the License.
 #next-header-actions {
   align-items: center;
   display: flex;
+  height: 100%;
 }
 
 #next-header-actions i {
@@ -71,13 +78,12 @@ limitations under the License.
 
 #next-header-actions .next-avatar-container {
   cursor: pointer;
-  margin: 0 3px 0 26px;
 }
 
 #next-header-menu {
   position: absolute;
   top: 39px;
-  right: 4px;
+  right: 5px;
 }
 
 #next-header-bell {

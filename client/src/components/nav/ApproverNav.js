@@ -15,8 +15,13 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Icon, Container, Input, Search } from 'semantic-ui-react';
+import { Link, withRouter } from 'react-router-dom';
+import {
+  Button,
+  Icon,
+  Container,
+  Input,
+  Search } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -34,6 +39,7 @@ import NavList from './NavList';
 class ApproverNav extends Component {
 
   static propTypes = {
+    location:               PropTypes.object,
     onBehalfOf:             PropTypes.string,
     openProposalsCount:     PropTypes.number,
     recommendedPacks:       PropTypes.array,
@@ -44,22 +50,34 @@ class ApproverNav extends Component {
 
 
   /**
+   * Determine if nav item is active
+   * @param {object} name Nav item name
+   * @returns {boolean}
+   */
+  isItemActive = (name) => {
+    const { location } = this.props;
+    return location.pathname.includes(`/${name}`);
+  };
+
+
+  /**
    * Render each list of sidebar groups by passing the root
    * route, title, and array of items to NavList
    * @returns {JSX}
    */
   renderLists () {
-    const { openProposalsCount, onBehalfOf, users } = this.props;
+    const { openProposalsCount } = this.props;
 
-    let foo = users && users.find(user => user.id === onBehalfOf);
+    // const foo = users && users.find(user => user.id === onBehalfOf);
 
-    let bar = foo ? [
-      { name: foo && foo.name, slug: foo && `${foo.id}/pending` },
-    ] : [];
+    // const bar = foo ? [
+    //   { name: foo && foo.name, slug: foo && `${foo.id}/pending` },
+    // ] : [];
 
     return (
-      <div id='next-approver-nav-lists-container'>
+      <div id='next-approver-nav-lists-container' className='nav-list'>
         <NavList
+          disabled
           listTitle='Pending'
           labels={[
             openProposalsCount,
@@ -70,29 +88,39 @@ class ApproverNav extends Component {
             { name: 'About to Expire', slug: 'about-to-expire' },
           ]}
           route='/approval/pending'/>
-        <h4>
+        <h4 className={`hover
+                        ${this.isItemActive('delegated') ?
+        'active' : ''}`}>
           <Link to='/approval/delegated'>
             Delegated
           </Link>
         </h4>
-        <h4>
+        <h4 className={`hover
+                        ${this.isItemActive('approved') ?
+        'active' : ''}`}>
           <Link to='/approval/approved'>
             Approved
           </Link>
         </h4>
-        <h4>
+        <h4 className={`hover
+                        ${this.isItemActive('expired') ?
+        'active' : ''}`}>
           <Link to='/approval/expired'>
             Expired
           </Link>
         </h4>
-        <h4>
+        <h4 className={`hover
+                        ${this.isItemActive('people') ?
+        'active' : ''}`}>
           <NavList
             titleIsLink
             listTitle='People'
-            list={bar}
+            // list={bar}
             route='/approval/people'/>
         </h4>
-        <h4>
+        <h4 className={`hover
+                        ${this.isItemActive('manage') ?
+        'active' : ''}`}>
           <Link to='/approval/manage'>
             Manage
           </Link>
@@ -128,4 +156,4 @@ class ApproverNav extends Component {
 }
 
 
-export default ApproverNav;
+export default withRouter(ApproverNav);
