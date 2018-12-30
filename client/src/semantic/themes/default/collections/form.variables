@@ -33,7 +33,7 @@
 @inputWidth: 100%;
 @inputFontSize: 1.6em;
 @inputPadding: (@inputVerticalPadding + ((1em - @inputLineHeight) / 2)) @inputHorizontalPadding;
-@inputBorder: 1px solid @borderColor;
+@inputBorder: 0;
 @inputBorderColor: @white;
 @inputBorderRadius: .4em;
 @inputColor: @inputTextColor;
@@ -55,12 +55,12 @@
 /* Text Area */
 @textAreaPadding: @inputVerticalPadding @inputHorizontalPadding;
 @textAreaHeight: 12em;
-@textAreaResize: vertical;
+@textAreaResize: none;
 @textAreaLineHeight: 1.2857;
 @textAreaMinHeight: 8em;
 @textAreaMaxHeight: 24em;
 @textAreaBackground: @inputBackground;
-@textAreaBorder: @inputBorder;
+@textAreaBorder: 1px solid #999;
 @textAreaFontSize: @inputFontSize;
 @textAreaTransition: @inputTransition;
 

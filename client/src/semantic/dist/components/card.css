@@ -989,8 +989,12 @@ a.ui.card:hover,
          Theme Overrides
 *******************************/
 
-.ui.stackable.grid .column .ui.card {
+.ui.stackable.grid .column .ui.card.huge {
   height: 250px;
+}
+.ui.stackable.grid .column .ui.card.medium {
+  border-radius: 1em;
+  padding: 20px;
 }
 .ui.stackable.grid .column .ui.card.minimal {
   background: white;

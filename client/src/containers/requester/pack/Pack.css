@@ -15,16 +15,27 @@ limitations under the License.
 
 
 #next-requester-packs-content {
-  padding: 0 var(--page-content-padding);
   position: relative;
-  top: 190px;
-  width: calc(100% - 65px) !important;
+  top: 120px;
+  width: calc(100% - 61px) !important;
 }
 
 #next-requester-packs-description-container {
-  margin: 30px 0;
+  border-bottom: 1px solid var(--hr-light-color);
+  margin: 0 0 40px 0;
+  padding: 16px 30px 24px 30px;
+}
+
+#next-requester-packs-roles-list-container {
+  padding: 0 40px;
 }
 
 #next-requester-packs-description {
   padding: 20px 10px;
+}
+
+#next-requester-packs-content h5 {
+  color: #b1b3b3;
+  font-weight: bold;
+  margin-bottom: 15px;
 }

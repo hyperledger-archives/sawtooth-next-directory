@@ -17,7 +17,7 @@ limitations under the License.
 #next-approver-manage-roles-content {
   padding: 0 17% 130px 17%;
   position: relative;
-  top: 185px;
+  top: 220px;
   z-index: -3;
 }
 
@@ -32,11 +32,11 @@ limitations under the License.
 
 #next-approver-manage-roles-create-button {
   background: #ffffff;
-  border-radius: 100em;
   box-shadow: 0 3px 13px #98989814;
   color: #e20074;
-  font-size: 1em;
+  font-size: .95em;
   padding: 15px;
   position: fixed;
   right: 18px;
+  width: 190px;
 }

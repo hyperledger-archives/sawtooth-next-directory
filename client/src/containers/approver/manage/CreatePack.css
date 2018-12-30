@@ -14,6 +14,17 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+#next-approver-manage-create-pack-content {
+  padding: 0 30px;
+  position: relative;
+  top: 220px;
+}
+
+#next-approver-manage-create-pack-form {
+  width: 60%;
+  margin: 0 auto;
+}
+
 #next-approver-manage-create-pack-toolbar {
   align-items: center;
   background: white;
@@ -21,7 +32,7 @@ limitations under the License.
   box-shadow: 0 -4px 31px #9898981f;
   display: flex;
   height: 60px;
-  margin-left: -30px;
+  left: 245px;
   padding: 18px;
   position: fixed;
   width: calc(100% - 245px);
@@ -30,4 +41,19 @@ limitations under the License.
 #next-approver-manage-create-pack-done-button {
   position: fixed;
   right: 18px;
+}
+
+#next-create-pack-title-field {
+  margin-bottom: 60px;
+}
+
+#next-approver-manage-create-pack-form .field label {
+  color: #999;
+  margin-bottom: 30px;
+  max-width: 300px;
+}
+
+#next-approver-manage-create-pack-form  h3 {
+  color: var(--magenta);
+  margin-bottom: 5px;
 }

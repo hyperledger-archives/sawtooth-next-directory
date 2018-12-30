@@ -108,7 +108,7 @@
   padding: 0.67857143em 1em;
   font-size: 1.6em;
   background: #FFFFFF;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 0;
   color: #525252;
   border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
@@ -124,7 +124,7 @@
   tap-highlight-color: rgba(255, 255, 255, 0);
   padding: 0.78571429em 1em;
   background: #FFFFFF;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 1px solid #999;
   outline: none;
   color: #525252;
   border-radius: 0.4em;
@@ -134,7 +134,7 @@
   transition: color 0.1s ease, border-color 0.1s ease;
   font-size: 1.6em;
   line-height: 1.2857;
-  resize: vertical;
+  resize: none;
 }
 .ui.form textarea:not([rows]) {
   height: 12em;
@@ -163,7 +163,7 @@
   height: auto;
   width: 100%;
   background: #FFFFFF;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 0;
   border-radius: 0.4em;
   -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
           box-shadow: 0em 0em 0em 0em transparent inset;
@@ -1124,6 +1124,24 @@
 .ui.form input::placeholder,
 .ui.form textarea::placeholder {
   color: #00000059;
+}
+.ui.form input[type="text"] {
+  background: transparent;
+  border-bottom: 1px solid #999;
+  border-radius: 0;
+}
+.ui.form input[type="text"]:focus {
+  background: transparent;
+  border-bottom: 1px solid #E40073;
+  border-radius: 0;
+}
+.ui.form textarea {
+  background: transparent;
+  border-radius: 0.7em;
+}
+.ui.form textarea:focus {
+  border: 1px solid #E40073;
+  border-radius: 0.7em;
 }
 
 

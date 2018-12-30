@@ -46,10 +46,12 @@ async def fetch_all_pack_resources(conn, head_block_num, start, limit):
     return resources
 
 
-async def create_pack_resource(conn, pack_id, owners, name):
+async def create_pack_resource(conn, pack_id, owners, name, description):
     """Create a new pack resource"""
     resource = (
-        await r.table("packs").insert({"pack_id": pack_id, "name": name}).run(conn),
+        await r.table("packs")
+        .insert({"pack_id": pack_id, "name": name, "description": description})
+        .run(conn),
         await r.table("pack_owners")
         .insert({"pack_id": pack_id, "identifiers": owners})
         .run(conn),
@@ -57,11 +59,13 @@ async def create_pack_resource(conn, pack_id, owners, name):
     return resource
 
 
-async def add_role(conn, pack_id, role_id):
-    """Add a role to a pack resource"""
+async def add_roles(conn, pack_id, roles):
+    """Add roles to a pack resource"""
     resource = (
         await r.table("role_packs")
-        .insert({"role_id": role_id, "identifiers": [pack_id]})
+        .insert(
+            list(map(lambda role: {"role_id": role, "identifiers": [pack_id]}, roles))
+        )
         .run(conn)
     )
     return resource

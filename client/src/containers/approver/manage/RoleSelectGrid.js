@@ -15,10 +15,12 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Grid } from 'semantic-ui-react';
+import { Button, Grid, Icon } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 
 
 import './RoleSelectGrid.css';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -29,18 +31,93 @@ import './RoleSelectGrid.css';
  */
 class RoleSelectGrid extends Component {
 
-  state = {  };
+  static propTypes = {
+    getRoles:         PropTypes.func,
+    handleClick:      PropTypes.func,
+    ownedRoles:       PropTypes.array,
+    roles:            PropTypes.array,
+    roleFromId:       PropTypes.func,
+    selectedRoles:    PropTypes.array,
+  };
 
 
   /**
-   * Handle change event
-   * @param {object} event Event passed by Semantic UI
-   * @param {string} name  Name of form element derived from
-   *                       HTML attribute 'name'
-   * @param {string} value Value of form field
+   * Entry point to perform tasks required to render
+   * component.
    */
-  handleChange = (event, { name, value }) => {
-    this.setState({ [name]: value });
+  componentDidMount () {
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const { ownedRoles } = this.props;
+    if (!utils.arraysEqual(prevProps.ownedRoles, ownedRoles))
+      this.init();
+  }
+
+
+  /**
+   * Determine which roles are not currently loaded
+   * in the client and dispatch actions to retrieve them.
+   */
+  init () {
+    const {
+      ownedRoles,
+      getRoles,
+      roles } = this.props;
+
+    const diff = roles ?
+      ownedRoles &&
+      ownedRoles.filter(
+        roleId => !roles.find(role => role.id === roleId)
+      ) :
+      ownedRoles;
+    diff && diff.length > 0 && getRoles(diff);
+  }
+
+
+  /**
+   * Get role name from role ID
+   * @param {string} roleId Role ID
+   * @returns {string}
+   */
+  roleName = (roleId) => {
+    const { roleFromId } = this.props;
+    const role = roleFromId(roleId);
+    return role && role.name;
+  };
+
+
+  /**
+   * Render role toggle button
+   * @param {string} roleId Role ID
+   * @returns {JSX}
+   */
+  renderRoleToggle = (roleId) => {
+    const { handleClick, selectedRoles } = this.props;
+    return (
+      this.roleName(roleId) &&
+      <div>
+        <Button
+          fluid
+          toggle
+          className='toggle-card gradient'
+          active={selectedRoles.includes(roleId)}
+          onClick={() => handleClick(roleId)}
+          size='massive'>
+          {this.roleName(roleId)}
+          { selectedRoles.includes(roleId) &&
+            <Icon name='check' color='pink'/>
+          }
+        </Button>
+      </div>
+    );
   }
 
 
@@ -49,13 +126,14 @@ class RoleSelectGrid extends Component {
    * @returns {JSX}
    */
   render () {
+    const { ownedRoles } = this.props;
     return (
-      <Grid id='next-role-select-grid'>
-        <Grid.Column
-          id='next-approver-grid-track-column'
-          width={16}>
-          <h1>Role select grid</h1>
-        </Grid.Column>
+      <Grid centered columns={3} id='next-role-select-grid'>
+        { ownedRoles && ownedRoles.map(roleId => (
+          <Grid.Column key={roleId} width={5}>
+            {this.renderRoleToggle(roleId)}
+          </Grid.Column>
+        ))}
       </Grid>
     );
   }

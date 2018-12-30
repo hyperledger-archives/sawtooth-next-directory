@@ -34,7 +34,7 @@ import * as utils from 'services/Utils';
  */
 class ManagePacks extends Component {
 
-  themes = ['minimal', 'contrast'];
+  themes = ['minimal', 'contrast', 'magenta'];
 
 
   /**
@@ -133,7 +133,12 @@ class ManagePacks extends Component {
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
+            inverted
             title='Packs'
+            breadcrumb={[
+              {name: 'Manage', slug: '/approval/manage'},
+              {name: 'Packs', slug: '/approval/manage/packs'},
+            ]}
             button={() =>
               <Button
                 id='next-approver-manage-packs-create-button'
@@ -146,7 +151,7 @@ class ManagePacks extends Component {
             {...this.props}/>
           <div id='next-approver-manage-packs-content'>
             { ownedPacks && ownedPacks.length > 0 ?
-              <h2>Packs You&apos;ve Created</h2> :
+              <div></div> :
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
                   You haven&apos;t created any packs

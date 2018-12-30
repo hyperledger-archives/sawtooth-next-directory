@@ -3872,6 +3872,40 @@ button.ui.link:focus {
   background: none;
   opacity: 1;
 }
+.toggle-card.gradient.toggle {
+  background: -webkit-gradient(linear, left top, left bottom, from(#9600e8), to(#f70597));
+  background: -webkit-linear-gradient(top, #9600e8 0%, #f70597 100%);
+  background: linear-gradient(to bottom, #9600e8 0%, #f70597 100%);
+  border-radius: 1.2em !important;
+  color: #FFFFFF;
+  font-size: 1.2em !important;
+  font-weight: 400;
+  -webkit-transition: none;
+  transition: none;
+}
+.toggle-card.gradient.toggle.active {
+  background: #FFFFFF !important;
+  border: 1px solid #E40073;
+  color: #E40073 !important;
+}
+.toggle-card.gradient.toggle.active:hover {
+  background: #edf1f4 !important;
+  color: #bbb !important;
+}
+.toggle-card.gradient.toggle:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(#d950ff), to(#ff009a));
+  background: -webkit-linear-gradient(top, #d950ff 0%, #ff009a 100%);
+  background: linear-gradient(to bottom, #d950ff 0%, #ff009a 100%);
+  color: #FFFFFF;
+}
+.toggle-card.gradient.toggle.massive {
+  height: 130px;
+}
+.toggle-card.toggle.massive i {
+  position: absolute;
+  right: 22px;
+  top: 30px;
+}
 
 
 /*******************************

@@ -20,7 +20,7 @@
 @iconDividerSize: @relativeTiny;
 @iconDividerVerticalAlign: baseline;
 
-@sectionMargin: 0em;
+@sectionMargin: 0em .5em 0em .5em;
 @sectionPadding: 0em;
 
 /* Coupling */
