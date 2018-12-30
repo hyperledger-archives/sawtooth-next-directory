@@ -111,21 +111,31 @@ export const RequesterSelectors = {
   // Retrieve recommended packs
   recommendedPacks: (state) => {
     if (!state.requester.recommended || !state.user.me) return null;
+
     const roles = state.requester.recommended.filter(
-        item => !state.user.me.proposals.find(e => e.object_id === item.id)
-      ),
-      recommend = Object.keys(utils.groupBy(roles, 'packs')).filter(item => {
+      item => !state.user.me.proposals.find(
+        e => e.object_id === item.id
+      )
+    );
+    const recommend = Object.keys(utils.groupBy(roles, 'packs'))
+      .filter(item => {
         const cond1 = !item ||
-          (0 === item.length && item.includes('undefined')),
-          cond2 =
-            RequesterSelectors.requests(state) &&
-            RequesterSelectors.requests(state).find(obj => obj.id === item),
-          cond3 =
-            RequesterSelectors.mine(state) &&
-            RequesterSelectors.mine(state).find(obj => obj.id === item);
+                      (0 === item.length && item.includes('undefined'));
+
+        const cond2 = RequesterSelectors.requests(state) &&
+                      RequesterSelectors.requests(state).find(
+                        obj => obj.id === item
+                      );
+        const cond3 = RequesterSelectors.mine(state) &&
+                      RequesterSelectors.mine(state).find(
+                        obj => obj.id === item
+                      );
         return !(cond3 || cond2 || cond1);
       });
-    return recommend.join('') ? recommend : null;
+
+    return recommend.join('') ? [...new Set(
+      recommend.join(',').replace(/,+/g, ',').split(',')
+    )] : null;
   },
 
 

@@ -33,8 +33,16 @@ import * as theme from 'services/Theme';
  */
 class CreatePack extends Component {
 
-  state = { activeIndex: 0, name: '', validName: null };
-  themes = ['minimal', 'contrast'];
+  state = {
+    activeIndex:    0,
+    description:    '',
+    name:           '',
+    selectedRoles:  [],
+    validName:      null,
+  };
+
+
+  themes = ['minimal', 'contrast', 'magenta'];
 
 
   /**
@@ -59,12 +67,14 @@ class CreatePack extends Component {
    * @param {string} name Name of pack
    */
   createPack = () => {
-    const { name } = this.state;
+    const { description, name, selectedRoles } = this.state;
     const { createPack, id } = this.props;
     createPack({
       name,
+      description,
       owners:         [id],
       administrators: [id],
+      roles:          selectedRoles,
     });
   }
 
@@ -79,6 +89,23 @@ class CreatePack extends Component {
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });
     this.validate(name, value);
+  }
+
+
+  /**
+   * Handle click event
+   * @param {string} roleId Selected role ID
+   */
+  handleClick = (roleId) => {
+    this.setState(prevState => ({
+      selectedRoles: (() => {
+        const index = prevState.selectedRoles.indexOf(roleId);
+        return index !== -1 ? [
+          ...prevState.selectedRoles.slice(0, index),
+          ...prevState.selectedRoles.slice(index + 1)] :
+          [...prevState.selectedRoles, roleId];
+      })(),
+    }));
   }
 
 
@@ -108,10 +135,15 @@ class CreatePack extends Component {
    * @returns {JSX}
    */
   render () {
-    const { activeIndex, validName } = this.state;
+    const {
+      activeIndex,
+      description,
+      name,
+      selectedRoles,
+      validName } = this.state;
 
     const hide = 0;
-    const show = 300;
+    const show = 700;
 
     return (
       <Grid id='next-approver-grid'>
@@ -119,7 +151,12 @@ class CreatePack extends Component {
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
-            title='Packs'
+            inverted
+            title='Create Pack'
+            breadcrumb={[
+              {name: 'Manage', slug: '/approval/manage'},
+              {name: 'Packs', slug: '/approval/manage/packs'},
+            ]}
             button={() =>
               <Button
                 id='next-approver-manage-exit-button'
@@ -128,36 +165,47 @@ class CreatePack extends Component {
                 size='huge'
                 to='/approval/manage/packs'/>}
             {...this.props}/>
-          <div id='next-approver-manage-content'>
-            {/* <CreatePackForm/>
-          </div> */}
-            <Transition
-              visible={activeIndex === 0}
-              animation='fade right'
-              duration={{ hide, show }}>
-              <div id='next-approver-manage-create-pack-view-1'>
-                <Form>
-                  <Form.Input
-                    id='next-approver-manage-content-form'
-                    label='Title'
-                    autoFocus
-                    error={validName === false}
-                    name='name'
-                    placeholder='Title'
-                    onChange={this.handleChange}/>
-                  <Form.TextArea
-                    label='Description'
-                    name='description'
-                    placeholder='Description'/>
-                </Form>
-              </div>
-            </Transition>
+          <div id='next-approver-manage-create-pack-content'>
+            { activeIndex === 0 &&
+              <Transition
+                visible={activeIndex === 0}
+                animation='fade right'
+                duration={{ hide, show }}>
+                <div id='next-approver-manage-create-pack-view-1'>
+                  <Form id='next-approver-manage-create-pack-form'>
+                    <h3>Title</h3>
+                    <Form.Input id='next-create-pack-title-field'
+                      label='Create a descriptive name for your new pack.'
+                      autoFocus
+                      error={validName === false}
+                      name='name'
+                      value={name}
+                      placeholder='My Awesome Pack'
+                      onChange={this.handleChange}/>
+                    <h3>Description</h3>
+                    <Form.TextArea
+                      rows='6'
+                      label={`Create a compelling description of your new pack
+                              that clearly explains its intended use.`}
+                      name='description'
+                      value={description}
+                      onChange={this.handleChange}
+                      placeholder={
+                        'A long time ago in a galaxy far, far away....'
+                      }/>
+                  </Form>
+                </div>
+              </Transition>
+            }
             <Transition
               visible={activeIndex === 1}
               animation='fade left'
               duration={{ hide, show }}>
               <div id='next-approver-manage-create-pack-view-2'>
-                <RoleSelectGrid/>
+                <RoleSelectGrid
+                  handleClick={this.handleClick}
+                  selectedRoles={selectedRoles}
+                  {...this.props}/>
               </div>
             </Transition>
             <div id='next-approver-manage-create-pack-toolbar'>

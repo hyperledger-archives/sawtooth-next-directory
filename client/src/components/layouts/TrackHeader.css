@@ -31,6 +31,21 @@ limitations under the License.
   width: 100%;
 }
 
+#next-track-header .ui.breadcrumb {
+  display: flex;
+  left: 13px;
+  position: relative;
+  top: 76px;
+}
+
+#next-track-header .ui.breadcrumb .active {
+  color: var(--magenta);
+}
+
+#next-track-header .ui.breadcrumb a {
+  color: #aaa;
+}
+
 .dark.minimal #next-track-header {
   background: #273544;
   border-bottom: 1px solid #1f2830;
@@ -44,6 +59,10 @@ limitations under the License.
 .contrast.minimal #next-track-header {
   background: #ffffff;
   box-shadow: 0 3px 25px #c0c0c024;
+}
+
+.contrast.minimal.magenta #next-track-header {
+  background: linear-gradient(to bottom, #ca3389, #da24c3);
 }
 
 #next-track-header .ui.header {

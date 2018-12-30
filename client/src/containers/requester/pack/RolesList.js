@@ -15,8 +15,11 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Grid, Header, Image, Segment } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Card, Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+
+
 import './RolesList.css';
 import glyph from 'images/header-glyph-role.png';
 
@@ -104,7 +107,9 @@ class RolesList extends Component {
           <Header.Subheader>By {user.name}</Header.Subheader>
         }
         {user.email &&
-          <Header.Subheader>{user.email}</Header.Subheader>
+          <Header.Subheader className='next-roles-list-email-subheader'>
+            {user.email}
+          </Header.Subheader>
         }
       </div>
     );
@@ -124,7 +129,11 @@ class RolesList extends Component {
     return (
       role &&
         <Grid.Column key={roleId} largeScreen={8} widescreen={5}>
-          <Segment padded className='minimal'>
+          <Card
+            fluid
+            as={Link}
+            to={`/roles/${roleId}`}
+            className='minimal medium'>
             <Header as='h4' className='next-roles-list-role-info'>
               <div>
                 <Image size='mini' src={glyph}/>
@@ -134,7 +143,7 @@ class RolesList extends Component {
                 {role && role.owners && this.renderUserInfo(role.owners[0])}
               </div>
             </Header>
-          </Segment>
+          </Card>
         </Grid.Column>
     );
   }

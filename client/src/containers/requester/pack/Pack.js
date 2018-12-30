@@ -109,12 +109,18 @@ export class Pack extends Component {
                   {...this.props}/>
               </div>
             }
-            <Container id='next-requester-packs-description-container'>
+            <Container
+              className={!this.proposals ? 'next-margin-1' : ''}
+              id='next-requester-packs-description-container'>
               <div id='next-requester-packs-description'>
-                {this.pack.description}
+                <h5>DESCRIPTION</h5>
+                {this.pack.description || 'No description available.'}
               </div>
             </Container>
-            <RolesList activePack={this.pack} {...this.props}/>
+            <Container id='next-requester-packs-roles-list-container'>
+              <h5>ROLES</h5>
+              <RolesList activePack={this.pack} {...this.props}/>
+            </Container>
           </div>
         </Grid.Column>
         <Grid.Column

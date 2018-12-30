@@ -32,8 +32,14 @@ import * as theme from 'services/Theme';
  */
 class CreateRole extends Component {
 
-  state = { name: '', validName: null };
-  themes = ['minimal', 'contrast'];
+  themes = ['minimal', 'contrast', 'magenta'];
+
+
+  state = {
+    description:    '',
+    name:           '',
+    validName:      null,
+  };
 
 
   /**
@@ -58,10 +64,11 @@ class CreateRole extends Component {
    * @param {string} name Name of role
    */
   createRole = () => {
-    const { name } = this.state;
+    const { description, name } = this.state;
     const { createRole, id } = this.props;
     createRole({
       name,
+      description,
       owners:         [id],
       administrators: [id],
     });
@@ -105,7 +112,12 @@ class CreateRole extends Component {
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
-            title='Roles'
+            inverted
+            title='Create Role'
+            breadcrumb={[
+              {name: 'Manage', slug: '/approval/manage'},
+              {name: 'Roles', slug: '/approval/manage/roles'},
+            ]}
             button={() =>
               <Button
                 id='next-approver-manage-exit-button'
@@ -114,20 +126,24 @@ class CreateRole extends Component {
                 size='huge'
                 to='/approval/manage/roles'/>}
             {...this.props}/>
-          <div id='next-approver-manage-content'>
-            <Form>
-              <Form.Input
-                id='next-approver-manage-content-form'
-                label='Title'
+          <div id='next-approver-manage-create-role-content'>
+            <Form id='next-approver-manage-create-role-form'>
+              <h3>Title</h3>
+              <Form.Input id='next-create-role-title-field'
+                label='Create a descriptive name for your new role.'
                 autoFocus
                 error={validName === false}
                 name='name'
-                placeholder='Title'
+                placeholder='My Awesome Role'
                 onChange={this.handleChange}/>
+              <h3>Description</h3>
               <Form.TextArea
-                label='Description'
+                rows='6'
+                label={`Create a compelling description of your new role
+                        that clearly explains its intended use.`}
                 name='description'
-                placeholder='Description'/>
+                onChange={this.handleChange}
+                placeholder='A long time ago in a galaxy far, far away....'/>
             </Form>
             <div id='next-approver-manage-create-role-toolbar'>
               <Button

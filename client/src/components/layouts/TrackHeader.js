@@ -15,7 +15,8 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Header, Image, Grid } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Breadcrumb, Header, Image, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './TrackHeader.css';
 
@@ -30,6 +31,7 @@ import './TrackHeader.css';
 export default class TrackHeader extends Component {
 
   static propTypes = {
+    breadcrumb:         PropTypes.array,
     button:             PropTypes.func,
     glyph:              PropTypes.string,
     inverted:           PropTypes.bool,
@@ -43,7 +45,13 @@ export default class TrackHeader extends Component {
    * @returns {JSX}
    */
   render () {
-    const { button, glyph, inverted, subtitle, title } = this.props;
+    const {
+      breadcrumb,
+      button,
+      glyph,
+      inverted,
+      subtitle,
+      title } = this.props;
 
     return (
       <Grid>
@@ -64,6 +72,32 @@ export default class TrackHeader extends Component {
                 </Header>
               }
               {button && button()}
+              { breadcrumb && breadcrumb.length > 1 &&
+                <Breadcrumb>
+                  <Breadcrumb.Section
+                    link
+                    as={Link}
+                    to={breadcrumb[0].slug}>
+                    {breadcrumb[0].name}
+                  </Breadcrumb.Section>
+                  <Breadcrumb.Divider icon='right chevron'/>
+                  <Breadcrumb.Section
+                    link
+                    as={Link}
+                    to={breadcrumb[1].slug}>
+                    {breadcrumb[1].name}
+                  </Breadcrumb.Section>
+                  { title && title !== breadcrumb[1].name &&
+                    <div>
+                      <Breadcrumb.Divider icon='right arrow'/>
+                      <Breadcrumb.Section active>
+                        {title}
+                      </Breadcrumb.Section>
+                    </div>
+                  }
+                </Breadcrumb>
+              }
+
             </div>
           </div>
         </Grid.Column>

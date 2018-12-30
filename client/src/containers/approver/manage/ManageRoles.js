@@ -34,7 +34,7 @@ import * as utils from 'services/Utils';
  */
 class ManageRoles extends Component {
 
-  themes = ['minimal', 'contrast'];
+  themes = ['minimal', 'contrast', 'magenta'];
 
 
   /**
@@ -133,7 +133,12 @@ class ManageRoles extends Component {
           id='next-approver-grid-track-column'
           width={16}>
           <TrackHeader
+            inverted
             title='Roles'
+            breadcrumb={[
+              {name: 'Manage', slug: '/approval/manage'},
+              {name: 'Roles', slug: '/approval/manage/roles'},
+            ]}
             button={() =>
               <Button
                 id='next-approver-manage-roles-create-button'
@@ -146,7 +151,7 @@ class ManageRoles extends Component {
             {...this.props}/>
           <div id='next-approver-manage-roles-content'>
             { ownedRoles && ownedRoles.length > 0 ?
-              <h2>Roles You&apos;ve Created</h2> :
+              <div></div> :
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
                   You haven&apos;t created any roles

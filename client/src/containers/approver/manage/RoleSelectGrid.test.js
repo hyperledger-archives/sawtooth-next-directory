@@ -22,36 +22,24 @@ import { shallow } from 'enzyme';
 
 
 import * as customStore from 'customStore';
-import CreatePack from './CreatePack';
+import RoleSelectGrid from './RoleSelectGrid';
 
 
 const store = customStore.create();
-describe('CreateRole component', () => {
-  const props = {
-    submit: (username, password) => { },
-    CreateRole: () => { },
-    userId: '',
-    createPack: {
-      name: 'name',
-      owners: 'id1',
-    },
-    createPack: () => {},
-  };
-  const wrapper = shallow(<CreatePack {...props} />);
 
+
+describe('RoleSelectGrid component', () => {
+  const props = {};
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
       <Provider store={store}>
-        <BrowserRouter><CreatePack/></BrowserRouter>
+        <BrowserRouter><RoleSelectGrid/></BrowserRouter>
       </Provider>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-  wrapper.find('#next-approver-manage-content-form').simulate('change',
-    { event: {} }, { name: 'name', value: '' });
-  wrapper.instance().createPack(props);
 });

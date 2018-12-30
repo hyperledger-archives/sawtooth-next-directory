@@ -51,7 +51,7 @@ describe('CreateRole component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
-  wrapper.find('#next-approver-manage-content-form').simulate('change',
+  wrapper.find('#next-approver-manage-create-pack-form').simulate('change',
     { event: {} }, { name: 'name', value: '' });
   wrapper.instance().createPack(props);
 });

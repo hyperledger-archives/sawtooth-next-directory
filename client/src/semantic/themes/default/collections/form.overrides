@@ -36,3 +36,25 @@
 .ui.form textarea::placeholder {
   color: #00000059;
 }
+
+.ui.form input[type="text"] {
+  background: transparent;
+  border-bottom: 1px solid #999;
+  border-radius: 0;
+}
+
+.ui.form input[type="text"]:focus {
+  background: transparent;
+  border-bottom: 1px solid @magenta;
+  border-radius: 0;
+}
+
+.ui.form textarea {
+  background: transparent;
+  border-radius: .7em;
+}
+
+.ui.form textarea:focus {
+  border: 1px solid @magenta;
+  border-radius: .7em;
+}

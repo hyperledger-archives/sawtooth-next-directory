@@ -62,7 +62,7 @@
 }
 .ui.breadcrumb .section {
   display: inline-block;
-  margin: 0em;
+  margin: 0em 0.5em 0em 0.5em;
   padding: 0em;
 }
 

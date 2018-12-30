@@ -49,7 +49,7 @@ async def get_all_packs(request):
 @authorized()
 async def create_new_pack(request):
     """Create a new pack"""
-    required_fields = ["owners", "name"]
+    required_fields = ["owners", "name", "roles"]
     utils.validate_fields(required_fields, request.json)
 
     pack_id = str(uuid4())
@@ -58,6 +58,10 @@ async def create_new_pack(request):
         pack_id,
         request.json.get("owners"),
         request.json.get("name"),
+        request.json.get("description"),
+    )
+    await packs_query.add_roles(
+        request.app.config.DB_CONN, pack_id, request.json.get("roles")
     )
     return create_pack_response(request, pack_id)
 
@@ -94,13 +98,13 @@ async def add_pack_member(request, pack_id):
 @PACKS_BP.post("api/packs/<pack_id>/roles")
 # @authorized()
 async def add_pack_role(request, pack_id):
-    """Add a role to a pack"""
-    required_fields = ["role_id"]
+    """Add roles to a pack"""
+    required_fields = ["roles"]
     utils.validate_fields(required_fields, request.json)
-    await packs_query.add_role(
-        request.app.config.DB_CONN, pack_id, request.json.get("role_id")
+    await packs_query.add_roles(
+        request.app.config.DB_CONN, pack_id, request.json.get("roles")
     )
-    return json({"role_id": request.json.get("role_id")})
+    return json({"roles": request.json.get("roles")})
 
 
 def create_pack_response(request, pack_id):

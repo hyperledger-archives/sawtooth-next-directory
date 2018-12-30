@@ -177,3 +177,8 @@ limitations under the License.
   text-align: center;
   top: 45%;
 }
+
+#next-placeholder-chat .ui.fluid input {
+  background: white;
+  border: 1px solid #ddd;
+}

@@ -15,9 +15,9 @@ limitations under the License.
 
 
 #next-requester-roles-content {
-    position: relative;
-    top: 120px;
-    width: calc(100% - 61px) !important;
+  position: relative;
+  top: 120px;
+  width: calc(100% - 61px) !important;
 }
 
 #next-requester-roles-description-container {
