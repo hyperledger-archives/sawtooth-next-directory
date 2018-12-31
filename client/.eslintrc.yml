@@ -13,8 +13,15 @@ settings:
   react:
     version: 16.6
 
+plugins:
+  - react
+
 rules:
   react/display-name: off
+  react/jsx-tag-spacing: [error, { beforeSelfClosing: never }]
+  react/jsx-one-expression-per-line: error
+  react/jsx-indent: [error, 2]
+  # react/jsx-no-bind: error
   curly: [error, multi-or-nest, consistent]
   default-case: error
   dot-notation: error
@@ -67,8 +74,9 @@ rules:
   no-tabs: error
   space-before-function-paren: error
   arrow-spacing: error
-  generator-star-spacing: [error, {before: true, after: true}]
+  generator-star-spacing: [error, { before: true, after: true }]
   no-var: error
   object-shorthand: error
   prefer-arrow-callback: error
   prefer-const: error
+  keyword-spacing: [error, { after: true }]

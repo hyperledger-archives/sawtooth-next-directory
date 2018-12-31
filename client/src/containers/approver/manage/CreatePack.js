@@ -173,7 +173,9 @@ class CreatePack extends Component {
                 duration={{ hide, show }}>
                 <div id='next-approver-manage-create-pack-view-1'>
                   <Form id='next-approver-manage-create-pack-form'>
-                    <h3>Title</h3>
+                    <h3>
+                      Title
+                    </h3>
                     <Form.Input id='next-create-pack-title-field'
                       label='Create a descriptive name for your new pack.'
                       autoFocus
@@ -182,7 +184,9 @@ class CreatePack extends Component {
                       value={name}
                       placeholder='My Awesome Pack'
                       onChange={this.handleChange}/>
-                    <h3>Description</h3>
+                    <h3>
+                      Description
+                    </h3>
                     <Form.TextArea
                       rows='6'
                       label={`Create a compelling description of your new pack

@@ -88,7 +88,7 @@ class ChatForm extends Component {
    * @param {boolean} shouldRefresh If app should refresh on next
    *                                message received
    */
-  handleSend (message, shouldRefresh) {
+  handleSend = (message, shouldRefresh) => {
     const { refreshOnNextSocketReceive, send } = this.props;
     shouldRefresh && refreshOnNextSocketReceive(true);
     send(message);
@@ -197,7 +197,9 @@ class ChatForm extends Component {
                 this.handleSend(this.createPayload(button.payload), isDraft)}>
 
               { !disabled &&
-                <span>{button.title}</span>
+                <span>
+                  {button.title}
+                </span>
               }
               { disabled &&
                 <span></span>
@@ -232,10 +234,12 @@ class ChatForm extends Component {
           onClick={() => this.handleApprove(1)}>
 
           { !disabled &&
-              <span>Approve</span>
+            <span>
+              Approve
+            </span>
           }
           { disabled &&
-              <span></span>
+            <span></span>
           }
         </Button>
         <Button
@@ -246,10 +250,12 @@ class ChatForm extends Component {
           onClick={() => this.handleApprove(0)}>
 
           { !disabled &&
-              <span>Reject</span>
+            <span>
+              Reject
+            </span>
           }
           { disabled &&
-              <span></span>
+          <span></span>
           }
         </Button>
       </div>

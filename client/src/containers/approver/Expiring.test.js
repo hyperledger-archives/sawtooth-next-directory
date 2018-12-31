@@ -35,7 +35,9 @@ it('renders without crashing', () => {
   };
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Expiring {...props}/></BrowserRouter>
+      <BrowserRouter>
+        <Expiring {...props}/>
+      </BrowserRouter>
     </Provider>, div
   );
 

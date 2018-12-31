@@ -133,7 +133,9 @@ class Organization extends Component {
                   avatar
                   size='mini'/>
                 <div className='next-organization-user-info'>
-                  <h4>{this.userName(userId)}</h4>
+                  <h4>
+                    {this.userName(userId)}
+                  </h4>
                   {this.userEmail(userId)}
                 </div>
               </div>
@@ -164,7 +166,9 @@ class Organization extends Component {
                 avatar
                 size='mini'/>
               <div className='next-organization-user-info'>
-                <h4>{this.userName(userId)}</h4>
+                <h4>
+                  {this.userName(userId)}
+                </h4>
                 {this.userEmail(userId)}
               </div>
             </div>
@@ -185,7 +189,9 @@ class Organization extends Component {
         <div id='next-organization-current-person-user-info-container'>
           <Image src='http://i.pravatar.cc/300' avatar size='mini'/>
           <div className='next-organization-user-info'>
-            <h4>{this.userName(organization.id)}</h4>
+            <h4>
+              {this.userName(organization.id)}
+            </h4>
             {this.userEmail(organization.id)}
           </div>
         </div>

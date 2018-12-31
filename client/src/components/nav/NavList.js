@@ -103,7 +103,9 @@ class NavList extends Component {
           <Image floated='left' src=''/>
 
           <List.Content className='pull-left next-nav-list-content'>
-            <List.Header>{item.name}</List.Header>
+            <List.Header>
+              {item.name}
+            </List.Header>
           </List.Content>
 
           { labels && labels[index] &&
@@ -132,11 +134,17 @@ class NavList extends Component {
       titleIsLink } = this.props;
 
     return (
-      <div className={`next-nav-list-container
-                      ${disabled ? 'next-list-item-disabled' : ''}`}>
+      <div className={`next-nav-list-container ${disabled ?
+        'next-list-item-disabled' : ''}`}>
         { titleIsLink ?
-          <h4><Link to={route}>{listTitle}</Link></h4> :
-          <h4>{listTitle}</h4>
+          <h4>
+            <Link to={route}>
+              {listTitle}
+            </Link>
+          </h4> :
+          <h4>
+            {listTitle}
+          </h4>
         }
 
         { list && list.length !== 0 ?

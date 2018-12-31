@@ -46,7 +46,7 @@ export default class Avatar extends Component {
    */
   generatePlaceholder = () => {
     const { users, userId } = this.props;
-    const user = users.find(user => user.id === userId);
+    const user = users && users.find(user => user.id === userId);
 
     if (!user) return '?';
     const names = user.name.split(' ');

@@ -977,7 +977,7 @@ ol.ui.horizontal.list li:before,
   display: flex !important;
 }
 .nav-list h4 {
-  margin-top: 1rem;
+  margin-top: 0.85rem;
 }
 .nav-list h4.hover:not(.active):hover {
   background: rgba(255, 255, 255, 0.02);

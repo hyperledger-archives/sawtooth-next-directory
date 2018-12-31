@@ -29,7 +29,9 @@ describe('PeopleNav component', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><PeopleNav/></BrowserRouter>, div
+      <BrowserRouter>
+        <PeopleNav/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

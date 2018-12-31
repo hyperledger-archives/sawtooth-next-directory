@@ -42,7 +42,9 @@ describe('Header component', () => {
     };
     ReactDOM.render(
       <Provider store={store}>
-        <BrowserRouter><Header {...props} /></BrowserRouter>
+        <BrowserRouter>
+          <Header {...props}/>
+        </BrowserRouter>
       </Provider>, div
     );
 

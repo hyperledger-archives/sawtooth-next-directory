@@ -132,8 +132,12 @@ class RequesterNav extends Component {
       <Container>
         <Link to='/browse' id='next-requester-nav-browse'>
           <Button animated primary fluid>
-            <Button.Content visible>BROWSE</Button.Content>
-            <Button.Content hidden><Icon name='arrow right'/></Button.Content>
+            <Button.Content visible>
+              BROWSE
+            </Button.Content>
+            <Button.Content hidden>
+              <Icon name='arrow right'/>
+            </Button.Content>
           </Button>
         </Link>
         <Search

@@ -34,7 +34,7 @@ const prevProp = {
   allRoles: null,
 };
 const formatedData = [[{ id: 'role-id-1' }], [{ id: 'role-id-2' }], [], []];
-const wrapper = shallow(<Browse store={store} {...props} />);
+const wrapper = shallow(<Browse store={store} {...props}/>);
 
 
 it('renders without crashing', () => {
@@ -42,7 +42,9 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Browse /></BrowserRouter>
+      <BrowserRouter>
+        <Browse/>
+      </BrowserRouter>
     </Provider>, div
   );
 

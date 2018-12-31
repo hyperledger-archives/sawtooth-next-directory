@@ -37,7 +37,7 @@ const newprops = {
   userFromId: () => { },
   openProposals: [],
 };
-const wrapper = shallow(<PeopleApproval {...props} store={store} />);
+const wrapper = shallow(<PeopleApproval {...props} store={store}/>);
 
 
 it('renders without crashing', () => {
@@ -45,13 +45,17 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><PeopleApproval {...props} /></BrowserRouter>
+      <BrowserRouter>
+        <PeopleApproval {...props}/>
+      </BrowserRouter>
     </Provider>, div
   );
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><PeopleApproval {...newprops} /></BrowserRouter>
+      <BrowserRouter>
+        <PeopleApproval {...newprops}/>
+      </BrowserRouter>
     </Provider>, div
   );
 

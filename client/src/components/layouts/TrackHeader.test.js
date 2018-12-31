@@ -35,7 +35,9 @@ describe('TrackHeader component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><TrackHeader/></BrowserRouter>, div
+      <BrowserRouter>
+        <TrackHeader/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

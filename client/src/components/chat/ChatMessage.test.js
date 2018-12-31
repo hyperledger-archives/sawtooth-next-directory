@@ -38,7 +38,9 @@ describe('ChatMessage component', () => {
 
     ReactDOM.render(
       <Provider store={store}>
-        <BrowserRouter><ChatMessage {...props} /></BrowserRouter>
+        <BrowserRouter>
+          <ChatMessage {...props}/>
+        </BrowserRouter>
       </Provider>, div
     );
     ReactDOM.unmountComponentAtNode(div);

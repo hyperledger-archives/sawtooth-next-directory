@@ -122,7 +122,7 @@ class Chat extends Component {
    * Send message to chatbot engine
    * @param {string} message Message body
    */
-  send (message) {
+  send = (message) => {
     const { id, sendMessage } = this.props;
     sendMessage({do: 'REPLY', message: { text: message }, user_id: id});
   }
@@ -207,7 +207,9 @@ class Chat extends Component {
               {...this.props}/>
             <Header as='h3' inverted>
               {title}
-              <Header.Subheader>{subtitle}</Header.Subheader>
+              <Header.Subheader>
+                {subtitle}
+              </Header.Subheader>
             </Header>
           </div>
         }
@@ -220,7 +222,9 @@ class Chat extends Component {
                   size='small'
                   src={`http://i.pravatar.cc/150?u=${activeUser}`}
                   avatar/>
-                <Header as='h2' inverted>{this.userName(activeUser)}</Header>
+                <Header as='h2' inverted>
+                  {this.userName(activeUser)}
+                </Header>
                 <div>
                   <Button
                     as={Link}
@@ -256,7 +260,9 @@ class Chat extends Component {
               duration={{hide: 0, show: 300}}>
               <Header as='h3' inverted>
                 {selectedUsers.length === 1 && title}
-                <Header.Subheader>{subtitle}</Header.Subheader>
+                <Header.Subheader>
+                  {subtitle}
+                </Header.Subheader>
               </Header>
             </Transition>
           </div>
@@ -323,9 +329,9 @@ class Chat extends Component {
               disabled={disabled}
               approve={this.manualApprove}
               reject={this.manualReject}
-              requestRole={(message) => this.manualRequestRole(message)}
-              requestPack={(message) => this.manualRequestPack(message)}
-              send={(message) => this.send(message)}/>
+              requestRole={this.manualRequestRole}
+              requestPack={this.manualRequestPack}
+              send={this.send}/>
           </div>
         }
       </div>

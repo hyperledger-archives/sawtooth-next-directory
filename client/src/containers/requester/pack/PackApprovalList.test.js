@@ -31,13 +31,15 @@ describe('PackApprovalList component', () => {
       return { email: ''};
     },
   };
-  const wrapper = shallow(<PackApprovalList {...props} />);
+  const wrapper = shallow(<PackApprovalList {...props}/>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><PackApprovalList/></BrowserRouter>, div
+      <BrowserRouter>
+        <PackApprovalList/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

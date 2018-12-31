@@ -60,7 +60,9 @@ describe('Approved component', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><Approved {...props} store={store} /></BrowserRouter>, div
+      <BrowserRouter>
+        <Approved {...props} store={store}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

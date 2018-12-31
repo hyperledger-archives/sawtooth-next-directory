@@ -97,8 +97,8 @@ export const arraysEqual = (array1, array2) => {
 };
 
 
-export const nearestMinute = (minute = 1000 * 6) =>
-  new Date(Math.round(new Date().getTime() / minute) * minute).getTime();
+export const nearestMinute = (seconds = 1000 * 60) =>
+  new Date(Math.round(new Date().getTime() / seconds) * seconds).getTime();
 
 
 export const noop = () => {};

@@ -29,7 +29,9 @@ describe('ApprovedNav component', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><ApprovedNav/></BrowserRouter>, div
+      <BrowserRouter>
+        <ApprovedNav/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

@@ -68,13 +68,19 @@ const create = (baseURL =
   api.addResponseTransform(res => {
     switch (res.problem) {
       case 'TIMEOUT_ERROR':
-        toast.error('Server is not responding. Please try again later.');
+        toast.error('Server is not responding. Please try again later.', {
+          toastId: utils.nearestMinute(1000),
+        });
         return;
       case 'NETWORK_ERROR':
-        toast.error('Server currently unavailable. Please try again later.');
+        toast.error('Network error encountered. Please try again later.', {
+          toastId: utils.nearestMinute(1000),
+        });
         return;
       case 'CONNECTION_ERROR':
-        toast.error('Cannot connect to server. Please try again later.');
+        toast.error('Connection error encounterd. Please try again later.', {
+          toastId: utils.nearestMinute(1000),
+        });
         return;
       default:
         break;
@@ -125,7 +131,7 @@ const create = (baseURL =
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRole = (id) => api.get(`roles/${id}`);
-  const getRoles = () => api.get('roles');
+  const getRoles = () => api.get('roles', { limit: 10 });
   const getPack = (id) => api.get(`packs/${id}`);
   const getPacks = () => api.get('packs');
   const getRelationships = (id) => api.get(`users/${id}/relationships`);

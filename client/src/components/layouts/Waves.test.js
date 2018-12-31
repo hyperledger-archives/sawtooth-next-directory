@@ -37,13 +37,19 @@ describe('Waves component', () => {
     stopAnimation: () => { },
   };
 
-  const wrapper = shallow(<BrowserRouter><Waves {...props} /> </BrowserRouter>);
+  const wrapper = shallow(
+    <BrowserRouter>
+      <Waves {...props}/>
+    </BrowserRouter>
+  );
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><Waves {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <Waves {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

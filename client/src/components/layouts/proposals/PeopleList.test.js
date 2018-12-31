@@ -57,12 +57,14 @@ describe('PeopleList component', () => {
 
 
     ReactDOM.render(
-      <BrowserRouter><PeopleList {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <PeopleList {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
     const wrapper = shallow(
-      <PeopleList {...props} />);
+      <PeopleList {...props}/>);
     wrapper.instance().componentDidUpdate(newProps);
   });
 

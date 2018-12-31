@@ -31,13 +31,15 @@ describe('RoleApproval component', () => {
 
   };
 
-  const wrapper = shallow(<RoleApproval {...props} />);
+  const wrapper = shallow(<RoleApproval {...props}/>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><RoleApproval/></BrowserRouter>, div
+      <BrowserRouter>
+        <RoleApproval/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

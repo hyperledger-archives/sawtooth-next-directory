@@ -134,14 +134,14 @@ class LoginForm extends Component {
                   name='username'
                   type='text'
                   value={username}
-                  onChange={this.handleChange} />
+                  onChange={this.handleChange}/>
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button
                   content='Next'
                   disabled={!validUsername}
                   icon='right arrow'
-                  labelPosition='right' />
+                  labelPosition='right'/>
               </Container>
             </Form>
           </div>
@@ -159,7 +159,7 @@ class LoginForm extends Component {
                 <Image
                   avatar
                   src='http://i.pravatar.cc/150'
-                  size='tiny' />
+                  size='tiny'/>
               </Container>
               <Form.Button
                 id='next-login-form-back-button'

@@ -74,7 +74,7 @@ class Signup extends Component {
       isAuthenticated,
       recommendedPacks,
       recommendedRoles } = this.props;
-    if(isAuthenticated) {
+    if (isAuthenticated) {
       history.push(
         storage.getViewState() ?
           '/approval/pending/individual' :
@@ -97,7 +97,9 @@ class Signup extends Component {
           <Grid.Column id='next-login-column'>
             <Header inverted textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
-              <h1>Create an account</h1>
+              <h1>
+                Create an account
+              </h1>
             </Header>
             <SignupForm submit={signup}/>
           </Grid.Column>

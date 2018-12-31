@@ -37,7 +37,7 @@ const newprops = {
   userFromId: () => { },
   openProposals: [],
 };
-const wrapper = shallow(<Individuals {...props} store={store} />);
+const wrapper = shallow(<Individuals {...props} store={store}/>);
 
 
 it('renders without crashing', () => {
@@ -45,13 +45,17 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Individuals {...props} /></BrowserRouter>
+      <BrowserRouter>
+        <Individuals {...props}/>
+      </BrowserRouter>
     </Provider>, div
   );
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Individuals {...newprops} /></BrowserRouter>
+      <BrowserRouter>
+        <Individuals {...newprops}/>
+      </BrowserRouter>
     </Provider>, div
   );
 

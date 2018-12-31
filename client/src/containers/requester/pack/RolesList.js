@@ -119,7 +119,10 @@ class RolesList extends Component {
     return (
       <div>
         { user.name &&
-          <Header.Subheader>By {user.name}</Header.Subheader>
+          <Header.Subheader>
+            By
+            {user.name}
+          </Header.Subheader>
         }
         {user.email &&
           <Header.Subheader className='next-roles-list-email-subheader'>

@@ -81,10 +81,14 @@ class PackApprovalList extends Component {
     return (
       <div>
         { user.name &&
-          <div>{user.name}</div>
+          <div>
+            {user.name}
+          </div>
         }
         {user.email &&
-          <div>{user.email}</div>
+          <div>
+            {user.email}
+          </div>
         }
       </div>
     );
@@ -100,9 +104,15 @@ class PackApprovalList extends Component {
     return (
       <div>
         <div className='next-pack-approval-list-status'>
-          { status === 'CONFIRMED' && <span>Approved</span> }
-          { status === 'OPEN' && <span>Pending</span> }
-          { status === 'REJECTED' && <span>Rejected</span> }
+          { status === 'CONFIRMED' && <span>
+            Approved
+          </span> }
+          { status === 'OPEN' && <span>
+            Pending
+          </span> }
+          { status === 'REJECTED' && <span>
+            Rejected
+          </span> }
           <span
             className='next-pack-approval-list-status-emoji'
             role='img'

@@ -85,7 +85,9 @@ class ChatMessage extends Component {
                   floated='right'
                   color='purple'
                   size='small'>
-                  <div>{message.text}</div>
+                  <div>
+                    {message.text}
+                  </div>
                 </Segment>
               </div> :
               <div className='next-chat-message-left' key={index}>
@@ -96,7 +98,9 @@ class ChatMessage extends Component {
                 <Segment compact
                   floated='left'
                   size='small'>
-                  <div>{message.text}</div>
+                  <div>
+                    {message.text}
+                  </div>
                 </Segment>
               </div>
           )

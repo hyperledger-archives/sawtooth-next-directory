@@ -128,7 +128,9 @@ class CreateRole extends Component {
             {...this.props}/>
           <div id='next-approver-manage-create-role-content'>
             <Form id='next-approver-manage-create-role-form'>
-              <h3>Title</h3>
+              <h3>
+                Title
+              </h3>
               <Form.Input id='next-create-role-title-field'
                 label='Create a descriptive name for your new role.'
                 autoFocus
@@ -136,7 +138,9 @@ class CreateRole extends Component {
                 name='name'
                 placeholder='My Awesome Role'
                 onChange={this.handleChange}/>
-              <h3>Description</h3>
+              <h3>
+                Description
+              </h3>
               <Form.TextArea
                 rows='6'
                 label={`Create a compelling description of your new role

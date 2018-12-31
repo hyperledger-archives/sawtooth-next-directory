@@ -47,7 +47,9 @@ describe('Login component', () => {
 
     ReactDOM.render(
 
-      <BrowserRouter><Login {...props} store={store} /></BrowserRouter>, div
+      <BrowserRouter>
+        <Login {...props} store={store}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
