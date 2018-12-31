@@ -16,8 +16,13 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Grid, Header, Image, Segment } from 'semantic-ui-react';
-
+import {
+  Button,
+  Card,
+  Grid,
+  Header,
+  Image,
+  Placeholder } from 'semantic-ui-react';
 
 import './ManageRoles.css';
 import glyph from 'images/header-glyph-role.png';
@@ -35,6 +40,13 @@ import * as utils from 'services/Utils';
 class ManageRoles extends Component {
 
   themes = ['minimal', 'contrast', 'magenta'];
+
+
+  state = {
+    start: 0,
+    limit: 25,
+    roleList: [],
+  };
 
 
   /**
@@ -72,52 +84,90 @@ class ManageRoles extends Component {
    * in the client and dispatch actions to retrieve them.
    */
   init () {
-    const {
-      ownedRoles,
-      getRoles,
-      roles } = this.props;
+    const { ownedRoles } = this.props;
+    this.reset();
+    ownedRoles && this.loadNext(0);
+  }
 
-    const diff = roles ?
-      ownedRoles &&
-      ownedRoles.filter(
-        roleId => !roles.find(role => role.id === roleId)
-      ) :
-      ownedRoles;
-    diff && diff.length > 0 && getRoles(diff);
+
+  reset = () => {
+    this.setState({ roleList: [] });
   }
 
 
   /**
-   * Get role name from role ID
+   * Render a role card
    * @param {string} roleId Role ID
-   * @returns {string}
+   * @returns {JSX}
    */
-  roleName = (roleId) => {
+  renderRoleCard (roleId) {
     const { roleFromId } = this.props;
     const role = roleFromId(roleId);
-    return role && role.name;
-  };
+
+    if (!role) {
+      return (
+        <Grid.Column key={roleId}>
+          <Placeholder fluid key={roleId}>
+            <Placeholder.Header image>
+              <Placeholder.Line length='full'/>
+              <Placeholder.Line length='long'/>
+            </Placeholder.Header>
+          </Placeholder>
+        </Grid.Column>
+      );
+    }
+
+    const membersCount = [...role.members, ...role.owners].length;
+    const membersCountLabel = role &&
+      (membersCount > 1 || membersCount === 0) ?
+      `${membersCount} members` :
+      '1 member (You)';
+
+    return (
+      <Grid.Column key={roleId}>
+        <Card
+          fluid
+          as={Link}
+          to={`/roles/${roleId}`}
+          className='minimal medium'>
+          <Header as='h3'>
+            <div>
+              <Image size='mini' src={glyph}/>
+            </div>
+            <div>
+              {role.name}
+              <Header.Subheader>
+                {role.description || 'No description available.'}
+              </Header.Subheader>
+            </div>
+          </Header>
+          <Card.Content extra>
+            {membersCountLabel}
+          </Card.Content>
+        </Card>
+      </Grid.Column>
+    );
+  }
 
 
   /**
-   * Render a list of roles created by the user
-   * @returns {JSX}
+   * Load next set of data
+   * @param {number} start Loading start index
    */
-  renderRoles () {
-    const { ownedRoles } = this.props;
-    return (
-      <div>
-        { ownedRoles && ownedRoles.map(roleId => (
-          this.roleName(roleId) &&
-          <Segment padded className='minimal' key={roleId}>
-            <Header as='h3'>
-              <Image src={glyph} size='mini'/>
-              <div>{this.roleName(roleId)}</div>
-            </Header>
-          </Segment>
-        ))}
-      </div>
-    );
+  loadNext = (start) => {
+    const { getRoles, ownedRoles } = this.props;
+    const { limit } = this.state;
+    if (start === undefined || start === null)
+      start = this.state.start;
+
+    ownedRoles && getRoles(ownedRoles.slice(start, start + limit));
+    this.setState(prevState => ({
+      roleList: [
+        ...prevState.roleList,
+        ...ownedRoles.slice(start, start + limit),
+      ],
+      start: start + limit,
+    }));
   }
 
 
@@ -127,6 +177,12 @@ class ManageRoles extends Component {
    */
   render () {
     const { ownedRoles } = this.props;
+    const { roleList } = this.state;
+    const rolesCountLabel = ownedRoles &&
+      (ownedRoles.length > 1 || ownedRoles.length === 0) ?
+      `${ownedRoles.length} roles` :
+      '1 role';
+
     return (
       <Grid id='next-approver-grid'>
         <Grid.Column
@@ -150,15 +206,30 @@ class ManageRoles extends Component {
                 to='roles/create'/>}
             {...this.props}/>
           <div id='next-approver-manage-roles-content'>
-            { ownedRoles && ownedRoles.length > 0 ?
-              <div></div> :
+            { ownedRoles && ownedRoles.length > 0 &&
+              <h3>{rolesCountLabel}</h3>
+            }
+            { ownedRoles && ownedRoles.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
                   You haven&apos;t created any roles
                 </Header.Content>
               </Header>
             }
-            {this.renderRoles()}
+            <Grid columns={1} stackable>
+              { roleList.map(roleId =>
+                this.renderRoleCard(roleId)
+              ) }
+            </Grid>
+            { ownedRoles &&
+              ownedRoles.length > 25 &&
+              roleList.length !== ownedRoles.length &&
+              <div id='next-manage-roles-load-next-button'>
+                <Button onClick={() => this.loadNext()}>
+                  Load More
+                </Button>
+              </div>
+            }
           </div>
         </Grid.Column>
       </Grid>

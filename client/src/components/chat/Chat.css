@@ -52,9 +52,14 @@ limitations under the License.
   margin-top: 40px;
 }
 
+.next-chat-message-left .ui.segment {
+  min-width: 205px;
+}
+
 .next-chat-message-left .ui.segment,
 .next-chat-message-right .ui.segment {
   max-width: 310px;
+  word-break: break-word;
 }
 
 #next-chat-actions {

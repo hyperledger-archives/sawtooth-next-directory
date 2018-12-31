@@ -18,7 +18,10 @@ limitations under the License.
   padding: 0 17% 130px 17%;
   position: relative;
   top: 220px;
-  z-index: -3;
+}
+
+#next-manage-roles-load-next-button {
+  margin-top: 30px;
 }
 
 #next-approver-manage-roles-content h2 {
@@ -26,9 +29,20 @@ limitations under the License.
   margin-bottom: 50px;
 }
 
-#next-approver-manage-roles-content .ui.segment h3 img {
+#next-approver-manage-roles-content .ui.card h3 {
+  align-items: start;
+  display: flex;
+  margin-bottom: 0;
+}
+
+#next-approver-manage-roles-content .ui.card h3 img {
   margin-right: 20px;
 }
+
+#next-approver-manage-roles-content .ui.placeholder {
+  margin: 35px 0;
+}
+
 
 #next-approver-manage-roles-create-button {
   background: #ffffff;

@@ -47,5 +47,5 @@ describe('RolesList component', () => {
   });
   wrapper.instance().componentDidUpdate(props);
   wrapper.instance().renderUserInfo();
-  wrapper.instance().renderRoleSegment();
+  wrapper.instance().renderRoleCard();
 });

@@ -16,8 +16,13 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Grid, Header, Image, Segment } from 'semantic-ui-react';
-
+import {
+  Button,
+  Card,
+  Grid,
+  Header,
+  Image,
+  Placeholder } from 'semantic-ui-react';
 
 import './ManagePacks.css';
 import glyph from 'images/header-glyph-pack.png';
@@ -35,6 +40,13 @@ import * as utils from 'services/Utils';
 class ManagePacks extends Component {
 
   themes = ['minimal', 'contrast', 'magenta'];
+
+
+  state = {
+    start: 0,
+    limit: 25,
+    packList: [],
+  };
 
 
   /**
@@ -72,52 +84,89 @@ class ManagePacks extends Component {
    * in the client and dispatch actions to retrieve them.
    */
   init () {
-    const {
-      ownedPacks,
-      getPacks,
-      packs } = this.props;
+    const { ownedPacks } = this.props;
+    this.reset();
+    ownedPacks && this.loadNext(0);
+  }
 
-    const diff = packs ?
-      ownedPacks &&
-      ownedPacks.filter(
-        packId => !packs.find(pack => pack.id === packId)
-      ) :
-      ownedPacks;
-    diff && diff.length > 0 && getPacks(diff);
+
+  reset = () => {
+    this.setState({ packList: [] });
   }
 
 
   /**
-   * Get pack name from pack ID
+   * Render a pack card
    * @param {string} packId Pack ID
-   * @returns {string}
+   * @returns {JSX}
    */
-  packName = (packId) => {
+  renderPackCard (packId) {
     const { packFromId } = this.props;
     const pack = packFromId(packId);
-    return pack && pack.name;
-  };
+
+    if (!pack) {
+      return (
+        <Grid.Column key={packId}>
+          <Placeholder fluid key={packId}>
+            <Placeholder.Header image>
+              <Placeholder.Line length='full'/>
+              <Placeholder.Line length='long'/>
+            </Placeholder.Header>
+          </Placeholder>
+        </Grid.Column>
+      );
+    }
+
+    const rolesCountLabel = pack &&
+      (pack.roles.length > 1 || pack.roles.length === 0) ?
+      `${pack.roles.length} roles` :
+      '1 role';
+
+    return (
+      <Grid.Column key={packId}>
+        <Card
+          fluid
+          as={Link}
+          to={`/packs/${packId}`}
+          className='minimal medium'>
+          <Header as='h3'>
+            <div>
+              <Image size='mini' src={glyph}/>
+            </div>
+            <div>
+              {pack.name}
+              <Header.Subheader>
+                {pack.description || 'No description available.'}
+              </Header.Subheader>
+            </div>
+          </Header>
+          <Card.Content extra>
+            {rolesCountLabel}
+          </Card.Content>
+        </Card>
+      </Grid.Column>
+    );
+  }
 
 
   /**
-   * Render a list of packs created by the user
-   * @returns {JSX}
+   * Load next set of data
+   * @param {number} start Loading start index
    */
-  renderPacks () {
-    const { ownedPacks } = this.props;
-    return (
-      <div>
-        { ownedPacks && ownedPacks.map(packId => (
-          this.packName(packId) &&
-          <Segment padded className='minimal' key={packId}>
-            <Header as='h3'>
-              <Image src={glyph} size='mini'/>
-              <div>{this.packName(packId)}</div>
-            </Header>
-          </Segment>
-        ))}
-      </div>
-    );
+  loadNext = (start) => {
+    const { getPacks, ownedPacks } = this.props;
+    const { limit } = this.state;
+    if (start === undefined || start === null)
+      start = this.state.start;
+
+    ownedPacks && getPacks(ownedPacks.slice(start, start + limit));
+    this.setState(prevState => ({
+      packList: [
+        ...prevState.packList,
+        ...ownedPacks.slice(start, start + limit),
+      ],
+      start: start + limit,
+    }));
   }
 
 
@@ -127,6 +176,12 @@ class ManagePacks extends Component {
    */
   render () {
     const { ownedPacks } = this.props;
+    const { packList } = this.state;
+    const packsCountLabel = ownedPacks &&
+      (ownedPacks.length > 1 || ownedPacks.length === 0) ?
+      `${ownedPacks.length} packs` :
+      '1 pack';
+
     return (
       <Grid id='next-approver-grid'>
         <Grid.Column
@@ -150,15 +205,30 @@ class ManagePacks extends Component {
                 to='packs/create'/>}
             {...this.props}/>
           <div id='next-approver-manage-packs-content'>
-            { ownedPacks && ownedPacks.length > 0 ?
-              <div></div> :
+            { ownedPacks && ownedPacks.length > 0 &&
+              <h3>{packsCountLabel}</h3>
+            }
+            { ownedPacks && ownedPacks.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
                   You haven&apos;t created any packs
                 </Header.Content>
               </Header>
             }
-            {this.renderPacks()}
+            <Grid columns={1} stackable>
+              { packList.map(packId =>
+                this.renderPackCard(packId)
+              ) }
+            </Grid>
+            { ownedPacks &&
+              ownedPacks.length > 25 &&
+              packList.length !== ownedPacks.length &&
+              <div id='next-manage-packs-load-next-button'>
+                <Button onClick={() => this.loadNext()}>
+                  Load More
+                </Button>
+              </div>
+            }
           </div>
         </Grid.Column>
       </Grid>

@@ -994,6 +994,12 @@ a.ui.card:hover,
 }
 .ui.stackable.grid .column .ui.card.medium {
   border-radius: 1em;
+}
+.ui.stackable.grid .column .ui.card.medium > .extra {
+  font-size: 0.9em;
+  padding: 5px 20px;
+}
+.ui.stackable.grid .column .ui.card.medium .ui.header {
   padding: 20px;
 }
 .ui.stackable.grid .column .ui.card.minimal {
