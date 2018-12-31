@@ -30,11 +30,13 @@ describe('ChatForm component', () => {
     messages: [{buttons: [{title: 'title', payload: 'payload'}]}],
     approve: () => jest.fn,
   };
-  const wrapper = shallow(<ChatForm {...props} />);
+  const wrapper = shallow(<ChatForm {...props}/>);
   it('renders without crashing', () => {
     const div = document.createElement('div');
     ReactDOM.render(
-      <BrowserRouter><ChatForm {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <ChatForm {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

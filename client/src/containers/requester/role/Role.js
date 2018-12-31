@@ -126,12 +126,16 @@ export class Role extends Component {
               className={!this.proposal ? 'next-margin-1' : ''}
               id='next-requester-roles-description-container'>
               <div id='next-requester-roles-description'>
-                <h5>DESCRIPTION</h5>
+                <h5>
+                  DESCRIPTION
+                </h5>
                 {this.role.description || 'No description available.'}
               </div>
             </Container>
             <Container id='next-requester-roles-member-list-container'>
-              <h5>MEMBERS</h5>
+              <h5>
+                MEMBERS
+              </h5>
               <MemberList {...this.props}
                 members={this.role.members}
                 owners={this.role.owners}/>

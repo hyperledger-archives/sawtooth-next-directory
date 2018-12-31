@@ -42,7 +42,9 @@ describe('signup component', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     ReactDOM.render(
-      <BrowserRouter><Signup {...props} store={store}/></BrowserRouter>, div
+      <BrowserRouter>
+        <Signup {...props} store={store}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

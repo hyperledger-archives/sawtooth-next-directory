@@ -35,12 +35,14 @@ describe('Organization component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><Organization {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <Organization {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
 
-    const wrapper = shallow(<Organization {...props} />);
+    const wrapper = shallow(<Organization {...props}/>);
     wrapper.instance().componentDidUpdate(props);
   });
 

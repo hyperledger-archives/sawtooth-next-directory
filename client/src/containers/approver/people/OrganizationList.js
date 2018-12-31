@@ -81,7 +81,9 @@ class OrganizationList extends Component {
             <div>
               {user.name}
               {user.email &&
-                <Header.Subheader>{user.email}</Header.Subheader>
+                <Header.Subheader>
+                  {user.email}
+                </Header.Subheader>
               }
             </div>
           </Header>

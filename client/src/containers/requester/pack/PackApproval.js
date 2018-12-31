@@ -108,11 +108,17 @@ class PackApproval extends Component {
           <Card.Header id='next-pack-approval-status'>
             <Grid columns={4} padded='vertically'>
               <Grid.Column id='next-pack-approval-request-info'>
-                <div>Request ID</div>
-                <div>Request Date</div>
+                <div>
+                  Request ID
+                </div>
+                <div>
+                  Request Date
+                </div>
               </Grid.Column>
               <Grid.Column>
-                <h1>{approved}</h1>
+                <h1>
+                  {approved}
+                </h1>
                 <Label circular color='grey'>
                   <span
                     className='next-pack-approval-status-emoji'
@@ -124,7 +130,9 @@ class PackApproval extends Component {
                 </Label>
               </Grid.Column>
               <Grid.Column>
-                <h1>{pending}</h1>
+                <h1>
+                  {pending}
+                </h1>
                 <Label circular color='grey'>
                   <span
                     className='next-pack-approval-status-emoji'
@@ -136,7 +144,9 @@ class PackApproval extends Component {
                 </Label>
               </Grid.Column>
               <Grid.Column>
-                <h1>{rejected}</h1>
+                <h1>
+                  {rejected}
+                </h1>
                 <Label circular color='grey'>
                   <span
                     className='next-pack-approval-status-emoji'

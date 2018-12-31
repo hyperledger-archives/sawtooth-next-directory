@@ -96,7 +96,9 @@ class MemberList extends Component {
                 <div>
                   <Avatar userId={userId} size='medium' {...this.props}/>
                 </div>
-                <div>Unavailable</div>
+                <div>
+                  Unavailable
+                </div>
               </Header>
             </Segment>
           </Grid.Column>
@@ -123,7 +125,9 @@ class MemberList extends Component {
               </div>
               <div>
                 {user && user.name}
-                <Header.Subheader>{user && user.email}</Header.Subheader>
+                <Header.Subheader>
+                  {user && user.email}
+                </Header.Subheader>
               </div>
             </Header>
 

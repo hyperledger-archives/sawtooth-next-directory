@@ -36,7 +36,9 @@ describe('RoleSelectGrid component', () => {
 
     ReactDOM.render(
       <Provider store={store}>
-        <BrowserRouter><RoleSelectGrid/></BrowserRouter>
+        <BrowserRouter>
+          <RoleSelectGrid/>
+        </BrowserRouter>
       </Provider>, div
     );
 

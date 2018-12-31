@@ -36,7 +36,9 @@ const store = customStore.create();
 
 ReactDOM.render(
   <div id='next-root'>
-    <Provider store={store}><App routes={routes}/></Provider>
+    <Provider store={store}>
+      <App routes={routes}/>
+    </Provider>
     <ToastContainer
       autoClose={2500}
       toastClassName='toast'

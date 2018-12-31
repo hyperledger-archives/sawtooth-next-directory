@@ -123,12 +123,16 @@ export class Pack extends Component {
               className={!this.proposals ? 'next-margin-1' : ''}
               id='next-requester-packs-description-container'>
               <div id='next-requester-packs-description'>
-                <h5>DESCRIPTION</h5>
+                <h5>
+                  DESCRIPTION
+                </h5>
                 {this.pack.description || 'No description available.'}
               </div>
             </Container>
             <Container id='next-requester-packs-roles-list-container'>
-              <h5>ROLES</h5>
+              <h5>
+                ROLES
+              </h5>
               <RolesList activePack={this.pack} {...this.props}/>
             </Container>
           </div>

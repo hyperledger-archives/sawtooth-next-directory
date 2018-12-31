@@ -175,7 +175,9 @@ class PeopleApproval extends Component {
             }
             { openProposals && openProposals.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
-                <Header.Content>No pending items</Header.Content>
+                <Header.Content>
+                  No pending items
+                </Header.Content>
               </Header>
             }
           </div>

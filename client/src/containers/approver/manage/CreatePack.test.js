@@ -37,7 +37,7 @@ describe('CreateRole component', () => {
     },
     createPack: () => {},
   };
-  const wrapper = shallow(<CreatePack {...props} />);
+  const wrapper = shallow(<CreatePack {...props}/>);
 
 
   it('renders without crashing', () => {
@@ -45,7 +45,9 @@ describe('CreateRole component', () => {
 
     ReactDOM.render(
       <Provider store={store}>
-        <BrowserRouter><CreatePack/></BrowserRouter>
+        <BrowserRouter>
+          <CreatePack/>
+        </BrowserRouter>
       </Provider>, div
     );
 

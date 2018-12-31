@@ -57,12 +57,14 @@ describe('RoleList component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><RoleList {...props} {...newProps}/></BrowserRouter>, div
+      <BrowserRouter>
+        <RoleList {...props} {...newProps}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
     const wrapper = shallow(
-      <RoleList {...props} />);
+      <RoleList {...props}/>);
     wrapper.instance().componentDidUpdate(newProps);
   });
 

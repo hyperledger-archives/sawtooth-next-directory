@@ -37,7 +37,7 @@
 }
 
 .nav-list h4 {
-  margin-top: 1rem;
+  margin-top: .85rem;
 }
 
 .nav-list h4.hover:not(.active):hover {

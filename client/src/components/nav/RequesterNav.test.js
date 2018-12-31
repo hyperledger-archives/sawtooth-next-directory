@@ -38,13 +38,15 @@ describe('RequesterNav component', () => {
     packs: [{id: 'newPackId'}],
     getPacks: () => {},
   };
-  const wrapper = shallow(<RequesterNav {...props} />);
+  const wrapper = shallow(<RequesterNav {...props}/>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><RequesterNav {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <RequesterNav {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

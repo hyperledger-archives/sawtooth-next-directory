@@ -31,12 +31,14 @@ describe('IndividualsNav component', () => {
     setFlow: () => {},
 
   };
-  const wrapper = shallow(<IndividualsNav {...props} />);
+  const wrapper = shallow(<IndividualsNav {...props}/>);
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><IndividualsNav/></BrowserRouter>, div
+      <BrowserRouter>
+        <IndividualsNav/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

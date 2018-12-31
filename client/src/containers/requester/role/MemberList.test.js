@@ -43,12 +43,14 @@ describe('MemberList component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><MemberList {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <MemberList {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
 
-    const wrapper = shallow(<MemberList {...newProps} />);
+    const wrapper = shallow(<MemberList {...newProps}/>);
     wrapper.instance().componentDidUpdate(props);
   });
 

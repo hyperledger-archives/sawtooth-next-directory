@@ -29,13 +29,15 @@ describe('PackApproval component', () => {
     getUser: () => {},
     users: [{ id: 'proposal2'}],
   };
-  const wrapper = shallow(<PackApproval {...props} />);
+  const wrapper = shallow(<PackApproval {...props}/>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><PackApproval/></BrowserRouter>, div
+      <BrowserRouter>
+        <PackApproval/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

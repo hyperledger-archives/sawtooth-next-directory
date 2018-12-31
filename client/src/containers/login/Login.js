@@ -98,13 +98,17 @@ class Login extends Component {
           <Grid.Column id='next-login-column'>
             <Header inverted textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
-              <h1>Sign in to NEXT Directory</h1>
+              <h1>
+                Sign in to NEXT Directory
+              </h1>
             </Header>
             <LoginForm submit={login}/>
           </Grid.Column>
         </Grid>
         <div id='next-login-new-account-container'>
-          <Link to='/signup'>Create an account</Link>
+          <Link to='/signup'>
+            Create an account
+          </Link>
         </div>
       </div>
     );

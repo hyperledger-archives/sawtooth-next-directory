@@ -63,7 +63,11 @@ export default class StackedAvatar extends Component {
 
       });
     }
-    return <div className='next-avatar-element'>_</div>;
+    return (
+      <div className='next-avatar-element'>
+        _
+      </div>
+    );
 
   }
 

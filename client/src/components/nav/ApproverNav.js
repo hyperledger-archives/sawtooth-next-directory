@@ -68,14 +68,10 @@ class ApproverNav extends Component {
   renderLists () {
     const { openProposalsCount } = this.props;
 
-    // const foo = users && users.find(user => user.id === onBehalfOf);
-
-    // const bar = foo ? [
-    //   { name: foo && foo.name, slug: foo && `${foo.id}/pending` },
-    // ] : [];
-
     return (
-      <div id='next-approver-nav-lists-container' className='nav-list'>
+      <div
+        id='next-approver-nav-lists-container'
+        className='nav-list'>
         <NavList
           disabled
           listTitle='Pending'
@@ -88,39 +84,34 @@ class ApproverNav extends Component {
             { name: 'About to Expire', slug: 'about-to-expire' },
           ]}
           route='/approval/pending'/>
-        <h4 className={`hover
-                        ${this.isItemActive('delegated') ?
-        'active' : ''}`}>
+        <h4 className={`hover ${this.isItemActive('delegated') ?
+          'active' : ''}`}>
           <Link to='/approval/delegated'>
             Delegated
           </Link>
         </h4>
-        <h4 className={`hover
-                        ${this.isItemActive('approved') ?
-        'active' : ''}`}>
+        <h4 className={`hover ${this.isItemActive('approved') ?
+          'active' : ''}`}>
           <Link to='/approval/approved'>
             Approved
           </Link>
         </h4>
-        <h4 className={`hover
-                        ${this.isItemActive('expired') ?
-        'active' : ''}`}>
+        <h4 className={`hover ${this.isItemActive('expired') ?
+          'active' : ''}`}>
           <Link to='/approval/expired'>
             Expired
           </Link>
         </h4>
-        <h4 className={`hover
-                        ${this.isItemActive('people') ?
-        'active' : ''}`}>
+        <h4 className={`hover ${this.isItemActive('people') ?
+          'active' : ''}`}>
           <NavList
             titleIsLink
             listTitle='People'
             // list={bar}
             route='/approval/people'/>
         </h4>
-        <h4 className={`hover
-                        ${this.isItemActive('manage') ?
-        'active' : ''}`}>
+        <h4 className={`hover ${this.isItemActive('manage') ?
+          'active' : ''}`}>
           <Link to='/approval/manage'>
             Manage
           </Link>
@@ -139,8 +130,12 @@ class ApproverNav extends Component {
       <Container>
         <Link to='/' id='next-approver-nav-snapshot'>
           <Button animated primary fluid>
-            <Button.Content visible>SNAPSHOT</Button.Content>
-            <Button.Content hidden><Icon name='arrow right'/></Button.Content>
+            <Button.Content visible>
+              SNAPSHOT
+            </Button.Content>
+            <Button.Content hidden>
+              <Icon name='arrow right'/>
+            </Button.Content>
           </Button>
         </Link>
         <Search

@@ -206,7 +206,9 @@ class ManagePacks extends Component {
             {...this.props}/>
           <div id='next-approver-manage-packs-content'>
             { ownedPacks && ownedPacks.length > 0 &&
-              <h3>{packsCountLabel}</h3>
+              <h3>
+                {packsCountLabel}
+              </h3>
             }
             { ownedPacks && ownedPacks.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>

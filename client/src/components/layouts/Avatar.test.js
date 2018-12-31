@@ -33,7 +33,9 @@ describe('Avatar component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><Avatar {...props}/></BrowserRouter>, div
+      <BrowserRouter>
+        <Avatar {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

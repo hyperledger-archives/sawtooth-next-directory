@@ -37,7 +37,7 @@ const newprops = {
   userFromId: () => { },
   openProposals: [],
 };
-const wrapper = shallow(<Expired {...props} store={store} />);
+const wrapper = shallow(<Expired {...props} store={store}/>);
 
 
 it('renders without crashing', () => {
@@ -45,13 +45,17 @@ it('renders without crashing', () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Expired {...props} /></BrowserRouter>
+      <BrowserRouter>
+        <Expired {...props}/>
+      </BrowserRouter>
     </Provider>, div
   );
 
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter><Expired {...newprops} /></BrowserRouter>
+      <BrowserRouter>
+        <Expired {...newprops}/>
+      </BrowserRouter>
     </Provider>, div
   );
 

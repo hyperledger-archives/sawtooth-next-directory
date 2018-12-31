@@ -98,7 +98,7 @@ class Browse extends Component {
    * @returns {JSX}
    */
   renderLayout (layoutData) {
-    const{ rolesData } = this.state;
+    const { rolesData } = this.state;
     const data = layoutData ? layoutData : rolesData;
 
     return data.map((column, index) => {
@@ -115,7 +115,7 @@ class Browse extends Component {
    * @returns {JSX}
    */
   renderColumns = (columnData) => {
-    if(columnData) {
+    if (columnData) {
       return columnData.map( (item, index) => {
         return <BrowseCard key={index} details={item} {...this.props}/> ;
       });
@@ -158,7 +158,9 @@ class Browse extends Component {
           </Grid>
           { rolesData && rolesData.every(item => !item.length) &&
             <Header as='h3' textAlign='center' color='grey'>
-              <Header.Content>No roles or packs</Header.Content>
+              <Header.Content>
+                No roles or packs
+              </Header.Content>
             </Header>
           }
         </Container>

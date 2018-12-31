@@ -39,7 +39,9 @@ describe('BrowseCard component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><BrowseCard {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <BrowseCard {...props}/>
+      </BrowserRouter>, div
     );
     ReactDOM.unmountComponentAtNode(div);
   });
@@ -55,6 +57,6 @@ describe('BrowseCard component', () => {
       },
     };
 
-    const wrapper = shallow(<BrowseCard {...props} />);
+    const wrapper = shallow(<BrowseCard {...props}/>);
   });
 });

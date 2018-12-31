@@ -207,7 +207,9 @@ class ManageRoles extends Component {
             {...this.props}/>
           <div id='next-approver-manage-roles-content'>
             { ownedRoles && ownedRoles.length > 0 &&
-              <h3>{rolesCountLabel}</h3>
+              <h3>
+                {rolesCountLabel}
+              </h3>
             }
             { ownedRoles && ownedRoles.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>

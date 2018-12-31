@@ -28,13 +28,15 @@ describe('LoginForm component', () => {
   const props = {
     submit: (username, password) => { },
   };
-  const wrapper = shallow(<LoginForm {...props} />);
+  const wrapper = shallow(<LoginForm {...props}/>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
-      <BrowserRouter><LoginForm {...props} /></BrowserRouter>, div
+      <BrowserRouter>
+        <LoginForm {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

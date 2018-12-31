@@ -154,6 +154,10 @@ limitations under the License.
   margin-bottom: 2px;
 }
 
+#next-chat-roles-selection-container .ui.list .ui.checkbox label {
+  word-break: break-word;
+}
+
 .next-chat-action-button {
   flex: 1;
 }

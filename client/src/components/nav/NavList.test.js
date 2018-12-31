@@ -37,7 +37,9 @@ describe('NavList component', () => {
     };
 
     ReactDOM.render(
-      <BrowserRouter><NavList {...props}/></BrowserRouter>, div
+      <BrowserRouter>
+        <NavList {...props}/>
+      </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
