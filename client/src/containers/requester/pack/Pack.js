@@ -120,7 +120,8 @@ export class Pack extends Component {
               </div>
             }
             <Container
-              className={!this.proposals ? 'next-margin-1' : ''}
+              className={!this.proposals || this.proposals.length === 0 ?
+                'next-margin-1' : ''}
               id='next-requester-packs-description-container'>
               <div id='next-requester-packs-description'>
                 <h5>

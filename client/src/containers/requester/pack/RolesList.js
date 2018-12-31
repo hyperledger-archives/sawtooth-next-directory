@@ -121,6 +121,7 @@ class RolesList extends Component {
         { user.name &&
           <Header.Subheader>
             By
+            {' '}
             {user.name}
           </Header.Subheader>
         }

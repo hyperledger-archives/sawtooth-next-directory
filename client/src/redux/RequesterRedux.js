@@ -262,8 +262,9 @@ export const RequesterSelectors = {
     let result = null;
 
     if (type === 'pack') {
-      result = state.user.me.proposals
-        .filter(item => entity.roles.includes(item.object_id))
+      const pack = entity.find(pack => pack.id === id);
+      result = pack && state.user.me.proposals
+        .filter(item => pack.roles.includes(item.object_id))
         .map(item => item.proposal_id);
     }
     if (type === 'role') {
