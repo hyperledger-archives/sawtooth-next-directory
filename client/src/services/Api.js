@@ -131,7 +131,7 @@ const create = (baseURL =
   const login = (creds) => api.post('authorization', creds);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRole = (id) => api.get(`roles/${id}`);
-  const getRoles = () => api.get('roles', { limit: 10 });
+  const getRoles = (start, limit) => api.get('roles', { start, limit });
   const getPack = (id) => api.get(`packs/${id}`);
   const getPacks = () => api.get('packs');
   const getRelationships = (id) => api.get(`users/${id}/relationships`);

@@ -26,8 +26,8 @@ import * as utils from 'services/Utils';
 //
 //
 const { Types, Creators } = createActions({
-  allRolesRequest:      null,
-  allRolesSuccess:      ['roles'],
+  allRolesRequest:      ['start', 'limit'],
+  allRolesSuccess:      ['roles', 'rolesTotalCount'],
   allRolesFailure:      ['error'],
 
   roleRequest:          ['id'],
@@ -79,6 +79,7 @@ export const INITIAL_STATE = Immutable({
   recommended:      null,
   requests:         null,
   roles:            null,
+  rolesTotalCount:  null,
 });
 
 //
@@ -88,6 +89,7 @@ export const INITIAL_STATE = Immutable({
 //
 //
 export const RequesterSelectors = {
+  rolesTotalCount: (state) => state.requester.rolesTotalCount,
   roles: (state) => [
     ...state.requester.roles || [],
     ...state.approver.createdRoles || [],
@@ -301,9 +303,10 @@ export const success = {
     state.merge({
       fetching: false,
     }),
-  allRoles: (state, { roles }) =>
+  allRoles: (state, { roles, rolesTotalCount }) =>
     state.merge({
       fetching: false,
+      rolesTotalCount,
       roles: utils.merge(
         state.roles || [], roles || []
       ),

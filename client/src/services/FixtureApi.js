@@ -172,6 +172,7 @@ export default {
     return {
       ok: true,
       data: roles,
+      paging: {},
     };
   },
 

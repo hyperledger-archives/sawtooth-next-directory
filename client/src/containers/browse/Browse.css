@@ -19,7 +19,7 @@ limitations under the License.
 }
 
 #next-browse-container {
-  margin-top: 50px;
+  padding: 50px 0 100px 0;
 }
 
 .next-browse-search .ui {
@@ -31,4 +31,8 @@ limitations under the License.
   margin: 0 auto;
   padding-top: 40px;
   width: 90%;
+}
+
+#next-browse-load-next-button {
+  margin-top: 50px;
 }

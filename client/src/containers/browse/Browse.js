@@ -16,11 +16,13 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Header, Placeholder } from 'semantic-ui-react';
+import {
+  Button,
+  Container,
+  Grid,
+  Header,
+  Placeholder } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-
-import RequesterActions from 'redux/RequesterRedux';
 
 
 import './Browse.css';
@@ -46,7 +48,11 @@ class Browse extends Component {
   themes = ['dark'];
 
 
-  state = { rolesData: null };
+  state = {
+    start: 0,
+    limit: 100,
+    rolesData: null,
+  };
 
 
   /**
@@ -54,10 +60,8 @@ class Browse extends Component {
    * component. On load, get roles
    */
   componentDidMount () {
-    const { getAllRoles } = this.props;
-    // TODO: Pagination
-    getAllRoles();
     theme.apply(this.themes);
+    this.loadNext(0);
   }
 
 
@@ -76,7 +80,24 @@ class Browse extends Component {
    */
   componentDidUpdate (prevProps) {
     const { allRoles } = this.props;
-    if (prevProps.allRoles !== allRoles) this.formatData(allRoles);
+    if (prevProps.allRoles !== allRoles)
+      this.formatData(allRoles);
+
+  }
+
+
+  /**
+   * Load next set of data
+   * @param {number} start Loading start index
+   */
+  loadNext = (start) => {
+    const { getAllRoles } = this.props;
+    const { limit } = this.state;
+    if (start === undefined || start === null)
+      start = this.state.start;
+
+    getAllRoles(start, limit);
+    this.setState({ start: start + limit });
   }
 
 
@@ -146,16 +167,27 @@ class Browse extends Component {
    * @returns {JSX}
    */
   render () {
-    const { fetching } = this.props;
+    const { fetching, rolesTotalCount } = this.props;
     const { rolesData } = this.state;
+    const showLoadMoreButton = rolesData && rolesData
+      .reduce((count, row) => count + row.length, 0) < rolesTotalCount;
 
     return (
       <div id='next-browse-wrapper'>
         <Container fluid id='next-browse-container'>
           <Grid stackable columns={4} id='next-browse-grid'>
-            { fetching && this.renderPlaceholder()}
             { rolesData && this.renderLayout()}
+            { fetching && this.renderPlaceholder()}
           </Grid>
+          { showLoadMoreButton &&
+            <Container
+              id='next-browse-load-next-button'
+              textAlign='center'>
+              <Button size='large' onClick={() => this.loadNext()}>
+                Load More
+              </Button>
+            </Container>
+          }
           { rolesData && rolesData.every(item => !item.length) &&
             <Header as='h3' textAlign='center' color='grey'>
               <Header.Content>
@@ -179,9 +211,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    getAllRoles: () => dispatch(RequesterActions.allRolesRequest()),
-  };
+  return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Browse);

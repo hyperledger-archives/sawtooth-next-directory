@@ -4,9 +4,12 @@
 
 button.ui.fluid.primary.animated.button {
   background: #e80d98;
-  background: linear-gradient(to bottom, #e80d98 0%,#8d004d 100%);
-  background: -webkit-linear-gradient(top, #e80d98 0%,#8d004d 100%);
+  background: linear-gradient(to bottom, #e80dbd, #b8004c);
   height: 44px;
+}
+
+button.ui.fluid.primary.animated.button:active {
+  background: linear-gradient(to top, #c91684, #d72887);
 }
 
 button.ui.icon.left.labeled.button,

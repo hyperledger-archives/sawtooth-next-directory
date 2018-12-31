@@ -67,6 +67,7 @@ export const appState = (state) => {
     requests:            RequesterSelectors.requests(state),
     packs:               RequesterSelectors.packs(state),
     roles:               RequesterSelectors.roles(state),
+    rolesTotalCount:     RequesterSelectors.rolesTotalCount(state),
     proposalFromId:      (id)  =>
       RequesterSelectors.proposalFromId(state, id),
     proposalsFromIds:    (ids) =>
@@ -137,6 +138,8 @@ export const appDispatch = (dispatch) => {
     getProposal:       (id)  => dispatch(RequesterActions.proposalRequest(id)),
     getProposals:      (ids) =>
       dispatch(RequesterActions.proposalsRequest(ids)),
+    getAllRoles:       (start, limit) =>
+      dispatch(RequesterActions.allRolesRequest(start, limit)),
     requestRoleAccess:     (id, userId, reason) =>
       dispatch(RequesterActions.roleAccessRequest(id, userId, reason)),
     requestPackAccess:     (id, userId, reason) =>
