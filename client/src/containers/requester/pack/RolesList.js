@@ -43,6 +43,9 @@ class RolesList extends Component {
   }
 
 
+  state = { fetchingUsers: null };
+
+
   /**
    * Entry point to perform tasks required to render
    * component
@@ -58,37 +61,49 @@ class RolesList extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { activePack } = this.props;
+    const { activePack, roles } = this.props;
+
     if (prevProps.activePack !== activePack) this.init();
+    if (prevProps.roles && roles &&
+        prevProps.roles.length !== roles.length) {
+      const fetchedRoles = roles.filter(
+        role => activePack.roles.indexOf(role.id) !== -1);
+      if (fetchedRoles.length === activePack.roles.length)
+        this.init2();
+    }
   }
 
 
   /**
-   * Determine which roles and users are not currently loaded
+   * Determine which roles are not currently loaded
    * in the client and dispatch actions to retrieve them.
    */
   init () {
-    const {
-      activePack,
-      getRoles,
-      getUsers,
-      roles,
-      users } = this.props;
-
+    const { activePack, getRoles, roles } = this.props;
     if (!activePack) return;
-
     const diff = roles ? activePack.roles.filter(roleId =>
-      roles.find(role => role.id !== roleId)) : activePack.roles;
-
-    const diff2 = roles && users && roles
-      .filter(role => activePack.roles.find(roleId => role.id === roleId))
-      .map(role => users
-        .find(user => user.id !== role.owners[0]) && role.owners[0])
-      .filter(userId => userId);
-
+      !roles.find(role => role.id === roleId)) : activePack.roles;
 
     diff && diff.length > 0 && getRoles(diff);
-    diff2 && diff2.length > 0 && getUsers([...new Set(diff2)]);
+  }
+
+
+  /**
+   * Determine which users are not currently loaded
+   * in the client and dispatch actions to retrieve them.
+   */
+  init2 = () => {
+    const { activePack, getUsers, roles } = this.props;
+    const { fetchingUsers } = this.state;
+
+    if (fetchingUsers) return;
+    this.setState({ fetchingUsers: true });
+
+    const diff = roles && roles
+      .filter(role => activePack.roles.find(roleId => role.id === roleId))
+      .map(role => role.owners[0]);
+
+    diff && diff.length > 0 && getUsers([...new Set(diff)]);
   }
 
 
@@ -121,7 +136,7 @@ class RolesList extends Component {
    * @param {string} roleId Role ID
    * @returns {JSX}
    */
-  renderRoleSegment (roleId) {
+  renderRoleCard (roleId) {
     const { roles } = this.props;
     if (!roles) return null;
     const role = roles.find((role) => role.id === roleId);
@@ -159,7 +174,7 @@ class RolesList extends Component {
       <div>
         <Grid columns={3} stackable>
           { activePack && activePack.roles && activePack.roles.map((roleId) => (
-            this.renderRoleSegment(roleId)
+            this.renderRoleCard(roleId)
           )) }
         </Grid>
       </div>

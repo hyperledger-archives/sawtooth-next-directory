@@ -72,6 +72,15 @@ export class Pack extends Component {
   }
 
 
+  subtitle = () => {
+    if (!this.pack) return;
+    const rolesCount = this.pack.roles.length;
+    return `${rolesCount} ${rolesCount > 1 || rolesCount === 0 ?
+      'roles' :
+      'role'}`;
+  };
+
+
   /**
    * Render entrypoint
    * @returns {JSX}
@@ -96,6 +105,7 @@ export class Pack extends Component {
             inverted
             glyph={glyph}
             waves
+            subtitle={this.subtitle()}
             title={this.pack.name}
             {...this.props}/>
           <div id='next-requester-packs-content'>

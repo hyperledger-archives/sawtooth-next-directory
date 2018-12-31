@@ -113,6 +113,7 @@ def create_pack_response(request, pack_id):
         "id": pack_id,
         "name": request.json.get("name"),
         "owners": request.json.get("owners"),
+        "roles": request.json.get("roles"),
     }
 
     return json({"data": pack_resource})
