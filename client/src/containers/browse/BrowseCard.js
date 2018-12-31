@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Icon, Segment } from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -54,7 +54,6 @@ class BrowseCard extends Component {
    */
   render () {
     const { details } = this.props;
-    const { isPinned } = this.state;
 
     return (
       <Segment
@@ -62,14 +61,14 @@ class BrowseCard extends Component {
         to={`/roles/${details.id}`}
         className='gradient'>
         <div className='browse-tile-title-container'>
-          <div className='browse-tile-title'>
+          <h4 className='browse-tile-title'>
             {details.name}
-          </div>
-          <Icon
+          </h4>
+          {/* <Icon
             className='browse-tile-pinned-icon'
             disabled={!isPinned}
             onClick={this.togglePinned}
-            inverted name='pin' size='small'/>
+            inverted name='pin' size='small'/> */}
         </div>
         <div className='browse-tile-members'>
           <StackedAvatar

@@ -13,9 +13,6 @@ settings:
   react:
     version: 16.6
 
-plugins:
-  - react
-
 rules:
   react/display-name: off
   react/jsx-tag-spacing: [error, { beforeSelfClosing: never }]

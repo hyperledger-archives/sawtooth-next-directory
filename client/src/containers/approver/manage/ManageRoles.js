@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import {
   Button,
   Card,
+  Container,
   Grid,
   Header,
   Image,
@@ -226,11 +227,13 @@ class ManageRoles extends Component {
             { ownedRoles &&
               ownedRoles.length > 25 &&
               roleList.length !== ownedRoles.length &&
-              <div id='next-manage-roles-load-next-button'>
-                <Button onClick={() => this.loadNext()}>
+              <Container
+                id='next-manage-roles-load-next-button'
+                textAlign='center'>
+                <Button size='large' onClick={() => this.loadNext()}>
                   Load More
                 </Button>
-              </div>
+              </Container>
             }
           </div>
         </Grid.Column>

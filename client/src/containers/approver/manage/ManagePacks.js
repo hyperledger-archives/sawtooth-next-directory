@@ -226,7 +226,7 @@ class ManagePacks extends Component {
               ownedPacks.length > 25 &&
               packList.length !== ownedPacks.length &&
               <div id='next-manage-packs-load-next-button'>
-                <Button onClick={() => this.loadNext()}>
+                <Button size='large' onClick={() => this.loadNext()}>
                   Load More
                 </Button>
               </div>

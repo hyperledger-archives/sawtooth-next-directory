@@ -115,14 +115,19 @@ export function * getPacks (api, action) {
  * @param {object} action Redux action
  * @generator
  */
-export function * getAllRoles (api) {
+export function * getAllRoles (api, action) {
   try {
     yield put(showLoading());
-    const res = yield call(api.getRoles);
-    if (res.ok)
-      yield put(RequesterActions.allRolesSuccess(res.data.data));
-    else
+    const { start, limit } = action;
+    const res = yield call(api.getRoles, start, limit);
+    if (res.ok) {
+      yield put(RequesterActions.allRolesSuccess(
+        res.data.data,
+        res.data.paging.total),
+      );
+    } else {
       yield put(RequesterActions.allRolesFailure(res.data.error));
+    }
 
   } catch (err) {
     console.error(err);

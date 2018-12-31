@@ -94,23 +94,28 @@ test('fetchPack: failure path', () => {
 
 
 test('getAllRoles: success Path', () => {
+  const res = { ok: true, data: {data: '', paging: { total: 0 }}};
+  const start = 1;
+  const limit = 10;
 
-  const res = { ok: true, data: {data: ''}};
-
-  const step = stepper(getAllRoles(FixtureAPI));
+  const step = stepper(getAllRoles(FixtureAPI, start, limit));
   step();
   step();
   const stepRes = step(res);
 
-  expect(stepRes).toEqual(put(RequesterActions.allRolesSuccess(res.data.data)));
+  expect(stepRes).toEqual(put(RequesterActions.allRolesSuccess(
+    res.data.data,
+    res.data.paging.total,
+  )));
 });
 
 
 test('getAllRoles: failure Path', () => {
-
   const res = { ok: false, data: {error: '', data: ''}};
+  const start = 1;
+  const limit = 10;
 
-  const step = stepper(getAllRoles(FixtureAPI));
+  const step = stepper(getAllRoles(FixtureAPI, start, limit));
   step();
   step();
   const stepRes = step(res);

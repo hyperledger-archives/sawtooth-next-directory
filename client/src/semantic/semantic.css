@@ -839,6 +839,10 @@ body,
   padding: 20px !important;
 }
 
+.toast.Toastify__toast--warning {
+  color: #1d1e27;
+}
+
 /*******************************
          Site Overrides
 *******************************/
@@ -5202,10 +5206,16 @@ body,
 
 button.ui.fluid.primary.animated.button {
   background: #e80d98;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e80d98), to(#8d004d));
-  background: linear-gradient(to bottom, #e80d98 0%, #8d004d 100%);
-  background: -webkit-linear-gradient(top, #e80d98 0%, #8d004d 100%);
+  background: -webkit-gradient(linear, left top, left bottom, from(#e80dbd), to(#b8004c));
+  background: -webkit-linear-gradient(top, #e80dbd, #b8004c);
+  background: linear-gradient(to bottom, #e80dbd, #b8004c);
   height: 44px;
+}
+
+button.ui.fluid.primary.animated.button:active {
+  background: -webkit-gradient(linear, left bottom, left top, from(#c91684), to(#d72887));
+  background: -webkit-linear-gradient(bottom, #c91684, #d72887);
+  background: linear-gradient(to top, #c91684, #d72887);
 }
 
 button.ui.icon.left.labeled.button,

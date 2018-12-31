@@ -27,7 +27,7 @@ import Browse from './Browse';
 
 const store = customStore.create();
 const props = {
-  getAllRoles: () => { },
+  getAllRoles: () => {},
   allRoles: [{ id: 'role-id-1' }, { id: 'role-id-2' }],
 };
 const prevProp = {
@@ -43,7 +43,7 @@ it('renders without crashing', () => {
   ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <Browse/>
+        <Browse {...props}/>
       </BrowserRouter>
     </Provider>, div
   );

@@ -95,3 +95,7 @@ body,
   border-radius: 1em !important;
   padding: 20px !important;
 }
+
+.toast.Toastify__toast--warning {
+  color: #1d1e27;
+}
