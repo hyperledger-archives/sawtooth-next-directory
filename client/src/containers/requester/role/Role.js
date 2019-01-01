@@ -31,6 +31,7 @@ import MemberList from './MemberList';
 
 import './Role.css';
 import glyph from 'images/header-glyph-role.png';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -79,14 +80,6 @@ export class Role extends Component {
   };
 
 
-  subtitle = () => {
-    const membersCount = [...this.role.members, ...this.role.owners].length;
-    return `${membersCount} ${membersCount > 1 || membersCount === 0 ?
-      'members' :
-      'member'}`;
-  };
-
-
   /**
    * Render entrypoint
    * @returns {JSX}
@@ -113,7 +106,13 @@ export class Role extends Component {
             glyph={glyph}
             waves
             title={this.role.name}
-            subtitle={this.subtitle()}
+            subtitle={
+              this.role && utils.countLabel([
+                ...this.role.members,
+                ...this.role.owners,
+              ]
+                .length, 'member')
+            }
             {...this.props}/>
           <div id='next-requester-roles-content'>
             { this.proposal &&

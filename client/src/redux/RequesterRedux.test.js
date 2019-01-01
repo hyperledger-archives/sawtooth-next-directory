@@ -45,7 +45,7 @@ test('proposalSuccess', () => {
 test('allrolesSuccess', () => {
   const state = reducer(INITIAL_STATE, Actions.allRolesSuccess([]));
 
-  expect(state.fetching).toBe(false);
+  expect(state.fetchingAllRoles).toBe(false);
   expect(state.error).toBeNull();
 });
 test('accessSuccess', () => {

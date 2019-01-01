@@ -117,11 +117,6 @@ class ManagePacks extends Component {
       );
     }
 
-    const rolesCountLabel = pack &&
-      (pack.roles.length > 1 || pack.roles.length === 0) ?
-      `${pack.roles.length} roles` :
-      '1 role';
-
     return (
       <Grid.Column key={packId}>
         <Card
@@ -141,7 +136,7 @@ class ManagePacks extends Component {
             </div>
           </Header>
           <Card.Content extra>
-            {rolesCountLabel}
+            {pack && utils.countLabel(pack.roles.length, 'role')}
           </Card.Content>
         </Card>
       </Grid.Column>
@@ -177,10 +172,6 @@ class ManagePacks extends Component {
   render () {
     const { ownedPacks } = this.props;
     const { packList } = this.state;
-    const packsCountLabel = ownedPacks &&
-      (ownedPacks.length > 1 || ownedPacks.length === 0) ?
-      `${ownedPacks.length} packs` :
-      '1 pack';
 
     return (
       <Grid id='next-approver-grid'>
@@ -207,7 +198,7 @@ class ManagePacks extends Component {
           <div id='next-approver-manage-packs-content'>
             { ownedPacks && ownedPacks.length > 0 &&
               <h3>
-                {packsCountLabel}
+                {ownedPacks && utils.countLabel(ownedPacks.length, 'pack')}
               </h3>
             }
             { ownedPacks && ownedPacks.length === 0 &&

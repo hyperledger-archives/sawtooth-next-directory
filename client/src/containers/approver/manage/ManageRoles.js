@@ -118,12 +118,6 @@ class ManageRoles extends Component {
       );
     }
 
-    const membersCount = [...role.members, ...role.owners].length;
-    const membersCountLabel = role &&
-      (membersCount > 1 || membersCount === 0) ?
-      `${membersCount} members` :
-      '1 member (You)';
-
     return (
       <Grid.Column key={roleId}>
         <Card
@@ -143,7 +137,12 @@ class ManageRoles extends Component {
             </div>
           </Header>
           <Card.Content extra>
-            {membersCountLabel}
+            { role && utils.countLabel([
+              ...role.members,
+              ...role.owners,
+            ]
+              .length, 'member', true)
+            }
           </Card.Content>
         </Card>
       </Grid.Column>
@@ -179,10 +178,6 @@ class ManageRoles extends Component {
   render () {
     const { ownedRoles } = this.props;
     const { roleList } = this.state;
-    const rolesCountLabel = ownedRoles &&
-      (ownedRoles.length > 1 || ownedRoles.length === 0) ?
-      `${ownedRoles.length} roles` :
-      '1 role';
 
     return (
       <Grid id='next-approver-grid'>
@@ -209,7 +204,7 @@ class ManageRoles extends Component {
           <div id='next-approver-manage-roles-content'>
             { ownedRoles && ownedRoles.length > 0 &&
               <h3>
-                {rolesCountLabel}
+                {ownedRoles && utils.countLabel(ownedRoles.length, 'role')}
               </h3>
             }
             { ownedRoles && ownedRoles.length === 0 &&

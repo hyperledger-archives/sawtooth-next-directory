@@ -15,8 +15,6 @@ limitations under the License.
 
 
 import base from '../mock_data/base.json';
-import roles from '../mock_data/all_roles.json';
-import packs from '../mock_data/packs.json';
 import organization from '../mock_data/organization.json';
 
 
@@ -171,8 +169,10 @@ export default {
   getRoles: () => {
     return {
       ok: true,
-      data: roles,
-      paging: {},
+      data: {
+        data: [],
+        paging: {},
+      },
     };
   },
 
@@ -207,7 +207,10 @@ export default {
   getPacks: () => {
     return {
       ok: true,
-      data: packs,
+      data: {
+        data: [],
+        paging: {},
+      },
     };
   },
 

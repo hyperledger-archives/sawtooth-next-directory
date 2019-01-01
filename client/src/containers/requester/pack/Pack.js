@@ -30,6 +30,7 @@ import RolesList from './RolesList';
 
 import './Pack.css';
 import glyph from 'images/header-glyph-pack.png';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -72,15 +73,6 @@ export class Pack extends Component {
   }
 
 
-  subtitle = () => {
-    if (!this.pack) return;
-    const rolesCount = this.pack.roles.length;
-    return `${rolesCount} ${rolesCount > 1 || rolesCount === 0 ?
-      'roles' :
-      'role'}`;
-  };
-
-
   /**
    * Render entrypoint
    * @returns {JSX}
@@ -105,7 +97,9 @@ export class Pack extends Component {
             inverted
             glyph={glyph}
             waves
-            subtitle={this.subtitle()}
+            subtitle={this.pack && utils.countLabel(
+              this.pack.roles.length, 'role')
+            }
             title={this.pack.name}
             {...this.props}/>
           <div id='next-requester-packs-content'>

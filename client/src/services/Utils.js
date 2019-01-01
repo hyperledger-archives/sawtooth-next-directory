@@ -101,4 +101,18 @@ export const nearestMinute = (seconds = 1000 * 60) =>
   new Date(Math.round(new Date().getTime() / seconds) * seconds).getTime();
 
 
+export const sort = (array, key) =>
+  array.sort((a, b) => {
+    if (a[key] < b[key]) return -1;
+    if (a[key] > b[key]) return 1;
+    return 0;
+  });
+
+
+export const countLabel = (count, name, showMeLabelIfOne) => {
+  name = showMeLabelIfOne ? `${name} (You)` : name;
+  return `${count} ${count > 1 || count === 0 ? name + 's' : name}`;
+};
+
+
 export const noop = () => {};
