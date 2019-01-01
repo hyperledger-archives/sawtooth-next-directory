@@ -104,7 +104,7 @@ async def create_new_user(request):
     await auth_query.create_auth_entry(request.app.config.DB_CONN, auth_entry)
 
     # Send back success response
-    return create_user_response(request, txn_key.public_key)
+    return create_user_response(request, txn_user_id)
 
 
 @USERS_BP.get("api/users/<user_id>")
@@ -244,10 +244,10 @@ async def fetch_recommended_roles(request, user_id):
     )
 
 
-def create_user_response(request, public_key):
-    token = generate_api_key(request.app.config.SECRET_KEY, public_key)
+def create_user_response(request, user_id):
+    token = generate_api_key(request.app.config.SECRET_KEY, user_id)
     user_resource = {
-        "id": public_key,
+        "id": user_id,
         "name": request.json.get("name"),
         "username": request.json.get("username"),
         "email": request.json.get("email"),
