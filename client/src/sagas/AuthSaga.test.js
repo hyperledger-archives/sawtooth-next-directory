@@ -25,7 +25,7 @@ import { login, signup, logout } from 'sagas/AuthSaga';
 const stepper = (fn) => (mock) => fn.next(mock).value;
 
 
-test.skip('first calls API', () => {
+test('first calls API', () => {
   const username = 'hello';
   const password = 'world';
 

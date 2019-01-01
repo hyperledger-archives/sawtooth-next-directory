@@ -133,7 +133,7 @@ const create = (baseURL =
   const getRole = (id) => api.get(`roles/${id}`);
   const getRoles = (start, limit) => api.get('roles', { start, limit });
   const getPack = (id) => api.get(`packs/${id}`);
-  const getPacks = () => api.get('packs');
+  const getPacks = (start, limit) => api.get('packs', { start, limit });
   const getRelationships = (id) => api.get(`users/${id}/relationships`);
   const getRoot = () => api.get('');
   const getUser = (id) => api.get(`users/${id}`);

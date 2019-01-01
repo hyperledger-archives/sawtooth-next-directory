@@ -23,6 +23,7 @@ import { getBase,
   fetchPack,
   fetchRole,
   fetchProposal,
+  getAllPacks,
   getAllRoles,
   roleAccess,
   packAccess } from 'sagas/RequesterSaga';
@@ -100,7 +101,6 @@ test('getAllRoles: success Path', () => {
 
   const step = stepper(getAllRoles(FixtureAPI, start, limit));
   step();
-  step();
   const stepRes = step(res);
 
   expect(stepRes).toEqual(put(RequesterActions.allRolesSuccess(
@@ -117,11 +117,40 @@ test('getAllRoles: failure Path', () => {
 
   const step = stepper(getAllRoles(FixtureAPI, start, limit));
   step();
-  step();
   const stepRes = step(res);
 
   expect(stepRes)
     .toEqual(put(RequesterActions.allRolesFailure(res.data.error)));
+});
+
+
+test('getAllPacks: success Path', () => {
+  const res = { ok: true, data: {data: '', paging: { total: 0 }}};
+  const start = 1;
+  const limit = 10;
+
+  const step = stepper(getAllPacks(FixtureAPI, start, limit));
+  step();
+  const stepRes = step(res);
+
+  expect(stepRes).toEqual(put(RequesterActions.allPacksSuccess(
+    res.data.data,
+    res.data.paging.total,
+  )));
+});
+
+
+test('getAllPacks: failure Path', () => {
+  const res = { ok: false, data: {error: '', data: ''}};
+  const start = 1;
+  const limit = 10;
+
+  const step = stepper(getAllPacks(FixtureAPI, start, limit));
+  step();
+  const stepRes = step(res);
+
+  expect(stepRes)
+    .toEqual(put(RequesterActions.allPacksFailure(res.data.error)));
 });
 
 

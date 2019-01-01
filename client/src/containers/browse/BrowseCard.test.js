@@ -29,7 +29,7 @@ describe('BrowseCard component', () => {
     const div = document.createElement('div');
 
     const props = {
-      details: {
+      resource: {
         name: '',
         category: '',
         admins: [],
@@ -48,7 +48,7 @@ describe('BrowseCard component', () => {
 
   it('calls prop `onToggle` when icon clicked', () => {
     const props = {
-      details: {
+      resource: {
         name: '',
         category: '',
         admins: [],

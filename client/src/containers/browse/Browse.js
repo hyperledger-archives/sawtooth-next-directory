@@ -39,8 +39,8 @@ import * as theme from 'services/Theme';
 class Browse extends Component {
 
   static propTypes = {
-    allRoles:           PropTypes.array,
-    fetching:           PropTypes.bool,
+    fetchingAllPacks:   PropTypes.bool,
+    fetchingAllRoles:   PropTypes.bool,
     getAllRoles:        PropTypes.func,
   };
 
@@ -51,7 +51,7 @@ class Browse extends Component {
   state = {
     start: 0,
     limit: 100,
-    rolesData: null,
+    rolesData: [],
   };
 
 
@@ -74,76 +74,38 @@ class Browse extends Component {
 
 
   /**
-   * Called whenever Redux state changes.
-   * @param {object} prevProps Props before update
-   * @returns {undefined}
-   */
-  componentDidUpdate (prevProps) {
-    const { allRoles } = this.props;
-    if (prevProps.allRoles !== allRoles)
-      this.formatData(allRoles);
-
-  }
-
-
-  /**
    * Load next set of data
    * @param {number} start Loading start index
    */
   loadNext = (start) => {
-    const { getAllRoles } = this.props;
+    const { getAllPacks, getAllRoles } = this.props;
     const { limit } = this.state;
     if (start === undefined || start === null)
       start = this.state.start;
 
+    getAllPacks(start, limit);
     getAllRoles(start, limit);
     this.setState({ start: start + limit });
   }
 
 
   /**
-   * Format data ?
-   * @param {array} value ?
-   */
-  formatData = (value) => {
-    const arr = [[], [], [], []];
-    value.forEach((ele, index) => {
-      arr[index % 4].push(ele);
-    });
-    this.setState({ rolesData: arr });
-  }
-
-  /**
-   * Render layout ?
-   * @param {array} layoutData ?
-   * @returns {JSX}
-   */
-  renderLayout (layoutData) {
-    const { rolesData } = this.state;
-    const data = layoutData ? layoutData : rolesData;
-
-    return data.map((column, index) => {
-      return (<Grid.Column key={index}>
-        {this.renderColumns(column)}
-      </Grid.Column>);
-    });
-  }
-
-
-  /**
    * Render columns
-   * @param {array} columnData ?
+   * @param {array} column Array of resources to display within
+   *                       a column subsection
    * @returns {JSX}
    */
-  renderColumns = (columnData) => {
-    if (columnData) {
-      return columnData.map( (item, index) => {
-        return <BrowseCard key={index} details={item} {...this.props}/> ;
-      });
-    }
+  renderColumns = (column) => {
+    return column.map((item, index) => (
+      <BrowseCard key={index} resource={item} {...this.props}/>
+    ));
   }
 
 
+  /**
+   * Render placeholder graphics
+   * @returns {JSX}
+   */
   renderPlaceholder = () => {
     return Array(4).fill(0).map((item, index) => (
       <Grid.Column key={index}>
@@ -163,23 +125,47 @@ class Browse extends Component {
 
 
   /**
+   * Get count of resource in browse state
+   * @returns {number}
+   */
+  browseCount = () => {
+    const { browseData } = this.props;
+    return browseData && browseData.reduce(
+      (count, row) => count + row.length, 0
+    );
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
-    const { fetching, rolesTotalCount } = this.props;
-    const { rolesData } = this.state;
-    const showLoadMoreButton = rolesData && rolesData
-      .reduce((count, row) => count + row.length, 0) < rolesTotalCount;
+    const {
+      browseData,
+      fetchingAllPacks,
+      fetchingAllRoles,
+      rolesTotalCount } = this.props;
+
+    const { limit } = this.state;
+
+    const showNoContentLabel = !fetchingAllPacks &&
+      !fetchingAllRoles && this.browseCount() === 0;
+    const showData = this.browseCount() >= limit ||
+      (!fetchingAllPacks && !fetchingAllRoles);
 
     return (
       <div id='next-browse-wrapper'>
         <Container fluid id='next-browse-container'>
           <Grid stackable columns={4} id='next-browse-grid'>
-            { rolesData && this.renderLayout()}
-            { fetching && this.renderPlaceholder()}
+            { showData && browseData.map((column, index) => (
+              <Grid.Column key={index}>
+                {this.renderColumns(column)}
+              </Grid.Column>
+            ))}
+            {(fetchingAllPacks || fetchingAllRoles) && this.renderPlaceholder()}
           </Grid>
-          { showLoadMoreButton &&
+          { this.browseCount() < rolesTotalCount &&
             <Container
               id='next-browse-load-next-button'
               textAlign='center'>
@@ -188,7 +174,7 @@ class Browse extends Component {
               </Button>
             </Container>
           }
-          { rolesData && rolesData.every(item => !item.length) &&
+          { showNoContentLabel &&
             <Header as='h3' textAlign='center' color='grey'>
               <Header.Content>
                 No roles or packs
@@ -205,8 +191,8 @@ class Browse extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    allRoles: state.requester.roles,
-    fetching: state.requester.fetching,
+    fetchingAllPacks: state.requester.fetchingAllPacks,
+    fetchingAllRoles: state.requester.fetchingAllRoles,
   };
 };
 

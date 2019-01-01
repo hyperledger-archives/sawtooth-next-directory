@@ -14,58 +14,37 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-.browse-tile-expanded {
-  height: 209px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.ui.segment.gradient.browse-tile-expanded {
   background: #fff;
-  padding:0px;
-  border-radius: 5px;
+  height: 316px;
+  justify-content: start;
   overflow: hidden;
+  padding: 0;
 }
 
-.browse-tile-expanded > .browse-tile-title {
+.browse-tile-description {
+  color: black;
+  max-height: 97px;
+  overflow: hidden;
+  padding: 22px;
+}
+
+.browse-tile-expanded .browse-tile-title-container {
   background: linear-gradient(to bottom, #9600e8 0%,#f70597 100%);
-  padding: 5px;
+  padding: 22px;
   overflow: hidden;
 }
 
-.browse-tile-title-container {
-  color: #fff;
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: flex;
-  justify-content: space-between;
+.ui.segment .browse-tile-title-container .ui.header {
+  display: block;
 }
 
-.browse-tile-title {
-  font-weight: 400;
-  word-break: break-word;
-}
-
-.browse-tile-desc {
-  padding: 10px 5px;
-  font-size: 0.9em;
-}
-
-.browse-tile-members {
-  height: 75%;
+.ui.segment .browse-tile-title-container .ui.header .sub.header {
+  color: #f8c1ffb8;
 }
 
 .browse-tile-pinned-icon {
   cursor: pointer;
   margin-left: 15px;
   transform: rotate(45deg);
-}
-
-.browse-tile-category {
-  font-size: 0.75em;
-  color:var(--browse-text-color);
-}
-
-.browse-tile-likes {
-  padding: 5px;
-  color: grey;
-  font-size: 10px;
 }

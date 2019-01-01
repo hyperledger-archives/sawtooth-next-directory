@@ -16,12 +16,13 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Segment } from 'semantic-ui-react';
+import { Header, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import './BrowseCard.css';
 import StackedAvatar from './StackedAvatar';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -34,7 +35,7 @@ import StackedAvatar from './StackedAvatar';
 class BrowseCard extends Component {
 
   static propTypes = {
-    details: PropTypes.object,
+    resource: PropTypes.object,
   };
 
 
@@ -53,28 +54,42 @@ class BrowseCard extends Component {
    * @returns {JSX}
    */
   render () {
-    const { details } = this.props;
+    const { resource } = this.props;
 
     return (
       <Segment
         as={Link}
-        to={`/roles/${details.id}`}
-        className='gradient'>
+        to={`/${resource.roles ? 'packs' : 'roles'}/${resource.id}`}
+        className={`gradient ${resource.roles ? 'browse-tile-expanded' : ''}`}>
         <div className='browse-tile-title-container'>
-          <h4 className='browse-tile-title'>
-            {details.name}
-          </h4>
+          <Header inverted as='h4'>
+            {resource.name}
+            { resource.roles &&
+              <Header.Subheader>
+                {resource.roles && utils.countLabel(
+                  resource.roles.length, 'role')
+                }
+              </Header.Subheader>
+            }
+          </Header>
           {/* <Icon
             className='browse-tile-pinned-icon'
             disabled={!isPinned}
             onClick={this.togglePinned}
             inverted name='pin' size='small'/> */}
         </div>
-        <div className='browse-tile-members'>
-          <StackedAvatar
-            list={[...details.owners, ...details.members]}
-            {...this.props}/>
+        { resource.roles &&
+        <div className='browse-tile-description'>
+          {resource.description || 'No description available.'}
         </div>
+        }
+        { !resource.roles &&
+          <div className='browse-tile-members'>
+            <StackedAvatar
+              list={[...resource.owners, ...resource.members]}
+              {...this.props}/>
+          </div>
+        }
       </Segment>
     );
   }

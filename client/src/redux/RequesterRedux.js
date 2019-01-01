@@ -26,6 +26,10 @@ import * as utils from 'services/Utils';
 //
 //
 const { Types, Creators } = createActions({
+  allPacksRequest:      ['start', 'limit'],
+  allPacksSuccess:      ['packs', 'packsTotalCount'],
+  allPacksFailure:      ['error'],
+
   allRolesRequest:      ['start', 'limit'],
   allRolesSuccess:      ['roles', 'rolesTotalCount'],
   allRolesFailure:      ['error'],
@@ -75,11 +79,14 @@ export const INITIAL_STATE = Immutable({
   activeRole:       null,
   error:            null,
   fetching:         null,
+  fetchingAllRoles: null,
+  fetchingAllPacks: null,
   packs:            null,
   recommended:      null,
   requests:         null,
   roles:            null,
   rolesTotalCount:  null,
+  packsTotalCount:  null,
 });
 
 //
@@ -90,6 +97,7 @@ export const INITIAL_STATE = Immutable({
 //
 export const RequesterSelectors = {
   rolesTotalCount: (state) => state.requester.rolesTotalCount,
+  packsTotalCount: (state) => state.requester.packsTotalCount,
   roles: (state) => [
     ...state.requester.roles || [],
     ...state.approver.createdRoles || [],
@@ -98,6 +106,20 @@ export const RequesterSelectors = {
     ...state.requester.packs || [],
     ...state.approver.createdPacks || [],
   ],
+
+
+  browseData: (state) => {
+    const formatted = [[], [], [], []];
+    const data = [
+      ...state.requester.packs || [],
+      ...state.requester.roles || [],
+    ];
+    const sorted = utils.sort(data, 'name');
+    sorted.forEach((item, index) => {
+      formatted[index % 4].push(item);
+    });
+    return formatted;
+  },
 
 
   // Retrieve recommended roles
@@ -283,9 +305,12 @@ export const RequesterSelectors = {
 //
 //
 //
-export const request = (state) => {
-  return state.merge({ fetching: true });
+export const request = {
+  allRoles:   (state) => state.merge({ fetchingAllRoles: true }),
+  allPacks:   (state) => state.merge({ fetchingAllPacks: true }),
+  temp:       (state) => state.merge({ fetching: true }),
 };
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 };
@@ -306,10 +331,18 @@ export const success = {
     }),
   allRoles: (state, { roles, rolesTotalCount }) =>
     state.merge({
-      fetching: false,
+      fetchingAllRoles: false,
       rolesTotalCount,
       roles: utils.merge(
         state.roles || [], roles || []
+      ),
+    }),
+  allPacks: (state, { packs, packsTotalCount }) =>
+    state.merge({
+      fetchingAllPacks: false,
+      packsTotalCount,
+      packs: utils.merge(
+        state.packs || [], packs || []
       ),
     }),
   base: (state, { base }) =>
@@ -354,34 +387,37 @@ export const success = {
 //
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]:              resetAll,
-  [Types.BASE_REQUEST]:           request,
+  [Types.BASE_REQUEST]:           request.temp,
   [Types.BASE_SUCCESS]:           success.base,
   [Types.BASE_FAILURE]:           failure,
 
   // Roles
-  [Types.ALL_ROLES_REQUEST]:      request,
+  [Types.ALL_ROLES_REQUEST]:      request.allRoles,
   [Types.ALL_ROLES_SUCCESS]:      success.allRoles,
   [Types.ALL_ROLES_FAILURE]:      failure,
-  [Types.ROLES_REQUEST]:          request,
-  [Types.ROLE_REQUEST]:           request,
+  [Types.ROLES_REQUEST]:          request.temp,
+  [Types.ROLE_REQUEST]:           request.temp,
   [Types.ROLE_SUCCESS]:           success.role,
   [Types.ROLE_FAILURE]:           failure,
-  [Types.ROLE_ACCESS_REQUEST]:    request,
+  [Types.ROLE_ACCESS_REQUEST]:    request.temp,
   [Types.ROLE_ACCESS_SUCCESS]:    success.access,
   [Types.ROLE_ACCESS_FAILURE]:    failure,
 
   // Packs
-  [Types.PACKS_REQUEST]:          request,
-  [Types.PACK_REQUEST]:           request,
+  [Types.ALL_PACKS_REQUEST]:      request.allPacks,
+  [Types.ALL_PACKS_SUCCESS]:      success.allPacks,
+  [Types.ALL_PACKS_FAILURE]:      failure,
+  [Types.PACKS_REQUEST]:          request.temp,
+  [Types.PACK_REQUEST]:           request.temp,
   [Types.PACK_SUCCESS]:           success.pack,
   [Types.PACK_FAILURE]:           failure,
-  [Types.PACK_ACCESS_REQUEST]:    request,
+  [Types.PACK_ACCESS_REQUEST]:    request.temp,
   [Types.PACK_ACCESS_SUCCESS]:    success.access,
   [Types.PACK_ACCESS_FAILURE]:    failure,
 
   // Proposals
-  [Types.PROPOSALS_REQUEST]:      request,
-  [Types.PROPOSAL_REQUEST]:       request,
+  [Types.PROPOSALS_REQUEST]:      request.temp,
+  [Types.PROPOSAL_REQUEST]:       request.temp,
   [Types.PROPOSAL_SUCCESS]:       success.proposal,
   [Types.PROPOSAL_FAILURE]:       failure,
 });
