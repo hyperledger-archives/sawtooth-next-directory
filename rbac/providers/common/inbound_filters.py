@@ -16,7 +16,6 @@
 """
 
 import datetime
-import rethinkdb as r
 from rbac.common.logs import get_logger
 
 from rbac.providers.common.provider_transforms import (
@@ -70,17 +69,13 @@ def inbound_group_filter(entry, provider):
     return standard_entry
 
 
-def rethink_datetime(value):
-    """ Converts a datetime.datetime to a rethinkDB compatible datetime """
-    if (
-        not isinstance(value, datetime.datetime)
-        or value.year < 1970
-        or value.year > 2200
-    ):
+def datetime_to_seconds(value):
+    """ Converts a datetime.datetime seconds in unix epoch time
+    """
+    if not isinstance(value, datetime.datetime):
         return None
     epoch_zero = datetime.datetime(1970, 1, 1, tzinfo=value.tzinfo)
-    seconds = (value - epoch_zero).total_seconds()
-    return r.epoch_time(seconds * 1000)
+    return int((value - epoch_zero).total_seconds())
 
 
 def inbound_value_filter(value):
@@ -88,7 +83,7 @@ def inbound_value_filter(value):
     1. Unwraps LDAP attributes
     2. Removes empty arrays
     3. Unwraps single value arrays
-    4. Converts datetime.datetime to rethink compatible datetime
+    4. Converts datetime.datetime to seconds
     """
     if hasattr(value, "value"):
         value = value.value
@@ -98,8 +93,5 @@ def inbound_value_filter(value):
         if len(value) == 1:
             return value[0]
     elif isinstance(value, datetime.datetime):
-        # TODO: we can store a date but we have to reconvert it
-        # anytime we move the record, apparently. Use string for now.
-        # return rethink_datetime(value)
-        return str(value)
+        return datetime_to_seconds(value)
     return value

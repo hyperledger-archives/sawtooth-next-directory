@@ -48,7 +48,7 @@ class ProposalMessage(BaseMessage):
         """Proposal state container name is plural (ProposalsContainer)"""
         return self._name_camel_plural
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates that:
         1. the proposed user is a User that exists in state (if proposal involves a user)
         2. the proposed role is a Role that exists in state (if a role proposal)
@@ -57,13 +57,12 @@ class ProposalMessage(BaseMessage):
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if hasattr(message, "user_id") and not addresser.user.exists_in_state_inputs(
-            inputs=inputs,
+            inputs=payload.inputs,
             input_state=input_state,
             object_id=getattr(message, "user_id"),
             skip_if_not_in_inputs=True,
@@ -74,7 +73,7 @@ class ProposalMessage(BaseMessage):
                 )
             )
         if hasattr(message, "role_id") and not addresser.role.exists_in_state_inputs(
-            inputs=inputs,
+            inputs=payload.inputs,
             input_state=input_state,
             object_id=getattr(message, "role_id"),
             skip_if_not_in_inputs=True,
@@ -85,7 +84,7 @@ class ProposalMessage(BaseMessage):
                 )
             )
         if hasattr(message, "task_id") and not addresser.task.exists_in_state_inputs(
-            inputs=inputs,
+            inputs=payload.inputs,
             input_state=input_state,
             object_id=getattr(message, "task_id"),
             skip_if_not_in_inputs=True,

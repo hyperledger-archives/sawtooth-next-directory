@@ -26,6 +26,6 @@ message UpdateProposal {
 
     string reason = 4;
 
-    repeated string on_behalf_of = 5;
+    repeated string on_behalf_of = 5; 
 
 }

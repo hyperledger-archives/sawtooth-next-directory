@@ -72,16 +72,15 @@ class ConfirmAddRoleTask(ProposalConfirm):
 
         return inputs, outputs
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates that:
         1. the signer is an owner of the task"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         # TODO: change to verify proposal assignment and hierarchy
 
@@ -89,21 +88,20 @@ class ConfirmAddRoleTask(ProposalConfirm):
     #            inputs=inputs,
     #            input_state=input_state,
     #            object_id=message.related_id,
-    #            related_id=signer,
+    #            related_id=payload.signer.user_id,
     #        ):
     #            raise ValueError(
     #                "Signer {} must be an owner of the task {}".format(
-    #                    signer, message.object_id
+    #                    payload.signer.user_id, message.object_id
     #                )
     #            )
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """Create admin address"""
         addresser.role.task.create_relationship(
             object_id=object_id,
             related_id=related_id,
-            outputs=outputs,
+            outputs=payload.outputs,
             output_state=output_state,
+            created_date=payload.now,
         )

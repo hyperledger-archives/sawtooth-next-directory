@@ -217,7 +217,7 @@ def unmake_item(batch_object, signer_public_key=None):
         payload.ParseFromString(batch_object.payload)
         batch_object = payload
     if isinstance(batch_object, RBACPayload):
-        _, message, _, _, _ = unmake_payload(payload=batch_object)
+        message, _ = unmake_payload(payload=batch_object)
         return message
     raise Exception(
         "unmake doesn't handle type {}\n{}".format(type(batch_object), batch_object)

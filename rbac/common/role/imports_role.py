@@ -101,18 +101,17 @@ class ImportsRole(BaseMessage):
         in state. (TODO: temporary, add provider keys to state)"""
         return True
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates the message against state"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if addresser.role.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.role_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.role_id
         ):
             LOGGER.warning(
                 # import is replayable, we'll verify information is up-to-date instead
@@ -120,28 +119,35 @@ class ImportsRole(BaseMessage):
                 message.role_id,
             )
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """Create admin, owner and member addresses"""
+        # set membership expiration on the 1 year anniversary of the role creation date
+        expiration_date = int(
+            payload.now
+            + (12 - (payload.now - int(message.created_date)) / 2628000 % 12) * 2628000
+        )
         for admin in message.admins:
             addresser.role.admin.create_relationship(
                 object_id=object_id,
                 related_id=admin,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
             )
         for admin in message.owners:
             addresser.role.owner.create_relationship(
                 object_id=object_id,
                 related_id=admin,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
             )
         for member in message.members:
             addresser.role.member.create_relationship(
                 object_id=object_id,
                 related_id=member,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
+                expiration_date=expiration_date,
             )

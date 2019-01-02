@@ -72,19 +72,18 @@ class ProposeAddRoleMember(ProposalPropose):
 
         return inputs, outputs
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates that:
         1. the proposed user is not already an member of the role"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if addresser.role.member.exists_in_state_inputs(
-            inputs=inputs,
+            inputs=payload.inputs,
             input_state=input_state,
             object_id=message.role_id,
             related_id=message.user_id,

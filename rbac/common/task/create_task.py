@@ -94,18 +94,17 @@ class CreateTask(BaseMessage):
         if not message.owners:
             raise ValueError("New tasks must have owners.")
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates the message against state"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if addresser.task.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.task_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.task_id
         ):
             raise ValueError("Task with id {} already exists".format(message.task_id))
         users = list(set(list(message.admins) + list(message.owners)))
@@ -115,21 +114,21 @@ class CreateTask(BaseMessage):
         if not all_users_exist:
             raise ValueError("The users {} were not found".format(users_not_found))
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """Create admin and owner addresses"""
         for admin in message.admins:
             addresser.task.admin.create_relationship(
                 object_id=object_id,
                 related_id=admin,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
             )
         for admin in message.owners:
             addresser.task.owner.create_relationship(
                 object_id=object_id,
                 related_id=admin,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
             )

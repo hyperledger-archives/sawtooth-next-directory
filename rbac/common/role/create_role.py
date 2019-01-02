@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Implements the CREATE_ROLE message
-usage: rbac.role.create()"""
-
+""" Implements the CREATE_ROLE message
+    usage: rbac.role.new()
+"""
 import logging
+
 from rbac.common import addresser
 from rbac.common.addresser.address_space import AddressSpace
 from rbac.common.addresser.address_space import ObjectType
@@ -26,8 +27,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CreateRole(BaseMessage):
-    """Implements the CREATE_ROLE message
-    usage: rbac.role.create()"""
+    """ Implements the CREATE_ROLE message
+        usage: rbac.role.new()
+    """
 
     def __init__(self):
         super().__init__()
@@ -97,18 +99,17 @@ class CreateRole(BaseMessage):
         if not message.owners:
             raise ValueError("New roles must have owners.")
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates the message against state"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if addresser.role.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.role_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.role_id
         ):
             raise ValueError("Role with id {} already exists".format(message.role_id))
         users = list(set(list(message.admins) + list(message.owners)))
@@ -118,21 +119,21 @@ class CreateRole(BaseMessage):
         if not all_users_exist:
             raise ValueError("The users {} were not found".format(users_not_found))
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """Create admin and owner addresses"""
         for admin in message.admins:
             addresser.role.admin.create_relationship(
                 object_id=object_id,
                 related_id=admin,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
             )
         for admin in message.owners:
             addresser.role.owner.create_relationship(
                 object_id=object_id,
                 related_id=admin,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
             )

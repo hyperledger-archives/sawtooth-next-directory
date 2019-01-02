@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x14proposal_state.proto\"2\n\x12ProposalsContainer\x12\x1c\n\tproposals\x18\x01 \x03(\x0b\x32\t.Proposal\"\x8f\x05\n\x08Proposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12-\n\rproposal_type\x18\x02 \x01(\x0e\x32\x16.Proposal.ProposalType\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\t\x12\x0e\n\x06opener\x18\x05 \x01(\t\x12\x0e\n\x06\x63loser\x18\x06 \x01(\t\x12 \n\x06status\x18\x07 \x01(\x0e\x32\x10.Proposal.Status\x12\x13\n\x0bopen_reason\x18\x08 \x01(\t\x12\x14\n\x0c\x63lose_reason\x18\t \x01(\t\x12\x10\n\x08metadata\x18\n \x01(\t\x12\x1c\n\tapprovals\x18\x0b \x03(\x0b\x32\t.Approval\x12\x1e\n\nrejections\x18\x0c \x03(\x0b\x32\n.Rejection\"\xa9\x02\n\x0cProposalType\x12\x11\n\rADD_ROLE_TASK\x10\x00\x12\x13\n\x0f\x41\x44\x44_ROLE_MEMBER\x10\x01\x12\x12\n\x0e\x41\x44\x44_ROLE_OWNER\x10\x02\x12\x12\n\x0e\x41\x44\x44_ROLE_ADMIN\x10\x03\x12\x14\n\x10REMOVE_ROLE_TASK\x10\x04\x12\x16\n\x12REMOVE_ROLE_MEMBER\x10\x05\x12\x15\n\x11REMOVE_ROLE_OWNER\x10\x06\x12\x15\n\x11REMOVE_ROLE_ADMIN\x10\x07\x12\x12\n\x0e\x41\x44\x44_TASK_OWNER\x10\x08\x12\x12\n\x0e\x41\x44\x44_TASK_ADMIN\x10\t\x12\x15\n\x11REMOVE_TASK_OWNER\x10\n\x12\x15\n\x11REMOVE_TASK_ADMIN\x10\x0b\x12\x17\n\x13UPDATE_USER_MANAGER\x10\x0c\"/\n\x06Status\x12\x08\n\x04OPEN\x10\x00\x12\x0c\n\x08REJECTED\x10\x01\x12\r\n\tCONFIRMED\x10\x02\"/\n\x08\x41pproval\x12\x10\n\x08\x61pprover\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\t\"0\n\tRejection\x12\x10\n\x08rejector\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x14proposal_state.proto\"2\n\x12ProposalsContainer\x12\x1c\n\tproposals\x18\x01 \x03(\x0b\x32\t.Proposal\"\xba\x05\n\x08Proposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12-\n\rproposal_type\x18\x02 \x01(\x0e\x32\x16.Proposal.ProposalType\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\t\x12\x0e\n\x06opener\x18\x05 \x01(\t\x12\x0e\n\x06\x63loser\x18\x06 \x01(\t\x12 \n\x06status\x18\x07 \x01(\x0e\x32\x10.Proposal.Status\x12\x13\n\x0bopen_reason\x18\x08 \x01(\t\x12\x14\n\x0c\x63lose_reason\x18\t \x01(\t\x12\x10\n\x08metadata\x18\n \x01(\t\x12\x1c\n\tapprovals\x18\x0b \x03(\x0b\x32\t.Approval\x12\x1e\n\nrejections\x18\x0c \x03(\x0b\x32\n.Rejection\x12\x14\n\x0c\x63reated_date\x18\r \x01(\x03\x12\x13\n\x0b\x63losed_date\x18\x0e \x01(\x03\"\xa9\x02\n\x0cProposalType\x12\x11\n\rADD_ROLE_TASK\x10\x00\x12\x13\n\x0f\x41\x44\x44_ROLE_MEMBER\x10\x01\x12\x12\n\x0e\x41\x44\x44_ROLE_OWNER\x10\x02\x12\x12\n\x0e\x41\x44\x44_ROLE_ADMIN\x10\x03\x12\x14\n\x10REMOVE_ROLE_TASK\x10\x04\x12\x16\n\x12REMOVE_ROLE_MEMBER\x10\x05\x12\x15\n\x11REMOVE_ROLE_OWNER\x10\x06\x12\x15\n\x11REMOVE_ROLE_ADMIN\x10\x07\x12\x12\n\x0e\x41\x44\x44_TASK_OWNER\x10\x08\x12\x12\n\x0e\x41\x44\x44_TASK_ADMIN\x10\t\x12\x15\n\x11REMOVE_TASK_OWNER\x10\n\x12\x15\n\x11REMOVE_TASK_ADMIN\x10\x0b\x12\x17\n\x13UPDATE_USER_MANAGER\x10\x0c\"/\n\x06Status\x12\x08\n\x04OPEN\x10\x00\x12\x0c\n\x08REJECTED\x10\x01\x12\r\n\tCONFIRMED\x10\x02\"/\n\x08\x41pproval\x12\x10\n\x08\x61pprover\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\t\"0\n\tRejection\x12\x10\n\x08rejector\x18\x01 \x01(\t\x12\x11\n\ton_behalf\x18\x02 \x01(\tb\x06proto3')
 )
 
 
@@ -85,8 +85,8 @@ _PROPOSAL_PROPOSALTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=386,
-  serialized_end=683,
+  serialized_start=429,
+  serialized_end=726,
 )
 _sym_db.RegisterEnumDescriptor(_PROPOSAL_PROPOSALTYPE)
 
@@ -111,8 +111,8 @@ _PROPOSAL_STATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=685,
-  serialized_end=732,
+  serialized_start=728,
+  serialized_end=775,
 )
 _sym_db.RegisterEnumDescriptor(_PROPOSAL_STATUS)
 
@@ -239,6 +239,20 @@ _PROPOSAL = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='created_date', full_name='Proposal.created_date', index=12,
+      number=13, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='closed_date', full_name='Proposal.closed_date', index=13,
+      number=14, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -254,7 +268,7 @@ _PROPOSAL = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=77,
-  serialized_end=732,
+  serialized_end=775,
 )
 
 
@@ -291,8 +305,8 @@ _APPROVAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=734,
-  serialized_end=781,
+  serialized_start=777,
+  serialized_end=824,
 )
 
 
@@ -329,8 +343,8 @@ _REJECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=783,
-  serialized_end=831,
+  serialized_start=826,
+  serialized_end=874,
 )
 
 _PROPOSALSCONTAINER.fields_by_name['proposals'].message_type = _PROPOSAL

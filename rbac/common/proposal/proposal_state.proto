@@ -89,6 +89,10 @@ message Proposal {
     //rejections received
     repeated Rejection rejections = 12;
 
+    int64 created_date = 13;
+
+    int64 closed_date = 14;
+
 }
 
 message Approval {
