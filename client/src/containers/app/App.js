@@ -119,34 +119,61 @@ class App extends Component {
 
 
   /**
-   * Get open request and role data needed to display
-   * resource names in the navbar
+   * Get open request, role, and pack data needed to
+   * display resource names in the navbar
    */
   hydrateSidebar () {
-    const { getProposals, getRoles, me, roles, defaultUser } = this.props;
-    const Me = defaultUser? defaultUser : me;
-    // * (1) Map proposals and memberOf to ID array
-    let ids = [
-      ...Me.proposals,
-      ...Me.memberOf,
-    ].map((item) =>
+    const {
+      getPacks,
+      getProposals,
+      getRoles,
+      me,
+      packs,
+      roles,
+      defaultUser } = this.props;
+
+    const user = defaultUser ? defaultUser : me;
+
+    // Populate proposal ID array
+    const proposalIds = user.proposals.map(
+      item => item.proposal_id
+    );
+
+    // Populate role ID array
+    let roleIds = [
+      ...user.proposals,
+      ...user.memberOf,
+    ].map(item =>
       typeof item  === 'object' ?
         item.object_id :
         item);
 
-    // Find roles we don't already have loaded in
-    if (roles) {
-      ids = ids.filter(item =>
-        roles.find(role => role.id !== item));
+    // Populate pack ID array
+    let packIds = user && user.proposals.map(
+      item => {
+        const metadata = item.metadata &&
+          item.metadata.length &&
+          JSON.parse(item.metadata);
+        return metadata.pack_id;
+      }
+    ).filter(item => item);
+
+    // Find packs and roles not loaded in
+    if (roles && roles.length) {
+      roleIds = roleIds.filter(
+        item => !roles.find(role => role.id === item)
+      );
+    }
+    if (packs & packs.length) {
+      packIds = packIds.filter(
+        item => !packs.find(pack => pack.id === item)
+      );
     }
 
-
-    const bar = Me.proposals.map(item =>
-      item.proposal_id);
-
-    // Load roles not in
-    getProposals(bar);
-    getRoles(ids);
+    // Fetch roles, packs, and proposals
+    getProposals(proposalIds);
+    getPacks([...new Set(packIds)]);
+    getRoles(roleIds);
   }
 
 
