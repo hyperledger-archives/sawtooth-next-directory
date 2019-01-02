@@ -18,7 +18,7 @@ import { put } from 'redux-saga/effects';
 
 
 import FixtureAPI from 'services/FixtureApi';
-import RequesterActions from 'redux/RequesterRedux';
+import { RequesterActions } from 'state';
 import { getBase,
   fetchPack,
   fetchRole,

@@ -14,24 +14,6 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import Actions, { reducer, INITIAL_STATE } from './ChatRedux';
-
-
-test('clearMessages', () => {
-  const state = reducer(INITIAL_STATE, Actions.clearMessages(null));
-  expect(state.messages).toBe(null);
-});
-
-
-test('messageSend', () => {
-  const argument =  {payload: { message: { text: 'userid' }}};
-  const state = reducer(INITIAL_STATE, Actions.messageSend(argument));
-  expect(state.fetching).toBe(true);
-});
-
-test('messageReceive', () => {
-  const Message = JSON.stringify({ message: { length: 'userid' }});
-  const state = reducer(INITIAL_STATE, Actions.messageReceive(Message));
-  expect(state.fetching).toBe(false);
-  expect(state.messages).toBe(null);
-});
+export const ChatSelectors = {
+  messages: (state) => state.chat.messages,
+};

@@ -14,79 +14,28 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { createReducer, createActions } from 'reduxsauce';
-import Immutable from 'seamless-immutable';
+import { createReducer } from 'reduxsauce';
+import { INITIAL_STATE, ChatTypes as Types } from './ChatActions';
 import ping from 'sounds/ping.mp3';
 
 
-//
-// Actions
-//
-//
-//
-//
-const { Types, Creators } = createActions({
-  conversationRequest:    ['id'],
-  conversationSuccess:    ['conversation'],
-  conversationFailure:    ['error'],
-
-  messageSend:            ['payload'],
-  messageReceive:         ['message'],
-
-  clearMessages:          null,
-});
-
-
-export const ChatTypes = Types;
-export default Creators;
-
-//
-// State
-//
-//
-//
-//
-export const INITIAL_STATE = Immutable({
-  fetching:         null,
-  messages:         null,
-  error:            null,
-});
-
-
-//
-// Selectors
-//
-//
-//
-//
-export const ChatSelectors = {
-  messages: (state) => state.chat.messages,
-};
-
-
-//
-// Reducers
-// General
-//
-//
-//
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 };
+
+
 export const clearMessages = (state) => {
   return state.merge({ messages: null });
 };
 
 
-//
-// Reducers
-// Success
-//
-//
-//
 export const conversationSuccess = (state, { conversation }) => {
-  return state.merge({ fetching: false, messages: conversation.messages });
+  return state.merge({
+    fetching: false,
+    messages: conversation.messages,
+  });
 };
+
 
 export const messageSend = (state, { payload }) => {
   if (payload.message && payload.message.text.startsWith('/'))
@@ -98,6 +47,7 @@ export const messageSend = (state, { payload }) => {
       state.messages,
   });
 };
+
 
 export const messageReceive = (state, { message }) => {
   const parsed = JSON.parse(message);
@@ -114,13 +64,8 @@ export const messageReceive = (state, { message }) => {
   });
 };
 
-//
-// Hooks
-//
-//
-//
-//
-export const reducer = createReducer(INITIAL_STATE, {
+
+export const ChatReducer = createReducer(INITIAL_STATE, {
   [Types.CLEAR_MESSAGES]: clearMessages,
 
   // [Types.CONVERSATION_REQUEST]: request,

@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import { call, put } from 'redux-saga/effects';
-import ChatActions from 'redux/ChatRedux';
+import { ChatActions } from 'state';
 import { socket } from 'services/Socket';
 
 

@@ -14,8 +14,9 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import Actions, { reducer, INITIAL_STATE } from './ApproverRedux';
 import Immutable from 'seamless-immutable';
+import Actions, { INITIAL_STATE } from './ApproverActions';
+import { ApproverReducer as reducer } from './ApproverReducer';
 
 
 const UPDATED_STATE = Immutable({
@@ -27,14 +28,19 @@ const UPDATED_STATE = Immutable({
 
 
 test('openProposalsRequest', () => {
-  const state = reducer(INITIAL_STATE, Actions.openProposalsRequest(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.openProposalsRequest(null)
+  );
   expect(state.fetching).toBe(true);
 });
 
 
 test('openProposalsSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.openProposalsSuccess([]));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.openProposalsSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
@@ -42,48 +48,60 @@ test('openProposalsSuccess', () => {
 
 test('openProposalsFailure', () => {
   const error = '';
-  const state = reducer(INITIAL_STATE, Actions.openProposalsFailure(error));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.openProposalsFailure(error)
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');
 });
 
 
 test('confirmedProposalsSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.confirmedProposalsSuccess([]));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.confirmedProposalsSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
 
 
 test('createRoleSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.createRoleSuccess([]));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.createRoleSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
 
 
 test('createPackSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.createPackSuccess([]));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.createPackSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
 
 
 test('approveProposalsSuccess', () => {
-  const state = reducer(UPDATED_STATE, Actions.approveProposalsSuccess([]));
-
+  const state = reducer(
+    UPDATED_STATE,
+    Actions.approveProposalsSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
 
 
 test('rejectProposalsSuccess', () => {
-  const state = reducer(UPDATED_STATE, Actions.rejectProposalsSuccess([]));
-
+  const state = reducer(
+    UPDATED_STATE,
+    Actions.rejectProposalsSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });

@@ -16,10 +16,7 @@ limitations under the License.
 
 import { all, call, fork, put, spawn } from 'redux-saga/effects';
 import { showLoading, hideLoading } from 'react-redux-loading-bar';
-
-
-import RequesterActions from 'redux/RequesterRedux';
-import UserActions from 'redux/UserRedux';
+import { RequesterActions, UserActions } from 'state';
 
 
 /**

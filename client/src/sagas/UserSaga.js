@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import { all, call, fork, put } from 'redux-saga/effects';
-import UserActions from 'redux/UserRedux';
+import { UserActions } from 'state';
 
 
 /**

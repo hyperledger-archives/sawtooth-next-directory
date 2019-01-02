@@ -18,7 +18,7 @@ import { put } from 'redux-saga/effects';
 
 
 import FixtureAPI from 'services/FixtureApi';
-import ApproverActions from 'redux/ApproverRedux';
+import { ApproverActions } from 'state';
 import { getOpenProposals, getConfirmedProposals } from 'sagas/ApproverSaga';
 
 

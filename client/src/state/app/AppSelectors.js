@@ -14,21 +14,13 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { applyMiddleware, compose, createStore } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-
-
-import sagas from './sagas';
-import reducers from './state';
-
-
-export let store;
-
-
-export const create = () => {
-  const sagaMiddleware = createSagaMiddleware();
-  store = createStore(reducers, compose(applyMiddleware(sagaMiddleware)));
-
-  sagaMiddleware.run(sagas);
-  return store;
+export const AppSelectors = {
+  isAnimating:     (state) => state.app.isAnimating,
+  isRefreshing:    (state) => state.app.isRefreshing,
+  isSocketOpen:    (state) => state.app.isSocketOpen,
+  socketError:     (state) => state.app.socketError,
+  socketMaxAttemptsReached: (state) =>
+    state.app.socketMaxAttemptsReached,
+  shouldRefreshOnNextSocketReceive: (state) =>
+    state.app.shouldRefreshOnNextSocketReceive,
 };

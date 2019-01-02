@@ -16,7 +16,7 @@ limitations under the License.
 
 import { call, put } from 'redux-saga/effects';
 import { showLoading, hideLoading } from 'react-redux-loading-bar';
-import AuthActions from 'redux/AuthRedux';
+import { AuthActions } from 'state';
 
 
 /**

@@ -18,8 +18,7 @@ import { delay, eventChannel } from 'redux-saga';
 import { call, put, take } from 'redux-saga/effects';
 
 
-import AppActions from 'redux/AppRedux';
-import ChatActions from 'redux/ChatRedux';
+import { AppActions, ChatActions } from 'state';
 import Socket, {
   SOCKET_RECONNECT_TIMEOUT,
   SOCKET_NORMAL_CLOSURE_ERROR_CODE,
