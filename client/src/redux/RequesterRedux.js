@@ -195,107 +195,110 @@ export const RequesterSelectors = {
 
   // Retrieve user requests (proposals)
   requests: (state) => {
-    if (
-      !state.requester.requests ||
-      !state.user.me ||
-      !state.requester.roles
-    )
+    if (!state.requester.requests ||
+        !state.requester.roles)
       return null;
 
-    const open = [];
+    const requests = [];
     state.requester.requests
-      .filter(request => request.status !== 'CONFIRMED')
+      .filter(
+        request => request.status !== 'CONFIRMED'
+      )
       .forEach(request => {
-        const merge = { ...request, ...state.requester.roles
-          .find(role => role.id === request.object),
+        const role = {
+          ...state.requester.roles.find(
+            role => role.id === request.object
+          ),
         };
-        if (
-          state.requester.packs &&
-          merge &&
-          merge.packs &&
-          merge.packs.length > 0
-        ) {
-          open.push(state.requester.packs.find(pack =>
-            pack.id === merge.packs[0]
-          ));
+        delete role.metadata;
+        const merged = { ...request, ...role };
+
+        if (merged.metadata && merged.metadata.length) {
+          const metadata = JSON.parse(merged.metadata);
+          state.requester.packs && requests.push(
+            state.requester.packs.find(
+              pack => pack.id === metadata.pack_id
+            )
+          );
         } else {
-          open.push(merge);
+          requests.push(merged);
         }
       });
 
-    return [...new Set(open)];
+    return [...new Set(requests)];
   },
 
 
-  // Retrieve and group my packs / roles
+  // Retrieve a unique set of packs and roles a user
+  // is member of grouped like the following:
+  // [{ pack }, { role }, { pack } ...]
   mine: (state) => {
-    if (
-      !state.requester.requests ||
-      !state.user.me ||
-      !state.requester.roles
-    )
-      return null;
+    if (!state.user.me) return null;
+    const mine = [];
 
-    const confirmed = [];
-    const unconfirmed = [];
+    for (const roleId of state.user.me.memberOf) {
+      const request = state.user.me.proposals.find(
+        item => item.object_id === roleId
+      );
 
-    // Debugger;;
-
-    // Iterating over open proposals, constructing an object
-    // for each request with info about its corresponding role
-    state.requester.requests.forEach(request => {
-      const merge = { ...request, ...state.requester.roles
-        .find(role => role.id === request.object),
-      };
-      if (
-        state.requester.packs &&
-        merge &&
-        merge.packs &&
-        merge.packs.length > 0
-      ) {
-        const pack = state.requester.packs.find(pack =>
-          pack.id === merge.packs[0]
-        );
-        merge.status !== 'CONFIRMED' && unconfirmed.push(pack.id);
-        confirmed.push(pack);
-      } else {
-        merge.status === 'CONFIRMED' && confirmed.push(merge);
+      if (request) {
+        const metadata = request.metadata &&
+          request.metadata.length &&
+          JSON.parse(request.metadata);
+        if (metadata) {
+          if (state.requester.packs) {
+            const pack = state.requester.packs.find(
+              pack => pack.id === metadata.pack_id
+            );
+            pack && mine.push(pack);
+          }
+          continue;
+        }
       }
-    });
+      if (state.requester.roles) {
+        const role = state.requester.roles.find(
+          role => role.id === roleId
+        );
+        role && mine.push(role);
+      }
+    }
 
-    // Create a new array of the form [{pack}, {role}, ...],
-    // removing duplicates and unconfirmed proposals
-    const unique = [...new Set(confirmed)];
-    return unique.filter(item => !unconfirmed.includes(item.id));
+    return [...new Set(mine)];
   },
 
 
   /**
-   * Find the proposal ID(s) of a resource in the store provided
-   * the ID of the resource
+   * Find the proposal ID of a role
    * @param   {object} state      Redux state
-   * @param   {array}  entity     Redux entity
    * @param   {string} id         Object ID
-   * @param   {string} type       Entity group type (e.g., role)
-   * @returns {string|array}
+   * @returns {string}
    */
-  proposalIdFromObjectId: (state, entity, id, type) => {
-    if (!entity || !state.user.me) return null;
+  roleProposalId: (state, id) => {
+    if (!state.user.me) return null;
     let result = null;
-
-    if (type === 'pack') {
-      const pack = entity.find(pack => pack.id === id);
-      result = pack && state.user.me.proposals
-        .filter(item => pack.roles.includes(item.object_id))
-        .map(item => item.proposal_id);
-    }
-    if (type === 'role') {
-      const proposal = state.user.me.proposals
-        .find(item => item.object_id === id);
-      result = proposal && proposal.proposal_id;
-    }
+    const proposal = state.user.me.proposals
+      .find(item => item.object_id === id);
+    result = proposal && proposal.proposal_id;
 
     return result;
+  },
+
+  /**
+   * Find the proposal IDs of a pack
+   * @param   {object} state      Redux state
+   * @param   {string} id         Pack ID
+   * @returns {array}
+   */
+  packProposalIds: (state, id) => {
+    if (!state.user.me) return null;
+    return state.user.me.proposals.filter(
+      item => {
+        const metadata = item.metadata &&
+          item.metadata.length &&
+          JSON.parse(item.metadata);
+        return metadata && metadata.pack_id === id;
+      }
+    ).map(item => item.proposal_id);
   },
 };
 

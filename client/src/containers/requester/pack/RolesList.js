@@ -51,7 +51,15 @@ class RolesList extends Component {
    * component
    */
   componentDidMount () {
+    const { activePack, roles } = this.props;
     this.init();
+    if (roles) {
+      const fetchedRoles = roles.filter(
+        role => activePack.roles.indexOf(role.id) !== -1
+      );
+      if (fetchedRoles.length === activePack.roles.length)
+        this.init2();
+    }
   }
 
 
@@ -67,7 +75,8 @@ class RolesList extends Component {
     if (prevProps.roles && roles &&
         prevProps.roles.length !== roles.length) {
       const fetchedRoles = roles.filter(
-        role => activePack.roles.indexOf(role.id) !== -1);
+        role => activePack.roles.indexOf(role.id) !== -1
+      );
       if (fetchedRoles.length === activePack.roles.length)
         this.init2();
     }

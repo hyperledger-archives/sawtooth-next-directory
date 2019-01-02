@@ -13,6 +13,8 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+import json as json_encode
+
 from uuid import uuid4
 
 from sanic import Blueprint
@@ -90,6 +92,7 @@ async def add_pack_member(request, pack_id):
     pack_resource = await packs_query.fetch_pack_resource(
         request.app.config.DB_CONN, pack_id, head_block.get("num")
     )
+    request.json["metadata"] = json_encode.dumps({"pack_id": pack_id})
     for role_id in pack_resource.get("roles"):
         await roles.add_role_member(request, role_id)
     return json({"pack_id": pack_id})

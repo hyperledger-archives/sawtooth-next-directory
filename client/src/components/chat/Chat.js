@@ -331,7 +331,7 @@ class Chat extends Component {
               reject={this.manualReject}
               requestRole={this.manualRequestRole}
               requestPack={this.manualRequestPack}
-              send={this.send}/>
+              send={(message) => this.send(message)}/>
           </div>
         }
       </div>

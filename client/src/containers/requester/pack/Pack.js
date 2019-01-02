@@ -88,6 +88,9 @@ export class Pack extends Component {
     if (!this.pack) return null;
     this.proposals = proposalsFromIds(proposalIds);
 
+    const showApprovalCard = this.proposals && this.proposals.length &&
+      this.proposals.some(proposal => proposal.status !== 'CONFIRMED');
+
     return (
       <Grid id='next-requester-grid'>
         <Grid.Column
@@ -103,7 +106,7 @@ export class Pack extends Component {
             title={this.pack.name}
             {...this.props}/>
           <div id='next-requester-packs-content'>
-            { this.proposals && this.proposals.length > 0 &&
+            { showApprovalCard &&
               <div>
                 <PackApproval
                   proposals={this.proposals}
@@ -114,8 +117,7 @@ export class Pack extends Component {
               </div>
             }
             <Container
-              className={!this.proposals || this.proposals.length === 0 ?
-                'next-margin-1' : ''}
+              className={showApprovalCard ? '' : 'next-margin-1'}
               id='next-requester-packs-description-container'>
               <div id='next-requester-packs-description'>
                 <h5>
@@ -149,13 +151,10 @@ export class Pack extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
-  const { packs } = state.requester;
 
   return {
     packId: id,
-    proposalIds: RequesterSelectors.proposalIdFromObjectId(
-      state, packs, id, 'pack'
-    ),
+    proposalIds: RequesterSelectors.packProposalIds(state, id),
   };
 };
 

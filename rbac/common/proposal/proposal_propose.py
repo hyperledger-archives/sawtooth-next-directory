@@ -88,4 +88,4 @@ class ProposalPropose(ProposalMessage):
         store.related_id = self._get_related_id(message)
         store.open_reason = message.reason
         store.opener = signer.user_id
-        # store.metadata = message.metadata
+        store.metadata = message.metadata

@@ -115,6 +115,6 @@ def fetch_proposal_ids_by_opener(opener, head_block_num):
     return (
         r.table("proposals")
         .get_all(opener, index="opener")
-        .pluck("proposal_id", "object_id")
+        .pluck("proposal_id", "object_id", "metadata")
         .coerce_to("array")
     )

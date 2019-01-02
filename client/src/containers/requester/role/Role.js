@@ -122,7 +122,8 @@ export class Role extends Component {
                 {...this.props}/>
             }
             <Container
-              className={!this.proposal ? 'next-margin-1' : ''}
+              className={this.proposal && this.proposal.state === 'OPEN' ?
+                '' : 'next-margin-1'}
               id='next-requester-roles-description-container'>
               <div id='next-requester-roles-description'>
                 <h5>
@@ -161,13 +162,10 @@ export class Role extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
-  const { roles } = state.requester;
 
   return {
     roleId: id,
-    proposalId: RequesterSelectors.proposalIdFromObjectId(
-      state, roles, id, 'role'
-    ),
+    proposalId: RequesterSelectors.roleProposalId(state, id),
   };
 };
 
