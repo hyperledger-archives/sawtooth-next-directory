@@ -33,21 +33,16 @@ def test_make_with_self_manager():
     user_key = helper.user.key()
     user_id = user_key.public_key
     name = helper.user.name()
-    with pytest.raises(ValueError):
-        message = rbac.user.make(
-            user_id=user_id, name=name, metadata=None, manager_id=user_id
-        )
-
-    message = protobuf.user_transaction_pb2.CreateUser(
-        user_id=user_id, name=name, metadata=None, manager_id=user_id
-    )
-    with pytest.raises(ValueError):
-        rbac.user.make_payload(
-            message=message, signer_user_id=user_id, signer_keypair=user_key
-        )
 
     with pytest.raises(ValueError):
-        rbac.user.new(signer_user_id=user_id, signer_keypair=user_key, message=message)
+        rbac.user.new(
+            signer_user_id=user_id,
+            signer_keypair=user_key,
+            user_id=user_id,
+            name=name,
+            metadata=None,
+            manager_id=user_id,
+        )
 
 
 @pytest.mark.user

@@ -77,16 +77,15 @@ class RejectAddRoleMember(ProposalReject):
 
         return inputs, outputs
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates that:
         1. the signer is an owner of the role"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         # TODO: change to verify proposal assignment and hierarchy
 
@@ -95,10 +94,10 @@ class RejectAddRoleMember(ProposalReject):
 #            inputs=inputs,
 #            input_state=input_state,
 #            object_id=message.object_id,
-#            related_id=signer,
+#            related_id=payload.signer.user_id,
 #        ):
 #            raise ValueError(
 #                "Signer {} must be an owner of the role {}".format(
-#                    signer, message.object_id
+#                    payload.signer.user_id, message.object_id
 #                )
 #            )

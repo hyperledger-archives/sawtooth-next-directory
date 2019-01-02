@@ -97,4 +97,6 @@ message RBACPayload {
 
     Signer signer = 5;
 
+    int64 now = 6;
+
 }

@@ -65,44 +65,41 @@ class ConfirmUpdateUserManager(ProposalConfirm):
 
         return inputs, outputs
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates that:
         1. the proposed manager is a User that exists in state
         2. The proposed manager is the signer of the transaction"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if message.related_id and not addresser.user.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.related_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.related_id
         ):
             raise ValueError(
                 "Manager with id {} does not exist in state".format(message.related_id)
             )
         user = addresser.user.get_from_input_state(
-            inputs=inputs, input_state=input_state, object_id=message.object_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.object_id
         )
         # TODO: change to verify proposal assignment and hierarchy
 
-    #        if message.related_id != signer:
+    #        if message.related_id != payload.signer.user_id:
     #            raise ValueError(
     #                "Proposed manager {} is not the transaction signer".format(
     #                    message.related_id
     #                )
     #            )
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """Stores additional data"""
         addresser.user.set_output_state_attribute(
             name="manager_id",
             value=message.related_id,
-            outputs=outputs,
+            outputs=payload.outputs,
             output_state=output_state,
             object_id=message.object_id,
             related_id=None,

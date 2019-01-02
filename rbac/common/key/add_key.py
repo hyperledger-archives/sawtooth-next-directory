@@ -87,32 +87,30 @@ class AddKey(BaseMessage):
         """
         return True
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """ Validates the message against state
         """
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if not addresser.user.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.user_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.user_id
         ):
             raise ValueError(
                 "User with id {} does not exists in state".format(message.user_id)
             )
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """ Stores additional data and relationships
         """
         addresser.user.key.create_relationship(
             object_id=message.user_id,
             related_id=message.key_id,
-            outputs=outputs,
+            outputs=payload.outputs,
             output_state=output_state,
+            created_date=payload.now,
         )

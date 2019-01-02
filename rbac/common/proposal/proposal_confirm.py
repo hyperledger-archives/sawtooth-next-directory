@@ -30,10 +30,11 @@ class ProposalConfirm(ProposalAction):
         return addresser.MessageActionType.CONFIRM
 
     def store_message(
-        self, object_id, related_id, store, message, outputs, output_state, signer
+        self, object_id, related_id, store, message, payload, output_state
     ):
         """Update the proposal data"""
         # pylint: disable=no-member
         store.status = protobuf.proposal_state_pb2.Proposal.CONFIRMED
         store.close_reason = message.reason
-        store.closer = signer.user_id
+        store.closer = payload.signer.user_id
+        store.closed_date = payload.now

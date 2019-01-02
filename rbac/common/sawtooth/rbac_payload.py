@@ -17,7 +17,7 @@ sent to the RBAC Sawtooth validator / transaction processor
 """
 
 # pylint: disable=no-member
-
+import time
 import logging
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
@@ -25,6 +25,52 @@ from rbac.common.protobuf.rbac_payload_pb2 import Signer
 
 LOGGER = logging.getLogger(__name__)
 MESSAGE_NAMES = RBACPayload.MessageType.DESCRIPTOR.values_by_name.items()
+
+
+class MessagePayload:
+    """ The decoded message payload wrapper information
+    """
+
+    def __init__(self, message_type, inputs, outputs, signer, now):
+        self._message_type = message_type
+        self._message_type_name = get_message_type_name(message_type)
+        self._inputs = inputs
+        self._outputs = outputs
+        self._signer = signer
+        self._now = now
+
+    @property
+    def message_type(self):
+        """ The type of the message (enum from the payload protobuf) """
+        return self._message_type
+
+    @property
+    def message_type_name(self):
+        """ The text name of the message type """
+        return self._message_type_name
+
+    @property
+    def inputs(self):
+        """ The input addresses sent with the message """
+        return self._inputs
+
+    @property
+    def outputs(self):
+        """ The output addresses sent with the message """
+        return self._outputs
+
+    @property
+    def signer(self):
+        """ The signer of the message (user_id, public_key) """
+        return self._signer
+
+    @property
+    def now(self):
+        """ The time the message was created, approximately now
+            This is passed to message methods can access the current time,
+            which is otherwise can't be safely accessed (not deterministic)
+        """
+        return self._now
 
 
 def get_message_type_name(message_type):
@@ -51,6 +97,7 @@ def make_payload(message, message_type, inputs, outputs, signer):
         inputs=inputs,
         outputs=outputs,
         signer=signer,
+        now=int(time.time()),
     )
 
 
@@ -94,13 +141,16 @@ def unmake_payload(payload):
     if not isinstance(payload.content, bytes):
         raise Exception("Expected RBACPayload, no content found")
 
-    inputs = list(payload.inputs)
-    outputs = list(payload.outputs)
-
     message_type = payload.message_type
     message = get_proto(message_type)
     message.ParseFromString(payload.content)
 
-    signer = payload.signer
+    message_payload = MessagePayload(
+        message_type=message_type,
+        inputs=set(list(payload.inputs)),
+        outputs=set(list(payload.outputs)),
+        signer=payload.signer,
+        now=payload.now,
+    )
 
-    return message_type, message, inputs, outputs, signer
+    return message, message_payload

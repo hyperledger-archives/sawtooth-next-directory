@@ -48,6 +48,7 @@ message CreateUser {
 
     string key = 7;
 
+    int64 created_date = 8;
 }
 
 message ImportsUser {
@@ -67,6 +68,8 @@ message ImportsUser {
     string remote_id = 7;
 
     string key = 8;
+
+    int64 created_date = 9;
 
 }
 

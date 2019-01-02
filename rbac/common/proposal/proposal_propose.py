@@ -29,7 +29,7 @@ class ProposalPropose(ProposalMessage):
         """The action type performed by this message"""
         return addresser.MessageActionType.PROPOSE
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates that:
         1. the proposal is signed by the user or their manager
         2. there is no open proposal for the same relationship
@@ -37,26 +37,25 @@ class ProposalPropose(ProposalMessage):
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         object_id = self._get_object_id(message)
         related_id = self._get_related_id(message)
         # TODO: change signer verification method
-        # if hasattr(message, "user_id") and getattr(message, "user_id") != signer:
+        # if hasattr(message, "user_id") and getattr(message, "user_id") != payload.signer.user_id:
         #    user = addresser.user.get_from_input_state(
-        #        inputs=inputs, input_state=input_state, object_id=message.user_id
+        #        inputs=payload.inputs, input_state=input_state, object_id=message.user_id
         #    )
-        #    if user.manager_id != signer:
+        #    if user.manager_id != payload.signer.user_id:
         #        raise ValueError(
         #            "{}: the user or their manager must be the proposal signer, got {}\n{}".format(
         #                self.message_type_name, signer, user
         #            )
         #        )
         last_proposal = addresser.proposal.get_from_input_state(
-            inputs=inputs,
+            inputs=payload.inputs,
             input_state=input_state,
             object_id=object_id,
             related_id=related_id,
@@ -77,7 +76,7 @@ class ProposalPropose(ProposalMessage):
             )
 
     def store_message(
-        self, object_id, related_id, store, message, outputs, output_state, signer
+        self, object_id, related_id, store, message, payload, output_state
     ):
         """Create the proposal data"""
         store.proposal_id = message.proposal_id
@@ -87,5 +86,6 @@ class ProposalPropose(ProposalMessage):
         store.object_id = self._get_object_id(message)
         store.related_id = self._get_related_id(message)
         store.open_reason = message.reason
-        store.opener = signer.user_id
+        store.opener = payload.signer.user_id
+        store.created_date = payload.now
         store.metadata = message.metadata

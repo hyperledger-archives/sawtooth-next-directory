@@ -53,17 +53,18 @@ class BatchAssertions(AddressAssertions):
 
     def assertEqualPayload(self, payload1, payload2):
         """Check that two payloads are the equivalent"""
-        message_type1, message1, inputs1, outputs1, signer_user_id1 = unmake_payload(
-            payload1
-        )
-        message_type2, message2, inputs2, outputs2, signer_user_id2 = unmake_payload(
-            payload2
-        )
-        self.assertEqual(message_type1, message_type2)
-        self.assertEqual(inputs1, inputs2)
-        self.assertEqual(outputs1, outputs2)
+        message1, message_payload1 = unmake_payload(payload1)
+        message2, message_payload2 = unmake_payload(payload2)
+        self.assertEqual(message_payload1.message_type, message_payload2.message_type)
+        self.assertEqual(message_payload1.inputs, message_payload2.inputs)
+        self.assertEqual(message_payload1.outputs, message_payload2.outputs)
         self.assertEqualMessage(message1, message2)
-        self.assertEqual(signer_user_id1, signer_user_id2)
+        self.assertEqual(
+            message_payload1.signer.user_id, message_payload2.signer.user_id
+        )
+        self.assertEqual(
+            message_payload1.signer.public_key, message_payload2.signer.public_key
+        )
 
     # override this for in each *_manager_test for appropriate message_type inputs/outputs
     def assertValidPayload(self, payload, message, message_type):
@@ -156,9 +157,11 @@ class BatchAssertions(AddressAssertions):
             signer_public_key=signer_public_key,
         )
         self.assertEqualPayload(payload1=transaction.payload, payload2=payload)
-        message_type, message, _, _, _ = unmake_payload(payload)
+        message, message_payload = unmake_payload(payload)
         self.assertValidPayload(
-            payload=transaction.payload, message=message, message_type=message_type
+            payload=transaction.payload,
+            message=message,
+            message_type=message_payload.message_type,
         )
 
     def assertValidBatch(self, batch, payload, signer_public_key, batcher_public_key):

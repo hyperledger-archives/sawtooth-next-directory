@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Implements the CREATE_USER message
-usage: rbac.user.create()"""
+""" Implements the CREATE_USER message
+    usage: rbac.user.new()
+"""
 import logging
 
 from rbac.common import addresser
@@ -23,8 +24,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CreateUser(BaseMessage):
-    """Implements the CREATE_USER message
-    usage: rbac.user.create()"""
+    """ Implements the CREATE_USER message
+        usage: rbac.user.new()
+    """
 
     def __init__(self):
         super().__init__()
@@ -93,43 +95,41 @@ class CreateUser(BaseMessage):
             if message.user_id == message.manager_id:
                 raise ValueError("User cannot be their own manager")
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates the message against state"""
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if addresser.user.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.user_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.user_id
         ):
             raise ValueError(
                 "User with id {} already exists in state".format(message.user_id)
             )
         if message.manager_id and not addresser.user.exists_in_state_inputs(
-            inputs=inputs, input_state=input_state, object_id=message.manager_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.manager_id
         ):
             raise ValueError(
                 "Manager with id {} does not exist in state".format(message.manager_id)
             )
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """Stores data beyond the user record"""
         if message.key:
             addresser.key.store(
                 object_id=message.key,
                 message=message,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
             )
             addresser.user.key.create_relationship(
                 object_id=object_id,
                 related_id=message.key,
-                outputs=outputs,
+                outputs=payload.outputs,
                 output_state=output_state,
+                created_date=payload.now,
             )

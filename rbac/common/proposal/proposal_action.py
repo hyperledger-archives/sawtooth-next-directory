@@ -28,7 +28,7 @@ class ProposalAction(ProposalMessage):
     def message_proto(self):
         return proposal_transaction_pb2.UpdateProposal
 
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Validates that:
         1. the proposal id sent is the current proposal
         2. the proposed is open
@@ -36,10 +36,9 @@ class ProposalAction(ProposalMessage):
         super().validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         if not store:
             raise ValueError(

@@ -16,6 +16,7 @@
 """Base class for all message classes, abstracting out
 common functionality and facilitating differences via
 property and method overrides"""
+import time
 import logging
 from rbac.common import addresser
 from rbac.common import protobuf
@@ -27,6 +28,7 @@ from rbac.common.sawtooth import state_client
 from rbac.common.base import base_processor as processor
 from rbac.common.base.base_address import AddressBase
 from rbac.common.protobuf.rbac_payload_pb2 import Signer
+from rbac.common.sawtooth.rbac_payload import MessagePayload
 
 LOGGER = logging.getLogger(__name__)
 
@@ -255,7 +257,8 @@ class BaseMessage(AddressBase):
         if hasattr(message, self._name_id) and getattr(message, self._name_id) == "":
             # sets the unique identifier field of the message to a unique_id if no identifier is provided
             setattr(message, self._name_id, self.unique_id())
-        self.validate(message=message)
+        if hasattr(message, "created_date") and not message.created_date > 0:
+            message.created_date = int(time.time())
         return message
 
     # pylint: disable=unused-argument
@@ -278,20 +281,20 @@ class BaseMessage(AddressBase):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
     # pylint: disable=unused-argument
-    def validate_state(self, context, message, inputs, input_state, store, signer):
+    def validate_state(self, context, message, payload, input_state, store):
         """Common state validation for all messages"""
-        if signer.public_key is None:
+        if payload.signer.public_key is None:
             raise ValueError("Signer public key is required")
-        if signer.user_id is None:
+        if payload.signer.user_id is None:
             raise ValueError("Signer user id is required")
         if message is None:
             raise ValueError("Message is required")
-        if not isinstance(inputs, list) and not isinstance(inputs, set):
+        if not isinstance(payload.inputs, (list, set)):
             raise ValueError("Inputs is required and expected to be a list or a set")
         if not isinstance(input_state, dict):
             raise ValueError("Input state was expected to be a dictionary")
-        if not isinstance(signer.public_key, str) and PUBLIC_KEY_PATTERN.match(
-            signer.public_key
+        if not isinstance(payload.signer.public_key, str) and PUBLIC_KEY_PATTERN.match(
+            payload.signer.public_key
         ):
             raise TypeError("Expected signer public key to be a public key")
         if context is None:
@@ -363,13 +366,7 @@ class BaseMessage(AddressBase):
         message = kwargs.get("message")
         if not message:
             message = self.make(**kwargs)
-        else:
-            self.validate(
-                message=message,
-                signer=Signer(
-                    user_id=signer_user_id, public_key=signer_keypair.public_key
-                ),
-            )
+
         payload = self.make_payload(
             message=message,
             signer_keypair=signer_keypair,
@@ -388,13 +385,7 @@ class BaseMessage(AddressBase):
         message = kwargs.get("message")
         if not message:
             message = self.make(**kwargs)
-        else:
-            self.validate(
-                message=message,
-                signer=Signer(
-                    user_id=signer_user_id, public_key=signer_keypair.public_key
-                ),
-            )
+
         payload = self.make_payload(
             message=message,
             signer_user_id=signer_user_id,
@@ -410,27 +401,24 @@ class BaseMessage(AddressBase):
 
     def unmake_payload(self, payload):
         """Unmake the payload for the given message type"""
-        message_type = self.message_type
         # pylint: disable=not-callable
         message = self.message_proto()
         message.ParseFromString(payload.content)
-        inputs = set(list(payload.inputs))
-        outputs = set(list(payload.outputs))
-        signer = payload.signer
-        return message, message_type, inputs, outputs, signer
+        message_payload = MessagePayload(
+            message_type=self.message_type,
+            inputs=set(list(payload.inputs)),
+            outputs=set(list(payload.outputs)),
+            signer=payload.signer,
+            now=payload.now,
+        )
+        return message, message_payload
 
     def new(self, signer_keypair, signer_user_id, **kwargs):
         """Creates and send a message to the blockchain"""
         message = kwargs.get("message")
         if not message:
             message = self.make(**kwargs)
-        else:
-            self.validate(
-                message=message,
-                signer=Signer(
-                    user_id=signer_user_id, public_key=signer_keypair.public_key
-                ),
-            )
+
         return self.send(
             signer_keypair=signer_keypair,
             payload=self.make_payload(
@@ -528,7 +516,7 @@ class BaseMessage(AddressBase):
         return store
 
     def _update_store(
-        self, object_id, related_id, message, store, outputs, output_state, signer
+        self, object_id, related_id, message, payload, store, output_state
     ):
         """Update the output state entries for the given address using
         the data the given message"""
@@ -538,15 +526,14 @@ class BaseMessage(AddressBase):
             related_id=related_id,
             store=store,
             message=message,
-            outputs=outputs,
+            payload=payload,
             output_state=output_state,
-            signer=signer,
         )
         output_state["changed"].add(address)
 
     # pylint: disable=unused-argument
     def store_message(
-        self, object_id, related_id, store, message, outputs, output_state, signer
+        self, object_id, related_id, store, message, payload, output_state
     ):
         """Copies a message to the state object, excluding properties
         listed in message_fields_not_in_state property. This provides
@@ -575,9 +562,7 @@ class BaseMessage(AddressBase):
             entries[address] = output_state[address].SerializeToString()
         state_client.set_state(context=context, entries=entries)
 
-    def apply_update(
-        self, message, object_id, related_id, outputs, output_state, signer
-    ):
+    def apply_update(self, message, payload, object_id, related_id, output_state):
         """Apply additional state changes (if any)
         Message implementation will override this method if there
         is data to be stored in any other address"""
@@ -590,21 +575,21 @@ class BaseMessage(AddressBase):
         signer of the message (e.g. CREATE_USER)"""
         return False
 
-    def authenticate_state(self, message, inputs, input_state, signer):
+    def authenticate_state(self, message, payload, input_state):
         """Check to see if the signer of the transaction is
         eligible to perform the action"""
-        # signer_address = addresser.user.address(object_id=signer)
-        # key_address = addresser.key.address(object_id=signer)
-        # if signer_address not in inputs:
+        # signer_address = addresser.user.address(object_id=payload.signer.user_id)
+        # key_address = addresser.key.address(object_id=payload.signer.public_key)
+        # if key_address not in payload.inputs:
         #    raise ValueError(
-        #        "{}: address {} for signer's public key {} was not sent as an input address".format(
-        #            self._name_title, signer_address, signer
+        #        "{}: key address {} for signer's public key {} was not sent as an input address".format(
+        #            self._name_title, key_address, signer.public_key
         #        )
         #    )
-        # if not self.allow_signer_not_in_state and signer_address not in input_state:
+        # if not self.allow_signer_not_in_state and key_address not in input_state:
         #    raise ValueError(
-        #        "{}: address {} for signer's public key {} was not found in state".format(
-        #            self._name_title, signer_address, signer
+        #        "{}: key address {} for signer's public key {} was not found in state".format(
+        #            self._name_title, key_address, signer.public_key
         #        )
         #    )
         pass
@@ -612,52 +597,54 @@ class BaseMessage(AddressBase):
     def apply(self, header, payload, context):
         """Handles a message in the transaction processor"""
         # pylint: disable=not-callable
-        message, _, inputs, outputs, signer = self.unmake_payload(payload=payload)
-        if signer.public_key != header.signer_public_key:
+        message, payload = self.unmake_payload(payload=payload)
+
+        if payload.signer.public_key != header.signer_public_key:
             raise ValueError(
                 "Signer public key {} does not match claimed public key {}".format(
-                    header.signer_public_key, signer.public_key
+                    header.signer_public_key, payload.signer.public_key
                 )
             )
         object_id = self._get_object_id(item=message)
         related_id = self._get_related_id(item=message)
 
-        self.validate(message=message, signer=signer)
-        input_state = self.get_addresses(context=context, addresses=inputs)
-        output_state = self._make_output_state(input_state=input_state, outputs=outputs)
+        self.validate(message=message, signer=payload.signer)
+        input_state = self.get_addresses(context=context, addresses=payload.inputs)
+        output_state = self._make_output_state(
+            input_state=input_state, outputs=payload.outputs
+        )
 
         self.authenticate_state(
-            message=message, inputs=inputs, input_state=input_state, signer=signer
+            message=message, payload=payload, input_state=input_state
         )
         store = self._get_store(
             object_id=object_id,
             related_id=related_id,
-            outputs=outputs,
+            outputs=payload.outputs,
             output_state=output_state,
         )
         self.validate_state(
             context=context,
             message=message,
-            inputs=inputs,
+            payload=payload,
             input_state=input_state,
             store=store,
-            signer=signer,
         )
         self._update_store(
             object_id=object_id,
             related_id=related_id,
             message=message,
+            payload=payload,
             store=store,
-            outputs=outputs,
             output_state=output_state,
-            signer=signer,
         )
         self.apply_update(
             message=message,
+            payload=payload,
             object_id=object_id,
             related_id=related_id,
-            outputs=outputs,
             output_state=output_state,
-            signer=signer,
         )
-        self.save_state(context=context, outputs=outputs, output_state=output_state)
+        self.save_state(
+            context=context, outputs=payload.outputs, output_state=output_state
+        )

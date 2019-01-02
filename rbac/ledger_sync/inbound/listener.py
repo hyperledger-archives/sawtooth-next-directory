@@ -77,7 +77,7 @@ def process(rec, database):
                 database.get_table("inbound_queue").get(rec["id"]).delete()
             )
         else:
-            rec["error"] = status[0]["invalid_transactions"][0]["message"]
+            rec["error"] = get_status_error(status)
             database.run_query(database.get_table("inbound_queue_errors").insert(rec))
             database.run_query(
                 database.get_table("inbound_queue").get(rec["id"]).delete()
@@ -87,6 +87,16 @@ def process(rec, database):
             "%s exception processing inbound record:\n%s", type(err).__name__, rec
         )
         LOGGER.exception(err)
+
+
+def get_status_error(status):
+    """ Try to get the error from a transaction status
+    """
+    try:
+        LOGGER.warning("Error status %s", status)
+        return status[0]["invalid_transactions"][0]["message"]
+    except Exception:  # pylint: disable=broad-except
+        return "Unhandled error {}".format(status)
 
 
 def listener():
