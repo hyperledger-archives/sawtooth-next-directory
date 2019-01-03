@@ -18,7 +18,7 @@ import { call, put } from 'redux-saga/effects';
 
 
 import FixtureAPI from 'services/FixtureApi';
-import ChatActions from 'redux/ChatRedux';
+import { ChatActions } from 'state';
 import { getConversation } from 'sagas/ChatSaga';
 
 

@@ -23,7 +23,7 @@ import PropTypes from 'prop-types';
 
 import './Login.css';
 import logo from 'images/next-logo-billboard.png';
-import AuthActions, { AuthSelectors } from 'redux/AuthRedux';
+import { AuthActions, AuthSelectors } from 'state';
 import LoginForm from 'components/forms/LoginForm';
 
 

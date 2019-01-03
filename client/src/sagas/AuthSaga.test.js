@@ -18,7 +18,7 @@ import { call, put } from 'redux-saga/effects';
 
 
 import FixtureAPI from 'services/FixtureApi';
-import AuthActions from 'redux/AuthRedux';
+import { AuthActions } from 'state';
 import { login, signup, logout } from 'sagas/AuthSaga';
 
 

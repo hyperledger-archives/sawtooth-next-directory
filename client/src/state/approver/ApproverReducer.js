@@ -14,120 +14,11 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { createReducer, createActions } from 'reduxsauce';
-import Immutable from 'seamless-immutable';
+import { createReducer } from 'reduxsauce';
+import { INITIAL_STATE, ApproverTypes as Types } from './ApproverActions';
 import * as utils from 'services/Utils';
 
 
-//
-// Actions
-//
-//
-//
-//
-const { Types, Creators } = createActions({
-  openProposalsRequest:       ['id'],
-  openProposalsSuccess:       ['openProposals'],
-  openProposalsFailure:       ['error'],
-
-  confirmedProposalsRequest:  null,
-  confirmedProposalsSuccess:  ['confirmedProposals'],
-  confirmedProposalsFailure:  ['error'],
-
-  createRoleRequest:          ['payload'],
-  createRoleSuccess:          ['role'],
-  createRoleFailure:          ['error'],
-
-  createPackRequest:          ['payload'],
-  createPackSuccess:          ['pack'],
-  createPackFailure:          ['error'],
-
-  approveProposalsRequest:    ['ids'],
-  approveProposalsSuccess:    ['closedProposal'],
-  approveProposalsFailure:    ['error'],
-
-  rejectProposalsRequest:     ['ids'],
-  rejectProposalsSuccess:     ['closedProposal'],
-  rejectProposalsFailure:     ['error'],
-
-  organizationRequest:        ['id'],
-  organizationSuccess:        ['organization'],
-  organizationFailure:        ['error'],
-
-  resetAll:                   null,
-  onBehalfOfSet:              ['id'],
-});
-
-
-export const ApproverTypes = Types;
-export default Creators;
-
-//
-// State
-//
-//
-//
-//
-export const INITIAL_STATE = Immutable({
-  confirmedProposals:   null,
-  createdPacks:         null,
-  createdRoles:         null,
-  error:                null,
-  fetching:             null,
-  openProposals:        null,
-  organization:         null,
-  onBehalfOf:           null,
-});
-
-//
-// Selectors
-//
-//
-//
-//
-export const ApproverSelectors = {
-  confirmedProposals:    (state) => state.approver.confirmedProposals,
-  openProposals:         (state) => state.approver.openProposals,
-  openProposalsByUser:   (state) =>
-    utils.groupBy(state.approver.openProposals, 'opener'),
-  openProposalsByRole:   (state) =>
-    utils.groupBy(state.approver.openProposals, 'object'),
-  openProposalsCount:    (state) => {
-    return (
-      state.user.me &&
-      state.approver.openProposals &&
-      state.approver.openProposals
-        .filter(proposal => proposal.approvers.includes(state.user.me.id))
-        .length
-    ) || null;
-  },
-  openProposalFromId:    (state, id) =>
-    state.approver.openProposals &&
-    state.approver.openProposals.find(proposal => proposal.id === id),
-  organization:          (state) => state.approver.organization,
-  onBehalfOf:            (state) => state.approver.onBehalfOf,
-  ownedPacks:            (state) => {
-    if (!state.user.me) return null;
-    return utils.merge(
-      (state.approver.createdPacks || []).map(pack => pack.id),
-      state.user.me.ownerOf.packs,
-    );
-  },
-  ownedRoles:            (state) => {
-    if (!state.user.me) return null;
-    return utils.merge(
-      (state.approver.createdRoles || []).map(role => role.id),
-      state.user.me.ownerOf.roles,
-    );
-  },
-};
-
-//
-// Reducers
-// General
-//
-//
-//
 export const request = (state) => {
   return state.merge({ fetching: true });
 };
@@ -138,12 +29,7 @@ export const resetAll = () => {
   return INITIAL_STATE;
 };
 
-//
-// Reducers
-// Success
-//
-//
-//
+
 export const success = {
 
   // Proposals
@@ -172,6 +58,7 @@ export const success = {
       ),
     }),
 
+
   // Create
   createRole: (state, { role }) =>
     state.merge({
@@ -188,6 +75,7 @@ export const success = {
       ),
     }),
 
+
   // People
   organization: (state, { organization }) =>
     state.merge({
@@ -198,13 +86,8 @@ export const success = {
     state.merge({ onBehalfOf: id }),
 };
 
-//
-// Hooks
-//
-//
-//
-//
-export const reducer = createReducer(INITIAL_STATE, {
+
+export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]: resetAll,
 
   // Proposals

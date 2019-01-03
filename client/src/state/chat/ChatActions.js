@@ -14,21 +14,28 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { applyMiddleware, compose, createStore } from 'redux';
-import createSagaMiddleware from 'redux-saga';
+import { createActions } from 'reduxsauce';
+import Immutable from 'seamless-immutable';
 
 
-import sagas from './sagas';
-import reducers from './state';
+const { Types, Creators } = createActions({
+  conversationRequest:    ['id'],
+  conversationSuccess:    ['conversation'],
+  conversationFailure:    ['error'],
+
+  messageSend:            ['payload'],
+  messageReceive:         ['message'],
+
+  clearMessages:          null,
+});
 
 
-export let store;
+export const ChatTypes = Types;
+export default Creators;
 
 
-export const create = () => {
-  const sagaMiddleware = createSagaMiddleware();
-  store = createStore(reducers, compose(applyMiddleware(sagaMiddleware)));
-
-  sagaMiddleware.run(sagas);
-  return store;
-};
+export const INITIAL_STATE = Immutable({
+  fetching:              null,
+  messages:              null,
+  error:                 null,
+});

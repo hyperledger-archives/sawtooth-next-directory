@@ -14,55 +14,93 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import Actions, { reducer, INITIAL_STATE } from './AppRedux';
+import Actions, { INITIAL_STATE } from './AppActions';
+import { AppReducer as reducer } from './AppReducer';
 
 
 test('animationBegin', () => {
-  const state = reducer(INITIAL_STATE, Actions.animationBegin(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.animationBegin(null)
+  );
   expect(state.isAnimating).toBe(true);
 });
 
+
 test('animationEnd', () => {
-  const state = reducer(INITIAL_STATE, Actions.animationEnd(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.animationEnd(null)
+  );
   expect(state.isAnimating).toBe(false);
 });
 
+
 test('socketOpenSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.socketOpenSuccess(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.socketOpenSuccess(null)
+  );
   expect(state.isSocketOpen).toBe(true);
 });
 
+
 test('socketCloseSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.socketCloseSuccess(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.socketCloseSuccess(null)
+  );
   expect(state.isSocketOpen).toBe(false);
 });
 
+
 test('refreshBegin', () => {
-  const state = reducer(INITIAL_STATE, Actions.refreshBegin(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.refreshBegin(null)
+  );
   expect(state.isRefreshing).toBe(true);
 });
 
+
 test('refreshEnd', () => {
-  const state = reducer(INITIAL_STATE, Actions.refreshEnd(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.refreshEnd(null)
+  );
   expect(state.isRefreshing).toBe(false);
 });
 
+
 test('socketError', () => {
-  const state = reducer(INITIAL_STATE, Actions.socketError(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.socketError(null)
+  );
   expect(state.error).toBeNull();
 });
 
+
 test('socketOpen', () => {
-  const state = reducer(INITIAL_STATE, Actions.socketOpen(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.socketOpen(null)
+  );
 });
 
+
 test('socketClose', () => {
-  const state = reducer(INITIAL_STATE, Actions.socketClose(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.socketClose(null)
+  );
 });
+
 
 test('refreshOnNextSocketReceive', () => {
   const flag = '';
-  const state = reducer(INITIAL_STATE,
-    Actions.refreshOnNextSocketReceive(flag));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.refreshOnNextSocketReceive(flag)
+  );
 });

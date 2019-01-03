@@ -16,7 +16,7 @@ limitations under the License.
 
 import { all, call, fork, put } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
-import ApproverActions from 'redux/ApproverRedux';
+import { ApproverActions } from 'state';
 
 
 /**

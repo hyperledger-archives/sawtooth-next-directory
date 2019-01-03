@@ -14,29 +14,32 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import Actions, { reducer, INITIAL_STATE } from './UserRedux';
+import Actions, { INITIAL_STATE } from './ChatActions';
+import { ChatReducer as reducer } from './ChatReducer';
 
 
-test('meFailure', () => {
-  const error = '';
-  const state = reducer(INITIAL_STATE, Actions.userFailure(error));
+test('clearMessages', () => {
+  const state = reducer(INITIAL_STATE, Actions.clearMessages(null));
+  expect(state.messages).toBe(null);
+});
+
+
+test('messageSend', () => {
+  const argument =  {payload: { message: { text: 'userid' }}};
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.messageSend(argument)
+  );
+  expect(state.fetching).toBe(true);
+});
+
+
+test('messageReceive', () => {
+  const Message = JSON.stringify({ message: { length: 'userid' }});
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.messageReceive(Message)
+  );
   expect(state.fetching).toBe(false);
-  expect(state.error).toBe('');
+  expect(state.messages).toBe(null);
 });
-
-test('resetAll', () => {
-  const state = reducer(INITIAL_STATE, Actions.resetAll(null));
-});
-
-test('meSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.meSuccess([]));
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBeNull();
-});
-
-test('userSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.userSuccess([]));
-  expect(state.fetching).toBe(false);
-  expect(state.error).toBeNull();
-});
-

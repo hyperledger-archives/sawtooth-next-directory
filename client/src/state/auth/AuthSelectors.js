@@ -14,21 +14,14 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { applyMiddleware, compose, createStore } from 'redux';
-import createSagaMiddleware from 'redux-saga';
+import * as storage from 'services/Storage';
 
 
-import sagas from './sagas';
-import reducers from './state';
-
-
-export let store;
-
-
-export const create = () => {
-  const sagaMiddleware = createSagaMiddleware();
-  store = createStore(reducers, compose(applyMiddleware(sagaMiddleware)));
-
-  sagaMiddleware.run(sagas);
-  return store;
+export const AuthSelectors = {
+  isAuthenticated: (state) => {
+    return !!storage.getToken() || state.auth.isAuthenticated;
+  },
+  user: (state) => {
+    return state.auth.user || { id: storage.getUserId() };
+  },
 };

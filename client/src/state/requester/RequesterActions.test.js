@@ -14,47 +14,75 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import Actions, { reducer, INITIAL_STATE } from './RequesterRedux';
+import Actions, { INITIAL_STATE } from './RequesterActions';
+import { RequesterReducer as reducer } from './RequesterReducer';
 
 
 test('roleSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.roleSuccess([]));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.roleSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
+
+
 test('packSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.packSuccess([]));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.packSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
+
+
 test('packFailure', () => {
   const error = '';
-  const state = reducer(INITIAL_STATE, Actions.packFailure(error));
-
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.packFailure(error)
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');
 });
-test('proposalSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.proposalSuccess([]));
 
+
+test('proposalSuccess', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.proposalSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
-test('allrolesSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.allRolesSuccess([]));
 
+
+test('allrolesSuccess', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.allRolesSuccess([])
+  );
   expect(state.fetchingAllRoles).toBe(false);
   expect(state.error).toBeNull();
 });
-test('accessSuccess', () => {
-  const state = reducer(INITIAL_STATE, Actions.packAccessSuccess([]));
 
+
+test('accessSuccess', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.packAccessSuccess([])
+  );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
 
+
 test('resetAll', () => {
-  const state = reducer(INITIAL_STATE, Actions.resetAll(null));
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.resetAll(null)
+  );
 });
+

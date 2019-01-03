@@ -18,7 +18,7 @@ import { call, put } from 'redux-saga/effects';
 
 
 import FixtureAPI from 'services/FixtureApi';
-import UserActions from 'redux/UserRedux';
+import { UserActions } from 'state';
 import { me, getUser, getAllUsers } from 'sagas/UserSaga';
 
 

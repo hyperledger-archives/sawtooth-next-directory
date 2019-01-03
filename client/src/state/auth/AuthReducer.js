@@ -14,72 +14,14 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { createReducer, createActions } from 'reduxsauce';
-import Immutable from 'seamless-immutable';
+import { createReducer } from 'reduxsauce';
+import { INITIAL_STATE, AuthTypes as Types } from './AuthActions';
 import * as storage from 'services/Storage';
 
 
-//
-// Actions
-//
-//
-//
-//
-const { Types, Creators } = createActions({
-  loginRequest:     ['username', 'password'],
-  loginSuccess:     ['isAuthenticated', 'payload'],
-  loginFailure:     ['error'],
+export const request = (state) =>
+  state.merge({ fetching: true, error: false });
 
-  signupRequest:    ['name', 'username', 'password', 'email'],
-  signupSuccess:    ['isAuthenticated', 'payload'],
-  signupFailure:    ['error'],
-
-  logoutRequest:    null,
-  logoutSuccess:    null,
-  logoutFailure:    ['error'],
-});
-
-
-export const AuthTypes = Types;
-export default Creators;
-
-//
-// State
-//
-//
-//
-//
-export const INITIAL_STATE = Immutable({
-  isAuthenticated:  null,
-  fetching:         null,
-  error:            null,
-  user:             null,
-});
-
-
-//
-// Selectors
-//
-//
-//
-//
-export const AuthSelectors = {
-  isAuthenticated: (state) => {
-    return !!storage.getToken() || state.auth.isAuthenticated;
-  },
-  user: (state) => {
-    return state.auth.user || { id: storage.getUserId() };
-  },
-};
-
-
-//
-// Reducers
-//
-//
-//
-//
-export const request = (state) => state.merge({ fetching: true, error: false });
 
 export const success = (state, { isAuthenticated, payload }) => {
   payload.user ?
@@ -92,9 +34,11 @@ export const success = (state, { isAuthenticated, payload }) => {
   });
 };
 
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 };
+
 
 export const logout = (state) => {
   storage.removeToken();
@@ -103,13 +47,7 @@ export const logout = (state) => {
 };
 
 
-//
-// Hooks
-//
-//
-//
-//
-export const reducer = createReducer(INITIAL_STATE, {
+export const AuthReducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_REQUEST]: request,
   [Types.LOGIN_SUCCESS]: success,
   [Types.LOGIN_FAILURE]: failure,

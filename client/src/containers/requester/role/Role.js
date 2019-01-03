@@ -20,7 +20,7 @@ import { Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import { RequesterSelectors } from 'redux/RequesterRedux';
+import { RequesterSelectors } from 'state';
 
 
 import Chat from 'components/chat/Chat';
