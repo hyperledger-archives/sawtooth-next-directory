@@ -564,3 +564,15 @@ class StateBase:
         getattr(container, self._state_container_list_name).extend([store])
         output_state[address] = container
         output_state["changed"].add(address)
+
+    def remove_relationship(self, object_id, related_id, outputs, output_state, now):
+        """ Removes a relationship record
+        """
+        address = self.address(object_id=object_id, related_id=related_id)
+        if address not in outputs:
+            raise ValueError(
+                "address {} for was not included in outputs".format(
+                    self.parse(address=address)
+                )
+            )
+        output_state["removed"].add(address)

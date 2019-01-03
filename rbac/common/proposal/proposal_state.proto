@@ -47,6 +47,8 @@ message Proposal {
         OPEN = 0;
         REJECTED = 1;
         CONFIRMED = 2;
+        EXPIRED = 3;
+        REMOVED = 4;
     }
 
     string proposal_id = 1;

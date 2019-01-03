@@ -29,3 +29,16 @@ message UpdateProposal {
     repeated string on_behalf_of = 5; 
 
 }
+
+
+message RemovalProposal {
+
+    string proposal_id = 1;
+
+    string object_id = 2;
+
+    string related_id = 3;
+
+    string reason = 4;
+
+}

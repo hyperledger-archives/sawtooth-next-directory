@@ -469,7 +469,7 @@ class BaseMessage(AddressBase):
     def _make_output_state(self, input_state, outputs):
         """Makes the output state entries from the input state and
         adds the addresses that were not in state"""
-        output_state = {"changed": set()}
+        output_state = {"changed": set(), "removed": set()}
         inputs_to_outputs = [address for address in outputs if address in input_state]
         for address in inputs_to_outputs:
             output_state[address] = input_state[address]
@@ -560,7 +560,12 @@ class BaseMessage(AddressBase):
                     "Address {} not in listed outputs".format(addresser.parse(address))
                 )
             entries[address] = output_state[address].SerializeToString()
-        state_client.set_state(context=context, entries=entries)
+        if entries:
+            state_client.set_state(context=context, entries=entries)
+        if output_state["removed"]:
+            state_client.delete_state(
+                context=context, addresses=output_state["removed"]
+            )
 
     def apply_update(self, message, payload, object_id, related_id, output_state):
         """Apply additional state changes (if any)

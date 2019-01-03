@@ -76,3 +76,11 @@ def set_state(context, entries):
         return context.set_state(entries=entries, timeout=TIMEOUT_SECONDS)
     except FutureTimeoutError:
         raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)
+
+
+def delete_state(context, addresses):
+    """Deletes a list of addresses from the blockchain state"""
+    try:
+        return context.delete_state(addresses=addresses, timeout=TIMEOUT_SECONDS)
+    except FutureTimeoutError:
+        raise InternalError(ERROR_MESSAGE_TIMEOUT, TIMEOUT_SECONDS)

@@ -95,7 +95,10 @@ class BaseRelationship(AddressBase):
         # pylint: disable=not-callable
         container = self._state_container()
         address = self.address(object_id=object_id, related_id=related_id)
-        container.ParseFromString(client.get_address(address=address))
+        data = client.get_address(address=address)
+        if not data:
+            return False
+        container.ParseFromString(data)
         stores = list(container.relationships)
         if not stores:
             LOGGER.warning(
@@ -118,3 +121,6 @@ class BaseRelationship(AddressBase):
             )
         store = stores[0]
         return bool(store.object_id == object_id and store.related_id == related_id)
+
+    def not_exists(self, object_id, related_id):
+        return not self.exists(object_id=object_id, related_id=related_id)
