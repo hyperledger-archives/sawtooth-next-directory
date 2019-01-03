@@ -98,8 +98,8 @@ class ChatMessage extends Component {
                 <Segment compact
                   floated='left'
                   size='small'>
-                  <div>
-                    {message.text}
+                  <div dangerouslySetInnerHTML={{__html: message.text}}>
+                    {/* {message.text} */}
                   </div>
                 </Segment>
               </div>

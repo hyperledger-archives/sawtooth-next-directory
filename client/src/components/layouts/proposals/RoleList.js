@@ -117,7 +117,7 @@ class RoleList extends Component {
     const { openProposalsByRole } = this.props;
     return (
       <div className='pull-right'>
-        {  openProposalsByRole[roleId].map(proposal => (
+        { openProposalsByRole[roleId].map(proposal => (
           <Avatar
             key={proposal.id}
             userId={proposal.opener}
@@ -167,7 +167,7 @@ class RoleList extends Component {
     const { handleChange } = this.props;
     return (
       <div className='next-role-list-item' key={roleId}>
-        <Segment className='light' padded>
+        <Segment className='minimal' padded>
           <Checkbox
             defaultIndeterminate={this.isIndeterminate(roleId)}
             checked={this.isRoleChecked(roleId)}

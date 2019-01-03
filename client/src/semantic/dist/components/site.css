@@ -203,6 +203,9 @@ body,
 .pull-right {
   float: right;
 }
+.cursor-pointer {
+  cursor: pointer;
+}
 .dark {
   background: #273544;
 }

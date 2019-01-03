@@ -30,8 +30,8 @@
 
 .dark .ui.segment.minimal {
   background: #212c3a;
-  border: 0;
-  box-shadow: none;
+  border: 1px solid #0000001c;
+  box-shadow: 0 3px 13px #00000014;
 }
 
 .dark .ui.segment.minimal h3,

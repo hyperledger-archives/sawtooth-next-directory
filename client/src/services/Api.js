@@ -137,7 +137,7 @@ const create = (baseURL =
   const getRelationships = (id) => api.get(`users/${id}/relationships`);
   const getRoot = () => api.get('');
   const getUser = (id) => api.get(`users/${id}`);
-  const getUsers = () => api.get('users', { limit: 15 });
+  const getUsers = (start, limit) => api.get('users', { start, limit });
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const search = (query) => api.post('', { q: query });

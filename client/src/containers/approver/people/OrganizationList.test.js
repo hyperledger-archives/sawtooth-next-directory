@@ -33,7 +33,7 @@ describe('OrganizationList component', () => {
       handleUserSelect: () => {},
       members: ['props'],
       owners: [''],
-      users: [{ id: 'proposal1' }],
+      users: [{ id: 'proposal1', name: '' }],
 
     };
     const newProps = {
@@ -42,7 +42,7 @@ describe('OrganizationList component', () => {
       handleUserSelect: () => {},
       members: ['newProps'],
       owners: [''],
-      users: [{ id: 'proposal1' }],
+      users: [{ id: 'proposal1', name: '' }],
 
     };
 

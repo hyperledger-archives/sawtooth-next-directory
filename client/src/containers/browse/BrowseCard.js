@@ -62,7 +62,7 @@ class BrowseCard extends Component {
         to={`/${resource.roles ? 'packs' : 'roles'}/${resource.id}`}
         className={`gradient ${resource.roles ? 'browse-tile-expanded' : ''}`}>
         <div className='browse-tile-title-container'>
-          <Header inverted as='h4'>
+          <Header inverted as='h3'>
             {resource.name}
             { resource.roles &&
               <Header.Subheader>

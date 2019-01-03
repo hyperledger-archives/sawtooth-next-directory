@@ -15,7 +15,7 @@ limitations under the License.
 
 
 #next-chat-container {
-  background: linear-gradient(to bottom, #de3a6f 0%, transparent 15%);
+  background: linear-gradient(to bottom, #de3a6f 4%, transparent 15%);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -56,6 +56,10 @@ limitations under the License.
   min-width: 205px;
 }
 
+.next-chat-message-left .ui.segment strong {
+  color: var(--magenta);
+}
+
 .next-chat-message-left .ui.segment,
 .next-chat-message-right .ui.segment {
   max-width: 310px;
@@ -72,7 +76,7 @@ limitations under the License.
   align-items: center;
   display: flex;
   flex: 0 0 96px;
-  margin-bottom: 30px;
+  margin-bottom: 7px;
   padding-left: calc(5% + 21px);
 }
 
@@ -82,11 +86,16 @@ limitations under the License.
 }
 
 #next-chat-selection-heading-container h3 {
-  margin: 0 0 0 10px;
+  margin: 0 0 0 13px;
+}
+
+#next-chat-selection-heading-container h3 .ui.subheader {
+  margin-top: 0;
 }
 
 #next-chat-selection-heading-container .ui.list {
   font-size: 1.1em;
+  margin-bottom: 0;
 }
 
 #next-chat-header {
@@ -150,8 +159,16 @@ limitations under the License.
   padding: 5%;
 }
 
-#next-chat-roles-selection-container .ui.segment.minimal {
+#next-chat-roles-selection-container .ui.segment.minimal,
+#next-chat-users-selection-container .ui.segment.minimal {
   margin-bottom: 2px;
+  padding-left: 20px;
+}
+
+#next-chat-users-selection-container .ui.list .ui.checkbox label,
+#next-chat-roles-selection-container .ui.list .ui.checkbox label {
+  color: gray;
+  font-size: 1.2em;
 }
 
 #next-chat-roles-selection-container .ui.list .ui.checkbox label {

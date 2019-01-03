@@ -147,7 +147,6 @@ class Delegated extends Component {
           <TrackHeader
             glyph={glyph}
             title='Delegated Requests'
-            subtitle={openProposals && openProposals.length + ' pending'}
             {...this.props}/>
           <div id='next-approver-delegated-content'>
             <IndividualsNav

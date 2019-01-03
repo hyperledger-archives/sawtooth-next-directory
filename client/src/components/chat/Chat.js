@@ -23,7 +23,6 @@ import {
   Header,
   List,
   Icon,
-  Image,
   Segment,
   Transition } from 'semantic-ui-react';
 
@@ -112,9 +111,11 @@ class Chat extends Component {
    * @returns {string}
    */
   userName = (userId) => {
-    const { userFromId } = this.props;
+    const { id, userFromId } = this.props;
     const user = userFromId(userId);
-    return user && user.name;
+    if (user)
+      return userId === id ? `${user.name} (You)` : user.name;
+    return null;
   };
 
 
@@ -179,8 +180,10 @@ class Chat extends Component {
     const {
       activeUser,
       disabled,
+      formDisabled,
       handleChange,
       handleOnBehalfOf,
+      organization,
       selectedProposal,
       selectedRoles,
       selectedUsers,
@@ -218,21 +221,21 @@ class Chat extends Component {
           <div id='next-chat-users-selection-container'>
             { activeUser &&
               <div id='next-chat-organization-heading'>
-                <Image
-                  size='small'
-                  src={`http://i.pravatar.cc/150?u=${activeUser}`}
-                  avatar/>
+                <Avatar userId={activeUser} size='large' {...this.props}/>
                 <Header as='h2' inverted>
                   {this.userName(activeUser)}
                 </Header>
-                <div>
-                  <Button
-                    as={Link}
-                    to={`people/${activeUser}/pending`}
-                    onClick={handleOnBehalfOf}>
-                    Pending Approvals
-                  </Button>
-                </div>
+                { organization &&
+                  organization.direct_reports.includes(activeUser) &&
+                  <div>
+                    <Button
+                      as={Link}
+                      to={`people/${activeUser}/pending`}
+                      onClick={handleOnBehalfOf}>
+                      Pending Approvals
+                    </Button>
+                  </div>
+                }
               </div>
             }
           </div>
@@ -327,6 +330,7 @@ class Chat extends Component {
             <ChatForm
               {...this.props}
               disabled={disabled}
+              formDisabled={formDisabled}
               approve={this.manualApprove}
               reject={this.manualReject}
               requestRole={this.manualRequestRole}

@@ -164,8 +164,8 @@ templates:
   - text: Fine.
   - text: Have it your way.
   utter_recommendation:
-  - text: Hi! Based on your role, I bet having access to {resource_name} would make
-      it easier for you to function.
+  - text: Hi! Based on your role, I bet having access to <strong>{resource_name}</strong>
+      would make it easier for you to function.
   utter_recommended_draft:
   - buttons:
     - payload: '/send_recommended{"reason": "I need access."}'

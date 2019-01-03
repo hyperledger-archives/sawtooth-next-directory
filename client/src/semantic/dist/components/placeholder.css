@@ -76,14 +76,14 @@
 .ui.placeholder .square.image:not(.header) {
   height: 0px;
   overflow: hidden;
-
+  
 /* 1/1 aspect ratio */
   padding-top: 100%;
 }
 .ui.placeholder .rectangular.image:not(.header) {
   height: 0px;
   overflow: hidden;
-
+  
 /* 4/3 aspect ratio */
   padding-top: 75%;
 }
@@ -200,16 +200,6 @@
 .ui.inverted.placeholder .line:after {
   background-color: #273544;
 }
-
-/* Constrast Theme Loader */
-.contrast .ui.placeholder,
-.contrast .ui.placeholder > :before,
-.contrast .ui.placeholder .image.header:after,
-.contrast .ui.placeholder .line,
-.contrast .ui.placeholder .line:after {
-  background-color: #fbfcfd;
-}
-
 
 
 /*******************************

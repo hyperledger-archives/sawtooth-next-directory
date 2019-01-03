@@ -16,12 +16,12 @@ limitations under the License.
 
 #next-organization-container {
   padding: 0 30px;
-  transform: translateY(-305px);
+  /* transform: translateY(-33%); */
 }
 
 #next-organization-toggle-manager-button-container {
   position: fixed;
-  top: 248px;
+  top: 227px;
   z-index: 999;
   width: calc(75% - 245px);
 }
@@ -33,7 +33,7 @@ limitations under the License.
 }
 
 .next-organization-managers-hide {
-  animation: managers-hide 1.5s ease-in forwards;
+  animation: managers-hide 0s ease-in forwards;
 }
 
 .next-organization-managers-show {
@@ -41,13 +41,13 @@ limitations under the License.
 }
 
 @keyframes managers-show {
-  0% { transform: translateY(-305px); }
+  0% { transform: translateY(-33%); }
   25%, 100% { transform: translateY(0); }
 }
 
 @keyframes managers-hide {
   0% { transform: translateY(0); }
-  25%, 100% { transform: translateY(-305px); }
+  25%, 100% { transform: translateY(-33%); }
 }
 
 .next-organization-user-info {
@@ -72,10 +72,6 @@ limitations under the License.
   flex-direction: row;
 }
 
-#next-organization-container .avatar.mini {
-  width: 45px;
-}
-
 #next-organization-managers {
   display: flex;
   flex-direction: column-reverse;
@@ -98,7 +94,7 @@ limitations under the License.
 }
 
 .next-organization-manager-item {
-  margin-bottom: 20px;
+  margin-bottom: 2em;
 }
 
 .next-organization-peer-item {
@@ -109,7 +105,7 @@ limitations under the License.
 
 .next-organization-direct-report-item {
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-bottom: 2em;
 }
 
 .next-organization-manager-item:first-child {
@@ -119,28 +115,28 @@ limitations under the License.
 #next-organization-managers:after {
   border-left: 1px solid #516073;
   content: '';
-  height: calc(100% + 38px);
-  margin-left: 22px;
+  height: calc(100% + 4.1em);
+  margin-left: 1.5em;
   position: absolute;
-  top: 35px;
+  top: 1.5em;
   z-index: -1;
 }
 
 .next-organization-manager-item:first-child:before {
   border-bottom: 1px solid #516073;
   content: '';
-  margin-top: 22px;
+  margin-top: 1.5em;
   position: absolute;
-  width: calc(100% - 26px);
+  width: calc(100% - 1.5em);
   z-index: -1;
 }
 
 #next-organization-direct-reports:after {
   border-left: 1px solid #516073;
-  bottom: 22px;
+  bottom: 2em;
   content: '';
   height: 100%;
-  margin-left: -48px;
+  margin-left: -4em;
   position: absolute;
   z-index: -1;
 }
@@ -148,17 +144,19 @@ limitations under the License.
 .next-organization-direct-report-item:before {
   border-bottom: 1px solid #516073;
   content: '';
-  margin-left: -48px;
+  margin-left: -4em;
   position: absolute;
-  width: 65px;
+  width: 5em;
+  z-index: -1;
 }
 
 #next-organization-current-person-user-info-container:before {
   border-bottom: 1px solid #516073;
   content: '';
-  margin-left: -48px;
+  margin-left: -3.5em;
   position: absolute;
-  width: 59px;
+  width: 5em;
+  z-index: -1;
 }
 
 .next-organization-peer-item:before {
@@ -166,6 +164,8 @@ limitations under the License.
   border-left: 1px solid #516073;
   position: absolute;
   height: 110px;
-  margin-top: -88px;
-  margin-left: 21px;
+  margin-top: calc(-4em + -33px);
+  margin-left: 1.5em;
+  z-index: -1;
 }
+

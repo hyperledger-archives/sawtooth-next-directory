@@ -51,7 +51,6 @@ class Browse extends Component {
   state = {
     start: 0,
     limit: 100,
-    rolesData: [],
   };
 
 

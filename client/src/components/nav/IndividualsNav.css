@@ -19,14 +19,19 @@ limitations under the License.
   display: flex;
   padding: var(--page-content-padding);
   position: fixed;
-  top: 160px;
+  top: 130px;
   width: calc(75% - 245px);
   z-index: 2;
 }
 
-.dark #next-people-nav {
+.dark #next-individuals-nav {
   background: var(--dark-bg);
-  z-index: 999;
+  z-index: 98;
+}
+
+.dark .next-individual-search .ui.large.fluid.icon.input input {
+  background: #2b3c4d;
+  border: 2px solid #2b3c4d;
 }
 
 .next-individual-search {

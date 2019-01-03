@@ -28,8 +28,8 @@ const { Types, Creators } = createActions({
   userSuccess:     ['user'],
   userFailure:     ['error'],
 
-  allUsersRequest: null,
-  allUsersSuccess: ['users'],
+  allUsersRequest: ['start', 'limit'],
+  allUsersSuccess: ['users', 'usersTotalCount'],
   allUsersFailure: ['error'],
 
   resetAll:        null,

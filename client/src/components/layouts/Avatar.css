@@ -26,9 +26,12 @@ limitations under the License.
 
 .next-avatar-container.medium {
   font-size: 1.5em;
-  height: 2em;
   padding-top: .6em;
-  width: 2em;
+}
+
+.next-avatar-container.large {
+  font-size: 4.5em;
+  padding-top: .85em;
 }
 
 .next-avatar-container.small {
