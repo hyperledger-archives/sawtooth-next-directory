@@ -19,7 +19,7 @@ limitations under the License.
   display: flex;
   padding: var(--page-content-padding);
   position: fixed;
-  top: 160px;
+  top: 130px;
   width: calc(75% - 245px);
   z-index: 2;
 }

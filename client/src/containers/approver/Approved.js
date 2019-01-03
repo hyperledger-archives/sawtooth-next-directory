@@ -24,6 +24,7 @@ import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import ApprovedNav from 'components/nav/ApprovedNav';
 import * as theme from 'services/Theme';
+import glyph from 'images/header-glyph-individual-inverted.png';
 
 
 /**
@@ -227,7 +228,10 @@ class Approved extends Component {
         <Grid.Column
           id='next-approver-grid-track-column'
           width={12}>
-          <TrackHeader title='Approved Requests' {...this.props}/>
+          <TrackHeader
+            glyph={glyph}
+            title='Approved Requests'
+            {...this.props}/>
           <div id='next-approver-approved-content'>
             <ApprovedNav/>
             { !confirmedProposals || confirmedProposals.length === 0 ?

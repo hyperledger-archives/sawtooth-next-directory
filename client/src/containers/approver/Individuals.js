@@ -147,12 +147,15 @@ class Individuals extends Component {
           <TrackHeader
             glyph={glyph}
             title='Individual Requests'
-            subtitle={openProposals && openProposals.length + ' pending'}
+            // subtitle={openProposals && openProposals.length + ' pending'}
             {...this.props}/>
           <div id='next-approver-individuals-content'>
             <IndividualsNav
               activeIndex={activeIndex}
               setFlow={this.setFlow}/>
+            <h3 id='next-approver-individuals-pending'>
+              {openProposals && openProposals.length + ' pending'}
+            </h3>
             { openProposals && openProposals.length !== 0 &&
               <div>
                 { activeIndex === 0 &&
@@ -174,7 +177,7 @@ class Individuals extends Component {
             { openProposals && openProposals.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  No pending items
+                  Nothing to see here
                 </Header.Content>
               </Header>
             }
@@ -186,6 +189,7 @@ class Individuals extends Component {
           width={4}>
           <Chat
             type='APPROVER'
+            formDisabled
             title={title}
             subtitle={subtitle}
             groupBy={activeIndex}

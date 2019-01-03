@@ -89,8 +89,8 @@ export const appState = (state) => {
     me:                  UserSelectors.me(state),
     users:               UserSelectors.users(state),
     memberOf:            UserSelectors.memberOf(state),
+    usersTotalCount:     UserSelectors.usersTotalCount(state),
     userFromId:          (id) => UserSelectors.userFromId(state, id),
-
   };
 };
 
@@ -160,8 +160,9 @@ export const appDispatch = (dispatch) => {
     getMe:             ()    => dispatch(UserActions.meRequest()),
     getUser:           (id)  => dispatch(UserActions.userRequest(id)),
     getUsers:          (ids) => dispatch(UserActions.usersRequest(ids)),
-    getAllUsers:       ()    => dispatch(UserActions.allUsersRequest()),
     logout:            ()    => logout(dispatch),
+    getAllUsers:       (start, limit) =>
+      dispatch(UserActions.allUsersRequest(start, limit)),
 
   };
 };

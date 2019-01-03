@@ -28,3 +28,7 @@ limitations under the License.
   min-height: 74px;
   justify-content: space-between;
 }
+
+.next-role-list-item .ui.segment .next-avatar-container {
+  margin-left: 10px;
+}

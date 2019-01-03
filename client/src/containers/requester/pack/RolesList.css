@@ -25,4 +25,5 @@ h4.ui.header.next-roles-list-role-info {
 
 .ui.header .sub.header.next-roles-list-email-subheader {
   color: var(--magenta);
+  word-break: break-word;
 }

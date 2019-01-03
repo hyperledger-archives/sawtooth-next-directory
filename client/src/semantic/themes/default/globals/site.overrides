@@ -23,6 +23,10 @@ body,
   float: right;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .dark {
   background: @darkBackground;
 }

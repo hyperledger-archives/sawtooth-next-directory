@@ -26,4 +26,5 @@ export const UserSelectors = {
   userFromId: (state, id) =>
     state.user.users &&
     state.user.users.find(user => user.id === id),
+  usersTotalCount: (state) => state.user.usersTotalCount,
 };

@@ -113,7 +113,7 @@ templates:
   utter_recommendation:
     - text: >-
         Hi! Based on your role, I bet having access
-        to {resource_name} would make it easier for you
+        to <strong>{resource_name}</strong> would make it easier for you
         to function.
 
   utter_ask_request_access:

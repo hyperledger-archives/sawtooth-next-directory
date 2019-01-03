@@ -130,7 +130,6 @@ class PeopleList extends Component {
   };
 
 
-
   /**
    * Render role / pack proposals for a given user as a sub-list
    * of a parent user list item.
@@ -140,18 +139,20 @@ class PeopleList extends Component {
    */
   renderUserProposals (userId, proposals) {
     const { handleChange } = this.props;
-
     return (
       proposals.map((proposal) => (
         <List.Item key={proposal.id}>
           <List.Header key={proposal.id}>
-            <span className='next-people-list-proposal'>
+            <span className='next-people-list-proposal-role'>
               <Checkbox
                 checked={this.isRoleChecked(proposal)}
                 proposal={proposal.id}
                 user={userId}
                 label={this.roleName(proposal.object)}
                 onChange={handleChange}/>
+            </span>
+            <span className='next-people-list-proposal-reason'>
+              {proposal.open_reason}
             </span>
           </List.Header>
         </List.Item>
@@ -197,8 +198,7 @@ class PeopleList extends Component {
             { this.renderUserProposals(
               userId,
               openProposalsByUser[userId].map(proposal => proposal)
-            )
-            }
+            )}
           </List.List>
         </List.Item>
         }

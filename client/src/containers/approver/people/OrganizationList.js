@@ -15,8 +15,14 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Header, Image, Loader, Segment } from 'semantic-ui-react';
+import {
+  Button,
+  Container,
+  Header,
+  Placeholder,
+  Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+import Avatar from 'components/layouts/Avatar';
 import './OrganizationList.css';
 
 
@@ -38,7 +44,13 @@ class OrganizationList extends Component {
     members:            PropTypes.array,
     owners:             PropTypes.array,
     users:              PropTypes.array,
-  }
+  };
+
+
+  state = {
+    start: 0,
+    limit: 100,
+  };
 
 
   /**
@@ -46,9 +58,9 @@ class OrganizationList extends Component {
    * Get first page of all users.
    */
   componentDidMount   () {
-    const { getAllUsers, handleUserSelect, id, users } = this.props;
-    (!users || (users && users.length < 99)) && getAllUsers();
+    const { handleUserSelect, id } = this.props;
     handleUserSelect(id);
+    this.loadNext(0);
   }
 
 
@@ -61,13 +73,48 @@ class OrganizationList extends Component {
 
   }
 
+  /**
+   * Load next set of data
+   * @param {number} start Loading start index
+   */
+  loadNext = (start) => {
+    const { getAllUsers, users } = this.props;
+    const { limit } = this.state;
+    if (start === undefined || start === null)
+      start = this.state.start;
+
+    if (users && users.length >= limit)
+      start = users.length;
+
+    getAllUsers(start, limit);
+    this.setState({ start: start + limit });
+  }
+
+
+  /**
+   * Render placeholder graphics
+   * @returns {JSX}
+   */
+  renderPlaceholder = () => {
+    return Array(4).fill(0).map((item, index) => (
+      <div key={index} className='next-member-list-placeholder'>
+        <Placeholder inverted fluid>
+          <Placeholder.Header image>
+            <Placeholder.Line length='full'/>
+            <Placeholder.Line length='long'/>
+          </Placeholder.Header>
+        </Placeholder>
+      </div>
+    ));
+  }
+
 
   /**
    * Render segment containing user info
    * @returns {JSX}
    */
   renderUserSegment () {
-    const { handleUserSelect, users } = this.props;
+    const { handleUserSelect, id, users } = this.props;
     return (
       users && users.map((user, index) => (
         <Segment
@@ -76,10 +123,11 @@ class OrganizationList extends Component {
           className='no-padding minimal'>
           <Header as='h3' className='next-member-list-user-info'>
             <div>
-              <Image src={`http://i.pravatar.cc/150?u=${user.id}`} avatar/>
+              <Avatar userId={user.id} size='medium' {...this.props}/>
             </div>
             <div>
               {user.name}
+              {user.id === id && ' (You)'}
               {user.email &&
                 <Header.Subheader>
                   {user.email}
@@ -98,19 +146,21 @@ class OrganizationList extends Component {
    * @returns {JSX}
    */
   render () {
-    const { fetchingAllUsers } = this.props;
-
-    if (fetchingAllUsers) {
-      return (
-        <Loader active={fetchingAllUsers} size='large'>
-          Loading
-        </Loader>
-      );
-    }
+    const { fetchingAllUsers, users, usersTotalCount } = this.props;
 
     return (
       <div id='next-approver-people-list-container'>
         {this.renderUserSegment()}
+        {fetchingAllUsers && this.renderPlaceholder()}
+        { users && users.length < usersTotalCount &&
+          <Container
+            id='next-users-load-next-button'
+            textAlign='center'>
+            <Button size='large' onClick={() => this.loadNext()}>
+              Load More
+            </Button>
+          </Container>
+        }
       </div>
     );
   }

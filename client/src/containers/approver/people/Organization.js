@@ -15,9 +15,10 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Button, Container, Image } from 'semantic-ui-react';
+import { Popup } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './Organization.css';
+import Avatar from 'components/layouts/Avatar';
 
 
 /**
@@ -100,17 +101,29 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderPeers () {
-    const { organization } = this.props;
+    const { handleUserSelect, organization } = this.props;
     return (
       <div className='pull-right' id='next-organization-peers'>
-        { organization.peers && organization.peers.map((userId, index) => (
-          <div className='next-organization-peer-item' key={index}>
-            <Image
-              src={`http://i.pravatar.cc/300?img=${index}`}
-              avatar
-              size='mini'/>
-          </div>
-        ))}
+        { organization.peers &&
+          organization.peers.slice(0, 3).map((userId, index) => (
+            <div
+              onClick={() => handleUserSelect(userId)}
+              className='cursor-pointer next-organization-peer-item'
+              key={index}>
+              <Popup
+                inverted
+                trigger={
+                  <Avatar
+                    userId={userId}
+                    size='medium'
+                    {...this.props}/>
+                }
+                content={this.userName(userId)}
+                position='bottom center'
+                on='hover'/>
+            </div>
+          ))
+        }
       </div>
     );
   }
@@ -121,17 +134,21 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderManagers () {
-    const { organization } = this.props;
+    const { handleUserSelect, organization } = this.props;
     return (
       <div id='next-organization-managers'>
         { organization.managers &&
           organization.managers.map((userId, index) => (
-            <div key={index} className='next-organization-manager-item'>
-              <div className='pull-left'>
-                <Image
-                  src={`http://i.pravatar.cc/300?img=${index}`}
-                  avatar
-                  size='mini'/>
+            <div
+              key={index}
+              className='next-organization-manager-item'>
+              <div
+                className='pull-left cursor-pointer'
+                onClick={() => handleUserSelect(userId)}>
+                <Avatar
+                  userId={userId}
+                  size='medium'
+                  {...this.props}/>
                 <div className='next-organization-user-info'>
                   <h4>
                     {this.userName(userId)}
@@ -159,12 +176,12 @@ class Organization extends Component {
           organization.direct_reports.map((userId, index) => (
             <div
               onClick={() => handleUserSelect(userId)}
-              className='next-organization-direct-report-item'
+              className='cursor-pointer next-organization-direct-report-item'
               key={index}>
-              <Image
-                src={`http://i.pravatar.cc/300?img=${index}`}
-                avatar
-                size='mini'/>
+              <Avatar
+                userId={userId}
+                size='medium'
+                {...this.props}/>
               <div className='next-organization-user-info'>
                 <h4>
                   {this.userName(userId)}
@@ -183,14 +200,21 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderPerson () {
-    const { organization } = this.props;
+    const { handleUserSelect, id, organization } = this.props;
     return (
       <div id='next-organization-current-person'>
-        <div id='next-organization-current-person-user-info-container'>
-          <Image src='http://i.pravatar.cc/300' avatar size='mini'/>
+        <div
+          onClick={() => handleUserSelect(organization.id)}
+          className='cursor-pointer'
+          id='next-organization-current-person-user-info-container'>
+          <Avatar
+            userId={organization.id}
+            size='medium'
+            {...this.props}/>
           <div className='next-organization-user-info'>
             <h4>
               {this.userName(organization.id)}
+              {organization.id === id && ' (You)'}
             </h4>
             {this.userEmail(organization.id)}
           </div>
@@ -207,25 +231,25 @@ class Organization extends Component {
    */
   render () {
     const { organization } = this.props;
-    const { showManagers } = this.state;
+    // const { showManagers } = this.state;
 
-    let transition = '';
-    if (showManagers)
-      transition ='next-organization-managers-show';
-    else if (showManagers !== null)
-      transition = 'next-organization-managers-hide';
+    // let transition = '';
+    // if (showManagers)
+    //   transition ='next-organization-managers-show';
+    // else if (showManagers !== null)
+    //   transition = 'next-organization-managers-hide';
 
     return (
       <div>
-        <Container
+        {/* <Container
           id='next-organization-toggle-manager-button-container'
           textAlign='right'>
           <Button
             onClick={() => this.toggleManagers()}>
             {showManagers ? 'Hide Managers' : 'Show Managers'}
           </Button>
-        </Container>
-        <div className={transition} id='next-organization-container'>
+        </Container> */}
+        <div id='next-organization-container'>
           { organization && this.renderManagers() }
           { organization && this.renderPerson() }
         </div>

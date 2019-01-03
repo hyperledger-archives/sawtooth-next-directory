@@ -29,7 +29,7 @@ import { syncAll } from '../IndividualsHelper';
 
 
 import './PeopleApproval.css';
-import glyph from 'images/header-glyph-individual-inverted.png';
+import glyph from 'images/header-glyph-individual.png';
 import * as theme from 'services/Theme';
 
 
@@ -46,7 +46,7 @@ class PeopleApproval extends Component {
   };
 
 
-  themes = ['minimal'];
+  themes = ['dark', 'minimal'];
 
 
   state = {
@@ -62,8 +62,9 @@ class PeopleApproval extends Component {
    * component. On load, get open proposals.
    */
   componentDidMount () {
-    const { getOpenProposals, onBehalfOf } = this.props;
+    const { getOpenProposals, getUser, onBehalfOf } = this.props;
     getOpenProposals(onBehalfOf);
+    getUser(onBehalfOf);
     theme.apply(this.themes);
   }
 
@@ -141,20 +142,31 @@ class PeopleApproval extends Component {
       selected`;
 
     const foo = users && users.find(user => user.id === onBehalfOf);
+    const bar = `Pending Approvals (${foo && foo.name})`;
 
     return (
       <Grid id='next-approver-grid'>
 
         <Grid.Column id='next-approver-grid-track-column' width={12}>
           <TrackHeader
+            inverted
+            breadcrumb={[
+              {name: 'People', slug: '/approval/people'},
+              {
+                name: 'Direct Report Approvals',
+                slug: `/approval/people/${onBehalfOf}/pending`,
+              },
+            ]}
             glyph={glyph}
-            title={foo && foo.name + '\'s Pending Requests'}
-            subtitle={openProposals && openProposals.length + ' pending'}
+            title={foo && bar}
             {...this.props}/>
           <div id='next-approver-people-approval-content'>
             <PeopleApprovalNav
               activeIndex={activeIndex}
               setFlow={this.setFlow}/>
+            <h3 id='next-approver-people-pending'>
+              {openProposals && openProposals.length + ' pending'}
+            </h3>
             { openProposals && openProposals.length !== 0 &&
               <div>
                 { activeIndex === 0 &&
@@ -188,6 +200,7 @@ class PeopleApproval extends Component {
           width={4}>
           <Chat
             type='APPROVER'
+            formDisabled
             title={title}
             subtitle={subtitle}
             groupBy={activeIndex}
@@ -208,8 +221,13 @@ class PeopleApproval extends Component {
 }
 
 
-const mapStateToProps = (state) => {
-  return {};
+const mapStateToProps = (state, ownProps) => {
+  const { id } = ownProps.match.params;
+  const { onBehalfOf } = ownProps;
+
+  return {
+    onBehalfOf: onBehalfOf || id,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {

@@ -36,9 +36,11 @@ export const success = {
     state.merge({
       fetching: false, users: utils.merge(state.users || [], [user]),
     }),
-  allUsers: (state, { users }) =>
+  allUsers: (state, { users, usersTotalCount }) =>
     state.merge({
-      fetchingAllUsers: false, users: utils.merge(state.users || [], users),
+      fetchingAllUsers: false,
+      usersTotalCount,
+      users: utils.merge(state.users || [], users),
     }),
 };
 

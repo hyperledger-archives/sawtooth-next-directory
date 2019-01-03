@@ -157,8 +157,8 @@ export const RequesterSelectors = {
   // is member of grouped like the following:
   // [{ pack }, { role }, { pack } ...]
   mine: (state) => {
-    if (!state.user.me) return null;
-    const mine = [];
+    if (!state.user.me || !state.requester.requests) return null;
+    let mine = [];
 
     for (const roleId of state.user.me.memberOf) {
       const request = state.user.me.proposals.find(
@@ -186,6 +186,17 @@ export const RequesterSelectors = {
         role && mine.push(role);
       }
     }
+
+    mine = mine.filter(item => {
+      if (item.roles) {
+        const isOpen = state.requester.requests.find(
+          request => item.roles.includes(request.object) &&
+            request.status !== 'CONFIRMED'
+        );
+        return !isOpen;
+      }
+      return true;
+    });
 
     return [...new Set(mine)];
   },

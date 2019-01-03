@@ -35,6 +35,7 @@ class ChatForm extends Component {
     activeRole:           PropTypes.object,
     approve:              PropTypes.func,
     disabled:             PropTypes.bool,
+    formDisabled:         PropTypes.bool,
     messages:             PropTypes.array,
     reject:               PropTypes.func,
     requestPack:          PropTypes.func,
@@ -268,13 +269,13 @@ class ChatForm extends Component {
    * @returns {JSX}
    */
   render () {
-    const { socketMaxAttemptsReached, type } = this.props;
+    const { formDisabled, socketMaxAttemptsReached, type } = this.props;
     const { message, isDraft } = this.state;
     const isManual = type === 'REQUESTER' && socketMaxAttemptsReached;
 
     return (
       <div>
-        { !isDraft && !socketMaxAttemptsReached &&
+        { !isDraft && !socketMaxAttemptsReached && !formDisabled &&
         <div>
           <Form id='next-placeholder-chat'
             onSubmit={() => this.handleSend(message)}>
@@ -303,6 +304,7 @@ class ChatForm extends Component {
               this.handleSend(`/send{"reason": "${message}"}`, true)}>
             <Form.TextArea id='next-chat-form-draft-textarea'
               placeholder='Draft your message...'
+              autoFocus
               name='message'
               value={message}
               onChange={this.handleChange}/>

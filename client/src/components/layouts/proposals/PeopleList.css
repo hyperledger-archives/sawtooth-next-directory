@@ -23,6 +23,14 @@ limitations under the License.
   padding-right: 20px;
 }
 
+.dark .next-people-list-name .ui.checkbox label {
+  color: white
+}
+
+.next-people-list-proposal-role {
+  flex: 0 0 40%;
+}
+
 .next-people-list-name .ui.checkbox label {
   font-weight: bold;
 }
@@ -30,7 +38,6 @@ limitations under the License.
 .next-people-list-email {
   color: var(--magenta);
   flex: 1;
-  font-size: .9em;
   padding: 0 20px;
 }
 
@@ -38,6 +45,15 @@ limitations under the License.
 .next-people-list-item .ui.checkbox label {
   display: flex;
   font-size: 1.1em;
+}
+
+.dark .next-people-list-item .header,
+.dark .next-people-list-item .ui.checkbox label {
+  color: white;
+}
+
+.next-people-list-item .list .header {
+  display: flex !important;
 }
 
 .next-people-list-proposal .ui.checkbox label {

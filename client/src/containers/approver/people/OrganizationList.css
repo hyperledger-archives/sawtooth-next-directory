@@ -21,3 +21,19 @@ limitations under the License.
 #next-approver-people-list-container .ui.segment {
   cursor: pointer;
 }
+
+h3.next-member-list-user-info div:first-child {
+  flex: 0 0 66px;
+}
+
+#next-approver-people-list-loader {
+  padding-top: 70px;
+}
+
+#next-users-load-next-button {
+  margin-top: 50px;
+}
+
+.next-member-list-placeholder {
+  margin-top: 45px;
+}

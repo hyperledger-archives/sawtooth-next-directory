@@ -15,7 +15,16 @@ limitations under the License.
 
 
 #next-approver-people-approval-content {
-  margin-top: 300px;
+  color: white;
+  margin-top: 293px;
   position: relative;
-  width: calc(100% - 65px) !important;
+  width: calc(100% - 61px) !important;
+}
+
+#next-approver-people-pending {
+  margin: 30px;
+}
+
+#next-approver-people-approval-content #next-individuals-nav {
+  padding-top: 70px;
 }

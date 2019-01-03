@@ -122,7 +122,7 @@ export class Role extends Component {
                 {...this.props}/>
             }
             <Container
-              className={this.proposal && this.proposal.state === 'OPEN' ?
+              className={this.proposal && this.proposal.status !== 'CONFIRMED' ?
                 '' : 'next-margin-1'}
               id='next-requester-roles-description-container'>
               <div id='next-requester-roles-description'>

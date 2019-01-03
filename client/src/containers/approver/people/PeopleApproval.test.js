@@ -29,13 +29,17 @@ const store = customStore.create();
 const props = {
   getOpenProposals: () => { },
   userFromId: () => { },
+  getUser: () => {},
   openProposals: [''],
+  match: { params: {} },
 };
 
 const newprops = {
   getOpenProposals: () => { },
   userFromId: () => { },
+  getUser: () => {},
   openProposals: [],
+  match: { params: {} },
 };
 const wrapper = shallow(<PeopleApproval {...props} store={store}/>);
 

@@ -147,7 +147,6 @@ class Expired extends Component {
           <TrackHeader
             glyph={glyph}
             title='Expired Requests'
-            subtitle={openProposals && openProposals.length + ' pending'}
             {...this.props}/>
           <div id='next-approver-expired-content'>
             <IndividualsNav
