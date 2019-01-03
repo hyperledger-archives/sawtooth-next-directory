@@ -24,6 +24,7 @@ from rbac.common.role.relationship_owner import OwnerRelationship
 from rbac.common.role.relationship_admin import AdminRelationship
 from rbac.common.role.relationship_task import TaskRelationship
 from rbac.common.role.imports_role import ImportsRole
+from rbac.common.role.update_role import UpdateRole
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +39,7 @@ class Role(CreateRole):
         self.admin = AdminRelationship()
         self.task = TaskRelationship()
         self.imports = ImportsRole()
+        self.update = UpdateRole()
 
 
 ROLE = Role()

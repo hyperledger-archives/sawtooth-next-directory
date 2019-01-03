@@ -118,3 +118,10 @@ message ImportsRole {
     int64 created_date = 9;
 }
 
+message UpdateRole {
+
+    string role_id = 1;
+
+    string description = 2;
+
+}
