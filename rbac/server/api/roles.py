@@ -86,7 +86,20 @@ async def get_role(request, role_id):
 @ROLES_BP.patch("api/roles/<role_id>")
 @authorized()
 async def update_role(request, role_id):
-    raise ApiNotImplemented()
+    required_fields = ["description"]
+    utils.validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    role_description = request.json.get("description")
+    batch_list = rbac.role.update.batch_list(
+        signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
+        role_id=role_id,
+        description=role_description,
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json({"id": role_id, "description": role_description})
 
 
 @ROLES_BP.post("api/roles/<role_id>/admins")

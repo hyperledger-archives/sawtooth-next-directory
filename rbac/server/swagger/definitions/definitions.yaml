@@ -192,6 +192,31 @@
         items:
           type: string
           example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+  roleDescription:
+    type: object
+    description: New description for role
+    required:
+      - description
+    properties:
+      description:
+        type: string
+        description: New description for role
+        example: This role is for IT Admins
+  updatedRoleResponse:
+    description: Response with the role and updated description
+    type: object
+    required:
+      - id
+      - description
+    properties:
+      id:
+        type: string
+        description: Id of the role
+        example: 1f68397b-5b38-4aec-9913-4541c7e1d4c4
+      description:
+        type: string
+        description: New description for the role
+        example: This role is for IT Admins
   task:
     description: A specific permission in the system
     type: object
