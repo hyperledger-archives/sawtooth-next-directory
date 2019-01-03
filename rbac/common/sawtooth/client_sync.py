@@ -43,6 +43,8 @@ class ClientSync:
     def get_address(self, address, head=None):
         """Reads an address of the blockchain state"""
         leaf = self._client.get("/state/" + address, head=head)
+        if not leaf:
+            return None
         return b64decode(leaf["data"])
 
     def list_blocks(self, limit=None):

@@ -19,28 +19,10 @@ import logging
 from rethinkdb import r
 
 from rbac.common import addresser
-from rbac.common.addresser import AddressSpace
 from rbac.common.util import bytes_from_hex
-
+from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
 
 LOGGER = logging.getLogger(__name__)
-
-TABLE_NAMES = {
-    AddressSpace.USER: "users",
-    AddressSpace.PROPOSALS: "proposals",
-    AddressSpace.SYSADMIN_ATTRIBUTES: "roles",
-    AddressSpace.SYSADMIN_MEMBERS: "role_members",
-    AddressSpace.SYSADMIN_OWNERS: "role_owners",
-    AddressSpace.SYSADMIN_ADMINS: "role_admins",
-    AddressSpace.ROLES_ATTRIBUTES: "roles",
-    AddressSpace.ROLES_MEMBERS: "role_members",
-    AddressSpace.ROLES_OWNERS: "role_owners",
-    AddressSpace.ROLES_ADMINS: "role_admins",
-    AddressSpace.ROLES_TASKS: "role_tasks",
-    AddressSpace.TASKS_ATTRIBUTES: "tasks",
-    AddressSpace.TASKS_OWNERS: "task_owners",
-    AddressSpace.TASKS_ADMINS: "task_admins",
-}
 
 
 def get_updater(database, block_num):

@@ -22,6 +22,7 @@ from rbac.common.base.base_relationship import BaseRelationship
 from rbac.common.role.propose_member import ProposeAddRoleMember
 from rbac.common.role.confirm_member import ConfirmAddRoleMember
 from rbac.common.role.reject_member import RejectAddRoleMember
+from rbac.common.role.remove_member import RemoveRoleMember
 
 LOGGER = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class MemberRelationship(BaseRelationship):
         self.propose = ProposeAddRoleMember()
         self.confirm = ConfirmAddRoleMember()
         self.reject = RejectAddRoleMember()
+        self.remove = RemoveRoleMember()
 
     @property
     def address_type(self):

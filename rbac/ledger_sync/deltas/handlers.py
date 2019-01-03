@@ -20,7 +20,7 @@ from rethinkdb import r
 from rbac.common import addresser
 from rbac.ledger_sync.deltas.decoding import data_to_dicts
 from rbac.ledger_sync.deltas.updating import get_updater
-
+from rbac.ledger_sync.deltas.removing import get_remover
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,11 +52,15 @@ def _handle_delta(database, delta):
 
         # Parse changes and update database
         update = get_updater(database, delta.block_num)
+        remove = get_remover(database, delta.block_num)
         for change in delta.state_changes:
             if addresser.family.is_family(change.address):
-                resources = data_to_dicts(change.address, change.value)
-                for resource in resources:
-                    update_results = update(change.address, resource)
+                if not change.value:
+                    remove(change.address)
+                else:
+                    resources = data_to_dicts(change.address, change.value)
+                    for resource in resources:
+                        update(change.address, resource)
 
         # Add new block to database
         new_block = {
@@ -73,5 +77,5 @@ def _handle_delta(database, delta):
             )
 
     except Exception as err:  # pylint: disable=broad-except
-        LOGGER.warning("%s error handling delta:", type(err))
-        LOGGER.warning(err)
+        LOGGER.exception("%s error handling delta:", type(err))
+        LOGGER.exception(err)
