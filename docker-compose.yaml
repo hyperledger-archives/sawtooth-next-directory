@@ -155,6 +155,7 @@ services:
     container_name: rbac-client
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - NODE_PATH=${NODE_PATH-src/}
       - REACT_APP_SERVER_HOST=${REACT_APP_SERVER_HOST}
       - REACT_APP_SERVER_PORT=${REACT_APP_SERVER_PORT}
       - REACT_APP_HTTP_PROTOCOL=${REACT_APP_HTTP_PROTOCOL}
