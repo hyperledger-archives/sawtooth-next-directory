@@ -193,7 +193,10 @@ export default {
   getUsers: (id) => {
     return {
       ok: true,
-      data: {},
+      data: {
+        data: [],
+        paging: {},
+      },
     };
   },
 

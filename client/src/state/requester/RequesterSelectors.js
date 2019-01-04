@@ -52,7 +52,8 @@ export const RequesterSelectors = {
       role.packs && role.packs.length === 0 &&
       !state.user.me.proposals.find(proposal =>
         proposal.object_id === role.id
-      )
+      ) &&
+      !state.user.me.memberOf.includes(role.id)
     ).slice(0, 3),
 
 
@@ -157,7 +158,7 @@ export const RequesterSelectors = {
   // is member of grouped like the following:
   // [{ pack }, { role }, { pack } ...]
   mine: (state) => {
-    if (!state.user.me || !state.requester.requests) return null;
+    if (!state.user.me) return null;
     let mine = [];
 
     for (const roleId of state.user.me.memberOf) {
@@ -189,6 +190,7 @@ export const RequesterSelectors = {
 
     mine = mine.filter(item => {
       if (item.roles) {
+        if (!state.requester.requests) return false;
         const isOpen = state.requester.requests.find(
           request => item.roles.includes(request.object) &&
             request.status !== 'CONFIRMED'

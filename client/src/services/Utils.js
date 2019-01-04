@@ -110,8 +110,8 @@ export const sort = (array, key) =>
 
 
 export const countLabel = (count, name, showMeLabelIfOne) => {
-  name = showMeLabelIfOne ? `${name} (You)` : name;
-  return `${count} ${count > 1 || count === 0 ? name + 's' : name}`;
+  const youLabel = showMeLabelIfOne ? ' (You)' : '';
+  return `${count} ${count > 1 || count === 0 ? name + 's' : name} ${youLabel}`;
 };
 
 
