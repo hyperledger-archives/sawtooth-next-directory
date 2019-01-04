@@ -53,6 +53,7 @@ limitations under the License.
 }
 
 .minimal #next-track-header {
+  background: white;
   border-bottom: 1px solid #eff0f3;
 }
 

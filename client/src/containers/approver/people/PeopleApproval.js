@@ -188,7 +188,7 @@ class PeopleApproval extends Component {
             { openProposals && openProposals.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  No pending items
+                  Your direct report has no pending approvals
                 </Header.Content>
               </Header>
             }

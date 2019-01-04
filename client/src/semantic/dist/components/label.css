@@ -1313,6 +1313,27 @@ a.ui.basic.label:hover {
   padding: 0.4em 0.5em !important;
   top: 0.9em;
 }
+.ui.inverted.list a.active .content.right.floated .basic.label {
+  background: none;
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  font-size: 0.8em;
+  line-height: 1.6em;
+  min-height: 1.65em;
+  padding: 0 10px !important;
+  text-indent: 0;
+}
+.ui.inverted.list a .content.right.floated .basic.label {
+  background: #767676;
+  border-color: #767676;
+  color: #FFFFFF;
+  font-size: 0.8em;
+  letter-spacing: 0.15em;
+  line-height: 1.6em;
+  min-height: 1.65em;
+  padding: 0 10px !important;
+  text-indent: 0;
+}
 
 
 /*******************************
