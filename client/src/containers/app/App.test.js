@@ -50,8 +50,7 @@ const props = {
 
 const newProps = {
   isAuthenticated: true,
-  isSocketOpen: true,
-  sendMessage: () => { },
+  isSocketOpen: () => {},
   me: {
     proposals: [{
       id: 'proposalID',

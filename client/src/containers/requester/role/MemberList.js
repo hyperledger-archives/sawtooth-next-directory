@@ -125,6 +125,7 @@ class MemberList extends Component {
               </div>
               <div>
                 {user && user.name}
+                {isOwner && ' (Owner)'}
                 <Header.Subheader>
                   {user && user.email}
                 </Header.Subheader>

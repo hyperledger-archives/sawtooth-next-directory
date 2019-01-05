@@ -29,8 +29,8 @@ limitations under the License.
 #next-outer-grid-nav {
   background: var(--nav-bg-color);
   height: 100%;
-  padding: 0;
-  padding-top: 43px;
+  overflow: auto;
+  padding: 43px 0 15px 0;
   position: fixed;
   width: 245px;
 }

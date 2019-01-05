@@ -18,6 +18,7 @@ rules:
   react/jsx-tag-spacing: [error, { beforeSelfClosing: never }]
   react/jsx-one-expression-per-line: error
   react/jsx-indent: [error, 2]
+  react/sort-prop-types: error
   # react/jsx-no-bind: error
   curly: [error, multi-or-nest, consistent]
   default-case: error

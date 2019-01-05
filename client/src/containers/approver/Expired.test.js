@@ -27,12 +27,14 @@ import Expired from './Expired';
 
 const store = customStore.create();
 const props = {
+  isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },
   openProposals: [''],
 };
 
 const newprops = {
+  isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },
   openProposals: [],

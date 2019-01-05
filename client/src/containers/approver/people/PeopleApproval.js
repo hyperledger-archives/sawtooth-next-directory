@@ -23,8 +23,8 @@ import PropTypes from 'prop-types';
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import PeopleApprovalNav from 'components/nav/IndividualsNav';
-import PeopleList from 'components/layouts/proposals/PeopleList';
-import RoleList from 'components/layouts/proposals/RoleList';
+import PeopleList from '../PeopleList';
+import RoleList from '../RoleList';
 import { syncAll } from '../IndividualsHelper';
 
 

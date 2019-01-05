@@ -49,29 +49,26 @@ export const messageSend = (state, { payload }) => {
 };
 
 
-export const messageReceive = (state, { message }) => {
-  const parsed = JSON.parse(message);
-
+export const messageReceive = (state, { payload }) => {
   if (state.messages && state.messages.length > 0) {
     const sound = new Audio(ping);
     sound.play().catch();
   }
   return state.merge({
     fetching: false,
-    messages: parsed.length > 0 ?
-      [...parsed.reverse(), ...(state.messages || [])] :
+    messages: payload.length > 0 ?
+      [...payload.reverse(), ...(state.messages || [])] :
       state.messages,
   });
 };
 
 
 export const ChatReducer = createReducer(INITIAL_STATE, {
-  [Types.CLEAR_MESSAGES]: clearMessages,
+  [Types.CLEAR_MESSAGES]:  clearMessages,
+  [Types.MESSAGE_SEND]:    messageSend,
+  [Types.MESSAGE_RECEIVE]: messageReceive,
 
   // [Types.CONVERSATION_REQUEST]: request,
   // [Types.CONVERSATION_SUCCESS]: conversationSuccess,
   // [Types.CONVERSATION_FAILURE]: failure,
-
-  [Types.MESSAGE_SEND]: messageSend,
-  [Types.MESSAGE_RECEIVE]: messageReceive,
 });

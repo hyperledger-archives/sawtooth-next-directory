@@ -43,7 +43,8 @@ export const appState = (state) => {
     // App
     isAnimating:         AppSelectors.isAnimating(state),
     isRefreshing:        AppSelectors.isRefreshing(state),
-    isSocketOpen:        AppSelectors.isSocketOpen(state),
+    isSocketOpen:        (endpoint) =>
+      AppSelectors.isSocketOpen(state, endpoint),
     socketMaxAttemptsReached:
       AppSelectors.socketMaxAttemptsReached(state),
     shouldRefreshOnNextSocketReceive:
@@ -107,10 +108,14 @@ export const appDispatch = (dispatch) => {
     // App
     startAnimation:    ()    => dispatch(AppActions.animationBegin()),
     stopAnimation:     ()    => dispatch(AppActions.animationEnd()),
-    openSocket:        ()    => dispatch(AppActions.socketOpen()),
-    closeSocket:       ()    => dispatch(AppActions.socketClose()),
     startRefresh:      ()    => dispatch(AppActions.refreshBegin()),
     stopRefresh:       ()    => dispatch(AppActions.refreshEnd()),
+    sendSocket:        (endpoint, payload) =>
+      dispatch(AppActions.socketSend(endpoint, payload)),
+    openSocket:        (endpoint) =>
+      dispatch(AppActions.socketOpen(endpoint)),
+    closeSocket:       (endpoint) =>
+      dispatch(AppActions.socketClose(endpoint)),
     refreshOnNextSocketReceive: (flag) =>
       dispatch(AppActions.refreshOnNextSocketReceive(flag)),
 
@@ -135,8 +140,10 @@ export const appDispatch = (dispatch) => {
     // Chat
     resetChat:         ()    => dispatch(ChatActions.clearMessages()),
     getConversation:   (id)  => dispatch(ChatActions.conversationRequest(id)),
-    sendMessage:       (payload) =>
-      dispatch(ChatActions.messageSend(payload)),
+    sendMessage:       (payload) => {
+      dispatch(ChatActions.messageSend(payload)) &&
+      dispatch(AppActions.socketSend('chatbot', payload));
+    },
 
     // Requester
     getBase:           ()    => dispatch(RequesterActions.baseRequest()),

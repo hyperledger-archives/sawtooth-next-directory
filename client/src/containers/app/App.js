@@ -62,7 +62,10 @@ class App extends Component {
   componentDidMount () {
     const { isAuthenticated, openSocket } = this.props;
     isAuthenticated && this.hydrate();
-    isAuthenticated && openSocket();
+    if (isAuthenticated) {
+      openSocket('chatbot');
+      openSocket('feed');
+    }
   }
 
 
@@ -81,14 +84,19 @@ class App extends Component {
       stopRefresh,
       openSocket } = this.props;
 
-    if (!isAuthenticated) return isSocketOpen && closeSocket();
+    if (!isAuthenticated) {
+      isSocketOpen('chatbot') && closeSocket('chatbot');
+      isSocketOpen('feed') && closeSocket('feed');
+      return;
+    }
 
 
     // On receiving new props, if user authentication
     // state changes, we know that a user has logged in,
     // so get hydrate user and recommended objects
     if (prevProps.isAuthenticated !== isAuthenticated) {
-      openSocket();
+      openSocket('chatbot');
+      openSocket('feed');
       this.hydrate();
     }
 

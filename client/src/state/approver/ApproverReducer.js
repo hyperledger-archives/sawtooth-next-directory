@@ -19,14 +19,25 @@ import { INITIAL_STATE, ApproverTypes as Types } from './ApproverActions';
 import * as utils from 'services/Utils';
 
 
-export const request = (state) => {
-  return state.merge({ fetching: true });
-};
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-};
-export const resetAll = () => {
-  return INITIAL_STATE;
+export const request = (state) =>
+  state.merge({ fetching: true });
+
+
+export const failure = (state, { error }) =>
+  state.merge({ fetching: false, error });
+
+
+export const resetAll = () =>
+  INITIAL_STATE;
+
+
+export const feedReceive = (state, { payload }) => {
+  return state.merge({
+    openProposals: utils.merge(
+      state.openProposals || [],
+      [payload.open_proposal]
+    ),
+  });
 };
 
 
@@ -88,7 +99,8 @@ export const success = {
 
 
 export const ApproverReducer = createReducer(INITIAL_STATE, {
-  [Types.RESET_ALL]: resetAll,
+  [Types.RESET_ALL]:                    resetAll,
+  [Types.FEED_RECEIVE]:                 feedReceive,
 
   // Proposals
   [Types.CONFIRMED_PROPOSALS_REQUEST]:  request,
@@ -113,9 +125,9 @@ export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.CREATE_PACK_FAILURE]:          failure,
 
   // People
-  [Types.ORGANIZATION_REQUEST]:          request,
-  [Types.ORGANIZATION_SUCCESS]:          success.organization,
-  [Types.ORGANIZATION_FAILURE]:          failure,
-  [Types.ON_BEHALF_OF_SET]:              success.onBehalfOf,
+  [Types.ORGANIZATION_REQUEST]:         request,
+  [Types.ORGANIZATION_SUCCESS]:         success.organization,
+  [Types.ORGANIZATION_FAILURE]:         failure,
+  [Types.ON_BEHALF_OF_SET]:             success.onBehalfOf,
 
 });

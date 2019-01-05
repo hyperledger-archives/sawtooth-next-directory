@@ -27,6 +27,7 @@ import PeopleApproval from './PeopleApproval';
 
 const store = customStore.create();
 const props = {
+  isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },
   getUser: () => {},
@@ -35,6 +36,7 @@ const props = {
 };
 
 const newprops = {
+  isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },
   getUser: () => {},

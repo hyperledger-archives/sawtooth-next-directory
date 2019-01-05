@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import { Checkbox, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './RoleList.css';
-import Avatar from '../Avatar';
+import Avatar from 'components/layouts/Avatar';
 
 
 /**
@@ -36,9 +36,9 @@ class RoleList extends Component {
     openProposalsByRole:   PropTypes.object,
     openProposalsByUser:   PropTypes.object,
     roleFromId:            PropTypes.func,
-    selectedRoles:         PropTypes.array,
-    selectedProposals:     PropTypes.array,
     roles:                 PropTypes.array,
+    selectedProposals:     PropTypes.array,
+    selectedRoles:         PropTypes.array,
     users:                 PropTypes.array,
   };
 

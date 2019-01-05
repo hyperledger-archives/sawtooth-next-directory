@@ -72,7 +72,7 @@ class Approved extends Component {
 
   /**
    * Determine which roles and users are not currently loaded
-   * in the client and dispatches actions to retrieve them.
+   * in the client and dispatch actions to retrieve them.
    */
   init () {
     const {

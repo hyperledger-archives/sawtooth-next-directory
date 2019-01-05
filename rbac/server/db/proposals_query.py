@@ -92,6 +92,37 @@ async def fetch_proposal_resource(conn, proposal_id, head_block_num):
         )
 
 
+async def subscribe_to_proposals(conn):
+    return (
+        await r.table("proposals")
+        .map(
+            lambda proposal: proposal.merge(
+                {
+                    "id": proposal["proposal_id"],
+                    "type": proposal["proposal_type"],
+                    "object": proposal["object_id"],
+                    "target": proposal["related_id"],
+                }
+            )
+        )
+        .map(
+            lambda proposal: (proposal["metadata"] == "").branch(
+                proposal.without("metadata"), proposal
+            )
+        )
+        .without(
+            "start_block_num",
+            "end_block_num",
+            "proposal_id",
+            "proposal_type",
+            "object_id",
+            "related_id",
+        )
+        .changes()
+        .run(conn, time_format="raw")
+    )
+
+
 def fetch_approver_ids(table, object_id, head_block_num):
     return (
         r.table(table)

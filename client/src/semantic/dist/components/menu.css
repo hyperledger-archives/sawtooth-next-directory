@@ -2051,6 +2051,9 @@ Floated Menu / Item
 .ui.huge.inverted.vertical.menu .item {
   padding-bottom: 0.65em;
 }
+.ui.huge.inverted.vertical.menu .center.header {
+  padding: 52px;
+}
 .ui.huge.inverted.vertical.menu .item:first-child {
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -2059,6 +2062,44 @@ Floated Menu / Item
   display: -ms-flexbox;
   display: flex;
   min-height: 70px;
+}
+.ui.huge.inverted.vertical.menu > .menu-section {
+  padding-bottom: 18px;
+}
+.ui.huge.inverted.vertical.menu > .menu-section > .header {
+  font-size: 0.75em;
+  padding: 4px 18px;
+}
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray {
+  border-bottom: 1px solid #323d49;
+  max-height: 300px;
+  overflow: auto;
+}
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray:after {
+  background: -webkit-gradient(linear, left bottom, left top, from(#212c3b), to(transparent));
+  background: -webkit-linear-gradient(bottom, #212c3b, transparent);
+  background: linear-gradient(to top, #212c3b, transparent);
+  bottom: 19px;
+  content: '';
+  height: 32px;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+}
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  font-size: 0.8em;
+}
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header > .small {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 1.8em;
+          flex: 0 0 1.8em;
+  margin-right: 17px;
 }
 .ui.huge.inverted.vertical.menu .ui.header .content {
   color: #FFFFFF;

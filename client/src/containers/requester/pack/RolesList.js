@@ -38,8 +38,8 @@ class RolesList extends Component {
     getRoles:           PropTypes.func,
     getUsers:           PropTypes.func,
     roles:              PropTypes.array,
-    users:              PropTypes.array,
     userFromId:         PropTypes.func,
+    users:              PropTypes.array,
   }
 
 

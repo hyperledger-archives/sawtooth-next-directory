@@ -26,20 +26,36 @@ export const animationEnd = (state) =>
   state.merge({ isAnimating: false });
 
 
+export const socketSend = (state) =>
+  state.merge({});
+
+
+export const socketReceive = (state, { payload }) =>
+  state.merge({});
+
+
 export const socketOpen = (state) =>
   state.merge({});
 
 
-export const socketOpenSuccess = (state) =>
-  state.merge({ isSocketOpen: true, socketError: false });
+export const socketOpenSuccess = (state, { endpoint }) => {
+  if (endpoint === 'chatbot')
+    return state.merge({ isChatSocketOpen: true, socketError: false });
+  if (endpoint === 'feed')
+    return state.merge({ isFeedSocketOpen: true, socketError: false });
+};
 
 
 export const socketClose = (state) =>
   state.merge({});
 
 
-export const socketCloseSuccess = (state) =>
-  state.merge({ isSocketOpen: false });
+export const socketCloseSuccess = (state, { endpoint }) => {
+  if (endpoint === 'chatbot')
+    return state.merge({ isChatSocketOpen: false, socketError: false });
+  if (endpoint === 'feed')
+    return state.merge({ isFeedSocketOpen: false, socketError: false });
+};
 
 
 export const socketError = (state, { error }) =>
@@ -68,6 +84,9 @@ export const AppReducer = createReducer(INITIAL_STATE, {
 
   [Types.REFRESH_BEGIN]:                  refreshBegin,
   [Types.REFRESH_END]:                    refreshEnd,
+
+  [Types.SOCKET_SEND]:                    socketSend,
+  [Types.SOCKET_RECEIVE]:                 socketReceive,
 
   [Types.SOCKET_ERROR]:                   socketError,
   [Types.SOCKET_OPEN]:                    socketOpen,

@@ -16,7 +16,6 @@ limitations under the License.
 
 import { call, put } from 'redux-saga/effects';
 import { ChatActions } from 'state';
-import { socket } from 'services/Socket';
 
 
 /**
@@ -34,21 +33,6 @@ export function * getConversation (api, action) {
     else
       yield put(ChatActions.conversationFailure(res.data.error));
 
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-
-/**
- * Send a message to the chatbot engine
- * @param {object} action Redux action
- * @generator
- */
-export function * sendMessage (action) {
-  try {
-    const { payload } = action;
-    yield socket.send(JSON.stringify(payload));
   } catch (err) {
     console.error(err);
   }

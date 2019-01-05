@@ -105,3 +105,4 @@ test('rejectProposalsSuccess', () => {
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();
 });
+

@@ -25,12 +25,15 @@ const { Types, Creators } = createActions({
   refreshBegin:                      null,
   refreshEnd:                        null,
 
+  socketSend:                        ['endpoint', 'payload'],
+  socketReceive:                     ['payload'],
+
   socketError:                       ['error'],
   socketMaxAttemptsReached:          null,
-  socketOpen:                        null,
-  socketOpenSuccess:                 null,
-  socketClose:                       null,
-  socketCloseSuccess:                null,
+  socketOpen:                        ['endpoint'],
+  socketOpenSuccess:                 ['endpoint'],
+  socketClose:                       ['endpoint'],
+  socketCloseSuccess:                ['endpoint'],
   refreshOnNextSocketReceive:        ['flag'],
 });
 
@@ -46,5 +49,6 @@ export const INITIAL_STATE = Immutable({
   isAnimating:                       null,
   isRefreshing:                      null,
   shouldRefreshOnNextSocketReceive:  null,
-  isSocketOpen:                      null,
+  isChatSocketOpen:                  null,
+  isFeedSocketOpen:                  null,
 });

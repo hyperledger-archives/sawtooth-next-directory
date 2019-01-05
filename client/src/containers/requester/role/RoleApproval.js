@@ -103,7 +103,12 @@ class RoleApproval extends Component {
           <Card.Content extra id='next-role-approval-details'>
             <Grid columns={3} padded='vertically'>
               <Grid.Column>
-                Request ID
+                <div>
+                  Request ID
+                </div>
+                <strong>
+                  {proposal.id.slice(0, 7)}
+                </strong>
               </Grid.Column>
               <Grid.Column>
                 Request Date

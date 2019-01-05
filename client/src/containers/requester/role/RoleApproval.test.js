@@ -26,8 +26,8 @@ import RoleApproval from './RoleApproval';
 describe('RoleApproval component', () => {
   const props = {
     getUser: () => {},
-    proposal: { appprovers: [{ id: 'proposal1'}] },
-    users: [{ id: 'proposal2'}],
+    proposal: { id: 'proposal-123', approvers: [{ id: 'approver-123'}] },
+    users: [{ id: 'user-123'}],
 
   };
 

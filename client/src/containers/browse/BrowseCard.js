@@ -66,8 +66,8 @@ class BrowseCard extends Component {
             {resource.name}
             { resource.roles &&
               <Header.Subheader>
-                {resource.roles && utils.countLabel(
-                  resource.roles.length, 'role')
+                { resource.roles &&
+                  utils.countLabel(resource.roles.length, 'role')
                 }
               </Header.Subheader>
             }

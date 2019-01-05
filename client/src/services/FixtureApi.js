@@ -138,7 +138,7 @@ export default {
     };
   },
 
-  sendMessage: (message) => {
+  sendSocket: (message) => {
     return {
       ok: true,
       data: message,

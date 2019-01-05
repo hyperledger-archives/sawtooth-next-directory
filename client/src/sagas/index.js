@@ -50,9 +50,9 @@ import {
   getAllRoles } from './RequesterSaga';
 
 
-import { closeSocket, openSocket } from './AppSaga';
+import { closeSocket, openSocket, sendSocket } from './AppSaga';
 import { login, signup, logout } from './AuthSaga';
-import { getConversation, sendMessage } from './ChatSaga';
+import { getConversation } from './ChatSaga';
 import { me, getUser, getUsers, getAllUsers } from './UserSaga';
 
 
@@ -82,6 +82,7 @@ function * sagas () {
     // App
     takeLatest(AppTypes.SOCKET_OPEN, openSocket),
     takeLatest(AppTypes.SOCKET_CLOSE, closeSocket),
+    takeLatest(AppTypes.SOCKET_SEND, sendSocket),
 
     // Approver
     takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
@@ -103,7 +104,6 @@ function * sagas () {
 
     // Chat
     takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, FixtureAPI),
-    takeLatest(ChatTypes.MESSAGE_SEND, sendMessage),
 
     // Requester
     takeLatest(RequesterTypes.ALL_PACKS_REQUEST, getAllPacks, api),

@@ -24,7 +24,7 @@ const { Types, Creators } = createActions({
   conversationFailure:    ['error'],
 
   messageSend:            ['payload'],
-  messageReceive:         ['message'],
+  messageReceive:         ['payload'],
 
   clearMessages:          null,
 });

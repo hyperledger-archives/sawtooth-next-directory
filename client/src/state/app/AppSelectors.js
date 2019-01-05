@@ -17,7 +17,10 @@ limitations under the License.
 export const AppSelectors = {
   isAnimating:     (state) => state.app.isAnimating,
   isRefreshing:    (state) => state.app.isRefreshing,
-  isSocketOpen:    (state) => state.app.isSocketOpen,
+  isSocketOpen:    (state, endpoint) => {
+    if (endpoint === 'chatbot') return state.app.isChatSocketOpen;
+    if (endpoint === 'feed') return state.app.isFeedSocketOpen;
+  },
   socketError:     (state) => state.app.socketError,
   socketMaxAttemptsReached: (state) =>
     state.app.socketMaxAttemptsReached,
