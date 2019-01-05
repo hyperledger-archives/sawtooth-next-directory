@@ -29,6 +29,7 @@ import PropTypes from 'prop-types';
 
 import './Header.css';
 import Avatar from './Avatar';
+import Notifications from './Notifications';
 import logo from 'images/next-logo-primary.png';
 import * as utils from 'services/Utils';
 import * as storage from 'services/Storage';
@@ -43,18 +44,21 @@ import * as storage from 'services/Storage';
 class Header extends Component {
 
   static propTypes = {
-    history:                PropTypes.object,
-    logout:                 PropTypes.func,
-    me:                     PropTypes.object,
-    startAnimation:         PropTypes.func,
-    openProposalsCount:     PropTypes.number,
-    recommendedPacks:       PropTypes.array,
-    recommendedRoles:       PropTypes.array,
+    history:                 PropTypes.object,
+    logout:                  PropTypes.func,
+    me:                      PropTypes.object,
+    openProposalsCount:      PropTypes.number,
+    recommendedPacks:        PropTypes.array,
+    recommendedRoles:        PropTypes.array,
+    startAnimation:          PropTypes.func,
   }
 
 
-  state = { approverViewEnabled: null, menuVisible: false };
-
+  state = {
+    approverViewEnabled:     null,
+    globalMenuVisible:       false,
+    notificationMenuVisible: false,
+  };
 
 
   /**
@@ -62,12 +66,35 @@ class Header extends Component {
    * component. Add event listener to handle click outside menu.
    */
   componentDidMount () {
+    const { id, isSocketOpen, sendSocket } = this.props;
     document.addEventListener(
       'mousedown', this.handleClickOutside
     );
     this.setState({
       approverViewEnabled: !!storage.getViewState(),
     });
+    if (isSocketOpen('feed'))
+      sendSocket('feed', { user_id: id });
+  }
+
+
+  /**
+   * Called whenever Redux state changes. On socket open, send
+   * message to feed socket.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const { id, isAuthenticated, isSocketOpen, sendSocket } = this.props;
+    if (prevProps.isAuthenticated !== isAuthenticated) {
+      this.setState({
+        globalMenuVisible: false,
+        notificationMenuVisible: false,
+      });
+    }
+    if (prevProps.isSocketOpen('feed') !== isSocketOpen('feed') &&
+      isSocketOpen('feed'))
+      sendSocket('feed', { user_id: id });
   }
 
 
@@ -89,7 +116,10 @@ class Header extends Component {
    */
   handleClickOutside = (event) => {
     this.ref && !this.ref.contains(event.target) &&
-      this.setState({ menuVisible: false });
+      this.setState({
+        globalMenuVisible: false,
+        notificationMenuVisible: false,
+      });
   }
 
 
@@ -102,9 +132,20 @@ class Header extends Component {
   }
 
 
-  toggleMenu = () => {
-    const { menuVisible } = this.state;
-    this.setState({ menuVisible: !menuVisible });
+  toggleNotificationMenu = () => {
+    const { notificationMenuVisible } = this.state;
+    this.setState({
+      globalMenuVisible: false,
+      notificationMenuVisible: !notificationMenuVisible,
+    });
+  }
+
+
+  toggleGlobalMenu = () => {
+    const { globalMenuVisible } = this.state;
+    this.setState({
+      globalMenuVisible: !globalMenuVisible,
+      notificationMenuVisible: false });
   }
 
 
@@ -138,7 +179,7 @@ class Header extends Component {
 
   logout = () => {
     const { logout } = this.props;
-    this.toggleMenu();
+    this.toggleGlobalMenu();
     logout();
   }
 
@@ -147,15 +188,15 @@ class Header extends Component {
    * Render global dropdown menu
    * @returns {JSX}
    */
-  renderMenu () {
+  renderGlobalMenu () {
     const { id, me } = this.props;
     const { approverViewEnabled } = this.state;
 
     return (
-      <div id='next-header-menu'>
+      <div id='next-header-global-menu'>
         <Menu inverted size='huge' vertical>
           { me &&
-            <Menu.Item id='next-header-menu-profile'>
+            <Menu.Item id='next-header-global-menu-profile'>
               <MenuHeader as='h3'>
                 <Avatar userId={id} size='medium' {...this.props}/>
                 <MenuHeader.Content>
@@ -164,7 +205,7 @@ class Header extends Component {
               </MenuHeader>
             </Menu.Item>
           }
-          <Menu.Item id='next-header-menu-view-toggle'>
+          <Menu.Item id='next-header-global-menu-view-toggle'>
             <MenuHeader as='h5'>
               <Icon name='window maximize outline' color='grey'/>
               <MenuHeader.Content>
@@ -186,7 +227,9 @@ class Header extends Component {
               </MenuHeader.Content>
             </MenuHeader>
           </Menu.Item>
-          <Menu.Item as={Link} to='/approval/manage' onClick={this.toggleMenu}>
+          <Menu.Item
+            as={Link} to='/approval/manage'
+            onClick={this.toggleGlobalMenu}>
             <MenuHeader as='h5'>
               <Icon name='setting' color='grey'/>
               <MenuHeader.Content>
@@ -194,7 +237,9 @@ class Header extends Component {
               </MenuHeader.Content>
             </MenuHeader>
           </Menu.Item>
-          <Menu.Item  id='next-signout-button' onClick={this.logout}>
+          <Menu.Item
+            id='next-signout-button'
+            onClick={this.logout}>
             <MenuHeader as='h5'>
               <Icon name='sign out' color='grey'/>
               <MenuHeader.Content>
@@ -220,7 +265,10 @@ class Header extends Component {
       recommendedPacks,
       recommendedRoles,
       startAnimation } = this.props;
-    const { approverViewEnabled, menuVisible } = this.state;
+    const {
+      approverViewEnabled,
+      globalMenuVisible,
+      notificationMenuVisible } = this.state;
 
     return (
       <header className='next-header' ref={this.setRef}>
@@ -237,29 +285,39 @@ class Header extends Component {
         </div>
         { me &&
         <div id='next-header-actions'>
-          <div id='next-header-bell'>
-            <Link to='/approval/pending/individual'>
-              <Icon inverted name='bell'/>
-              { openProposalsCount &&
-                <Label circular color='red' floating size='mini'>
-                  {openProposalsCount}
-                </Label>
-              }
-            </Link>
+          <div
+            id='next-header-actions-bell'
+            className='cursor-pointer'
+            onClick={this.toggleNotificationMenu}>
+            <Icon inverted name='bell'/>
+            { openProposalsCount &&
+              <Label circular color='red' floating size='mini'>
+                {openProposalsCount}
+              </Label>
+            }
           </div>
           { me &&
             <div
               id='next-header-actions-profile'
-              onClick={this.toggleMenu}>
-              <Avatar
-                userId={id}
-                size='small'
-                {...this.props}/>
+              onClick={this.toggleGlobalMenu}>
+              <div className='cursor-pointer'>
+                <Avatar
+                  userId={id}
+                  size='small'
+                  {...this.props}/>
+              </div>
             </div>
           }
         </div>
         }
-        { menuVisible && this.renderMenu() }
+        { globalMenuVisible &&
+          this.renderGlobalMenu()
+        }
+        { notificationMenuVisible &&
+          <Notifications
+            toggleMenu={this.toggleNotificationMenu}
+            {...this.props}/>
+        }
       </header>
     );
   }

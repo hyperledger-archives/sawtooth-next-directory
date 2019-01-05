@@ -39,18 +39,18 @@ test('animationEnd', () => {
 test('socketOpenSuccess', () => {
   const state = reducer(
     INITIAL_STATE,
-    Actions.socketOpenSuccess(null)
+    Actions.socketOpenSuccess('chatbot')
   );
-  expect(state.isSocketOpen).toBe(true);
+  expect(state.isChatSocketOpen).toBe(true);
 });
 
 
 test('socketCloseSuccess', () => {
   const state = reducer(
     INITIAL_STATE,
-    Actions.socketCloseSuccess(null)
+    Actions.socketCloseSuccess('feed')
   );
-  expect(state.isSocketOpen).toBe(false);
+  expect(state.isFeedSocketOpen).toBe(false);
 });
 
 
@@ -69,6 +69,24 @@ test('refreshEnd', () => {
     Actions.refreshEnd(null)
   );
   expect(state.isRefreshing).toBe(false);
+});
+
+
+test('socketSend', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.socketSend(null)
+  );
+  expect(state.error).toBeNull();
+});
+
+
+test('socketReceive', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.socketReceive(null)
+  );
+  expect(state.error).toBeNull();
 });
 
 

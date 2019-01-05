@@ -39,7 +39,7 @@ describe('FixtureApi Service', () => {
   });
 
   test('send message', () => {
-    FixtureAPI.sendMessage('new message found');
+    FixtureAPI.sendSocket('new message found');
   });
 
   test('login', () => {

@@ -24,7 +24,7 @@ import PropTypes from 'prop-types';
 import './Login.css';
 import logo from 'images/next-logo-billboard.png';
 import { AuthActions, AuthSelectors } from 'state';
-import LoginForm from 'components/forms/LoginForm';
+import LoginForm from './LoginForm';
 
 
 import * as utils from 'services/Utils';

@@ -30,8 +30,8 @@ import './Waves.css';
 class Waves extends Component {
 
   static propTypes = {
-    location:              PropTypes.object,
     isAnimating:           PropTypes.bool,
+    location:              PropTypes.object,
     stopAnimation:         PropTypes.func,
   };
 

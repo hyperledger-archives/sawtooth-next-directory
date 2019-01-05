@@ -31,10 +31,10 @@ import Avatar from 'components/layouts/Avatar';
 class Organization extends Component {
 
   static propTypes = {
-    id:                 PropTypes.string,
     getOrganization:    PropTypes.func,
-    handleUserSelect:   PropTypes.func,
     getUsers:           PropTypes.func,
+    handleUserSelect:   PropTypes.func,
+    id:                 PropTypes.string,
     organization:       PropTypes.object,
     userFromId:         PropTypes.func,
   }

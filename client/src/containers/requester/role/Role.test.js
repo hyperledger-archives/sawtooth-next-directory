@@ -37,9 +37,10 @@ it('renders without crashing', () => {
       return { members: [], owners: [] };
     },
     proposalFromId: () => {
-      return { status: 'OPEN' };
+      return { id: 'proposal-123', status: 'OPEN' };
     },
     getProposal: (id) => { },
+    isSocketOpen: () => {},
     proposalId: 'id-1',
     roleId: 'id-2',
     match: { params: {} },

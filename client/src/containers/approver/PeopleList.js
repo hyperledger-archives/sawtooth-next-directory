@@ -35,9 +35,9 @@ class PeopleList extends Component {
     openProposalsByRole:      PropTypes.object,
     openProposalsByUser:      PropTypes.object,
     roleFromId:               PropTypes.func,
+    roles:                    PropTypes.array,
     selectedProposals:        PropTypes.array,
     selectedUsers:            PropTypes.array,
-    roles:                    PropTypes.array,
     users:                    PropTypes.array,
   };
 

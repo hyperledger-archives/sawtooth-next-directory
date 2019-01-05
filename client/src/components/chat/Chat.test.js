@@ -53,6 +53,7 @@ describe('Chat component', () => {
   it('renders without crashing with different props', () => {
     const div = document.createElement('div');
     const props = {
+      isSocketOpen: () => {},
       submit: (username, password) => { },
       title: 'defaultTitle',
       type: '1',
@@ -64,6 +65,7 @@ describe('Chat component', () => {
       },
     };
     const newProps = {
+      isSocketOpen: () => {},
       type: '1',
       groupBy: 1,
       selectedRoles: [{ id: 'roleid' }],
@@ -80,8 +82,7 @@ describe('Chat component', () => {
 
     ReactDOM.render(
       <BrowserRouter>
-        <Chat store={store}
-          title='defaultTitle' type={'0'}/>
+        <Chat store={store} title='defaultTitle' type={'0'} {...props}/>
       </BrowserRouter>, div
     );
 
@@ -93,7 +94,7 @@ describe('Chat component', () => {
 
     ReactDOM.render(
       <BrowserRouter>
-        <Chat type={'0'} store={store}/>
+        <Chat type={'0'} {...props} store={store}/>
       </BrowserRouter>, div
     );
 

@@ -31,21 +31,19 @@ import * as utils from 'services/Utils';
 class ChatForm extends Component {
 
   static propTypes = {
-    activePack:           PropTypes.object,
-    activeRole:           PropTypes.object,
-    approve:              PropTypes.func,
-    disabled:             PropTypes.bool,
-    formDisabled:         PropTypes.bool,
-    messages:             PropTypes.array,
-    reject:               PropTypes.func,
-    requestPack:          PropTypes.func,
-    requestRole:          PropTypes.func,
-    send:                 PropTypes.func.isRequired,
-    type:                 PropTypes.string,
-    refreshOnNextSocketReceive:
-      PropTypes.func,
-    socketMaxAttemptsReached:
-      PropTypes.bool,
+    activePack:                 PropTypes.object,
+    activeRole:                 PropTypes.object,
+    approve:                    PropTypes.func,
+    disabled:                   PropTypes.bool,
+    formDisabled:               PropTypes.bool,
+    messages:                   PropTypes.array,
+    refreshOnNextSocketReceive: PropTypes.func,
+    reject:                     PropTypes.func,
+    requestPack:                PropTypes.func,
+    requestRole:                PropTypes.func,
+    send:                       PropTypes.func.isRequired,
+    socketMaxAttemptsReached:   PropTypes.bool,
+    type:                       PropTypes.string,
   };
 
 

@@ -35,8 +35,8 @@ class RoleSelectGrid extends Component {
     getRoles:         PropTypes.func,
     handleClick:      PropTypes.func,
     ownedRoles:       PropTypes.array,
-    roles:            PropTypes.array,
     roleFromId:       PropTypes.func,
+    roles:            PropTypes.array,
     selectedRoles:    PropTypes.array,
   };
 

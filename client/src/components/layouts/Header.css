@@ -34,33 +34,26 @@ limitations under the License.
   margin-right: 10px;
 }
 
-#next-header-actions-profile {
-  align-items: center;
-  display: flex;
-  height: 100%;
-  padding: 0 22px 0 26px;
-}
-
-#next-header-menu-view-toggle .content {
+#next-header-global-menu-view-toggle .content {
   width: 100%;
 }
 
-#next-header-menu-view-toggle .ui.header > .icon {
+#next-header-global-menu-view-toggle .ui.header > .icon {
   vertical-align: top;
 }
 
-#next-header-menu-profile .ui.header {
+#next-header-global-menu-profile .ui.header {
   display: flex;
   align-items: center;
 }
 
-#next-header-menu-profile .ui.header .content {
+#next-header-global-menu-profile .ui.header .content {
   overflow: hidden;
   padding-left: 16px;
   text-overflow: ellipsis;
 }
 
-#next-header-menu .next-toggle-state-label {
+#next-header-global-menu .next-toggle-state-label {
   color: coral;
   margin-left: 7px;
 }
@@ -71,24 +64,40 @@ limitations under the License.
   height: 100%;
 }
 
-#next-header-actions i {
-  font-size: 1.1em;
-  padding: 1px;
-}
-
-#next-header-actions .next-avatar-container {
-  cursor: pointer;
-}
-
-#next-header-menu {
+#next-header-global-menu {
   position: absolute;
   top: 39px;
   right: 5px;
 }
 
-#next-header-bell {
+#next-header-notification-menu {
+  position: absolute;
+  top: 39px;
+  right: 65px;
+}
+
+#next-header-actions i {
+  font-size: 1.1em;
+}
+
+#next-header-actions-profile {
+  align-items: center;
   display: flex;
+  height: 100%;
+  padding: 0 22px 0 15px;
+}
+
+#next-header-actions-bell {
+  display: flex;
+  height: 100%;
+  padding: 10px;
   position: relative;
+}
+
+#next-header-actions-bell .floating.label {
+  left: 32px;
+  text-shadow: 0px 1px 0px #0000001f;
+  top: 18px;
 }
 
 .next-global-loading-bar {
@@ -99,7 +108,8 @@ limitations under the License.
   top: 0;
 }
 
-#next-header-menu:before {
+#next-header-notification-menu:before,
+#next-header-global-menu:before {
   background: #212c3a;
   content: '';
   height: 40px;
@@ -108,4 +118,8 @@ limitations under the License.
   top: -40px;
   width: 60px;
   z-index: -1;
+}
+
+#next-header-notification-menu:before {
+  width: 42px;
 }

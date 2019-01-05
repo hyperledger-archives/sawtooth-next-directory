@@ -47,6 +47,7 @@ const { Types, Creators } = createActions({
 
   resetAll:                   null,
   onBehalfOfSet:              ['id'],
+  feedReceive:                ['payload'],
 });
 
 

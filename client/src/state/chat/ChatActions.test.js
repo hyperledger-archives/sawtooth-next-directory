@@ -35,10 +35,10 @@ test('messageSend', () => {
 
 
 test('messageReceive', () => {
-  const Message = JSON.stringify({ message: { length: 'userid' }});
+  const payload = { message: { length: 'userid' }};
   const state = reducer(
     INITIAL_STATE,
-    Actions.messageReceive(Message)
+    Actions.messageReceive(payload)
   );
   expect(state.fetching).toBe(false);
   expect(state.messages).toBe(null);

@@ -22,50 +22,26 @@ import { BrowserRouter } from 'react-router-dom';
 
 
 import * as customStore from 'customStore';
-import Header from './Header';
+import Notifications from './Notifications';
 
 
 const store = customStore.create();
 
 
-describe('Header component', () => {
+describe('Notifications component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    const props = {
-      id: '1234',
-      isSocketOpen: () => {},
-      me: { name: 'username' },
-      openProposalsCount: 5,
-      renderMenu: () => {  },
-      logout: () => { },
-      users: [],
-    };
+    const props = {};
     ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter>
-          <Header {...props}/>
+          <Notifications {...props}/>
         </BrowserRouter>
       </Provider>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
-  });
-
-  it('calls logout function', () => {
-    const props = {
-      isSocketOpen: () => {},
-      me: { name: 'username' },
-      openProposalsCount: 5,
-      renderMenu: () => {  },
-      logout: () => { },
-    };
-
-    const wrapper = shallow(
-      <Header.WrappedComponent {...props} store={store}/>
-    );
-
-    wrapper.instance().logout();
   });
 
 });

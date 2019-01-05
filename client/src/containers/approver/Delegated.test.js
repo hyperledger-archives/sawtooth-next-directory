@@ -27,12 +27,14 @@ import Delegated from './Delegated';
 
 const store = customStore.create();
 const props = {
+  isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },
   openProposals: [''],
 };
 
 const newprops = {
+  isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },
   openProposals: [],

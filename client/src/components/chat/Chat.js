@@ -29,7 +29,7 @@ import {
 
 import './Chat.css';
 import ChatMessage from './ChatMessage';
-import ChatForm from 'components/forms/ChatForm';
+import ChatForm from './ChatForm';
 import Avatar from 'components/layouts/Avatar';
 
 
@@ -51,7 +51,7 @@ class Chat extends Component {
     const { id, isSocketOpen, messages, sendMessage, type } = this.props;
 
     if (type === 'REQUESTER' &&
-        isSocketOpen &&
+        isSocketOpen('chatbot') &&
         !messages) {
       sendMessage({
         do: 'CREATE', message: { text: '/recommend' }, user_id: id,
@@ -77,9 +77,9 @@ class Chat extends Component {
       refreshOnNextSocketReceive,
       shouldRefreshOnNextSocketReceive } = this.props;
 
-    if (prevProps.isSocketOpen !== isSocketOpen &&
+    if (prevProps.isSocketOpen('chatbot') !== isSocketOpen('chatbot') &&
         type === 'REQUESTER' &&
-        isSocketOpen &&
+        isSocketOpen('chatbot') &&
         !messages) {
       sendMessage({
         do: 'CREATE', message: { text: '/recommend' }, user_id: id,

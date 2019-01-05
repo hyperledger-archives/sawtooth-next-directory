@@ -32,8 +32,8 @@ export default class Avatar extends Component {
   static propTypes = {
     onClick:        PropTypes.func,
     size:           PropTypes.string,
-    users:          PropTypes.array,
     userId:         PropTypes.string,
+    users:          PropTypes.array,
   }
 
 

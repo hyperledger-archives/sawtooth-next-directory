@@ -22,7 +22,7 @@ import PropTypes from 'prop-types';
 
 import './Signup.css';
 import { AuthActions, AuthSelectors } from 'state';
-import SignupForm from 'components/forms/SignupForm';
+import SignupForm from './SignupForm';
 import logo from 'images/next-logo-billboard.png';
 
 

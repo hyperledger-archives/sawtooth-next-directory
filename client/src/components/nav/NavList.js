@@ -38,9 +38,9 @@ class NavList extends Component {
   static propTypes = {
     disabled:         PropTypes.bool,
     labels:           PropTypes.array,
-    location:         PropTypes.object,
     list:             PropTypes.array,
     listTitle:        PropTypes.string,
+    location:         PropTypes.object,
     route:            PropTypes.string,
     titleIsLink:      PropTypes.bool,
   };

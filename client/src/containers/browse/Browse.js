@@ -164,7 +164,7 @@ class Browse extends Component {
             ))}
             {(fetchingAllPacks || fetchingAllRoles) && this.renderPlaceholder()}
           </Grid>
-          { this.browseCount() < rolesTotalCount &&
+          { this.browseCount() < rolesTotalCount && this.browseCount() !== 0 &&
             <Container
               id='next-browse-load-next-button'
               textAlign='center'>

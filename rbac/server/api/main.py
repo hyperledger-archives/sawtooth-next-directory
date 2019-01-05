@@ -31,6 +31,7 @@ from rbac.server.api.auth import AUTH_BP
 from rbac.server.api.chatbot import CHATBOT_BP
 from rbac.server.api.blocks import BLOCKS_BP
 from rbac.server.api.errors import ERRORS_BP
+from rbac.server.api.feed import FEED_BP
 from rbac.server.api.packs import PACKS_BP
 from rbac.server.api.proposals import PROPOSALS_BP
 from rbac.server.api.roles import ROLES_BP
@@ -101,6 +102,7 @@ def main():
     app.blueprint(BLOCKS_BP)
     app.blueprint(CHATBOT_BP)
     app.blueprint(ERRORS_BP)
+    app.blueprint(FEED_BP)
     app.blueprint(PACKS_BP)
     app.blueprint(PROPOSALS_BP)
     app.blueprint(ROLES_BP)
