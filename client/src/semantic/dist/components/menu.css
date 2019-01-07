@@ -2081,7 +2081,7 @@ Floated Menu / Item
   background: linear-gradient(to top, #212c3b, transparent);
   bottom: 19px;
   content: '';
-  height: 32px;
+  height: 12px;
   pointer-events: none;
   position: absolute;
   width: 100%;

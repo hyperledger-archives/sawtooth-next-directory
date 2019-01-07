@@ -25,6 +25,7 @@ import TrackHeader from 'components/layouts/TrackHeader';
 import ApprovedNav from 'components/nav/ApprovedNav';
 import * as theme from 'services/Theme';
 import glyph from 'images/header-glyph-individual-inverted.png';
+import Avatar from 'components/layouts/Avatar';
 
 
 /**
@@ -164,7 +165,13 @@ class Approved extends Component {
     const { column, direction } = this.state;
 
     return (
-      <Table sortable selectable>
+      <Table
+        sortable
+        selectable
+        singleLine
+        striped
+        padded='very'
+        className='cursor-pointer'>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
@@ -198,7 +205,15 @@ class Approved extends Component {
                 {this.roleName(proposal.object)}
               </Table.Cell>
               <Table.Cell>
-                {this.userName(proposal.opener)}
+                <Header as='h4' className='next-approver-approved-table-opener'>
+                  <Avatar
+                    userId={proposal.opener}
+                    size='small'
+                    {...this.props}/>
+                  <Header.Content>
+                    {this.userName(proposal.opener)}
+                  </Header.Content>
+                </Header>
               </Table.Cell>
               <Table.Cell className='next-approver-approved-table-email'>
                 {this.userEmail(proposal.opener)}

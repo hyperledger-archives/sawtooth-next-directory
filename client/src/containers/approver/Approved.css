@@ -15,13 +15,28 @@ limitations under the License.
 
 
 #next-approver-approved-content {
-  margin-top: 300px;
+  margin-top: 230px;
+  overflow: auto;
+  padding-bottom: 100px;
   position: relative;
-  width: calc(100% - 60px) !important;
+  width: calc(100% - 61px) !important;
+}
+
+.next-approver-approved-table-opener {
+  align-items: center;
+  display: flex;
+}
+
+.next-approver-approved-table-opener div:first-child {
+  margin-right: 10px;
 }
 
 .next-approver-approved-table-email {
   color: var(--magenta);
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  top: 3px;
 }
 
 .next-approver-approved-table-email i {

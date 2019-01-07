@@ -29,18 +29,6 @@ limitations under the License.
   margin-bottom: 50px;
 }
 
-#next-approver-manage-packs-content .ui.card h3 {
-  align-items: start;
-  display: flex;
-  padding: 20px 40px 20px 20px;
-  margin-bottom: 0;
-}
-
-#next-approver-manage-packs-content .ui.card h3 div:first-child {
-  flex: 0 0 54px;
-  line-height: 1.4em;
-}
-
 #next-approver-manage-packs-content .ui.placeholder {
   margin: 35px 0;
 }

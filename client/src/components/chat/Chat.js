@@ -16,24 +16,16 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import {
-  Button,
-  Checkbox,
-  Header,
-  List,
-  Icon,
-  Segment,
-  Transition } from 'semantic-ui-react';
 
 
 import './Chat.css';
-import ChatMessage from './ChatMessage';
 import ChatForm from './ChatForm';
-import Avatar from 'components/layouts/Avatar';
+import ApproverChat from './ApproverChat';
+import RequesterChat from './RequesterChat';
+import PeopleChat from './PeopleChat';
 
 
-// TODO: Break out into child components
+// TODO: Consider renaming (sub)component(s)
 /**
  *
  * @class         Chat
@@ -48,7 +40,12 @@ class Chat extends Component {
    * from chatbot
    */
   componentDidMount () {
-    const { id, isSocketOpen, messages, sendMessage, type } = this.props;
+    const {
+      id,
+      isSocketOpen,
+      messages,
+      sendMessage,
+      type } = this.props;
 
     if (type === 'REQUESTER' &&
         isSocketOpen('chatbot') &&
@@ -94,32 +91,6 @@ class Chat extends Component {
 
 
   /**
-   * Get role name from role ID
-   * @param {string} roleId Role ID
-   * @returns {string}
-   */
-  roleName = (roleId) => {
-    const { roleFromId } = this.props;
-    const role = roleFromId(roleId);
-    return role && role.name;
-  };
-
-
-  /**
-   * Get user name from user ID
-   * @param {string} userId User ID
-   * @returns {string}
-   */
-  userName = (userId) => {
-    const { id, userFromId } = this.props;
-    const user = userFromId(userId);
-    if (user)
-      return userId === id ? `${user.name} (You)` : user.name;
-    return null;
-  };
-
-
-  /**
    * Send message to chatbot engine
    * @param {string} message Message body
    */
@@ -149,6 +120,9 @@ class Chat extends Component {
   }
 
 
+  /**
+   * Approve selected proposals
+   */
   manualApprove = () => {
     const { approveProposals, selectedProposals, reset } = this.props;
     approveProposals(selectedProposals);
@@ -156,6 +130,9 @@ class Chat extends Component {
   }
 
 
+  /**
+   * Reject selected proposals
+   */
   manualReject = () => {
     const { rejectProposals, selectedProposals, reset } = this.props;
     rejectProposals(selectedProposals);
@@ -177,154 +154,19 @@ class Chat extends Component {
    * @returns {JSX}
    */
   render () {
-    const {
-      activeUser,
-      disabled,
-      formDisabled,
-      handleChange,
-      handleOnBehalfOf,
-      organization,
-      selectedProposal,
-      selectedRoles,
-      selectedUsers,
-      subtitle,
-      title,
-      groupBy,
-      type } = this.props;
+    const { disabled, formDisabled, type } = this.props;
 
     return (
       <div id='next-chat-container'>
-        { type === 'REQUESTER' && title &&
-          <Header id='next-chat-header' size='small' inverted>
-            {title}
-            <Icon link name='pin' size='mini' className='pull-right'/>
-          </Header>
+        { type === 'APPROVER' &&
+          <ApproverChat {...this.props}/>
         }
-
-        { type === 'APPROVER' && selectedProposal && title && subtitle &&
-          <div id='next-chat-selection-heading-container'>
-            <Avatar
-              userId={selectedProposal.opener}
-              size='medium'
-              className='pull-left'
-              {...this.props}/>
-            <Header as='h3' inverted>
-              {title}
-              <Header.Subheader>
-                {subtitle}
-              </Header.Subheader>
-            </Header>
-          </div>
-        }
-
-        { type === 'PEOPLE' &&
-          <div id='next-chat-users-selection-container'>
-            { activeUser &&
-              <div id='next-chat-organization-heading'>
-                <Avatar userId={activeUser} size='large' {...this.props}/>
-                <Header as='h2' inverted>
-                  {this.userName(activeUser)}
-                </Header>
-                { organization &&
-                  organization.direct_reports.includes(activeUser) &&
-                  <div>
-                    <Button
-                      as={Link}
-                      to={`people/${activeUser}/pending`}
-                      onClick={handleOnBehalfOf}>
-                      Pending Approvals
-                    </Button>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        }
-
-        { type === 'APPROVER' && selectedUsers &&
-          <div id='next-chat-selection-heading-container'>
-            <Transition.Group
-              as={List}
-              horizontal
-              animation='fade right'
-              duration={{hide: 0, show: 1000}}>
-              { selectedUsers.map(user =>
-                <Avatar
-                  key={user}
-                  userId={user}
-                  size='medium'
-                  className='pull-left'
-                  {...this.props}/>
-              ) }
-            </Transition.Group>
-            <Transition
-              visible={selectedUsers.length > 0}
-              animation='fade left'
-              duration={{hide: 0, show: 300}}>
-              <Header as='h3' inverted>
-                {selectedUsers.length === 1 && title}
-                <Header.Subheader>
-                  {subtitle}
-                </Header.Subheader>
-              </Header>
-            </Transition>
-          </div>
-        }
-
-        { type === 'APPROVER' && groupBy === 0 && selectedUsers &&
-          <div id='next-chat-users-selection-container'>
-            <Transition.Group
-              as={List}
-              animation='fade down'
-              duration={{hide: 300, show: 300}}>
-              { selectedUsers.map(user =>
-                <Segment className='minimal' padded='very' key={user}>
-                  <Checkbox
-                    checked={!!user}
-                    user={user}
-                    label={this.userName(user)}
-                    onChange={handleChange}/>
-                </Segment>
-              ) }
-            </Transition.Group>
-          </div>
-        }
-
-        { type === 'APPROVER' && groupBy === 1 && selectedRoles &&
-          <div id='next-chat-roles-selection-container'>
-            <Transition.Group
-              as={List}
-              animation='fade down'
-              duration={{hide: 300, show: 300}}>
-              { [...new Set(selectedRoles)].map(role =>
-                <Segment className='minimal' padded='very' key={role}>
-                  <Checkbox
-                    checked={!!role}
-                    role={role}
-                    label={this.roleName(role)}
-                    onChange={handleChange}/>
-                </Segment>
-              ) }
-            </Transition.Group>
-          </div>
-        }
-
-        { type === 'APPROVER' && selectedProposal &&
-          <div id='next-chat-messages-container'>
-            <ChatMessage
-              messages={[{
-                text: selectedProposal.open_reason,
-                from: selectedProposal.opener,
-              }]}/>
-          </div>
-        }
-
         { type === 'REQUESTER' &&
-          <div id='next-chat-messages-container'>
-            <ChatMessage {...this.props}/>
-          </div>
+          <RequesterChat {...this.props}/>
         }
-
+        { type === 'PEOPLE' &&
+          <PeopleChat {...this.props}/>
+        }
         { type !== 'PEOPLE' &&
           <div id='next-chat-conversation-dock'>
             <ChatForm
@@ -355,5 +197,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {};
 };
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

@@ -18,6 +18,7 @@ import React, { Component } from 'react';
 import { Header, Loader, Image, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import chatbotAvatar from 'images/chatbot-avatar.png';
+import Avatar from 'components/layouts/Avatar';
 
 
 /**
@@ -92,14 +93,16 @@ class ChatMessage extends Component {
               </div> :
               <div className='next-chat-message-left' key={index}>
                 { message.from ?
-                  <Image src='http://i.pravatar.cc/150' size='mini' avatar/> :
+                  <Avatar
+                    userId={message.from}
+                    size='small'
+                    {...this.props}/> :
                   <Image src={chatbotAvatar} size='mini'/>
                 }
                 <Segment compact
                   floated='left'
                   size='small'>
                   <div dangerouslySetInnerHTML={{__html: message.text}}>
-                    {/* {message.text} */}
                   </div>
                 </Segment>
               </div>

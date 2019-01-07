@@ -96,6 +96,7 @@ class RoleList extends Component {
     }
   }
 
+
   /**
    * Get role name from role ID
    * @param {string} roleId Role ID
