@@ -16,7 +16,10 @@
 from sanic import Blueprint
 from sanic import response
 from rbac.server.api.auth import authorized
+<<<<<<< HEAD
 
+=======
+>>>>>>> Swagger hosted
 SWAGGER_BP = Blueprint("swagger")
 
 
@@ -25,5 +28,9 @@ SWAGGER_BP = Blueprint("swagger")
 async def get_swagger(request):
     return await response.file(
         "/project/hyperledger-rbac/rbac/server/swagger/index.html",
+<<<<<<< HEAD
         headers={"Content-Type": "text/html; charset=utf-8"},
+=======
+        headers={'Content-Type': 'text/html; charset=utf-8'}
+>>>>>>> Swagger hosted
     )
