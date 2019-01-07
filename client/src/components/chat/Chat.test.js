@@ -144,8 +144,6 @@ describe('Chat component', () => {
     wrapper.dive().instance().send(props, { type: 1 });
     wrapper.dive().instance().send(props, { type: null });
     newWrapper.dive().instance().send(newProps, { type: 0 });
-    wrapper.dive().instance().roleName(props);
-    wrapper.dive().instance().userName(props);
     wrapper.dive().instance().manualRequestRole(props);
     wrapper.dive().instance().manualRequestPack(props);
     wrapper.dive().instance().manualApprove(props);

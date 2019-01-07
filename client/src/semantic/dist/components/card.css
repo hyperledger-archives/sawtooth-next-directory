@@ -992,21 +992,70 @@ a.ui.card:hover,
 .ui.stackable.grid .column .ui.card.huge {
   height: 250px;
 }
-.ui.stackable.grid .column .ui.card.medium {
+.ui.stackable.grid .column .ui.card.medium,
+.ui.stackable.grid .column .ui.card.small {
   border-radius: 1em;
 }
 .ui.stackable.grid .column .ui.card.medium > .extra {
   font-size: 0.9em;
-  padding: 5px 20px;
+  padding: 10px 24px;
+}
+.ui.stackable.grid .column .ui.card.small > .extra {
+  padding: 2px 18px;
+  font-size: 0.85em;
 }
 .ui.stackable.grid .column .ui.card.medium .ui.header {
-  padding: 20px;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: start;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px 40px 20px 20px;
+  margin-bottom: 0;
+}
+.ui.stackable.grid .column .ui.card.small .ui.header {
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: start;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 12px 15px 10px 15px;
+  margin-bottom: 0;
+}
+.ui.stackable.grid .column .ui.card.medium .ui.header div:first-child {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 54px;
+          flex: 0 0 54px;
+  line-height: 1.4em;
+}
+.ui.stackable.grid .column .ui.card.small .ui.header div:first-child {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 39px;
+          flex: 0 0 39px;
+  line-height: 1.4em;
+}
+.ui.stackable.grid .column .ui.card.small .ui.header div:nth-child(2) {
+  margin-top: 3px;
+}
+.ui.stackable.grid .column .ui.card.small .ui.header .ui.mini.image {
+  width: 24px;
 }
 .ui.stackable.grid .column .ui.card.minimal {
   background: white;
   border: 1px solid #eee;
   -webkit-box-shadow: 0 3px 13px #98989814;
           box-shadow: 0 3px 13px #98989814;
+}
+.dark .ui.stackable.grid .column .ui.card.minimal {
+  background: #212c3a;
+  border: 1px solid #0000001c;
+  -webkit-box-shadow: 0 3px 13px #00000014;
+          box-shadow: 0 3px 13px #00000014;
+}
+.dark .ui.stackable.grid .column .ui.card.minimal .header {
+  color: #FFFFFF;
 }
 .ui.stackable.grid .column .ui.card.huge .content:first-child {
   padding: 15%;
@@ -1034,6 +1083,10 @@ a.ui.card:hover,
 .ui.cards > .card > .extra,
 .ui.card > .extra {
   border-top: 1px solid #0000000f !important;
+}
+.dark .ui.cards > .card > .extra,
+.dark .ui.card > .extra {
+  color: #e0efff38;
 }
 
 

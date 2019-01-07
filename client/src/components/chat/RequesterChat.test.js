@@ -14,32 +14,34 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-approver-manage-roles-content {
-  padding: 0 17% 130px 17%;
-  position: relative;
-  top: 220px;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { shallow } from 'enzyme';
+import { BrowserRouter } from 'react-router-dom';
 
-#next-manage-roles-load-next-button {
-  margin-top: 50px;
-}
 
-#next-approver-manage-roles-content h2 {
-  color: var(--magenta);
-  margin-bottom: 50px;
-}
+import * as customStore from 'customStore';
+import RequesterChat from './RequesterChat';
 
-#next-approver-manage-roles-content .ui.placeholder {
-  margin: 35px 0;
-}
 
-#next-approver-manage-roles-create-button {
-  background: #ffffff;
-  box-shadow: 0 3px 13px #98989814;
-  color: #e20074;
-  font-size: .95em;
-  padding: 15px;
-  position: fixed;
-  right: 18px;
-  width: 190px;
-}
+const store = customStore.create();
+
+
+describe('RequesterChat component', () => {
+
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    const props = {
+
+    };
+
+    ReactDOM.render(
+      <BrowserRouter>
+        <RequesterChat store={store} {...props}/>
+      </BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});

@@ -26,6 +26,8 @@ import Approved from './Approved';
 
 
 const store = customStore.create();
+
+
 describe('Approved component', () => {
   const props = {
     getConfirmedProposals: () => {},
@@ -34,7 +36,7 @@ describe('Approved component', () => {
     getRoles: () => {},
     getUsers: () => {},
     selectedProposal: [{object: ''}],
-    confirmedProposals: [{ id: 'roleid' }],
+    confirmedProposals: [{ id: 'proposal-123', opener: 'opener-123' }],
     roles: [{ id: 'role' }],
     userFromId: (userId) => {
       return { email: '' };
@@ -48,7 +50,7 @@ describe('Approved component', () => {
     getRoles: () => {},
     getUsers: () => {},
     selectedProposal: [{id: 'qwerty'}],
-    confirmedProposals: [{ id: 'roleid' }],
+    confirmedProposals: [{ id: 'proposal-123', opener: 'opener-123' }],
     userFromId: (userId) => {
       return { email: '' };
     },
