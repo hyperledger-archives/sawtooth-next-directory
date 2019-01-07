@@ -37,6 +37,7 @@ from rbac.server.api.roles import ROLES_BP
 from rbac.server.api.tasks import TASKS_BP
 from rbac.server.api.users import USERS_BP
 from rbac.server.api.webhooks import WEBHOOKS_BP
+from rbac.server.api.swagger import SWAGGER_BP
 from rbac.server.db import db_utils
 
 APP_BP = Blueprint("utils")
@@ -106,6 +107,7 @@ def main():
     app.blueprint(TASKS_BP)
     app.blueprint(USERS_BP)
     app.blueprint(WEBHOOKS_BP)
+    app.blueprint(SWAGGER_BP)
     app.blueprint(APP_BP)
 
     load_config(app)
