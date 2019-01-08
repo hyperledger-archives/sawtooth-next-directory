@@ -67,6 +67,7 @@ class AadAuth:
             response.status_code,
             response,
         )
+        return None
 
     def _time_left(self):
         """Check for how much time is left on the token."""
