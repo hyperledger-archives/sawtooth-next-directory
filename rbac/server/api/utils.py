@@ -92,6 +92,11 @@ async def create_response(conn, request_url, data, head_block, start=None, limit
     return json(response)
 
 
+def create_tracker_response(slot_name, value):
+    """Create JSON event payload used to modify the chatbot tracker"""
+    return json({"events": [{"event": "slot", "name": slot_name, "value": value}]})
+
+
 async def get_response_paging_info(conn, table, url, start, limit, head_block_num):
     total = await get_table_count(conn, table, head_block_num)
 
@@ -169,34 +174,27 @@ async def get_transactor_key(request):
     return Key(hex_private_key), user_id
 
 
-async def send(conn, batch_list, timeout):
+async def send(conn, batch_list, timeout, webhook=False):
     batch_request = client_batch_submit_pb2.ClientBatchSubmitRequest()
     batch_request.batches.extend(list(batch_list.batches))
-
     validator_response = await conn.send(
         validator_pb2.Message.CLIENT_BATCH_SUBMIT_REQUEST,
         batch_request.SerializeToString(),
         timeout,
     )
-
     client_response = client_batch_submit_pb2.ClientBatchSubmitResponse()
     client_response.ParseFromString(validator_response.content)
+    status = client_response.status
 
-    if (
-        client_response.status
-        == client_batch_submit_pb2.ClientBatchSubmitResponse.INTERNAL_ERROR
-    ):
-        raise ApiInternalError("Internal Error")
-    elif (
-        client_response.status
-        == client_batch_submit_pb2.ClientBatchSubmitResponse.INVALID_BATCH
-    ):
-        raise ApiBadRequest("Invalid Batch")
-    elif (
-        client_response.status
-        == client_batch_submit_pb2.ClientBatchSubmitResponse.QUEUE_FULL
-    ):
-        raise ApiInternalError("Queue Full")
+    if not webhook:
+        if status == client_batch_submit_pb2.ClientBatchSubmitResponse.INTERNAL_ERROR:
+            raise ApiInternalError("Internal Error")
+        elif status == client_batch_submit_pb2.ClientBatchSubmitResponse.INVALID_BATCH:
+            raise ApiBadRequest("Invalid Batch")
+        elif status == client_batch_submit_pb2.ClientBatchSubmitResponse.QUEUE_FULL:
+            raise ApiInternalError("Queue Full")
+    elif status != client_batch_submit_pb2.ClientBatchSubmitResponse.OK:
+        return None
 
     status_request = client_batch_submit_pb2.ClientBatchStatusRequest()
     status_request.batch_ids.extend(
@@ -204,28 +202,31 @@ async def send(conn, batch_list, timeout):
     )
     status_request.wait = True
     status_request.timeout = timeout
-
     validator_response = await conn.send(
         validator_pb2.Message.CLIENT_BATCH_STATUS_REQUEST,
         status_request.SerializeToString(),
         timeout,
     )
-
     status_response = client_batch_submit_pb2.ClientBatchStatusResponse()
     status_response.ParseFromString(validator_response.content)
+    status = status_response.status
 
-    if status_response.status != client_batch_submit_pb2.ClientBatchStatusResponse.OK:
-        raise ApiInternalError("Internal Error")
+    if not webhook:
+        if status != client_batch_submit_pb2.ClientBatchStatusResponse.OK:
+            raise ApiInternalError("Internal Error")
+    elif status != client_batch_submit_pb2.ClientBatchStatusResponse.OK:
+        return None
 
-    resp = status_response.batch_statuses[0]
+    response = status_response.batch_statuses[0]
+    status = response.status
 
-    if resp.status == client_batch_submit_pb2.ClientBatchStatus.COMMITTED:
-        return resp
-    elif resp.status == client_batch_submit_pb2.ClientBatchStatus.INVALID:
-        raise ApiBadRequest(
-            "Bad Request: {}".format(resp.invalid_transactions[0].message)
-        )
-    elif resp.status == client_batch_submit_pb2.ClientBatchStatus.PENDING:
-        raise ApiInternalError("Internal Error: Transaction submitted but timed out.")
-    elif resp.status == client_batch_submit_pb2.ClientBatchStatus.UNKNOWN:
-        raise ApiInternalError("Internal Error: Something went wrong. Try again later.")
+    if not webhook:
+        if status == client_batch_submit_pb2.ClientBatchStatus.INVALID:
+            raise ApiBadRequest(
+                "Bad Request: {}".format(response.invalid_transactions[0].message)
+            )
+        elif status == client_batch_submit_pb2.ClientBatchStatus.PENDING:
+            raise ApiInternalError("Internal Error: Transaction timed out.")
+        elif status == client_batch_submit_pb2.ClientBatchStatus.UNKNOWN:
+            raise ApiInternalError("Internal Error: Unspecified error.")
+    return status

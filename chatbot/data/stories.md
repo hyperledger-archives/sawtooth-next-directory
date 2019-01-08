@@ -36,6 +36,38 @@
   - utter_fanfare_sent
   - utter_request_bye
 
+## story_send_current_role_1
+* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+  - action_request_access
+  - slot{"batch_status": "1"}
+  - utter_exclame
+  - utter_fanfare_sent
+  - utter_request_bye
+
+## story_send_current_role_2
+* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+  - action_request_access
+  - slot{"batch_status": "2"}
+  - utter_send_failure_invalid
+
+## story_send_current_role_3
+* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+  - action_request_access
+  - slot{"batch_status": "3"}
+  - utter_send_failure_pending
+
+## story_send_current_role_4
+* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+  - action_request_access
+  - slot{"batch_status": "4"}
+  - utter_send_failure_unknown
+
+## story_send_current_role_error
+* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+  - action_request_access
+  - slot{"batch_status": null}
+  - utter_send_failure_unknown
+
 ## story_cancel
 * cancel
   - utter_passive

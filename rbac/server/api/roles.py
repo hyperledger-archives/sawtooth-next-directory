@@ -147,9 +147,14 @@ async def add_role_member(request, role_id):
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    batch_status = await utils.send(
+        request.app.config.VAL_CONN,
+        batch_list,
+        request.app.config.TIMEOUT,
+        request.json.get("tracker") and True,
     )
+    if request.json.get("tracker"):
+        return utils.create_tracker_response("batch_status", batch_status)
     return json({"proposal_id": proposal_id})
 
 

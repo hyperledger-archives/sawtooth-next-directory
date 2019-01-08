@@ -99,7 +99,7 @@ async def add_pack_member(request, pack_id):
 
 
 @PACKS_BP.post("api/packs/<pack_id>/roles")
-# @authorized()
+@authorized()
 async def add_pack_role(request, pack_id):
     """Add roles to a pack"""
     required_fields = ["roles"]
