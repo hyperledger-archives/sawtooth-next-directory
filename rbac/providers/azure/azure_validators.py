@@ -24,7 +24,7 @@ def outbound_user_creation_filter(sawtooth_user, provider):
     :param: user > dict > a dictionary representing a user
     :param: provider > str > inbound provider type (azure, ldap)
     """
-    if provider != "azure" and provider != "ldap":
+    if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
     user = {}
     for key, value in USER_CREATION_TRANSFORM.items():
@@ -49,7 +49,7 @@ def outbound_group_creation_filter(sawtooth_group, provider):
     :param: group > dict > a dictionary representing a group
     :param: provider > str > inbound provider type (azure, ldap)
     """
-    if provider != "azure" and provider != "ldap":
+    if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
     group = {}
     for key, value in GROUP_CREATION_TRANSFORM.items():

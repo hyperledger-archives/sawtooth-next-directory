@@ -88,6 +88,6 @@ class AadAuth:
             headers["Host"] = "graph.microsoft.com"
         if request_type == "GET":
             headers["Accept"] = "application/json"
-        elif request_type == "PATCH" or request_type == "POST":
+        elif request_type in ("PATCH", "POST"):
             headers["Content-Type"] = "application/json"
         return headers
