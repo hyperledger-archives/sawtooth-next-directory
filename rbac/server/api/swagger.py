@@ -15,13 +15,11 @@
 
 from sanic import Blueprint
 from sanic import response
-from rbac.server.api.auth import authorized
 
 SWAGGER_BP = Blueprint("swagger")
 
 
 @SWAGGER_BP.get("api/swagger")
-@authorized()
 async def get_swagger(request):
     return await response.file(
         "/project/hyperledger-rbac/rbac/server/swagger/index.html",
