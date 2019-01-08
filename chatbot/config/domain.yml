@@ -39,32 +39,39 @@ config:
   store_entities_as_slots: true
 
 entities:
-- token
-- resource_id
-- resource_type
-- resource_name
 - approver_name
+- batch_status
 - reason
+- resource_id
+- resource_name
+- resource_type
+- token
 
 forms: []
 
 slots:
-  token:
+  approver_name:
+    type: unfeaturized
+  batch_status:
+    type: categorical
+    values:
+      - 1 # COMMITTED
+      - 2 # INVALID
+      - 3 # PENDING
+      - 4 # UNKNOWN
+  reason:
     type: unfeaturized
   resource_id:
+    type: unfeaturized
+  resource_name:
     type: unfeaturized
   resource_type:
     type: categorical
     values:
     - PACK
     - ROLE
-  resource_name:
+  token:
     type: unfeaturized
-  approver_name:
-    type: unfeaturized
-  reason:
-    type: unfeaturized
-
 
 actions:
   - utter_default
@@ -89,6 +96,9 @@ actions:
   - utter_test
   - utter_test_role
   - utter_passive
+  - utter_send_failure_invalid
+  - utter_send_failure_pending
+  - utter_send_failure_unknown
   - action_request_access
 
 templates:
@@ -190,6 +200,23 @@ templates:
   utter_awe:
     - text: Pretty great, right?
     - text: Yep.
+
+  utter_send_failure_invalid:
+    - text: >-
+        Hmmm.... Small hiccup. Something about your request
+        isn't going through our validators. Not sure what the
+        problem is exactly. Try again later.
+
+  utter_send_failure_pending:
+    - text: >-
+        Oh no! It looks like it took my minions too long to
+        complete your request. Please try again later.
+
+  utter_send_failure_unknown:
+    - text: >-
+        Houston, we've had a problem.... I'm sorry to say
+        that I was unable to request access for you right now.
+        But please don't lose faith in me. Simply try again later.
 
   utter_exclame:
     - text: Awesome!

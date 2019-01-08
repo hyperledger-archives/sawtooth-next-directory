@@ -23,16 +23,20 @@ actions:
 - utter_test
 - utter_test_role
 - utter_passive
+- utter_send_failure_invalid
+- utter_send_failure_pending
+- utter_send_failure_unknown
 - action_request_access
 config:
   store_entities_as_slots: true
 entities:
-- token
-- resource_id
-- resource_type
-- resource_name
 - approver_name
+- batch_status
 - reason
+- resource_id
+- resource_name
+- resource_type
+- token
 forms: []
 intents:
 - recommend:
@@ -76,6 +80,15 @@ slots:
     auto_fill: true
     initial_value: null
     type: rasa_core.slots.UnfeaturizedSlot
+  batch_status:
+    auto_fill: true
+    initial_value: null
+    type: rasa_core.slots.CategoricalSlot
+    values:
+    - '1'
+    - '2'
+    - '3'
+    - '4'
   reason:
     auto_fill: true
     initial_value: null
@@ -177,6 +190,16 @@ templates:
   utter_request_bye:
   - text: Feel free to ping me anytime. I will notify you once I hear from {approver_name}.
       Au revoir!
+  utter_send_failure_invalid:
+  - text: Hmmm.... Small hiccup. Something about your request isn't going through
+      our validators. Not sure what the problem is exactly. Try again later.
+  utter_send_failure_pending:
+  - text: Oh no! It looks like it took my minions too long to complete your request.
+      Please try again later.
+  utter_send_failure_unknown:
+  - text: Houston, we've had a problem.... I'm sorry to say that I was unable to request
+      access for you right now. But please don't lose faith in me. Simply try again
+      later.
   utter_standby:
   - text: Feel free to ping me anytime.
   - text: I'll be here for you.
