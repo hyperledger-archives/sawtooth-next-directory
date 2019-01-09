@@ -17,7 +17,6 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Button, Form, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import * as utils from 'services/Utils';
 
 
 /**
@@ -36,12 +35,15 @@ class ChatForm extends Component {
     approve:                    PropTypes.func,
     disabled:                   PropTypes.bool,
     formDisabled:               PropTypes.bool,
+    location:                   PropTypes.object,
     messages:                   PropTypes.array,
+    messagesById:               PropTypes.func,
     refreshOnNextSocketReceive: PropTypes.func,
     reject:                     PropTypes.func,
     requestPack:                PropTypes.func,
     requestRole:                PropTypes.func,
     send:                       PropTypes.func.isRequired,
+    showForm:                   PropTypes.bool,
     socketMaxAttemptsReached:   PropTypes.bool,
     type:                       PropTypes.string,
   };
@@ -51,24 +53,48 @@ class ChatForm extends Component {
 
 
   /**
-   * Called whenever Redux state changes. Determine whether or not
-   * the chat form should display a draft text area.
+   * Entry point to perform tasks required to render component.
+   */
+  componentDidMount () {
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes.
    * @param {object} prevProps Props before update
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { messages } = this.props;
+    const { location, messages } = this.props;
 
-    if (messages !== prevProps.messages) {
-      try {
-        this.setState({
-          isDraft: messages[0].buttons[0].payload.startsWith('/send'),
-        });
-      } catch {
-        utils.noop();
-      }
+    if (messages !== prevProps.messages)
+      this.init();
+
+    if (location.pathname !== prevProps.location.pathname) {
+      this.init();
+      this.setState({ message: '' });
     }
+  }
 
+
+  /**
+   * Determine whether or not the chat form should display
+   * a draft text area.
+   */
+  init () {
+    const { activePack, activeRole, messagesById } = this.props;
+    try {
+      const resourceId = (activePack && activePack.id) ||
+        (activeRole && activeRole.id);
+      const isSend = messagesById(resourceId)[0]
+        .buttons[0]
+        .payload
+        .startsWith('/request');
+      this.setState({ isDraft: isSend });
+    } catch (error) {
+      this.setState({ isDraft: false });
+    }
   }
 
 
@@ -81,11 +107,11 @@ class ChatForm extends Component {
 
 
   /**
-   * Tell app to refresh to refresh when next message received
-   * and send message to parent handler for dispatch
-   * @param {string} message Message to send
-   * @param {boolean} shouldRefresh If app should refresh on next
-   *                                message received
+   * Send message to parent handler for dispatch
+   * @param {string}  message Message to send
+   * @param {boolean} shouldRefresh DEPRECATED
+   *                  If app should refresh on next
+   *                  message received
    */
   handleSend = (message, shouldRefresh) => {
     const { refreshOnNextSocketReceive, send } = this.props;
@@ -133,20 +159,21 @@ class ChatForm extends Component {
 
   /**
    * Create intent payload to send back to chatbot engine,
-   * inserting the current message to send in the body if
-   * the intend is /send. Otherwise, the payload is the original
-   * intent from the the button payload.
+   * inserting the current message to send in the body given
+   * the intent is /request_access. Otherwise, the payload
+   * is the original intent from the the button payload.
    *
    * @param {string} payload Payload in button object
-   *                         sent rom chatbot engine
+   *                         sent from chatbot engine
    *                 @example "Yes, please.", "No, thanks.",
-   *                 '/send{"reason": "..."}')
+   *                 '/request_access{"reason": "..."}')
    * @returns {string}
    */
   createPayload = (payload) => {
     const { activePack, activeRole } = this.props;
     const { message } = this.state;
-    if (!payload.startsWith('/') || payload.indexOf('{') === -1) return payload;
+    if (!payload.startsWith('/') || payload.indexOf('{') === -1)
+      return payload;
 
     const demarcation = payload.indexOf('{');
     const parsed = JSON.parse(
@@ -175,17 +202,21 @@ class ChatForm extends Component {
    */
   renderRequesterActions () {
     const {
+      activePack,
+      activeRole,
       disabled,
-      messages,
+      messagesById,
       socketMaxAttemptsReached } = this.props;
+    const { message } = this.state;
 
-    const { isDraft, message } = this.state;
+    const resource = activePack || activeRole;
+    const activeMessages = resource && messagesById(resource.id);
 
     return (
       <div id='next-chat-actions'>
-        { messages && messages[0] && messages[0].buttons &&
-          !socketMaxAttemptsReached &&
-          messages[0].buttons.map((button, index) => (
+        { activeMessages && activeMessages[0] &&
+          !socketMaxAttemptsReached && activeMessages[0].buttons &&
+          activeMessages[0].buttons.map((button, index) => (
             <Button
               key={index}
               className='next-chat-action-button'
@@ -193,7 +224,7 @@ class ChatForm extends Component {
               size='medium'
               disabled={disabled}
               onClick={() =>
-                this.handleSend(this.createPayload(button.payload), isDraft)}>
+                this.handleSend(this.createPayload(button.payload), false)}>
 
               { !disabled &&
                 <span>
@@ -267,13 +298,17 @@ class ChatForm extends Component {
    * @returns {JSX}
    */
   render () {
-    const { formDisabled, socketMaxAttemptsReached, type } = this.props;
+    const {
+      formDisabled,
+      showForm,
+      socketMaxAttemptsReached,
+      type } = this.props;
     const { message, isDraft } = this.state;
     const isManual = type === 'REQUESTER' && socketMaxAttemptsReached;
 
     return (
       <div>
-        { !isDraft && !socketMaxAttemptsReached && !formDisabled &&
+        { !isDraft && !socketMaxAttemptsReached && !showForm &&
         <div>
           <Form id='next-placeholder-chat'
             onSubmit={() => this.handleSend(message)}>
@@ -285,10 +320,10 @@ class ChatForm extends Component {
               name='message'
               value={this.state.message}
               onChange={this.handleChange}>
-              <input autoComplete='off'/>
+              <input disabled={formDisabled} autoComplete='off'/>
               <Icon
                 link
-                id='next-name-chat-submit'
+                id='next-chat-form-submit-icon'
                 name='paper plane'
                 onClick={() => this.handleSend(message)}/>
             </Form.Input>
@@ -298,8 +333,10 @@ class ChatForm extends Component {
         { (isDraft || isManual) &&
         <div id='next-chat-form-draft-container'>
           <Form
-            onSubmit={() =>
-              this.handleSend(`/send{"reason": "${message}"}`, true)}>
+            onSubmit={() => this.handleSend(this.createPayload(
+              `/request_access${JSON.stringify(
+                {reason: '', resource_id: '', resource_type: ''}
+              )}`), false)}>
             <Form.TextArea id='next-chat-form-draft-textarea'
               placeholder='Draft your message...'
               autoFocus

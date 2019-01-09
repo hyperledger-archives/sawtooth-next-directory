@@ -22,7 +22,7 @@ from sanic import Blueprint
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 
-from rbac.server.db import roles_query
+from rbac.server.db import users_query
 from rbac.app.config import CHATBOT_REST_ENDPOINT
 
 LOGGER = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ CHATBOT_BP = Blueprint("chatbot")
 @authorized()
 async def chatbot(request, ws):
     while True:
-        required_fields = ["do", "message", "user_id"]
+        required_fields = ["text", "user_id"]
         recv = json.loads(await ws.recv())
 
         utils.validate_fields(required_fields, recv)
@@ -45,24 +45,24 @@ async def chatbot(request, ws):
 
 
 async def create_response(request, recv):
-    if recv["do"] == "CREATE":
-        LOGGER.info("[Chatbot] %s: Creating conversation", recv.get("user_id"))
-        await create_conversation(request, recv)
+    if recv.get("resource_id"):
+        LOGGER.info("[Chatbot] %s: Updating tracker", recv.get("user_id"))
+        await update_tracker(request, recv)
     LOGGER.info("[Chatbot] %s: Sending generated reply", recv.get("user_id"))
     response = await generate_chatbot_reply(request, recv)
+    for message in response:
+        message["resource_id"] = recv.get("resource_id")
     return json.dumps(response)
 
 
-async def create_conversation(request, recv):
-    head_block = await utils.get_request_block(request)
-    recommended_resource = await roles_query.fetch_recommended_resource(
-        request.app.config.DB_CONN, recv.get("user_id"), head_block.get("num")
-    )
+async def update_tracker(request, recv):
+    if recv.get("approver_id"):
+        head_block = await utils.get_request_block(request)
+        owner_resource = await users_query.fetch_user_resource(
+            request.app.config.DB_CONN, recv.get("approver_id"), head_block.get("num")
+        )
+        await create_event(request, recv, "approver_name", owner_resource.get("name"))
     await create_event(request, recv, "token", utils.extract_request_token(request))
-    await create_event(request, recv, "resource_name", recommended_resource.get("name"))
-    await create_event(
-        request, recv, "resource_id", recommended_resource.get("role_id")
-    )
 
 
 async def create_event(request, recv, name, value):
@@ -78,6 +78,6 @@ async def create_event(request, recv, name, value):
 async def generate_chatbot_reply(request, recv):
     """Get a reply from the chatbot engine"""
     url = CHATBOT_REST_ENDPOINT + "/webhooks/rest/webhook"
-    data = {"sender": recv.get("user_id"), "message": recv["message"].get("text")}
+    data = {"sender": recv.get("user_id"), "message": recv.get("text")}
     async with request.app.config.HTTP_SESSION.post(url=url, json=data) as response:
         return await response.json()

@@ -16,57 +16,51 @@ limitations under the License.
 
 import { createReducer } from 'reduxsauce';
 import { INITIAL_STATE, ChatTypes as Types } from './ChatActions';
-import ping from 'sounds/ping.mp3';
 
 
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-};
+export const failure = (state, { error }) =>
+  state.merge({ fetching: false, error });
 
 
-export const clearMessages = (state) => {
-  return state.merge({ messages: null });
-};
+export const clearMessages = (state) =>
+  state.merge({ messages: null });
 
 
-export const conversationSuccess = (state, { conversation }) => {
-  return state.merge({
+export const conversationSuccess = (state, { conversation }) =>
+  state.merge({
     fetching: false,
     messages: conversation.messages,
   });
-};
 
 
 export const messageSend = (state, { payload }) => {
-  if (payload.message && payload.message.text.startsWith('/'))
+  if (payload.text && payload.text.startsWith('/update'))
+    return state.merge({});
+  else if (payload.text && payload.text.startsWith('/'))
     return state.merge({ fetching: true });
+
   return state.merge({
     fetching: true,
-    messages: payload.do !== 'CREATE' ?
-      [payload.message, ...(state.messages || [])] :
-      state.messages,
+    messages: [payload, ...(state.messages || [])],
   });
 };
 
 
-export const messageReceive = (state, { payload }) => {
-  if (state.messages && state.messages.length > 0) {
-    const sound = new Audio(ping);
-    sound.play().catch();
-  }
-  return state.merge({
-    fetching: false,
-    messages: payload.length > 0 ?
-      [...payload.reverse(), ...(state.messages || [])] :
-      state.messages,
-  });
-};
+export const messageReceive = (state, { payload }) =>
+  payload[0] && payload[0].text.includes('/noop') ?
+    state.merge({}) :
+    state.merge({
+      fetching: false,
+      messages: payload.length > 0 ?
+        [...payload.reverse(), ...(state.messages || [])] :
+        state.messages,
+    });
 
 
 export const ChatReducer = createReducer(INITIAL_STATE, {
-  [Types.CLEAR_MESSAGES]:  clearMessages,
-  [Types.MESSAGE_SEND]:    messageSend,
-  [Types.MESSAGE_RECEIVE]: messageReceive,
+  [Types.CLEAR_MESSAGES]:      clearMessages,
+  [Types.MESSAGE_SEND]:        messageSend,
+  [Types.MESSAGE_RECEIVE]:     messageReceive,
 
   // [Types.CONVERSATION_REQUEST]: request,
   // [Types.CONVERSATION_SUCCESS]: conversationSuccess,

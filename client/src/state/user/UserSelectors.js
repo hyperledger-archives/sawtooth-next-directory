@@ -22,7 +22,6 @@ export const UserSelectors = {
   id:         (state) =>
     (state.user.me && state.user.me.id) || storage.getUserId(),
   users:      (state) => state.user.users,
-  memberOf:   (state) => state.user.me && state.user.me.memberOf,
   userFromId: (state, id) =>
     state.user.users &&
     state.user.users.find(user => user.id === id),

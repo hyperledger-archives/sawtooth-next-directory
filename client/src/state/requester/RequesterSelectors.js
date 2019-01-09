@@ -15,15 +15,24 @@ limitations under the License.
 
 
 import * as utils from 'services/Utils';
+import { ApproverSelectors } from 'state';
 
 
 export const RequesterSelectors = {
-  rolesTotalCount: (state) => state.requester.rolesTotalCount,
-  packsTotalCount: (state) => state.requester.packsTotalCount,
+  rolesTotalCount: (state) =>
+    state.requester.rolesTotalCount,
+
+
+  packsTotalCount: (state) =>
+    state.requester.packsTotalCount,
+
+
   roles: (state) => [
     ...state.requester.roles || [],
     ...state.approver.createdRoles || [],
   ],
+
+
   packs: (state) => [
     ...state.requester.packs || [],
     ...state.approver.createdPacks || [],
@@ -50,10 +59,16 @@ export const RequesterSelectors = {
     state.user.me &&
     state.requester.recommended.filter(role =>
       role.packs && role.packs.length === 0 &&
-      !state.user.me.proposals.find(proposal =>
-        proposal.object_id === role.id
-      ) &&
-      !state.user.me.memberOf.includes(role.id)
+      role.members.length > 0 &&
+      ![...state.user.me.proposals,
+        ...(state.requester.requests || []),
+      ]
+        .find(proposal =>
+          proposal.object_id === role.id ||
+          proposal.object === role.id
+        ) &&
+      !state.user.me.memberOf.includes(role.id) &&
+      !state.user.me.ownerOf.roles.includes(role.id)
     ).slice(0, 3),
 
 
@@ -75,8 +90,8 @@ export const RequesterSelectors = {
                       RequesterSelectors.requests(state).find(
                         obj => obj.id === item
                       );
-        const cond3 = RequesterSelectors.mine(state) &&
-                      RequesterSelectors.mine(state).find(
+        const cond3 = RequesterSelectors.memberOf(state) &&
+                      RequesterSelectors.memberOf(state).find(
                         obj => obj.id === item
                       );
         return !(cond3 || cond2 || cond1);
@@ -96,6 +111,7 @@ export const RequesterSelectors = {
     ]
       .find(role => role.id === id),
 
+
   // Retrieve pack by ID
   packFromId: (state, id) =>
     [
@@ -104,12 +120,15 @@ export const RequesterSelectors = {
     ]
       .find(pack => pack.id === id),
 
+
   // Retrieve proposal by ID
   proposalFromId: (state, id) =>
     state.requester.requests &&
     state.requester.requests.find(request =>
       request.id === id
     ),
+
+
   // Retrieve proposals by IDs
   proposalsFromIds: (state, ids) =>
     state.requester.requests &&
@@ -140,11 +159,11 @@ export const RequesterSelectors = {
 
         if (merged.metadata && merged.metadata.length) {
           const metadata = JSON.parse(merged.metadata);
-          state.requester.packs && requests.push(
+          const pack = state.requester.packs &&
             state.requester.packs.find(
               pack => pack.id === metadata.pack_id
-            )
-          );
+            );
+          pack && requests.push(pack);
         } else {
           requests.push(merged);
         }
@@ -157,9 +176,9 @@ export const RequesterSelectors = {
   // Retrieve a unique set of packs and roles a user
   // is member of grouped like the following:
   // [{ pack }, { role }, { pack } ...]
-  mine: (state) => {
+  memberOf: (state) => {
     if (!state.user.me) return null;
-    let mine = [];
+    let memberOf = [];
 
     for (const roleId of state.user.me.memberOf) {
       const request = state.user.me.proposals.find(
@@ -175,7 +194,7 @@ export const RequesterSelectors = {
             const pack = state.requester.packs.find(
               pack => pack.id === metadata.pack_id
             );
-            pack && mine.push(pack);
+            pack && memberOf.push(pack);
           }
           continue;
         }
@@ -184,11 +203,11 @@ export const RequesterSelectors = {
         const role = state.requester.roles.find(
           role => role.id === roleId
         );
-        role && mine.push(role);
+        role && memberOf.push(role);
       }
     }
 
-    mine = mine.filter(item => {
+    memberOf = memberOf.filter(item => {
       if (item.roles) {
         if (!state.requester.requests) return false;
         const isOpen = state.requester.requests.find(
@@ -200,14 +219,23 @@ export const RequesterSelectors = {
       return true;
     });
 
-    return [...new Set(mine)];
+    return [...new Set(memberOf)];
   },
+
+
+  memberAndOwnerOf: (state) =>
+    [...new Set([
+      ...(ApproverSelectors.ownedPacks(state) || []),
+      ...(ApproverSelectors.ownedRoles(state) || []),
+      ...(RequesterSelectors.memberOf(state) || [])
+        .map(resource => resource.id),
+    ])],
 
 
   /**
    * Find the proposal ID of a role
    * @param   {object} state      Redux state
-   * @param   {string} id         Object ID
+   * @param   {string} id         Role ID
    * @returns {string}
    */
   roleProposalId: (state, id) => {

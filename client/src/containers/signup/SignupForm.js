@@ -30,7 +30,7 @@ import PropTypes from 'prop-types';
  * @description   Component encapsulating the signup form
  *
  */
-export default class SignupForm extends Component {
+class SignupForm extends Component {
 
   static propTypes = {
     submit: PropTypes.func.isRequired,
@@ -215,3 +215,6 @@ export default class SignupForm extends Component {
   }
 
 }
+
+
+export default SignupForm;

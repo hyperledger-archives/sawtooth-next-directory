@@ -26,14 +26,21 @@ import Login from './Login';
 
 
 const store = customStore.create();
+
+
 describe('Login component', () => {
 
   const props = {
     recommended: [{ name: 'abc' }],
     isAuthenticated: true,
-    history: { push: () => { } },
+    history: {
+      location: { pathname: '' },
+      push: () => {},
+    },
   };
-  const wrapper = shallow(<Login {...props} store={store}/>);
+  const wrapper = shallow(
+    <Login {...props} store={store}/>
+  );
 
 
   it('renders without crashing', () => {
@@ -42,11 +49,13 @@ describe('Login component', () => {
     const props = {
       recommended: [{ name: 'abc' }],
       isAuthenticated: true,
-      history: { push: () => { } },
+      history: {
+        location: { pathname: '' },
+        push: () => {},
+      },
     };
 
     ReactDOM.render(
-
       <BrowserRouter>
         <Login {...props} store={store}/>
       </BrowserRouter>, div

@@ -27,8 +27,9 @@ import { AuthActions, AuthSelectors } from 'state';
 import LoginForm from './LoginForm';
 
 
-import * as utils from 'services/Utils';
 import * as storage from 'services/Storage';
+import * as theme from 'services/Theme';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -49,11 +50,15 @@ class Login extends Component {
   };
 
 
+  themes = ['flux'];
+
+
   /**
    * Entry point to perform tasks required to render
    * component
    */
   componentDidMount () {
+    theme.apply(this.themes);
     this.init();
   }
 
@@ -65,6 +70,16 @@ class Login extends Component {
    */
   componentDidUpdate (prevProps) {
     this.init();
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    const { history } = this.props;
+    !history.location.pathname.includes('signup') &&
+      theme.remove(this.themes);
   }
 
 

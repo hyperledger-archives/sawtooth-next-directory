@@ -51,7 +51,7 @@ class MemberList extends Component {
 
     const diff = users &&
       join.filter(userId =>
-        users.find(user => user.id !== userId));
+        !users.find(user => user.id === userId));
 
     diff && getUsers(diff);
   }
@@ -70,7 +70,7 @@ class MemberList extends Component {
       const join = [...members, ...owners];
       const diff = users &&
         join.filter(userId =>
-          users.find(user => user.id !== userId));
+          !users.find(user => user.id === userId));
 
       diff && getUsers(diff);
     }

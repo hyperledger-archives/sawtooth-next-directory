@@ -19,7 +19,7 @@ import logging
 LIB_LEVELS = {"asyncio": logging.WARNING}
 LOGGER_FORMAT = "%(levelname)s %(asctime)s %(name)s %(module)s %(pathname)s %(message)s"
 
-logging.basicConfig(level=logging.DEBUG, format=LOGGER_FORMAT)
+logging.basicConfig(level=logging.WARNING, format=LOGGER_FORMAT)
 
 for lib, level in LIB_LEVELS.items():
     logging.getLogger(lib).setLevel(level)

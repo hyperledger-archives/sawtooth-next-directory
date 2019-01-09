@@ -26,17 +26,24 @@ import Signup from './Signup';
 
 
 const store = customStore.create();
+
+
 describe('signup component', () => {
 
   const props = {
-    history: { push: () => { } },
+    history: {
+      location: { pathname: '' },
+      push: () => {},
+    },
     isAuthenticated: true,
     recommended: [{ id: '', name: '' }],
     recommendedPacks: [],
     recommendedRoles: [],
     signup: () => {},
   };
-  const wrapper = shallow(<Signup {...props} store={store}/>);
+  const wrapper = shallow(
+    <Signup {...props} store={store}/>
+  );
 
 
   it('renders without crashing', () => {

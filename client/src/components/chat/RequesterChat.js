@@ -19,7 +19,8 @@ import { Header, Icon } from 'semantic-ui-react';
 
 
 import './RequesterChat.css';
-import ChatMessage from './ChatMessage';
+import ChatTranscript from './ChatTranscript';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -28,7 +29,122 @@ import ChatMessage from './ChatMessage';
  * @description   Component encapsulating the requester chat view
  *
  */
-export default class RequesterChat extends Component {
+class RequesterChat extends Component {
+
+  /**
+   * Entry point to perform tasks required to render component
+   */
+  componentDidMount () {
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const {
+      activePack,
+      activeRole,
+      isSocketOpen,
+      recommendedPacks,
+      recommendedRoles } = this.props;
+
+    if (prevProps.isSocketOpen('chatbot') !== isSocketOpen('chatbot'))
+      this.init();
+
+    if (!utils.arraysEqual(prevProps.recommendedRoles, recommendedRoles))
+      this.init();
+
+    if ((activeRole && recommendedRoles &&
+          prevProps.activeRole.id !== activeRole.id) ||
+        (activePack && recommendedPacks &&
+          prevProps.activePack.id !== activePack.id))
+      this.init();
+  }
+
+
+  /**
+   * Send intent message to chatbot for a given role or pack.
+   * Update the chatbot tracker with the current context when
+   * the current role or pack changes.
+   */
+  init () {
+    const {
+      activePack,
+      activeRole,
+      id,
+      isSocketOpen,
+      messagesCountById,
+      memberAndOwnerOf,
+      recommendedPacks,
+      recommendedRoles,
+      requests,
+      sendMessage } = this.props;
+
+    const resource = activePack || activeRole;
+    if (!resource) return;
+
+    if ((recommendedPacks || recommendedRoles) && isSocketOpen('chatbot')) {
+      const payload = {
+        resource_id: resource.id,
+        user_id: id,
+      };
+      const slots = {
+        resource_name: resource.name,
+        resource_type: activePack ? 'PACK' : 'ROLE',
+      };
+      const update = messagesCountById(resource.id) > 0 && 'update';
+
+      if (activeRole) payload.approver_id = activeRole.owners[0];
+      if (memberAndOwnerOf.includes(resource.id)) {
+
+        // Construct intent message given user is a member
+        // of the current pack or role
+        payload.text = `/${update || 'member'}${JSON.stringify(
+          {...slots, member_status: 'MEMBER'})}`;
+
+      } else if (requests && requests.find(
+        request => request.object === resource.id || request.id === resource.id)
+      ) {
+
+        // Construct intent message given user has previously
+        // requested access to the current pack or role
+        payload.text = `/${update || 'pending'}${JSON.stringify(
+          {...slots, member_status: 'PENDING'})}`;
+
+      } else if ([
+        ...(recommendedPacks || []),
+        ...(recommendedRoles || [])]
+        .map(item => item.id || item).includes(resource.id)
+      ) {
+
+        // Construct intent message given user is not a member
+        // of the current recommended role or pack
+        payload.text = `/${update || 'recommend'}${JSON.stringify(
+          {...slots, member_status: 'NOT_MEMBER'})}`;
+
+      } else if (resource.owners && resource.owners.length === 0) {
+
+        // Construct intent message given role has no owner(s)
+        if (update) return;
+        payload.text = '/no_owner';
+
+      } else {
+
+        // Construct intent message given user is not a member
+        // of the current role or pack
+        slots.member_status = 'NOT_MEMBER';
+        payload.text = `/${update || 'offer'}${JSON.stringify(
+          {...slots, member_status: 'NOT_MEMBER'})}`;
+
+      }
+      sendMessage(payload);
+    }
+  }
+
 
   /**
    * Render entrypoint
@@ -44,11 +160,14 @@ export default class RequesterChat extends Component {
             <Icon link name='pin' size='mini' className='pull-right'/>
           </Header>
         }
-        <div id='next-chat-messages-container'>
-          <ChatMessage {...this.props}/>
+        <div id='next-requester-chat-transcript-container'>
+          <ChatTranscript {...this.props}/>
         </div>
       </div>
     );
   }
 
 }
+
+
+export default RequesterChat;

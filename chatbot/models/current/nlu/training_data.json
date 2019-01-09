@@ -10,20 +10,56 @@
         "text": "/recommend"
       },
       {
-        "intent": "send_current",
-        "text": "/send_current"
+        "intent": "offer",
+        "text": "/offer"
       },
       {
-        "intent": "send_current",
-        "text": "/send_current"
+        "intent": "offer",
+        "text": "/offer"
       },
       {
-        "intent": "send_recommended",
-        "text": "/send_recommended"
+        "intent": "member",
+        "text": "/member"
       },
       {
-        "intent": "send_recommended",
-        "text": "/send_recommended"
+        "intent": "member",
+        "text": "/member"
+      },
+      {
+        "intent": "pending",
+        "text": "/pending"
+      },
+      {
+        "intent": "pending",
+        "text": "/pending"
+      },
+      {
+        "intent": "update",
+        "text": "/update"
+      },
+      {
+        "intent": "update",
+        "text": "/update"
+      },
+      {
+        "intent": "request_access",
+        "text": "/request_access"
+      },
+      {
+        "intent": "request_access",
+        "text": "/request_access"
+      },
+      {
+        "intent": "no_owner",
+        "text": "/no_owner"
+      },
+      {
+        "intent": "no_owner",
+        "text": "/no_owner"
+      },
+      {
+        "intent": "cancel",
+        "text": "Nevermind."
       },
       {
         "intent": "access",
@@ -143,19 +179,31 @@
       },
       {
         "intent": "whoami",
-        "text": "Who are you"
+        "text": "what is your name?"
       },
       {
         "intent": "whoami",
-        "text": "what is your name"
+        "text": "whats ur name"
       },
       {
         "intent": "whoami",
-        "text": "where do you come from"
+        "text": "what's your name?"
+      },
+      {
+        "intent": "whoami",
+        "text": "Who are you?"
       },
       {
         "intent": "whoami",
         "text": "what are you called?"
+      },
+      {
+        "intent": "whoami",
+        "text": "what should i call you"
+      },
+      {
+        "intent": "whoami",
+        "text": "what are you?"
       },
       {
         "intent": "laugh",

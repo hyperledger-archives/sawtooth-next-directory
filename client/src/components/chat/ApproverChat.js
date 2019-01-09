@@ -24,7 +24,7 @@ import {
 
 
 import './ApproverChat.css';
-import ChatMessage from './ChatMessage';
+import ChatTranscript from './ChatTranscript';
 import Avatar from 'components/layouts/Avatar';
 import { Icon } from 'semantic-ui-react';
 
@@ -35,7 +35,7 @@ import { Icon } from 'semantic-ui-react';
  * @description   Component encapsulating the approver chat view
  *
  */
-export default class ApproverChat extends Component {
+class ApproverChat extends Component {
 
   /**
    * Get role name from role ID
@@ -169,8 +169,8 @@ export default class ApproverChat extends Component {
           </div>
         }
         { selectedProposal &&
-          <div id='next-chat-messages-container'>
-            <ChatMessage {...this.props}
+          <div id='next-approver-chat-transcript-container'>
+            <ChatTranscript {...this.props}
               messages={[{
                 text: selectedProposal.open_reason,
                 from: selectedProposal.opener,
@@ -182,3 +182,6 @@ export default class ApproverChat extends Component {
   }
 
 }
+
+
+export default ApproverChat;

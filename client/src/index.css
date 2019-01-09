@@ -15,28 +15,27 @@ limitations under the License.
 
 
 :root {
-  --magenta: #e40073;
-  --header-bg-color: #1d1e27;
-  --header-color: #fff;
   --auth-fg-color: #fff;
   --auth-fg-highlight-color: #ff92c5;
-  --auth-bg-color: linear-gradient(#870bcc, #f7007f);
-  --chat-approver-bg-color: #ebeef2;
-  --chat-requester-bg-color: #abb6c73b;
-  --selection-list-active-color: #9195980f;
-  --nav-heading-color: #fff;
-  --nav-bg-color: #212c3a;
-  --nav-list-padding: 22px;
-  --nav-list-color: #778899;
-  --page-content-padding: 30px;
-  --track-header-height: 113px;
   --avatar-count: #fff;
   --browse-bg-color: #273544;
   --browse-text-color: rgba(255, 255, 255, 0.5);
-  --dark-bg: #273544;
-  --inverted-text-color: #727c85;
-  --text-light: #fff;
+  --chat-approver-bg-color: #ebeef2;
+  --chat-requester-bg-color: #abb6c73b;
   --component-nav-bg: #fff;
+  --dark-bg: #273544;
   --divider-color: #cedbe6;
+  --header-bg-color: #1d1e27;
+  --header-color: #fff;
   --hr-light-color: #0000000f;
+  --inverted-text-color: #727c85;
+  --magenta: #e40073;
+  --nav-bg-color: #212c3a;
+  --nav-heading-color: #fff;
+  --nav-list-color: #778899;
+  --nav-list-padding: 22px;
+  --page-content-padding: 30px;
+  --selection-list-active-color: #9195980f;
+  --text-light: #fff;
+  --track-header-height: 113px;
 }

@@ -25,7 +25,6 @@ limitations under the License.
 }
 
 #next-login-container {
-  background: var(--auth-bg-color);
   height: 100%;
   overflow: auto;
 }
@@ -46,10 +45,6 @@ limitations under the License.
 
 #next-login-form-2 {
   margin-top: 40px;
-}
-
-#next-login-container .ui.form .field.field input:-webkit-autofill {
-  box-shadow: 0px 0px 0px 100px var(--auth-bg-color) inset !important;
 }
 
 #next-login-new-account-container {

@@ -25,6 +25,9 @@ import RequesterChat from './RequesterChat';
 import PeopleChat from './PeopleChat';
 
 
+import * as sound from 'services/Sound';
+
+
 // TODO: Consider renaming (sub)component(s)
 /**
  *
@@ -35,29 +38,6 @@ import PeopleChat from './PeopleChat';
 class Chat extends Component {
 
   /**
-   * Entry point to perform tasks required to render component.
-   * If socket open, send message to get initial recommendation
-   * from chatbot
-   */
-  componentDidMount () {
-    const {
-      id,
-      isSocketOpen,
-      messages,
-      sendMessage,
-      type } = this.props;
-
-    if (type === 'REQUESTER' &&
-        isSocketOpen('chatbot') &&
-        !messages) {
-      sendMessage({
-        do: 'CREATE', message: { text: '/recommend' }, user_id: id,
-      });
-    }
-  }
-
-
-  /**
    * Called whenever Redux state changes. On socket open, send
    * message to get initial recommendation from chatbot
    * @param {object} prevProps Props before update
@@ -65,27 +45,28 @@ class Chat extends Component {
    */
   componentDidUpdate (prevProps) {
     const {
-      id,
-      isSocketOpen,
+      activePack,
+      activeRole,
       messages,
-      sendMessage,
+      messagesCountById,
       startRefresh,
-      type,
       refreshOnNextSocketReceive,
       shouldRefreshOnNextSocketReceive } = this.props;
-
-    if (prevProps.isSocketOpen('chatbot') !== isSocketOpen('chatbot') &&
-        type === 'REQUESTER' &&
-        isSocketOpen('chatbot') &&
-        !messages) {
-      sendMessage({
-        do: 'CREATE', message: { text: '/recommend' }, user_id: id,
-      });
-    }
 
     if (messages !== prevProps.messages) {
       shouldRefreshOnNextSocketReceive && startRefresh();
       refreshOnNextSocketReceive(false);
+
+      const resourceId = (activePack && activePack.id) ||
+        (activeRole && activeRole.id);
+
+      if (messages[0] && resourceId && messagesCountById(resourceId) > 2 &&
+          messages[0].recipient_id && messages[0].resource_id === resourceId) {
+        if (messages[0].text.includes('sent'))
+          sound.play('CHAT_REQUEST_SENT');
+        else
+          sound.play('CHAT_RECEIVE');
+      }
     }
   }
 
@@ -95,8 +76,18 @@ class Chat extends Component {
    * @param {string} message Message body
    */
   send = (message) => {
-    const { id, sendMessage } = this.props;
-    sendMessage({do: 'REPLY', message: { text: message }, user_id: id});
+    const {
+      activePack,
+      activeRole,
+      id,
+      sendMessage } = this.props;
+    const payload = {
+      text: message,
+      user_id: id,
+      resource_id: (activeRole && activeRole.id) ||
+        (activePack && activePack.id),
+    };
+    sendMessage(payload);
   }
 
 
@@ -154,7 +145,8 @@ class Chat extends Component {
    * @returns {JSX}
    */
   render () {
-    const { disabled, formDisabled, type } = this.props;
+    const { activeRole, disabled, showForm, type } = this.props;
+    const noMembers = activeRole && activeRole.owners.length === 0;
 
     return (
       <div id='next-chat-container'>
@@ -172,7 +164,8 @@ class Chat extends Component {
             <ChatForm
               {...this.props}
               disabled={disabled}
-              formDisabled={formDisabled}
+              formDisabled={noMembers}
+              showForm={showForm}
               approve={this.manualApprove}
               reject={this.manualReject}
               requestRole={this.manualRequestRole}

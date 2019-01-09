@@ -26,9 +26,27 @@ export const request = {
 };
 
 
+export const failure = (state, { error }) =>
+  state.merge({ fetching: false, error });
+
+
+export const resetAll = () =>
+  INITIAL_STATE;
+
+
+export const feedReceive = (state, { payload }) =>
+  payload.user_proposal ?
+    state.merge({
+      requests: utils.merge(state.requests || [], [payload.user_proposal]),
+    }) :
+    state.merge({});
+
+
 export const success = {
   access: (state) =>
     state.merge({ fetching: false }),
+
+
   base: (state, { base }) =>
     state.merge({
       fetching: false,
@@ -47,6 +65,8 @@ export const success = {
       rolesTotalCount,
       roles: utils.merge(state.roles || [], roles || []),
     }),
+
+
   allPacks: (state, { packs, packsTotalCount }) =>
     state.merge({
       fetchingAllPacks: false,
@@ -60,11 +80,15 @@ export const success = {
       fetching: false,
       packs: utils.merge(state.packs || [], [pack]),
     }),
+
+
   role: (state, { role }) =>
     state.merge({
       fetching: false,
       roles: utils.merge(state.roles || [], [role]),
     }),
+
+
   proposal: (state, { proposal }) =>
     state.merge({
       fetching: false,
@@ -73,18 +97,10 @@ export const success = {
 };
 
 
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-};
-
-
-export const resetAll = () => {
-  return INITIAL_STATE;
-};
-
-
 export const RequesterReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]:              resetAll,
+  [Types.FEED_RECEIVE]:           feedReceive,
+
   [Types.BASE_REQUEST]:           request.temp,
   [Types.BASE_SUCCESS]:           success.base,
   [Types.BASE_FAILURE]:           failure,

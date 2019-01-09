@@ -27,6 +27,7 @@ import Individuals from './Individuals';
 
 const store = customStore.create();
 const props = {
+  location: {},
   isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },
@@ -34,6 +35,7 @@ const props = {
 };
 
 const newprops = {
+  location: {},
   isSocketOpen: () => {},
   getOpenProposals: () => { },
   userFromId: () => { },

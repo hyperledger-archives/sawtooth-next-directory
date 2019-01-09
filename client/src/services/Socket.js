@@ -17,6 +17,7 @@ limitations under the License.
 export const sockets = {};
 
 
+export const SOCKET_TIMEOUT = 30e3;
 export const SOCKET_RECONNECT_TIMEOUT = 1e3;
 export const SOCKET_NORMAL_CLOSURE_ERROR_CODE = 1e3;
 export const SOCKET_NO_STATUS_RECEIVED_ERROR_CODE = 1005;

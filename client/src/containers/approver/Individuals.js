@@ -189,7 +189,7 @@ class Individuals extends Component {
           width={4}>
           <Chat
             type='APPROVER'
-            formDisabled
+            showForm
             title={title}
             subtitle={subtitle}
             groupBy={activeIndex}

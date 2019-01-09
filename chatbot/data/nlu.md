@@ -2,13 +2,32 @@
 - /recommend
 - /recommend
 
-## intent:send_current
-- /send_current
-- /send_current
+## intent:offer
+- /offer
+- /offer
 
-## intent:send_recommended
-- /send_recommended
-- /send_recommended
+## intent:member
+- /member
+- /member
+
+## intent:pending
+- /pending
+- /pending
+
+## intent:update
+- /update
+- /update
+
+## intent:request_access
+- /request_access
+- /request_access
+
+## intent:no_owner
+- /no_owner
+- /no_owner
+
+## intent:cancel
+- Nevermind.
 
 ## intent:access
 - access
@@ -46,10 +65,13 @@
 - i require access because
 
 ## intent:whoami
-- Who are you
-- what is your name
-- where do you come from
+- what is your name?
+- whats ur name
+- what's your name?
+- Who are you?
 - what are you called?
+- what should i call you
+- what are you?
 
 ## intent:laugh
 - lol

@@ -27,6 +27,7 @@ import logo from 'images/next-logo-billboard.png';
 
 
 import * as storage from 'services/Storage';
+import * as theme from 'services/Theme';
 import * as utils from 'services/Utils';
 
 
@@ -47,11 +48,15 @@ class Signup extends Component {
   };
 
 
+  themes = ['flux'];
+
+
   /**
    * Entry point to perform tasks required to render
    * component
    */
-  componendDidMount () {
+  componentDidMount () {
+    theme.apply(this.themes);
     this.init();
   }
 
@@ -63,6 +68,16 @@ class Signup extends Component {
    */
   componentDidUpdate (prevProps) {
     this.init();
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    const { history } = this.props;
+    !history.location.pathname.includes('login') &&
+      theme.remove(this.themes);
   }
 
 
@@ -92,9 +107,9 @@ class Signup extends Component {
     const { signup } = this.props;
 
     return (
-      <div id='next-login-container'>
+      <div id='next-signup-container'>
         <Grid container centered columns={2}>
-          <Grid.Column id='next-login-column'>
+          <Grid.Column id='next-signup-column'>
             <Header inverted textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
               <h1>

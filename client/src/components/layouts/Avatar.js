@@ -27,7 +27,7 @@ import './Avatar.css';
  *
  *
  */
-export default class Avatar extends Component {
+class Avatar extends Component {
 
   static propTypes = {
     onClick:        PropTypes.func,
@@ -86,3 +86,6 @@ export default class Avatar extends Component {
   }
 
 }
+
+
+export default Avatar;

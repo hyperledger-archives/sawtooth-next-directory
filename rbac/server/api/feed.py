@@ -59,3 +59,5 @@ async def proposal_feed(request, ws, recv):
             and recv.get("user_id") in proposal_resource["approvers"]
         ):
             await ws.send(json.dumps({"open_proposal": proposal_resource}))
+        elif recv.get("user_id") == proposal_resource["opener"]:
+            await ws.send(json.dumps({"user_proposal": proposal_resource}))

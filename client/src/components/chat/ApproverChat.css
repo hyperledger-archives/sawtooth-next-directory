@@ -12,6 +12,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
+
+
+#next-approver-chat-transcript-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+  padding: 1.3rem;
+}
+
+#next-approver-chat-transcript-container:before {
+  background: linear-gradient(#eceef2, transparent);
+  content: "";
+  height: 30px;
+  left: 0;
+  position: absolute;
+  top: 183px;
+  width: 100%;
+  z-index: 1;
+}
+
+#next-approver-chat-transcript-container::-webkit-scrollbar {
+  background: transparent;
+  width: 0px;
+}
+
 .next-chat-list-icon {
   margin-left: 0.3em;
 }

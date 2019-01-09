@@ -14,23 +14,17 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-approver-manage-content {
-  height: calc(100% - 164px);
-  padding: 0 30px;
-  position: relative;
-  top: 145px;
-}
+import CHAT_RECEIVE from 'sounds/chat-receive.mp3';
+import CHAT_REQUEST_SENT from 'sounds/chat-request-sent.mp3';
+import * as utils from 'services/Utils';
 
-#next-approver-manage-content > .ui.grid {
-  height: 100%;
-}
 
-#next-approver-manage-exit-button {
-  position: fixed;
-  right: 18px;
-}
+const sounds = {
+  CHAT_RECEIVE: new Audio(CHAT_RECEIVE),
+  CHAT_REQUEST_SENT: new Audio(CHAT_REQUEST_SENT),
+};
 
-#next-approver-manage-content .ui.form {
-  margin: 0 auto;
-  width: 60%;
-}
+
+export const play = (name) => {
+  sounds[name].play().catch(error => utils.noop());
+};

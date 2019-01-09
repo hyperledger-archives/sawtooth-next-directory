@@ -39,7 +39,7 @@ import Avatar from 'components/layouts/Avatar';
  * @description   Component encapsulating the people chat view
  *
  */
-export default class PeopleChat extends Component {
+class PeopleChat extends Component {
 
   state = { activeIndex: 0, currentRolesMaxCount: 5 };
 
@@ -231,3 +231,6 @@ export default class PeopleChat extends Component {
   }
 
 }
+
+
+export default PeopleChat;

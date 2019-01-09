@@ -31,29 +31,31 @@ export const resetAll = () =>
   INITIAL_STATE;
 
 
-export const feedReceive = (state, { payload }) => {
-  return state.merge({
-    openProposals: utils.merge(
-      state.openProposals || [],
-      [payload.open_proposal]
-    ),
-  });
-};
+export const feedReceive = (state, { payload }) =>
+  payload.open_proposal ?
+    state.merge({
+      openProposals: utils.merge(
+        state.openProposals || [], [payload.open_proposal]
+      ),
+    }) :
+    state.merge({});
 
 
 export const success = {
-
-  // Proposals
   openProposals: (state, { openProposals }) =>
     state.merge({
       fetching: false,
       openProposals: openProposals.data,
     }),
+
+
   confirmedProposals: (state, { confirmedProposals }) =>
     state.merge({
       fetching: false,
       confirmedProposals: confirmedProposals.data,
     }),
+
+
   approveProposals: (state, { closedProposal }) =>
     state.merge({
       fetching: false,
@@ -61,6 +63,8 @@ export const success = {
         proposal => proposal.id !== closedProposal.proposal_id
       ),
     }),
+
+
   rejectProposals: (state, { closedProposal }) =>
     state.merge({
       fetching: false,
@@ -70,7 +74,6 @@ export const success = {
     }),
 
 
-  // Create
   createRole: (state, { role }) =>
     state.merge({
       fetching: false,
@@ -78,6 +81,8 @@ export const success = {
         state.createdRoles || [], [role]
       ),
     }),
+
+
   createPack: (state, { pack }) =>
     state.merge({
       fetching: false,
@@ -87,12 +92,13 @@ export const success = {
     }),
 
 
-  // People
   organization: (state, { organization }) =>
     state.merge({
       fetching: false,
       organization,
     }),
+
+
   onBehalfOf: (state, { id }) =>
     state.merge({ onBehalfOf: id }),
 };
@@ -129,5 +135,4 @@ export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.ORGANIZATION_SUCCESS]:         success.organization,
   [Types.ORGANIZATION_FAILURE]:         failure,
   [Types.ON_BEHALF_OF_SET]:             success.onBehalfOf,
-
 });

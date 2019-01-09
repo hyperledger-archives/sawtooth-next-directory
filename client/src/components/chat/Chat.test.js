@@ -32,6 +32,7 @@ describe('Chat component', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     const props = {
+      location: {},
       submit: (username, password) => { },
       title: 'defaultTitle',
       type: '1',
@@ -53,6 +54,7 @@ describe('Chat component', () => {
   it('renders without crashing with different props', () => {
     const div = document.createElement('div');
     const props = {
+      location: {},
       isSocketOpen: () => {},
       submit: (username, password) => { },
       title: 'defaultTitle',
@@ -65,6 +67,7 @@ describe('Chat component', () => {
       },
     };
     const newProps = {
+      location: {},
       isSocketOpen: () => {},
       type: '1',
       groupBy: 1,
@@ -106,7 +109,7 @@ describe('Chat component', () => {
     const props = {
       sendMessage: () => { },
       type: '0',
-      activeRole: { id: 'abc' },
+      activeRole: { id: 'abc', owners: [] },
       activePack: { id: 'abc' },
       me: { id: 'asdf' },
       requestAccess: () => { },
@@ -129,7 +132,7 @@ describe('Chat component', () => {
     const newProps = {
       sendMessage: () => { },
       type: '1',
-      activeRole: { id: 'abc' },
+      activeRole: { id: 'abc', owners: [] },
       me: { id: 'asdf' },
       approveProposals: () => { },
       selectedProposals: () => {},
