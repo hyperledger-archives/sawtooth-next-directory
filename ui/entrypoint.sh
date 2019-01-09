@@ -14,8 +14,9 @@
 # limitations under the License.
 
 # Set the server hostname for the prod environment
-if [ "${RBAC_SERVER}" ] ; then
-    sed -i "s/localhost/${RBAC_SERVER}/g" src/environments/environment.prod.ts
+if [ "${HOST}" ] ; then
+    sed -i "s/localhost/${HOST}/g" src/environments/environment.prod.ts
+    sed -i "s/localhost/${HOST}/g" protractor.conf.js
 fi
 
 npm start -- --env=prod --host=0.0.0.0 --port=4200

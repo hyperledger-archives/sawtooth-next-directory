@@ -1,0 +1,105 @@
+/*******************************
+        Global Overrides
+*******************************/
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+body,
+#root {
+  height: 100%;
+}
+
+.clear {
+  clear: both;
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.dark {
+  background: @darkBackground;
+}
+
+.contrast {
+  background: @contrastBackground;
+}
+
+.avatar-palette-1 {
+  background: @avatarPalette1;
+  color: @avatarPalette1TextColor;
+}
+
+.avatar-palette-2 {
+  background: @avatarPalette2;
+  color: @avatarPalette2TextColor;
+}
+
+.avatar-palette-3 {
+  background: @avatarPalette3;
+  color: @avatarPalette3TextColor;
+}
+
+.avatar-palette-4 {
+  background: @avatarPalette4;
+  color: @avatarPalette4TextColor;
+}
+
+.avatar-palette-5 {
+  background: @avatarPalette5;
+  color: @avatarPalette5TextColor;
+}
+
+.avatar-palette-6 {
+  background: @avatarPalette6;
+  color: @avatarPalette6TextColor;
+}
+
+.avatar-palette-7 {
+  background: @avatarPalette7;
+  color: @avatarPalette7TextColor;
+}
+
+.avatar-palette-8{
+  background: @avatarPalette8;
+  color: @avatarPalette8TextColor;
+}
+
+.avatar-palette-9 {
+  background: @avatarPalette9;
+  color: @avatarPalette9TextColor;
+}
+
+.avatar-palette-10 {
+  background: @avatarPalette10;
+  color: @avatarPalette10TextColor;
+}
+
+.avatar-palette-11 {
+  background: @avatarPalette11;
+  color: @avatarPalette11TextColor;
+}
+
+.avatar-palette-12 {
+  background: @avatarPalette12;
+  color: @avatarPalette12TextColor;
+}
+
+.toast {
+  border-radius: 1em !important;
+  padding: 20px !important;
+}
+
+.toast.Toastify__toast--warning {
+  color: #1d1e27;
+}

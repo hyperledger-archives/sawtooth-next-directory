@@ -1,0 +1,89 @@
+    post:
+      security:
+        - Bearer: []
+      description: Add a task to a role
+      parameters:
+        - name: task
+          in: body
+          description: Task to be added to the role
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                $ref: '../definitions/definitions.yaml#/taskId'
+        - $ref: '../parameters/parameters.yaml#/roleId'
+      responses:
+        '200':
+          description: Success response with proposal id
+          schema:
+            $ref: '../definitions/definitions.yaml#/proposalId'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '../definitions/definitions.yaml#/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'
+    delete:
+      security:
+        - Bearer: []
+      description: Remove a task from the role
+      parameters:
+        - name: member
+          in: body
+          description: Task to be removed from the role
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Id of the task to remove from this role
+        - $ref: '../parameters/parameters.yaml#/roleId'
+      responses:
+        '200':
+          description: Success response with proposal id
+          schema:
+            $ref: '../definitions/definitions.yaml#/proposalId'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '../definitions/definitions.yaml#/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'

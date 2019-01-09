@@ -1,0 +1,110 @@
+// Copyright 2018 Contributors to Hyperledger Sawtooth
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ------------------------------------------------------------------------------
+
+syntax = "proto3";
+
+
+message ProposalsContainer {
+
+    repeated Proposal proposals = 1;
+
+}
+
+
+message Proposal {
+
+    enum ProposalType {
+
+        ADD_ROLE_TASK = 0;
+        ADD_ROLE_MEMBER = 1;
+        ADD_ROLE_OWNER = 2;
+        ADD_ROLE_ADMIN = 3;
+        REMOVE_ROLE_TASK = 4;
+        REMOVE_ROLE_MEMBER = 5;
+        REMOVE_ROLE_OWNER = 6;
+        REMOVE_ROLE_ADMIN = 7;
+        ADD_TASK_OWNER = 8;
+        ADD_TASK_ADMIN = 9;
+        REMOVE_TASK_OWNER = 10;
+        REMOVE_TASK_ADMIN = 11;
+        UPDATE_USER_MANAGER = 12;
+
+    }
+
+    enum Status {
+        OPEN = 0;
+        REJECTED = 1;
+        CONFIRMED = 2;
+        EXPIRED = 3;
+        REMOVED = 4;
+    }
+
+    string proposal_id = 1;
+
+    ProposalType proposal_type = 2;
+
+
+    // The id of the Role, Task, User that the 'related_id' is being added or
+    // removed from. For example, for an ADD_ROLE_MEMBER Proposal, the
+    // object_id is the Role id.
+    string object_id = 3;
+
+    // The id of the Task, or User that is being added or removed from the
+    // 'object_id'. For example, for an ADD_TASK_OWNER Proposal, the
+    // related_id is the User id of the proposed new Owner.
+    string related_id = 4;
+
+    // The public key of the user that caused the Proposal to be created.
+    string opener = 5;
+
+    // The public key of the user that caused the Proposal to be REJECTED or
+    // CONFIRMED.
+    string closer = 6;
+
+    Status status = 7;
+
+    // A user supplied message to explain why the Proposal was made.
+    string open_reason = 8;
+
+    // A user supplied (upon closing the Proposal) for why the Proposal was
+    // closed in the way it was.
+    string close_reason = 9;
+
+    // Client supplied metadata that is not indexed or parsed by the TP.
+    string metadata = 10;
+
+    //approvals received
+    repeated Approval approvals = 11;
+
+    //rejections received
+    repeated Rejection rejections = 12;
+
+    int64 created_date = 13;
+
+    int64 closed_date = 14;
+
+}
+
+message Approval {
+    string approver = 1;
+
+    string on_behalf = 2;
+}
+
+message Rejection {
+    string rejector = 1;
+
+    string on_behalf = 2;
+}

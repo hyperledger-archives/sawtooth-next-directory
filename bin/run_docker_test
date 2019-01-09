@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +13,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# -----------------------------------------------------------------------------
 
 # This file is executed by 'build' located in the same directory.
 # Running locally requires
 #   pip3 installation of the grpcio package
 #   arg specifying which docker-compose.yaml to run tests with
 # Direct execution example:
-# >   ./run_docker_test ../integration_tests/blockchain/docker-compose.yaml
+# >   ./run_docker_test ../tests/docker-compose.yaml
 
 import argparse
 import logging
@@ -176,7 +177,7 @@ def main():
         LOGGER.info("Shutting down with: %s", str(compose_down))
         shutdown_success = False
         for i in range(2):
-            if shutdown_success == False:
+            if not shutdown_success:
 
                 # Always give compose down time to cleanup
                 timeout = max(timer.remaining(), COMPOSE_DOWN_RETRY_TIMEOUT)
@@ -366,7 +367,7 @@ def _setup_environ(isolation_id):
             os.path.realpath(__file__)
         )
     )
-    print(os.environ['SAWTOOTH_CORE'])
+    LOGGER.debug(os.environ['SAWTOOTH_CORE'])
 
 
 def _get_compose_dir():

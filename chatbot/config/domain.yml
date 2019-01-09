@@ -1,0 +1,250 @@
+# Copyright 2018 Contributors to Hyperledger Sawtooth
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+%YAML 1.1
+---
+intents:
+  - recommend
+  - access
+  - affirm
+  - deny
+  - greet
+  - send_current
+  - send_recommended
+  - cancel
+  - bye
+  - thank
+  - feeling
+  - reason
+  - laugh
+  - awe
+  - insult
+  - help
+  - whoami
+  - name
+
+config:
+  store_entities_as_slots: true
+
+entities:
+- approver_name
+- batch_status
+- reason
+- resource_id
+- resource_name
+- resource_type
+- token
+
+forms: []
+
+slots:
+  approver_name:
+    type: unfeaturized
+  batch_status:
+    type: categorical
+    values:
+      - 1 # COMMITTED
+      - 2 # INVALID
+      - 3 # PENDING
+      - 4 # UNKNOWN
+  reason:
+    type: unfeaturized
+  resource_id:
+    type: unfeaturized
+  resource_name:
+    type: unfeaturized
+  resource_type:
+    type: categorical
+    values:
+    - PACK
+    - ROLE
+  token:
+    type: unfeaturized
+
+actions:
+  - utter_default
+  - utter_standby
+  - utter_recommendation
+  - utter_ask_request_access
+  - utter_greet
+  - utter_recommended_draft
+  - utter_current_draft
+  - utter_exclame
+  - utter_fanfare_sent
+  - utter_request_bye
+  - utter_thank
+  - utter_feeling
+  - utter_bye
+  - utter_laugh
+  - utter_awe
+  - utter_insult
+  - utter_help
+  - utter_whoami
+  - utter_name
+  - utter_test
+  - utter_test_role
+  - utter_passive
+  - utter_send_failure_invalid
+  - utter_send_failure_pending
+  - utter_send_failure_unknown
+  - action_request_access
+
+templates:
+  utter_default:
+    - text: Sorry, I didn't get that. Can you clarify?
+    - text: I don't understand what you mean.
+
+  utter_standby:
+    - text: Feel free to ping me anytime.
+    - text: I'll be here for you.
+
+  utter_passive:
+    - text: Fine.
+    - text: Have it your way.
+
+  utter_whoami:
+    - text: >-
+          I am Dez, a robot designed specifically to help
+          you because you are special and deserve it.
+    - text: Who are you?
+
+  utter_recommendation:
+    - text: >-
+        Hi! Based on your role, I bet having access
+        to <strong>{resource_name}</strong> would make it easier for you
+        to function.
+
+  utter_ask_request_access:
+    - text: Do you want me to request access for you?
+      buttons:
+      - title: Yes, please
+        payload: Yes, please.
+      - title: No, thanks
+        payload: No, thanks.
+
+  utter_name:
+    - text: It's a pleasure to be getting to know you.
+    - text: That's great.
+    - text: Cool stuff.
+    - text: Uh huh.
+
+  utter_greet:
+    - text: Bonjour! How can I help you?
+    - text: Hola!
+    - text: Sup?
+    - text: Howdy partner.
+    - text: Oh hi there.
+    - text: What's up?
+    - text: How may I serve you?
+
+  utter_help:
+    - text: >-
+        I am here to help you get access to resources
+        you need.
+
+  utter_insult:
+    - text: >-
+        I am trying my best to be helpful. Please let
+        me know more clearly how I can help you.
+    - text: >-
+        All robots make mistakes at some point. This
+        may be one of those moments. Please tell
+        me what it is you'd like me to do.
+
+  utter_recommended_draft:
+    - text: >-
+        So you'd like to request access for {resource_name}?
+        Great. All you need to do is draft a note for
+        {approver_name} and I'll take care of the rest.
+      buttons:
+        - title: Send request
+          payload: '/send_recommended{"reason": "I need access."}'
+        - title: Nevermind
+          payload: /cancel
+
+  utter_current_draft:
+    - text: >-
+        Okay. So you need access to this?
+        Go ahead and draft a note and I'll take care of the rest.
+      buttons:
+        - title: Send request
+          payload: '/send_current{"reason": "-", "resource_id": "-", "resource_type": "-"}'
+        - title: Nevermind
+          payload: /cancel
+
+  utter_test:
+    - text: >-
+        ITS A PACK, ID you want is {resource_id}
+
+  utter_test_role:
+    - text: >-
+        ITS A ROLE, ID you want is {resource_id}
+
+  utter_laugh:
+    - text: I know right?
+    - text: You're hilarious.
+    - text: Pretty funny.
+
+  utter_awe:
+    - text: Pretty great, right?
+    - text: Yep.
+
+  utter_send_failure_invalid:
+    - text: >-
+        Hmmm.... Small hiccup. Something about your request
+        isn't going through our validators. Not sure what the
+        problem is exactly. Try again later.
+
+  utter_send_failure_pending:
+    - text: >-
+        Oh no! It looks like it took my minions too long to
+        complete your request. Please try again later.
+
+  utter_send_failure_unknown:
+    - text: >-
+        Houston, we've had a problem.... I'm sorry to say
+        that I was unable to request access for you right now.
+        But please don't lose faith in me. Simply try again later.
+
+  utter_exclame:
+    - text: Awesome!
+
+  utter_fanfare_sent:
+    - text: Ta-da! Request sent
+
+  utter_request_bye:
+    - text: >-
+        Feel free to ping me anytime. I will notify you
+        once I hear from {approver_name}. Au revoir!
+
+  utter_bye:
+    - text: Talk to you later.
+    - text: Later gater.
+    - text: Until next time.
+    - text: Bye. I will always be here for you.
+
+  utter_thank:
+    - text: You're most welcome.
+    - text: No problem.
+    - text: My pleasure.
+    - text: You got it.
+    - text: Anytime.
+    - text: Sure thing.
+
+  utter_feeling:
+    - text: I'm okay.
+    - text: I'm just hanging around.
+    - text: Eh. Could be better I guess.
+    - text: Do you actually care?

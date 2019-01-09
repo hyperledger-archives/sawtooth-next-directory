@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,11 +20,9 @@ import sys
 
 
 TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, os.path.join(TOP_DIR, 'server'))
-sys.path.insert(0, os.path.join(TOP_DIR, 'transaction_creation'))
-sys.path.insert(0, os.path.join(TOP_DIR, 'addressing'))
+sys.path.insert(0, TOP_DIR)
 
-from api.main import main
+from rbac.server.api.main import main
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,102 +13,217 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-version: "2"
+version: "3"
 
 services:
+  shell:
+    build:
+      context: .
+      dockerfile: ./docker/tests.Dockerfile
+    container_name: rbac-shell
+    image: rbac-shell:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    depends_on:
+      - rest-api
+    command: tail -f /dev/null
+    environment:
+      - PYTHONPATH=/project/hyperledger-rbac/
+      - SERVER_HOST=${SERVER_HOST:-rbac-server}
+      - SERVER_PORT=${SERVER_PORT:-8000}
+      - VALIDATOR_HOST=${VALIDATOR_HOST:-validator}
+      - VALIDATOR_PORT=${VALIDATOR_PORT:-4004}
+      - VALIDATOR_TIMEOUT=${VALIDATOR_TIMEOUT:-500}
+      - DB_HOST=${DB_HOST:-rethink}
+      - DB_PORT=${DB_PORT:-28015}
+      - DB_NAME=${DB_NAME:-rbac}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
+
+  rbac-provider-azure:
+    build:
+      context: .
+      dockerfile: ./docker/rbac.providers.azure.Dockerfile
+    container_name: rbac-providers-azure
+    image: rbac-provider-azure:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    environment:
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - CLIENT_ASSERTION=${CLIENT_ASSERTION}
+      - TENANT_ID=${TENANT_ID}
+      - AUTH_TYPE=${AUTH_TYPE}
+      - AAD_EH_SAS_POLICY=${AAD_EH_SAS_POLICY}
+      - AAD_EH_SAS_KEY=${AAD_EH_SAS_KEY}
+      - AAD_EH_CONSUMER_GROUP=${AAD_EH_CONSUMER_GROUP}
+      - AAD_EH_NAMESPACE=${AAD_EH_NAMESPACE}
+      - AAD_EH_NAME=${AAD_EH_NAME}
+    depends_on:
+      - ledger-sync
+    command: ./bin/rbac-providers-azure
+
+  rbac-provider-ldap:
+    build:
+      context: .
+      dockerfile: ./docker/rbac.providers.ldap.Dockerfile
+    container_name: rbac-providers-ldap
+    image: rbac-provider-ldap:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    environment:
+      - LDAP_DC=${LDAP_DC}
+      - LDAP_SERVER=${LDAP_SERVER}
+      - LDAP_USER=${LDAP_USER}
+      - LDAP_PASS=${LDAP_PASS}
+      - DELTA_SYNC_INTERVAL_SECONDS=${DELTA_SYNC_INTERVAL_SECONDS}
+    depends_on:
+      - ledger-sync
+    command: ./bin/rbac-providers-ldap
+
   rbac-server:
     build:
       context: .
-      dockerfile: ./server/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: rbac-server-production:${ISOLATION_ID}
+      dockerfile: ./docker/rbac.server.Dockerfile
+    container_name: rbac-server
+    image: rbac-server:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     ports:
       - "8000:8000"
     depends_on:
       - ledger-sync
       - rethink
       - validator
-    command: ./bin/rbac-server --host 0.0.0.0 --db-host rethink --validator-host validator
+    environment:
+      - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
+      - SERVER_PORT=${SERVER_PORT:-8000}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
+      - CLIENT_HOST=${CLIENT_HOST}
+      - CLIENT_PORT=${CLIENT_PORT}
+      - DEMO_MODE=${DEMO_MODE:-False}
+    command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:
+    container_name: rbac-rethink
     image: rethinkdb:2.3
     ports:
       - "9090:8080"
+    expose:
+      - "28015"
 
   rbac-tp:
     build:
       context: .
-      dockerfile: ./processor/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: rbac-tp-production:${ISOLATION_ID}
-    command: ./bin/rbac-tp -vv tcp://validator:4004
+      dockerfile: ./docker/rbac.processor.Dockerfile
+    container_name: rbac-tp
+    image: rbac-tp:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    environment:
+      - HOST=${HOST:-localhost}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
+    command: ./bin/rbac-tp tcp://validator:4004
 
   ledger-sync:
     build:
       context: .
-      dockerfile: ./ledger_sync/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: rbac-ledger-sync-production:${ISOLATION_ID}
+      dockerfile: ./docker/rbac.ledger_sync.Dockerfile
+    container_name: rbac-ledger-sync
+    image: rbac-ledger-sync:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
     depends_on:
       - rethink
       - validator
+    environment:
+      - HOST=${HOST:-localhost}
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
     command: |
       bash -c "
         ./bin/setup_db --host rethink &&
-        ./bin/rbac-ledger-sync -v --db-host rethink --validator tcp://validator:4004
-      "
+        ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
+      \"\""
 
-  rbac-ui:
+  client:
     build:
       context: .
-      dockerfile: ./ui/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: rbac-ui-production:${ISOLATION_ID}
+      dockerfile: ./docker/client.Dockerfile
+    container_name: rbac-client
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_PATH=${NODE_PATH-src/}
+      - REACT_APP_SERVER_HOST=${REACT_APP_SERVER_HOST}
+      - REACT_APP_SERVER_PORT=${REACT_APP_SERVER_PORT}
+      - REACT_APP_HTTP_PROTOCOL=${REACT_APP_HTTP_PROTOCOL}
+      - REACT_APP_WS_PROTOCOL=${REACT_APP_WS_PROTOCOL}
+    image: rbac-client:${ISOLATION_ID-latest}
+    volumes:
+      - ./client:/client
+      - /client/node_modules
     ports:
-      - "4200:4200"
+      - "4201:3000"
+      - "35729:35729"
     depends_on:
       - rbac-server
-    environment:
-      - RBAC_SERVER=localhost
+
+  chatbot:
+    build:
+      context: .
+      dockerfile: ./docker/chatbot.Dockerfile
+    container_name: rbac-chatbot
+    image: rbac-chatbot:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    ports:
+      - "5005:5005"
 
   rest-api:
-    image: hyperledger/sawtooth-rest-api:1.0
     container_name: sawtooth-rest-api
+    image: hyperledger/sawtooth-rest-api:1.0
     ports:
       - "8008:8008"
     depends_on:
       - validator
-    command: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
+    command: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008
 
   settings-tp:
+    container_name: rbac-settings-tp
     image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
       - validator
-    command: settings-tp -v --connect tcp://validator:4004
+    command: settings-tp --connect tcp://validator:4004
 
   validator:
+    container_name: rbac-validator-tp
     image: hyperledger/sawtooth-validator:1.0
-    command: |
+    entrypoint: |
       bash -c "
-        sawadm keygen --force &&
-        sawtooth keygen my_key --force &&
-        sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
-        sawadm genesis config-genesis.batch &&
-        sawtooth-validator -vv \
+        if [ ! -f /etc/sawtooth/keys/validator.priv ]; then
+          sawadm keygen &&
+          sawtooth keygen my_key &&
+          sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+          sawadm genesis config-genesis.batch
+        fi;
+        sawtooth-validator \
           --endpoint tcp://validator:8800 \
-          --bind component:tcp://*:4004 \
-          --bind network:tcp://*:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800
           --scheduler parallel
-      "
+      \"\""
+
+  # rbac-ui:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/ui.Dockerfile
+  #   container_name: rbac-ui
+  #   image: rbac-ui:${ISOLATION_ID-latest}
+  #   ports:
+  #     - "4200:4200"
+  #   depends_on:
+  #     - rbac-server
+  #   environment:
+  #     - HOST=${HOST:-localhost}

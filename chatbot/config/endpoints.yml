@@ -1,0 +1,2 @@
+action_endpoint:
+  url: "http://rbac-server:8000/webhooks/chatbot"

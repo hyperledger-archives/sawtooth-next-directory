@@ -1,0 +1,88 @@
+/*******************************
+         Theme Overrides
+*******************************/
+
+button.ui.fluid.primary.animated.button {
+  background: #e80d98;
+  background: linear-gradient(to bottom, #e80dbd, #b8004c);
+  height: 44px;
+}
+
+button.ui.fluid.primary.animated.button:active {
+  background: linear-gradient(to top, #c91684, #d72887);
+}
+
+button.ui.icon.left.labeled.button,
+a.ui.icon.left.labeled.button {
+  background: none;
+  color: @white;
+  padding-left: 3em !important;
+}
+
+button.ui.icon.right.labeled.button,
+a.ui.icon.right.labeled.button {
+  background: none;
+  color: @white;
+  padding-right: 3em !important;
+}
+
+button.ui.icon.left.labeled.button i,
+button.ui.icon.right.labeled.button i,
+a.ui.icon.left.labeled.button i,
+a.ui.icon.right.labeled.button i {
+  background: none;
+}
+
+button.ui.link {
+  background: none;
+  color: @white;
+  opacity: 0.5;
+  font-size: 1em;
+  font-weight: normal;
+  padding: 0;
+  transition: 0.1s opacity ease;
+  -webkit-transition: 0.1s opacity ease;
+}
+
+button.ui.link:active,
+button.ui.link:hover,
+button.ui.link:focus {
+  color: @white;
+  background: none;
+  opacity: 1;
+}
+
+.toggle-card.gradient.toggle {
+  background: linear-gradient(to bottom, #9600e8 0%,#f70597 100%);
+  border-radius: 1.2em !important;
+  color: @white;
+  font-size: 1.2em !important;
+  font-weight: 400;
+  transition: none;
+}
+
+.toggle-card.gradient.toggle.active {
+  background: @white !important;
+  border: 1px solid @magenta;
+  color: @magenta !important;
+}
+
+.toggle-card.gradient.toggle.active:hover {
+  background: #edf1f4 !important;
+  color: #bbb !important;
+}
+
+.toggle-card.gradient.toggle:hover {
+  background: linear-gradient(to bottom, #d950ff 0%,#ff009a 100%);
+  color: @white;
+}
+
+.toggle-card.gradient.toggle.massive {
+  height: 130px;
+}
+
+.toggle-card.toggle.massive i {
+  position: absolute;
+  right: 22px;
+  top: 30px;
+}

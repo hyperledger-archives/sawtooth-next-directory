@@ -1,0 +1,102 @@
+// Copyright 2018 Contributors to Hyperledger Sawtooth
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+message Signer {
+    string user_id = 1;
+    string public_key = 2;
+}
+
+
+message RBACPayload {
+
+    enum MessageType {
+        PROPOSE_ADD_ROLE_TASK = 0;
+        PROPOSE_ADD_ROLE_MEMBER = 1;
+        PROPOSE_ADD_ROLE_OWNER = 2;
+        PROPOSE_ADD_ROLE_ADMIN = 3;
+        PROPOSE_REMOVE_ROLE_TASK = 4;
+        PROPOSE_REMOVE_ROLE_MEMBER = 5;
+        PROPOSE_REMOVE_ROLE_OWNER = 6;
+        PROPOSE_REMOVE_ROLE_ADMIN = 7;
+        CONFIRM_ADD_ROLE_TASK = 8;
+        CONFIRM_ADD_ROLE_MEMBER = 9;
+        CONFIRM_ADD_ROLE_OWNER = 10;
+        CONFIRM_ADD_ROLE_ADMIN = 11;
+        CONFIRM_REMOVE_ROLE_TASK = 12;
+        CONFIRM_REMOVE_ROLE_MEMBER = 13;
+        CONFIRM_REMOVE_ROLE_OWNER = 14;
+        CONFIRM_REMOVE_ROLE_ADMIN = 15;
+        REJECT_ADD_ROLE_TASK = 16;
+        REJECT_ADD_ROLE_MEMBER = 17;
+        REJECT_ADD_ROLE_OWNER = 18;
+        REJECT_ADD_ROLE_ADMIN = 19;
+        REJECT_REMOVE_ROLE_TASK = 20;
+        REJECT_REMOVE_ROLE_MEMBER = 21;
+        REJECT_REMOVE_ROLE_OWNER = 22;
+        REJECT_REMOVE_ROLE_ADMIN = 23;
+        PROPOSE_ADD_TASK_OWNER = 24;
+        PROPOSE_ADD_TASK_ADMIN = 25;
+        PROPOSE_REMOVE_TASK_OWNER = 26;
+        PROPOSE_REMOVE_TASK_ADMIN = 27;
+        CONFIRM_ADD_TASK_OWNER = 28;
+        CONFIRM_ADD_TASK_ADMIN = 29;
+        CONFIRM_REMOVE_TASK_OWNER = 30;
+        CONFIRM_REMOVE_TASK_ADMIN = 31;
+        REJECT_ADD_TASK_OWNER = 32;
+        REJECT_ADD_TASK_ADMIN = 33;
+        REJECT_REMOVE_TASK_OWNER = 34;
+        REJECT_REMOVE_TASK_ADMIN = 35;
+        PROPOSE_UPDATE_USER_MANAGER = 36;
+        CONFIRM_UPDATE_USER_MANAGER = 37;
+        REJECT_UPDATE_USER_MANAGER = 38;
+
+        CREATE_ROLE = 39;
+        CREATE_USER = 40;
+        CREATE_TASK = 41;
+
+        UPDATE_ROLE = 42;
+        UPDATE_PROPOSAL = 43;
+        UPDATE_TASK = 44;
+        UPDATE_USER = 45;
+
+        IMPORTS_USER = 46;
+        IMPORTS_ROLE = 47;
+        IMPORTS_ADD_ROLE_OWNER = 48;
+        IMPORTS_ADD_ROLE_ADMIN = 49;
+        IMPORTS_ADD_ROLE_MEMBER = 50;
+        IMPORTS_REMOVE_ROLE_OWNER = 51;
+        IMPORTS_REMOVE_ROLE_ADMIN = 52;
+        IMPORTS_REMOVE_ROLE_MEMBER = 53;
+
+        ADD_KEY = 54;
+        
+    }
+
+
+    MessageType message_type = 1;
+
+    bytes content = 2;
+
+    repeated string inputs = 3;
+
+    repeated string outputs = 4;
+
+    Signer signer = 5;
+
+    int64 now = 6;
+
+}

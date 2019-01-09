@@ -1,0 +1,85 @@
+    get:
+      security:
+        - Bearer: []
+      description: Fetches the complete details of a role
+      parameters:
+        - $ref: '../parameters/parameters.yaml#/head'
+        - $ref: '../parameters/parameters.yaml#/roleId'
+      responses:
+        '200':
+          description: Response with the fetched role
+          schema:
+            properties:
+              link:
+                $ref: '../definitions/definitions.yaml#/getRoleLink'
+              head:
+                $ref: '../definitions/definitions.yaml#/head'
+              data:
+                $ref: '../definitions/definitions.yaml#/role'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '../definitions/definitions.yaml#/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'
+    patch:
+      security: 
+        - Bearer: []
+      description: Updates a role's description
+      parameters:
+        - $ref: '../parameters/parameters.yaml#/roleId'
+        - name: description
+          in: body
+          description: New description for the specified role
+          required: true
+          schema:
+            $ref: '../definitions/definitions.yaml#/roleDescription'
+      responses:
+        '200':
+          description: Response with the role and updated description
+          schema:
+            properties:
+              data:
+                $ref: '../definitions/definitions.yaml#/updatedRoleResponse'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '../definitions/definitions.yaml#/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'

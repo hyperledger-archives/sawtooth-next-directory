@@ -1,0 +1,83 @@
+/*******************************
+         Theme Overrides
+*******************************/
+
+.ui.huge.inverted.vertical.menu {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.ui.huge.inverted.vertical.menu .item {
+  padding-bottom: .65em;
+}
+
+.ui.huge.inverted.vertical.menu .center.header {
+  padding: 52px;
+}
+
+.ui.huge.inverted.vertical.menu .item:first-child {
+  align-items: center;
+  display: flex;
+  min-height: 70px;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section {
+  padding-bottom: 18px;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .header {
+  font-size: .75em;
+  padding: 4px 18px;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray {
+  border-bottom: 1px solid #323d49;
+  max-height: 300px;
+  overflow: auto;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray:after {
+  background: linear-gradient(to top, #212c3b, transparent);
+  bottom: 19px;
+  content: '';
+  height: 12px;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header {
+  align-items: center;
+  display: flex;
+  font-size: .8em;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header > .small {
+  flex: 0 0 1.8em;
+  margin-right: 17px;
+}
+
+.ui.huge.inverted.vertical.menu .ui.header .content {
+  color: @white;
+}
+
+.ui.huge.inverted.vertical.menu .ui.header .content p {
+  color: lightslategray;
+  font-size: .85em;
+  margin-top: 7px;
+}
+
+.ui.huge.inverted.vertical.menu .item:first-child .ui.header .content {
+  max-width: 12em;
+}
+
+.ui.compact.menu {
+  background: none;
+  border-color: @magenta;
+  border-radius: 1em;
+  height: 37px;
+}
+
+.ui.compact.menu a.item:not(.active) {
+  color: @magenta;
+}

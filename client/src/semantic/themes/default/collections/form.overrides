@@ -1,0 +1,60 @@
+/*******************************
+         Theme Overrides
+*******************************/
+
+.form-inverted .ui.form .field input[type="email"],
+.form-inverted .ui.form .field input[type="password"],
+.form-inverted .ui.form .field input[type="text"] {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid @inputBorderColor;
+  border-radius: 0;
+}
+
+.form-inverted .ui.form .field input::placeholder,
+.form-inverted .ui.form .field input:focus::placeholder {
+  color: #ffffffa6;
+}
+
+.form-inverted .ui.form .field > .ui.label {
+  background: none;
+  font-weight: normal;
+  margin: 8px 0 0 11px;
+}
+
+.form-inverted .ui.form .field input:-webkit-autofill {
+  -webkit-text-fill-color: @inputAutoFillBorder;
+}
+
+.form-inverted .ui.form .field .error input[type="password"],
+.form-inverted .ui.form .field .error input[type="text"] ,
+.form-inverted .ui.form .field .error input[type="email"] {
+  border-color: @formErrorBorder;
+}
+
+.ui.form input::placeholder,
+.ui.form textarea::placeholder {
+  color: #00000059;
+}
+
+.ui.form input[type="text"] {
+  background: transparent;
+  border-bottom: 1px solid #999;
+  border-radius: 0;
+}
+
+.ui.form input[type="text"]:focus {
+  background: transparent;
+  border-bottom: 1px solid @magenta;
+  border-radius: 0;
+}
+
+.ui.form textarea {
+  background: transparent;
+  border-radius: .7em;
+}
+
+.ui.form textarea:focus {
+  border: 1px solid @magenta;
+  border-radius: .7em;
+}

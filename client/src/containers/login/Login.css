@@ -1,0 +1,91 @@
+/* Copyright 2018 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+
+
+#next-login-column {
+  margin-top: 130px;
+  max-width: 450px;
+}
+
+#next-login-column a,
+#next-login-column input {
+  color: var(--nav-heading-color);
+}
+
+#next-login-container {
+  background: var(--auth-bg-color);
+  height: 100%;
+  overflow: auto;
+}
+
+#next-login-logo {
+  margin-bottom: 25px;
+  height: 100px;
+  width: 100px;
+}
+
+#next-login-container h1 {
+  font-size: 1.2em;
+}
+
+#next-login-form-1 {
+  margin-top: 70px;
+}
+
+#next-login-form-2 {
+  margin-top: 40px;
+}
+
+#next-login-container .ui.form .field.field input:-webkit-autofill {
+  box-shadow: 0px 0px 0px 100px var(--auth-bg-color) inset !important;
+}
+
+#next-login-new-account-container {
+  color: var(--auth-fg-highlight-color);
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1111;
+  width: 170px;
+}
+
+#next-login-new-account-container a {
+  color: var(--nav-heading-color);
+  background: #8b8ea916;
+  display: block;
+  height: 40px;
+  padding: 10px;
+  text-align: center;
+}
+
+#next-login-new-account-container a:hover {
+  background: #8b8ea91c;
+}
+
+#next-login-new-account-container span {
+  margin-right: 10px;
+}
+
+#next-login-form-password {
+  margin-top: 30px;
+}
+
+#next-login-form-reset-password {
+  margin-top: 40px;
+}
+
+#next-login-form-avatar-container {
+  min-height: 80px;
+}

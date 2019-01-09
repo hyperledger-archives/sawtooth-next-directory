@@ -1,0 +1,80 @@
+extends:
+  - plugin:react/recommended
+
+parser: babel-eslint
+
+parserOptions:
+  ecmaFeatures:
+    jsx: true
+  ecmaVersion: 7
+  sourceType: module
+
+settings:
+  react:
+    version: 16.6
+
+rules:
+  react/display-name: off
+  react/jsx-tag-spacing: [error, { beforeSelfClosing: never }]
+  react/jsx-one-expression-per-line: error
+  react/jsx-indent: [error, 2]
+  react/sort-prop-types: error
+  # react/jsx-no-bind: error
+  curly: [error, multi-or-nest, consistent]
+  default-case: error
+  dot-notation: error
+  eqeqeq: [error, smart]
+  max-classes-per-file: error
+  no-else-return: error
+  no-extra-bind: error
+  no-global-assign: error
+  no-return-await: error
+  no-redeclare: error
+  no-useless-return: error
+  array-bracket-spacing: [error, never]
+  block-spacing: error
+  brace-style: error
+  comma-dangle: [error, always-multiline]
+  comma-spacing: error
+  computed-property-spacing: error
+  eol-last: error
+  indent: [error, 2, { SwitchCase: 1 }]
+  jsx-quotes: [error, prefer-single]
+  key-spacing: [error, { mode: minimum }]
+  linebreak-style: error
+  lines-around-comment: error
+  max-len: [error, { code: 80, tabWidth: 2 }]
+  no-trailing-spaces: error
+  no-unneeded-ternary: error
+  no-unreachable: error
+  valid-jsdoc: [error, {
+    requireReturn: false,
+    prefer: { return: returns },
+    requireReturnDescription: false,
+  }]
+  prefer-object-spread: error
+  quotes: [error, single]
+  semi: [error, always]
+  require-jsdoc: [error, {
+    require: {
+      FunctionDeclaration: false,
+      MethodDefinition: true,
+      ClassDeclaration: true,
+      ArrowFunctionExpression: false,
+      FunctionExpression: false,
+    }
+  }]
+  no-debugger: error
+  no-console: [error, { allow: [warn, error] }]
+  no-empty: error
+  no-extra-boolean-cast: error
+  no-mixed-operators: error
+  no-tabs: error
+  space-before-function-paren: error
+  arrow-spacing: error
+  generator-star-spacing: [error, { before: true, after: true }]
+  no-var: error
+  object-shorthand: error
+  prefer-arrow-callback: error
+  prefer-const: error
+  keyword-spacing: [error, { after: true }]

@@ -1,0 +1,45 @@
+/* Copyright 2018 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+
+
+#next-approver-approved-content {
+  margin-top: 230px;
+  overflow: auto;
+  padding-bottom: 100px;
+  position: relative;
+  width: calc(100% - 61px) !important;
+}
+
+.next-approver-approved-table-opener {
+  align-items: center;
+  display: flex;
+}
+
+.next-approver-approved-table-opener div:first-child {
+  margin-right: 10px;
+}
+
+.next-approver-approved-table-email {
+  color: var(--magenta);
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  top: 3px;
+}
+
+.next-approver-approved-table-email i {
+  left: 9px;
+  position: relative;
+}

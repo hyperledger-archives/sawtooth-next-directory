@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,25 +23,34 @@ usage() {
 
     cat << EOM
         Usage:
-            $0 [-p] [-t] [-l] [-a]
+            $0 [-t] [-l] [-f] [-p] [-c] [-a]
 
         Options:
-            -h           print help text
-            -p           build protobuf modules using docker containers
-            -l           lint source code
             -t           run unit and integration tests
-            -a           protogen, lint, tests in order
+            -l           lint source code
+            -f           format python source (black)
+            -p           build protobuf modules using docker containers
+            -c           train chatbot nlu and core
+            -a           lint, tests in order
+            -h           print help text
+
+
 EOM
 
 }
 
+if ! [ -e .env ]
+then
+    echo ".env file not found. Creating one from .env.example ..."
+    cp ./.env.example ./.env
+fi
 
 info() {
     echo -e "\033[0;36m\n[--- $1 ---]\n\033[0m"
 }
 
 
-while getopts hpltia opt;
+while getopts hpltiafc opt;
 do
     case $opt in
         h)
@@ -50,32 +59,36 @@ do
             ;;
         p)
             info "Building Protobuf modules"
-            docker build . -f integration_tests/blockchain/Dockerfile -t rbac-test-env
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
+            docker build . -f docker/tests.Dockerfile -t rbac-test-env
+            docker run --rm -v $(pwd):/project/hyperledger-rbac rbac-test-env bin/protogen
             ;;
         t)
             info "Running tests"
-            $TOP_DIR/bin/run_tests_ubuntu
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/docker-test.yaml
+            ;;
+        c)
+            info "Training chatbot"
+            docker build . -f docker/chatbot.Dockerfile -t rbac-chatbot
+            docker run --rm -v $(pwd):/project/hyperledger-rbac rbac-chatbot bin/train --core --nlu
             ;;
         l)
             info "Running lint"
-            docker build . -f integration_tests/blockchain/Dockerfile -t rbac-test-env
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
+            $TOP_DIR/bin/run_lint
+            ;;
+        f)
+            info "Running formatter"
+            $TOP_DIR/bin/run_python_formatter
             ;;
         i)
-            info "Running integration tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain/docker-compose.yaml
+            info "Running tests"
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/docker-test.yaml
             ;;
         a)
-            docker build . -f integration_tests/blockchain/Dockerfile -t rbac-test-env
-            info "Building Protobuf modules"
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/protogen
+            docker build . -f docker/tests.Dockerfile -t rbac-test-env
             info "Running lint"
-            docker run --rm -v $(pwd):/project/tmobile-rbac rbac-test-env bin/run_lint
+            docker run --rm -v $(pwd):/project/hyperledger-rbac rbac-test-env bin/run_lint
             info "Running tests"
-            $TOP_DIR/bin/run_tests_ubuntu
-            info "Running integration tests"
-            $TOP_DIR/bin/run_docker_test $TOP_DIR/integration_tests/blockchain/docker-compose.yaml
+            $TOP_DIR/bin/run_docker_test $TOP_DIR/docker-test.yaml
             ;;
         \?)
             usage

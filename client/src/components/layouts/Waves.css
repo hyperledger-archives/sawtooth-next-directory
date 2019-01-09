@@ -1,0 +1,77 @@
+/* Copyright 2018 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+
+
+#next-wave {
+  height: 37px;
+  position: absolute;
+  width: 100%;
+}
+
+#next-wave-alt {
+  height: 37px;
+  position: absolute;
+  width: 100%;
+}
+
+#next-wave svg,
+#next-wave-alt svg {
+  background: none;
+  height: 37px;
+  width: 100%;
+}
+
+#next-wave-container {
+  background: -webkit-linear-gradient(top, #870bcc 0%,#f7007f 89%);
+  display: flex;
+  height: 135px;
+  flex-direction: column-reverse;
+  position: fixed;
+  top: 40px;
+  width: 100%;
+  z-index: 1;
+}
+
+.dark #next-wave-container {
+  display: none;
+}
+
+.minimal #next-wave-container {
+  background: none;
+}
+
+.next-waves-animate-down {
+  animation: waves-down 0s ease-in forwards;
+  transform-origin: center;
+}
+
+@keyframes waves-down {
+  0% { transform: scale(1, 1); opacity: 1; }
+  25%, 100% { transform: scale(1, 0); opacity: 0; }
+}
+
+.next-waves-animate-up {
+  animation: waves-up 2.5s ease-out forwards;
+  transform-origin: bottom;
+}
+
+@keyframes waves-up {
+  0% { transform: scale(1, 0); }
+  25%, 100% { transform: scale(1, 1); }
+}
+
+.next-static {
+  display: none;
+}

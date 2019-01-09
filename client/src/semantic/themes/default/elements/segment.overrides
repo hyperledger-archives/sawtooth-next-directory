@@ -1,0 +1,84 @@
+/*******************************
+         Theme Overrides
+*******************************/
+
+.ui.segment .ui.header  {
+  align-items: center;
+  display: flex;
+  margin-top: 0;
+  overflow: hidden;
+}
+
+.ui.segment .ui.header img {
+  height: 3em;
+  width: 3em;
+}
+
+.ui.segment.avatar .ui.header div:first-child {
+  flex: 0 0 4em;
+}
+
+.ui.segment .ui.header .sub.header {
+  color: @magenta;
+  margin-top: 5px;
+}
+
+.ui.segment.minimal {
+  border: 1px solid #eee;
+  box-shadow: 0 3px 13px #98989814;
+}
+
+.dark .ui.segment.minimal {
+  background: #212c3a;
+  border: 1px solid #0000001c;
+  box-shadow: 0 3px 13px #00000014;
+}
+
+.dark .ui.segment.minimal h3,
+.dark .ui.segment.minimal h4 {
+  color: white;
+}
+
+.ui.segment.light {
+  background: #f7f7f7;
+  box-shadow: none;
+}
+
+.ui.segment.secondary {
+  opacity: .6;
+}
+
+.floated.segment.compact {
+  border-radius: 19px;
+  margin-bottom: 0;
+  padding: 11px 17px;
+}
+
+.floated.segment.compact.left {
+  border-bottom-left-radius: 0;
+  box-shadow: none;
+  color: #505356;
+  font-size: 1em;
+  margin-left: 15px;
+}
+
+.floated.segment.compact.right {
+   background: linear-gradient(to bottom, #f20083, #ca07cd);
+   border-bottom-right-radius: 0;
+   font-size: 1em;
+}
+
+.ui.segment.no-padding {
+  padding: 10px;
+}
+
+.ui.segment.gradient {
+  background: linear-gradient(to bottom, #9600e8 0%,#f70597 100%);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 150px;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+  padding: 22px 25px;
+}

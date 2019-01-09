@@ -21,7 +21,6 @@ export class EmployeesComponent implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute, 
               private usersUtils: UsersUtilsService) { 
-    debugger
     this.employees = this.activatedRoute.snapshot.data['requestsSent'];
 
      this.tableConfig = {

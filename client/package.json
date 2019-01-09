@@ -1,0 +1,74 @@
+{
+  "name": "next-directory",
+  "description": "NEXT Directory client",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyperledger/sawtooth-next-directory"
+  },
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "apisauce": "^0.16.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-redux": "^5.0.7",
+    "react-redux-loading-bar": "^4.1.0",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.1.1",
+    "react-toastify": "^4.4.3",
+    "redux": "^4.0.0",
+    "redux-saga": "^0.16.0",
+    "reduxsauce": "^1.0.0",
+    "seamless-immutable": "^7.1.4",
+    "semantic-ui-react": "^0.83.0"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!**/e2e/**",
+      "!**/mock_data/**",
+      "!**/semantic/**",
+      "!src/index.js",
+      "!src/routes.js",
+      "!src/registerServiceWorker.js"
+    ]
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:semantic": "cd src/semantic && gulp build",
+    "watch:semantic": "cd src/semantic && gulp",
+    "lint": "eslint --ext=js --ext==jsx .",
+    "test": "react-scripts test --env=jsdom --coverage",
+    "eject": "react-scripts eject",
+    "docs": "jsdoc --configure .jsdoc.json --verbose --recurse"
+  },
+  "devDependencies": {
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0",
+    "enzyme-to-json": "^3.3.4",
+    "react-test-renderer": "^16.6.3",
+    "sinon": "^7.1.1",
+    "eslint": "5.6.0",
+    "eslint-plugin-react": "^7.11.1",
+    "jest-localstorage-mock": "^2.3.0",
+    "jsdoc": "^3.5.5",
+    "minami": "^1.2.3",
+    "semui-onyx": "^2.4.2-onyx.7"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "eslintIgnore": [
+    "**/coverage/**",
+    "**/build/**",
+    "**/docs/**",
+    "**/e2e/**",
+    "**/semantic/**",
+    "src/registerServiceWorker.js"
+  ]
+}

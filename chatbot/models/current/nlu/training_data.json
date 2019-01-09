@@ -1,0 +1,874 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "intent": "recommend",
+        "text": "/recommend"
+      },
+      {
+        "intent": "recommend",
+        "text": "/recommend"
+      },
+      {
+        "intent": "send_current",
+        "text": "/send_current"
+      },
+      {
+        "intent": "send_current",
+        "text": "/send_current"
+      },
+      {
+        "intent": "send_recommended",
+        "text": "/send_recommended"
+      },
+      {
+        "intent": "send_recommended",
+        "text": "/send_recommended"
+      },
+      {
+        "intent": "access",
+        "text": "access"
+      },
+      {
+        "intent": "access",
+        "text": "access please"
+      },
+      {
+        "intent": "access",
+        "text": "may i get access?"
+      },
+      {
+        "intent": "access",
+        "text": "Can I have access?"
+      },
+      {
+        "intent": "access",
+        "text": "i need access"
+      },
+      {
+        "intent": "access",
+        "text": "grant me access"
+      },
+      {
+        "intent": "access",
+        "text": "i want access to this pack"
+      },
+      {
+        "intent": "access",
+        "text": "No give me access to this role"
+      },
+      {
+        "intent": "access",
+        "text": "i need access to this"
+      },
+      {
+        "intent": "access",
+        "text": "give me access to this one"
+      },
+      {
+        "intent": "access",
+        "text": "no, i need this pack"
+      },
+      {
+        "intent": "access",
+        "text": "I need this role"
+      },
+      {
+        "intent": "access",
+        "text": "please grant me access to this item"
+      },
+      {
+        "intent": "access",
+        "text": "i require access to this resource"
+      },
+      {
+        "intent": "access",
+        "text": "gimme access to this permission"
+      },
+      {
+        "intent": "access",
+        "text": "i want this group"
+      },
+      {
+        "intent": "access",
+        "text": "need access to this group"
+      },
+      {
+        "intent": "help",
+        "text": "help"
+      },
+      {
+        "intent": "help",
+        "text": "help me"
+      },
+      {
+        "intent": "help",
+        "text": "show me help"
+      },
+      {
+        "intent": "help",
+        "text": "i need help"
+      },
+      {
+        "intent": "help",
+        "text": "can you help me?"
+      },
+      {
+        "intent": "help",
+        "text": "could you offer assistance"
+      },
+      {
+        "intent": "help",
+        "text": "can you assist"
+      },
+      {
+        "intent": "help",
+        "text": "what can you do"
+      },
+      {
+        "intent": "help",
+        "text": "What are your capabilities?"
+      },
+      {
+        "intent": "reason",
+        "text": "Please grant me access. I need it for my job."
+      },
+      {
+        "intent": "reason",
+        "text": "I need access"
+      },
+      {
+        "intent": "reason",
+        "text": "i require access because"
+      },
+      {
+        "intent": "whoami",
+        "text": "Who are you"
+      },
+      {
+        "intent": "whoami",
+        "text": "what is your name"
+      },
+      {
+        "intent": "whoami",
+        "text": "where do you come from"
+      },
+      {
+        "intent": "whoami",
+        "text": "what are you called?"
+      },
+      {
+        "intent": "laugh",
+        "text": "lol"
+      },
+      {
+        "intent": "laugh",
+        "text": "haha"
+      },
+      {
+        "intent": "laugh",
+        "text": "hahahaha"
+      },
+      {
+        "intent": "laugh",
+        "text": "very funny"
+      },
+      {
+        "intent": "laugh",
+        "text": "looool"
+      },
+      {
+        "intent": "laugh",
+        "text": "nice"
+      },
+      {
+        "intent": "insult",
+        "text": "you suck"
+      },
+      {
+        "intent": "insult",
+        "text": "you're dumb"
+      },
+      {
+        "intent": "insult",
+        "text": "youre stupid"
+      },
+      {
+        "intent": "insult",
+        "text": "you're not very helpful"
+      },
+      {
+        "intent": "insult",
+        "text": "you are bad"
+      },
+      {
+        "intent": "awe",
+        "text": "wow"
+      },
+      {
+        "intent": "awe",
+        "text": "whoa"
+      },
+      {
+        "intent": "awe",
+        "text": "interesting"
+      },
+      {
+        "intent": "awe",
+        "text": "clever"
+      },
+      {
+        "intent": "bye",
+        "text": "Bye"
+      },
+      {
+        "intent": "bye",
+        "text": "Goodbye"
+      },
+      {
+        "intent": "bye",
+        "text": "See you later"
+      },
+      {
+        "intent": "bye",
+        "text": "Bye bot"
+      },
+      {
+        "intent": "bye",
+        "text": "Goodbye friend"
+      },
+      {
+        "intent": "bye",
+        "text": "bye"
+      },
+      {
+        "intent": "bye",
+        "text": "bye for now"
+      },
+      {
+        "intent": "bye",
+        "text": "catch you later"
+      },
+      {
+        "intent": "bye",
+        "text": "gotta go"
+      },
+      {
+        "intent": "bye",
+        "text": "See you"
+      },
+      {
+        "intent": "bye",
+        "text": "goodnight"
+      },
+      {
+        "intent": "bye",
+        "text": "have a nice day"
+      },
+      {
+        "intent": "bye",
+        "text": "i'm off"
+      },
+      {
+        "intent": "bye",
+        "text": "see you later alligator"
+      },
+      {
+        "intent": "bye",
+        "text": "we'll speak soon"
+      },
+      {
+        "intent": "greet",
+        "text": "Hi"
+      },
+      {
+        "intent": "greet",
+        "text": "Hey"
+      },
+      {
+        "intent": "greet",
+        "text": "Hi bot"
+      },
+      {
+        "intent": "greet",
+        "text": "Hey bot"
+      },
+      {
+        "intent": "greet",
+        "text": "Hello"
+      },
+      {
+        "intent": "greet",
+        "text": "Good morning"
+      },
+      {
+        "intent": "greet",
+        "text": "hi again"
+      },
+      {
+        "intent": "greet",
+        "text": "hi folks"
+      },
+      {
+        "intent": "greet",
+        "text": "hi Mister"
+      },
+      {
+        "intent": "greet",
+        "text": "hi pal!"
+      },
+      {
+        "intent": "greet",
+        "text": "hi there"
+      },
+      {
+        "intent": "greet",
+        "text": "greetings"
+      },
+      {
+        "intent": "greet",
+        "text": "hello everybody"
+      },
+      {
+        "intent": "greet",
+        "text": "hello is anybody there"
+      },
+      {
+        "intent": "greet",
+        "text": "hello robot"
+      },
+      {
+        "intent": "greet",
+        "text": "what's happening"
+      },
+      {
+        "intent": "greet",
+        "text": "what's good?"
+      },
+      {
+        "intent": "greet",
+        "text": "howdy"
+      },
+      {
+        "intent": "greet",
+        "text": "ayyy"
+      },
+      {
+        "intent": "greet",
+        "text": "hola"
+      },
+      {
+        "intent": "greet",
+        "text": "guten tag"
+      },
+      {
+        "intent": "greet",
+        "text": "bonjour"
+      },
+      {
+        "intent": "thank",
+        "text": "Thanks"
+      },
+      {
+        "intent": "thank",
+        "text": "Thank you"
+      },
+      {
+        "intent": "thank",
+        "text": "Thank you so much"
+      },
+      {
+        "intent": "thank",
+        "text": "Thanks bot"
+      },
+      {
+        "intent": "thank",
+        "text": "Thanks for that"
+      },
+      {
+        "intent": "thank",
+        "text": "cheers"
+      },
+      {
+        "intent": "thank",
+        "text": "cheers bro"
+      },
+      {
+        "intent": "thank",
+        "text": "ok thanks!"
+      },
+      {
+        "intent": "thank",
+        "text": "perfect thank you"
+      },
+      {
+        "intent": "thank",
+        "text": "thanks a bunch for everything"
+      },
+      {
+        "intent": "thank",
+        "text": "thanks for the help"
+      },
+      {
+        "intent": "thank",
+        "text": "thanks a lot"
+      },
+      {
+        "intent": "thank",
+        "text": "amazing, thanks"
+      },
+      {
+        "intent": "thank",
+        "text": "cool, thanks"
+      },
+      {
+        "intent": "thank",
+        "text": "cool thank you"
+      },
+      {
+        "intent": "thank",
+        "text": "thx"
+      },
+      {
+        "intent": "thank",
+        "text": "thx much"
+      },
+      {
+        "intent": "thank",
+        "text": "gracias"
+      },
+      {
+        "intent": "thank",
+        "text": "merci"
+      },
+      {
+        "intent": "thank",
+        "text": "nice"
+      },
+      {
+        "intent": "affirm",
+        "text": "yes"
+      },
+      {
+        "intent": "affirm",
+        "text": "yes sure"
+      },
+      {
+        "intent": "affirm",
+        "text": "absolutely"
+      },
+      {
+        "intent": "affirm",
+        "text": "for sure"
+      },
+      {
+        "intent": "affirm",
+        "text": "yes yes yes"
+      },
+      {
+        "intent": "affirm",
+        "text": "definitely"
+      },
+      {
+        "intent": "affirm",
+        "text": "yep"
+      },
+      {
+        "intent": "affirm",
+        "text": "uh huh"
+      },
+      {
+        "intent": "affirm",
+        "text": "you bet"
+      },
+      {
+        "intent": "affirm",
+        "text": "ok"
+      },
+      {
+        "intent": "affirm",
+        "text": "k"
+      },
+      {
+        "intent": "affirm",
+        "text": "okay"
+      },
+      {
+        "intent": "affirm",
+        "text": "that's cool"
+      },
+      {
+        "intent": "affirm",
+        "text": "cool"
+      },
+      {
+        "intent": "affirm",
+        "text": "cool with me"
+      },
+      {
+        "intent": "affirm",
+        "text": "sounds good"
+      },
+      {
+        "intent": "affirm",
+        "text": "that works"
+      },
+      {
+        "intent": "affirm",
+        "text": "sure whatever"
+      },
+      {
+        "intent": "affirm",
+        "text": "eh fine"
+      },
+      {
+        "intent": "affirm",
+        "text": "why not"
+      },
+      {
+        "intent": "affirm",
+        "text": "positively"
+      },
+      {
+        "intent": "affirm",
+        "text": "100%"
+      },
+      {
+        "intent": "affirm",
+        "text": "Yes, please"
+      },
+      {
+        "intent": "deny",
+        "text": "nah"
+      },
+      {
+        "intent": "deny",
+        "text": "eh"
+      },
+      {
+        "intent": "deny",
+        "text": "no"
+      },
+      {
+        "intent": "deny",
+        "text": "no thankyou"
+      },
+      {
+        "intent": "deny",
+        "text": "no thank you"
+      },
+      {
+        "intent": "deny",
+        "text": "No, thanks."
+      },
+      {
+        "intent": "deny",
+        "text": "no thanks"
+      },
+      {
+        "intent": "deny",
+        "text": "nope"
+      },
+      {
+        "intent": "deny",
+        "text": "nah"
+      },
+      {
+        "intent": "deny",
+        "text": "i don't think so"
+      },
+      {
+        "intent": "deny",
+        "text": "maybe later"
+      },
+      {
+        "intent": "deny",
+        "text": "not today"
+      },
+      {
+        "intent": "deny",
+        "text": "i don't think so"
+      },
+      {
+        "intent": "deny",
+        "text": "don't need you"
+      },
+      {
+        "intent": "deny",
+        "text": "maybe next time"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 11,
+            "end": 16,
+            "value": "Juste",
+            "entity": "name"
+          }
+        ],
+        "text": "My name is Juste"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 5,
+            "end": 9,
+            "value": "Josh",
+            "entity": "name"
+          }
+        ],
+        "text": "I am Josh"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 4,
+            "end": 8,
+            "value": "Lucy",
+            "entity": "name"
+          }
+        ],
+        "text": "I'm Lucy"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 15,
+            "end": 19,
+            "value": "Greg",
+            "entity": "name"
+          }
+        ],
+        "text": "People call me Greg"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 5,
+            "end": 10,
+            "value": "David",
+            "entity": "name"
+          }
+        ],
+        "text": "It's David"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 23,
+            "end": 26,
+            "value": "Amy",
+            "entity": "name"
+          }
+        ],
+        "text": "Usually people call me Amy"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 11,
+            "end": 15,
+            "value": "John",
+            "entity": "name"
+          }
+        ],
+        "text": "My name is John"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 16,
+            "end": 19,
+            "value": "Sam",
+            "entity": "name"
+          }
+        ],
+        "text": "You can call me Sam"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 15,
+            "end": 20,
+            "value": "Linda",
+            "entity": "name"
+          }
+        ],
+        "text": "Please call me Linda"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 13,
+            "end": 16,
+            "value": "Tom",
+            "entity": "name"
+          }
+        ],
+        "text": "Name name is Tom"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 5,
+            "end": 12,
+            "value": "Richard",
+            "entity": "name"
+          }
+        ],
+        "text": "I am Richard"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 4,
+            "end": 9,
+            "value": "Tracy",
+            "entity": "name"
+          }
+        ],
+        "text": "I'm Tracy"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 8,
+            "end": 13,
+            "value": "Sally",
+            "entity": "name"
+          }
+        ],
+        "text": "Call me Sally"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 5,
+            "end": 12,
+            "value": "Philipp",
+            "entity": "name"
+          }
+        ],
+        "text": "I am Philipp"
+      },
+      {
+        "intent": "name",
+        "entities": [
+          {
+            "start": 5,
+            "end": 12,
+            "value": "Charlie",
+            "entity": "name"
+          }
+        ],
+        "text": "I am Charlie"
+      },
+      {
+        "intent": "joke",
+        "text": "Can you tell me a joke?"
+      },
+      {
+        "intent": "joke",
+        "text": "I would like to hear a joke"
+      },
+      {
+        "intent": "joke",
+        "text": "Tell me a joke"
+      },
+      {
+        "intent": "joke",
+        "text": "A joke please"
+      },
+      {
+        "intent": "joke",
+        "text": "Tell me a joke please"
+      },
+      {
+        "intent": "joke",
+        "text": "I would like to hear a joke"
+      },
+      {
+        "intent": "joke",
+        "text": "I would loke to hear a joke, please"
+      },
+      {
+        "intent": "joke",
+        "text": "Can you tell jokes?"
+      },
+      {
+        "intent": "joke",
+        "text": "Please tell me a joke"
+      },
+      {
+        "intent": "joke",
+        "text": "I need to hear a joke"
+      },
+      {
+        "intent": "feeling",
+        "text": "How are you?"
+      },
+      {
+        "intent": "feeling",
+        "text": "how are you"
+      },
+      {
+        "intent": "feeling",
+        "text": "how are you feeling"
+      },
+      {
+        "intent": "feeling",
+        "text": "Everything okay?"
+      },
+      {
+        "intent": "feeling",
+        "text": "How's it going?"
+      },
+      {
+        "intent": "feeling",
+        "text": "what are you feeling?"
+      },
+      {
+        "intent": "feeling",
+        "text": "whatcha thinking about"
+      },
+      {
+        "intent": "feeling",
+        "text": "what does it feel like being a bot?"
+      }
+    ],
+    "regex_features": [],
+    "lookup_tables": [],
+    "entity_synonyms": [
+      {
+        "value": "pack",
+        "synonyms": [
+          "item",
+          "resource",
+          "permission",
+          "group",
+          "role"
+        ]
+      },
+      {
+        "value": "role",
+        "synonyms": [
+          "pack"
+        ]
+      }
+    ]
+  }
+}

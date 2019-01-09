@@ -1,0 +1,16 @@
+# .readthedocs.yml
+name: sawtooth-next-directory
+type: sphinx
+
+build:
+  image: latest
+
+python:
+    version: 3.5
+
+# Build PDF & ePub
+formats:
+    - epub
+    - pdf
+
+requirements_file: docs/requirements.txt

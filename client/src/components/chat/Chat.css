@@ -1,0 +1,216 @@
+/* Copyright 2018 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+
+
+#next-chat-container {
+  background: linear-gradient(to bottom, #de3a6f 4%, transparent 15%);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: 40px;
+}
+
+#next-chat-container > div:first-child {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dark #next-chat-container {
+  background: none;
+}
+
+#next-chat-conversation-dock {
+  flex: 0 0 100px;
+  padding: 1.3rem;
+  text-align: center;
+}
+
+#next-chat-conversation-dock input {
+  border-radius: 30px;
+  font-size: 1.2em;
+  height: 2.7em;
+}
+
+.next-chat-message-left {
+  align-items: flex-end;
+  display: flex;
+  flex-shrink: 0;
+}
+
+.next-chat-message-right {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-top: 40px;
+}
+
+.next-chat-message-left .ui.segment {
+  min-width: 100px;
+}
+
+.next-chat-message-left .ui.segment strong {
+  color: var(--magenta);
+}
+
+.next-chat-message-left .ui.segment,
+.next-chat-message-right .ui.segment {
+  max-width: 310px;
+  word-break: break-word;
+}
+
+#next-chat-actions {
+  display: flex;
+  margin-top: 15px;
+  min-height: 34px;
+}
+
+#next-chat-selection-heading-container {
+  align-items: center;
+  display: flex;
+  flex: 0 0 96px;
+  margin-bottom: 7px;
+  padding-left: calc(5% + 21px);
+}
+
+#next-chat-selection-heading-container .next-avatar-container {
+  border: 1px solid;
+  margin-left: -24px;
+}
+
+#next-chat-selection-heading-container h3 {
+  margin: 0 0 0 13px;
+}
+
+#next-chat-selection-heading-container h3 .ui.subheader {
+  margin-top: 0;
+}
+
+#next-chat-selection-heading-container .ui.list {
+  font-size: 1.1em;
+  margin-bottom: 0;
+}
+
+#next-chat-header {
+  padding: 2rem;
+  flex: 0 0 131px;
+}
+
+#next-chat-organization-heading {
+  margin-top: 30px;
+  text-align: center;
+}
+
+#next-chat-header i.mini {
+  font-size: 1em;
+  margin: 0;
+  transform: rotate(45deg);
+}
+
+#next-chat-messages-container {
+  flex: 1;
+  overflow-y: scroll;
+  padding: 1.3rem;
+}
+
+#next-chat-messages-container,
+#next-chat-messages {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#next-chat-messages-container:before {
+  background: linear-gradient(#eff0f3 50%, transparent);
+  content: "";
+  height: 30px;
+  left: 0;
+  position: absolute;
+  top: 183px;
+  width: 100%;
+  z-index: 1;
+}
+
+#next-manual-triggers {
+  left: -183px;
+  opacity: .3;
+  position: absolute;
+  top: 60px;
+}
+
+#next-chat-messages-container::-webkit-scrollbar {
+  background: transparent;
+  width: 0px;
+}
+
+#next-chat-roles-selection-container,
+#next-chat-proposals-selection-container,
+#next-chat-users-selection-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 5%;
+}
+
+#next-chat-roles-selection-container .ui.segment.minimal,
+#next-chat-users-selection-container .ui.segment.minimal {
+  margin-bottom: 2px;
+  padding-left: 20px;
+}
+
+#next-chat-users-selection-container .ui.list .ui.checkbox label,
+#next-chat-roles-selection-container .ui.list .ui.checkbox label {
+  color: gray;
+  font-size: 1.2em;
+}
+
+#next-chat-roles-selection-container .ui.list .ui.checkbox label {
+  word-break: break-word;
+}
+
+.next-chat-action-button {
+  flex: 1;
+}
+
+#next-chat-form-draft-container {
+  height: 136px;
+}
+
+#next-chat-form-draft-container .ui.form,
+#next-chat-form-draft-container .field {
+  height: 100%;
+}
+
+#next-chat-form-draft-container textarea {
+  border-radius: 19px;
+  font-size: 1.1em;
+  height: 100%;
+}
+
+#next-chat-form-draft-textarea {
+  resize: none;
+}
+
+#next-chat-message-error-container {
+  position: absolute;
+  text-align: center;
+  top: 45%;
+}
+
+#next-placeholder-chat .ui.fluid input {
+  background: white;
+  border: 1px solid #ddd;
+}

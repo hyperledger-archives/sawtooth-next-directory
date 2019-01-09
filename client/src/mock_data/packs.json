@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": "d7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0",
+      "name": "Jazz Rev",
+      "description": "Lorem ipsum dolor sit amet.",
+      "roles": []
+    },
+    {
+      "id": "539d9dd3-6b4d-4136-ab67-b6ff6b307c9f",
+      "name": "Rebellion Access",
+      "description": "Lorem ipsum dolor sit amet.",
+      "roles": []
+    }
+  ]
+}

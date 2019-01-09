@@ -1,0 +1,26 @@
+{
+  "id": "e15a71ee-58d2-49e8-a8e4-21888144be1f",
+  "conversation_id": "bf42a57b-6fe4-41ce-9f2a-f6f7dab54e8b",
+  "name": "Cloud Onboarding Pack",
+  "description": "Cloud Onboarding Pack has been curated to give you access to all cloud-related roles.",
+  "roles": [
+    {
+      "id": "11e27bd4-5256-4935-993a-2a2af833a8d0",
+      "name": "r_vault_ccp_sms_stg_admin",
+      "owner": "Jack Kent",
+      "email": "jack.kent@example.com"
+    },
+    {
+      "id": "7c65cb1a-7488-451e-bcf0-43d28e6f4c6a",
+      "name": "r_artifactory_ccp_prd_docker_ro",
+      "owner": "John Doe",
+      "email": "john.doe@example.com"
+    },
+    {
+      "id": "d65e1fa0-790c-4463-b6da-851ec4fdc12d",
+      "name": "r_grafana_ccp_prd_selfs_ro",
+      "owner": "Liz Kelly",
+      "email": "liz.kelly@example.com"
+    }
+  ]
+}

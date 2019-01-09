@@ -1,0 +1,48 @@
+    get:
+      security:
+        - Bearer: []
+      description: Get list of open proposals assigned to a particular user
+      parameters:
+        - $ref: '../parameters/parameters.yaml#/head'
+        - $ref: '../parameters/parameters.yaml#/start'
+        - $ref: '../parameters/parameters.yaml#/limit'
+        - $ref: '../parameters/parameters.yaml#/userId'
+      responses:
+        '200':
+          description: Response with a list of open proposals
+          schema:
+            properties:
+              link:
+                $ref: '../definitions/definitions.yaml#/getOpenProposalsLink'
+              paging:
+                $ref: '../definitions/definitions.yaml#/paging'
+              head:
+                $ref: '../definitions/definitions.yaml#/head'
+              data:
+                type: array
+                items:
+                  $ref: '../definitions/definitions.yaml#/proposal'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '404':
+          description: Response for object not found
+          schema:
+            $ref: '../definitions/definitions.yaml#/404Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'
