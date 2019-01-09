@@ -57,7 +57,7 @@ class TestRoleMemberAddresser(TestAssertions):
         self.assertEqual(parsed.related_id, user_id)
 
     @pytest.mark.parse_role_member_address
-    def test_parse_role_member_address_hash(self):
+    def test_role_member_address_hash(self):
         """Test addresser.user.parse returns a parsed address if it is a user address"""
         user_id = "foo"
         role_id = "bar"
