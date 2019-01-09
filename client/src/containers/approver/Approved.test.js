@@ -30,6 +30,8 @@ const store = customStore.create();
 
 describe('Approved component', () => {
   const props = {
+    location: {},
+    messagesById: () => [],
     getConfirmedProposals: () => {},
     roleFromId: () => {},
     userFromId: () => {},
@@ -44,6 +46,8 @@ describe('Approved component', () => {
     users: [],
   };
   const newProps = {
+    location: {},
+    messagesById: () => [],
     getConfirmedProposals: () => {},
     roleFromId: () => {},
     userFromId: () => {},

@@ -18,7 +18,11 @@ import { delay, eventChannel } from 'redux-saga';
 import { call, put, spawn, take } from 'redux-saga/effects';
 
 
-import { AppActions, ApproverActions, ChatActions } from 'state';
+import {
+  AppActions,
+  ApproverActions,
+  ChatActions,
+  RequesterActions } from 'state';
 import Socket, {
   sockets,
   SOCKET_RECONNECT_TIMEOUT,
@@ -114,8 +118,10 @@ const createChannel = (endpoint, socket) =>
       const payload = event.data && JSON.parse(event.data);
       emit(AppActions.socketReceive(payload));
 
-      if (endpoint === 'feed')
+      if (endpoint === 'feed') {
         emit(ApproverActions.feedReceive(payload));
+        emit(RequesterActions.feedReceive(payload));
+      }
       if (endpoint === 'chatbot')
         emit(ChatActions.messageReceive(payload));
     };

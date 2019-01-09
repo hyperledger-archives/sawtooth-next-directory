@@ -21,25 +21,26 @@ import { BrowserRouter } from 'react-router-dom';
 
 
 import * as customStore from 'customStore';
-import ChatMessage from './Chat';
+import ChatTranscript from './ChatTranscript';
 
 
 const store = customStore.create();
 
 
-describe('ChatMessage component', () => {
+describe('ChatTranscript component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     const props = {
       messages: [{ text: 'message text' }],
+      messagesById: () => [],
     };
 
     ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter>
-          <ChatMessage {...props}/>
+          <ChatTranscript {...props}/>
         </BrowserRouter>
       </Provider>, div
     );

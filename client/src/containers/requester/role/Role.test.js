@@ -32,6 +32,7 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
 
   const props = {
+    location: {},
     getRole: (id) => { },
     roleFromId: () => {
       return { members: [], owners: [] };
@@ -41,6 +42,8 @@ it('renders without crashing', () => {
     },
     getProposal: (id) => { },
     isSocketOpen: () => {},
+    resetChat: () => {},
+    messagesById: () => [],
     proposalId: 'id-1',
     roleId: 'id-2',
     match: { params: {} },

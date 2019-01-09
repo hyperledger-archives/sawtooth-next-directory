@@ -34,7 +34,7 @@ limitations under the License.
 }
 
 #next-wave-container {
-  background: -webkit-linear-gradient(top, #870bcc 0%,#f7007f 89%);
+  background: linear-gradient(to bottom, #870bcc 0%,#f7007f 89%);
   display: flex;
   height: 135px;
   flex-direction: column-reverse;

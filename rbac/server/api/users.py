@@ -231,8 +231,8 @@ async def fetch_confirmed_proposals(request, user_id):
 async def fetch_recommended_roles(request, user_id):
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    recommended_resources = await roles_query.fetch_recommended_resources(
-        request.app.config.DB_CONN, user_id, head_block.get("num"), 0, 6
+    recommended_resources = await roles_query.fetch_all_role_resources(
+        request.app.config.DB_CONN, head_block.get("num"), 0, 10
     )
     return await utils.create_response(
         request.app.config.DB_CONN,

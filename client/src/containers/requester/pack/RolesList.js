@@ -51,15 +51,8 @@ class RolesList extends Component {
    * component
    */
   componentDidMount () {
-    const { activePack, roles } = this.props;
     this.init();
-    if (roles) {
-      const fetchedRoles = roles.filter(
-        role => activePack.roles.indexOf(role.id) !== -1
-      );
-      if (fetchedRoles.length === activePack.roles.length)
-        this.init2();
-    }
+    this.init2();
   }
 
 
@@ -69,17 +62,13 @@ class RolesList extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { activePack, roles } = this.props;
+    const { activePack } = this.props;
 
-    if (prevProps.activePack !== activePack) this.init();
-    if (prevProps.roles && roles &&
-        prevProps.roles.length !== roles.length) {
-      const fetchedRoles = roles.filter(
-        role => activePack.roles.indexOf(role.id) !== -1
-      );
-      if (fetchedRoles.length === activePack.roles.length)
-        this.init2();
+    if (prevProps.activePack !== activePack) {
+      this.init();
+      this.setState({ fetchingUsers: false });
     }
+    this.init2();
   }
 
 
@@ -102,15 +91,22 @@ class RolesList extends Component {
    * in the client and dispatch actions to retrieve them.
    */
   init2 = () => {
-    const { activePack, getUsers, roles } = this.props;
+    const { activePack, getUsers, roles, users } = this.props;
     const { fetchingUsers } = this.state;
 
-    if (fetchingUsers) return;
+    if (!roles) return;
+    const fetchedRoles = roles.filter(
+      role => activePack.roles.indexOf(role.id) !== -1
+    );
+    if (fetchingUsers || fetchedRoles.length !== activePack.roles.length)
+      return;
+
     this.setState({ fetchingUsers: true });
 
     const diff = roles && roles
       .filter(role => activePack.roles.find(roleId => role.id === roleId))
-      .map(role => role.owners[0]);
+      .map(role => role.owners[0])
+      .filter(userId => !users.find(user => user.id === userId));
 
     diff && diff.length > 0 && getUsers([...new Set(diff)]);
   }

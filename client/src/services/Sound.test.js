@@ -14,23 +14,10 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-approver-manage-content {
-  height: calc(100% - 164px);
-  padding: 0 30px;
-  position: relative;
-  top: 145px;
-}
+describe('Sound Service', () => {
 
-#next-approver-manage-content > .ui.grid {
-  height: 100%;
-}
+  test('apply', () => {
 
-#next-approver-manage-exit-button {
-  position: fixed;
-  right: 18px;
-}
+  });
 
-#next-approver-manage-content .ui.form {
-  margin: 0 auto;
-  width: 60%;
-}
+});

@@ -28,7 +28,7 @@ import './TrackHeader.css';
  *
  *
  */
-export default class TrackHeader extends Component {
+class TrackHeader extends Component {
 
   static propTypes = {
     breadcrumb:         PropTypes.array,
@@ -106,3 +106,6 @@ export default class TrackHeader extends Component {
   }
 
 }
+
+
+export default TrackHeader;

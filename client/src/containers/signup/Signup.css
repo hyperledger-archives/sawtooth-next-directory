@@ -14,6 +14,25 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
+#next-signup-container {
+  height: 100%;
+  overflow: auto;
+}
+
+#next-signup-container h1 {
+  font-size: 1.2em;
+}
+
+#next-signup-column {
+  margin-top: 130px;
+  max-width: 450px;
+}
+
+#next-signup-column a,
+#next-signup-column input {
+  color: var(--nav-heading-color);
+}
+
 #next-signup-form-password .ui.label {
   color: var(--auth-fg-color);
 }

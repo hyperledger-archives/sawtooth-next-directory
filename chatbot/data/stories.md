@@ -1,72 +1,117 @@
+## story_update_member
+* update{"member_status": "MEMBER", "resource_name": "abc"}
+  - utter_noop
+
+## story_update_not_member
+* update{"member_status": "NOT_MEMBER", "resource_name": "abc"}
+  - utter_noop
+
+## story_update_pending
+* update{"member_status": "PENDING", "resource_name": "abc"}
+  - utter_noop
+
+## story_offer
+* offer{"member_status": "NOT_MEMBER", "resource_id": "123", "resource_name": "abc"}
+  - utter_offer
+
+## story_member
+* member{"member_status": "MEMBER", "resource_id": "123", "resource_name": "abc"}
+  - utter_member
+
+## story_pending_role
+* pending{"member_status": "PENDING", "resource_type": "ROLE", "resource_id": "123", "resource_name": "abc"}
+  - utter_pending_role
+
+## story_pending_pack
+* pending{"member_status": "PENDING", "resource_type": "PACK", "resource_id": "123", "resource_name": "abc"}
+  - utter_pending_pack
+
 ## story_recommend
-* recommend
+* recommend{"member_status": "NOT_MEMBER", "resource_id": "123", "resource_name": "abc"}
   - utter_recommendation
   - utter_ask_request_access
 
-## story_access
+## story_access_member
 * access
-  - utter_current_draft
+  - slot{"member_status": "MEMBER"}
+  - utter_access_member
 
-## story_affirm
+## story_access_not_member_pack
+* access
+  - slot{"member_status": "NOT_MEMBER", "resource_type": "PACK"}
+  - utter_current_draft_pack
+
+## story_access_not_member_role
+* access
+  - slot{"member_status": "NOT_MEMBER", "resource_type": "ROLE"}
+  - utter_current_draft_role
+
+## story_access_pending
+* access
+  - slot{"member_status": "PENDING"}
+  - utter_access_pending
+
+## story_affirm_member
 * affirm
-  - utter_recommended_draft
+  - slot{"member_status": "MEMBER"}
+  - utter_generic
+
+## story_affirm_pending
+* affirm
+  - slot{"member_status": "PENDING"}
+  - utter_generic
+
+## story_affirm_not_member_pack
+* affirm
+  - slot{"member_status": "NOT_MEMBER", "resource_type": "PACK"}
+  - utter_recommended_draft_pack
+
+## story_affirm_not_member_role
+* affirm
+  - slot{"member_status": "NOT_MEMBER", "resource_type": "ROLE"}
+  - utter_recommended_draft_role
 
 ## story_deny
 * deny
   - utter_standby
 
-## story_send_recommended
-* send_recommended{"reason": "I need access."}
+## story_request_access_pack
+* request_access{"reason": "I need access.", "resource_id": "1234", "resource_type": "PACK"}
   - action_request_access
-  - utter_exclame
   - utter_fanfare_sent
-  - utter_request_bye
 
-## story_send_current_pack
-* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "PACK"}
+## story_request_access_role
+* request_access{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
   - action_request_access
-  - utter_exclame
   - utter_fanfare_sent
-  - utter_request_bye
 
-## story_send_current_role
-* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
-  - action_request_access
-  - utter_exclame
-  - utter_fanfare_sent
-  - utter_request_bye
-
-## story_send_current_role_1
-* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+## story_request_access_role_1
+* request_access{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
   - action_request_access
   - slot{"batch_status": "1"}
-  - utter_exclame
   - utter_fanfare_sent
-  - utter_request_bye
 
-## story_send_current_role_2
-* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+## story_request_access_role_2
+* request_access{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
   - action_request_access
   - slot{"batch_status": "2"}
   - utter_send_failure_invalid
 
-## story_send_current_role_3
-* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+## story_request_access_role_3
+* request_access{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
   - action_request_access
   - slot{"batch_status": "3"}
   - utter_send_failure_pending
 
-## story_send_current_role_4
-* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
+## story_request_access_role_4
+* request_access{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
   - action_request_access
   - slot{"batch_status": "4"}
   - utter_send_failure_unknown
 
-## story_send_current_role_error
-* send_current{"reason": "I need access.", "resource_id": "1234", "resource_type": "ROLE"}
-  - action_request_access
-  - slot{"batch_status": null}
-  - utter_send_failure_unknown
+## story_no_owner
+* no_owner
+  - utter_no_owner
 
 ## story_cancel
 * cancel

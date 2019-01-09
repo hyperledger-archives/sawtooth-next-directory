@@ -99,7 +99,7 @@ class Header extends Component {
 
 
   /**
-   * Called whenever Redux state changes. Remove event listener.
+   * Component teardown. Remove event listener.
    * @param {object} prevProps Props before update
    * @returns {undefined}
    */

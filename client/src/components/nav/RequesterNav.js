@@ -36,7 +36,7 @@ class RequesterNav extends Component {
 
   static propTypes = {
     getPacks:           PropTypes.func,
-    mine:               PropTypes.array,
+    memberOf:           PropTypes.array,
     packs:              PropTypes.array,
     recommendedPacks:   PropTypes.array,
     recommendedRoles:   PropTypes.array,
@@ -76,7 +76,7 @@ class RequesterNav extends Component {
     let diff;
     packs && recommendedPacks ?
       diff = recommendedPacks.filter(packId =>
-        packs.find(pack => pack.id !== packId)) :
+        !packs.find(pack => pack.id === packId)) :
       diff = recommendedPacks;
 
     diff && diff.length > 0 && getPacks(diff);
@@ -93,7 +93,7 @@ class RequesterNav extends Component {
       recommendedPacks,
       recommendedRoles,
       packs,
-      mine,
+      memberOf,
       requests } = this.props;
 
     // Recommendedations are all roles. Format a separate array of
@@ -106,7 +106,7 @@ class RequesterNav extends Component {
       <div id='next-requester-nav-lists-container'>
         <NavList
           listTitle='Your Packs / Roles'
-          list={mine}/>
+          list={memberOf}/>
         <NavList
           listTitle='Your Requests'
           list={requests}/>

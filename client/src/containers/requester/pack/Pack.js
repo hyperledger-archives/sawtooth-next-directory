@@ -67,7 +67,10 @@ export class Pack extends Component {
   }
 
 
-  init = () => {
+  /**
+   * Fetch pack if not loaded in client
+   */
+  init () {
     const { getPack, packId, packFromId } = this.props;
     packId && !packFromId(packId) && getPack(packId);
   }

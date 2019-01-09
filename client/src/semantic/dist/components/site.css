@@ -212,6 +212,14 @@ body,
 .contrast {
   background: #fbfcfd;
 }
+.flux {
+  -webkit-animation: flux 30s ease infinite;
+  animation: flux 30s ease infinite;
+  background: -webkit-gradient(linear, left top, left bottom, from(#7200ef), to(#f7007d));
+  background: -webkit-linear-gradient(top, #7200ef, #f7007d);
+  background: linear-gradient(180deg, #7200ef, #f7007d);
+  background-size: 140% 140%;
+}
 .avatar-palette-1 {
   background: #ffb5e8;
   color: #ff69d0;
@@ -266,6 +274,28 @@ body,
 }
 .toast.Toastify__toast--warning {
   color: #1d1e27;
+}
+@-webkit-keyframes flux {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 51% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
+@keyframes flux {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 51% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
 }
 
 

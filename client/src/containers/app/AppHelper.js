@@ -27,8 +27,7 @@ import {
   AuthSelectors,
   ChatSelectors,
   RequesterSelectors,
-  UserSelectors,
-} from 'state';
+  UserSelectors } from 'state';
 
 
 //
@@ -68,9 +67,12 @@ export const appState = (state) => {
 
     // Chat
     messages:            ChatSelectors.messages(state),
+    messagesById:        (id) => ChatSelectors.messagesById(state, id),
+    messagesCountById:   (id) => ChatSelectors.messagesCountById(state, id),
 
     // Requester
-    mine:                RequesterSelectors.mine(state),
+    memberOf:            RequesterSelectors.memberOf(state),
+    memberAndOwnerOf:    RequesterSelectors.memberAndOwnerOf(state),
     recommendedRoles:    RequesterSelectors.recommendedRoles(state),
     recommendedPacks:    RequesterSelectors.recommendedPacks(state),
     requests:            RequesterSelectors.requests(state),
@@ -89,7 +91,6 @@ export const appState = (state) => {
     id:                  UserSelectors.id(state),
     me:                  UserSelectors.me(state),
     users:               UserSelectors.users(state),
-    memberOf:            UserSelectors.memberOf(state),
     usersTotalCount:     UserSelectors.usersTotalCount(state),
     userFromId:          (id) => UserSelectors.userFromId(state, id),
   };
@@ -110,6 +111,7 @@ export const appDispatch = (dispatch) => {
     stopAnimation:     ()    => dispatch(AppActions.animationEnd()),
     startRefresh:      ()    => dispatch(AppActions.refreshBegin()),
     stopRefresh:       ()    => dispatch(AppActions.refreshEnd()),
+    forceSocketError:  ()    => dispatch(AppActions.socketMaxAttemptsReached()),
     sendSocket:        (endpoint, payload) =>
       dispatch(AppActions.socketSend(endpoint, payload)),
     openSocket:        (endpoint) =>
@@ -138,8 +140,8 @@ export const appDispatch = (dispatch) => {
       dispatch(ApproverActions.onBehalfOfSet(id)),
 
     // Chat
-    resetChat:         ()    => dispatch(ChatActions.clearMessages()),
     getConversation:   (id)  => dispatch(ChatActions.conversationRequest(id)),
+    resetChat:         ()    => dispatch(ChatActions.clearMessages()),
     sendMessage:       (payload) => {
       dispatch(ChatActions.messageSend(payload)) &&
       dispatch(AppActions.socketSend('chatbot', payload));

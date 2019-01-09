@@ -990,7 +990,7 @@ a.ui.card:hover,
 *******************************/
 
 .ui.stackable.grid .column .ui.card.huge {
-  height: 250px;
+  height: 270px;
 }
 .ui.stackable.grid .column .ui.card.medium,
 .ui.stackable.grid .column .ui.card.small {
@@ -1054,31 +1054,25 @@ a.ui.card:hover,
   -webkit-box-shadow: 0 3px 13px #00000014;
           box-shadow: 0 3px 13px #00000014;
 }
+.contrast .ui.stackable.grid .column .ui.card.minimal {
+  border: 1px solid #dde1eccf;
+}
 .dark .ui.stackable.grid .column .ui.card.minimal .header {
   color: #FFFFFF;
 }
 .ui.stackable.grid .column .ui.card.huge .content:first-child {
-  padding: 15%;
+  padding: 14%;
 }
 .ui.stackable.grid .column .ui.card.disabled {
   opacity: 0.4;
 }
-.ui.stackable.grid .column .ui.card.huge .content .header {
+.ui.stackable.grid .column .ui.card.huge > .content > .header {
   color: #E40073;
   font-size: 1.7em;
   font-weight: 400;
 }
-.ui.stackable.grid .column .ui.card .content {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+.ui.stackable.grid .column .ui.card.huge > .content > .description {
+  margin-top: 14%;
 }
 .ui.cards > .card > .extra,
 .ui.card > .extra {

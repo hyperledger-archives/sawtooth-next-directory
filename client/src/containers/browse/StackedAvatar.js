@@ -27,7 +27,7 @@ import Avatar from 'components/layouts/Avatar';
  * @description   Stacked avatar component ?
  *
  */
-export default class StackedAvatar extends Component {
+class StackedAvatar extends Component {
 
   static propTypes = {
     list: PropTypes.array,
@@ -94,3 +94,6 @@ export default class StackedAvatar extends Component {
   }
 
 }
+
+
+export default StackedAvatar;

@@ -16,36 +16,41 @@
 %YAML 1.1
 ---
 intents:
-  - recommend
   - access
   - affirm
-  - deny
-  - greet
-  - send_current
-  - send_recommended
-  - cancel
-  - bye
-  - thank
-  - feeling
-  - reason
-  - laugh
   - awe
-  - insult
+  - bye
+  - cancel
+  - deny
+  - feeling
+  - greet
   - help
-  - whoami
+  - insult
+  - laugh
+  - member
   - name
+  - no_owner
+  - offer
+  - pending
+  - reason
+  - recommend
+  - request_access
+  - thank
+  - update
+  - whoami
 
 config:
   store_entities_as_slots: true
 
 entities:
-- approver_name
-- batch_status
-- reason
-- resource_id
-- resource_name
-- resource_type
-- token
+  - approver_name
+  - batch_status
+  - member_status
+  - reason
+  - resource_id
+  - resource_name
+  - resource_type
+  - token
 
 forms: []
 
@@ -59,6 +64,12 @@ slots:
       - 2 # INVALID
       - 3 # PENDING
       - 4 # UNKNOWN
+  member_status:
+    type: categorical
+    values:
+      - PENDING
+      - MEMBER
+      - NOT_MEMBER
   reason:
     type: unfeaturized
   resource_id:
@@ -74,37 +85,68 @@ slots:
     type: unfeaturized
 
 actions:
-  - utter_default
-  - utter_standby
-  - utter_recommendation
+  - action_request_access
+  - utter_access_member
+  - utter_access_pending
   - utter_ask_request_access
-  - utter_greet
-  - utter_recommended_draft
-  - utter_current_draft
+  - utter_awe
+  - utter_bye
+  - utter_current_draft_pack
+  - utter_current_draft_role
+  - utter_default
   - utter_exclame
   - utter_fanfare_sent
-  - utter_request_bye
-  - utter_thank
   - utter_feeling
-  - utter_bye
-  - utter_laugh
-  - utter_awe
-  - utter_insult
+  - utter_generic
+  - utter_greet
   - utter_help
-  - utter_whoami
+  - utter_insult
+  - utter_laugh
+  - utter_member
   - utter_name
-  - utter_test
-  - utter_test_role
+  - utter_no_owner
+  - utter_noop
+  - utter_offer
   - utter_passive
+  - utter_pending_pack
+  - utter_pending_role
+  - utter_recommendation
+  - utter_recommended_draft_pack
+  - utter_recommended_draft_role
   - utter_send_failure_invalid
   - utter_send_failure_pending
   - utter_send_failure_unknown
-  - action_request_access
+  - utter_standby
+  - utter_thank
+  - utter_whoami
 
 templates:
+  utter_noop:
+    - text: /noop
+
+  utter_offer:
+    - text: >-
+        Hi! Would you like me to request access to
+        <strong>{resource_name}</strong> for you?
+      buttons:
+      - title: Yes, please
+        payload: Yes, please.
+      - title: No, thanks
+        payload: No, thanks.
+
   utter_default:
     - text: Sorry, I didn't get that. Can you clarify?
     - text: I don't understand what you mean.
+
+  utter_member:
+    - text: You are a member of this resource.
+    - text: Are you a member of this resource? Indeed you are.
+
+  utter_access_member:
+    - text: You already have access to this resource, silly.
+
+  utter_access_pending:
+    - text: You've already requested access to this resource.
 
   utter_standby:
     - text: Feel free to ping me anytime.
@@ -116,9 +158,8 @@ templates:
 
   utter_whoami:
     - text: >-
-          I am Dez, a robot designed specifically to help
-          you because you are special and deserve it.
-    - text: Who are you?
+        I am Nex, a robot designed specifically to help
+        you because you are very special and deserve it.
 
   utter_recommendation:
     - text: >-
@@ -135,7 +176,7 @@ templates:
         payload: No, thanks.
 
   utter_name:
-    - text: It's a pleasure to be getting to know you.
+    - text: It's a pleasure getting to know you.
     - text: That's great.
     - text: Cool stuff.
     - text: Uh huh.
@@ -151,46 +192,59 @@ templates:
 
   utter_help:
     - text: >-
-        I am here to help you get access to resources
+        I'm here to help you get access to resources
         you need.
 
   utter_insult:
     - text: >-
-        I am trying my best to be helpful. Please let
+        I'm trying my best to be helpful. Please let
         me know more clearly how I can help you.
     - text: >-
-        All robots make mistakes at some point. This
-        may be one of those moments. Please tell
+        All robots make mistakes at some point. Please tell
         me what it is you'd like me to do.
 
-  utter_recommended_draft:
+  utter_recommended_draft_role:
     - text: >-
-        So you'd like to request access for {resource_name}?
-        Great. All you need to do is draft a note for
-        {approver_name} and I'll take care of the rest.
+        So you'd like to request access to <strong>{resource_name}</strong>?
+        Great. All you need to do is draft a note for <strong>{approver_name}</strong>
+        and I'll take care of the rest.
       buttons:
         - title: Send request
-          payload: '/send_recommended{"reason": "I need access."}'
+          payload: '/request_access{"reason": "-", "resource_id": "-", "resource_type": "-"}'
         - title: Nevermind
-          payload: /cancel
+          payload: Nevermind.
 
-  utter_current_draft:
+  utter_recommended_draft_pack:
     - text: >-
-        Okay. So you need access to this?
-        Go ahead and draft a note and I'll take care of the rest.
+        So you want access to <strong>{resource_name}</strong>?
+        Awesome. All you need to do is draft a note. I'll send the note to each approver
+        and then move this pack to your pending requests!
       buttons:
         - title: Send request
-          payload: '/send_current{"reason": "-", "resource_id": "-", "resource_type": "-"}'
+          payload: '/request_access{"reason": "-", "resource_id": "-", "resource_type": "-"}'
+        - title: Actually...
+          payload: Nevermind.
+
+  utter_current_draft_role:
+    - text: >-
+        Okay. So you need access to <strong>{resource_name}</strong>?
+        Go ahead and draft a note for <strong>{approver_name}</strong>
+        and I'll get on it.
+      buttons:
+        - title: Send request
+          payload: '/request_access{"reason": "-", "resource_id": "-", "resource_type": "-"}'
+        - title: Actually...
+          payload: Nevermind.
+
+  utter_current_draft_pack:
+    - text: >-
+        Alright. So you'd like access to <strong>{resource_name}</strong>?
+        If you would, draft a note and I'll make sure each approver gets your request.
+      buttons:
+        - title: Send request
+          payload: '/request_access{"reason": "-", "resource_id": "-", "resource_type": "-"}'
         - title: Nevermind
-          payload: /cancel
-
-  utter_test:
-    - text: >-
-        ITS A PACK, ID you want is {resource_id}
-
-  utter_test_role:
-    - text: >-
-        ITS A ROLE, ID you want is {resource_id}
+          payload: Nevermind.
 
   utter_laugh:
     - text: I know right?
@@ -218,16 +272,33 @@ templates:
         that I was unable to request access for you right now.
         But please don't lose faith in me. Simply try again later.
 
+  utter_no_owner:
+    - text: >-
+        Seeing as this role has no owner, what's a bot to do? I have
+        an idea! Why don't you try to become the owner? 😜
+
   utter_exclame:
     - text: Awesome!
 
-  utter_fanfare_sent:
-    - text: Ta-da! Request sent
+  utter_generic:
+    - text: <h1>🤓</h1>
+    - text: <h1>🙈</h1>
+    - text: <h1>🤔</h1>
 
-  utter_request_bye:
+  utter_fanfare_sent:
+    - text: <h1>🧚</h1>I've sent your request. Isn't this just magical?
+    - text: <h1>🧚</h1>Sent and sent!
+
+  utter_pending_role:
     - text: >-
         Feel free to ping me anytime. I will notify you
-        once I hear from {approver_name}. Au revoir!
+        once I hear from <strong>{approver_name}</strong>. Au revoir!
+
+  utter_pending_pack:
+    - text: >-
+        I'll keep you posted as I hear from each approver. Keep in mind
+        that even if an approver rejects a request, you'll still have access
+        to any other roles of this pack that get approved. Bye for now!
 
   utter_bye:
     - text: Talk to you later.

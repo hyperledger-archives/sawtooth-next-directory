@@ -34,7 +34,9 @@ const { Types, Creators } = createActions({
   socketOpenSuccess:                 ['endpoint'],
   socketClose:                       ['endpoint'],
   socketCloseSuccess:                ['endpoint'],
+
   refreshOnNextSocketReceive:        ['flag'],
+  feedReceive:                       ['payload'],
 });
 
 

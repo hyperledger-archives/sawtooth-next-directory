@@ -78,3 +78,4 @@ rules:
   prefer-arrow-callback: error
   prefer-const: error
   keyword-spacing: [error, { after: true }]
+  # sort-imports: [error, { ignoreDeclarationSort: true }]

@@ -16,4 +16,14 @@ limitations under the License.
 
 export const ChatSelectors = {
   messages: (state) => state.chat.messages,
+  messagesById: (state, id) =>
+    state.chat.messages &&
+    state.chat.messages.filter(
+      message => message.resource_id === id
+    ),
+  messagesCountById: (state, id) =>
+    state.chat.messages &&
+    state.chat.messages.filter(
+      message => message.resource_id === id
+    ).length,
 };

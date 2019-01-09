@@ -41,20 +41,3 @@ limitations under the License.
   min-width: 0;
   padding: 0;
 }
-
-#next-hamburger-icon {
-  position: absolute;
-  top: 50px;
-  left: 15px;
-  padding: 0px;
-  cursor: pointer;
-  z-index: 3;
-}
-
-#next-hamburger-wrapper{
-  padding: 25px;
-}
-
-.pushable>.pusher {
-  height: 100%;
-}

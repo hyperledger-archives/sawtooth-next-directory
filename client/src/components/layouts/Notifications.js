@@ -34,7 +34,7 @@ import Avatar from './Avatar';
  * @description   Notifications menu
  *
  */
-export default class Notifications extends Component {
+class Notifications extends Component {
 
   static propTypes = {
     getUsers:             PropTypes.func,
@@ -152,3 +152,6 @@ export default class Notifications extends Component {
     );
   }
 }
+
+
+export default Notifications;

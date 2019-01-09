@@ -63,7 +63,7 @@ export const socketError = (state, { error }) =>
 
 
 export const socketMaxAttemptsReached = (state) =>
-  state.merge({ socketMaxAttemptsReached: true });
+  state.merge({ socketError: true, socketMaxAttemptsReached: true });
 
 
 export const refreshBegin = (state) =>

@@ -48,6 +48,7 @@ export class Role extends Component {
     getRole: PropTypes.func,
   };
 
+
   /**
    * Entry point to perform tasks required to render component.
    * Fetch role if not loaded in client.
@@ -68,12 +69,19 @@ export class Role extends Component {
   }
 
 
-  init = () => {
+  /**
+   * Fetch role if not loaded in client
+   */
+  init () {
     const { getRole, roleId, roleFromId } = this.props;
     roleId && !roleFromId(roleId) && getRole(roleId);
   }
 
 
+  /**
+   * Determine if user owns current role
+   * @returns {boolean}
+   */
   isOwner = () => {
     const { me } = this.props;
     return me && !!this.role.owners.find(owner => owner === me.id);
@@ -97,7 +105,6 @@ export class Role extends Component {
 
     return (
       <Grid id='next-requester-grid'>
-
         <Grid.Column
           id='next-requester-grid-track-column'
           width={12}>
@@ -142,7 +149,6 @@ export class Role extends Component {
             </Container>
           </div>
         </Grid.Column>
-
         <Grid.Column
           id='next-requester-grid-converse-column'
           width={4}>
@@ -152,7 +158,6 @@ export class Role extends Component {
             title={this.role.name + ' Conversations'}
             activeRole={this.role} {...this.props}/>
         </Grid.Column>
-
       </Grid>
     );
   }
@@ -162,7 +167,6 @@ export class Role extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
-
   return {
     roleId: id,
     proposalId: RequesterSelectors.roleProposalId(state, id),

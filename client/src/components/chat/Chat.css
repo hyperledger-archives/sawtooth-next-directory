@@ -44,34 +44,6 @@ limitations under the License.
   height: 2.7em;
 }
 
-.next-chat-message-left {
-  align-items: flex-end;
-  display: flex;
-  flex-shrink: 0;
-}
-
-.next-chat-message-right {
-  align-items: flex-end;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  margin-top: 40px;
-}
-
-.next-chat-message-left .ui.segment {
-  min-width: 100px;
-}
-
-.next-chat-message-left .ui.segment strong {
-  color: var(--magenta);
-}
-
-.next-chat-message-left .ui.segment,
-.next-chat-message-right .ui.segment {
-  max-width: 310px;
-  word-break: break-word;
-}
-
 #next-chat-actions {
   display: flex;
   margin-top: 15px;
@@ -122,39 +94,11 @@ limitations under the License.
   transform: rotate(45deg);
 }
 
-#next-chat-messages-container {
-  flex: 1;
-  overflow-y: scroll;
-  padding: 1.3rem;
-}
-
-#next-chat-messages-container,
-#next-chat-messages {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-#next-chat-messages-container:before {
-  background: linear-gradient(#eff0f3 50%, transparent);
-  content: "";
-  height: 30px;
-  left: 0;
-  position: absolute;
-  top: 183px;
-  width: 100%;
-  z-index: 1;
-}
-
 #next-manual-triggers {
   left: -183px;
   opacity: .3;
   position: absolute;
   top: 60px;
-}
-
-#next-chat-messages-container::-webkit-scrollbar {
-  background: transparent;
-  width: 0px;
 }
 
 #next-chat-roles-selection-container,
@@ -206,13 +150,11 @@ limitations under the License.
   resize: none;
 }
 
-#next-chat-message-error-container {
-  position: absolute;
-  text-align: center;
-  top: 45%;
-}
-
 #next-placeholder-chat .ui.fluid input {
   background: white;
   border: 1px solid #ddd;
+}
+
+#next-chat-form-submit-icon {
+  right: 6px;
 }

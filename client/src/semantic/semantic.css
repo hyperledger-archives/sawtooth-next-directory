@@ -778,6 +778,15 @@ body,
   background: #fbfcfd;
 }
 
+.flux {
+  -webkit-animation: flux 30s ease infinite;
+  animation: flux 30s ease infinite;
+  background: -webkit-gradient(linear, left top, left bottom, from(#7200ef), to(#f7007d));
+  background: -webkit-linear-gradient(top, #7200ef, #f7007d);
+  background: linear-gradient(180deg, #7200ef, #f7007d);
+  background-size: 140% 140%;
+}
+
 .avatar-palette-1 {
   background: #ffb5e8;
   color: #ff69d0;
@@ -845,6 +854,34 @@ body,
 
 .toast.Toastify__toast--warning {
   color: #1d1e27;
+}
+
+@-webkit-keyframes flux {
+  0% {
+    background-position: 50% 0%;
+  }
+
+  50% {
+    background-position: 51% 100%;
+  }
+
+  100% {
+    background-position: 50% 0%;
+  }
+}
+
+@keyframes flux {
+  0% {
+    background-position: 50% 0%;
+  }
+
+  50% {
+    background-position: 51% 100%;
+  }
+
+  100% {
+    background-position: 50% 0%;
+  }
 }
 
 /*******************************
@@ -29717,7 +29754,7 @@ a.ui.card:hover,
 *******************************/
 
 .ui.stackable.grid .column .ui.card.huge {
-  height: 250px;
+  height: 270px;
 }
 
 .ui.stackable.grid .column .ui.card.medium,
@@ -29793,35 +29830,30 @@ a.ui.card:hover,
   box-shadow: 0 3px 13px #00000014;
 }
 
+.contrast .ui.stackable.grid .column .ui.card.minimal {
+  border: 1px solid #dde1eccf;
+}
+
 .dark .ui.stackable.grid .column .ui.card.minimal .header {
   color: #FFFFFF;
 }
 
 .ui.stackable.grid .column .ui.card.huge .content:first-child {
-  padding: 15%;
+  padding: 14%;
 }
 
 .ui.stackable.grid .column .ui.card.disabled {
   opacity: 0.4;
 }
 
-.ui.stackable.grid .column .ui.card.huge .content .header {
+.ui.stackable.grid .column .ui.card.huge > .content > .header {
   color: #E40073;
   font-size: 1.7em;
   font-weight: 400;
 }
 
-.ui.stackable.grid .column .ui.card .content {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
+.ui.stackable.grid .column .ui.card.huge > .content > .description {
+  margin-top: 14%;
 }
 
 .ui.cards > .card > .extra,

@@ -65,7 +65,7 @@ class Manage extends Component {
           <TrackHeader inverted title='Manage' {...this.props}/>
           <div id='next-approver-manage-content'>
             <Grid stackable>
-              <Grid.Row columns={3}>
+              <Grid.Row columns={3} stretched>
                 <Grid.Column>
                   <Card
                     fluid
@@ -99,7 +99,7 @@ class Manage extends Component {
                     `}/>
                 </Grid.Column>
               </Grid.Row>
-              <Grid.Row columns={3}>
+              <Grid.Row columns={3} stretched>
                 <Grid.Column>
                   <Card
                     fluid

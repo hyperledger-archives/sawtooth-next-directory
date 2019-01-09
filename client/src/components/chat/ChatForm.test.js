@@ -25,6 +25,7 @@ import ChatForm from './ChatForm';
 
 describe('ChatForm component', () => {
   const props = {
+    location: {},
     submit: (username, password) => { },
     send: () => {},
     messages: [{buttons: [{title: 'title', payload: 'payload'}]}],
@@ -47,7 +48,7 @@ describe('ChatForm component', () => {
   });
 
   test('form  button click event', () => {
-    wrapper.find('#next-name-chat-submit').simulate('click');
+    wrapper.find('#next-chat-form-submit-icon').simulate('click');
   });
 
   test('form input handle change event', () => {
@@ -67,7 +68,7 @@ describe('ChatForm component', () => {
   test('create payload function', () => {
     const spy = jest.spyOn(wrapper.instance(), 'createPayload');
     wrapper.instance()
-      .createPayload('/send_recommended{"reason": "I need access."}');
+      .createPayload('/request_access{"reason": "I need access."}');
     expect(spy).toHaveBeenCalled();
   });
 

@@ -3,7 +3,7 @@
 *******************************/
 
 .ui.stackable.grid .column .ui.card.huge {
-  height: 250px;
+  height: 270px;
 }
 
 .ui.stackable.grid .column .ui.card.medium,
@@ -65,28 +65,30 @@
   box-shadow: 0 3px 13px #00000014;
 }
 
+.contrast .ui.stackable.grid .column .ui.card.minimal {
+  border: 1px solid #dde1eccf;
+}
+
 .dark .ui.stackable.grid .column .ui.card.minimal .header {
   color: @white;
 }
 
 .ui.stackable.grid .column .ui.card.huge .content:first-child {
-  padding: 15%;
+  padding: 14%;
 }
 
 .ui.stackable.grid .column .ui.card.disabled {
   opacity: .4;
 }
 
-.ui.stackable.grid .column .ui.card.huge .content .header {
+.ui.stackable.grid .column .ui.card.huge > .content > .header {
   color: @magenta;
   font-size: 1.7em;
   font-weight: 400;
 }
 
-.ui.stackable.grid .column .ui.card .content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.ui.stackable.grid .column .ui.card.huge > .content > .description {
+  margin-top: 14%;
 }
 
 .ui.cards > .card > .extra,
