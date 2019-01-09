@@ -77,7 +77,7 @@ Setting up Dependencies:
     Prior to setting up dependencies you should activate your virtual env and have automake installed. Automake is to
     help with the installation of secp256k1 as it will error without during installation.
 
-    1. Follow this `solution <https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat>`_
+    1. Follow this `solution <https://stackoverflow.com/a/49986365>`_
     to get a C++ support for a couple of dependencies.
     2. Run the following:
 

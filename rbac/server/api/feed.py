@@ -34,17 +34,17 @@ FEED_BP = Blueprint("feed")
 
 @FEED_BP.websocket("api/feed")
 @authorized()
-async def feed(request, ws):
+async def feed(request, write_stream):
     """Socket feed enabling real-time notifications"""
     while True:
         required_fields = ["user_id"]
-        recv = json.loads(await ws.recv())
+        recv = json.loads(await write_stream.recv())
 
         utils.validate_fields(required_fields, recv)
-        await proposal_feed(request, ws, recv)
+        await proposal_feed(request, write_stream, recv)
 
 
-async def proposal_feed(request, ws, recv):
+async def proposal_feed(request, write_stream, recv):
     """Send open proposal updates to a given user"""
     subscription = await proposals_query.subscribe_to_proposals(
         request.app.config.DB_CONN
@@ -58,6 +58,6 @@ async def proposal_feed(request, ws, recv):
             proposal_resource["status"] == "OPEN"
             and recv.get("user_id") in proposal_resource["approvers"]
         ):
-            await ws.send(json.dumps({"open_proposal": proposal_resource}))
+            await write_stream.send(json.dumps({"open_proposal": proposal_resource}))
         elif recv.get("user_id") == proposal_resource["opener"]:
-            await ws.send(json.dumps({"user_proposal": proposal_resource}))
+            await write_stream.send(json.dumps({"user_proposal": proposal_resource}))

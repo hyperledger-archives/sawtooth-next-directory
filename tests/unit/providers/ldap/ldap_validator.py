@@ -53,7 +53,7 @@ def test_validate_create_entry(payload, data_type, expected):
 
 
 @pytest.mark.parametrize("payload,data_type,err_msg", INVALID_PAYLOADS)
-def test_validate_create_entry_errors(payload, data_type, err_msg):
+def test_create_entry_errors(payload, data_type, err_msg):
     """Test that invalid payloads raise an error."""
     with pytest.raises(ValidationException) as err:
         validate_create_entry(payload, data_type)
@@ -70,7 +70,7 @@ def test_validate_update_entry(payload, data_type, expected):
 
 
 @pytest.mark.parametrize("payload,data_type,err_msg", INVALID_PAYLOADS)
-def test_validate_update_entry_errors(payload, data_type, err_msg):
+def test_update_entry_errors(payload, data_type, err_msg):
     """Test that invalid payloads raise an error."""
     with pytest.raises(ValidationException) as err:
         validate_update_entry(payload, data_type)

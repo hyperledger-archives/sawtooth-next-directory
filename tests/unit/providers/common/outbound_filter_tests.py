@@ -67,7 +67,7 @@ def test_outbound_user_filter():
     assert "job_title" not in result
 
 
-def test_outbound_user_filter_bad_provider():
+def test_outbound_user_provider():
     """ Test outbound user filter with bad provider throws error"""
     with pytest.raises(TypeError):
         outbound_user_filter({"remote_id": 1234}, "test_run")
@@ -80,7 +80,7 @@ def test_outbound_group_filter():
     assert "id" not in result
 
 
-def test_outbound_group_filter_bad_provider():
+def test_outbound_group_provider():
     """ Test outbound group filter with bad provider throws error"""
     with pytest.raises(TypeError):
         outbound_group_filter({"remote_id": 1234}, "test_run")
@@ -96,10 +96,10 @@ def test_outbound_user_creation(test_input, provider, field_to_test, expected):
     )
 
 
-@pytest.mark.parametrize("test_input, provider, errorType", LIST_OF_INVALID_INPUT)
-def test_outbound_user_creation_with_bad_input(test_input, provider, errorType):
+@pytest.mark.parametrize("test_input, provider, error_type", LIST_OF_INVALID_INPUT)
+def test_bad_outbound_user_create(test_input, provider, error_type):
     """ Test outbound group creation with bad provider throws error"""
-    with pytest.raises(errorType):
+    with pytest.raises(error_type):
         outbound_user_creation_filter(test_input, provider)
 
 
@@ -112,8 +112,8 @@ def test_outbound_group_creation():
     assert "mail" not in result
 
 
-@pytest.mark.parametrize("test_input, provider, errorType", LIST_OF_INVALID_INPUT)
-def test_outbound_group_creation_with_bad_input(test_input, provider, errorType):
+@pytest.mark.parametrize("test_input, provider, error_type", LIST_OF_INVALID_INPUT)
+def test_bad_outbound_group_create(test_input, provider, error_type):
     """ Test outbound group creation without valid provider throws error"""
-    with pytest.raises(errorType):
+    with pytest.raises(error_type):
         outbound_group_creation_filter(test_input, provider)
