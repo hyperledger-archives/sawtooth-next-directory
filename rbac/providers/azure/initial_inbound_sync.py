@@ -58,6 +58,7 @@ def fetch_groups_with_members():
             groups_payload.status_code,
             groups_payload,
         )
+    return None
 
 
 def fetch_group_owner(group_id):
@@ -76,6 +77,8 @@ def fetch_group_owner(group_id):
             owner_payload.status_code,
             owner_payload,
         )
+        return None
+    return None
 
 
 def fetch_users():
@@ -92,6 +95,7 @@ def fetch_users():
             users_payload.status_code,
             users_payload,
         )
+    return None
 
 
 def fetch_user_manager(user_id):
@@ -112,6 +116,7 @@ def fetch_user_manager(user_id):
             manager_payload.status_code,
             manager_payload,
         )
+    return None
 
 
 def fetch_next_payload(next_url):
@@ -128,6 +133,7 @@ def fetch_next_payload(next_url):
             payload.status_code,
             payload,
         )
+    return None
 
 
 def fetch_retry(headers, func, *args):

@@ -54,6 +54,7 @@ def is_entry_in_aad(queue_entry):
         return is_user_in_aad(queue_entry)
     elif data_type == "group":
         return is_group_in_aad(queue_entry)
+    return None
 
 
 def is_user_in_aad(queue_entry):
@@ -101,6 +102,7 @@ def fetch_user_aad(user_id):
         url = ("%s/%s/users/%s", GRAPH_URL, GRAPH_VERSION, user_id)
         response = requests.get(url=url, headers=headers)
         return response
+    return None
 
 
 def fetch_group_aad(group_id):
@@ -109,6 +111,7 @@ def fetch_group_aad(group_id):
         url = ("%s/%s/groups/%s", GRAPH_URL, GRAPH_VERSION, group_id)
         response = requests.get(url=url, headers=headers)
         return response
+    return None
 
 
 def update_entry_aad(queue_entry):
