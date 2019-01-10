@@ -49,7 +49,7 @@ class RBACTransactionHandler(object):
         try:
             if transaction.payload == "ping".encode("utf-8"):
                 LOGGER.info("Got a ping!")
-                return
+                return None
             payload = RBACPayload()
             payload.ParseFromString(transaction.payload)
 
@@ -68,3 +68,4 @@ class RBACTransactionHandler(object):
             LOGGER.exception("Unexpected processor %s exception", type(err))
             LOGGER.exception(err)
             raise InvalidTransaction(err)
+        return None
