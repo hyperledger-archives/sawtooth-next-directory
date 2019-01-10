@@ -32,3 +32,7 @@ limitations under the License.
 .next-role-list-item .ui.segment .next-avatar-container {
   margin-left: 10px;
 }
+
+.next-role-list-icon {
+  margin-left: 0.4em;
+}

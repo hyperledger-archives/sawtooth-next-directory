@@ -19,6 +19,7 @@ import { Checkbox, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './RoleList.css';
 import Avatar from 'components/layouts/Avatar';
+import { Icon } from 'semantic-ui-react';
 
 
 /**
@@ -118,13 +119,25 @@ class RoleList extends Component {
     const { openProposalsByRole } = this.props;
     return (
       <div className='pull-right'>
-        { openProposalsByRole[roleId].map(proposal => (
-          <Avatar
-            key={proposal.id}
-            userId={proposal.opener}
-            size='medium'
-            {...this.props}/>
-        ))}
+        { openProposalsByRole[roleId].map((proposal, index) => {
+          if (index > 2) return null;
+
+          if (index === 2) {
+            return (
+              <span className='next-role-list-icon'>
+                <Icon inverted color='black' name='add' size='small'/>
+                {openProposalsByRole[roleId].length - 2}
+              </span>
+            );
+          }
+          return (
+            <Avatar
+              key={proposal.id}
+              userId={proposal.opener}
+              size='medium'
+              {...this.props}/>
+          );
+        })}
       </div>
     );
   }

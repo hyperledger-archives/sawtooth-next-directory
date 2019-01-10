@@ -26,6 +26,7 @@ import {
 import './ApproverChat.css';
 import ChatMessage from './ChatMessage';
 import Avatar from 'components/layouts/Avatar';
+import { Icon } from 'semantic-ui-react';
 
 
 /**
@@ -100,14 +101,23 @@ export default class ApproverChat extends Component {
               horizontal
               animation='fade right'
               duration={{hide: 0, show: 1000}}>
-              { selectedUsers.map(user =>
-                <Avatar
+              { selectedUsers.map((user, index) => {
+                if (index > 2) return null;
+
+                if (index === 2) {
+                  return (
+                    <span className='next-chat-list-icon'>
+                      <Icon inverted name='add' size='tiny'/>
+                    </span>
+                  );
+                }
+                return (<Avatar
                   key={user}
                   userId={user}
                   size='medium'
                   className='pull-left'
-                  {...this.props}/>
-              ) }
+                  {...this.props}/>);
+              })}
             </Transition.Group>
             <Transition
               visible={selectedUsers.length > 0}
