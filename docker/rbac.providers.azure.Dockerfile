@@ -13,42 +13,13 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
-# Begin base docker image config for Hyperledger RBAC Next Directory
-# This should remain the same for all python containers to maximize caching
-# -----------------------------------------------------------------------------
-FROM hyperledger/sawtooth-validator:1.0
-
-RUN apt-get update \
- && apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3-pip \
-        python3-sawtooth-sdk \
- && locale-gen en_US.UTF-8 \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y  apt-utils
-
-RUN pip3 install -U pip setuptools
-
-RUN pip3 install \
-        grpcio-tools==1.16.1 \
-        itsdangerous==1.1.0 \
-        rethinkdb==2.3.0.post6 \
-        sanic==0.8.3 \
-        watchdog==0.9.0
-
-ENV LC_ALL=en_US.UTF-8
-WORKDIR /project/hyperledger-rbac
-# -----------------------------------------------------------------------------
-# End base docker image config for Hyperledger RBAC Next Directory
-# -----------------------------------------------------------------------------
-
-# Container-specific dependencies are installed separately for
-# optimizing caching
+FROM python:3.5-slim
 RUN pip3 install \
         pyasn1==0.4.4 \
         pytz==2018.6 \
-        azure-eventhub==1.2.0
-
+        azure-eventhub==1.2.0 \
+        itsdangerous==1.1.0 \
+        rethinkdb==2.3.0.post6 \
+        sawtooth-sdk==1.0.1
+WORKDIR /project/hyperledger-rbac
 CMD [ "./bin/rbac-providers-azure" ]
