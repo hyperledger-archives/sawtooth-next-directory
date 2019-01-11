@@ -121,3 +121,4 @@ services:
     environment:
       - PYTHONPATH=/project/hyperledger-rbac/
       - HOST=${HOST:-localhost}
+      - LDAP_SERVER=${LDAP_SERVER}

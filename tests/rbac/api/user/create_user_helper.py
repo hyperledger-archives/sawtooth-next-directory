@@ -83,7 +83,11 @@ class CreateUserTestHelper(BaseApiHelper, UserTestData):
         if not user:
             user = self.new()
             api_wait()  # temporary, see config
-        data = {"id": user["username"], "password": user["password"]}
+        data = {
+            "id": user["username"],
+            "password": user["password"],
+            "auth_source": "next",
+        }
         response = requests.post(url=self.auth_url, headers=None, json=data)
         result = assert_api_success(response)
         assert result["data"]["message"] == "Authorization successful"

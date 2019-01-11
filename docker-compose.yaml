@@ -103,6 +103,7 @@ services:
       - CLIENT_HOST=${CLIENT_HOST}
       - CLIENT_PORT=${CLIENT_PORT}
       - DEMO_MODE=${DEMO_MODE:-False}
+      - LDAP_SERVER=${LDAP_SERVER}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:

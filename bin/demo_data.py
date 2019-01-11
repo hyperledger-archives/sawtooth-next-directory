@@ -51,7 +51,7 @@ def add_demo_data():
     for user in avengers:
         with requests.Session() as s:
             try:
-                login = {"id": user[1], "password": password}
+                login = {"id": user[1], "password": password, "auth_source": "next"}
                 response = s.post('http://' + host + ':8000/api/authorization/', json=login)
                 LOGGER.info(response)
                 LOGGER.info(response.json())
@@ -78,7 +78,7 @@ def add_demo_data():
     for user in xmen:
         with requests.Session() as s:
             try:
-                login = {"id": user[1], "password": password}
+                login = {"id": user[1], "password": password, "auth_source": "next"}
                 response = s.post('http://' + host + ':8000/api/authorization/', json=login)
                 LOGGER.info(response)
                 LOGGER.info(response.json())
@@ -111,7 +111,7 @@ def add_demo_data():
     }]
 
     with requests.Session() as s:
-        login = {"id": "CaptainAmerica", "password": password}
+        login = {"id": "CaptainAmerica", "password": password, "auth_source": "next"}
         response = s.post('http://' + host + ':8000/api/authorization/', json=login)
         LOGGER.info(response)
         LOGGER.info(response.json())
@@ -146,7 +146,7 @@ def add_demo_data():
     pack_ids = []
 
     with requests.Session() as s:
-        login = {"id": "charles.xavier", "password": password}
+        login = {"id": "charles.xavier", "password": password, "auth_source": "next"}
         response = s.post('http://' + host + ':8000/api/authorization/', json=login)
         LOGGER.info(response)
         LOGGER.info(response.json())
@@ -187,7 +187,7 @@ def add_demo_data():
     for user in xmen:
         with requests.Session() as s:
             try:
-                login = {"id": user[1], "password": password}
+                login = {"id": user[1], "password": password, "auth_source": "next"}
                 response = s.post('http://' + host + ':8000/api/authorization/', json=login)
                 LOGGER.info(response)
                 LOGGER.info(response.json())
