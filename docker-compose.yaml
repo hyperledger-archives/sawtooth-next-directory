@@ -214,16 +214,3 @@ services:
           --bind network:tcp://eth0:8800
           --scheduler parallel
       \"\""
-
-  # rbac-ui:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/ui.Dockerfile
-  #   container_name: rbac-ui
-  #   image: rbac-ui:${ISOLATION_ID-latest}
-  #   ports:
-  #     - "4200:4200"
-  #   depends_on:
-  #     - rbac-server
-  #   environment:
-  #     - HOST=${HOST:-localhost}
