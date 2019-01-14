@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Sawtooth NEXT Directory'
-copyright = '2018 Contributors to Hyperledger Sawtooth'
+copyright = '2019 Contributors to Hyperledger Sawtooth'
 author = 'Contributors to Hyperledger Sawtooth'
 
 # The short X.Y version
