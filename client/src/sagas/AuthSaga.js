@@ -27,8 +27,9 @@ import { AuthActions } from 'state';
  */
 export function * login (api, action) {
   try {
-    const { username, password } = action;
+    const { username, password, authSource } = action;
     const res = yield call(api.login, {
+      auth_source: authSource,
       id: username,
       password,
     });

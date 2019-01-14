@@ -141,10 +141,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    login: (email, password) =>
-      dispatch(AuthActions.loginRequest(email, password)),
-    attemptSignup: (name, username, password, email) =>
-      dispatch(AuthActions.signupRequest(name, username, password, email)),
+    login: (username, password, authSource) =>
+      dispatch(AuthActions.loginRequest(username, password, authSource)),
   };
 };
 

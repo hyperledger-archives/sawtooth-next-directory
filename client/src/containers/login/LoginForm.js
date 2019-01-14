@@ -44,6 +44,7 @@ class LoginForm extends Component {
     validUsername:  null,
     validPassword:  null,
     validEmail:     null,
+    authSource:     null,
     resetEmail:     '',
   };
 
@@ -91,7 +92,7 @@ class LoginForm extends Component {
    */
   validate = (name, value) => {
     name === 'username' &&
-      this.setState({ validUsername: value.length > 0 });
+      this.setState({ authSource: 'next', validUsername: value.length > 0 });
     name === 'password' &&
       this.setState({ validPassword: value.length > 0 });
     name === 'resetEmail' &&
@@ -107,6 +108,7 @@ class LoginForm extends Component {
     const { submit } = this.props;
     const {
       activeIndex,
+      authSource,
       username,
       password,
       resetEmail,
@@ -152,7 +154,7 @@ class LoginForm extends Component {
           duration={{ hide, show }}>
           <div id='next-login-form-2'>
             <Form id='next-password-form'
-              onSubmit={() => submit(username, password)}>
+              onSubmit={() => submit(username, password, authSource)}>
               <Container
                 textAlign='center'
                 id='next-login-form-avatar-container'>
