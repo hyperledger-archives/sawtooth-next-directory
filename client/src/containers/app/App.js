@@ -31,10 +31,9 @@ import Login from 'containers/login/Login';
 import Signup from 'containers/signup/Signup';
 import Header from 'components/layouts/Header';
 import Waves from 'components/layouts/Waves';
-
+import PageNotFound from 'components/layouts/PageNotFound';
 
 import { appDispatch, appState } from './AppHelper';
-
 
 /**
  *
@@ -84,6 +83,7 @@ class App extends Component {
       isAuthenticated,
       isRefreshing,
       stopRefresh,
+      pageNotFound,
       openSocket } = this.props;
 
     if (!isAuthenticated) {
@@ -197,12 +197,12 @@ class App extends Component {
   renderNav () {
     return this.routes.map((route, index) => (
       route.nav &&
-      <Route
-        key={index}
-        path={route.path}
-        exact={route.exact}
-        render={route.nav}
-      />
+        <Route
+          key={index}
+          path={route.path}
+          exact={route.exact}
+          render={route.nav}
+        />
     ));
   }
 
@@ -214,12 +214,17 @@ class App extends Component {
    */
   renderMain () {
     return this.routes.map((route, index) => (
-      <Route
-        key={index}
-        path={route.path}
-        exact={route.exact}
-        render={route.main}
-      />
+      route.path ?
+        <Route
+          key={index}
+          path={route.path}
+          exact={route.exact}
+          render={route.main}
+        /> :
+        <Route
+          key={index}
+          render={route.main}
+        />
     ));
   }
 
@@ -253,6 +258,7 @@ class App extends Component {
   render () {
     const { isAuthenticated, routes } = this.props;
     this.routes = routes(this.props);
+
 
     return (
       <Router>
