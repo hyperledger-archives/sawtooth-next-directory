@@ -281,12 +281,12 @@ services:
         ./bin/rbac-ledger-sync -vv --db-host rethink-3 --validator tcp://validator-3:4004
       \"\""
 
-  rbac-ui-0:
+  rbac-client-0:
     build:
       context: .
-      dockerfile: ./docker/ui.Dockerfile
-    container_name: rbac-ui-0
-    image: rbac-ui-production:${ISOLATION_ID-latest}
+      dockerfile: ./docker/client.Dockerfile
+    container_name: rbac-client-0
+    image: rbac-client-production:${ISOLATION_ID-latest}
     ports:
       - "4200"
     depends_on:
@@ -297,12 +297,12 @@ services:
     environment:
       - HOST=10.5.0.60
 
-  rbac-ui-1:
+  rbac-client-1:
     build:
       context: .
-      dockerfile: ./docker/ui.Dockerfile
-    container_name: rbac-ui-1
-    image: rbac-ui-production:${ISOLATION_ID-latest}
+      dockerfile: ./docker/client.Dockerfile
+    container_name: rbac-client-1
+    image: rbac-client-production:${ISOLATION_ID-latest}
     ports:
       - "4200"
     depends_on:
@@ -313,12 +313,12 @@ services:
     environment:
       - HOST=10.5.0.61
 
-  rbac-ui-2:
+  rbac-client-2:
     build:
       context: .
       dockerfile: ./docker/ui.Dockerfile
-    container_name: rbac-ui-2
-    image: rbac-ui-production:${ISOLATION_ID-latest}
+    container_name: rbac-client-2
+    image: rbac-client-production:${ISOLATION_ID-latest}
     ports:
       - "4200"
     depends_on:
@@ -329,12 +329,12 @@ services:
     environment:
       - HOST=10.5.0.62
 
-  rbac-ui-3:
+  rbac-client-3:
     build:
       context: .
       dockerfile: ./docker/ui.Dockerfile
-    container_name: rbac-ui-3
-    image: rbac-ui-production:${ISOLATION_ID-latest}
+    container_name: rbac-client-3
+    image: rbac-client-production:${ISOLATION_ID-latest}
     ports:
       - "4200"
     depends_on:
