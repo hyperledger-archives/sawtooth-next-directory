@@ -60,9 +60,10 @@ class ChatTranscript extends Component {
       messages,
       messagesById,
       socketError,
-      socketMaxAttemptsReached } = this.props;
+      socketMaxAttemptsReached,
+      type } = this.props;
 
-    if (socketMaxAttemptsReached) {
+    if (type === 'REQUESTER' && socketMaxAttemptsReached) {
       return (
         <div id='next-chat-message-error-container'>
           <Header
@@ -84,6 +85,9 @@ class ChatTranscript extends Component {
     }
     const resourceId = (activePack && activePack.id) ||
       (activeRole && activeRole.id);
+    const transcript = type === 'REQUESTER' ?
+      messagesById(resourceId) :
+      messages;
 
     return (
       <div>
@@ -107,40 +111,40 @@ class ChatTranscript extends Component {
           className={`${fetching ?
             'next-chat-transcript-animation-send' :
             'next-chat-transcript-animation-receive'}`}>
-          { !socketError &&
-            messagesById(resourceId).map((message, index) =>
-              this.isMe(message) ?
-                message.text &&
-                <div className={`next-chat-message-right ${index === 0 ?
-                  'next-chat-message-animation-send' : ''}`} key={index}>
-                  <Segment compact inverted
-                    floated='right'
-                    color='purple'
-                    size='small'>
+          { !socketError && transcript &&
+              transcript.map((message, index) =>
+                this.isMe(message) ?
+                  message.text &&
+                  <div className={`next-chat-message-right ${index === 0 ?
+                    'next-chat-message-animation-send' : ''}`} key={index}>
+                    <Segment compact inverted
+                      floated='right'
+                      color='purple'
+                      size='small'>
+                      <div>
+                        {message.text}
+                      </div>
+                    </Segment>
+                  </div> :
+                  <div className={`next-chat-message-left ${index === 0 ?
+                    'next-chat-message-animation-receive' : ''}`} key={index}>
                     <div>
-                      {message.text}
+                      { message.from ?
+                        <Avatar
+                          userId={message.from}
+                          size='small'
+                          {...this.props}/> :
+                        <Image src={chatbotAvatar} size='mini'/>
+                      }
                     </div>
-                  </Segment>
-                </div> :
-                <div className={`next-chat-message-left ${index === 0 ?
-                  'next-chat-message-animation-receive' : ''}`} key={index}>
-                  <div>
-                    { message.from ?
-                      <Avatar
-                        userId={message.from}
-                        size='small'
-                        {...this.props}/> :
-                      <Image src={chatbotAvatar} size='mini'/>
-                    }
+                    <Segment compact
+                      floated='left'
+                      size='small'>
+                      <div dangerouslySetInnerHTML={{__html: message.text}}>
+                      </div>
+                    </Segment>
                   </div>
-                  <Segment compact
-                    floated='left'
-                    size='small'>
-                    <div dangerouslySetInnerHTML={{__html: message.text}}>
-                    </div>
-                  </Segment>
-                </div>
-            )
+              )
           }
         </div>
       </div>

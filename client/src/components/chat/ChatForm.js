@@ -308,7 +308,7 @@ class ChatForm extends Component {
 
     return (
       <div>
-        { !isDraft && !socketMaxAttemptsReached && !showForm &&
+        { !isDraft && !isManual && !showForm &&
         <div>
           <Form id='next-placeholder-chat'
             onSubmit={() => this.handleSend(message)}>

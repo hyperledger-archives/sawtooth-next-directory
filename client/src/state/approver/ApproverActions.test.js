@@ -22,8 +22,9 @@ import { ApproverReducer as reducer } from './ApproverReducer';
 const UPDATED_STATE = Immutable({
   fetching:           null,
   error:              null,
-  openProposals:      [{id: 'openProposalId'}],
+  openProposals:      [{ id: 'openProposalId' }],
   confirmedProposals: null,
+  rejectedProposals:  null,
 });
 
 
@@ -61,6 +62,16 @@ test('confirmedProposalsSuccess', () => {
   const state = reducer(
     INITIAL_STATE,
     Actions.confirmedProposalsSuccess([])
+  );
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+
+test('rejectedProposalsSuccess', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.rejectedProposalsSuccess([])
   );
   expect(state.fetching).toBe(false);
   expect(state.error).toBeNull();

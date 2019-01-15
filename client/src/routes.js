@@ -28,24 +28,21 @@ import Approved from './containers/approver/Approved';
 import ApproverHome from './containers/approver/ApproverHome';
 import CreatePack from './containers/approver/manage/CreatePack';
 import CreateRole from './containers/approver/manage/CreateRole';
+import Delegated from './containers/approver/Delegated';
+import Expired from './containers/approver/Expired';
 import Expiring from './containers/approver/Expiring';
 import Individuals from './containers/approver/Individuals';
 import Manage from './containers/approver/manage/Manage';
 import ManagePacks from './containers/approver/manage/ManagePacks';
 import ManageRoles from './containers/approver/manage/ManageRoles';
 import People from './containers/approver/people/People';
-import Delegated from './containers/approver/Delegated';
-import Expired from './containers/approver/Expired';
 import PeopleApproval from './containers/approver/people/PeopleApproval';
+import Rejected from './containers/approver/Rejected';
 
 
 const routes = (props) => [
-  //
+
   // Requester
-  //
-  //
-  //
-  //
   {
     path:   '/',
     main:   (rest) => <RequesterHome {...props} {...rest}/>,
@@ -65,13 +62,8 @@ const routes = (props) => [
     exact:  true,
   },
 
-  //
-  // Approver
-  //
-  //
-  //
-  //
 
+  // Approver
   {
     path:   '/approval',
     main:   (rest) => <ApproverHome {...props} {...rest}/>,
@@ -135,6 +127,12 @@ const routes = (props) => [
   {
     path:   '/approval/approved',
     main:   (rest) => <Approved {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/rejected',
+    main:   (rest) => <Rejected {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

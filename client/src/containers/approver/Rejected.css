@@ -14,40 +14,40 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-roles-list-container {
-  padding: 0 var(--page-content-padding);
+#next-approver-rejected-content {
+  margin-top: 230px;
+  overflow: auto;
+  padding-bottom: 100px;
+  position: relative;
+  width: calc(100% - 61px) !important;
 }
 
-.next-role-list-item {
-  margin-bottom: 20px;
-}
-
-.next-role-list-item .ui.segment {
+.next-approver-rejected-table-opener {
   align-items: center;
   display: flex;
-  min-height: 74px;
+}
+
+.next-approver-rejected-table-opener div:first-child {
+  margin-right: 10px;
+}
+
+.next-approver-rejected-table-email {
+  color: var(--magenta);
+  display: flex;
   justify-content: space-between;
-}
-
-.next-role-list-item .ui.segment .next-avatar-container {
-  margin-left: 10px;
-}
-
-.next-role-list-icon {
-  background: #ffd6d6;
-  border-radius: 50%;
-  color: #ff8b88;
-  display: inline-block;
-  font-size: 1.5em;
-  height: 2em;
-  margin-left: 10px;
-  padding: .6em 0 0 0.2em;
-  width: 2em;
-}
-
-.next-role-list-icon i.orange {
-  left: 2px;
-  opacity: .75;
   position: relative;
-  top: -3px;
+  top: 3px;
+}
+
+.next-approver-rejected-table-email i {
+  left: 9px;
+  position: relative;
+}
+
+#next-approver-rejected-placeholder {
+  margin: 30px;
+}
+
+#next-approver-rejected-placeholder .ui.placeholder {
+  margin: 0 0 40px 0;
 }

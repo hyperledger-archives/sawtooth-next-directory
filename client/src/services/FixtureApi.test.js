@@ -18,11 +18,6 @@ import FixtureAPI from './FixtureApi';
 
 
 describe('FixtureApi Service', () => {
-
-  test('get requester base', () => {
-    FixtureAPI.getRequesterBase();
-  });
-
   test('get role by id', () => {
     FixtureAPI.getRole('default');
     FixtureAPI.getRole('e15a71ee-58d2-49e8-a8e4-21888144be1f');
@@ -32,27 +27,33 @@ describe('FixtureApi Service', () => {
     FixtureAPI.getRole('d7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0');
   });
 
+
   test('get role by id', () => {
     FixtureAPI.getConversation('default');
     FixtureAPI.getConversation('490d7d4c-6e07-4795-b785-7a0146d4ec0f');
     FixtureAPI.getConversation('bf42a57b-6fe4-41ce-9f2a-f6f7dab54e8b');
   });
 
+
   test('send message', () => {
     FixtureAPI.sendSocket('new message found');
   });
+
 
   test('login', () => {
     FixtureAPI.login('username', 'password');
   });
 
+
   test('logout', () => {
     FixtureAPI.logout();
   });
 
+
   test('get roles', () => {
     FixtureAPI.getRoles();
   });
+
 
   test('get pack', () => {
     const id= ['e15a71ee-58d2-49e8-a8e4-21888144be1f',
@@ -63,7 +64,5 @@ describe('FixtureApi Service', () => {
       '',
     ];
     id.map((i) => FixtureAPI.getPack(i));
-
   });
-
 });

@@ -48,23 +48,16 @@ const create = (baseURL =
 (process.env.REACT_APP_HTTP_PROTOCOL || 'http://') +
   (process.env.REACT_APP_SERVER_HOST || 'localhost') + ':' +
   (process.env.REACT_APP_SERVER_PORT || '8000') + '/api/') => {
-  //
+
+
   // Configuration
-  //
-  //
-  //
-  //
   const api = apisauce.create({
     baseURL,
     withCredentials: true,
   });
 
-  //
+
   // Transforms
-  //
-  //
-  //
-  //
   api.addResponseTransform(res => {
     switch (res.problem) {
       case 'TIMEOUT_ERROR':
@@ -102,33 +95,13 @@ const create = (baseURL =
     }
   });
 
-  //
-  // Definitions
-  //
-  //
-  //
-  //
-  const me = () => {
-    const id = storage.get('user_id');
-    return api.get(`users/${id}`);
-  };
-  const getConfirmedProposals = () => {
-    const id = storage.get('user_id');
-    return api.get(`users/${id}/proposals/confirmed`);
-  };
-  const getOpenProposals = (id) => {
-    id = id || storage.get('user_id');
-    return api.get(`users/${id}/proposals/open`);
-  };
-  const getRecommended = () => {
-    const id = storage.get('user_id');
-    return api.get(`users/${id}/roles/recommended`);
-  };
 
+  // Definitions
   const approveProposals = (id, body) => api.patch(`proposals/${id}`, body);
   const createPack = (payload) => api.post('packs', payload);
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
+  const me = () => api.get(`users/${storage.get('user_id')}`);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRole = (id) => api.get(`roles/${id}`);
   const getRoles = (start, limit) => api.get('roles', { start, limit });
@@ -144,12 +117,23 @@ const create = (baseURL =
   const signup = (creds) => api.post('users', creds);
 
 
+  const getConfirmedProposals = (id = storage.get('user_id')) =>
+    api.get(`users/${id}/proposals/confirmed`);
+  const getOpenProposals = (id = storage.get('user_id')) =>
+    api.get(`users/${id}/proposals/open`);
+  const getRecommended = (id = storage.get('user_id')) =>
+    api.get(`users/${id}/roles/recommended`);
+  const getRejectedProposals = (id = storage.get('user_id')) =>
+    api.get(`users/${id}/proposals/rejected`);
+
+
   return {
     approveProposals,
     createPack,
     createRole,
     login,
     getConfirmedProposals,
+    getRejectedProposals,
     getOpenProposals,
     getProposal,
     getRecommended,

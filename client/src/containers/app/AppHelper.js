@@ -30,12 +30,7 @@ import {
   UserSelectors } from 'state';
 
 
-//
 // App-wide selectors
-//
-//
-//
-//
 export const appState = (state) => {
   return {
 
@@ -51,6 +46,7 @@ export const appState = (state) => {
 
     // Approver
     confirmedProposals:  ApproverSelectors.confirmedProposals(state),
+    rejectedProposals:   ApproverSelectors.rejectedProposals(state),
     openProposals:       ApproverSelectors.openProposals(state),
     openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
     openProposalsByUser: ApproverSelectors.openProposalsByUser(state),
@@ -97,12 +93,7 @@ export const appState = (state) => {
 };
 
 
-//
 // App-wide actions
-//
-//
-//
-//
 export const appDispatch = (dispatch) => {
   return {
 
@@ -128,8 +119,10 @@ export const appDispatch = (dispatch) => {
       dispatch(ApproverActions.rejectProposalsRequest(ids)),
     getOpenProposals:  (id)    =>
       dispatch(ApproverActions.openProposalsRequest(id)),
-    getConfirmedProposals: () =>
-      dispatch(ApproverActions.confirmedProposalsRequest()),
+    getConfirmedProposals: (id) =>
+      dispatch(ApproverActions.confirmedProposalsRequest(id)),
+    getRejectedProposals:  (id) =>
+      dispatch(ApproverActions.rejectedProposalsRequest(id)),
     createRole: (payload) =>
       dispatch(ApproverActions.createRoleRequest(payload)),
     createPack: (payload) =>

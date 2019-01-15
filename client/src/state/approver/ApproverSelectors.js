@@ -19,6 +19,7 @@ import * as utils from 'services/Utils';
 
 export const ApproverSelectors = {
   confirmedProposals:    (state) => state.approver.confirmedProposals,
+  rejectedProposals:     (state) => state.approver.rejectedProposals,
   openProposals:         (state) => state.approver.openProposals,
   openProposalsByUser:   (state) =>
     utils.groupBy(state.approver.openProposals, 'opener'),

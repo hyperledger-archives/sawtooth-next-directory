@@ -96,6 +96,12 @@ class ApproverNav extends Component {
             Approved
           </Link>
         </h4>
+        <h4 className={`hover ${this.isItemActive('rejected') ?
+          'active' : ''}`}>
+          <Link to='/approval/rejected'>
+            Rejected
+          </Link>
+        </h4>
         <h4 className={`hover ${this.isItemActive('expired') ?
           'active' : ''}`}>
           <Link to='/approval/expired'>

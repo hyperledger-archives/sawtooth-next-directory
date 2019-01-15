@@ -44,15 +44,22 @@ export const feedReceive = (state, { payload }) =>
 export const success = {
   openProposals: (state, { openProposals }) =>
     state.merge({
-      fetching: false,
-      openProposals: openProposals.data,
+      fetching:             false,
+      openProposals:        openProposals.data,
     }),
 
 
   confirmedProposals: (state, { confirmedProposals }) =>
     state.merge({
-      fetching: false,
-      confirmedProposals: confirmedProposals.data,
+      fetching:             false,
+      confirmedProposals:   confirmedProposals.data,
+    }),
+
+
+  rejectedProposals: (state, { rejectedProposals }) =>
+    state.merge({
+      fetching:             false,
+      rejectedProposals:    rejectedProposals.data,
     }),
 
 
@@ -93,10 +100,7 @@ export const success = {
 
 
   organization: (state, { organization }) =>
-    state.merge({
-      fetching: false,
-      organization,
-    }),
+    state.merge({ fetching: false, organization }),
 
 
   onBehalfOf: (state, { id }) =>
@@ -112,6 +116,9 @@ export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.CONFIRMED_PROPOSALS_REQUEST]:  request,
   [Types.CONFIRMED_PROPOSALS_SUCCESS]:  success.confirmedProposals,
   [Types.CONFIRMED_PROPOSALS_FAILURE]:  failure,
+  [Types.REJECTED_PROPOSALS_REQUEST]:   request,
+  [Types.REJECTED_PROPOSALS_SUCCESS]:   success.rejectedProposals,
+  [Types.REJECTED_PROPOSALS_FAILURE]:   failure,
   [Types.OPEN_PROPOSALS_REQUEST]:       request,
   [Types.OPEN_PROPOSALS_SUCCESS]:       success.openProposals,
   [Types.OPEN_PROPOSALS_FAILURE]:       failure,

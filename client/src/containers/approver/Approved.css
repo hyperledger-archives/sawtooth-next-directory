@@ -43,3 +43,11 @@ limitations under the License.
   left: 9px;
   position: relative;
 }
+
+#next-approver-approved-placeholder {
+  margin: 30px;
+}
+
+#next-approver-approved-placeholder .ui.placeholder {
+  margin: 0 0 40px 0;
+}

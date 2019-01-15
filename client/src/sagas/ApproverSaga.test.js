@@ -17,9 +17,12 @@ limitations under the License.
 import { put } from 'redux-saga/effects';
 
 
+import {
+  getOpenProposals,
+  getConfirmedProposals,
+  getRejectedProposals } from 'sagas/ApproverSaga';
 import FixtureAPI from 'services/FixtureApi';
 import { ApproverActions } from 'state';
-import { getOpenProposals, getConfirmedProposals } from 'sagas/ApproverSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;
@@ -27,11 +30,8 @@ const stepper = (fn) => (mock) => fn.next(mock).value;
 
 test('getOpenProposals: call API', () => {
   const res = { ok: true, data: {} };
-
   const step = stepper(getOpenProposals(FixtureAPI, {id: ''}));
-
   step();
-
   const stepRes = step(res);
   expect(stepRes).toEqual(put(ApproverActions.openProposalsSuccess(res.data)));
 });
@@ -39,12 +39,19 @@ test('getOpenProposals: call API', () => {
 
 test('getConfirmedProposals: call API', () => {
   const res = { ok: true, data: {} };
-
   const step = stepper(getConfirmedProposals(FixtureAPI));
-
   step();
-
   const stepRes = step(res);
   expect(stepRes)
     .toEqual(put(ApproverActions.confirmedProposalsSuccess(res.data)));
+});
+
+
+test('getRejectedProposals: call API', () => {
+  const res = { ok: true, data: {} };
+  const step = stepper(getRejectedProposals(FixtureAPI));
+  step();
+  const stepRes = step(res);
+  expect(stepRes)
+    .toEqual(put(ApproverActions.rejectedProposalsSuccess(res.data)));
 });

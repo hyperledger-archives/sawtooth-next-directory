@@ -34,7 +34,6 @@ import Waves from 'components/layouts/Waves';
 
 
 import { appDispatch, appState } from './AppHelper';
-import { SOCKET_TIMEOUT } from 'services/Socket';
 
 
 /**
@@ -61,12 +60,14 @@ class App extends Component {
    * component. If authenticated, hydate data and open socket.
    */
   componentDidMount () {
-    const { forceSocketError, isAuthenticated, openSocket } = this.props;
+    const { isAuthenticated, openSocket } = this.props;
     isAuthenticated && this.hydrate();
     if (isAuthenticated) {
       openSocket('chatbot');
       openSocket('feed');
-      this.wait = setTimeout(forceSocketError, SOCKET_TIMEOUT);
+
+      // TODO: Needs more logic
+      // this.wait = setTimeout(forceSocketError, SOCKET_TIMEOUT);
     }
   }
 
@@ -80,7 +81,6 @@ class App extends Component {
     const {
       closeSocket,
       me,
-      messages,
       isSocketOpen,
       isAuthenticated,
       isRefreshing,
@@ -113,8 +113,9 @@ class App extends Component {
     if (prevProps.me !== me)
       this.hydrateSidebar();
 
-    if (messages !== prevProps.messages)
-      clearTimeout(this.wait);
+    // TODO: Needs more logic
+    // if (messages !== prevProps.messages)
+    //   clearTimeout(this.wait);
   }
 
 
