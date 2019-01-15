@@ -20,6 +20,7 @@ RUN pip3 install \
         azure-eventhub==1.2.0 \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
+        requests==2.20.0 \
         sawtooth-sdk==1.0.1
 WORKDIR /project/hyperledger-rbac
 CMD [ "./bin/rbac-providers-azure" ]
