@@ -86,15 +86,21 @@ export const RequesterSelectors = {
         const cond1 = !item ||
                       (0 === item.length && item.includes('undefined'));
 
+        // User cannot have previously requested access
         const cond2 = RequesterSelectors.requests(state) &&
                       RequesterSelectors.requests(state).find(
                         obj => obj.id === item
                       );
+
+        // User cannot be a member
         const cond3 = RequesterSelectors.memberOf(state) &&
                       RequesterSelectors.memberOf(state).find(
                         obj => obj.id === item
                       );
-        return !(cond3 || cond2 || cond1);
+
+        // User cannot be an owner
+        const cond4 = state.user.me.ownerOf.packs.includes(item);
+        return !(cond4 || cond3 || cond2 || cond1);
       });
 
     return recommend.join('') ? [...new Set(
