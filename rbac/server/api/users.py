@@ -226,6 +226,39 @@ async def fetch_confirmed_proposals(request, user_id):
     )
 
 
+@USERS_BP.get("api/users/<user_id>/proposals/rejected")
+@authorized()
+async def fetch_rejected_proposals(request, user_id):
+    head_block = await utils.get_request_block(request)
+    start, limit = utils.get_request_paging_info(request)
+    proposals = await proposals_query.fetch_all_proposal_resources(
+        request.app.config.DB_CONN, head_block.get("num"), start, limit
+    )
+    proposal_resources = []
+    for proposal in proposals:
+        proposal_resource = await compile_proposal_resource(
+            request.app.config.DB_CONN, proposal, head_block.get("num")
+        )
+        proposal_resources.append(proposal_resource)
+
+    rejected_proposals = []
+    for proposal_resource in proposal_resources:
+        if (
+            proposal_resource["status"] == "REJECTED"
+            and user_id in proposal_resource["approvers"]
+        ):
+            rejected_proposals.append(proposal_resource)
+
+    return await utils.create_response(
+        request.app.config.DB_CONN,
+        request.url,
+        rejected_proposals,
+        head_block,
+        start=start,
+        limit=limit,
+    )
+
+
 @USERS_BP.get("api/users/<user_id>/roles/recommended")
 @authorized()
 async def fetch_recommended_roles(request, user_id):

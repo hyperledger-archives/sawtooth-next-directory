@@ -103,10 +103,11 @@ class ApproverChat extends Component {
               duration={{hide: 0, show: 1000}}>
               { selectedUsers.map((user, index) => {
                 if (index > 2) return null;
-
                 if (index === 2) {
                   return (
-                    <span className='next-chat-list-icon'>
+                    <span
+                      key={user}
+                      className='next-chat-list-icon'>
                       <Icon inverted name='add' size='tiny'/>
                     </span>
                   );

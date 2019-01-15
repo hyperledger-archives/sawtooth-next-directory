@@ -37,9 +37,12 @@ const { Types, Creators } = createActions({
   openProposalsRequest:       ['id'],
   openProposalsSuccess:       ['openProposals'],
   openProposalsFailure:       ['error'],
-  confirmedProposalsRequest:  null,
+  confirmedProposalsRequest:  ['id'],
   confirmedProposalsSuccess:  ['confirmedProposals'],
   confirmedProposalsFailure:  ['error'],
+  rejectedProposalsRequest:   ['id'],
+  rejectedProposalsSuccess:   ['rejectedProposals'],
+  rejectedProposalsFailure:   ['error'],
 
   organizationRequest:        ['id'],
   organizationSuccess:        ['organization'],
@@ -64,4 +67,5 @@ export const INITIAL_STATE = Immutable({
   openProposals:              null,
   organization:               null,
   onBehalfOf:                 null,
+  rejectedProposals:          null,
 });

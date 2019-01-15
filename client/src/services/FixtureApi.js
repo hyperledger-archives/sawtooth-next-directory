@@ -14,213 +14,94 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import base from '../mock_data/base.json';
-import organization from '../mock_data/organization.json';
-
-
-import cloudOnboardingPack from '../mock_data/pack_cloud_onboarding.json';
-import rebellionAccessPack from '../mock_data/pack_rebellion_access.json';
-import rebellionSecurityPack from '../mock_data/pack_rebellion_security.json';
-import jazzPack from '../mock_data/pack_jazz_security_permissions.json';
-import jazzRevPack from '../mock_data/pack_jazz_rev.json';
-
-
-import onboardingConversation from '../mock_data/conversation_onboarding.json';
-import approvalConversation from '../mock_data/conversation_approval.json';
+import conversation1 from 'mocks/conversation1.json';
+import conversation2 from 'mocks/conversation2.json';
+import organization from 'mocks/organization.json';
+import pack1 from 'mocks/pack1.json';
+import pack2 from 'mocks/pack2.json';
+import pack3 from 'mocks/pack3.json';
+import pack4 from 'mocks/pack4.json';
+import pack5 from 'mocks/pack5.json';
 
 
 export default {
+  getConfirmedProposals: () => ({ ok: true, data: [] }),
+  getOpenProposals: (id) => ({ ok: true, data: [] }),
+  getProposal: () => ({ ok: true, data: [] }),
+  getRecommended: () => ({ ok: true, data: [] }),
+  getRejectedProposals: () => ({ ok: true, data: [] }),
+  getRelationships: (id) => ({ ok: true, data: organization }),
+  getRole: (id) => ({ ok: true, data: {} }),
+  getUser: (id) => ({ ok: true, data: {} }),
+  login: (username, password) => ({ ok: true, data: {} }),
+  logout: () => ({ ok: true, data: {} }),
+  me: () => ({ ok: true, data: {} }),
+  requestPackAccess: () => ({ ok: true, data: [] }),
+  requestRoleAccess: () => ({ ok: true, data: [] }),
+  sendSocket: (message) => ({ ok: true, data: message }),
+  signup: (username, password, name, email) => ({ ok: true, data: {} }),
 
-  getRequesterBase: () => {
-    return {
-      ok: true,
-      data: base,
-    };
-  },
-
-  getOpenProposals: (id) => {
-    return {
-      ok: true,
-      data: [],
-    };
-  },
-
-  getConfirmedProposals: () => {
-    return {
-      ok: true,
-      data: [],
-    };
-  },
-
-  requestRoleAccess: () => {
-    return {
-      ok: true,
-      data: [],
-    };
-  },
-
-  requestPackAccess: () => {
-    return {
-      ok: true,
-      data: [],
-    };
-  },
-
-  getRecommended: () => {
-    return {
-      ok: true,
-      data: base,
-    };
-  },
-
-  getProposal: () => {
-    return {
-      ok: true,
-      data: base,
-    };
-  },
 
   getPack: (id) => {
     let data;
-
     switch (id) {
       case 'e15a71ee-58d2-49e8-a8e4-21888144be1f':
-        data = cloudOnboardingPack;
+        data = pack1;
         break;
-
-      case '539d9dd3-6b4d-4136-ab67-b6ff6b307c9f':
-        data = rebellionAccessPack;
-        break;
-
-      case 'd1ea7166-9c0f-428a-b684-9d73935e9211':
-        data = rebellionSecurityPack;
-        break;
-
       case '3e542e8d-2e04-4125-b7f6-5b362dcc8a60':
-        data = jazzPack;
+        data = pack2;
         break;
-
       case 'd7fc25f9-eb50-4b51-bb62-a8eb6e89f1f0':
-        data = jazzRevPack;
+        data = pack3;
         break;
-
+      case '539d9dd3-6b4d-4136-ab67-b6ff6b307c9f':
+        data = pack4;
+        break;
+      case 'd1ea7166-9c0f-428a-b684-9d73935e9211':
+        data = pack5;
+        break;
       default:
         data = {};
         break;
     }
-
-    return {
-      ok: true,
-      data,
-    };
+    return { ok: true, data };
   },
+
 
   getConversation: (id) => {
     let data;
-
     switch (id) {
       case '490d7d4c-6e07-4795-b785-7a0146d4ec0f':
-        data = onboardingConversation;
+        data = conversation1;
         break;
-
       case 'bf42a57b-6fe4-41ce-9f2a-f6f7dab54e8b':
-        data = approvalConversation;
+        data = conversation2;
         break;
-
       default:
         data = { messages: [] };
         break;
     }
-
-    return {
-      ok: true,
-      data,
-    };
+    return { ok: true, data };
   },
 
-  sendSocket: (message) => {
-    return {
-      ok: true,
-      data: message,
-    };
-  },
 
-  login: (username, password) => {
-    return {
-      ok: true,
-      data: {},
-    };
-  },
+  getPacks: () => ({
+    ok: true,
+    data: { data: [], paging: {} },
+  }),
 
-  signup: (username, password, name, email) => {
-    return {
-      ok: true,
-      data: {},
-    };
-  },
 
-  logout: () => {
-    return {
-      ok: true,
-      data: {},
-    };
-  },
+  getRoles: () => ({
+    ok: true,
+    data: { data: [], paging: {} },
+  }),
 
-  getRoles: () => {
-    return {
-      ok: true,
-      data: {
-        data: [],
-        paging: {},
-      },
-    };
-  },
 
-  me: () => {
-    return {
-      ok: true,
-      data: {},
-    };
-  },
-
-  getUser: (id) => {
-    return {
-      ok: true,
-      data: {},
-    };
-  },
-
-  getUsers: (id) => {
-    return {
-      ok: true,
-      data: {
-        data: [],
-        paging: {},
-      },
-    };
-  },
-
-  getRole: (id) => {
-    return {
-      ok: true,
-      data: {},
-    };
-  },
-
-  getPacks: () => {
-    return {
-      ok: true,
-      data: {
-        data: [],
-        paging: {},
-      },
-    };
-  },
-
-  getRelationships: (id) => {
-    return {
-      ok: true,
-      data: organization,
-    };
-  },
+  getUsers: (id) => ({
+    ok: true,
+    data: {
+      data: [],
+      paging: {},
+    },
+  }),
 };

@@ -24,7 +24,7 @@ import {
   Table } from 'semantic-ui-react';
 
 
-import './Approved.css';
+import './Rejected.css';
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import ApprovedNav from 'components/nav/ApprovedNav';
@@ -35,11 +35,11 @@ import Avatar from 'components/layouts/Avatar';
 
 /**
  *
- * @class         Approved
- * @description   Approved component
+ * @class         Rejected
+ * @description   Rejected component
  *
  */
-class Approved extends Component {
+class Rejected extends Component {
 
   themes = ['minimal'];
   state = { column: null, direction: null, selectedProposal: {} };
@@ -47,12 +47,12 @@ class Approved extends Component {
 
   /**
    * Entry point to perform tasks required to render
-   * component. On load, get confirmed proposals.
+   * component. On load, get rejected proposals.
    */
   componentDidMount () {
-    const { getConfirmedProposals } = this.props;
+    const { getRejectedProposals } = this.props;
     theme.apply(this.themes);
-    getConfirmedProposals();
+    getRejectedProposals();
     this.init();
   }
 
@@ -63,8 +63,8 @@ class Approved extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { confirmedProposals } = this.props;
-    if (prevProps.confirmedProposals !== confirmedProposals) this.init();
+    const { rejectedProposals } = this.props;
+    if (prevProps.rejectedProposals !== rejectedProposals) this.init();
   }
 
 
@@ -85,23 +85,23 @@ class Approved extends Component {
       getRoles,
       getUsers,
       roles,
-      confirmedProposals,
+      rejectedProposals,
       users } = this.props;
 
-    if (!confirmedProposals) return;
+    if (!rejectedProposals) return;
 
-    let diff = roles && confirmedProposals.filter(
+    let diff = roles && rejectedProposals.filter(
       proposal => !roles.find(role => role.id === proposal.object)
     );
-    let diff2 = users && confirmedProposals.filter(
+    let diff2 = users && rejectedProposals.filter(
       proposal => !users.find(user => user.id === proposal.opener)
     );
     diff = roles ?
       diff.map(proposal => proposal.object) :
-      confirmedProposals.map(proposal => proposal.object);
+      rejectedProposals.map(proposal => proposal.object);
     diff2 = users ?
       diff2.map(proposal => proposal.opener) :
-      confirmedProposals.map(proposal => proposal.opener);
+      rejectedProposals.map(proposal => proposal.opener);
 
     diff && diff.length > 0 && getRoles(diff);
     diff2 && diff2.length > 0 && getUsers([...new Set(diff2)]);
@@ -168,7 +168,7 @@ class Approved extends Component {
    */
   renderPlaceholder = () => {
     return (
-      <div id='next-approver-approved-placeholder'>
+      <div id='next-approver-rejected-placeholder'>
         { Array(2).fill(0).map((item, index) => (
           <Placeholder fluid key={index}>
             <Placeholder.Header>
@@ -183,11 +183,11 @@ class Approved extends Component {
 
 
   /**
-   * Render confirmed proposals table
+   * Render rejected proposals table
    * @returns {JSX}
    */
   renderTable () {
-    const { confirmedProposals } = this.props;
+    const { rejectedProposals } = this.props;
     const { column, direction } = this.state;
 
     return (
@@ -216,14 +216,14 @@ class Approved extends Component {
               Requester Email
             </Table.HeaderCell>
             <Table.HeaderCell
-              sorted={column === 'approved_date' ? direction : null}
-              onClick={this.handleSort('approved_date')}>
-              Approved On
+              sorted={column === 'rejected_date' ? direction : null}
+              onClick={this.handleSort('rejected_date')}>
+              Rejected On
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          { confirmedProposals && confirmedProposals.map(proposal => (
+          { rejectedProposals && rejectedProposals.map(proposal => (
             <Table.Row
               key={proposal.id}
               onClick={() => this.setSelectedProposal(proposal)}>
@@ -231,7 +231,7 @@ class Approved extends Component {
                 {this.roleName(proposal.object)}
               </Table.Cell>
               <Table.Cell>
-                <Header as='h4' className='next-approver-approved-table-opener'>
+                <Header as='h4' className='next-approver-rejected-table-opener'>
                   <Avatar
                     userId={proposal.opener}
                     size='small'
@@ -241,7 +241,7 @@ class Approved extends Component {
                   </Header.Content>
                 </Header>
               </Table.Cell>
-              <Table.Cell className='next-approver-approved-table-email'>
+              <Table.Cell className='next-approver-rejected-table-email'>
                 {this.userEmail(proposal.opener)}
                 <Icon name='info circle' color='grey'/>
               </Table.Cell>
@@ -261,7 +261,7 @@ class Approved extends Component {
    * @returns {JSX}
    */
   render () {
-    const { confirmedProposals } = this.props;
+    const { rejectedProposals } = this.props;
     const { selectedProposal } = this.state;
 
     return (
@@ -271,20 +271,20 @@ class Approved extends Component {
           width={12}>
           <TrackHeader
             glyph={glyph}
-            title='Approved Requests'
+            title='Rejected Requests'
             {...this.props}/>
-          <div id='next-approver-approved-content'>
+          <div id='next-approver-rejected-content'>
             <ApprovedNav/>
-            { !confirmedProposals &&
+            { !rejectedProposals &&
               this.renderPlaceholder()
             }
-            { confirmedProposals && confirmedProposals.length > 0 &&
+            { rejectedProposals && rejectedProposals.length > 0 &&
               this.renderTable()
             }
-            { confirmedProposals && confirmedProposals.length === 0 &&
+            { rejectedProposals && rejectedProposals.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  You haven&apos;t approved any items
+                  You haven&apos;t rejected any items
                 </Header.Content>
               </Header>
             }
@@ -315,4 +315,4 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Approved);
+export default connect(mapStateToProps, mapDispatchToProps)(Rejected);

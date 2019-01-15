@@ -121,11 +121,15 @@ class RoleList extends Component {
       <div className='pull-right'>
         { openProposalsByRole[roleId].map((proposal, index) => {
           if (index > 2) return null;
-
           if (index === 2) {
             return (
-              <span className='next-role-list-icon'>
-                <Icon inverted color='black' name='add' size='small'/>
+              <span
+                key={proposal.id}
+                className='next-role-list-icon'>
+                <Icon
+                  color='orange'
+                  name='add'
+                  size='tiny'/>
                 {openProposalsByRole[roleId].length - 2}
               </span>
             );

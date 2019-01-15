@@ -27,7 +27,7 @@
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
       "!**/e2e/**",
-      "!**/mock_data/**",
+      "!**/mocks/**",
       "!**/semantic/**",
       "!src/index.js",
       "!src/routes.js",

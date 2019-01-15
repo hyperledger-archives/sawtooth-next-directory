@@ -33,6 +33,7 @@ import {
   rejectProposals,
   getOpenProposals,
   getConfirmedProposals,
+  getRejectedProposals,
   getRelationships,
   createPack,
   createRole } from './ApproverSaga';
@@ -59,23 +60,11 @@ import { me, getUser, getUsers, getAllUsers } from './UserSaga';
 const api = API.create();
 
 
-/**
- *
- * Construct API sagas
- *
- *
- */
 export default function * root () {
   yield sagas();
 }
 
 
-/**
- *
- *
- *
- *
- */
 function * sagas () {
   yield all([
 
@@ -92,6 +81,9 @@ function * sagas () {
     takeLatest(ApproverTypes.REJECT_PROPOSALS_REQUEST, rejectProposals, api),
     takeLatest(
       ApproverTypes.CONFIRMED_PROPOSALS_REQUEST, getConfirmedProposals, api
+    ),
+    takeLatest(
+      ApproverTypes.REJECTED_PROPOSALS_REQUEST, getRejectedProposals, api
     ),
     takeLatest(
       ApproverTypes.ORGANIZATION_REQUEST, getRelationships, api

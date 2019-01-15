@@ -29,7 +29,9 @@ export function * getOpenProposals (api, action) {
   try {
     const { id } = action;
     const res = yield call(api.getOpenProposals, id);
-    yield put(ApproverActions.openProposalsSuccess(res.data));
+    res.ok ?
+      yield put(ApproverActions.openProposalsSuccess(res.data)) :
+      yield put(ApproverActions.openProposalsFailure(res.data));
   } catch (err) {
     console.error(err);
   }
@@ -45,7 +47,27 @@ export function * getOpenProposals (api, action) {
 export function * getConfirmedProposals (api, action) {
   try {
     const res = yield call(api.getConfirmedProposals);
-    yield put(ApproverActions.confirmedProposalsSuccess(res.data));
+    res.ok ?
+      yield put(ApproverActions.confirmedProposalsSuccess(res.data)) :
+      yield put(ApproverActions.confirmedProposalsFailure(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Get rejected proposals
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * getRejectedProposals (api, action) {
+  try {
+    const res = yield call(api.getRejectedProposals);
+    res.ok ?
+      yield put(ApproverActions.rejectedProposalsSuccess(res.data)) :
+      yield put(ApproverActions.rejectedProposalsFailure(res.data));
   } catch (err) {
     console.error(err);
   }
