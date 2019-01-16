@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 
 
 import './RolesList.css';
-import glyph from 'images/header-glyph-role.png';
+import glyph from 'images/glyph-role.png';
 
 
 /**

@@ -76,6 +76,10 @@ limitations under the License.
   right: 65px;
 }
 
+#next-header-notification-menu .ui.huge.vertical.menu {
+  width: 25rem;
+}
+
 #next-header-actions i {
   font-size: 1.1em;
 }

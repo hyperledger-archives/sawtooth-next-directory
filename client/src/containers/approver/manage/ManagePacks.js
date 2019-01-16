@@ -25,7 +25,7 @@ import {
   Placeholder } from 'semantic-ui-react';
 
 import './ManagePacks.css';
-import glyph from 'images/header-glyph-pack.png';
+import glyph from 'images/glyph-pack.png';
 import TrackHeader from 'components/layouts/TrackHeader';
 import * as theme from 'services/Theme';
 import * as utils from 'services/Utils';

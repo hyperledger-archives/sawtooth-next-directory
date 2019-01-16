@@ -239,6 +239,22 @@ export function * packAccess (api, action) {
 
 
 /**
+ * Manually expire a role
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * manualExpire (api, action) {
+  try {
+    const { id } = action;
+    yield call(api.expire, { id });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
  * Helper for getting detailed info for a specific role
  * @param {object} api    API service
  * @param {object} id     Role ID

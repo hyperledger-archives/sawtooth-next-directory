@@ -18,11 +18,14 @@ import * as storage from 'services/Storage';
 
 
 export const UserSelectors = {
-  me:         (state) => state.user.me,
-  id:         (state) =>
+  me:           (state) => state.user.me,
+  expired:      (state) => state.user.me && state.user.me.expired,
+  expiredCount: (state) =>
+    (state.user.me && state.user.me.expired.length) || null,
+  id:           (state) =>
     (state.user.me && state.user.me.id) || storage.getUserId(),
-  users:      (state) => state.user.users,
-  userFromId: (state, id) =>
+  users:        (state) => state.user.users,
+  userFromId:   (state, id) =>
     state.user.users &&
     state.user.users.find(user => user.id === id),
   usersTotalCount: (state) => state.user.usersTotalCount,

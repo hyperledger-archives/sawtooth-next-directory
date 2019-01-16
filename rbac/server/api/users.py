@@ -259,6 +259,23 @@ async def fetch_rejected_proposals(request, user_id):
     )
 
 
+@USERS_BP.patch("api/users/<user_id>/roles/expired")
+@authorized()
+async def update_expired_roles(request, user_id):
+    """Manually expire user role membership"""
+    head_block = await utils.get_request_block(request)
+    required_fields = ["id"]
+    utils.validate_fields(required_fields, request.json)
+
+    await roles_query.expire_role_member(
+        request.app.config.DB_CONN,
+        request.json.get("id"),
+        user_id,
+        head_block.get("num"),
+    )
+    return json({"role_id": request.json.get("id")})
+
+
 @USERS_BP.get("api/users/<user_id>/roles/recommended")
 @authorized()
 async def fetch_recommended_roles(request, user_id):

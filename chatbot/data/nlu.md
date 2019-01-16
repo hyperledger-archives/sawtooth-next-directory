@@ -26,6 +26,10 @@
 - /no_owner
 - /no_owner
 
+## intent:expired
+- /expired
+- /expired
+
 ## intent:cancel
 - Nevermind.
 

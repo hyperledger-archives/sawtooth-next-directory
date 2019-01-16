@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid } from 'semantic-ui-react';
+import { Button, Container, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -30,7 +30,7 @@ import MemberList from './MemberList';
 
 
 import './Role.css';
-import glyph from 'images/header-glyph-role.png';
+import glyph from 'images/glyph-role.png';
 import * as utils from 'services/Utils';
 
 
@@ -94,6 +94,7 @@ export class Role extends Component {
    */
   render () {
     const {
+      manualExpire,
       proposalFromId,
       proposalId,
       roleId,
@@ -147,6 +148,13 @@ export class Role extends Component {
                 members={this.role.members}
                 owners={this.role.owners}/>
             </Container>
+          </div>
+          <div id='next-requester-roles-manual-expire'>
+            <Button
+              basic
+              size='tiny'
+              icon='circle'
+              onClick={() => manualExpire(roleId)}/>
           </div>
         </Grid.Column>
         <Grid.Column

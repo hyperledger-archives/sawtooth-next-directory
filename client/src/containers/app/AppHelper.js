@@ -84,6 +84,8 @@ export const appState = (state) => {
     packFromId:          (id)  => RequesterSelectors.packFromId(state, id),
 
     // User
+    expired:             UserSelectors.expired(state),
+    expiredCount:        UserSelectors.expiredCount(state),
     id:                  UserSelectors.id(state),
     me:                  UserSelectors.me(state),
     users:               UserSelectors.users(state),
@@ -147,6 +149,7 @@ export const appDispatch = (dispatch) => {
     getPack:           (id)  => dispatch(RequesterActions.packRequest(id)),
     getPacks:          (ids) => dispatch(RequesterActions.packsRequest(ids)),
     getProposal:       (id)  => dispatch(RequesterActions.proposalRequest(id)),
+    manualExpire:      (id)  => dispatch(RequesterActions.manualExpire(id)),
     getProposals:      (ids) =>
       dispatch(RequesterActions.proposalsRequest(ids)),
     getAllPacks:       (start, limit) =>

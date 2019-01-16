@@ -29,7 +29,7 @@ import { syncAll } from '../IndividualsHelper';
 
 
 import './PeopleApproval.css';
-import glyph from 'images/header-glyph-individual.png';
+import glyph from 'images/glyph-individual.png';
 import * as theme from 'services/Theme';
 
 

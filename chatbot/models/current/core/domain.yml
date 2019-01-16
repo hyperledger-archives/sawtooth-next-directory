@@ -11,6 +11,7 @@ actions:
 - utter_current_draft_role
 - utter_default
 - utter_exclame
+- utter_expired
 - utter_fanfare_sent
 - utter_feeling
 - utter_generic
@@ -59,6 +60,8 @@ intents:
 - cancel:
     use_entities: true
 - deny:
+    use_entities: true
+- expired:
     use_entities: true
 - feeling:
     use_entities: true
@@ -180,6 +183,15 @@ templates:
   - text: I don't understand what you mean.
   utter_exclame:
   - text: Awesome!
+  utter_expired:
+  - buttons:
+    - payload: Yes, please.
+      title: Yes, please
+    - payload: No, thanks.
+      title: No, thanks
+    text: It looks like your membership to <strong>{resource_name}</strong> has expired.
+      Don't worry. This is normal security stuff. Do you want me to request access
+      for you again?
   utter_fanfare_sent:
   - text: <h1>🧚</h1>I've sent your request. Isn't this just magical?
   - text: <h1>🧚</h1>Sent and sent!

@@ -48,7 +48,8 @@ import {
   getProposal,
   getProposals,
   getAllPacks,
-  getAllRoles } from './RequesterSaga';
+  getAllRoles,
+  manualExpire } from './RequesterSaga';
 
 
 import { closeSocket, openSocket, sendSocket } from './AppSaga';
@@ -109,6 +110,7 @@ function * sagas () {
     takeLatest(RequesterTypes.PROPOSALS_REQUEST, getProposals, api),
     takeLatest(RequesterTypes.PACK_ACCESS_REQUEST, packAccess, api),
     takeLatest(RequesterTypes.ROLE_ACCESS_REQUEST, roleAccess, api),
+    takeLatest(RequesterTypes.MANUAL_EXPIRE, manualExpire, api),
 
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),

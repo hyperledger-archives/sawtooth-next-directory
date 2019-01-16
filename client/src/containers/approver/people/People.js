@@ -27,7 +27,7 @@ import OrganizationList from './OrganizationList';
 
 
 import './People.css';
-import glyph from 'images/header-glyph-individual.png';
+import glyph from 'images/glyph-individual.png';
 import * as theme from 'services/Theme';
 
 

@@ -53,6 +53,7 @@ const { Types, Creators } = createActions({
 
   resetAll:             null,
   feedReceive:          ['payload'],
+  manualExpire:         ['id'],
 });
 
 

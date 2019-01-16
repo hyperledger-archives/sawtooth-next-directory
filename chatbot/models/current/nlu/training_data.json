@@ -58,6 +58,14 @@
         "text": "/no_owner"
       },
       {
+        "intent": "expired",
+        "text": "/expired"
+      },
+      {
+        "intent": "expired",
+        "text": "/expired"
+      },
+      {
         "intent": "cancel",
         "text": "Nevermind."
       },

@@ -29,7 +29,7 @@ import RolesList from './RolesList';
 
 
 import './Pack.css';
-import glyph from 'images/header-glyph-pack.png';
+import glyph from 'images/glyph-pack.png';
 import * as utils from 'services/Utils';
 
 
