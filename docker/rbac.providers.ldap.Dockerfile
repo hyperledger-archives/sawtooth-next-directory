@@ -13,14 +13,15 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-FROM python:3.5-slim
-RUN pip3 install \
-        ldap3==2.5.1 \
+FROM python:3.5-slim-jessie
+RUN pip install \
         pyasn1==0.4.4 \
         pytz==2018.6 \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
+        cryptography==2.4.2 \
         requests==2.20.0 \
         sawtooth-sdk==1.0.1
+RUN pip install ldap3==2.5.1 
 WORKDIR /project/hyperledger-rbac
 CMD [ "./bin/rbac-providers-ldap" ]
