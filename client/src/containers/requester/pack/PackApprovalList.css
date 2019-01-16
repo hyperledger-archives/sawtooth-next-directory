@@ -16,12 +16,25 @@ limitations under the License.
 
 #next-pack-approval-list-container {
   margin: 40px 0;
-  padding: 0 30px;
 }
 
-#next-pack-approval-list-grid .column{
+#next-pack-approval-list-container .ui.segment {
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 0;
+  box-shadow: none;
+  margin-top: 50px;
+  padding: 0 40px;
+}
+
+#next-pack-approval-list-grid .column {
   align-items: center;
   display: flex;
+}
+
+#next-pack-approval-list-grid div:first-child h5 {
+  color: var(--small-heading-color);
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .next-pack-approval-list-status {
@@ -31,9 +44,22 @@ limitations under the License.
 
 .next-pack-approval-list-status-emoji {
   font-size: 3em;
-  margin-left: 10px;
+  margin-left: 18px;
 }
 
-#next-pack-approval-list-approvers {
+.next-pack-approval-list-approvers {
   margin-right: 20px;
+}
+
+.next-pack-approval-list-approvers div:first-child {
+  margin: 3px 7px 0 0;
+}
+
+.next-pack-approval-list-name-subheader {
+  color: #00000099 !important;
+  margin-bottom: 7px !important;
+}
+
+.next-pack-approval-list-status {
+  justify-content: flex-end;
 }

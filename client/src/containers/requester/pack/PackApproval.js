@@ -77,8 +77,8 @@ class PackApproval extends Component {
     let rejected = 0;
 
     proposals.forEach(proposal => {
-      proposal.appprovers &&
-      proposal.appprovers.map((userId) => {
+      proposal.approvers &&
+      proposal.approvers.map((userId) => {
         return users && users.find((user) => user.id === userId) ?
           undefined :
           getUser(userId);
@@ -119,7 +119,7 @@ class PackApproval extends Component {
                 <h1>
                   {approved}
                 </h1>
-                <Label circular color='grey'>
+                <Label basic circular color='green'>
                   <span
                     className='next-pack-approval-status-emoji'
                     role='img'
@@ -133,7 +133,7 @@ class PackApproval extends Component {
                 <h1>
                   {pending}
                 </h1>
-                <Label circular color='grey'>
+                <Label basic circular color='yellow'>
                   <span
                     className='next-pack-approval-status-emoji'
                     role='img'
@@ -147,7 +147,7 @@ class PackApproval extends Component {
                 <h1>
                   {rejected}
                 </h1>
-                <Label circular color='grey'>
+                <Label basic circular color='red'>
                   <span
                     className='next-pack-approval-status-emoji'
                     role='img'

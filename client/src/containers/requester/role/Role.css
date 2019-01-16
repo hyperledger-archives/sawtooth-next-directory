@@ -35,7 +35,7 @@ limitations under the License.
 }
 
 #next-requester-roles-content h5 {
-  color: #b1b3b3;
+  color: var(--small-heading-color);
   font-weight: bold;
   margin-bottom: 15px;
 }

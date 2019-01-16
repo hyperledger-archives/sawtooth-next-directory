@@ -130,7 +130,7 @@ class RolesList extends Component {
             {user.name}
           </Header.Subheader>
         }
-        {user.email &&
+        { user.email &&
           <Header.Subheader className='next-roles-list-email-subheader'>
             {user.email}
           </Header.Subheader>
