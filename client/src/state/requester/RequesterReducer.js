@@ -37,7 +37,12 @@ export const resetAll = () =>
 export const feedReceive = (state, { payload }) =>
   payload.user_proposal ?
     state.merge({
-      requests: utils.merge(state.requests || [], [payload.user_proposal]),
+      requests: utils.merge(
+        (state.requests || []).filter(
+          request => request.id !== payload.user_proposal.id
+        ),
+        [payload.user_proposal]
+      ),
     }) :
     state.merge({});
 

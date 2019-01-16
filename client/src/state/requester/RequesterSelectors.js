@@ -261,15 +261,14 @@ export const RequesterSelectors = {
    * @param   {string} id         Pack ID
    * @returns {array}
    */
-  packProposalIds: (state, id) => {
-    if (!state.user.me) return null;
-    return state.user.me.proposals.filter(
+  packProposalIds: (state, id) =>
+    state.requester.requests &&
+    state.requester.requests.filter(
       item => {
         const metadata = item.metadata &&
           item.metadata.length &&
           JSON.parse(item.metadata);
         return metadata && metadata.pack_id === id;
       }
-    ).map(item => item.proposal_id);
-  },
+    ).map(item => item.id),
 };

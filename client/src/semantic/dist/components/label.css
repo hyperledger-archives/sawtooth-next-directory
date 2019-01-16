@@ -1313,6 +1313,10 @@ a.ui.basic.label:hover {
   padding: 0.4em 0.5em !important;
   top: 0.9em;
 }
+.ui.circular.label {
+  font-weight: 400;
+  padding: 0.7em 0.8em !important;
+}
 .ui.inverted.list a.active .content.right.floated .basic.label {
   background: none;
   border-color: #FFFFFF;

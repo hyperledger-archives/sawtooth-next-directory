@@ -15,11 +15,12 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Grid, Segment } from 'semantic-ui-react';
+import { Grid, Header, Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import './PackApprovalList.css';
+import Avatar from 'components/layouts/Avatar';
 import * as utils from 'services/Utils';
 
 
@@ -81,14 +82,14 @@ class PackApprovalList extends Component {
     return (
       <div>
         { user.name &&
-          <div>
+          <Header.Subheader className='next-pack-approval-list-name-subheader'>
             {user.name}
-          </div>
+          </Header.Subheader>
         }
-        {user.email &&
-          <div>
+        { user.email &&
+          <Header.Subheader>
             {user.email}
-          </div>
+          </Header.Subheader>
         }
       </div>
     );
@@ -141,19 +142,31 @@ class PackApprovalList extends Component {
       <Segment key={proposal.object}>
         <Grid columns={3} padded='vertically' id='next-pack-approval-list-grid'>
           <Grid.Column width={5}>
-            {role && role.name}
+            <h5>
+              {role && role.name}
+            </h5>
           </Grid.Column>
           <Grid.Column width={7}>
             { proposal.approvers && proposal.approvers.map(approver => (
-              <div
+              <Header
                 key={approver}
-                id='next-pack-approval-list-approvers'
-                className='pull-left'>
-                {this.renderUserInfo(approver)}
-              </div>
+                as='h4'
+                className='next-pack-approval-list-approvers'>
+                <div>
+                  <Avatar
+                    userId={approver}
+                    size='small'
+                    {...this.props}/>
+                </div>
+                <div>
+                  {this.renderUserInfo(approver)}
+                </div>
+              </Header>
             ))}
           </Grid.Column>
-          <Grid.Column width={4}>
+          <Grid.Column
+            width={4}
+            className='next-pack-approval-list-status'>
             {this.renderStatus(proposal.status)}
           </Grid.Column>
         </Grid>
