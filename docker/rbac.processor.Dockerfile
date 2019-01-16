@@ -12,36 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-# -----------------------------------------------------------------------------
-# Begin base docker image config for Hyperledger RBAC Next Directory
-# This should remain the same for all python containers to maximize caching
-# -----------------------------------------------------------------------------
-FROM hyperledger/sawtooth-validator:1.0
-
-RUN apt-get update \
- && apt-get install -y --allow-unauthenticated -q \
-        locales \
-        python3-pip \
-        python3-sawtooth-sdk \
- && locale-gen en_US.UTF-8 \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y  apt-utils
-
-RUN pip3 install -U pip setuptools
-
-RUN pip3 install \
+FROM python:3.5-slim-jessie
+RUN apt-get update -y && \
+        apt-get install -y apt-file && \
+        apt-file update && \
+        apt-get install -y gcc
+RUN pip install \
         grpcio-tools==1.16.1 \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
+        cryptography==2.4.2 \
         sanic==0.8.3 \
-        watchdog==0.9.0
-
-ENV LC_ALL=en_US.UTF-8
+        watchdog==0.9.0 \
+        requests==2.20.0 \
+        sawtooth-sdk==1.0.1 \
+        setuptools
 WORKDIR /project/hyperledger-rbac
-# -----------------------------------------------------------------------------
-# End base docker image config for Hyperledger RBAC Next Directory
-# -----------------------------------------------------------------------------
-
 CMD ["./bin/rbac-tp"]
