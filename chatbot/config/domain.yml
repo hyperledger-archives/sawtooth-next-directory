@@ -22,6 +22,7 @@ intents:
   - bye
   - cancel
   - deny
+  - expired
   - feeling
   - greet
   - help
@@ -95,6 +96,7 @@ actions:
   - utter_current_draft_role
   - utter_default
   - utter_exclame
+  - utter_expired
   - utter_fanfare_sent
   - utter_feeling
   - utter_generic
@@ -128,6 +130,17 @@ templates:
     - text: >-
         Hi! Would you like me to request access to
         <strong>{resource_name}</strong> for you?
+      buttons:
+      - title: Yes, please
+        payload: Yes, please.
+      - title: No, thanks
+        payload: No, thanks.
+
+  utter_expired:
+    - text: >-
+        It looks like your membership to <strong>{resource_name}</strong>
+        has expired. Don't worry. This is normal security stuff. Do you want
+        me to request access for you again?
       buttons:
       - title: Yes, please
         payload: Yes, please.

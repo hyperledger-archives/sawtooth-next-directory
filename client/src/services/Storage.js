@@ -35,7 +35,7 @@ export const removeUserId = () => remove(userIdKey);
 
 
 export const get = (key) =>
-  ('; '+document.cookie).split('; '+key+'=').pop().split(';').shift();
+  ('; ' + document.cookie).split('; ' + key + '=').pop().split(';').shift();
 
 
 export const set = (key, value) =>

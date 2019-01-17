@@ -29,7 +29,7 @@ import {
 
 import './PeopleChat.css';
 import * as utils from 'services/Utils';
-import glyph from 'images/header-glyph-role.png';
+import glyph from 'images/glyph-role.png';
 import Avatar from 'components/layouts/Avatar';
 
 

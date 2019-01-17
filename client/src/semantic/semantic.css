@@ -26395,17 +26395,23 @@ Floated Menu / Item
 .ui.huge.inverted.vertical.menu {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  -webkit-box-shadow: 0 20px 30px #00000029;
+  box-shadow: 0 20px 30px #00000029;
 }
 
 .ui.huge.inverted.vertical.menu .item {
   padding-bottom: 0.65em;
 }
 
-.ui.huge.inverted.vertical.menu .center.header {
-  padding: 52px;
+.ui.huge.inverted.vertical.menu .medium.item {
+  padding: 1.1em 1em 0.9em 1em;
 }
 
-.ui.huge.inverted.vertical.menu .item:first-child {
+.ui.huge.inverted.vertical.menu .center.header {
+  padding: 41px 52px 52px 50px;
+}
+
+.ui.huge.inverted.vertical.menu .large.item:first-child {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -26415,11 +26421,12 @@ Floated Menu / Item
   min-height: 70px;
 }
 
-.ui.huge.inverted.vertical.menu > .menu-section {
+.ui.huge.inverted.vertical.menu > .menu-section:last-child {
   padding-bottom: 18px;
 }
 
 .ui.huge.inverted.vertical.menu > .menu-section > .header {
+  color: #455567;
   font-size: 0.75em;
   padding: 4px 18px;
 }
@@ -26431,9 +26438,9 @@ Floated Menu / Item
 }
 
 .ui.huge.inverted.vertical.menu > .menu-section > .menu-tray:after {
-  background: -webkit-gradient(linear, left bottom, left top, from(#212c3b), to(transparent));
-  background: -webkit-linear-gradient(bottom, #212c3b, transparent);
-  background: linear-gradient(to top, #212c3b, transparent);
+  background: -webkit-gradient(linear, left bottom, left top, from(#212c3b63), to(transparent));
+  background: -webkit-linear-gradient(bottom, #212c3b63, transparent);
+  background: linear-gradient(to top, #212c3b63, transparent);
   bottom: 19px;
   content: '';
   height: 12px;
@@ -26449,14 +26456,36 @@ Floated Menu / Item
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  font-size: 0.8em;
+  font-size: 0.76em;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header > .small {
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header > div:first-child {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header .ui.button {
+  margin-left: 25px;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header .small {
   -webkit-box-flex: 0;
   -ms-flex: 0 0 1.8em;
   flex: 0 0 1.8em;
   margin-right: 17px;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header .small.image {
+  margin-left: 1px;
+  width: 21px;
 }
 
 .ui.huge.inverted.vertical.menu .ui.header .content {
@@ -26469,7 +26498,7 @@ Floated Menu / Item
   margin-top: 7px;
 }
 
-.ui.huge.inverted.vertical.menu .item:first-child .ui.header .content {
+.ui.huge.inverted.vertical.menu .large.item:first-child .ui.header .content {
   max-width: 12em;
 }
 

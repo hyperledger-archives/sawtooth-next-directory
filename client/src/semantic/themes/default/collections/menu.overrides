@@ -5,27 +5,33 @@
 .ui.huge.inverted.vertical.menu {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  box-shadow: 0 20px 30px #00000029;
 }
 
 .ui.huge.inverted.vertical.menu .item {
   padding-bottom: .65em;
 }
 
-.ui.huge.inverted.vertical.menu .center.header {
-  padding: 52px;
+.ui.huge.inverted.vertical.menu .medium.item {
+  padding: 1.1em 1em .9em 1em;
 }
 
-.ui.huge.inverted.vertical.menu .item:first-child {
+.ui.huge.inverted.vertical.menu .center.header {
+  padding: 41px 52px 52px 50px;
+}
+
+.ui.huge.inverted.vertical.menu .large.item:first-child {
   align-items: center;
   display: flex;
   min-height: 70px;
 }
 
-.ui.huge.inverted.vertical.menu > .menu-section {
+.ui.huge.inverted.vertical.menu > .menu-section:last-child {
   padding-bottom: 18px;
 }
 
 .ui.huge.inverted.vertical.menu > .menu-section > .header {
+  color: #455567;
   font-size: .75em;
   padding: 4px 18px;
 }
@@ -37,7 +43,7 @@
 }
 
 .ui.huge.inverted.vertical.menu > .menu-section > .menu-tray:after {
-  background: linear-gradient(to top, #212c3b, transparent);
+  background: linear-gradient(to top, #212c3b63, transparent);
   bottom: 19px;
   content: '';
   height: 12px;
@@ -49,12 +55,28 @@
 .ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header {
   align-items: center;
   display: flex;
-  font-size: .8em;
+  font-size: .76em;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header > .small {
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header > div:first-child {
+  align-items: center;
+  display: flex;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header .ui.button {
+  margin-left: 25px;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header .small {
   flex: 0 0 1.8em;
   margin-right: 17px;
+}
+
+.ui.huge.inverted.vertical.menu > .menu-section > .menu-tray .item > .ui.header .small.image {
+  margin-left: 1px;
+  width: 21px;
 }
 
 .ui.huge.inverted.vertical.menu .ui.header .content {
@@ -67,7 +89,7 @@
   margin-top: 7px;
 }
 
-.ui.huge.inverted.vertical.menu .item:first-child .ui.header .content {
+.ui.huge.inverted.vertical.menu .large.item:first-child .ui.header .content {
   max-width: 12em;
 }
 

@@ -26,7 +26,7 @@ import {
   Placeholder } from 'semantic-ui-react';
 
 import './ManageRoles.css';
-import glyph from 'images/header-glyph-role.png';
+import glyph from 'images/glyph-role.png';
 import TrackHeader from 'components/layouts/TrackHeader';
 import * as theme from 'services/Theme';
 import * as utils from 'services/Utils';

@@ -100,6 +100,7 @@ export const success = {
 export const RequesterReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]:              resetAll,
   [Types.FEED_RECEIVE]:           feedReceive,
+  [Types.MANUAL_EXPIRE]:          request.temp,
 
   [Types.BASE_REQUEST]:           request.temp,
   [Types.BASE_SUCCESS]:           success.base,

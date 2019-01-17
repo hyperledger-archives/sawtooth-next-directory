@@ -125,12 +125,15 @@ const create = (baseURL =
     api.get(`users/${id}/roles/recommended`);
   const getRejectedProposals = (id = storage.get('user_id')) =>
     api.get(`users/${id}/proposals/rejected`);
+  const expire = (id) =>
+    api.patch(`users/${storage.get('user_id')}/roles/expired`, id);
 
 
   return {
     approveProposals,
     createPack,
     createRole,
+    expire,
     login,
     getConfirmedProposals,
     getRejectedProposals,

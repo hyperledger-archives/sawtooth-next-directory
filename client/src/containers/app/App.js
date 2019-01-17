@@ -45,7 +45,6 @@ import { appDispatch, appState } from './AppHelper';
  *
  *                Component communication should be done only using
  *                the Redux store.
- *
  */
 class App extends Component {
 

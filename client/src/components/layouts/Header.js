@@ -132,6 +132,9 @@ class Header extends Component {
   }
 
 
+  /**
+   * Toggle notification menu
+   */
   toggleNotificationMenu = () => {
     const { notificationMenuVisible } = this.state;
     this.setState({
@@ -141,6 +144,9 @@ class Header extends Component {
   }
 
 
+  /**
+   * Toggle global menu
+   */
   toggleGlobalMenu = () => {
     const { globalMenuVisible } = this.state;
     this.setState({
@@ -177,10 +183,31 @@ class Header extends Component {
   }
 
 
+  /**
+   * Dispatch logout action
+   */
   logout = () => {
     const { logout } = this.props;
     this.toggleGlobalMenu();
     logout();
+  }
+
+
+  /**
+   * Determine notification icon count
+   * @returns {JSX}
+   */
+  renderCountIcon () {
+    const { expiredCount, openProposalsCount } = this.props;
+    return (
+      <div>
+        { (expiredCount || openProposalsCount) &&
+          <Label circular color='red' floating size='mini'>
+            {(expiredCount || 0) + (openProposalsCount || 0)}
+          </Label>
+        }
+      </div>
+    );
   }
 
 
@@ -196,7 +223,9 @@ class Header extends Component {
       <div id='next-header-global-menu'>
         <Menu inverted size='huge' vertical>
           { me &&
-            <Menu.Item id='next-header-global-menu-profile'>
+            <Menu.Item
+              id='next-header-global-menu-profile'
+              className='large'>
               <MenuHeader as='h3'>
                 <Avatar userId={id} size='medium' {...this.props}/>
                 <MenuHeader.Content>
@@ -261,7 +290,6 @@ class Header extends Component {
     const {
       id,
       me,
-      openProposalsCount,
       recommendedPacks,
       recommendedRoles,
       startAnimation } = this.props;
@@ -290,11 +318,7 @@ class Header extends Component {
             className='cursor-pointer'
             onClick={this.toggleNotificationMenu}>
             <Icon inverted name='bell'/>
-            { openProposalsCount &&
-              <Label circular color='red' floating size='mini'>
-                {openProposalsCount}
-              </Label>
-            }
+            {this.renderCountIcon()}
           </div>
           { me &&
             <div

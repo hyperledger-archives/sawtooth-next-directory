@@ -29,7 +29,7 @@ import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import ApprovedNav from 'components/nav/ApprovedNav';
 import * as theme from 'services/Theme';
-import glyph from 'images/header-glyph-individual-inverted.png';
+import glyph from 'images/glyph-individual-inverted.png';
 import Avatar from 'components/layouts/Avatar';
 
 

@@ -43,3 +43,9 @@ limitations under the License.
 .next-margin-1 {
   margin-top: 80px !important;
 }
+
+#next-requester-roles-manual-expire {
+  bottom: 0;
+  margin: 25px 38px;
+  position: fixed;
+}

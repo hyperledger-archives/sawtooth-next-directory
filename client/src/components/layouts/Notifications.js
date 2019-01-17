@@ -16,7 +16,9 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import {
+  Button,
   Icon,
+  Image,
   Menu,
   Header as MenuHeader } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
@@ -24,8 +26,11 @@ import PropTypes from 'prop-types';
 
 
 import './Notifications.css';
-import * as utils from 'services/Utils';
+import glyph from 'images/glyph-role.png';
+
+
 import Avatar from './Avatar';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -60,27 +65,45 @@ class Notifications extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { openProposalsByUser } = this.props;
+    const { me, openProposalsByUser } = this.props;
     if (prevProps.openProposalsByUser !== openProposalsByUser)
+      this.init();
+    if (prevProps.me !== me)
       this.init();
   }
 
 
   /**
-   * Determine which users are not currently loaded
+   * Determine which roles and users are not currently loaded
    * in the client and dispatch actions to retrieve them.
    */
   init () {
-    const { getUsers, openProposalsByUser, users } = this.props;
-    if (!openProposalsByUser) return;
+    const {
+      getRoles,
+      getUsers,
+      openProposalsByUser,
+      expired,
+      roles,
+      users } = this.props;
 
-    let userIds = Object.keys(openProposalsByUser);
-    if (users && users.length) {
-      userIds = userIds.filter(
-        userId => !users.find(user => user.id === userId)
-      );
+    if (expired) {
+      let roleIds = expired;
+      if (roles && roles.length) {
+        roleIds = roleIds.filter(
+          roleId => !roles.find(role => role.id === roleId)
+        );
+      }
+      getRoles(roleIds);
     }
-    getUsers(userIds);
+    if (openProposalsByUser) {
+      let userIds = Object.keys(openProposalsByUser);
+      if (users && users.length) {
+        userIds = userIds.filter(
+          userId => !users.find(user => user.id === userId)
+        );
+      }
+      getUsers(userIds);
+    }
   }
 
 
@@ -89,7 +112,12 @@ class Notifications extends Component {
    * @returns {JSX}
    */
   render () {
-    const { openProposalsByUser, toggleMenu, userFromId } = this.props;
+    const {
+      expired,
+      openProposalsByUser,
+      roleFromId,
+      toggleMenu,
+      userFromId } = this.props;
 
     return (
       <div id='next-header-notification-menu'>
@@ -98,7 +126,7 @@ class Notifications extends Component {
           size='huge'
           vertical>
           { openProposalsByUser &&
-            Object.keys(openProposalsByUser).length !== 0 &&
+            Object.keys(openProposalsByUser).length > 0 &&
             <div className='menu-section'>
               <Menu.Header>
                 Pending Requests
@@ -112,24 +140,27 @@ class Notifications extends Component {
                       key={userId}
                       as={Link}
                       to='/approval/pending/individual'
+                      className='medium'
                       onClick={toggleMenu}>
                       <MenuHeader as='h5'>
-                        <Avatar
-                          userId={userId}
-                          size='small'
-                          {...this.props}/>
-                        <MenuHeader.Content>
-                          <strong>
-                            {user.name}
-                          </strong>
-                          {' requested access to '}
-                          <strong>
-                            { utils.countLabel(
-                              openProposalsByUser[userId].length,
-                              'role',
-                            )}
-                          </strong>
-                        </MenuHeader.Content>
+                        <div>
+                          <Avatar
+                            userId={userId}
+                            size='small'
+                            {...this.props}/>
+                          <MenuHeader.Content>
+                            <strong>
+                              {user.name}
+                            </strong>
+                            {' requested access to '}
+                            <strong>
+                              { utils.countLabel(
+                                openProposalsByUser[userId].length,
+                                'role',
+                              )}
+                            </strong>
+                          </MenuHeader.Content>
+                        </div>
                       </MenuHeader>
                     </Menu.Item>
                   );
@@ -137,10 +168,51 @@ class Notifications extends Component {
               </div>
             </div>
           }
-          { openProposalsByUser &&
+          { expired && expired.length > 0 &&
+            <div className='menu-section'>
+              <Menu.Header>
+                Expired Roles
+              </Menu.Header>
+              <div className='menu-tray'>
+                { expired.map(roleId => {
+                  const role = roleFromId(roleId);
+                  return (
+                    role &&
+                    <Menu.Item
+                      className='medium'
+                      key={roleId}>
+                      <MenuHeader as='h5'>
+                        <div>
+                          <Image size='small' src={glyph}/>
+                          <MenuHeader.Content>
+                            {'Your membership to '}
+                            <strong>
+                              {role.name}
+                            </strong>
+                            {' has expired.'}
+                          </MenuHeader.Content>
+                        </div>
+                        <Button
+                          as={Link}
+                          to={`/roles/${roleId}`}
+                          size='mini'
+                          inverted
+                          color='blue'
+                          onClick={toggleMenu}>
+                          Renew
+                        </Button>
+                      </MenuHeader>
+                    </Menu.Item>
+                  );
+                }) }
+              </div>
+            </div>
+          }
+          { openProposalsByUser && expired &&
             Object.keys(openProposalsByUser).length === 0 &&
+            expired.length === 0 &&
             <MenuHeader as='h3' icon inverted textAlign='center'>
-              <Icon name='check circle outline'/>
+              <Icon name='check circle outline' color='green'/>
               You&apos;re all caught up
               <MenuHeader.Subheader>
                 You have no pending notifications

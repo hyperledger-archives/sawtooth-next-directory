@@ -75,6 +75,7 @@ class RequesterChat extends Component {
     const {
       activePack,
       activeRole,
+      expired,
       id,
       isSocketOpen,
       messagesCountById,
@@ -99,7 +100,14 @@ class RequesterChat extends Component {
       const update = messagesCountById(resource.id) > 0 && 'update';
 
       if (activeRole) payload.approver_id = activeRole.owners[0];
-      if (memberAndOwnerOf.includes(resource.id)) {
+      if (expired && expired.includes(resource.id)) {
+
+        // Construct intent message given role membership
+        // is expired
+        payload.text = `/${update || 'expired'}${JSON.stringify(
+          {...slots, member_status: 'NOT_MEMBER'})}`;
+
+      } else if (memberAndOwnerOf.includes(resource.id)) {
 
         // Construct intent message given user is a member
         // of the current pack or role
