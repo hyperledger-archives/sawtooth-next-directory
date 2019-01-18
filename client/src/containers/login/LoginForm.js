@@ -37,6 +37,9 @@ class LoginForm extends Component {
 
   static propTypes = {
     authSource:     PropTypes.string,
+    error:      PropTypes.bool,
+    errorText:  PropTypes.string,
+    resetAuthErrorState: PropTypes.func,
     setAuthSource:  PropTypes.func,
     submit:         PropTypes.func.isRequired,
   };
@@ -59,8 +62,31 @@ class LoginForm extends Component {
    */
   componentDidUpdate (prevProps, prevState) {
     const { activeIndex } = this.state;
+    const { error, resetAuthErrorState } = this.props;
+
     if (prevState.activeIndex === 0 && activeIndex === 1)
       setTimeout(() => this.passwordRef.focus(), 300);
+
+    if (error) {
+      setTimeout(() => {
+        this.setFlow(0);
+        this.usernameRef.focus();
+        resetAuthErrorState();
+      }, 300);
+    }
+  }
+
+  /**
+   * Called whenever props changes.
+   * @param {object} nextProps Props after update
+   * @returns {object} returns the state object
+   */
+  static getDerivedStateFromProps (nextProps) {
+    const { error } = nextProps;
+
+    if (error)
+      return { username: '', password: '' };
+    return null ;
   }
 
 
@@ -137,7 +163,7 @@ class LoginForm extends Component {
    * @returns {JSX}
    */
   render () {
-    const { submit, authSource } = this.props;
+    const { submit, authSource, error, errorText} = this.props;
     const {
       activeIndex,
       username,
@@ -162,6 +188,7 @@ class LoginForm extends Component {
               <Form.Field>
                 <Input
                   id='next-username-input'
+                  ref={ref => this.usernameRef = ref}
                   autoFocus
                   placeholder='Username'
                   error={validUsername === false}
@@ -169,6 +196,12 @@ class LoginForm extends Component {
                   type='text'
                   value={username}
                   onChange={this.handleChange}/>
+
+                {error !== false ?
+                  <Label className='next-input-info'>
+                    {errorText}
+                  </Label> : ''}
+
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button

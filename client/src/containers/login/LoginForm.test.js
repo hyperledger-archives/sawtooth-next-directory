@@ -27,6 +27,7 @@ describe('LoginForm component', () => {
 
   const props = {
     submit: (username, password) => { },
+    resetAuthState: () => {},
   };
   const wrapper = shallow(<LoginForm {...props}/>);
 

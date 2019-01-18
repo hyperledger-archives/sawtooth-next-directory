@@ -36,7 +36,7 @@ export const success = (state, { isAuthenticated, payload }) => {
 
 
 export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
+  return state.merge({ fetching: false, errorText: error, error: true });
 };
 
 
@@ -44,6 +44,10 @@ export const logout = (state) => {
   storage.removeToken();
   storage.removeUserId();
   return INITIAL_STATE;
+};
+
+export const resetErrorState = (state) => {
+  return state.merge({ error: null });
 };
 
 
@@ -59,4 +63,6 @@ export const AuthReducer = createReducer(INITIAL_STATE, {
   [Types.LOGOUT_REQUEST]: request,
   [Types.LOGOUT_SUCCESS]: logout,
   [Types.LOGOUT_FAILURE]: failure,
+
+  [Types.RESET_ERROR_STATE]: resetErrorState,
 });

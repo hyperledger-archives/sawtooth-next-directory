@@ -30,6 +30,8 @@ const { Types, Creators } = createActions({
   logoutRequest:    null,
   logoutSuccess:    null,
   logoutFailure:    ['error'],
+
+  resetErrorState:       null,
 });
 
 
@@ -41,5 +43,6 @@ export const INITIAL_STATE = Immutable({
   isAuthenticated:  null,
   fetching:         null,
   error:            null,
+  errorText:        null,
   user:             null,
 });

@@ -98,3 +98,9 @@ limitations under the License.
   text-align: center;
   width: 105px;
 }
+
+.next-input-info {
+  padding: 0 !important;
+  font-size: 11px !important;
+  color: var(--text-light) !important;
+}
