@@ -91,8 +91,6 @@ services:
     image: rbac-server:${ISOLATION_ID-latest}
     volumes:
       - ".:/project/hyperledger-rbac"
-    ports:
-      - "8000:8000"
     depends_on:
       - ledger-sync
       - rethink
@@ -151,7 +149,6 @@ services:
         ./bin/setup_db --host rethink &&
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
-
   client:
     build:
       context: .
@@ -169,9 +166,6 @@ services:
     volumes:
       - ./client:/client
       - /client/node_modules
-    ports:
-      - "4201:3000"
-      - "35729:35729"
     depends_on:
       - rbac-server
 
@@ -183,8 +177,6 @@ services:
     image: rbac-chatbot:${ISOLATION_ID-latest}
     volumes:
       - ".:/project/hyperledger-rbac"
-    ports:
-      - "5005:5005"
 
   rest-api:
     container_name: sawtooth-rest-api
