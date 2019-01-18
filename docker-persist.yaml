@@ -16,12 +16,12 @@
 # Persistent data configuration
 #
 # Start with persistent data:
-#    bin/start -p
+#    bin/start -c
 #       -or-
 #    docker-compose -f docker-compose.yaml -f docker-persist.yaml up
 #
 # Start in development config with persistent data:
-#    bin/start -p -d
+#    bin/start -c -d
 #       -or-
 #    docker-compose -f docker-compose.yaml -f docker-persist.yaml -f docker-dev.yaml up
 #

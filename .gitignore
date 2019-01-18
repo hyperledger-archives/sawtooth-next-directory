@@ -132,3 +132,9 @@ secrets.sh
 # temporary files
 *.tmp
 *.log*
+
+# Certs folder
+/certs
+
+# Nginx Config file
+nginx.conf
