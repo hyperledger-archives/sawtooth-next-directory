@@ -50,7 +50,7 @@ test('loginFailure', () => {
     Actions.loginFailure(error)
   );
   expect(state.fetching).toBe(false);
-  expect(state.error).toBe('');
+  expect(state.error).toBe(true);
 });
 
 

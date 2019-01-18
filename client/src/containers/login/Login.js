@@ -42,11 +42,14 @@ import * as utils from 'services/Utils';
 class Login extends Component {
 
   static propTypes = {
+    error:                  PropTypes.bool,
+    errorText:              PropTypes.string,
     history:                PropTypes.object,
     isAuthenticated:        PropTypes.bool,
     login:                  PropTypes.func.isRequired,
     recommendedPacks:       PropTypes.array,
     recommendedRoles:       PropTypes.array,
+    resetErrorState:             PropTypes.func,
   };
 
 
@@ -127,7 +130,7 @@ class Login extends Component {
    * @returns {JSX}
    */
   render () {
-    const { login } = this.props;
+    const { login, error, errorText, resetErrorState } = this.props;
     const { authSource } = this.state;
 
     return (
@@ -140,7 +143,11 @@ class Login extends Component {
             <LoginForm
               authSource={authSource}
               setAuthSource={this.setAuthSource}
-              submit={login}/>
+              submit={login}
+              error={error}
+              errorText={errorText}
+              resetAuthErrorState={resetErrorState}
+            />
           </Grid.Column>
         </Grid>
         <div id='next-login-new-account-container'>
@@ -158,6 +165,7 @@ class Login extends Component {
 const mapStateToProps = (state) => {
   return {
     error: state.auth.error,
+    errorText: state.auth.errorText,
     isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
 };
@@ -166,6 +174,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     login: (username, password, authSource) =>
       dispatch(AuthActions.loginRequest(username, password, authSource)),
+    resetErrorState: () => dispatch(AuthActions.resetErrorState()),
   };
 };
 
