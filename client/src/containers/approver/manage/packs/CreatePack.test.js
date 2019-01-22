@@ -22,37 +22,36 @@ import { shallow } from 'enzyme';
 
 
 import * as customStore from 'customStore';
-import CreateRole from './CreateRole';
+import CreatePack from './CreatePack';
 
 
 const store = customStore.create();
-describe('CreateRole component', () => {
+
+
+describe('CreatePack component', () => {
   const props = {
     submit: (username, password) => { },
-    createRole: {
-      name: 'name',
-      owners: 'id1',
-      administrators: 'id2',
-    },
-    createRole: () => {},
-    id: 'abc',
+    userId: '',
+    createPack: () => {},
   };
-  const wrapper = shallow(<CreateRole {...props}/>);
+  const wrapper = shallow(<CreatePack {...props}/>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
     ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter>
-          <CreateRole/>
+          <CreatePack/>
         </BrowserRouter>
       </Provider>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-  wrapper.find('#next-approver-manage-create-role-form').simulate('change',
-    { event: {} }, { name: 'name', value: '' });
-  wrapper.instance().createRole(props);
+
+  wrapper.find('#next-approver-manage-create-pack-form').simulate(
+    'change',
+    { event: {} }, { name: 'name', value: '' }
+  );
+  wrapper.instance().createPack(props);
 });

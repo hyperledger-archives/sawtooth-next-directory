@@ -26,8 +26,8 @@ import * as utils from 'services/Utils';
 /**
  *
  * @class         RoleSelectGrid
- * @description   Create new pack component
- *
+ * @description   Component encapsulating a role selection grid
+ *                used for associating roles with a given pack.
  */
 class RoleSelectGrid extends Component {
 

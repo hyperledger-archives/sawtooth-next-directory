@@ -42,6 +42,13 @@ export const feedReceive = (state, { payload }) =>
 
 
 export const success = {
+  delegations: (state, { delegations }) =>
+    state.merge({
+      fetching:             false,
+      delegations:          delegations.data,
+    }),
+
+
   openProposals: (state, { openProposals }) =>
     state.merge({
       fetching:             false,
@@ -111,6 +118,11 @@ export const success = {
 export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]:                    resetAll,
   [Types.FEED_RECEIVE]:                 feedReceive,
+
+  // Delegations
+  [Types.DELEGATIONS_REQUEST]:          request,
+  [Types.DELEGATIONS_SUCCESS]:          request.delegations,
+  [Types.DELEGATIONS_FAILURE]:          failure,
 
   // Proposals
   [Types.CONFIRMED_PROPOSALS_REQUEST]:  request,

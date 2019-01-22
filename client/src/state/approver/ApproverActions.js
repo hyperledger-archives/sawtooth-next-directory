@@ -27,6 +27,10 @@ const { Types, Creators } = createActions({
   createPackSuccess:          ['pack'],
   createPackFailure:          ['error'],
 
+  delegationsRequest:         ['id'],
+  delegationsSuccess:         ['delegations'],
+  delegationsFailure:         ['error'],
+
   approveProposalsRequest:    ['ids'],
   approveProposalsSuccess:    ['closedProposal'],
   approveProposalsFailure:    ['error'],
@@ -62,6 +66,7 @@ export const INITIAL_STATE = Immutable({
   confirmedProposals:         null,
   createdPacks:               null,
   createdRoles:               null,
+  delegations:                null,
   error:                      null,
   fetching:                   null,
   openProposals:              null,

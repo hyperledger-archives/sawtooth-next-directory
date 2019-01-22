@@ -17,32 +17,40 @@ limitations under the License.
 import React from 'react';
 
 
-import ApproverNav from './components/nav/ApproverNav';
-import RequesterHome from './containers/requester/RequesterHome';
-import RequesterNav from './components/nav/RequesterNav';
-import Role from './containers/requester/role/Role';
-import Pack from './containers/requester/pack/Pack';
+import ApproverHome from 'containers/approver/ApproverHome';
+import ApproverNav from 'components/nav/ApproverNav';
+import RequesterHome from 'containers/requester/RequesterHome';
+import RequesterNav from 'components/nav/RequesterNav';
 
 
-import Approved from './containers/approver/Approved';
-import ApproverHome from './containers/approver/ApproverHome';
-import CreatePack from './containers/approver/manage/CreatePack';
-import CreateRole from './containers/approver/manage/CreateRole';
-import Delegated from './containers/approver/Delegated';
-import Expired from './containers/approver/Expired';
-import Expiring from './containers/approver/Expiring';
-import Individuals from './containers/approver/Individuals';
-import Manage from './containers/approver/manage/Manage';
-import ManagePacks from './containers/approver/manage/ManagePacks';
-import ManageRoles from './containers/approver/manage/ManageRoles';
-import People from './containers/approver/people/People';
-import PeopleApproval from './containers/approver/people/PeopleApproval';
-import Rejected from './containers/approver/Rejected';
+import Role from 'containers/requester/role/Role';
+import Pack from 'containers/requester/pack/Pack';
+
+
+import Approved from 'containers/approver/proposals/Approved';
+import Delegated from 'containers/approver/proposals/Delegated';
+import Expired from 'containers/approver/proposals/Expired';
+import Expiring from 'containers/approver/proposals/Expiring';
+import Individuals from 'containers/approver/proposals/Individuals';
+import PeopleApproval from 'containers/approver/proposals/PeopleApproval';
+import Rejected from 'containers/approver/proposals/Rejected';
+
+
+import Manage from 'containers/approver/manage/Manage';
+import People from 'containers/approver/people/People';
+
+
+import CreateRole from 'containers/approver/manage/roles/CreateRole';
+import ManageRoles from 'containers/approver/manage/roles/ManageRoles';
+import CreatePack from 'containers/approver/manage/packs/CreatePack';
+import ManagePacks from 'containers/approver/manage/packs/ManagePacks';
+import CreateDelegation
+  from 'containers/approver/manage/delegations/CreateDelegation';
+import ManageDelegations
+  from 'containers/approver/manage/delegations/ManageDelegations';
 
 
 const routes = (props) => [
-
-  // Requester
   {
     path:   '/',
     main:   (rest) => <RequesterHome {...props} {...rest}/>,
@@ -61,9 +69,6 @@ const routes = (props) => [
     nav:    () => <RequesterNav {...props}/>,
     exact:  true,
   },
-
-
-  // Approver
   {
     path:   '/approval',
     main:   (rest) => <ApproverHome {...props} {...rest}/>,
@@ -101,6 +106,12 @@ const routes = (props) => [
     exact:  true,
   },
   {
+    path:   '/approval/manage/delegations',
+    main:   (rest) => <ManageDelegations {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
     path:   '/approval/manage/roles/create',
     main:   (rest) => <CreateRole {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
@@ -109,6 +120,12 @@ const routes = (props) => [
   {
     path:   '/approval/manage/packs/create',
     main:   (rest) => <CreatePack {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/manage/delegations/create',
+    main:   (rest) => <CreateDelegation {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

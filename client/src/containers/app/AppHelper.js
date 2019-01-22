@@ -46,6 +46,7 @@ export const appState = (state) => {
 
     // Approver
     confirmedProposals:  ApproverSelectors.confirmedProposals(state),
+    delegations:         ApproverSelectors.delegations(state),
     rejectedProposals:   ApproverSelectors.rejectedProposals(state),
     openProposals:       ApproverSelectors.openProposals(state),
     openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
@@ -119,6 +120,8 @@ export const appDispatch = (dispatch) => {
       dispatch(ApproverActions.approveProposalsRequest(ids)),
     rejectProposals:   (ids) =>
       dispatch(ApproverActions.rejectProposalsRequest(ids)),
+    getDelegations:    (ids) =>
+      dispatch(ApproverActions.delegationsRequest(ids)),
     getOpenProposals:  (id)    =>
       dispatch(ApproverActions.openProposalsRequest(id)),
     getConfirmedProposals: (id) =>

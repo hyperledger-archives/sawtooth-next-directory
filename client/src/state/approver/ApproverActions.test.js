@@ -58,6 +58,25 @@ test('openProposalsFailure', () => {
 });
 
 
+test('delegationsRequest', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.delegationsRequest(null)
+  );
+  expect(state.fetching).toBe(true);
+});
+
+test('delegationsFailure', () => {
+  const error = '';
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.delegationsFailure(error)
+  );
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBe('');
+});
+
+
 test('confirmedProposalsSuccess', () => {
   const state = reducer(
     INITIAL_STATE,

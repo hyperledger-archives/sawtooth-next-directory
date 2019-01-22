@@ -22,38 +22,36 @@ import { shallow } from 'enzyme';
 
 
 import * as customStore from 'customStore';
-import CreatePack from './CreatePack';
+import CreateDelegation from './CreateDelegation';
 
 
 const store = customStore.create();
-describe('CreateRole component', () => {
+
+
+describe('CreateDelegation component', () => {
   const props = {
     submit: (username, password) => { },
-    CreateRole: () => { },
     userId: '',
-    createPack: {
-      name: 'name',
-      owners: 'id1',
-    },
-    createPack: () => {},
+    createDelegation: () => {},
   };
-  const wrapper = shallow(<CreatePack {...props}/>);
-
+  const wrapper = shallow(<CreateDelegation {...props}/>);
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
     ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter>
-          <CreatePack/>
+          <CreateDelegation/>
         </BrowserRouter>
       </Provider>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-  wrapper.find('#next-approver-manage-create-pack-form').simulate('change',
-    { event: {} }, { name: 'name', value: '' });
-  wrapper.instance().createPack(props);
+
+  wrapper.find('#next-approver-manage-create-delegation-form').simulate(
+    'change',
+    { event: {} }, { name: 'name', value: '' }
+  );
+  wrapper.instance().createDelegation(props);
 });

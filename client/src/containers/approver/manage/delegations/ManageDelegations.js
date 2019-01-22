@@ -25,7 +25,8 @@ import {
   Image,
   Placeholder } from 'semantic-ui-react';
 
-import './ManageRoles.css';
+
+import './ManageDelegations.css';
 import glyph from 'images/glyph-role.png';
 import TrackHeader from 'components/layouts/TrackHeader';
 import * as theme from 'services/Theme';
@@ -34,11 +35,11 @@ import * as utils from 'services/Utils';
 
 /**
  *
- * @class         ManageRoles
+ * @class         ManageDelegations
  * @description   Manage component
  *
  */
-class ManageRoles extends Component {
+class ManageDelegations extends Component {
 
   themes = ['minimal', 'contrast', 'magenta'];
 
@@ -46,7 +47,7 @@ class ManageRoles extends Component {
   state = {
     start: 0,
     limit: 25,
-    roleList: [],
+    delegationList: [],
   };
 
 
@@ -66,8 +67,8 @@ class ManageRoles extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { ownedRoles } = this.props;
-    if (!utils.arraysEqual(prevProps.ownedRoles, ownedRoles))
+    const { delegations } = this.props;
+    if (!utils.arraysEqual(prevProps.delegations, delegations))
       this.init();
   }
 
@@ -85,30 +86,30 @@ class ManageRoles extends Component {
    * in the client and dispatch actions to retrieve them.
    */
   init () {
-    const { ownedRoles } = this.props;
+    const { delegations } = this.props;
     this.reset();
-    ownedRoles && this.loadNext(0);
+    delegations && this.loadNext(0);
   }
 
 
   reset = () => {
-    this.setState({ roleList: [] });
+    this.setState({ delegationList: [] });
   }
 
 
   /**
-   * Render a role card
-   * @param {string} roleId Role ID
+   * Render a delegation card
+   * @param {string} delegationId Delegation ID
    * @returns {JSX}
    */
-  renderRoleCard (roleId) {
-    const { roleFromId } = this.props;
-    const role = roleFromId(roleId);
+  renderDelegationCard (delegationId) {
+    const { delegationFromId } = this.props;
+    const delegation = delegationFromId(delegationId);
 
-    if (!role) {
+    if (!delegation) {
       return (
-        <Grid.Column key={roleId}>
-          <Placeholder fluid key={roleId}>
+        <Grid.Column key={delegationId}>
+          <Placeholder fluid key={delegationId}>
             <Placeholder.Header image>
               <Placeholder.Line length='full'/>
               <Placeholder.Line length='long'/>
@@ -119,30 +120,30 @@ class ManageRoles extends Component {
     }
 
     return (
-      <Grid.Column key={roleId}>
+      <Grid.Column key={delegationId}>
         <Card
           fluid
-          as={Link}
-          to={`/roles/${roleId}`}
           className='minimal medium'>
           <Header as='h3'>
             <div>
               <Image size='mini' src={glyph}/>
             </div>
             <div>
-              {role.name}
+              {utils.countLabel(delegation.roles.length, 'role')}
               <Header.Subheader>
-                {role.description || 'No description available.'}
+                <div>
+                  {'Delegated to '}
+                  {delegation.delegate}
+                </div>
+                {delegation.delegate_message}
               </Header.Subheader>
             </div>
           </Header>
           <Card.Content extra>
-            { role && utils.countLabel([
-              ...role.members,
-              ...role.owners,
-            ]
-              .length, 'member', true)
-            }
+            From
+            {delegation.start_date}
+            {' to '}
+            {delegation.end_date}
           </Card.Content>
         </Card>
       </Grid.Column>
@@ -155,16 +156,16 @@ class ManageRoles extends Component {
    * @param {number} start Loading start index
    */
   loadNext = (start) => {
-    const { getRoles, ownedRoles } = this.props;
+    const { getDelegations, delegations } = this.props;
     const { limit } = this.state;
     if (start === undefined || start === null)
       start = this.state.start;
 
-    ownedRoles && getRoles(ownedRoles.slice(start, start + limit));
+    delegations && getDelegations(delegations.slice(start, start + limit));
     this.setState(prevState => ({
-      roleList: [
-        ...prevState.roleList,
-        ...ownedRoles.slice(start, start + limit),
+      delegationList: [
+        ...prevState.delegationList,
+        ...delegations.slice(start, start + limit),
       ],
       start: start + limit,
     }));
@@ -176,8 +177,8 @@ class ManageRoles extends Component {
    * @returns {JSX}
    */
   render () {
-    const { ownedRoles } = this.props;
-    const { roleList } = this.state;
+    const { delegations } = this.props;
+    const { delegationList } = this.state;
 
     return (
       <Grid id='next-approver-grid'>
@@ -186,44 +187,44 @@ class ManageRoles extends Component {
           width={16}>
           <TrackHeader
             inverted
-            title='Roles'
+            title='Delegations'
             breadcrumb={[
               {name: 'Manage', slug: '/approval/manage'},
-              {name: 'Roles', slug: '/approval/manage/roles'},
+              {name: 'Delegations', slug: '/approval/manage/delegations'},
             ]}
             button={() =>
               <Button
-                id='next-approver-manage-roles-create-button'
+                id='next-approver-manage-delegations-create-button'
                 icon='add'
                 size='huge'
-                content='Create New Role'
+                content='Create Delegation'
                 labelPosition='left'
                 as={Link}
-                to='roles/create'/>}
+                to='delegations/create'/>}
             {...this.props}/>
-          <div id='next-approver-manage-roles-content'>
-            { ownedRoles && ownedRoles.length > 0 &&
+          <div id='next-approver-manage-delegations-content'>
+            { delegations && delegations.length > 0 &&
               <h3>
-                {ownedRoles && utils.countLabel(ownedRoles.length, 'role')}
+                {utils.countLabel(delegations.length, 'delegation')}
               </h3>
             }
-            { ownedRoles && ownedRoles.length === 0 &&
+            { delegations && delegations.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  You haven&apos;t created any roles
+                  You haven&apos;t created any delegations
                 </Header.Content>
               </Header>
             }
             <Grid columns={1} stackable>
-              { roleList.map(roleId =>
-                this.renderRoleCard(roleId)
+              { delegationList.map(delegationId =>
+                this.renderDelegationCard(delegationId)
               ) }
             </Grid>
-            { ownedRoles &&
-              ownedRoles.length > 25 &&
-              roleList.length !== ownedRoles.length &&
+            { delegations &&
+              delegations.length > 25 &&
+              delegationList.length !== delegations.length &&
               <Container
-                id='next-manage-roles-load-next-button'
+                id='next-manage-delegations-load-next-button'
                 textAlign='center'>
                 <Button size='large' onClick={() => this.loadNext()}>
                   Load More
@@ -239,4 +240,4 @@ class ManageRoles extends Component {
 }
 
 
-export default ManageRoles;
+export default ManageDelegations;

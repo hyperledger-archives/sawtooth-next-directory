@@ -23,9 +23,9 @@ import PropTypes from 'prop-types';
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import PeopleApprovalNav from 'components/nav/IndividualsNav';
-import PeopleList from '../PeopleList';
-import RoleList from '../RoleList';
-import { syncAll } from '../IndividualsHelper';
+import PeopleList from './PeopleList';
+import RoleList from './RoleList';
+import { syncAll } from './IndividualsHelper';
 
 
 import './PeopleApproval.css';

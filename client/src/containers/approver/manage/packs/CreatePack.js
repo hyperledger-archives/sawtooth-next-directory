@@ -64,7 +64,6 @@ class CreatePack extends Component {
 
   /**
    * Create a new pack
-   * @param {string} name Name of pack
    */
   createPack = () => {
     const { description, name, selectedRoles } = this.state;
