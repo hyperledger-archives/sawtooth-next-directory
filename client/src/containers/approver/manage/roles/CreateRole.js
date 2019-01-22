@@ -61,7 +61,6 @@ class CreateRole extends Component {
 
   /**
    * Create a new role
-   * @param {string} name Name of role
    */
   createRole = () => {
     const { description, name } = this.state;
