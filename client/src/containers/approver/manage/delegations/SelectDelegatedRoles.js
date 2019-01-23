@@ -16,10 +16,8 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import {
-  Button,
   Checkbox,
   Grid,
-  Icon,
   Input,
   Search,
   Table } from 'semantic-ui-react';

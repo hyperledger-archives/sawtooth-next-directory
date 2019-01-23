@@ -41,3 +41,31 @@ limitations under the License.
 .next-chat-list-icon {
   margin-left: 0.3em;
 }
+
+#next-chat-roles-selection-label,
+#next-chat-users-selection-label {
+  align-items: center;
+  display: flex;
+}
+
+#next-chat-roles-selection-label {
+  margin-left: 32px;
+}
+
+#next-chat-users-selection-label {
+  margin-left: 39px;
+}
+
+#next-chat-roles-selection-label label,
+#next-chat-users-selection-label label {
+  margin-left: 10px;
+  word-break: break-word;
+}
+
+#next-chat-roles-selection-label img {
+  width: 24px;
+}
+
+#next-chat-users-selection-label .medium {
+  flex: 0 0 2em;
+}

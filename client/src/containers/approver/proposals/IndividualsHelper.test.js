@@ -18,10 +18,10 @@ import {
   syncAll,
   syncFromCategory,
   syncFromItem,
-  syncUsers } from './IndividualsHelper';
+  syncUsers } from './IndividualHelper';
 
 
-describe('Individuals helper test', () => {
+describe('Individual helper test', () => {
 
   it('should call syncAll function', function () {
     const checked = true, roleId = 'roleID',
@@ -38,7 +38,7 @@ describe('Individuals helper test', () => {
       userId,
     );
 
-    expect(generator.next().value).toEqual({ 'proposals': '',
+    expect(generator.next().value).toEqual({ 'proposals': [],
       'roles': ['roleID'] });
   });
 
@@ -78,7 +78,7 @@ describe('Individuals helper test', () => {
     );
 
     expect(generator.next().value).toEqual({ changedUsers: ['userID'],
-      'proposals': '', 'roles': [undefined] });
+      'proposals': [''], 'roles': [undefined] });
   });
 
 

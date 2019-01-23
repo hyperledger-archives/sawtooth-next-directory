@@ -17,6 +17,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Button, Form, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+import './ChatForm.css';
 
 
 /**
@@ -35,6 +36,8 @@ class ChatForm extends Component {
     approve:                    PropTypes.func,
     disabled:                   PropTypes.bool,
     formDisabled:               PropTypes.bool,
+    hideButtons:                PropTypes.bool,
+    hideForm:                   PropTypes.bool,
     location:                   PropTypes.object,
     messages:                   PropTypes.array,
     messagesById:               PropTypes.func,
@@ -43,7 +46,6 @@ class ChatForm extends Component {
     requestPack:                PropTypes.func,
     requestRole:                PropTypes.func,
     send:                       PropTypes.func.isRequired,
-    showForm:                   PropTypes.bool,
     socketMaxAttemptsReached:   PropTypes.bool,
     type:                       PropTypes.string,
   };
@@ -219,7 +221,8 @@ class ChatForm extends Component {
           activeMessages[0].buttons.map((button, index) => (
             <Button
               key={index}
-              className='next-chat-action-button'
+              className={`next-chat-action-button
+                ${index < 1 ? 'primary' : 'basic'}`}
               circular
               size='medium'
               disabled={disabled}
@@ -259,6 +262,7 @@ class ChatForm extends Component {
         <Button
           className='next-chat-action-button'
           circular
+          primary
           size='medium'
           disabled={disabled}
           onClick={() => this.handleApprove(1)}>
@@ -275,6 +279,7 @@ class ChatForm extends Component {
         <Button
           className='next-chat-action-button'
           circular
+          basic
           size='medium'
           disabled={disabled}
           onClick={() => this.handleApprove(0)}>
@@ -300,7 +305,8 @@ class ChatForm extends Component {
   render () {
     const {
       formDisabled,
-      showForm,
+      hideButtons,
+      hideForm,
       socketMaxAttemptsReached,
       type } = this.props;
     const { message, isDraft } = this.state;
@@ -308,7 +314,7 @@ class ChatForm extends Component {
 
     return (
       <div>
-        { !isDraft && !isManual && !showForm &&
+        { !isDraft && !isManual && !hideForm &&
         <div>
           <Form id='next-placeholder-chat'
             onSubmit={() => this.handleSend(message)}>
@@ -346,8 +352,8 @@ class ChatForm extends Component {
           </Form>
         </div>
         }
-        {type === 'REQUESTER' && this.renderRequesterActions()}
-        {type === 'APPROVER' && this.renderApproverActions()}
+        {!hideButtons && type === 'REQUESTER' && this.renderRequesterActions()}
+        {!hideButtons && type === 'APPROVER' && this.renderApproverActions()}
       </div>
     );
   }

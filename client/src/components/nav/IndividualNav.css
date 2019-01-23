@@ -14,7 +14,7 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-individuals-nav {
+#next-individual-nav {
   background: var(--component-nav-bg);
   display: flex;
   padding: var(--page-content-padding);
@@ -24,7 +24,7 @@ limitations under the License.
   z-index: 2;
 }
 
-.dark #next-individuals-nav {
+.dark #next-individual-nav {
   background: var(--dark-bg);
   z-index: 98;
 }
@@ -46,4 +46,25 @@ limitations under the License.
 .next-individual-search .ui.large.fluid.icon.input input {
   background: #eceef1;
   border: 2px solid #eceef1;
+}
+
+#next-individual-nav-select-dropdown {
+  margin-left: 18px;
+}
+
+#next-individual-nav-select-dropdown .ui.checkbox {
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+}
+
+#next-individual-nav-select-dropdown .ui.button {
+  height: 38px;
+  position: absolute;
+  width: 52px;
+}
+
+#next-individual-nav-select-dropdown i {
+  padding: 14px 0 0 25px;
+  z-index: 1;
 }

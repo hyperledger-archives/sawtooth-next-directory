@@ -31,7 +31,7 @@ import Approved from 'containers/approver/proposals/Approved';
 import Delegated from 'containers/approver/proposals/Delegated';
 import Expired from 'containers/approver/proposals/Expired';
 import Expiring from 'containers/approver/proposals/Expiring';
-import Individuals from 'containers/approver/proposals/Individuals';
+import Individual from 'containers/approver/proposals/Individual';
 import PeopleApproval from 'containers/approver/proposals/PeopleApproval';
 import Rejected from 'containers/approver/proposals/Rejected';
 
@@ -77,7 +77,7 @@ const routes = (props) => [
   },
   {
     path:   '/approval/pending/individual',
-    main:   (rest) => <Individuals {...props} {...rest}/>,
+    main:   (rest) => <Individual {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

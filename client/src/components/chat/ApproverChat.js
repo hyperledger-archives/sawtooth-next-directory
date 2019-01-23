@@ -18,6 +18,7 @@ import React, { Component } from 'react';
 import {
   Checkbox,
   Header,
+  Image,
   List,
   Segment,
   Transition } from 'semantic-ui-react';
@@ -26,7 +27,7 @@ import {
 import './ApproverChat.css';
 import ChatTranscript from './ChatTranscript';
 import Avatar from 'components/layouts/Avatar';
-import { Icon } from 'semantic-ui-react';
+import glyph from 'images/glyph-role.png';
 
 
 /**
@@ -79,6 +80,16 @@ class ApproverChat extends Component {
 
     return (
       <div>
+        {((groupBy === 0 && selectedUsers && selectedUsers.length === 0) ||
+          (groupBy === 1 && selectedRoles && selectedRoles.length === 0)) &&
+          <div id='next-chat-message-info-container'>
+            <Header
+              as='h3'
+              content='No items selected'
+              subheader={`To approve or reject a request or group of requests,
+                          pick one or more items from the list on the left.`}/>
+          </div>
+        }
         { selectedProposal && title && subtitle &&
           <div id='next-chat-selection-heading-container'>
             <Avatar
@@ -96,30 +107,6 @@ class ApproverChat extends Component {
         }
         { selectedUsers &&
           <div id='next-chat-selection-heading-container'>
-            <Transition.Group
-              as={List}
-              horizontal
-              animation='fade right'
-              duration={{hide: 0, show: 1000}}>
-              { selectedUsers.map((user, index) => {
-                if (index > 2) return null;
-                if (index === 2) {
-                  return (
-                    <span
-                      key={user}
-                      className='next-chat-list-icon'>
-                      <Icon inverted name='add' size='tiny'/>
-                    </span>
-                  );
-                }
-                return (<Avatar
-                  key={user}
-                  userId={user}
-                  size='medium'
-                  className='pull-left'
-                  {...this.props}/>);
-              })}
-            </Transition.Group>
             <Transition
               visible={selectedUsers.length > 0}
               animation='fade left'
@@ -137,15 +124,23 @@ class ApproverChat extends Component {
           <div id='next-chat-users-selection-container'>
             <Transition.Group
               as={List}
-              animation='fade down'
-              duration={{hide: 300, show: 300}}>
+              animation='fade up'
+              duration={{hide: 0, show: 200}}>
               { selectedUsers.map(user =>
-                <Segment className='minimal' padded='very' key={user}>
+                <Segment className='minimal select' padded key={user}>
                   <Checkbox
                     checked={!!user}
                     user={user}
-                    label={this.userName(user)}
                     onChange={handleChange}/>
+                  <div id='next-chat-users-selection-label'>
+                    <Avatar
+                      size='medium'
+                      userId={user}
+                      {...this.props}/>
+                    <label>
+                      {this.userName(user)}
+                    </label>
+                  </div>
                 </Segment>
               ) }
             </Transition.Group>
@@ -155,15 +150,20 @@ class ApproverChat extends Component {
           <div id='next-chat-roles-selection-container'>
             <Transition.Group
               as={List}
-              animation='fade down'
-              duration={{hide: 300, show: 300}}>
+              animation='fade up'
+              duration={{hide: 0, show: 200}}>
               { [...new Set(selectedRoles)].map(role =>
-                <Segment className='minimal' padded='very' key={role}>
+                <Segment className='minimal select' key={role}>
                   <Checkbox
                     checked={!!role}
                     role={role}
-                    label={this.roleName(role)}
                     onChange={handleChange}/>
+                  <div id='next-chat-roles-selection-label'>
+                    <Image src={glyph} size='mini'/>
+                    <label>
+                      {this.roleName(role)}
+                    </label>
+                  </div>
                 </Segment>
               ) }
             </Transition.Group>

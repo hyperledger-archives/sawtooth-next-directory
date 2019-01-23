@@ -14,12 +14,6 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-chat-message-error-container {
-  position: absolute;
-  text-align: center;
-  top: 45%;
-}
-
 #next-chat-messages {
   display: flex;
   flex-direction: column-reverse;

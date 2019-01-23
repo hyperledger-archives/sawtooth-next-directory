@@ -871,6 +871,9 @@
          Theme Overrides
 *******************************/
 
+.ui.segment {
+  overflow: hidden;
+}
 .ui.segment .ui.header {
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -958,6 +961,15 @@
           justify-content: space-between;
   margin-bottom: 1.1rem;
   padding: 22px 25px;
+}
+.ui.segment.select:before {
+  background: #f6f9fb;
+  content: '';
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 62px;
 }
 
 

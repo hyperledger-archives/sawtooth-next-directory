@@ -80,20 +80,30 @@ class RoleList extends Component {
 
 
   /**
-   * Called whenever Redux state changes. Get users not
-   * loaded in client on state change.
+   * Called whenever Redux state changes. Get roles and
+   * users not loaded in client on state change.
    * @param {object} prevProps Props before update
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { getUsers, openProposalsByUser } = this.props;
+    const {
+      getRoles,
+      getUsers,
+      openProposalsByRole,
+      openProposalsByUser } = this.props;
+
+    const newRoles = Object.keys(openProposalsByRole);
     const newUsers = Object.keys(openProposalsByUser);
+    const oldRoles = Object.keys(prevProps.openProposalsByRole);
     const oldUsers = Object.keys(prevProps.openProposalsByUser);
 
-    // ?
-    if (newUsers.length > prevProps.length) {
+    if (newUsers.length > oldUsers.length) {
       const diff = newUsers.filter(user => !oldUsers.includes(user));
       getUsers(diff);
+    }
+    if (newRoles.length > oldRoles.length) {
+      const diff = newRoles.filter(role => !oldRoles.includes(role));
+      getRoles(diff);
     }
   }
 
@@ -176,6 +186,19 @@ class RoleList extends Component {
 
 
   /**
+   * Toggle checkbox when segment container clicked
+   * @param {string} roleId  Role ID
+   */
+  handleSegmentClick = (roleId) => {
+    const { handleChange } = this.props;
+    handleChange(undefined, {
+      checked: !this.isRoleChecked(roleId),
+      role: roleId,
+    });
+  }
+
+
+  /**
    * Render role list item
    * One list item per role with an open request.
    * @param {string} roleId Role ID
@@ -185,7 +208,10 @@ class RoleList extends Component {
     const { handleChange } = this.props;
     return (
       <div className='next-role-list-item' key={roleId}>
-        <Segment className='minimal' padded>
+        <Segment
+          className='minimal select cursor-pointer'
+          padded
+          onClick={() => this.handleSegmentClick(roleId)}>
           <Checkbox
             defaultIndeterminate={this.isIndeterminate(roleId)}
             checked={this.isRoleChecked(roleId)}

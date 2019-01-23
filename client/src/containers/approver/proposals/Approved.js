@@ -295,6 +295,7 @@ class Approved extends Component {
           width={4}>
           <Chat
             disabled={true}
+            hideButtons
             selectedProposal={selectedProposal}
             subtitle={this.roleName(selectedProposal.object)}
             title={this.userName(selectedProposal.opener)}

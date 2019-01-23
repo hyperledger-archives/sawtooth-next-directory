@@ -32,10 +32,10 @@ const { Types, Creators } = createActions({
   delegationsFailure:         ['error'],
 
   approveProposalsRequest:    ['ids'],
-  approveProposalsSuccess:    ['closedProposal'],
+  approveProposalsSuccess:    ['closedProposals'],
   approveProposalsFailure:    ['error'],
   rejectProposalsRequest:     ['ids'],
-  rejectProposalsSuccess:     ['closedProposal'],
+  rejectProposalsSuccess:     ['closedProposals'],
   rejectProposalsFailure:     ['error'],
 
   openProposalsRequest:       ['id'],

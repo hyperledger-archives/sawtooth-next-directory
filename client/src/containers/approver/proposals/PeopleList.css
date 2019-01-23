@@ -29,6 +29,7 @@ limitations under the License.
 
 .next-people-list-proposal-role {
   flex: 0 0 40%;
+  font-weight: normal;
 }
 
 .next-people-list-name .ui.checkbox label {
@@ -59,8 +60,4 @@ limitations under the License.
 .next-people-list-proposal .ui.checkbox label {
   font-size: 1em;
   font-weight: normal;
-}
-
-.next-people-list-item:hover {
-  background: var(--selection-list-active-color);
 }
