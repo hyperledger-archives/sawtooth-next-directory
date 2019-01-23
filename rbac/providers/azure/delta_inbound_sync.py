@@ -26,6 +26,7 @@ from azure.eventhub import EventHubClient, Offset
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 from rbac.providers.common.common import check_last_sync
+from rbac.providers.common.rbac_transactions import add_transaction
 
 # LOGGER levels: info, debug, warning, exception, error
 logging.basicConfig(level=logging.INFO)
@@ -163,6 +164,7 @@ def insert_change_to_db(data, record_timestamp):
         "timestamp": record_timestamp,
         "provider_id": TENANT_ID,
     }
+    add_transaction(inbound_entry)
     r.table("inbound_queue").insert(inbound_entry).run()
 
 
