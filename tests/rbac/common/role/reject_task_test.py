@@ -56,7 +56,6 @@ def test_make_addresses():
     proposal_address = rbac.role.task.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
     signer_user_id = helper.user.id()
-    signer_keypair = helper.user.key()
     task_owner_address = rbac.task.owner.address(related_id, signer_user_id)
     message = rbac.role.task.reject.make(
         proposal_id=proposal_id,

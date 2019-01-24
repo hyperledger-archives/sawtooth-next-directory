@@ -52,7 +52,6 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses():
     """Test making a propose manager message"""
-    user_key = helper.user.key()
     object_id = helper.user.id()
     related_id = helper.user.id()
     reason = helper.user.manager.propose.reason()

@@ -48,7 +48,6 @@ def test_make_addresses():
     """Test making addresses"""
     user_id = helper.user.id()
     name = helper.user.name()
-    signer_keypair = helper.user.key()
     message = rbac.user.imports.make(user_id=user_id, name=name)
     inputs, outputs = rbac.user.imports.make_addresses(
         message=message, signer_user_id=user_id

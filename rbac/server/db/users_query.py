@@ -177,7 +177,7 @@ async def fetch_peers(conn, user_id):
 async def fetch_manager_chain(conn, user_id):
     """Get a user's manager chain up to 5 manager's high."""
     manager_chain = []
-    for i in range(5):
+    for _ in range(5):
         user_object = await (
             r.db("rbac")
             .table("users")

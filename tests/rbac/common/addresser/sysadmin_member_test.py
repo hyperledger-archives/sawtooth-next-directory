@@ -70,7 +70,6 @@ class TestSysAdminMemberAddresser(TestAssertions):
 
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
-        role_id = addresser.sysadmin.address()
         user_id = addresser.user.unique_id()
         rel_address = addresser.sysadmin.member.address(user_id)
 

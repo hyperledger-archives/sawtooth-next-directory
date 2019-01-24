@@ -43,7 +43,6 @@ class CreateUserTestHelper(UserTestData):
     def imports_message(self):
         """ Get a test data ImportsUser message
         """
-        user_id = self.id()
         name = self.name()
         user = rbac.user.imports.make(name=name)
 

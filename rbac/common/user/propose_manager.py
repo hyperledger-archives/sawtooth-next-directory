@@ -93,7 +93,7 @@ class ProposeUpdateUserManager(ProposalPropose):
                     message.new_manager_id
                 )
             )
-        user = addresser.user.get_from_input_state(
+        addresser.user.get_from_input_state(
             inputs=payload.inputs, input_state=input_state, object_id=message.user_id
         )
 

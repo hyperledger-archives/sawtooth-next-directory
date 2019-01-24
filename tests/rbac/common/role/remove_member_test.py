@@ -35,7 +35,6 @@ def test_make():
     user_id = helper.user.id()
     role_id = helper.role.id()
     reason = helper.proposal.reason()
-    signer_user_id = helper.user.id()
     proposal_id = rbac.addresser.proposal.unique_id()
     message = rbac.role.member.remove.make(
         proposal_id=proposal_id, object_id=role_id, related_id=user_id, reason=reason
@@ -57,8 +56,6 @@ def test_make_addresses():
     proposal_id = rbac.addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     signer_user_id = helper.user.id()
-    signer_keypair = helper.user.key()
-
     relationship_address = rbac.role.member.address(role_id, user_id)
     proposal_address = rbac.role.member.remove.address(role_id, user_id)
     role_owner_address = rbac.role.owner.address(role_id, signer_user_id)
@@ -83,9 +80,7 @@ def test_make_addresses():
 @pytest.mark.role
 def test_new():
     """Test executing the message on the blockchain"""
-    proposal, role, role_owner, role_owner_key, user, _ = (
-        helper.role.member.propose.create()
-    )
+    proposal, _, role_owner, role_owner_key, _, _ = helper.role.member.propose.create()
 
     reason = helper.role.member.propose.reason()
 
@@ -108,7 +103,7 @@ def test_new():
     proposal_id = helper.proposal.id()
     reason = helper.proposal.reason()
 
-    confirm = rbac.role.member.confirm.get(
+    rbac.role.member.confirm.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 

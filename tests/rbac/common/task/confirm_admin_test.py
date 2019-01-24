@@ -57,11 +57,11 @@ def test_make_addresses():
     reason = helper.proposal.reason()
     relationship_address = rbac.task.admin.address(object_id, related_id)
     signer_user_id = helper.user.id()
-    signer_keypair = helper.user.key()
+    helper.user.key()
 
     user_address = rbac.user.address(related_id)
     signer_admin_address = rbac.task.admin.address(object_id, signer_user_id)
-    signer_user_address = rbac.user.address(signer_user_id)
+    rbac.user.address(signer_user_id)
     message = rbac.task.admin.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,

@@ -113,7 +113,7 @@ def peek_at_queue(table_name, provider_id=None):
             return queue_entry
         queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run()
         return queue_entry
-    except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError) as err:
+    except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError):
         return None
 
 
