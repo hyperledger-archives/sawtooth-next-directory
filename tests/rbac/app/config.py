@@ -44,7 +44,7 @@ from rbac.app.config import CHATBOT_REST_ENDPOINT
 @pytest.mark.library
 @pytest.mark.config
 class TestAppConfig(TestAssertions):
-    def assertIsIntString(self, value):
+    def assert_is_int_string(self, value):
         self.assertIsInstance(value, str)
         self.assertEqual(str(int(value)), value)
 

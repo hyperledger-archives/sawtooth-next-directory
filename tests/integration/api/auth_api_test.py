@@ -86,9 +86,9 @@ def create_test_user(session):
 )
 def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with valid inputs """
-    with requests.Session() as s:
-        create_test_user(s)
-        response = s.post(
+    with requests.Session() as session:
+        create_test_user(session)
+        response = session.post(
             "http://rbac-server:8000/api/authorization/", json=login_inputs
         )
         assert response.json()["data"]["message"] == expected_result
@@ -99,8 +99,8 @@ def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
 )
 def test_invalid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with invalid inputs """
-    with requests.Session() as s:
-        response = s.post(
+    with requests.Session() as session:
+        response = session.post(
             "http://rbac-server:8000/api/authorization/", json=login_inputs
         )
         assert response.json()["message"] == expected_result

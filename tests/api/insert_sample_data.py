@@ -45,7 +45,7 @@ ROLE = {
 TASK = {"name": "test-user-permissions", "owners": [], "administrators": []}
 
 
-seeded_data = {}
+SEEDED_DATA = {}
 
 
 def get_base_api_url(txn):
@@ -58,7 +58,7 @@ def get_base_api_url(txn):
 def api_request(method, base_url, path, body=None, auth=None):
     url = base_url + path
 
-    auth = auth or seeded_data.get("auth", None)
+    auth = auth or SEEDED_DATA.get("auth", None)
     headers = {"Authorization": auth} if auth else None
 
     response = request(method, url, json=body, headers=headers)
@@ -96,37 +96,37 @@ def sub_nested_strings(dct, pattern, replacement):
 def initialize_sample_resources(txns):
     base_url = get_base_api_url(txns[0])
 
-    def submit(p, r, a=None):
-        return api_submit(base_url, p, r, a)
+    def submit(proposal, role, admin=None):
+        return api_submit(base_url, proposal, role, admin)
 
     # Create MANAGER
     manager_response = submit("users", MANAGER)
-    seeded_data["manager_auth"] = manager_response["authorization"]
-    seeded_data["manager"] = manager_response["user"]
+    SEEDED_DATA["manager_auth"] = manager_response["authorization"]
+    SEEDED_DATA["manager"] = manager_response["user"]
 
     # Create USER
-    USER["manager"] = seeded_data["manager"]["id"]
+    USER["manager"] = SEEDED_DATA["manager"]["id"]
     user_response = submit("users", USER)
-    seeded_data["auth"] = user_response["authorization"]
-    seeded_data["user"] = user_response["user"]
+    SEEDED_DATA["auth"] = user_response["authorization"]
+    SEEDED_DATA["user"] = user_response["user"]
 
     # Create ROLE
-    ROLE["owners"].append(seeded_data["user"]["id"])
-    ROLE["administrators"].append(seeded_data["user"]["id"])
-    seeded_data["role"] = submit("roles", ROLE)
+    ROLE["owners"].append(SEEDED_DATA["user"]["id"])
+    ROLE["administrators"].append(SEEDED_DATA["user"]["id"])
+    SEEDED_DATA["role"] = submit("roles", ROLE)
 
     # Create TASK
-    TASK["owners"].append(seeded_data["user"]["id"])
-    TASK["administrators"].append(seeded_data["user"]["id"])
-    seeded_data["task"] = submit("tasks", TASK)
+    TASK["owners"].append(SEEDED_DATA["user"]["id"])
+    TASK["administrators"].append(SEEDED_DATA["user"]["id"])
+    SEEDED_DATA["task"] = submit("tasks", TASK)
 
     # Create a proposal
-    proposal_path = "roles/{}/owners".format(seeded_data["role"]["id"])
-    proposal_body = {"id": seeded_data["manager"]["id"]}
-    proposal_auth = seeded_data["manager_auth"]
+    proposal_path = "roles/{}/owners".format(SEEDED_DATA["role"]["id"])
+    proposal_body = {"id": SEEDED_DATA["manager"]["id"]}
+    proposal_auth = SEEDED_DATA["manager_auth"]
 
     proposal_response = submit(proposal_path, proposal_body, proposal_auth)
-    seeded_data["proposal"] = {"id": proposal_response["proposal_id"]}
+    SEEDED_DATA["proposal"] = {"id": proposal_response["proposal_id"]}
 
     # Get head block id
     time.sleep(2)
@@ -134,11 +134,11 @@ def initialize_sample_resources(txns):
 
     # Replace example identifiers with ones from seeded data
     for txn in txns:
-        txn["request"]["headers"]["Authorization"] = seeded_data["auth"]
+        txn["request"]["headers"]["Authorization"] = SEEDED_DATA["auth"]
         sub_nested_strings(txn, "[0-9a-f]{128}", head_id)
 
         for name, spec_id in INVALID_SPEC_IDS.items():
-            sub_nested_strings(txn, spec_id, seeded_data[name]["id"])
+            sub_nested_strings(txn, spec_id, SEEDED_DATA[name]["id"])
 
 
 @hooks.before("/api/users > POST > 200 > application/json")
@@ -151,7 +151,7 @@ def lengthen_user_name(txn):
 
 @hooks.before("/api/authorization > POST > 200 > application/json")
 def add_credentials(txn):
-    patch_body(txn, {"id": seeded_data["user"]["id"], "password": USER["password"]})
+    patch_body(txn, {"id": SEEDED_DATA["user"]["id"], "password": USER["password"]})
 
 
 @hooks.before("/api/roles > POST > 200 > application/json")
@@ -160,8 +160,8 @@ def add_owners_and_admins(txn):
     patch_body(
         txn,
         {
-            "administrators": [seeded_data["user"]["id"]],
-            "owners": [seeded_data["user"]["id"]],
+            "administrators": [SEEDED_DATA["user"]["id"]],
+            "owners": [SEEDED_DATA["user"]["id"]],
         },
     )
 
@@ -169,12 +169,12 @@ def add_owners_and_admins(txn):
 @hooks.before("/api/roles/{id}/tasks > POST > 200 > application/json")
 @hooks.before("/api/roles/{id}/tasks > DELETE > 200 > application/json")
 def add_task_id(txn):
-    patch_body(txn, {"id": seeded_data["task"]["id"]})
+    patch_body(txn, {"id": SEEDED_DATA["task"]["id"]})
 
 
 @hooks.before("/api/users > POST > 200 > application/json")
 def add_manager(txn):
-    patch_body(txn, {"manager": seeded_data["manager"]["id"]})
+    patch_body(txn, {"manager": SEEDED_DATA["manager"]["id"]})
 
 
 @hooks.before("/api/roles/{id}/admins > DELETE > 200 > application/json")
@@ -188,11 +188,11 @@ def add_manager(txn):
 @hooks.before("/api/users/{id}/manager > PUT > 200 > application/json")
 @hooks.before("/api/users/{id}/manager > DELETE > 200 > application/json")
 def add_manager_id(txn):
-    txn["request"]["headers"]["Authorization"] = seeded_data["manager_auth"]
-    patch_body(txn, {"id": seeded_data["manager"]["id"]})
+    txn["request"]["headers"]["Authorization"] = SEEDED_DATA["manager_auth"]
+    patch_body(txn, {"id": SEEDED_DATA["manager"]["id"]})
 
 
 @hooks.before("/api/tasks/{id}/admins > DELETE > 200 > application/json")
 @hooks.before("/api/tasks/{id}/owners > DELETE > 200 > application/json")
 def add_user_id(txn):
-    patch_body(txn, {"id": seeded_data["user"]["id"]})
+    patch_body(txn, {"id": SEEDED_DATA["user"]["id"]})

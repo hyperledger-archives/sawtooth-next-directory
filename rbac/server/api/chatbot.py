@@ -34,14 +34,14 @@ CHATBOT_BP = Blueprint("chatbot")
 
 @CHATBOT_BP.websocket("api/chatbot")
 @authorized()
-async def chatbot(request, ws):
+async def chatbot(request, web_socket):
     while True:
         required_fields = ["text", "user_id"]
-        recv = json.loads(await ws.recv())
+        recv = json.loads(await web_socket.recv())
 
         utils.validate_fields(required_fields, recv)
         response = await create_response(request, recv)
-        await ws.send(response)
+        await web_socket.send(response)
 
 
 async def create_response(request, recv):

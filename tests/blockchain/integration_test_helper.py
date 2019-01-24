@@ -31,7 +31,7 @@ class IntegrationTestHelper:
     """ A singleton test helper ensuring the Docker containers
     are up and available to be tested against."""
 
-    class __impl:
+    class Impl:
 
         __available = False
 
@@ -58,7 +58,7 @@ class IntegrationTestHelper:
 
     def __init__(self):
         if IntegrationTestHelper.__instance is None:
-            IntegrationTestHelper.__instance = IntegrationTestHelper.__impl()
+            IntegrationTestHelper.__instance = IntegrationTestHelper.Impl()
 
         self.__dict__[
             "IntegrationTestHelper__instance"
