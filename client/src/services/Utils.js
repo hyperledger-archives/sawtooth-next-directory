@@ -38,13 +38,24 @@ export const createSlug = (id, parent) => {
 };
 
 
+/**
+ * Instruct the client to use the first recommended pack
+ * or role loaded in place of the default landing screen.
+ * To display a landing screen instead, set the value of
+ * REACT_APP_DEFAULT_LANDING to 1.
+ *
+ * @param {array} packs Recommended packs
+ * @param {array} roles Recommended roles
+ * @returns {string}
+ */
 export const createHomeLink = (packs = [], roles = []) => {
   try {
-    if (packs && packs.length > 0)
-      return `/packs/${createSlug(packs[0])}`;
-
-    else if (roles && roles.length > 0)
-      return `/roles/${createSlug(roles[0].id)}`;
+    if (process.env.REACT_APP_DEFAULT_LANDING !== '1') {
+      if (packs && packs.length > 0)
+        return `/packs/${createSlug(packs[0])}`;
+      else if (roles && roles.length > 0)
+        return `/roles/${createSlug(roles[0].id)}`;
+    }
     return '/';
   } catch (error) {
     console.error(error);

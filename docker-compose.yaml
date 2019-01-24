@@ -161,6 +161,7 @@ services:
       - REACT_APP_SERVER_PORT=${REACT_APP_SERVER_PORT}
       - REACT_APP_HTTP_PROTOCOL=${REACT_APP_HTTP_PROTOCOL}
       - REACT_APP_WS_PROTOCOL=${REACT_APP_WS_PROTOCOL}
+      - REACT_APP_DEFAULT_LANDING=${REACT_APP_DEFAULT_LANDING}
     image: rbac-client:${ISOLATION_ID-latest}
     volumes:
       - ./client:/client
