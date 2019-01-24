@@ -15,7 +15,6 @@
 """ Syncs the blockchain state to RethinkDB
 """
 import logging
-from rethinkdb import r
 
 from rbac.common import addresser
 from rbac.common.util import bytes_from_hex
@@ -36,14 +35,10 @@ def _remove_state(database, block_num, address):
     """
     try:
         # update state table
-        now = r.now()
         address_parts = addresser.parse(address)
         address_binary = bytes_from_hex(address)
-        object_id = bytes_from_hex(address_parts.object_id)
-        object_type = address_parts.object_type.value
+        bytes_from_hex(address_parts.object_id)
         related_id = bytes_from_hex(address_parts.related_id)
-        related_type = address_parts.related_type.value
-        relationship_type = address_parts.relationship_type.value
 
         state = database.get_table("state")
         state_history = database.get_table("state_history")

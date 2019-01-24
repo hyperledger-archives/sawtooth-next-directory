@@ -38,7 +38,6 @@ class TestSysAdminAddresser(TestAssertions):
 
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
-        user_id = addresser.user.unique_id()
         sysadmin_address = addresser.sysadmin.address()
 
         parsed = addresser.parse(sysadmin_address)

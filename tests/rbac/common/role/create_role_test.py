@@ -72,7 +72,6 @@ def test_make_addresses():
     user_id = helper.user.id()
     user_address = rbac.user.address(user_id)
     signer_user_id = helper.user.id()
-    signer_keypair = helper.user.key()
     owner_address = rbac.role.owner.address(role_id, user_id)
     admin_address = rbac.role.admin.address(role_id, user_id)
     message = rbac.role.make(

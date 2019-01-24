@@ -51,7 +51,6 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses_user():
     """Test making the message addresses with user as signer"""
-    user_key = helper.user.key()
     user_id = helper.user.id()
     user_address = rbac.user.address(object_id=user_id)
     manager_id = helper.user.id()
@@ -84,7 +83,6 @@ def test_make_addresses_user():
 @pytest.mark.library
 def test_make_addresses_manager():
     """Test making the message addresses with manager as signer"""
-    user_key = helper.user.key()
     user_id = helper.user.id()
     user_address = rbac.user.address(object_id=user_id)
     manager_id = helper.user.id()
@@ -117,7 +115,6 @@ def test_make_addresses_manager():
 @pytest.mark.library
 def test_make_addresses_other():
     """Test making the message addresses with other signer"""
-    user_key = helper.user.key()
     user_id = helper.user.id()
     user_address = rbac.user.address(object_id=user_id)
     manager_id = helper.user.id()

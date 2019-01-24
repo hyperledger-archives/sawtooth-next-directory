@@ -82,7 +82,7 @@ class ConfirmUpdateUserManager(ProposalConfirm):
             raise ValueError(
                 "Manager with id {} does not exist in state".format(message.related_id)
             )
-        user = addresser.user.get_from_input_state(
+        addresser.user.get_from_input_state(
             inputs=payload.inputs, input_state=input_state, object_id=message.object_id
         )
         # TODO: change to verify proposal assignment and hierarchy

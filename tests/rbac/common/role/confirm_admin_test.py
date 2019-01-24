@@ -59,7 +59,6 @@ def test_make_addresses():
     reason = helper.proposal.reason()
     relationship_address = rbac.role.admin.address(object_id, related_id)
     signer_user_id = helper.user.id()
-    signer_keypair = helper.user.key()
 
     user_address = rbac.user.address(related_id)
     signer_admin_address = rbac.role.admin.address(object_id, signer_user_id)

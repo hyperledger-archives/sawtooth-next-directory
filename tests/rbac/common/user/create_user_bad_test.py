@@ -110,8 +110,6 @@ def test_make_payload_with_other_signer():
     user_id = user_key.public_key
     manager_key = helper.user.key()
     manager_id = manager_key.public_key
-    other_id = helper.user.id()
-    other_key = helper.user.key()
     name = helper.user.name()
 
     message = protobuf.user_transaction_pb2.CreateUser(

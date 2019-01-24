@@ -52,8 +52,6 @@ def test_make_addresses():
     """Test making the message addresses"""
     object_id = helper.user.id()
     user_address = rbac.user.address(object_id=object_id)
-    signer_keypair = helper.user.key()
-
     related_id = helper.user.id()
     reason = helper.user.manager.propose.reason()
     proposal_id = helper.proposal.id()

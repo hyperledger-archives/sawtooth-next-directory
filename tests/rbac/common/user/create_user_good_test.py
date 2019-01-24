@@ -125,7 +125,7 @@ def test_make_addresses_with_manager():
     """Test making addresses with manager"""
     name = helper.user.name()
     email = helper.user.email()
-    user_key = helper.user.key()
+    helper.user.key()
     user_id = helper.user.id()
     user_address = rbac.user.address(object_id=user_id)
     manager_id = helper.user.id()
