@@ -56,7 +56,6 @@ class TestOrgHierarchy(unittest.TestCase):
     def test_00_create_users(self):
         """Tests that the validation rules within the transaction processor
         are applied correctly.
-
         Notes:
             1. User
                 CreateUser Validation rules:
@@ -72,9 +71,7 @@ class TestOrgHierarchy(unittest.TestCase):
                          /              |
                         /                |
                       user3a              user3b
-
                 UpdateUserManager Validation rules:
-
         """
 
         self.assertEqual(
@@ -179,13 +176,11 @@ class TestOrgHierarchy(unittest.TestCase):
 
     def test_01_create_roles(self):
         """Tests that the CreateRole validation rules are correct.
-
         Notes:
             Role:
                 CreateRole Validation rules
                     - There isn't already a Role with the same id
                     - The Admins listed are Users.
-
                 Role1
                     - Admins
                         - user1
@@ -195,7 +190,6 @@ class TestOrgHierarchy(unittest.TestCase):
                     - Members
                         - user3a
                         - user3b
-
         """
 
         _, role1 = self.test_helper.make_key_and_name()
@@ -255,10 +249,9 @@ class TestOrgHierarchy(unittest.TestCase):
             "All Owners listed must be Users",
         )
 
-    def test_02_propose_update_user_manager(self):
+    def test_02_prop_update_user_mngr(self):
         """Tests that the ProposeUpdateUserManager validation rules are
         correct.
-
         Notes:
             ProposeUpdateUserManager Validation rules
                 - The user exists.
@@ -332,9 +325,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "There is already a proposal to make user2a have user2b " "as a manager.",
         )
 
-    def test_03_confirm_update_manager_proposal(self):
+    def test_03_conf_upd_mngr_proposal(self):
         """Tests the ConfirmUpdateUserManager validation rules.
-
         Notes:
             ConfirmUpdateUserManager validation rules
                 - The txn signer is the new manager
@@ -388,14 +380,12 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open",
         )
 
-    def test_04_reject_update_manager_proposal(self):
+    def test_04_rej_upd_mnr_proposal(self):
         """Tests the RejectUpdateUserManager validation rules.
-
         Notes:
             RejectUpdateUserManager validation rules
                 - The proposal is open and exists.
                 - The manager's id is the header signer pubkey.
-
         """
 
         proposal_id = uuid4().hex
@@ -447,9 +437,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal is not open",
         )
 
-    def test_05_propose_add_role_admins(self):
+    def test_05_prop_add_role_admins(self):
         """Tests the ProposeAddRoleAdmins validation rules.
-
         Notes:
             ProposeAddRoleAdmins validation rules
                 - No proposal exists for the same change.
@@ -457,7 +446,6 @@ class TestOrgHierarchy(unittest.TestCase):
                 - The txn is signed by either the User or their manager.
                 - The User exists.
                 - The Role exists.
-
             At this point:
                 user1                            role1
                     |                                |
@@ -548,9 +536,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "There must not be an open proposal for the same change.",
         )
 
-    def test_06_confirm_add_role_admins(self):
+    def test_06_conf_add_role_admins(self):
         """Tests the ConfirmAddRoleAdmins validation rules.
-
         Notes:
             ConfirmAddRoleAdmins validation rules
                 - The txn signer is a Role Admin for the role.
@@ -604,9 +591,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_07_reject_add_role_admins(self):
+    def test_07_rej_add_role_admins(self):
         """Tests the RejectAddRoleAdmins validation rules.
-
         Notes:
             RejectAddRoleAdmins validation rules
                 - The txn signer is a role admin.
@@ -675,9 +661,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_08_propose_add_role_owners(self):
+    def test_08_prop_add_role_owners(self):
         """Tests the ProposeAddRoleOwners validation rules.
-
         Notes:
             ProposeAddRoleOwners validation rules
                 - The Role exists.
@@ -751,15 +736,13 @@ class TestOrgHierarchy(unittest.TestCase):
             "No open proposal can exist for the same state change.",
         )
 
-    def test_09_confirm_add_role_owners(self):
+    def test_09_confirm_add_role_owner(self):
         # pylint: disable=W1401
         """Tests the ConfirmAddRoleOwners validation rules.
-
         Notes:
             ConfirmAddRoleOwners validation rules
                 - The proposal exists and is open.
                 - The txn signer is a Role admin.
-
             At this point:
                 user1                            role1
                     |                                 |
@@ -817,9 +800,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_10_reject_add_role_owners(self):
+    def test_10_reject_add_role_owner(self):
         """Tests the RejectAddRoleOwners validation rules.
-
         Notes:
             RejectAddRoleOwners validation rules
                 - The txn signer is an admin of the Role
@@ -888,10 +870,9 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_11_propose_add_role_members(self):
+    def test_11_prop_add_role_members(self):
         # pylint: disable=W1401
         """Tests the ProposeAddRoleMembers validation rules.
-
         Notes:
             ProposeAddRoleMembers validation rules
                 - The Role exists.
@@ -899,7 +880,6 @@ class TestOrgHierarchy(unittest.TestCase):
                 - The txn signer is either the User or the User's manager.
                 - No open proposal exists for the same change.
                 - The User is not already a Member of the Role.
-
             At this point:
                 user1                            role1
                     |                            /    |
@@ -974,9 +954,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "No open proposal can exist for the same state change.",
         )
 
-    def test_12_confirm_add_role_members(self):
+    def test_12_conf_add_role_members(self):
         """Tests the ConfirmAddRoleMembers validation rules.
-
         Notes:
             ConfirmAddRoleMembers validation rules
                 - The proposal exists and is open.
@@ -1031,9 +1010,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_13_reject_add_role_members(self):
+    def test_13_reject_add_role_membrs(self):
         """Tests the RejectAddRoleMembers validation rules.
-
         Notes:
             RejectAddRoleMembers validation rules
                 - The txn signer is an owner of the Role
@@ -1104,12 +1082,10 @@ class TestOrgHierarchy(unittest.TestCase):
 
     def test_14_create_task(self):
         """Tests the CreateTask validation rules.
-
         Notes:
             CreateTask validation rules
                 - The admins listed are users.
                 - The task_id is not used already.
-
         """
 
         self.assertEqual(
@@ -1165,7 +1141,6 @@ class TestOrgHierarchy(unittest.TestCase):
 
     def test_15_propose_add_role_tasks(self):
         """Tests the ProposeAddRoleTasks validation rules.
-
         Notes:
             ProposeAddRoleTask validation rules
                 - The txn is signed by a role owner.
@@ -1173,7 +1148,6 @@ class TestOrgHierarchy(unittest.TestCase):
                 - THe Task exists.
                 - The Task isn't already part of the Role.
                 - No open proposal exists for the same change.
-
         """
 
         self.assertEqual(
@@ -1240,14 +1214,12 @@ class TestOrgHierarchy(unittest.TestCase):
             "No Proposal for the same Add Role Task can exist.",
         )
 
-    def test_16_confirm_add_role_tasks(self):
+    def test_16_conf_add_role_tasks(self):
         """Tests the ConfirmAddRoleTasks validation rules.
-
         Notes:
             ConfirmAddRoleTasks validation rules
                 - The Proposal exists and is open.
                 - The txn signer is an Owner of the Task
-
         """
 
         self.assertEqual(
@@ -1300,12 +1272,10 @@ class TestOrgHierarchy(unittest.TestCase):
 
     def test_17_reject_add_role_tasks(self):
         """Tests the RejectAddRoleTasks validation rules.
-
         Notes:
             RejectAddRoleTasks validation rules
                 - The Proposal exists and is open.
                 - The txn signer is an Owner of the Task
-
         """
 
         proposal_id = str(uuid4())
@@ -1383,9 +1353,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_18_propose_add_task_admins(self):
+    def test_18_prop_add_task_admins(self):
         """Tests the ProposeAddTaskAdmins validation rules.
-
         Notes:
             ProposeAddTaskAdmins validation rules.
                 - The Task exists
@@ -1472,9 +1441,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "There must not be any OPEN proposal for the same change.",
         )
 
-    def test_19_confirm_add_task_admins(self):
+    def test_19_conf_add_task_admins(self):
         """Tests the ConfirmAddTaskAdmins validation rules
-
         Notes
             ConfirmAddTaskAdmins validation rules
                 - The proposal exists and is open.
@@ -1516,9 +1484,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_20_reject_add_task_admins(self):
+    def test_20_rej_add_task_admins(self):
         """Tests the RejectAddTaskAdmins validation rules
-
         Notes
             RejectAddTaskAdmins validation rules
                 - The proposal exists and is open.
@@ -1574,9 +1541,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_21_propose_add_task_owners(self):
+    def test_21_prop_add_task_owners(self):
         """Tests the ProposeAddTaskOwners validation rules
-
         Notes:
             ProposeAddTaskOwners
                 - The Task exists
@@ -1663,9 +1629,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "There must not be an OPEN proposal for the same change.",
         )
 
-    def test_22_confirm_add_task_owners(self):
+    def test_22_conf_add_task_owners(self):
         """Tests the ConfirmAddTaskOwners validation rules
-
         Notes
             ConfirmAddTaskOwners validation rules
                 - The proposal exists and is open.
@@ -1707,9 +1672,8 @@ class TestOrgHierarchy(unittest.TestCase):
             "The proposal must be open.",
         )
 
-    def test_23_reject_add_task_owners(self):
+    def test_23_rej_add_task_owners(self):
         """Tests the RejectAddTaskOwners validation rules
-
         Notes:
             RejectAddTaskOwners validation rules
                 - The proposal exists and is open

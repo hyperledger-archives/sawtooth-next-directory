@@ -91,7 +91,7 @@ class AzureResponseTestCase(unittest.TestCase):
     #     self.assertEqual(json_data, {"access_token": "you_got_access_token"})
 
     @mock.patch("requests.post", side_effect=mock_requests_post)
-    def test_check_token_GET_secret(self, mock_post):
+    def test_check_token_get_secret(self, mock_post):
         """"Test when there is no graph_token."""
         result = AADAUTH.check_token("GET")
         assert result == {
@@ -100,7 +100,7 @@ class AzureResponseTestCase(unittest.TestCase):
         }
 
     @mock.patch("requests.post", side_effect=mock_requests_post)
-    def test_check_token_POST_secret(self, mock_post):
+    def test_check_token_post_secret(self, mock_post):
         """"Test when there is no graph_token."""
         result = AADAUTH.check_token("PATCH")
         assert result == {

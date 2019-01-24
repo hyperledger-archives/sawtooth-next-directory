@@ -29,7 +29,7 @@ def test_inbound_user_filter():
     assert "id" not in result
 
 
-def test_inbound_user_filter_bad_provider():
+def test_inbound_bad_provider():
     """Test the inbound user filter with bad provider throws error"""
     with pytest.raises(TypeError):
         inbound_user_filter({"id": 1234}, "potato")
@@ -43,7 +43,7 @@ def test_inbound_group_filter():
     assert "id" not in result
 
 
-def test_inbound_group_filter_bad_provider():
+def test_inbound_group_provider():
     """Test the inbound group filter with bad provider throws error"""
     with pytest.raises(TypeError):
         inbound_group_filter({"id": 1234}, "potato")
