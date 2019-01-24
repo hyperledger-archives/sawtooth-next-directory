@@ -51,7 +51,12 @@ def test_inbound_group_provider():
 
 def test_data_type_correct():
     """Test that a list stays a list when a single value is in it."""
+<<<<<<< HEAD
     result = inbound_user_filter(
         {"id": "123-456-abs3", "manager": ["123-456-abs3"]}, "azure"
     )
     assert result["manager_id"] == ["123-456-abs3"]
+=======
+    result = inbound_user_filter({'id': "123-456-abs3", "manager": ["123-456-abs3"]}, "azure")
+    assert result['manager_id'] == ["123-456-abs3"]
+>>>>>>> Remove data unpacking for type change.
