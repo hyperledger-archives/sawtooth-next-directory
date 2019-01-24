@@ -12,25 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-""" Filters for inbound data fields
-"""
+"""Filters for stadardization of inbound json data to NEXT fields"""
 
 import datetime
 from rbac.common.logs import get_logger
 
-from rbac.providers.common.provider_transforms import (
-    GROUP_TRANSFORM,
-    USER_TRANSFORM,
-    STANDARD_USER_TRANSFORM,
-)
+from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
 
 LOGGER = get_logger(__name__)
 
 
 def inbound_user_filter(entry, provider):
-    """Takes in a user dict from a provider and standardizes the dict and returns it.
-    :param: user > dict > a dictionary representing a user
-    :param: provider > str > inbound provider type (azure, ldap)
+    """Takes in a user dict from a provider,standardizes and then returns it.
+    :param: user > dict > dictionary with user payload from provider
+    :param: provider > str > provider
     """
     if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
@@ -42,21 +37,13 @@ def inbound_user_filter(entry, provider):
                 standard_entry[key] = value
     if "email" not in standard_entry and "user_principal_name" in standard_entry:
         standard_entry["email"] = standard_entry["user_principal_name"]
-    for key, aliases in STANDARD_USER_TRANSFORM.items():
-        if key not in standard_entry:
-            for alias in aliases:
-                if alias in entry:
-                    value = inbound_value_filter(entry[alias])
-                    if value:
-                        standard_entry[key] = value
-                        break
     return standard_entry
 
 
 def inbound_group_filter(entry, provider):
-    """Takes in a group dict from a provider and standardizes the dict and returns it.
-    :param: group > dict > a dictionary representing a group
-    :param: provider > str > inbound provider type (azure, ldap)
+    """Takes in a group dict from a provider,standardizes and then returns it.
+    :param: group > dict > dictionary with group payload from provider
+    :param: provider > str
     """
     if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")

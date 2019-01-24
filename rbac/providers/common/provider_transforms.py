@@ -101,5 +101,3 @@ GROUP_CREATION_TRANSFORM = {
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
 }
-
-STANDARD_USER_TRANSFORM = {"name": {"name", "given_name", "user_nickname"}}
