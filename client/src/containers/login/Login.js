@@ -50,6 +50,9 @@ class Login extends Component {
   };
 
 
+  state = { authSource: null };
+
+
   themes = ['flux'];
 
 
@@ -59,6 +62,7 @@ class Login extends Component {
    */
   componentDidMount () {
     theme.apply(this.themes);
+    this.setState({ authSource: storage.getAuthSource() || 'next' });
     this.init();
   }
 
@@ -66,10 +70,22 @@ class Login extends Component {
   /**
    * Called whenever Redux state changes.
    * @param {object} prevProps Props before update
+   * @param {object} prevState State before update
    * @returns {undefined}
    */
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (prevProps, prevState) {
+    const { authSource } = this.state;
     this.init();
+
+    if (prevState.authSource !== authSource) {
+      if (authSource === 'ldap') {
+        storage.setAuthSource('ldap');
+        theme.apply(['interpolate']);
+      } else {
+        storage.setAuthSource('next');
+        theme.remove(['interpolate']);
+      }
+    }
   }
 
 
@@ -101,11 +117,21 @@ class Login extends Component {
 
 
   /**
+   * Set authentication source
+   * @param {string} authSource Authentication source
+   */
+  setAuthSource = (authSource) => {
+    this.setState({ authSource });
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
     const { login } = this.props;
+    const { authSource } = this.state;
 
     return (
       <div id='next-login-container'>
@@ -113,11 +139,11 @@ class Login extends Component {
           <Grid.Column id='next-login-column'>
             <Header inverted textAlign='center'>
               <Image centered src={logo} id='next-login-logo'/>
-              <h1>
-                Sign in to NEXT Directory
-              </h1>
             </Header>
-            <LoginForm submit={login}/>
+            <LoginForm
+              authSource={authSource}
+              setAuthSource={this.setAuthSource}
+              submit={login}/>
           </Grid.Column>
         </Grid>
         <div id='next-login-new-account-container'>

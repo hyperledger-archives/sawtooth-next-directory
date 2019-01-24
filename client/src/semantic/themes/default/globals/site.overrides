@@ -36,12 +36,22 @@ body,
 }
 
 .flux {
-  -webkit-animation: flux 30s ease infinite;
-  -moz-animation: flux 30s ease infinite;
-  -o-animation: flux 30s ease infinite;
-  animation: flux 30s ease infinite;
-  background: linear-gradient(180deg, #7200ef, #f7007d);
-  background-size: 140% 140%;
+  background: @darkBackground;
+  background: linear-gradient(180deg, #6b00ff, #f7007d);
+}
+
+.flux:before {
+  background: linear-gradient(180deg, #1d49df, #1be2b9);
+  content: '';
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  transition: 1s ease opacity;
+  width: 100%;
+}
+
+.interpolate:before {
+  opacity: 1;
 }
 
 .avatar-palette-1 {
@@ -113,24 +123,13 @@ body,
   color: #1d1e27;
 }
 
-
-@-webkit-keyframes flux {
-  0% { background-position: 50% 0%; }
-  50% { background-position: 51% 100%; }
-  100% { background-position: 50% 0%; }
-}
-@-moz-keyframes flux {
-  0% { background-position: 50% 0%; }
-  50% { background-position: 51% 100%; }
-  100% { background-position: 50% 0%; }
-}
-@-o-keyframes flux {
-  0% { background-position: 50% 0%; }
-  50% { background-position: 51% 100%; }
-  100% { background-position: 50% 0%; }
-}
 @keyframes flux {
   0% { background-position: 50% 0%; }
   50% { background-position: 51% 100%; }
   100% { background-position: 50% 0%; }
+}
+
+@keyframes opacity {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }

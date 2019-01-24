@@ -21,6 +21,7 @@ limitations under the License.
 
 #next-signup-container h1 {
   font-size: 1.2em;
+  margin-top: 48px;
 }
 
 #next-signup-column {
@@ -39,4 +40,11 @@ limitations under the License.
 
 #next-signup-form-1 {
   margin-top: 70px;
+}
+
+#next-signup-logo {
+  height: 100px;
+  margin-bottom: 25px;
+  margin-right: 0;
+  width: 100px;
 }
