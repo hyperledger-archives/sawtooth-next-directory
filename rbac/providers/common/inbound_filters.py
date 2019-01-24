@@ -65,20 +65,14 @@ def datetime_to_seconds(value):
     return int((value - epoch_zero).total_seconds())
 
 
-def inbound_value_filter(value):
+def inbound_value_filter(inbound_value):
     """Cleans up data values
     1. Unwraps LDAP attributes
-    2. Removes empty arrays
-    3. Unwraps single value arrays
-    4. Converts datetime.datetime to seconds
+    2. Converts datetime.datetime to seconds
     """
-    if hasattr(value, "value"):
-        value = value.value
-    if isinstance(value, list):
-        if not value:
-            return None
-        if len(value) == 1:
-            return value[0]
+    value = inbound_value
+    if hasattr(inbound_value, "value"):
+        value = inbound_value.value
     elif isinstance(value, datetime.datetime):
-        return datetime_to_seconds(value)
+        value = datetime_to_seconds(value)
     return value

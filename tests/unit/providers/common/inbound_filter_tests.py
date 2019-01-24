@@ -23,27 +23,35 @@ from rbac.providers.common.inbound_filters import (
 
 def test_inbound_user_filter():
     """Test the inbound user filter for azure transforms and returns a user dict."""
-    result = inbound_user_filter({"id": 1234}, "azure")
+    result = inbound_user_filter({"id": "123-456-abs3"}, "azure")
     assert isinstance(result, dict) is True
-    assert result["remote_id"] == 1234
+    assert result["remote_id"] == "123-456-abs3"
     assert "id" not in result
 
 
 def test_inbound_user_filter_bad_provider():
     """Test the inbound user filter with bad provider throws error"""
     with pytest.raises(TypeError):
-        inbound_user_filter({"id": 1234}, "potato")
+        inbound_user_filter({"id": "123-456-abs3"}, "potato")
 
 
 def test_inbound_group_filter():
     """Test the inbound group filter for azure transforms and returns a group dict."""
-    result = inbound_group_filter({"id": 1234}, "azure")
+    result = inbound_group_filter({"id": "123-456-abs3"}, "azure")
     assert isinstance(result, dict) is True
-    assert result["remote_id"] == 1234
+    assert result["remote_id"] == "123-456-abs3"
     assert "id" not in result
 
 
 def test_inbound_group_filter_bad_provider():
     """Test the inbound group filter with bad provider throws error"""
     with pytest.raises(TypeError):
-        inbound_group_filter({"id": 1234}, "potato")
+        inbound_group_filter({"id": "123-456-abs3"}, "potato")
+
+
+def test_data_type_correct():
+    """Test that a list stays a list when a single value is in it."""
+    result = inbound_user_filter(
+        {"id": "123-456-abs3", "manager": ["123-456-abs3"]}, "azure"
+    )
+    assert result["manager_id"] == ["123-456-abs3"]
