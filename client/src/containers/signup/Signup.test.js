@@ -55,8 +55,9 @@ describe('signup component', () => {
     );
 
     ReactDOM.unmountComponentAtNode(div);
-
   });
+
+
   wrapper.dive().instance().init();
   wrapper.dive().instance().componentDidUpdate(props);
 });

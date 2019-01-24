@@ -116,3 +116,8 @@
 .ui.compact.menu .item:active {
   background: #fbc4e5;
 }
+
+.ui.compact.inverted.menu {
+  border: 1px solid;
+  border-color: @white;
+}

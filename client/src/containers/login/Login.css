@@ -30,8 +30,9 @@ limitations under the License.
 }
 
 #next-login-logo {
-  margin-bottom: 25px;
   height: 100px;
+  margin-bottom: 25px;
+  margin-right: 0;
   width: 100px;
 }
 
@@ -40,7 +41,8 @@ limitations under the License.
 }
 
 #next-login-form-1 {
-  margin-top: 70px;
+  margin-top: 50px;
+  text-align: center;
 }
 
 #next-login-form-2 {
@@ -83,4 +85,16 @@ limitations under the License.
 
 #next-login-form-avatar-container {
   min-height: 80px;
+}
+
+#next-login-auth-source-menu {
+  height: 45px;
+  margin-bottom: 60px;
+}
+
+#next-login-auth-source-menu .item {
+  display: inline-block;
+  padding: 15px 0;
+  text-align: center;
+  width: 105px;
 }

@@ -38,6 +38,9 @@ describe('Login component', () => {
       push: () => {},
     },
   };
+  const state = {
+    authSource: null,
+  };
   const wrapper = shallow(
     <Login {...props} store={store}/>
   );
@@ -45,7 +48,6 @@ describe('Login component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-
     const props = {
       recommended: [{ name: 'abc' }],
       isAuthenticated: true,
@@ -63,5 +65,7 @@ describe('Login component', () => {
 
     ReactDOM.unmountComponentAtNode(div);
   });
-  wrapper.dive().instance().componentDidUpdate(props);
+
+
+  wrapper.dive().instance().componentDidUpdate(props, state);
 });

@@ -22,6 +22,7 @@ import {
   Label,
   Image,
   Input,
+  Menu,
   Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
@@ -35,7 +36,9 @@ import PropTypes from 'prop-types';
 class LoginForm extends Component {
 
   static propTypes = {
-    submit: PropTypes.func.isRequired,
+    authSource:     PropTypes.string,
+    setAuthSource:  PropTypes.func,
+    submit:         PropTypes.func.isRequired,
   };
 
 
@@ -44,7 +47,6 @@ class LoginForm extends Component {
     validUsername:  null,
     validPassword:  null,
     validEmail:     null,
-    authSource:     null,
     resetEmail:     '',
   };
 
@@ -92,7 +94,7 @@ class LoginForm extends Component {
    */
   validate = (name, value) => {
     name === 'username' &&
-      this.setState({ authSource: 'next', validUsername: value.length > 0 });
+      this.setState({ validUsername: value.length > 0 });
     name === 'password' &&
       this.setState({ validPassword: value.length > 0 });
     name === 'resetEmail' &&
@@ -101,14 +103,43 @@ class LoginForm extends Component {
 
 
   /**
+   * Render auth source menu
+   * @returns {JSX}
+   */
+  renderMenu () {
+    const { authSource, setAuthSource } = this.props;
+    return (
+      <div>
+        <Menu
+          compact
+          inverted
+          id='next-login-auth-source-menu'>
+          <Menu.Item
+            name='next'
+            active={authSource === 'next'}
+            onClick={() => setAuthSource('next')}>
+            NEXT
+          </Menu.Item>
+          <Menu.Item
+            name='ldap'
+            active={authSource === 'ldap'}
+            onClick={() => setAuthSource('ldap')}>
+            AD
+          </Menu.Item>
+        </Menu>
+      </div>
+    );
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
-    const { submit } = this.props;
+    const { submit, authSource } = this.props;
     const {
       activeIndex,
-      authSource,
       username,
       password,
       resetEmail,
@@ -126,6 +157,7 @@ class LoginForm extends Component {
           animation='fade up'
           duration={{ hide, show }}>
           <div id='next-login-form-1'>
+            {this.renderMenu()}
             <Form id='next-username-form' onSubmit={() => this.setFlow(1)}>
               <Form.Field>
                 <Input

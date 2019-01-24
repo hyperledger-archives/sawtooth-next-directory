@@ -16,6 +16,7 @@ limitations under the License.
 
 const tokenKey = 'RBAC_AUTH_HEADER_PAYLOAD';
 const viewKey = 'RBAC_APPROVER_VIEW_ENABLED';
+const authSourceKey = 'RBAC_AUTH_SOURCE';
 const userIdKey = 'user_id';
 
 
@@ -32,6 +33,11 @@ export const removeViewState = () => remove(viewKey);
 export const getUserId = () => get(userIdKey);
 export const setUserId = (value) => set(userIdKey, value);
 export const removeUserId = () => remove(userIdKey);
+
+
+export const getAuthSource = () => get(authSourceKey);
+export const setAuthSource = (value) => set(authSourceKey, value);
+export const removeAuthSource = () => remove(authSourceKey);
 
 
 export const get = (key) =>

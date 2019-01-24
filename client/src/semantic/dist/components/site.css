@@ -213,12 +213,25 @@ body,
   background: #fbfcfd;
 }
 .flux {
-  -webkit-animation: flux 30s ease infinite;
-  animation: flux 30s ease infinite;
-  background: -webkit-gradient(linear, left top, left bottom, from(#7200ef), to(#f7007d));
-  background: -webkit-linear-gradient(top, #7200ef, #f7007d);
-  background: linear-gradient(180deg, #7200ef, #f7007d);
-  background-size: 140% 140%;
+  background: #273544;
+  background: -webkit-gradient(linear, left top, left bottom, from(#6b00ff), to(#f7007d));
+  background: -webkit-linear-gradient(top, #6b00ff, #f7007d);
+  background: linear-gradient(180deg, #6b00ff, #f7007d);
+}
+.flux:before {
+  background: -webkit-gradient(linear, left top, left bottom, from(#1d49df), to(#1be2b9));
+  background: -webkit-linear-gradient(top, #1d49df, #1be2b9);
+  background: linear-gradient(180deg, #1d49df, #1be2b9);
+  content: '';
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  -webkit-transition: 1s ease opacity;
+  transition: 1s ease opacity;
+  width: 100%;
+}
+.interpolate:before {
+  opacity: 1;
 }
 .avatar-palette-1 {
   background: #ffb5e8;
@@ -295,6 +308,22 @@ body,
   }
   100% {
     background-position: 50% 0%;
+  }
+}
+@-webkit-keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

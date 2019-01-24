@@ -57,6 +57,7 @@ class Signup extends Component {
    */
   componentDidMount () {
     theme.apply(this.themes);
+    theme.remove(['interpolate']);
     this.init();
   }
 
@@ -111,9 +112,9 @@ class Signup extends Component {
         <Grid container centered columns={2}>
           <Grid.Column id='next-signup-column'>
             <Header inverted textAlign='center'>
-              <Image centered src={logo} id='next-login-logo'/>
+              <Image centered src={logo} id='next-signup-logo'/>
               <h1>
-                Create an account
+                Create a NEXT account
               </h1>
             </Header>
             <SignupForm submit={signup}/>
