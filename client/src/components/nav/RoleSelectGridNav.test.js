@@ -14,18 +14,29 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-role-select-grid {
-  margin-top: 46px;
-}
+import React from 'react';
 
-#next-role-select-grid .column .ui.placeholder {
-  margin: 40px 15px;
-}
 
-#next-role-select-grid-load-next-button {
-  margin-top: 100px;
-}
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { shallow } from 'enzyme';
 
-#next-role-select-grid-no-items {
-  margin-top: 70px;
-}
+
+import RoleSelectGridNav from './RoleSelectGridNav';
+
+
+describe('RoleSelectGridNav component', () => {
+  const props = {};
+  const wrapper = shallow(<RoleSelectGridNav {...props}/>);
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    ReactDOM.render(
+      <BrowserRouter>
+        <RoleSelectGridNav/>
+      </BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+});

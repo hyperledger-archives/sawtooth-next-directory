@@ -27,16 +27,16 @@ export const RequesterSelectors = {
     state.requester.packsTotalCount,
 
 
-  roles: (state) => [
-    ...state.requester.roles || [],
-    ...state.approver.createdRoles || [],
-  ],
+  roles: (state) => utils.merge(
+    state.requester.roles || [],
+    state.approver.createdRoles || [],
+  ),
 
 
-  packs: (state) => [
-    ...state.requester.packs || [],
-    ...state.approver.createdPacks || [],
-  ],
+  packs: (state) => utils.merge(
+    state.requester.packs || [],
+    state.approver.createdPacks || [],
+  ),
 
 
   browseData: (state) => {
