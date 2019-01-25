@@ -34,6 +34,7 @@ it('renders without crashing', () => {
   const props = {
     location: {},
     getRole: (id) => { },
+    getUsers: () => {},
     roleFromId: () => {
       return { members: [], owners: [] };
     },
