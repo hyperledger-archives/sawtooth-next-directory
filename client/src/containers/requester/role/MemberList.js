@@ -40,20 +40,11 @@ class MemberList extends Component {
 
   /**
    * Entry point to perform tasks required to render component.
-   * Get users needed to display info for owners and members if
-   * not already loaded in client
    */
-  componentDidMount   () {
-    const { getUsers, members, owners, users } = this.props;
+  componentDidMount () {
+    const { members, owners } = this.props;
     if (!owners || !members) return;
-
-    const join = [...owners, ...members];
-
-    const diff = users &&
-      join.filter(userId =>
-        !users.find(user => user.id === userId));
-
-    diff && getUsers(diff);
+    this.init();
   }
 
 
@@ -64,16 +55,23 @@ class MemberList extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
+    const { members, owners } = this.props;
+    if (prevProps.members !== members || prevProps.owners !== owners)
+      this.init();
+  }
+
+
+  /**
+   * Get users needed to display info for owners and members if
+   * not already loaded in client.
+   */
+  init () {
     const { getUsers, members, owners, users } = this.props;
-
-    if (prevProps.members !== members || prevProps.owners !== owners) {
-      const join = [...members, ...owners];
-      const diff = users &&
-        join.filter(userId =>
-          !users.find(user => user.id === userId));
-
-      diff && getUsers(diff);
-    }
+    const join = [...owners, ...members];
+    const diff = (users && join.filter(
+      userId => !users.find(user => user.id === userId)
+    )) || join;
+    diff && getUsers(diff);
   }
 
 

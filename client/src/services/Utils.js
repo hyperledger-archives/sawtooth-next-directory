@@ -67,16 +67,25 @@ export const groupBy = (array, key) => {
  * Uniquely merge arrays
  * @param {array} array1 1st array
  * @param {array} array2 2nd array
+ * @param {array} key Unique object property
  * @returns {array}
  */
-export const merge = (array1, array2) => {
+export const merge = (array1, array2, key = 'id') => {
   try {
-    return [...new Set([
-      ...array1,
+    const join = [...new Set([
       ...array2,
-    ]
-      .map(object => JSON.stringify(object)))]
-      .map(string => JSON.parse(string));
+      ...array1,
+    ])];
+    const result = [];
+    const map = new Map();
+
+    for (const item of join) {
+      if (!map.has(item[key])) {
+        map.set(item[key], true);
+        result.push(item);
+      }
+    }
+    return result;
   } catch (error) {
     console.error(error);
     console.error('Error merging arrays. Check values:', array1, array2);

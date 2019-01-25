@@ -14,10 +14,10 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { createSlug,
+import {
+  createSlug,
   groupBy,
   merge,
-  createHomeLink,
   arraysEqual } from './Utils';
 
 
@@ -29,15 +29,37 @@ describe('Utils Service', () => {
       .toBe('1234');
   });
 
+
   test('test groupby', () => {
     groupBy([{ group: '' }], 'group');
   });
 
-  test('test merge', () => {
-    const array1 = ['firstname'], array2 = ['lastname'];
-    expect(merge(array1, array2)).toEqual([...array1, ...array2]);
 
+  test('test merge', () => {
+    const array1 = [
+      { name: 'john', role: 'old' },
+      { name: 'mary' },
+    ];
+    const array2 = [
+      { name: 'john', role: 'new' },
+    ];
+    const array3 = [
+      { id: '123', members: [1] },
+      { id: '456' },
+    ];
+    const array4 = [
+      { id: '123', members: [1, 2, 3] },
+    ];
+    expect(merge(array1, array2, 'name')).toEqual([
+      { name: 'john', role: 'new' },
+      { name: 'mary' },
+    ]);
+    expect(merge(array3, array4)).toEqual([
+      { id: '123', members: [1, 2, 3] },
+      { id: '456' },
+    ]);
   });
+
 
   test('test arraysEqual', () => {
     const array1 = ['one'], array2 = ['two'], array3 = ['three', 'four'];
@@ -45,7 +67,5 @@ describe('Utils Service', () => {
     expect(arraysEqual(array1, array2)).toEqual(false);
     expect(arraysEqual(array1, null)).toEqual(false);
     expect(arraysEqual(array1, array3)).toEqual(false);
-
   });
-
 });

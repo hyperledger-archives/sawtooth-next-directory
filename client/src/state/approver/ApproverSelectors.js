@@ -42,16 +42,16 @@ export const ApproverSelectors = {
   onBehalfOf:            (state) => state.approver.onBehalfOf,
   ownedPacks:            (state) => {
     if (!state.user.me) return null;
-    return utils.merge(
-      (state.approver.createdPacks || []).map(pack => pack.id),
-      state.user.me.ownerOf.packs,
-    );
+    return [...new Set([
+      ...(state.approver.createdPacks || []).map(pack => pack.id),
+      ...state.user.me.ownerOf.packs,
+    ])];
   },
   ownedRoles:            (state) => {
     if (!state.user.me) return null;
-    return utils.merge(
-      (state.approver.createdRoles || []).map(role => role.id),
-      state.user.me.ownerOf.roles,
-    );
+    return [...new Set([
+      ...(state.approver.createdRoles || []).map(role => role.id),
+      ...state.user.me.ownerOf.roles,
+    ])];
   },
 };
