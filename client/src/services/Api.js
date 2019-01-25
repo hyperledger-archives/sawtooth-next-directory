@@ -97,7 +97,6 @@ const create = (baseURL =
 
 
   // Definitions
-  const approveProposals = (id, body) => api.patch(`proposals/${id}`, body);
   const createPack = (payload) => api.post('packs', payload);
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
@@ -113,6 +112,7 @@ const create = (baseURL =
   const getUsers = (start, limit) => api.get('users', { start, limit });
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
+  const updateProposals = (payload) => api.patch('proposals', payload);
   const search = (query) => api.post('', { q: query });
   const signup = (creds) => api.post('users', creds);
 
@@ -130,7 +130,6 @@ const create = (baseURL =
 
 
   return {
-    approveProposals,
     createPack,
     createRole,
     expire,
@@ -151,6 +150,7 @@ const create = (baseURL =
     me,
     requestPackAccess,
     requestRoleAccess,
+    updateProposals,
     search,
     signup,
   };

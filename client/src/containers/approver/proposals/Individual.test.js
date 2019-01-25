@@ -22,7 +22,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { shallow } from 'enzyme';
 
 import * as customStore from 'customStore';
-import Individuals from './Individuals';
+import Individual from './Individual';
 
 
 const store = customStore.create();
@@ -41,7 +41,7 @@ const newprops = {
   userFromId: () => { },
   openProposals: [],
 };
-const wrapper = shallow(<Individuals {...props} store={store}/>);
+const wrapper = shallow(<Individual {...props} store={store}/>);
 
 
 it('renders without crashing', () => {
@@ -50,7 +50,7 @@ it('renders without crashing', () => {
   ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <Individuals {...props}/>
+        <Individual {...props}/>
       </BrowserRouter>
     </Provider>, div
   );
@@ -58,7 +58,7 @@ it('renders without crashing', () => {
   ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <Individuals {...newprops}/>
+        <Individual {...newprops}/>
       </BrowserRouter>
     </Provider>, div
   );

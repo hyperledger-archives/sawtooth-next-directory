@@ -14,8 +14,9 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { all, call, fork, put } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
+import { showLoading, hideLoading } from 'react-redux-loading-bar';
 import { ApproverActions } from 'state';
 
 
@@ -128,24 +129,10 @@ export function * createRole (api, action) {
  */
 export function * approveProposals (api, action) {
   try {
+    yield put(showLoading());
     const { ids } = action;
-    if (ids.length > 0)
-      yield all(ids.map(id => fork(approveProposal, api, id)));
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-
-/**
- * Approve a single proposal
- * @param {object} api    API service
- * @param {object} id     Proposal ID
- * @generator
- */
-export function * approveProposal (api, id) {
-  try {
-    const res = yield call(api.approveProposals, id, {
+    const res = yield call(api.updateProposals, {
+      ids,
       status: 'APPROVED',
       reason: '',
     });
@@ -154,6 +141,8 @@ export function * approveProposal (api, id) {
       yield put(ApproverActions.approveProposalsFailure(res.data.error));
   } catch (err) {
     console.error(err);
+  } finally {
+    yield put(hideLoading());
   }
 }
 
@@ -166,24 +155,10 @@ export function * approveProposal (api, id) {
  */
 export function * rejectProposals (api, action) {
   try {
+    yield put(showLoading());
     const { ids } = action;
-    if (ids.length > 0)
-      yield all(ids.map(id => fork(rejectProposal, api, id)));
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-
-/**
- * Reject a single proposal
- * @param {object} api    API service
- * @param {object} id     Proposal ID
- * @generator
- */
-export function * rejectProposal (api, id) {
-  try {
-    const res = yield call(api.approveProposals, id, {
+    const res = yield call(api.updateProposals, {
+      ids,
       status: 'REJECTED',
       reason: '',
     });
@@ -192,6 +167,8 @@ export function * rejectProposal (api, id) {
       yield put(ApproverActions.rejectProposalsFailure(res.data.error));
   } catch (err) {
     console.error(err);
+  } finally {
+    yield put(hideLoading());
   }
 }
 

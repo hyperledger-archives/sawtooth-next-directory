@@ -22,27 +22,27 @@ import { BrowserRouter } from 'react-router-dom';
 import { shallow } from 'enzyme';
 
 
-import IndividualsNav from './IndividualsNav';
+import IndividualNav from './IndividualNav';
 
 
-describe('IndividualsNav component', () => {
+describe('IndividualNav component', () => {
   const props = {
     activeIndex: 0,
     setFlow: () => {},
 
   };
-  const wrapper = shallow(<IndividualsNav {...props}/>);
+  const wrapper = shallow(<IndividualNav {...props}/>);
   it('renders without crashing', () => {
     const div = document.createElement('div');
 
     ReactDOM.render(
       <BrowserRouter>
-        <IndividualsNav/>
+        <IndividualNav/>
       </BrowserRouter>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);
   });
-  wrapper.find('#next-individuals-nav-roles-click').simulate('click');
-  wrapper.find('#next-individuals-nav-people-click').simulate('click');
+  wrapper.find('#next-individual-nav-roles-click').simulate('click');
+  wrapper.find('#next-individual-nav-people-click').simulate('click');
 });

@@ -33,3 +33,7 @@
 .nav-list h4.active {
   background: @magenta;
 }
+
+.ui.list.striped > div:nth-child(even) {
+  background-color: rgba(0, 0, 50, 0.02);
+}

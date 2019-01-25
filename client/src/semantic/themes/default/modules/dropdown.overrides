@@ -57,3 +57,6 @@
   .dropdown.close:before { content: "\f00d"; }
 */
 
+.ui.floating.dropdown > .menu {
+  overflow: hidden;
+}

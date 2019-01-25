@@ -2140,11 +2140,21 @@ Floated Menu / Item
 .ui.compact.menu {
   background: none;
   border-color: #E40073;
-  border-radius: 1em;
   height: 37px;
 }
 .ui.compact.menu a.item:not(.active) {
   color: #E40073;
+}
+.ui.compact.menu .item:first-child {
+  border-bottom-left-radius: 9px;
+  border-top-left-radius: 9px;
+}
+.ui.compact.menu .item:last-child {
+  border-bottom-right-radius: 9px;
+  border-top-right-radius: 9px;
+}
+.ui.compact.menu .item:active {
+  background: #fbc4e5;
 }
 
 

@@ -33,7 +33,6 @@ limitations under the License.
 }
 
 #next-chat-conversation-dock {
-  flex: 0 0 100px;
   padding: 1.3rem;
   text-align: center;
 }
@@ -44,27 +43,12 @@ limitations under the License.
   height: 2.7em;
 }
 
-#next-chat-actions {
-  display: flex;
-  margin-top: 15px;
-  min-height: 34px;
-}
-
 #next-chat-selection-heading-container {
   align-items: center;
   display: flex;
   flex: 0 0 96px;
   margin-bottom: 7px;
-  padding-left: calc(5% + 21px);
-}
-
-#next-chat-selection-heading-container .next-avatar-container {
-  border: 1px solid;
-  margin-left: -24px;
-}
-
-#next-chat-selection-heading-container h3 {
-  margin: 0 0 0 13px;
+  padding-left: 5%;
 }
 
 #next-chat-selection-heading-container h3 .ui.subheader {
@@ -113,6 +97,10 @@ limitations under the License.
 
 #next-chat-roles-selection-container .ui.segment.minimal,
 #next-chat-users-selection-container .ui.segment.minimal {
+  align-items: center;
+  border: 1px solid #dbdfe5;
+  box-shadow: none;
+  display: flex !important;
   margin-bottom: 2px;
   padding-left: 20px;
 }
@@ -127,34 +115,16 @@ limitations under the License.
   word-break: break-word;
 }
 
-.next-chat-action-button {
-  flex: 1;
+#next-chat-message-info-container {
+  left: 0;
+  padding: 0 15%;
+  position: absolute;
+  text-align: center;
+  top: 45%;
 }
 
-#next-chat-form-draft-container {
-  height: 136px;
-}
-
-#next-chat-form-draft-container .ui.form,
-#next-chat-form-draft-container .field {
-  height: 100%;
-}
-
-#next-chat-form-draft-container textarea {
-  border-radius: 19px;
-  font-size: 1.1em;
-  height: 100%;
-}
-
-#next-chat-form-draft-textarea {
-  resize: none;
-}
-
-#next-placeholder-chat .ui.fluid input {
-  background: white;
-  border: 1px solid #ddd;
-}
-
-#next-chat-form-submit-icon {
-  right: 6px;
+#next-chat-message-info-container .ui.header .sub.header {
+  color: #a0a9b3;
+  font-size: .7em;
+  margin-top: 30px;
 }

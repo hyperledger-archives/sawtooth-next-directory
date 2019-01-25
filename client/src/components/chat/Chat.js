@@ -145,7 +145,12 @@ class Chat extends Component {
    * @returns {JSX}
    */
   render () {
-    const { activeRole, disabled, showForm, type } = this.props;
+    const {
+      activeRole,
+      disabled,
+      hideButtons,
+      hideForm,
+      type } = this.props;
     const noMembers = activeRole && activeRole.owners.length === 0;
 
     return (
@@ -165,7 +170,8 @@ class Chat extends Component {
               {...this.props}
               disabled={disabled}
               formDisabled={noMembers}
-              showForm={showForm}
+              hideButtons={hideButtons}
+              hideForm={hideForm}
               approve={this.manualApprove}
               reject={this.manualReject}
               requestRole={this.manualRequestRole}

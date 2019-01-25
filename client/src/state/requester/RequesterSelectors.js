@@ -245,13 +245,10 @@ export const RequesterSelectors = {
    * @returns {string}
    */
   roleProposalId: (state, id) => {
-    if (!state.user.me) return null;
-    let result = null;
-    const proposal = state.user.me.proposals
-      .find(item => item.object_id === id);
-    result = proposal && proposal.proposal_id;
-
-    return result;
+    if (!state.requester.requests) return null;
+    const proposal = state.requester.requests
+      .find(item => item.object === id);
+    return proposal && proposal.id;
   },
 
 

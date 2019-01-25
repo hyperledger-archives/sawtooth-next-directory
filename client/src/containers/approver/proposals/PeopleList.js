@@ -77,19 +77,30 @@ class PeopleList extends Component {
 
 
   /**
-   * Called whenever Redux state changes. Get users not
-   * loaded in client on state change.
+   * Called whenever Redux state changes. Get roles and
+   * users not loaded in client on state change.
    * @param {object} prevProps Props before update
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { getUsers, openProposalsByUser } = this.props;
+    const {
+      getRoles,
+      getUsers,
+      openProposalsByRole,
+      openProposalsByUser } = this.props;
+
+    const newRoles = Object.keys(openProposalsByRole);
     const newUsers = Object.keys(openProposalsByUser);
+    const oldRoles = Object.keys(prevProps.openProposalsByRole);
     const oldUsers = Object.keys(prevProps.openProposalsByUser);
 
     if (newUsers.length > oldUsers.length) {
       const diff = newUsers.filter(user => !oldUsers.includes(user));
       getUsers(diff);
+    }
+    if (newRoles.length > oldRoles.length) {
+      const diff = newRoles.filter(role => !oldRoles.includes(role));
+      getRoles(diff);
     }
   }
 
@@ -216,7 +227,7 @@ class PeopleList extends Component {
     if (!openProposalsByUser) return null;
     return (
       <div>
-        <List>
+        <List className='striped'>
           { Object.keys(openProposalsByUser).map((userId) => (
             this.renderUserItem(userId)
           ))}

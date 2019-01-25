@@ -22,24 +22,24 @@ import PropTypes from 'prop-types';
 
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
-import IndividualsNav from 'components/nav/IndividualsNav';
+import IndividualNav from 'components/nav/IndividualNav';
 import PeopleList from './PeopleList';
 import RoleList from './RoleList';
-import { syncAll } from './IndividualsHelper';
+import { syncAll } from './IndividualHelper';
 
 
-import './Individuals.css';
+import './Individual.css';
 import glyph from 'images/glyph-individual-inverted.png';
 import * as theme from 'services/Theme';
 
 
 /**
  *
- * @class         Individuals
+ * @class         Individual
  * @description   Individual requests component
  *
  */
-class Individuals extends Component {
+class Individual extends Component {
 
   static propTypes = {
     getOpenProposals: PropTypes.func,
@@ -54,6 +54,7 @@ class Individuals extends Component {
     selectedUsers:      [],
     selectedProposals:  [],
     activeIndex:        0,
+    allSelected:        false,
   };
 
 
@@ -87,6 +88,7 @@ class Individuals extends Component {
 
   reset = () => {
     this.setState({
+      allSelected:        false,
       selectedRoles:      [],
       selectedUsers:      [],
       selectedProposals:  [],
@@ -95,14 +97,47 @@ class Individuals extends Component {
 
 
   /**
+   * Handle select all / deselect all change event
+   * @param {object} event Event passed on change
+   * @param {object} data  Attributes passed on change
+   */
+  handleSelect = (event, data) => {
+    const {
+      openProposals,
+      openProposalsByRole,
+      openProposalsByUser } = this.props;
+
+    if (data.checked) {
+      openProposals &&
+      openProposalsByRole &&
+      openProposalsByUser && this.setState({
+        allSelected:        true,
+        selectedRoles:      Object.keys(openProposalsByRole),
+        selectedProposals:  openProposals.map(proposal => proposal.id),
+        selectedUsers:      Object.keys(openProposalsByUser),
+      });
+    } else {
+      this.setState({
+        allSelected:        false,
+        selectedRoles:      [],
+        selectedProposals:  [],
+        selectedUsers:      [],
+      });
+    }
+  }
+
+
+  /**
    * Handle proposal change event
    * When a proposal is checked or unchecked, select or deselect
    * the parent user, taking into account the currently
    * checked sibling proposals.
+   *
    * @param {object} event Event passed on change
    * @param {object} data  Attributes passed on change
    */
   handleChange = (event, data) => {
+    event && event.stopPropagation();
     const sync = syncAll.call(
       this,
       data.checked,
@@ -114,11 +149,12 @@ class Individuals extends Component {
     const { roles, proposals } = sync.next().value;
     const { users } = sync.next().value;
 
-    this.setState({
+    this.setState(prevState => ({
+      allSelected:        data.checked ? prevState.allSelected : false,
       selectedRoles:      roles,
       selectedProposals:  proposals,
       selectedUsers:      users,
-    });
+    }));
   };
 
 
@@ -130,6 +166,7 @@ class Individuals extends Component {
     const { openProposals, userFromId } = this.props;
     const {
       activeIndex,
+      allSelected,
       selectedProposals,
       selectedRoles,
       selectedUsers } = this.state;
@@ -142,20 +179,22 @@ class Individuals extends Component {
 
     return (
       <Grid id='next-approver-grid'>
-
         <Grid.Column id='next-approver-grid-track-column' width={12}>
           <TrackHeader
             glyph={glyph}
             title='Individual Requests'
-            // subtitle={openProposals && openProposals.length + ' pending'}
             {...this.props}/>
-          <div id='next-approver-individuals-content'>
-            <IndividualsNav
+          <div id='next-approver-individual-content'>
+            <IndividualNav
+              allSelected={allSelected}
+              handleSelect={this.handleSelect}
               activeIndex={activeIndex}
               setFlow={this.setFlow}/>
-            <h3 id='next-approver-individuals-pending'>
-              {openProposals && openProposals.length + ' pending'}
-            </h3>
+            <div id='next-approver-individual-pending'>
+              <h5>
+                {openProposals && openProposals.length + ' PENDING'}
+              </h5>
+            </div>
             { openProposals && openProposals.length !== 0 &&
               <div>
                 { activeIndex === 0 &&
@@ -183,13 +222,13 @@ class Individuals extends Component {
             }
           </div>
         </Grid.Column>
-
         <Grid.Column
           id='next-approver-grid-converse-column'
           width={4}>
           <Chat
             type='APPROVER'
-            showForm
+            hideForm
+            hideButtons={selectedProposals.length === 0}
             title={title}
             subtitle={subtitle}
             groupBy={activeIndex}
@@ -202,7 +241,6 @@ class Individuals extends Component {
             reset={this.reset}
             {...this.props}/>
         </Grid.Column>
-
       </Grid>
     );
   }
@@ -218,5 +256,4 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Individuals);
-
+export default connect(mapStateToProps, mapDispatchToProps)(Individual);

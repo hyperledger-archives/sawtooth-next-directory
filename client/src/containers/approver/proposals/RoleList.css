@@ -25,8 +25,13 @@ limitations under the License.
 .next-role-list-item .ui.segment {
   align-items: center;
   display: flex;
-  min-height: 74px;
   justify-content: space-between;
+  min-height: 74px;
+  overflow: hidden;
+}
+
+.next-role-list-item .ui.segment .ui.checkbox label {
+  padding-left: 62px;
 }
 
 .next-role-list-item .ui.segment .next-avatar-container {

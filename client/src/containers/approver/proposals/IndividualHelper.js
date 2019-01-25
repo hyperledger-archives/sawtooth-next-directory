@@ -47,9 +47,11 @@ export function * syncAll (checked, roleId, proposalId, userId) {
  * @generator
  */
 export function * syncFromCategory (checked, roleId) {
-  const { openProposalsByRole} = this.props;
-  let { selectedProposals: proposals, selectedRoles: roles } = this.state;
+  const { openProposalsByRole } = this.props;
+  const { selectedProposals, selectedRoles } = this.state;
   const changedUsers = [];
+  let proposals = [...selectedProposals];
+  let roles = [...selectedRoles];
 
   openProposalsByRole[roleId].forEach(proposal => {
     const index = proposals.indexOf(proposal.id);
@@ -76,7 +78,9 @@ export function * syncFromCategory (checked, roleId) {
  */
 export function * syncFromItem (checked, proposalId, userId) {
   const { openProposalsByUser, openProposalFromId } = this.props;
-  let { selectedProposals: proposals, selectedRoles: roles } = this.state;
+  const { selectedProposals, selectedRoles } = this.state;
+  let proposals = [...selectedProposals];
+  let roles = [...selectedRoles];
 
   const scope = proposalId ? [openProposalFromId(proposalId)] :
     openProposalsByUser[userId];
@@ -110,7 +114,8 @@ export function * syncFromItem (checked, proposalId, userId) {
  */
 export function * syncUsers (checked, changedUsers, proposals) {
   const { openProposalsByUser } = this.props;
-  let { selectedUsers: users } = this.state;
+  const { selectedUsers } = this.state;
+  let users = [...selectedUsers];
 
   changedUsers.forEach(user => {
     const index = users.indexOf(user);

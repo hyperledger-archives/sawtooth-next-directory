@@ -52,7 +52,7 @@
     Brand Colors
 --------------------*/
 
-@primaryColor        : @blue;
+@primaryColor        : @magenta;
 @secondaryColor      : @black;
 
 @lightPrimaryColor   : @lightBlue;
@@ -338,8 +338,7 @@
   0px 1px 2px 0 @borderColor
 ;
 @floatingShadow:
-  0px 2px 4px 0px rgba(34, 36, 38, 0.12),
-  0px 2px 10px 0px rgba(34, 36, 38, 0.15)
+  0 4px 14px #4646461a
 ;
 
 /*******************************

@@ -145,6 +145,17 @@ async def get_proposal(request, proposal_id):
     )
 
 
+@PROPOSALS_BP.patch("api/proposals")
+@authorized()
+async def batch_update_proposals(request):
+    """Update multiple proposals"""
+    required_fields = ["ids"]
+    utils.validate_fields(required_fields, request.json)
+    for proposal_id in request.json["ids"]:
+        await update_proposal(request, proposal_id)
+    return json({"proposal_ids": request.json["ids"]})
+
+
 @PROPOSALS_BP.patch("api/proposals/<proposal_id>")
 @authorized()
 async def update_proposal(request, proposal_id):

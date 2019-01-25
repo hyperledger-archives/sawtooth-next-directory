@@ -15,23 +15,31 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Menu, Input, Search } from 'semantic-ui-react';
+import {
+  Button,
+  Checkbox,
+  Dropdown,
+  Menu,
+  Input,
+  Search } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import './IndividualsNav.css';
+import './IndividualNav.css';
 
 
 /**
  *
- * @class         IndividualsNav
- * @description   Component encapsulating the template for Individuals
- *                navigation header
+ * @class         IndividualNav
+ * @description   Component encapsulating the template for Individual
+ *                Requests navigation header
  *
  *
  */
-class IndividualsNav extends Component {
+class IndividualNav extends Component {
 
   static propTypes = {
     activeIndex:        PropTypes.number,
+    allSelected:        PropTypes.bool,
+    handleSelect:       PropTypes.func,
     setFlow:            PropTypes.func,
   };
 
@@ -41,26 +49,45 @@ class IndividualsNav extends Component {
    * @returns {JSX}
    */
   render () {
-    const { activeIndex, setFlow } = this.props;
+    const {
+      activeIndex,
+      allSelected,
+      handleSelect,
+      setFlow } = this.props;
 
     return (
-      <div id='next-individuals-nav'>
+      <div id='next-individual-nav'>
         <Menu compact>
           <Menu.Item
             name='roles'
-            id='next-individuals-nav-roles-click'
+            id='next-individual-nav-roles-click'
             active={activeIndex === 0}
             onClick={() => setFlow(0)}>
             Roles
           </Menu.Item>
           <Menu.Item
             name='people'
-            id='next-individuals-nav-people-click'
+            id='next-individual-nav-people-click'
             active={activeIndex === 1}
             onClick={() => setFlow(1)}>
             People
           </Menu.Item>
         </Menu>
+        <div id='next-individual-nav-select-dropdown'>
+          <Checkbox
+            checked={allSelected}
+            onChange={handleSelect}/>
+          <Dropdown floating trigger={<Button basic/>}>
+            <Dropdown.Menu>
+              <Dropdown.Item
+                text='All'
+                onClick={() => handleSelect(undefined, { checked: true })}/>
+              <Dropdown.Item
+                text='None'
+                onClick={() => handleSelect(undefined, { checked: false })}/>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
         <Search
           fluid
           input={() => <Input
@@ -78,4 +105,4 @@ class IndividualsNav extends Component {
 }
 
 
-export default IndividualsNav;
+export default IndividualNav;

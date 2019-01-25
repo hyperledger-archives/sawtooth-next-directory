@@ -70,22 +70,26 @@ export const success = {
     }),
 
 
-  approveProposals: (state, { closedProposal }) =>
-    state.merge({
-      fetching: false,
-      openProposals: state.openProposals.filter(
-        proposal => proposal.id !== closedProposal.proposal_id
-      ),
-    }),
+  approveProposals: (state, { closedProposals }) =>
+    closedProposals.proposal_ids ?
+      state.merge({
+        fetching: false,
+        openProposals: state.openProposals.filter(
+          proposal => !closedProposals.proposal_ids.includes(proposal.id)
+        ),
+      }) :
+      state.merge({ fetching: false }),
 
 
-  rejectProposals: (state, { closedProposal }) =>
-    state.merge({
-      fetching: false,
-      openProposals: state.openProposals.filter(
-        proposal => proposal.id !== closedProposal.proposal_id
-      ),
-    }),
+  rejectProposals: (state, { closedProposals }) =>
+    closedProposals.proposal_ids ?
+      state.merge({
+        fetching: false,
+        openProposals: state.openProposals.filter(
+          proposal => !closedProposals.proposal_ids.includes(proposal.id)
+        ),
+      }) :
+      state.merge({ fetching: false }),
 
 
   createRole: (state, { role }) =>

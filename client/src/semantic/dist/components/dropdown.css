@@ -1241,12 +1241,12 @@ select.ui.dropdown {
 .ui.floating.dropdown .menu {
   left: 0;
   right: auto;
-  -webkit-box-shadow: 0px 2px 4px 0px rgba(34, 36, 38, 0.12), 0px 2px 10px 0px rgba(34, 36, 38, 0.15) !important;
-          box-shadow: 0px 2px 4px 0px rgba(34, 36, 38, 0.12), 0px 2px 10px 0px rgba(34, 36, 38, 0.15) !important;
+  -webkit-box-shadow: 0 4px 14px #4646461a !important;
+          box-shadow: 0 4px 14px #4646461a !important;
   border-radius: 0.71428571rem !important;
 }
 .ui.floating.dropdown > .menu {
-  margin-top: 0.5em !important;
+  margin-top: 0.9em !important;
   border-radius: 0.71428571rem !important;
 }
 
@@ -1508,6 +1508,9 @@ select.ui.dropdown {
   .dropdown.right:before { content: "\f0da"; }
   .dropdown.close:before { content: "\f00d"; }
 */
+.ui.floating.dropdown > .menu {
+  overflow: hidden;
+}
 
 
 /*******************************

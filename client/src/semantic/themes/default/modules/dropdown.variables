@@ -357,7 +357,7 @@
 @simpleTransition: opacity @simpleTransitionDuration @defaultEasing;
 
 /* Floating */
-@floatingMenuDistance: 0.5em;
+@floatingMenuDistance: 0.9em;
 @floatingMenuBoxShadow: @floatingShadow;
 @floatingMenuBorderRadius: @borderRadius;
 

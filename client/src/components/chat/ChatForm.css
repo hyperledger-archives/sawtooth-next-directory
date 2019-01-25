@@ -1,0 +1,62 @@
+/* Copyright 2019 Contributors to Hyperledger Sawtooth
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----------------------------------------------------------------------------- */
+
+
+#next-chat-actions {
+  display: flex;
+  margin-top: 15px;
+  min-height: 34px;
+}
+
+#next-chat-actions button {
+  margin-right: 0;
+}
+
+#next-chat-actions button:first-child {
+  margin-right: 15px;
+}
+
+.next-chat-action-button {
+  flex: 1;
+}
+
+#next-chat-form-draft-container {
+  height: 136px;
+}
+
+#next-chat-form-draft-container .ui.form,
+#next-chat-form-draft-container .field {
+  height: 100%;
+}
+
+#next-chat-form-draft-container textarea {
+  background: white;
+  border-radius: 19px;
+  font-size: 1.1em;
+  height: 100%;
+}
+
+#next-chat-form-draft-textarea {
+  resize: none;
+}
+
+#next-placeholder-chat .ui.fluid input {
+  background: white;
+  border: 1px solid #ddd;
+}
+
+#next-chat-form-submit-icon {
+  right: 6px;
+}

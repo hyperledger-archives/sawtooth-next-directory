@@ -81,7 +81,7 @@ class NavList extends Component {
    * attributes are mapped on <List>.
    *
    * Due to some sidebar sub-list items being dynamic and others static,
-   * (i.e., *Cloud Onboarding Pack* vs. *Individuals*), to support both in
+   * (i.e., *Cloud Onboarding Pack* vs. *Individual*), to support both in
    * one component, lists are passed in as an array with an optional
    * slug property, which becomes the ID of the route. In cases where
    * no slug is provided, one is generated.

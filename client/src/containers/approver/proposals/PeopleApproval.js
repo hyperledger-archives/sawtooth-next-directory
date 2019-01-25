@@ -22,10 +22,10 @@ import PropTypes from 'prop-types';
 
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
-import PeopleApprovalNav from 'components/nav/IndividualsNav';
+import PeopleApprovalNav from 'components/nav/IndividualNav';
 import PeopleList from './PeopleList';
 import RoleList from './RoleList';
-import { syncAll } from './IndividualsHelper';
+import { syncAll } from './IndividualHelper';
 
 
 import './PeopleApproval.css';
@@ -200,7 +200,7 @@ class PeopleApproval extends Component {
           width={4}>
           <Chat
             type='APPROVER'
-            showForm
+            hideForm
             title={title}
             subtitle={subtitle}
             groupBy={activeIndex}

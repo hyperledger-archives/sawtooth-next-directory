@@ -972,6 +972,9 @@ ol.ui.horizontal.list li:before,
 .nav-list h4.active {
   background: #E40073;
 }
+.ui.list.striped > div:nth-child(even) {
+  background-color: rgba(0, 0, 50, 0.02);
+}
 
 
 /*******************************

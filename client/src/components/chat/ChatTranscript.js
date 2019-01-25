@@ -65,9 +65,9 @@ class ChatTranscript extends Component {
 
     if (type === 'REQUESTER' && socketMaxAttemptsReached) {
       return (
-        <div id='next-chat-message-error-container'>
+        <div id='next-chat-message-info-container'>
           <Header
-            as='h2'
+            as='h3'
             content='Nex is feeling shy...'
             subheader={`In the meantime, you can draft a message
                         and request access for a role or pack below.`}/>
