@@ -29,7 +29,9 @@ const store = customStore.create();
 
 
 describe('RoleSelectGrid component', () => {
-  const props = {};
+  const props = {
+    getAllRoles: () => {},
+  };
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
@@ -37,7 +39,7 @@ describe('RoleSelectGrid component', () => {
     ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter>
-          <RoleSelectGrid/>
+          <RoleSelectGrid {...props}/>
         </BrowserRouter>
       </Provider>, div
     );

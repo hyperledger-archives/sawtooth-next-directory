@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Form, Grid, Transition } from 'semantic-ui-react';
+import { Button, Form, Grid } from 'semantic-ui-react';
 
 
 import './CreatePack.css';
@@ -141,9 +141,6 @@ class CreatePack extends Component {
       selectedRoles,
       validName } = this.state;
 
-    const hide = 0;
-    const show = 700;
-
     return (
       <Grid id='next-approver-grid'>
         <Grid.Column
@@ -166,51 +163,43 @@ class CreatePack extends Component {
             {...this.props}/>
           <div id='next-approver-manage-create-pack-content'>
             { activeIndex === 0 &&
-              <Transition
-                visible={activeIndex === 0}
-                animation='fade right'
-                duration={{ hide, show }}>
-                <div id='next-approver-manage-create-pack-view-1'>
-                  <Form id='next-approver-manage-create-pack-form'>
-                    <h3>
-                      Title
-                    </h3>
-                    <Form.Input id='next-create-pack-title-field'
-                      label='Create a descriptive name for your new pack.'
-                      autoFocus
-                      error={validName === false}
-                      name='name'
-                      value={name}
-                      placeholder='My Awesome Pack'
-                      onChange={this.handleChange}/>
-                    <h3>
-                      Description
-                    </h3>
-                    <Form.TextArea
-                      rows='6'
-                      label={`Create a compelling description of your new pack
-                              that clearly explains its intended use.`}
-                      name='description'
-                      value={description}
-                      onChange={this.handleChange}
-                      placeholder={
-                        'A long time ago in a galaxy far, far away....'
-                      }/>
-                  </Form>
-                </div>
-              </Transition>
+              <div id='next-approver-manage-create-pack-view-1'>
+                <Form id='next-approver-manage-create-pack-form'>
+                  <h3>
+                    Title
+                  </h3>
+                  <Form.Input id='next-create-pack-title-field'
+                    label='Create a descriptive name for your new pack.'
+                    autoFocus
+                    error={validName === false}
+                    name='name'
+                    value={name}
+                    placeholder='My Awesome Pack'
+                    onChange={this.handleChange}/>
+                  <h3>
+                    Description
+                  </h3>
+                  <Form.TextArea
+                    rows='6'
+                    label={`Create a compelling description of your new pack
+                            that clearly explains its intended use.`}
+                    name='description'
+                    value={description}
+                    onChange={this.handleChange}
+                    placeholder={
+                      'A long time ago in a galaxy far, far away....'
+                    }/>
+                </Form>
+              </div>
             }
-            <Transition
-              visible={activeIndex === 1}
-              animation='fade left'
-              duration={{ hide, show }}>
+            { activeIndex === 1 &&
               <div id='next-approver-manage-create-pack-view-2'>
                 <RoleSelectGrid
                   handleClick={this.handleClick}
                   selectedRoles={selectedRoles}
                   {...this.props}/>
               </div>
-            </Transition>
+            }
             <div id='next-approver-manage-create-pack-toolbar'>
               { activeIndex === 0 &&
                 <Button

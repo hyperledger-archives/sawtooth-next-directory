@@ -109,7 +109,10 @@ class ManageRoles extends Component {
     if (!role) {
       return (
         <Grid.Column key={roleId}>
-          <Placeholder fluid key={roleId}>
+          <Placeholder
+            fluid
+            key={roleId}
+            className='contrast'>
             <Placeholder.Header image>
               <Placeholder.Line length='full'/>
               <Placeholder.Line length='long'/>

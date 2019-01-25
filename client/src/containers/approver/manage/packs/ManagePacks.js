@@ -108,7 +108,10 @@ class ManagePacks extends Component {
     if (!pack) {
       return (
         <Grid.Column key={packId}>
-          <Placeholder fluid key={packId}>
+          <Placeholder
+            fluid
+            key={packId}
+            className='contrast'>
             <Placeholder.Header image>
               <Placeholder.Line length='full'/>
               <Placeholder.Line length='long'/>

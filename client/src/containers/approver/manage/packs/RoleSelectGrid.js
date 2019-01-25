@@ -15,12 +15,19 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Button, Grid, Icon } from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import {
+  Button,
+  Container,
+  Grid,
+  Header,
+  Icon,
+  Placeholder } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import './RoleSelectGrid.css';
-import * as utils from 'services/Utils';
+import RoleSelectGridNav from 'components/nav/RoleSelectGridNav';
 
 
 /**
@@ -32,12 +39,18 @@ import * as utils from 'services/Utils';
 class RoleSelectGrid extends Component {
 
   static propTypes = {
-    getRoles:         PropTypes.func,
+    fetchingAllRoles: PropTypes.bool,
+    getAllRoles:      PropTypes.func,
     handleClick:      PropTypes.func,
-    ownedRoles:       PropTypes.array,
-    roleFromId:       PropTypes.func,
     roles:            PropTypes.array,
+    rolesTotalCount:  PropTypes.number,
     selectedRoles:    PropTypes.array,
+  };
+
+
+  state = {
+    start: 0,
+    limit: 25,
   };
 
 
@@ -46,73 +59,64 @@ class RoleSelectGrid extends Component {
    * component.
    */
   componentDidMount () {
-    this.init();
+    this.loadNext(0);
   }
 
 
   /**
-   * Called whenever Redux state changes.
-   * @param {object} prevProps Props before update
-   * @returns {undefined}
+   * Load next set of data
+   * @param {number} start Loading start index
    */
-  componentDidUpdate (prevProps) {
-    const { ownedRoles } = this.props;
-    if (!utils.arraysEqual(prevProps.ownedRoles, ownedRoles))
-      this.init();
+  loadNext = (start) => {
+    const { getAllRoles } = this.props;
+    const { limit } = this.state;
+    if (start === undefined || start === null)
+      start = this.state.start;
+
+    getAllRoles(start, limit);
+    this.setState({ start: start + limit });
   }
 
 
   /**
-   * Determine which roles are not currently loaded
-   * in the client and dispatch actions to retrieve them.
+   * Render placeholder graphics
+   * @returns {JSX}
    */
-  init () {
-    const {
-      ownedRoles,
-      getRoles,
-      roles } = this.props;
-
-    const diff = roles ?
-      ownedRoles &&
-      ownedRoles.filter(
-        roleId => !roles.find(role => role.id === roleId)
-      ) :
-      ownedRoles;
-    diff && diff.length > 0 && getRoles(diff);
+  renderPlaceholder = () => {
+    return Array(6).fill(0).map((item, index) => (
+      <Grid.Column key={index} width={5}>
+        <Placeholder fluid className='contrast'>
+          <Placeholder.Header>
+            <Placeholder.Line length='full'/>
+          </Placeholder.Header>
+          <Placeholder.Paragraph>
+            <Placeholder.Line length='medium'/>
+            <Placeholder.Line length='short'/>
+          </Placeholder.Paragraph>
+        </Placeholder>
+      </Grid.Column>
+    ));
   }
-
-
-  /**
-   * Get role name from role ID
-   * @param {string} roleId Role ID
-   * @returns {string}
-   */
-  roleName = (roleId) => {
-    const { roleFromId } = this.props;
-    const role = roleFromId(roleId);
-    return role && role.name;
-  };
 
 
   /**
    * Render role toggle button
-   * @param {string} roleId Role ID
+   * @param {string} role Role
    * @returns {JSX}
    */
-  renderRoleToggle = (roleId) => {
+  renderRoleToggle = (role) => {
     const { handleClick, selectedRoles } = this.props;
     return (
-      this.roleName(roleId) &&
       <div>
         <Button
           fluid
           toggle
           className='toggle-card gradient'
-          active={selectedRoles.includes(roleId)}
-          onClick={() => handleClick(roleId)}
+          active={selectedRoles.includes(role.id)}
+          onClick={() => handleClick(role.id)}
           size='massive'>
-          {this.roleName(roleId)}
-          { selectedRoles.includes(roleId) &&
+          {role.name}
+          { selectedRoles.includes(role.id) &&
             <Icon name='check' color='pink'/>
           }
         </Button>
@@ -126,19 +130,61 @@ class RoleSelectGrid extends Component {
    * @returns {JSX}
    */
   render () {
-    const { ownedRoles } = this.props;
+    const {
+      fetchingAllRoles,
+      roles,
+      rolesTotalCount } = this.props;
+    const { limit } = this.state;
     return (
-      <Grid centered columns={3} id='next-role-select-grid'>
-        { ownedRoles && ownedRoles.map(roleId => (
-          <Grid.Column key={roleId} width={5}>
-            {this.renderRoleToggle(roleId)}
-          </Grid.Column>
-        ))}
-      </Grid>
+      <div>
+        <RoleSelectGridNav/>
+        <Grid centered columns={3} id='next-role-select-grid'>
+          { roles && (roles.length >= limit || !fetchingAllRoles) &&
+            roles.map(role => (
+              <Grid.Column key={role.id} width={5}>
+                {this.renderRoleToggle(role)}
+              </Grid.Column>
+            ))}
+          { fetchingAllRoles &&
+            this.renderPlaceholder()
+          }
+        </Grid>
+        { roles && roles.length === 0 && !fetchingAllRoles &&
+          <Container
+            id='next-role-select-grid-no-items'
+            textAlign='center'>
+            <Header as='h3' textAlign='center' color='grey'>
+              <Header.Content>
+                No roles available
+              </Header.Content>
+            </Header>
+          </Container>
+        }
+        { roles && (roles.length < rolesTotalCount) &&
+          <Container
+            id='next-role-select-grid-load-next-button'
+            textAlign='center'>
+            <Button size='large' onClick={() => this.loadNext()}>
+              Load More
+            </Button>
+          </Container>
+        }
+      </div>
     );
   }
 
 }
 
 
-export default RoleSelectGrid;
+const mapStateToProps = (state) => {
+  return {
+    fetchingAllRoles: state.requester.fetchingAllRoles,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {};
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoleSelectGrid);
