@@ -49,14 +49,41 @@ def test_inbound_group_provider():
         inbound_group_filter({"id": "123-456-abs3"}, "potato")
 
 
-def test_data_type_correct():
+def test_user_data_type_correct():
     """Test that a list stays a list when a single value is in it."""
-<<<<<<< HEAD
     result = inbound_user_filter(
         {"id": "123-456-abs3", "manager": ["123-456-abs3"]}, "azure"
     )
     assert result["manager_id"] == ["123-456-abs3"]
-=======
-    result = inbound_user_filter({'id': "123-456-abs3", "manager": ["123-456-abs3"]}, "azure")
-    assert result['manager_id'] == ["123-456-abs3"]
->>>>>>> Remove data unpacking for type change.
+
+
+def test_data_kept_with_empty_lst():
+    """Test that a list stays a list when there is no value in it."""
+    result = inbound_user_filter({"id": "123-456-abs3", "manager": []}, "azure")
+    assert result["manager_id"] == []
+
+
+def test_data_is_kept_when_null():
+    """Test that a user list stays null when it is None."""
+    result = inbound_user_filter({"id": "123-456-abs3", "manager": None}, "azure")
+    assert result["manager_id"] is None
+
+
+def test_group_data_type_correct():
+    """Test that a group list stays a list when a single value is in it."""
+    result = inbound_group_filter(
+        {"id": "123-456-abs3", "members": ["123-456-abs3"]}, "azure"
+    )
+    assert result["members"] == ["123-456-abs3"]
+
+
+def test_role_data_with_empty_lst():
+    """Test that a group list stays a list when there is no value in it."""
+    result = inbound_group_filter({"id": "123-456-abs3", "members": []}, "azure")
+    assert result["members"] == []
+
+
+def test_role_data_when_null():
+    """Test that a group list stays null when it is None."""
+    result = inbound_group_filter({"id": "123-456-abs3", "members": None}, "azure")
+    assert result["members"] is None
