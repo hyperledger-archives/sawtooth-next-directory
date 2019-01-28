@@ -141,6 +141,12 @@ class SignupForm extends Component {
                   type='text'
                   value={name}
                   onChange={this.handleChange}/>
+
+                {!validName &&
+                <Label className='next-name-signup-hint'>
+                  Name must be at least 5 characters.
+                </Label>}
+
               </Form.Field>
               <Form.Field>
                 <Input
@@ -161,6 +167,12 @@ class SignupForm extends Component {
                   type='text'
                   value={username}
                   onChange={this.handleChange}/>
+
+                {!validUsername &&
+                <Label className='next-username-signup-hint'>
+                  Username must be at least 5 characters.
+                </Label>}
+
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button
