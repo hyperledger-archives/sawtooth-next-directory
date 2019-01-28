@@ -22,57 +22,44 @@ from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRAN
 LOGGER = get_logger(__name__)
 
 
-def inbound_user_filter(entry, provider):
+def inbound_user_filter(user, provider):
     """Takes in a user dict from a provider,standardizes and then returns it.
     :param: user > dict > dictionary with user payload from provider
     :param: provider > str > provider
     """
     if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
-    standard_entry = {}
-    for key, alias in USER_TRANSFORM.items():
-        if alias[provider] in entry:
-            value = inbound_value_filter(entry[alias[provider]])
-            if value:
-                standard_entry[key] = value
-    if "email" not in standard_entry and "user_principal_name" in standard_entry:
-        standard_entry["email"] = standard_entry["user_principal_name"]
-    return standard_entry
+    standardized_user = {}
+    for key, value in USER_TRANSFORM.items():
+        if value[provider] in user:
+            value = inbound_value_filter(user[value[provider]])
+            standardized_user[key] = value
+    if "email" not in standardized_user and "user_principal_name" in standardized_user:
+        standardized_user["email"] = standardized_user["user_principal_name"]
+    return standardized_user
 
 
-def inbound_group_filter(entry, provider):
+def inbound_group_filter(group, provider):
     """Takes in a group dict from a provider,standardizes and then returns it.
     :param: group > dict > dictionary with group payload from provider
     :param: provider > str
     """
     if provider not in ("azure", "ldap"):
         raise TypeError("Provider must be specified with a valid option.")
-    standard_entry = {}
-    for key, alias in GROUP_TRANSFORM.items():
-        if alias[provider] in entry:
-            value = inbound_value_filter(entry[alias[provider]])
-            if value:
-                standard_entry[key] = value
-    return standard_entry
-
-
-def datetime_to_seconds(value):
-    """ Converts a datetime.datetime seconds in unix epoch time
-    """
-    if not isinstance(value, datetime.datetime):
-        return None
-    epoch_zero = datetime.datetime(1970, 1, 1, tzinfo=value.tzinfo)
-    return int((value - epoch_zero).total_seconds())
+    standardized_group = {}
+    for key, value in GROUP_TRANSFORM.items():
+        if value[provider] in group:
+            value = inbound_value_filter(group[value[provider]])
+            standardized_group[key] = value
+    return standardized_group
 
 
 def inbound_value_filter(inbound_value):
-    """Cleans up data values
-    1. Unwraps LDAP attributes
-    2. Converts datetime.datetime to seconds
-    """
+    """Unwraps LDAP attributes. Converts datetime.datetime to seconds."""
     value = inbound_value
     if hasattr(inbound_value, "value"):
         value = inbound_value.value
     elif isinstance(value, datetime.datetime):
-        value = datetime_to_seconds(value)
+        epoch_zero = datetime.datetime(1970, 1, 1, tzinfo=value.tzinfo)
+        value = int((value - epoch_zero).total_seconds())
     return value
