@@ -34,7 +34,8 @@ def process(rec, database):
             database.run_query(
                 database.get_table("inbound_queue").get(rec["id"]).delete()
             )
-            database.run_query(database.get_table("changelog").insert(rec))
+            rec["sync_direction"] = "inbound"
+            database.run_query(database.get_table("sync_errors").insert(rec))
             return
 
         batch = batch_pb2.Batch()
@@ -72,13 +73,15 @@ def process(rec, database):
                     LOGGER.warning(
                         "error updating metadata record:\n%s\n%s", result, query
                     )
+            rec["sync_direction"] = "inbound"
             database.run_query(database.get_table("changelog").insert(rec))
             database.run_query(
                 database.get_table("inbound_queue").get(rec["id"]).delete()
             )
         else:
             rec["error"] = get_status_error(status)
-            database.run_query(database.get_table("inbound_queue_errors").insert(rec))
+            rec["sync_direction"] = "inbound"
+            database.run_query(database.get_table("sync_errors").insert(rec))
             database.run_query(
                 database.get_table("inbound_queue").get(rec["id"]).delete()
             )

@@ -86,8 +86,8 @@ def setup_db(host, port, name):
         LOGGER.info('Creating table: inbound_queue')
         r.db(name).table_create('inbound_queue').run(conn)
 
-        LOGGER.info('Creating table: inbound_queue_errors')
-        r.db(name).table_create('inbound_queue_errors').run(conn)
+        LOGGER.info('Creating table: sync_errors')
+        r.db(name).table_create('sync_errors').run(conn)
 
         LOGGER.info('Creating table: outbound_queue')
         r.db(name).table_create('outbound_queue').run(conn)
