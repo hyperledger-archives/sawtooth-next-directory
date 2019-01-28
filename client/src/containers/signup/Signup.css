@@ -48,3 +48,11 @@ limitations under the License.
   margin-right: 0;
   width: 100px;
 }
+
+.next-username-signup-hint,
+.next-name-signup-hint {
+  margin: 0 !important;
+  /* padding: 0 !important; */
+  font-size: 11px !important;
+  color: var(--text-light) !important;
+}
