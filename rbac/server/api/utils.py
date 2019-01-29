@@ -77,6 +77,8 @@ def extract_request_token(request):
 
 
 async def create_response(conn, request_url, data, head_block, start=None, limit=None):
+    conn.reconnect(noreply_wait=False)
+
     base_url = request_url.split("?")[0]
     table = base_url.split("/")[4]
     url = "{}?head={}".format(base_url, head_block.get("id"))
@@ -89,6 +91,7 @@ async def create_response(conn, request_url, data, head_block, start=None, limit
         response["paging"] = await get_response_paging_info(
             conn, table, url, start, limit, head_block.get("num")
         )
+    conn.close()
     return json(response)
 
 
@@ -98,6 +101,8 @@ def create_tracker_response(slot_name, value):
 
 
 async def get_response_paging_info(conn, table, url, start, limit, head_block_num):
+    conn.reconnect(noreply_wait=False)
+
     total = await get_table_count(conn, table, head_block_num)
 
     prev_start = start - limit
@@ -107,6 +112,8 @@ async def get_response_paging_info(conn, table, url, start, limit, head_block_nu
     next_start = start + limit
     if next_start > last_start:
         next_start = last_start
+
+    conn.close()
 
     return {
         "start": start,
@@ -120,14 +127,20 @@ async def get_response_paging_info(conn, table, url, start, limit, head_block_nu
 
 
 async def get_table_count(conn, table, head_block_num):
+    conn.reconnect(noreply_wait=False)
+
     if table == "blocks":
-        return (
-            await r.table(table)
+        table_count = await (
+            r.table(table)
             .between(r.minval, head_block_num, right_bound="closed")
             .count()
             .run(conn)
         )
-    return await r.table(table).count().run(conn)
+        conn.close()
+        return table_count
+    table_count = await r.table(table).count().run(conn)
+    conn.close()
+    return table_count
 
 
 def get_request_paging_info(request):

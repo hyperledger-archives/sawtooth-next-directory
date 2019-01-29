@@ -25,6 +25,8 @@ from rbac.server.api import utils
 
 from rbac.server.db import proposals_query
 
+from rbac.server.db import db_utils
+
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.INFO
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
@@ -46,14 +48,22 @@ async def feed(request, web_socket):
 
 async def proposal_feed(request, web_socket, recv):
     """Send open proposal updates to a given user"""
-    subscription = await proposals_query.subscribe_to_proposals(
-        request.app.config.DB_CONN
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
+
+    subscription = await proposals_query.subscribe_to_proposals(conn)
     while await subscription.fetch_next():
         proposal = await subscription.next()
         proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal.get("new_val"), None
+            conn, proposal.get("new_val"), None
         )
+
+        conn.close()
+
         if (
             proposal_resource["status"] == "OPEN"
             and recv.get("user_id") in proposal_resource["approvers"]

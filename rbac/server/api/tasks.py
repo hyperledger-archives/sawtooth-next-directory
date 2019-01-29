@@ -26,24 +26,29 @@ from rbac.server.api import utils
 
 from rbac.server.db import tasks_query
 
+from rbac.server.db import db_utils
+
 TASKS_BP = Blueprint("tasks")
 
 
 @TASKS_BP.get("api/tasks")
 @authorized()
 async def get_all_tasks(request):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     task_resources = await tasks_query.fetch_all_task_resources(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
+    conn.close()
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        task_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, task_resources, head_block, start=start, limit=limit
     )
 
 
@@ -73,13 +78,19 @@ async def create_new_task(request):
 @TASKS_BP.get("api/tasks/<task_id>")
 @authorized()
 async def get_task(request, task_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     task_resource = await tasks_query.fetch_task_resource(
-        request.app.config.DB_CONN, task_id, head_block.get("num")
+        conn, task_id, head_block.get("num")
     )
-    return await utils.create_response(
-        request.app.config.DB_CONN, request.url, task_resource, head_block
-    )
+    conn.close()
+    return await utils.create_response(conn, request.url, task_resource, head_block)
 
 
 @TASKS_BP.patch("api/tasks/<task_id>")

@@ -32,6 +32,8 @@ from rbac.common.logs import get_logger
 from rbac.common.crypto.secrets import generate_api_key
 from rbac.common.crypto.secrets import deserialize_api_key
 
+from rbac.server.db import db_utils
+
 LOGGER = get_logger(__name__)
 AUTH_BP = Blueprint("auth")
 
@@ -57,9 +59,17 @@ def authorized():
                 id_dict = deserialize_api_key(
                     request.app.config.SECRET_KEY, utils.extract_request_token(request)
                 )
-                await auth_query.fetch_info_by_user_id(
-                    request.app.config.DB_CONN, id_dict.get("id")
+
+                conn = await db_utils.create_connection(
+                    request.app.config.DB_HOST,
+                    request.app.config.DB_PORT,
+                    request.app.config.DB_NAME,
                 )
+
+                await auth_query.fetch_info_by_user_id(conn, id_dict.get("id"))
+
+                conn.close()
+
             except (ApiNotFound, BadSignature):
                 raise ApiUnauthorized("Unauthorized: Invalid bearer token")
             response = await func(request, *args, **kwargs)

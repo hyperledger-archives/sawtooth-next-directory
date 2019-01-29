@@ -36,6 +36,8 @@ from rbac.common.logs import get_logger
 
 from rbac.common.crypto.secrets import generate_api_key
 
+from rbac.server.db import db_utils
+
 LOGGER = get_logger(__name__)
 USERS_BP = Blueprint("users")
 
@@ -43,19 +45,24 @@ USERS_BP = Blueprint("users")
 @USERS_BP.get("api/users")
 @authorized()
 async def fetch_all_users(request):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     LOGGER.info(head_block)
     start, limit = utils.get_request_paging_info(request)
     user_resources = await users_query.fetch_all_user_resources(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
+
+    conn.close()
+
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        user_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, user_resources, head_block, start=start, limit=limit
     )
 
 
@@ -101,7 +108,16 @@ async def create_new_user(request):
         "username": request.json.get("username"),
         "email": request.json.get("email"),
     }
-    await auth_query.create_auth_entry(request.app.config.DB_CONN, auth_entry)
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
+    await auth_query.create_auth_entry(conn, auth_entry)
+
+    conn.close()
 
     # Send back success response
     return create_user_response(request, txn_user_id)
@@ -111,14 +127,21 @@ async def create_new_user(request):
 @authorized()
 async def get_user(request, user_id):
 
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     # this takes 4 seconds
     user_resource = await users_query.fetch_user_resource(
-        request.app.config.DB_CONN, user_id, head_block.get("num")
+        conn, user_id, head_block.get("num")
     )
-    return await utils.create_response(
-        request.app.config.DB_CONN, request.url, user_resource, head_block
-    )
+
+    conn.close()
+
+    return await utils.create_response(conn, request.url, user_resource, head_block)
 
 
 @USERS_BP.get("api/user/<user_id>/summary")
@@ -137,13 +160,19 @@ async def get_user_summary(request, user_id):
 @USERS_BP.get("api/users/<user_id>/relationships")
 @authorized()
 async def get_user_relationships(request, user_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     user_resource = await users_query.fetch_user_relationships(
-        request.app.config.DB_CONN, user_id, head_block.get("num")
+        conn, user_id, head_block.get("num")
     )
-    return await utils.create_response(
-        request.app.config.DB_CONN, request.url, user_resource, head_block
-    )
+    conn.close()
+    return await utils.create_response(conn, request.url, user_resource, head_block)
 
 
 @USERS_BP.patch("api/users/<user_id>")
@@ -169,24 +198,39 @@ async def update_manager(request, user_id):
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
+
+    await utils.send(conn, batch_list, request.app.config.TIMEOUT)
+
+    conn.close()
+
     return json({"proposal_id": proposal_id})
 
 
 @USERS_BP.get("api/users/<user_id>/proposals/open")
 @authorized()
 async def fetch_open_proposals(request, user_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
     proposal_resources = []
     for proposal in proposals:
         proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal, head_block.get("num")
+            conn, proposal, head_block.get("num")
         )
         proposal_resources.append(proposal_resource)
 
@@ -198,28 +242,32 @@ async def fetch_open_proposals(request, user_id):
         ):
             open_proposals.append(proposal_resource)
 
+    conn.close()
+
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        open_proposals,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, open_proposals, head_block, start=start, limit=limit
     )
 
 
 @USERS_BP.get("api/users/<user_id>/proposals/confirmed")
 @authorized()
 async def fetch_confirmed_proposals(request, user_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
     proposal_resources = []
     for proposal in proposals:
         proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal, head_block.get("num")
+            conn, proposal, head_block.get("num")
         )
         proposal_resources.append(proposal_resource)
 
@@ -231,28 +279,32 @@ async def fetch_confirmed_proposals(request, user_id):
         ):
             confirmed_proposals.append(proposal_resource)
 
+    conn.close()
+
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        confirmed_proposals,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, confirmed_proposals, head_block, start=start, limit=limit
     )
 
 
 @USERS_BP.get("api/users/<user_id>/proposals/rejected")
 @authorized()
 async def fetch_rejected_proposals(request, user_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
     proposal_resources = []
     for proposal in proposals:
         proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal, head_block.get("num")
+            conn, proposal, head_block.get("num")
         )
         proposal_resources.append(proposal_resource)
 
@@ -264,13 +316,10 @@ async def fetch_rejected_proposals(request, user_id):
         ):
             rejected_proposals.append(proposal_resource)
 
+    conn.close()
+
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        rejected_proposals,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, rejected_proposals, head_block, start=start, limit=limit
     )
 
 
@@ -282,30 +331,41 @@ async def update_expired_roles(request, user_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    await roles_query.expire_role_member(
-        request.app.config.DB_CONN,
-        request.json.get("id"),
-        user_id,
-        head_block.get("num"),
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
+
+    await roles_query.expire_role_member(
+        conn, request.json.get("id"), user_id, head_block.get("num")
+    )
+
+    conn.close()
+
     return json({"role_id": request.json.get("id")})
 
 
 @USERS_BP.get("api/users/<user_id>/roles/recommended")
 @authorized()
 async def fetch_recommended_roles(request, user_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     recommended_resources = await roles_query.fetch_all_role_resources(
-        request.app.config.DB_CONN, head_block.get("num"), 0, 10
+        conn, head_block.get("num"), 0, 10
     )
+
+    conn.close()
+
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        recommended_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, recommended_resources, head_block, start=start, limit=limit
     )
 
 

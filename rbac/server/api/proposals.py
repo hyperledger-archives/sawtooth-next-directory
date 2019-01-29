@@ -27,6 +27,8 @@ from rbac.server.db import proposals_query
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.users_query import fetch_user_resource
 
+from rbac.server.db import db_utils
+
 LOGGER = get_logger(__name__)
 
 PROPOSALS_BP = Blueprint("proposals")
@@ -109,40 +111,49 @@ PROPOSAL_TRANSACTION = {
 @PROPOSALS_BP.get("api/proposals")
 @authorized()
 async def get_all_proposals(request):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
     proposal_resources = []
     for proposal in proposals:
         proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal, head_block.get("num")
+            conn, proposal, head_block.get("num")
         )
         proposal_resources.append(proposal_resource)
+    conn.close()
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        proposal_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, proposal_resources, head_block, start=start, limit=limit
     )
 
 
 @PROPOSALS_BP.get("api/proposals/<proposal_id>")
 @authorized()
 async def get_proposal(request, proposal_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     proposal = await proposals_query.fetch_proposal_resource(
-        request.app.config.DB_CONN, proposal_id, head_block.get("num")
+        conn, proposal_id, head_block.get("num")
     )
     proposal_resource = await compile_proposal_resource(
-        request.app.config.DB_CONN, proposal, head_block.get("num")
+        conn, proposal, head_block.get("num")
     )
-    return await utils.create_response(
-        request.app.config.DB_CONN, request.url, proposal_resource, head_block
-    )
+    conn.close()
+    return await utils.create_response(conn, request.url, proposal_resource, head_block)
 
 
 @PROPOSALS_BP.patch("api/proposals")
@@ -168,11 +179,17 @@ async def update_proposal(request, proposal_id):
         )
     txn_key, txn_user_id = await utils.get_transactor_key(request=request)
     block = await utils.get_request_block(request)
-    proposal_resource = await proposals_query.fetch_proposal_resource(
-        request.app.config.DB_CONN,
-        proposal_id=proposal_id,
-        head_block_num=block.get("num"),
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
+
+    proposal_resource = await proposals_query.fetch_proposal_resource(
+        conn, proposal_id=proposal_id, head_block_num=block.get("num")
+    )
+    conn.close()
 
     batch_list = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
         request.json["status"]
@@ -191,6 +208,7 @@ async def update_proposal(request, proposal_id):
 
 
 async def compile_proposal_resource(conn, proposal_resource, head_block_num):
+    conn.reconnect(noreply_wait=False)
     table = TABLES[proposal_resource["type"]]
     if "role" in table:
         proposal_resource["approvers"] = await fetch_relationships(
@@ -208,4 +226,5 @@ async def compile_proposal_resource(conn, proposal_resource, head_block_num):
             conn, proposal_resource.get("object"), head_block_num
         )
         proposal_resource["approvers"] = [user_resource.get("manager")]
+    conn.close()
     return proposal_resource
