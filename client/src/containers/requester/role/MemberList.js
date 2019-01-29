@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Grid, Header, Icon, Segment } from 'semantic-ui-react';
+import { Grid, Header, Icon, Segment, Popup } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './MemberList.css';
 import Avatar from 'components/layouts/Avatar';
@@ -83,7 +83,6 @@ class MemberList extends Component {
    */
   renderUserSegment (userId, isOwner) {
     const { users } = this.props;
-
     if (users) {
       const user = users.find((user) => user.id === userId);
       if (!user) {
@@ -108,14 +107,18 @@ class MemberList extends Component {
         <Grid.Column key={userId} largeScreen={8} widescreen={5}>
           <Segment className='avatar no-padding minimal'>
             { isOwner ?
-              <Icon
+              <Popup trigger={<Icon
                 name='shield'
                 className='pull-right'
-                color='green'/> :
-              <Icon
+                color='green'/>} content='Owner'
+              id='next-member-list-owner-popup-box'
+              position='top center' inverted/> :
+              <Popup trigger={<Icon
                 name='key'
                 className='pull-right'
-                color='grey'/>
+                color='grey'/>} content='Member'
+              id='next-member-list-member-popup-box'
+              position='top center' inverted/>
             }
             <Header as='h4' className='next-member-list-user-info'>
               <div>
