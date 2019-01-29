@@ -95,4 +95,5 @@ export const AppReducer = createReducer(INITIAL_STATE, {
   [Types.SOCKET_CLOSE_SUCCESS]:           socketCloseSuccess,
   [Types.SOCKET_MAX_ATTEMPTS_REACHED]:    socketMaxAttemptsReached,
   [Types.REFRESH_ON_NEXT_SOCKET_RECEIVE]: refreshOnNextSocketReceive,
+
 });
