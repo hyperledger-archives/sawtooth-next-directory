@@ -149,12 +149,41 @@ async def get_user(request, user_id):
 async def get_user_summary(request, user_id):
     """This endpoint is for returning summary data for a user, just it's user_id,name, email."""
     head_block = await utils.get_request_block(request)
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     user_resource = await users_query.fetch_user_resource_summary(
-        request.app.config.DB_CONN, user_id, head_block.get("num")
+        conn, user_id, head_block.get("num")
     )
-    return await utils.create_response(
-        request.app.config.DB_CONN, request.url, user_resource, head_block
+
+    conn.close()
+
+    return await utils.create_response(conn, request.url, user_resource, head_block)
+
+
+@USERS_BP.get("api/users/<user_id>/summary")
+@authorized()
+async def get_users_summary(request, user_id):
+    """This endpoint is for returning summary data for a user, just it's user_id,name, email."""
+    head_block = await utils.get_request_block(request)
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
+
+    user_resource = await users_query.fetch_user_resource_summary(
+        conn, user_id, head_block.get("num")
+    )
+
+    conn.close()
+
+    return await utils.create_response(conn, request.url, user_resource, head_block)
 
 
 @USERS_BP.get("api/users/<user_id>/relationships")

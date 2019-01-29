@@ -67,6 +67,10 @@ paths:
     parameters:
       - $ref: '../parameters/parameters.yaml#/userId'
     $ref: './users/users-id.yaml'
+  '/users/{id}/summary':
+    parameters:
+      - $ref: '../parameters/parameters.yaml#/userId'
+    $ref: './users/users-id-summary.yaml'
   '/users/{id}/manager':
     parameters:
       - $ref: '../parameters/parameters.yaml#/userId'
