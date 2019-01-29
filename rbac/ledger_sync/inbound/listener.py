@@ -48,6 +48,7 @@ def process(rec, database):
                     "address": rec["address"],
                     "object_type": rec["object_type"],
                     "object_id": rec["object_id"],
+                    "provider_id": rec["provider_id"],
                     "created_at": r.now(),
                     "updated_at": r.now(),
                     **rec["metadata"],
