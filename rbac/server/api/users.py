@@ -14,7 +14,6 @@
 # ------------------------------------------------------------------------------
 
 from uuid import uuid4
-import logging
 import hashlib
 
 from sanic import Blueprint
@@ -33,10 +32,11 @@ from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
+from rbac.common.logs import get_logger
 
 from rbac.common.crypto.secrets import generate_api_key
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 USERS_BP = Blueprint("users")
 
 
@@ -110,8 +110,23 @@ async def create_new_user(request):
 @USERS_BP.get("api/users/<user_id>")
 @authorized()
 async def get_user(request, user_id):
+
     head_block = await utils.get_request_block(request)
+    # this takes 4 seconds
     user_resource = await users_query.fetch_user_resource(
+        request.app.config.DB_CONN, user_id, head_block.get("num")
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN, request.url, user_resource, head_block
+    )
+
+
+@USERS_BP.get("api/user/<user_id>/summary")
+@authorized()
+async def get_user_summary(request, user_id):
+    """This endpoint is for returning summary data for a user, just it's user_id,name, email."""
+    head_block = await utils.get_request_block(request)
+    user_resource = await users_query.fetch_user_resource_summary(
         request.app.config.DB_CONN, user_id, head_block.get("num")
     )
     return await utils.create_response(

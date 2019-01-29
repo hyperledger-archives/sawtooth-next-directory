@@ -80,6 +80,22 @@ async def fetch_user_resource(conn, user_id, head_block_num):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
 
 
+async def fetch_user_resource_summary(conn, user_id, head_block_num):
+    """Database query to get summary data on an individual user."""
+    resource = (
+        await r.table("users")
+        .get_all(user_id, index="user_id")
+        .merge({"id": r.row["user_id"], "name": r.row["name"], "email": r.row["email"]})
+        .without("user_id", "manager_id", "start_block_num", "end_block_num")
+        .coerce_to("array")
+        .run(conn)
+    )
+    try:
+        return resource[0]
+    except IndexError:
+        raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
+
+
 async def fetch_all_user_resources(conn, head_block_num, start, limit):
     """Database query to compile general data on all user's in database."""
     return (
