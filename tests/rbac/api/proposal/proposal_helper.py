@@ -64,6 +64,7 @@ class ProposalTestHelper(BaseApiHelper):
         """ Reject a proposal """
         return self.update(proposal, approver, Status.REJECTED, reason)
 
-    def reason(self):
+    @classmethod
+    def reason(cls):
         """ Get a random reason """
         return "Because" + str(random.randint(10000, 100000))

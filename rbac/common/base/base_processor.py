@@ -93,27 +93,33 @@ class BaseTransactionProcessor(object):
         """Namespaces handled by this transaction processor"""
         return self._family.namespaces
 
-    def register_message_handler(self, message):
+    @classmethod
+    def register_message_handler(cls, message):
         """Register a transaction processor handler for a given message class"""
         return register_message_handler(message)
 
-    def has_message_handler(self, message_type):
+    @classmethod
+    def has_message_handler(cls, message_type):
         """Whether a handler is registered for the given message type"""
         return has_message_handler(message_type)
 
-    def can_handle_message(self, payload):
+    @classmethod
+    def can_handle_message(cls, payload):
         """Whether we know how to handle a given payload"""
         return can_handle_message(payload)
 
-    def get_message_handler(self, message_type):
+    @classmethod
+    def get_message_handler(cls, message_type):
         """Get the handler for the given message type"""
         return get_message_handler(message_type)
 
-    def handle_message(self, header, payload, context):
+    @classmethod
+    def handle_message(cls, header, payload, context):
         """Handle the messages submitted to the transaction processor"""
         return handle_message(header, payload, context)
 
-    def apply(self, transaction, context):
+    @classmethod
+    def apply(cls, transaction, context):
         """Main entry point for the Sawtooth Transaction Processor
         Transactions get submitted to this required interface method"""
         try:

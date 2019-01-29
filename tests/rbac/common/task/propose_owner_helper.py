@@ -41,11 +41,13 @@ helper = StubTestHelper()
 class ProposeTaskOwnerTestHelper:
     """Propose Task Owner Test Helper"""
 
-    def id(self):
+    @classmethod
+    def id(cls):
         """Gets a unique identifier"""
         return rbac.addresser.proposal.unique_id()
 
-    def reason(self):
+    @classmethod
+    def reason(cls):
         """Get a random reason"""
         return "Because" + str(random.randint(10000, 100000))
 

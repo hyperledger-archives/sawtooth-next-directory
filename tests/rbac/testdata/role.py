@@ -75,10 +75,12 @@ class RoleTestData:
         )
         return self.last_name
 
-    def reason(self):
+    @classmethod
+    def reason(cls):
         """Get a random reason"""
         return "Because I need " + _word() + _word() + _word() + "."
 
-    def description(self):
+    @classmethod
+    def description(cls):
         """Get a random role description"""
         return _paragraph()

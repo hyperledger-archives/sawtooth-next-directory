@@ -280,8 +280,8 @@ class BaseMessage(AddressBase):
         if not isinstance(message, self.message_proto):
             raise TypeError("Expected message to be {}".format(self.message_proto))
 
-    # pylint: disable=unused-argument
-    def validate_state(self, context, message, payload, input_state, store):
+    @classmethod
+    def validate_state(cls, context, message, payload, input_state, store):
         """Common state validation for all messages"""
         if payload.signer.public_key is None:
             raise ValueError("Signer public key is required")
@@ -428,7 +428,8 @@ class BaseMessage(AddressBase):
             ),
         )
 
-    def send(self, signer_keypair, payload):
+    @classmethod
+    def send(cls, signer_keypair, payload):
         """Sends a payload to the validator API"""
         if not isinstance(signer_keypair, Key):
             raise TypeError("Expected signer_keypair to be a Key")
@@ -466,7 +467,8 @@ class BaseMessage(AddressBase):
             )
         return state_entries
 
-    def _make_output_state(self, input_state, outputs):
+    @classmethod
+    def _make_output_state(cls, input_state, outputs):
         """Makes the output state entries from the input state and
         adds the addresses that were not in state"""
         output_state = {"changed": set(), "removed": set()}
@@ -546,7 +548,8 @@ class BaseMessage(AddressBase):
             exclude_fields=self.message_fields_not_in_state,
         )
 
-    def save_state(self, context, outputs, output_state):
+    @classmethod
+    def save_state(cls, context, outputs, output_state):
         """Save the output state to the blockchain"""
         changed = [
             address

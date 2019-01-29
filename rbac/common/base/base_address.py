@@ -226,12 +226,14 @@ class AddressBase(StateBase):
             return self
         return None
 
-    def get_object_id(self, address):
+    @classmethod
+    def get_object_id(cls, address):
         """Returns the hash of an object_id (or the object_id itself if it
         is a 12-byte unique identifier), as encoded in a given address"""
         return address[14:38]
 
-    def get_related_id(self, address):
+    @classmethod
+    def get_related_id(cls, address):
         """Returns the hash of a related_id (or the related_id itself if it
         is a 12-byte unique identifier), as encoded in a given address"""
         value = address[44:68]

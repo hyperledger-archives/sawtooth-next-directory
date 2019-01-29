@@ -38,7 +38,8 @@ class TestRestClient(TestAssertions):
 
     @pytest.mark.state
     @pytest.mark.skip("too expensive if large chain, refactor elsewhere")
-    def test_state(self):
+    @classmethod
+    def test_state(cls):
         """Grab the entire blockchain state and deserialize it"""
         subtree = addresser.family.namespace
         for item in client.list_state(subtree=subtree)["data"]:

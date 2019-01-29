@@ -26,10 +26,12 @@ LOGGER = logging.getLogger(__name__)
 class ProposalTestHelper:
     """Proposal test helper"""
 
-    def id(self):
+    @classmethod
+    def id(cls):
         """Get a test proposal_id (not created)"""
         return rbac.addresser.proposal.unique_id()
 
-    def reason(self):
+    @classmethod
+    def reason(cls):
         """Get a random reason"""
         return "Because" + str(random.randint(10000, 100000))

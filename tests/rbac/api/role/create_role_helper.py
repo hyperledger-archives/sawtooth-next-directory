@@ -52,7 +52,8 @@ class CreateRoleTestHelper(BaseApiHelper):
         """ Create Role endpoint """
         return self.url_base + "/api/roles/"
 
-    def name(self):
+    @classmethod
+    def name(cls):
         """ Get a random name """
         return "Role" + str(random.randint(1000, 10000))
 

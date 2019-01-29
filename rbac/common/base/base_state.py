@@ -66,7 +66,8 @@ class StateBase:
         """
         return self.object_type.name.title()
 
-    def _camel_case(self, value):
+    @classmethod
+    def _camel_case(cls, value):
         """Make a string camel case
         Example: ROLE_ATTRIBUTE -> RoleAttribute"""
         return value.title().replace(" ", "").replace("_", "")
@@ -193,12 +194,14 @@ class StateBase:
             self._state_container_prefix + "Container",
         )
 
-    def unique_id(self):
+    @classmethod
+    def unique_id(cls):
         """Generates a random 12-byte hexadecimal string
         Override where desired behavior differs"""
         return unique_id()
 
-    def hash(self, value):
+    @classmethod
+    def hash(cls, value):
         """Returns a 12-byte hash of a given string lowercased, unless it is already a
         12-byte hexadecimal string (e.g. as returned by the unique_id function).
         Returns zero bytes if the value is None or falsey
@@ -304,7 +307,8 @@ class StateBase:
             return self.deserialize(address=address, data=data)
         return None
 
-    def get_addresses(self, context, addresses):
+    @classmethod
+    def get_addresses(cls, context, addresses):
         """Get the list of blockchain addresses"""
         return state_client.get_addresses(context=context, addresses=addresses)
 

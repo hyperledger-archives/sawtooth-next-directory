@@ -57,7 +57,8 @@ class ProposeRoleMemberTestHelper(BaseApiHelper):
         """ Reject add member endpoint """
         return self.url_base + "/api/roles/{}/members/".format(role_id)
 
-    def reason(self):
+    @classmethod
+    def reason(cls):
         """Get a random reason"""
         return "Because" + str(random.randint(10000, 100000))
 

@@ -29,11 +29,12 @@ LOGGER = logging.getLogger(__name__)
 @pytest.fixture
 def test_object():
     class TestObject:
-        @property
-        def test_property(self):
+        @classmethod
+        def test_property(cls):
             return "bar"
 
-        def test_method(self):
+        @classmethod
+        def test_method(cls):
             return "foobar"
 
     return TestObject()
@@ -47,7 +48,7 @@ def test_get_attribute(test_object):
     2. return a reference to a method, if it exists
     3. return None if a property or method does not exist
     """
-    assert get_attribute(test_object, "test_property") == "bar"
+    assert get_attribute(test_object, "test_property")() == "bar"
     assert callable(get_attribute(test_object, "test_method"))
     assert get_attribute(test_object, "test_method")() == "foobar"
     assert get_attribute(test_object, "no_property") is None

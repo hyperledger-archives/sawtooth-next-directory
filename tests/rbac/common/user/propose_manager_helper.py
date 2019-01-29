@@ -39,11 +39,13 @@ helper = StubTestHelper()
 class ProposeManagerTestHelper:
     """Propose Manager Helper"""
 
-    def id(self):
+    @classmethod
+    def id(cls):
         """Get a unique identifier"""
         return rbac.addresser.proposal.unique_id()
 
-    def reason(self):
+    @classmethod
+    def reason(cls):
         """Get a random reason"""
         return "Because" + str(random.randint(10000, 100000))
 

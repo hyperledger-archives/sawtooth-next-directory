@@ -35,7 +35,8 @@ LOGGER = logging.getLogger(__name__)
 class TestBatchClient(TestAssertions):
     """Test the Sawtooth batch helper class"""
 
-    def get_test_inputs(self, message_type=RBACPayload.CREATE_USER):
+    @classmethod
+    def get_test_inputs(cls, message_type=RBACPayload.CREATE_USER):
         """Returns test data inputs for testing batcher functions"""
         if message_type == RBACPayload.CREATE_USER:
             signer = Key()

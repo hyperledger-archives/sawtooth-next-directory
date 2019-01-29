@@ -38,7 +38,8 @@ class AadAuth:
     def __init__(self):
         """Initialize the class."""
 
-    def get_token(self):
+    @classmethod
+    def get_token(cls):
         if AUTH_TYPE.upper() == "SECRET":
             data = {
                 "client_id": CLIENT_ID,

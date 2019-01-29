@@ -39,15 +39,18 @@ helper = StubTestHelper()
 class CreateTaskTestHelper:
     """Create Task Test Helper"""
 
-    def id(self):
+    @classmethod
+    def id(cls):
         """Get a test task_id (not created)"""
         return rbac.addresser.task.unique_id()
 
-    def name(self):
+    @classmethod
+    def name(cls):
         """Get a random name"""
         return "Task" + str(random.randint(1000, 10000))
 
-    def reason(self):
+    @classmethod
+    def reason(cls):
         """Get a random reason"""
         return "Because" + str(random.randint(10000, 100000))
 
