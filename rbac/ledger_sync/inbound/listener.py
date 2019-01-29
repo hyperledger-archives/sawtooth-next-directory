@@ -34,7 +34,7 @@ def process(rec, database):
             database.run_query(
                 database.get_table("inbound_queue").get(rec["id"]).delete()
             )
-            database.run_query(database.get_table("inbound_queue_errors").insert(rec))
+            database.run_query(database.get_table("changelog").insert(rec))
             return
 
         batch = batch_pb2.Batch()
@@ -72,7 +72,7 @@ def process(rec, database):
                     LOGGER.warning(
                         "error updating metadata record:\n%s\n%s", result, query
                     )
-            database.run_query(database.get_table("inbound_queue_archive").insert(rec))
+            database.run_query(database.get_table("changelog").insert(rec))
             database.run_query(
                 database.get_table("inbound_queue").get(rec["id"]).delete()
             )

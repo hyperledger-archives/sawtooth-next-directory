@@ -26,7 +26,6 @@ from rbac.providers.common.provider_errors import DatabaseConnectionException
 
 LOGGER = get_logger(__name__)
 
-CHANGELOG = os.getenv("CHANGELOG", "changelog")
 DB_HOST = os.getenv("DB_HOST", "rethink")
 DB_PORT = os.getenv("DB_PORT", "28015")
 DB_NAME = os.getenv("DB_NAME", "rbac")
@@ -122,7 +121,7 @@ def put_entry_changelog(queue_entry, direction):
     queue_entry["changelog_timestamp"] = dt.now().isoformat()
     queue_entry["direction"] = direction
     result = (
-        r.table(CHANGELOG)
+        r.table("changelog")
         .insert(queue_entry, return_changes=True, conflict="error")
         .run()
     )
