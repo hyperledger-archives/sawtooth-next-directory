@@ -26,24 +26,29 @@ from rbac.server.api import utils
 
 from rbac.server.db import roles_query
 
+from rbac.server.db import db_utils
+
 ROLES_BP = Blueprint("roles")
 
 
 @ROLES_BP.get("api/roles")
 @authorized()
 async def get_all_roles(request):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     role_resources = await roles_query.fetch_all_role_resources(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
+    conn.close()
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        role_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, role_resources, head_block, start=start, limit=limit
     )
 
 
@@ -74,13 +79,19 @@ async def create_new_role(request):
 @ROLES_BP.get("api/roles/<role_id>")
 @authorized()
 async def get_role(request, role_id):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     role_resource = await roles_query.fetch_role_resource(
-        request.app.config.DB_CONN, role_id, head_block.get("num")
+        conn, role_id, head_block.get("num")
     )
-    return await utils.create_response(
-        request.app.config.DB_CONN, request.url, role_resource, head_block
-    )
+    conn.close()
+    return await utils.create_response(conn, request.url, role_resource, head_block)
 
 
 @ROLES_BP.patch("api/roles/<role_id>")

@@ -25,6 +25,8 @@ from rbac.server.api import utils
 from rbac.server.db import users_query
 from rbac.app.config import CHATBOT_REST_ENDPOINT
 
+from rbac.server.db import db_utils
+
 LOGGER = logging.getLogger(__name__)
 LOGGER.level = logging.INFO
 LOGGER.addHandler(logging.StreamHandler(sys.stdout))
@@ -57,9 +59,16 @@ async def create_response(request, recv):
 
 async def update_tracker(request, recv):
     if recv.get("approver_id"):
+
+        conn = await db_utils.create_connection(
+            request.app.config.DB_HOST,
+            request.app.config.DB_PORT,
+            request.app.config.DB_NAME,
+        )
+
         head_block = await utils.get_request_block(request)
         owner_resource = await users_query.fetch_user_resource(
-            request.app.config.DB_CONN, recv.get("approver_id"), head_block.get("num")
+            conn, recv.get("approver_id"), head_block.get("num")
         )
         await create_event(request, recv, "approver_name", owner_resource.get("name"))
     await create_event(request, recv, "token", utils.extract_request_token(request))

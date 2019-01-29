@@ -22,6 +22,8 @@ from rbac.server.api import utils
 
 from rbac.server.db import blocks_query
 
+from rbac.server.db import db_utils
+
 
 BLOCKS_BP = Blueprint("blocks")
 
@@ -29,18 +31,23 @@ BLOCKS_BP = Blueprint("blocks")
 @BLOCKS_BP.get("api/blocks")
 @authorized()
 async def get_all_blocks(request):
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     block_resources = await blocks_query.fetch_all_blocks(
-        request.app.config.DB_CONN, head_block.get("num"), start, limit
+        conn, head_block.get("num"), start, limit
     )
+
+    conn.close()
+
     return await utils.create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        block_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, block_resources, head_block, start=start, limit=limit
     )
 
 
@@ -49,9 +56,17 @@ async def get_all_blocks(request):
 async def get_latest_block(request):
     if "?head=" in request.url:
         raise ApiBadRequest("Bad Request: 'head' parameter should not be specified")
-    block_resource = await blocks_query.fetch_latest_block_with_retry(
-        request.app.config.DB_CONN
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
+
+    block_resource = await blocks_query.fetch_latest_block_with_retry(conn)
+
+    conn.close()
+
     url = request.url.replace("latest", block_resource.get("id"))
     return json({"data": block_resource, "link": url})
 
@@ -61,7 +76,15 @@ async def get_latest_block(request):
 async def get_block(request, block_id):
     if "?head=" in request.url:
         raise ApiBadRequest("Bad Request: 'head' parameter should not be specified")
-    block_resource = await blocks_query.fetch_block_by_id(
-        request.app.config.DB_CONN, block_id
+
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
+
+    block_resource = await blocks_query.fetch_block_by_id(conn, block_id)
+
+    conn.close()
+
     return json({"data": block_resource, "link": request.url})

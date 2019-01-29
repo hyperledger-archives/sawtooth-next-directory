@@ -22,6 +22,8 @@ from rbac.common.crypto.secrets import encrypt_private_key
 from rbac.server.api import utils
 from rbac.server.api.errors import ApiNotFound
 
+from rbac.server.db import db_utils
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -38,7 +40,11 @@ async def fetch_info_by_user_id(conn, user_id):
 
 async def fetch_info_by_username(request):
     username = request.json.get("id")
-    conn = request.app.config.DB_CONN
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
     result = (
         await r.table("auth")
         .get_all(username, index="username")
@@ -85,5 +91,7 @@ async def fetch_info_by_username(request):
         "encrypted_private_key": encrypted_private_key,
     }
     await r.table("auth").insert(auth_entry).run(conn)
+
+    conn.close()
 
     return auth_entry
