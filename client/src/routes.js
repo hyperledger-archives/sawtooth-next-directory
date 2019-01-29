@@ -22,7 +22,6 @@ import ApproverNav from 'components/nav/ApproverNav';
 import RequesterHome from 'containers/requester/RequesterHome';
 import RequesterNav from 'components/nav/RequesterNav';
 
-import PageNotFound from './components/layouts/PageNotFound';
 
 import Role from 'containers/requester/role/Role';
 import Pack from 'containers/requester/pack/Pack';
@@ -165,9 +164,6 @@ const routes = (props) => [
     main:   (rest) => <Expired {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
-  },
-  {
-    main:   (rest) => <PageNotFound {...props}/>,
   },
 
 ];
