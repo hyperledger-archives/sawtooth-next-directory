@@ -34,6 +34,8 @@ LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
+USER_BASE_DN = os.getenv("USER_BASE_DN")
+GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
 DELTA_SYNC_INTERVAL_SECONDS = int(os.getenv("DELTA_SYNC_INTERVAL_SECONDS", "3600"))
 
 LOGGER = get_logger(__name__)
@@ -41,40 +43,66 @@ LOGGER = get_logger(__name__)
 
 def fetch_ldap_data():
     """
-        Call to get entries for all (Users | Groups) in Active Directory, saves the time of the sync,
+        Call to get entries for (Users | Groups) in Active Directory, saves the time of the sync,
         and inserts data into RethinkDB.
     """
     LOGGER.debug("Connecting to RethinkDB...")
     connect_to_db()
     LOGGER.debug("Successfully connected to RethinkDB")
 
-    last_sync = (
-        r.table("sync_tracker")
-        .filter({"provider_id": LDAP_DC})
-        .max("timestamp")
-        .coerce_to("object")
-        .run()
-    )
+    for data_type in ["user", "group"]:
+        if data_type == "user":
+            last_sync = (
+                r.table("sync_tracker")
+                .filter({"provider_id": LDAP_DC, "source": "ldap-user"})
+                .max("timestamp")
+                .coerce_to("object")
+                .run()
+            )
+            last_sync_time = last_sync["timestamp"]
+            last_sync_time_formatted = to_date_ldap_query(
+                rethink_timestamp=last_sync_time
+            )
+            search_filter = (
+                "(&(objectClass=person)(whenChanged>=%s))" % last_sync_time_formatted
+            )
+            search_base = USER_BASE_DN
 
-    last_sync_time = last_sync["timestamp"]
-    last_sync_time_formatted = to_date_ldap_query(rethink_timestamp=last_sync_time)
-    search_filter = (
-        "(&(|(objectClass=person)(objectClass=group))(whenChanged>=%s))"
-        % last_sync_time_formatted
-    )
+        else:
+            last_sync = (
+                r.table("sync_tracker")
+                .filter({"provider_id": LDAP_DC, "source": "ldap-group"})
+                .max("timestamp")
+                .coerce_to("object")
+                .run()
+            )
 
-    ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
+            last_sync_time = last_sync["timestamp"]
+            last_sync_time_formatted = to_date_ldap_query(
+                rethink_timestamp=last_sync_time
+            )
+            search_filter = (
+                "(&(objectClass=group)(whenChanged>=%s))" % last_sync_time_formatted
+            )
+            search_base = GROUP_BASE_DN
+        ldap_connection = ldap_connector.await_connection(
+            LDAP_SERVER, LDAP_USER, LDAP_PASS
+        )
 
-    ldap_connection.search(
-        search_base=LDAP_DC,
-        search_filter=search_filter,
-        attributes=ldap3.ALL_ATTRIBUTES,
-    )
+        ldap_connection.search(
+            search_base=search_base,
+            search_filter=search_filter,
+            attributes=ldap3.ALL_ATTRIBUTES,
+        )
 
-    parsed_last_sync_time = datetime.strptime(
-        last_sync_time.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f"
-    ).replace(tzinfo=timezone.utc)
-    insert_to_db(data_dict=ldap_connection.entries, when_changed=parsed_last_sync_time)
+        parsed_last_sync_time = datetime.strptime(
+            last_sync_time.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f"
+        ).replace(tzinfo=timezone.utc)
+        insert_to_db(
+            data_dict=ldap_connection.entries,
+            when_changed=parsed_last_sync_time,
+            data_type=data_type,
+        )
 
 
 def to_date_ldap_query(rethink_timestamp):
@@ -86,7 +114,7 @@ def to_date_ldap_query(rethink_timestamp):
     ).strftime("%Y%m%d%H%M%S.0Z")
 
 
-def insert_to_db(data_dict, when_changed):
+def insert_to_db(data_dict, when_changed, data_type):
     """Insert (Users | Groups) individually to RethinkDB from dict of data and begins delta sync timer."""
     insertion_counter = 0
 
@@ -101,11 +129,9 @@ def insert_to_db(data_dict, when_changed):
                 entry_to_insert[attribute] = entry_attributes[attribute][0]
 
         if entry.whenChanged.value > when_changed:
-            if "person" in entry.objectClass.value:
-                data_type = "user"
+            if data_type == "user":
                 standardized_entry = inbound_user_filter(entry_to_insert, "ldap")
             else:
-                data_type = "group"
                 standardized_entry = inbound_group_filter(entry_to_insert, "ldap")
             entry_modified_timestamp = entry.whenChanged.value.strftime(
                 "%Y-%m-%dT%H:%M:%S.%f+00:00"

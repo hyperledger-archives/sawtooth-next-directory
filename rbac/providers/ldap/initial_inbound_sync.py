@@ -43,7 +43,8 @@ LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
-
+USER_BASE_DN = os.getenv("USER_BASE_DN")
+GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
 LDAP_SEARCH_PAGE_SIZE = 500
 
 
@@ -56,13 +57,15 @@ def fetch_ldap_data(data_type):
 
     if data_type == "user":
         search_filter = "(objectClass=person)"
+        search_base = USER_BASE_DN
     elif data_type == "group":
         search_filter = "(objectClass=group)"
+        search_base = GROUP_BASE_DN
 
     ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
 
     search_parameters = {
-        "search_base": LDAP_DC,
+        "search_base": search_base,
         "search_filter": search_filter,
         "attributes": ldap3.ALL_ATTRIBUTES,
         "paged_size": LDAP_SEARCH_PAGE_SIZE,
