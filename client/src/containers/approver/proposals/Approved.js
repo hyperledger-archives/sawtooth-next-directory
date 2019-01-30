@@ -104,7 +104,7 @@ class Approved extends Component {
       confirmedProposals.map(proposal => proposal.opener);
 
     diff && diff.length > 0 && getRoles(diff);
-    diff2 && diff2.length > 0 && getUsers([...new Set(diff2)]);
+    diff2 && diff2.length > 0 && getUsers([...new Set(diff2)], true);
   }
 
 

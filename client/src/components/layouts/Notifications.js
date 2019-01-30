@@ -102,7 +102,7 @@ class Notifications extends Component {
           userId => !users.find(user => user.id === userId)
         );
       }
-      getUsers(userIds);
+      getUsers(userIds, true);
     }
   }
 

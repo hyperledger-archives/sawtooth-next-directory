@@ -110,6 +110,7 @@ const create = (baseURL =
   const getRoot = () => api.get('');
   const getUser = (id) => api.get(`users/${id}`);
   const getUsers = (start, limit) => api.get('users', { start, limit });
+  const getUserSummary = (id) => api.get(`user/${id}/summary`);
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const updateProposals = (payload) => api.patch('proposals', payload);
@@ -147,6 +148,7 @@ const create = (baseURL =
     getRoot,
     getUser,
     getUsers,
+    getUserSummary,
     me,
     requestPackAccess,
     requestRoleAccess,

@@ -106,9 +106,9 @@ class RolesList extends Component {
     const diff = roles && roles
       .filter(role => activePack.roles.find(roleId => role.id === roleId))
       .map(role => role.owners[0])
-      .filter(userId => !users.find(user => user.id === userId));
+      .filter(userId => !users || !users.find(user => user.id === userId));
 
-    diff && diff.length > 0 && getUsers([...new Set(diff)]);
+    diff && diff.length > 0 && getUsers([...new Set(diff)], true);
   }
 
 

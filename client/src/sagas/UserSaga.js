@@ -37,7 +37,7 @@ export function * me (api, action) {
 
 
 /**
- * Get detailed info for a specific user or group of
+ * Get detailed info for a specific user
  * users
  * @param {object} api    API service
  * @param {object} action Redux action
@@ -45,8 +45,10 @@ export function * me (api, action) {
  */
 export function * getUser (api, action) {
   try {
-    const { id } = action;
-    const res = yield call(api.getUser, id);
+    const { id, summary } = action;
+    const res = summary ?
+      yield call(api.getUserSummary, id) :
+      yield call(api.getUser, id);
     res.ok ?
       yield put(UserActions.userSuccess(res.data.data)) :
       yield put(UserActions.userFailure(res.data.message));
@@ -64,8 +66,9 @@ export function * getUser (api, action) {
  */
 export function * getUsers (api, action) {
   try {
-    const { ids } = action;
-    if (ids.length > 0) yield all(ids.map(id => fork(getUser, api, { id })));
+    const { ids, summary } = action;
+    if (ids.length > 0)
+      yield all(ids.map(id => fork(getUser, api, { id, summary })));
   } catch (err) {
     console.error(err);
   }

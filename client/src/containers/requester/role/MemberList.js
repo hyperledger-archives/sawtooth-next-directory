@@ -71,7 +71,7 @@ class MemberList extends Component {
     const diff = (users && join.filter(
       userId => !users.find(user => user.id === userId)
     )) || join;
-    diff && getUsers(diff);
+    diff && getUsers(diff, true);
   }
 
 
@@ -125,7 +125,7 @@ class MemberList extends Component {
                 <Avatar userId={userId} size='medium' {...this.props}/>
               </div>
               <div>
-                {user && user.name}
+                {(user && user.name) || 'Unnamed'}
                 {isOwner && ' (Owner)'}
                 <Header.Subheader>
                   {user && user.email}
