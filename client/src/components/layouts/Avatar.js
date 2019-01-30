@@ -60,7 +60,7 @@ class Avatar extends Component {
         .toUpperCase();
     }
 
-    return initials;
+    return initials || 'U';
   }
 
 

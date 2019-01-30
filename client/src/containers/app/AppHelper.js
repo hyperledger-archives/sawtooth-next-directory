@@ -151,10 +151,12 @@ export const appDispatch = (dispatch) => ({
 
   // User
   getMe:              () => dispatch(User.meRequest()),
-  getUser:          (id) => dispatch(User.userRequest(id)),
-  getUsers:        (ids) => dispatch(User.usersRequest(ids)),
   logout:             () => logout(dispatch),
-  getAllUsers:       (start, limit) =>
+  getUser:     (id, summary) =>
+    dispatch(User.userRequest(id, summary)),
+  getUsers:    (ids, summary) =>
+    dispatch(User.usersRequest(ids, summary)),
+  getAllUsers: (start, limit) =>
     dispatch(User.allUsersRequest(start, limit)),
 });
 

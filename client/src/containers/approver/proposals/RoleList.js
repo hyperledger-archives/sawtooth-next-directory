@@ -67,7 +67,7 @@ class RoleList extends Component {
         !users.find(user => newUser === user.id)) :
       collection = newUsers;
 
-    getUsers(collection);
+    getUsers(collection, true);
 
     const newRoles = Object.keys(openProposalsByRole);
     roles ?
@@ -99,7 +99,7 @@ class RoleList extends Component {
 
     if (newUsers.length > oldUsers.length) {
       const diff = newUsers.filter(user => !oldUsers.includes(user));
-      getUsers(diff);
+      getUsers(diff, true);
     }
     if (newRoles.length > oldRoles.length) {
       const diff = newRoles.filter(role => !oldRoles.includes(role));
