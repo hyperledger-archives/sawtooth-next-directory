@@ -38,10 +38,11 @@ limitations under the License.
 
 #next-login-container h1 {
   font-size: 1.2em;
+  margin-top: 48px;
 }
 
 #next-login-form-1 {
-  margin-top: 50px;
+  margin-top: 70px;
   text-align: center;
 }
 

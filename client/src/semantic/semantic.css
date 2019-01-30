@@ -5366,6 +5366,7 @@ button.ui.link:focus {
 
 .toggle-card.gradient.toggle.massive {
   height: 130px;
+  word-break: break-all;
 }
 
 .toggle-card.toggle.massive i {
@@ -19751,7 +19752,7 @@ ol.ui.horizontal.list li:before,
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  height: 150px;
+  height: 170px;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;

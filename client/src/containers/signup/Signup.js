@@ -57,7 +57,6 @@ class Signup extends Component {
    */
   componentDidMount () {
     theme.apply(this.themes);
-    theme.remove(['interpolate']);
     this.init();
   }
 

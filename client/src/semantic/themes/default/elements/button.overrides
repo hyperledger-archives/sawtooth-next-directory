@@ -79,6 +79,7 @@ button.ui.link:focus {
 
 .toggle-card.gradient.toggle.massive {
   height: 130px;
+  word-break: break-all;
 }
 
 .toggle-card.toggle.massive i {
