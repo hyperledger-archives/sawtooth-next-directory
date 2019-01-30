@@ -81,7 +81,7 @@
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  height: 150px;
+  height: 170px;
   justify-content: space-between;
   margin-bottom: 1.1rem;
   padding: 22px 25px;

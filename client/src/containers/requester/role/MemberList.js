@@ -94,7 +94,7 @@ class MemberList extends Component {
                   <Avatar userId={userId} size='medium' {...this.props}/>
                 </div>
                 <div>
-                  Unavailable
+                  Loading
                 </div>
               </Header>
             </Segment>

@@ -20,7 +20,6 @@ import {
   Container,
   Form,
   Label,
-  Image,
   Input,
   Menu,
   Transition } from 'semantic-ui-react';
@@ -187,14 +186,6 @@ class LoginForm extends Component {
           <div id='next-login-form-2'>
             <Form id='next-password-form'
               onSubmit={() => submit(username, password, authSource)}>
-              <Container
-                textAlign='center'
-                id='next-login-form-avatar-container'>
-                <Image
-                  avatar
-                  src='http://i.pravatar.cc/150'
-                  size='tiny'/>
-              </Container>
               <Form.Button
                 id='next-login-form-back-button'
                 content='Back'

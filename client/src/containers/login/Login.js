@@ -78,13 +78,10 @@ class Login extends Component {
     this.init();
 
     if (prevState.authSource !== authSource) {
-      if (authSource === 'ldap') {
+      if (authSource === 'ldap')
         storage.setAuthSource('ldap');
-        theme.apply(['interpolate']);
-      } else {
+      else
         storage.setAuthSource('next');
-        theme.remove(['interpolate']);
-      }
     }
   }
 
