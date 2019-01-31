@@ -71,7 +71,7 @@ class PeopleChat extends Component {
 
     let roleIds = user.memberOf;
     if (roles && roles.length) {
-      roleIds = roleIds.filter(
+      roleIds = roleIds && roleIds.filter(
         roleId => !roles.find(role => role.id === roleId)
       );
     }
@@ -183,7 +183,7 @@ class PeopleChat extends Component {
                 id='next-chat-organization-user-info'
                 textAlign='left'>
                 <Accordion inverted>
-                  { user.memberOf.length > 0 &&
+                  { user.memberOf && user.memberOf.length > 0 &&
                     <div>
                       <Accordion.Title
                         active={activeIndex === 0}
