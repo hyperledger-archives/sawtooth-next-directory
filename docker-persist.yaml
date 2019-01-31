@@ -42,10 +42,12 @@ version: "3"
 services:
 
   rethink:
+    restart: unless-stopped
     volumes:
       - db:/data/rethinkdb_data
 
   validator:
+    restart: unless-stopped
     volumes:
       - keys:/var/lib/sawtooth
       - chain:/etc/sawtooth/keys
