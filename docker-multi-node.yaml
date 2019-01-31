@@ -30,6 +30,7 @@ networks:
         - subnet: 10.5.0.0/16
 
 services:
+  restart: unless-stopped
   shell:
     build:
       context: .
@@ -49,6 +50,7 @@ services:
       PYTHONPATH: /project/hyperledger-rbac/addressing:/project/hyperledger-rbac/transaction_creation
 
   rbac-server-0:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.server.Dockerfile
@@ -68,6 +70,7 @@ services:
     command: ./bin/rbac-server --db-host rethink-0 --validator-host validator-0
 
   rbac-server-1:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.server.Dockerfile
@@ -87,6 +90,7 @@ services:
     command: ./bin/rbac-server --db-host rethink-1 --validator-host validator-1
   
   rbac-server-2:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.server.Dockerfile
@@ -106,6 +110,7 @@ services:
     command: ./bin/rbac-server --db-host rethink-2 --validator-host validator-2
 
   rbac-server-3:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.server.Dockerfile
@@ -126,6 +131,7 @@ services:
     
 
   rethink-0:
+    restart: unless-stopped
     container_name: rbac-rethink-0
     image: rethinkdb:2.3
     ports:
@@ -134,6 +140,7 @@ services:
       - node_network
   
   rethink-1:
+    restart: unless-stopped
     container_name: rbac-rethink-1
     image: rethinkdb:2.3
     ports:
@@ -142,6 +149,7 @@ services:
       - node_network
   
   rethink-2:
+    restart: unless-stopped
     container_name: rbac-rethink-2
     image: rethinkdb:2.3
     ports:
@@ -150,6 +158,7 @@ services:
       - node_network
   
   rethink-3:
+    restart: unless-stopped
     container_name: rbac-rethink-3
     image: rethinkdb:2.3
     ports:
@@ -158,6 +167,7 @@ services:
       - node_network
 
   rbac-tp-0:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.processor.Dockerfile
@@ -170,6 +180,7 @@ services:
     command: ./bin/rbac-tp -vv tcp://validator-0:4004
   
   rbac-tp-1:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.processor.Dockerfile
@@ -182,6 +193,7 @@ services:
     command: ./bin/rbac-tp -vv tcp://validator-1:4004
   
   rbac-tp-2:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.processor.Dockerfile
@@ -194,6 +206,7 @@ services:
     command: ./bin/rbac-tp -vv tcp://validator-2:4004
 
   rbac-tp-3:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.processor.Dockerfile
@@ -206,6 +219,7 @@ services:
     command: ./bin/rbac-tp -vv tcp://validator-3:4004
 
   ledger-sync-0:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.ledger_sync.Dockerfile
@@ -225,6 +239,7 @@ services:
       \"\""
 
   ledger-sync-1:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.ledger_sync.Dockerfile
@@ -244,6 +259,7 @@ services:
       \"\""
   
   ledger-sync-2:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.ledger_sync.Dockerfile
@@ -263,6 +279,7 @@ services:
       \"\""
 
   ledger-sync-3:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/rbac.ledger_sync.Dockerfile
@@ -282,6 +299,7 @@ services:
       \"\""
 
   rbac-client-0:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/client.Dockerfile
@@ -298,6 +316,7 @@ services:
       - HOST=10.5.0.60
 
   rbac-client-1:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/client.Dockerfile
@@ -314,6 +333,7 @@ services:
       - HOST=10.5.0.61
 
   rbac-client-2:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/ui.Dockerfile
@@ -330,6 +350,7 @@ services:
       - HOST=10.5.0.62
 
   rbac-client-3:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/ui.Dockerfile
@@ -346,6 +367,7 @@ services:
       - HOST=10.5.0.63
 
   rest-api-0:
+    restart: unless-stopped
     container_name: sawtooth-rest-api-0
     image: hyperledger/sawtooth-rest-api:1.0
     expose:
@@ -357,6 +379,7 @@ services:
     command: sawtooth-rest-api --connect tcp://validator-0:4004 --bind rest-api-0:8008 -vv
 
   rest-api-1:
+    restart: unless-stopped
     container_name: sawtooth-rest-api-1
     image: hyperledger/sawtooth-rest-api:1.0
     expose:
@@ -368,6 +391,7 @@ services:
     command: sawtooth-rest-api --connect tcp://validator-1:4004 --bind rest-api-1:8008 -vvv
 
   rest-api-2:
+    restart: unless-stopped
     container_name: sawtooth-rest-api-2
     image: hyperledger/sawtooth-rest-api:1.0
     expose:
@@ -379,6 +403,7 @@ services:
     command: sawtooth-rest-api --connect tcp://validator-2:4004 --bind rest-api-2:8008 -vv
   
   rest-api-3:
+    restart: unless-stopped
     container_name: sawtooth-rest-api-3
     image: hyperledger/sawtooth-rest-api:1.0
     expose:
@@ -390,6 +415,7 @@ services:
     command: sawtooth-rest-api --connect tcp://validator-3:4004 --bind rest-api-3:8008 -vv
 
   settings-tp-0:
+    restart: unless-stopped
     container_name: rbac-settings-tp-0
     image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
@@ -399,6 +425,7 @@ services:
     command: settings-tp -v --connect tcp://validator-0:4004
   
   settings-tp-1:
+    restart: unless-stopped
     container_name: rbac-settings-tp-1
     image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
@@ -408,6 +435,7 @@ services:
     command: settings-tp -v --connect tcp://validator-1:4004
   
   settings-tp-2:
+    restart: unless-stopped
     container_name: rbac-settings-tp-2
     image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
@@ -417,6 +445,7 @@ services:
     command: settings-tp -v --connect tcp://validator-2:4004
 
   settings-tp-3:
+    restart: unless-stopped
     container_name: rbac-settings-tp-3
     image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
@@ -426,6 +455,7 @@ services:
     command: settings-tp -v --connect tcp://validator-3:4004
 
   validator-0:
+    restart: unless-stopped
     container_name: rbac-validator-tp-0
     image: hyperledger/sawtooth-validator:1.0
     expose:
@@ -473,6 +503,7 @@ services:
       \"\""
 
   validator-1:
+    restart: unless-stopped
     container_name: rbac-validator-tp-1
     image: hyperledger/sawtooth-validator:1.0
     expose:
@@ -495,6 +526,7 @@ services:
       \"\""
   
   validator-2:
+    restart: unless-stopped
     container_name: rbac-validator-tp-2
     image: hyperledger/sawtooth-validator:1.0
     expose:
@@ -517,6 +549,7 @@ services:
       \"\""
 
   validator-3:
+    restart: unless-stopped
     container_name: rbac-validator-tp-3
     image: hyperledger/sawtooth-validator:1.0
     expose:
@@ -540,6 +573,7 @@ services:
       \"\""
   
   poet-validator-registry-tp-0:
+    restart: unless-stopped
     image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
     container_name: sawtooth-poet-validator-registry-tp-0
     expose:
@@ -551,6 +585,7 @@ services:
     command: poet-validator-registry-tp -C tcp://validator-0:4004
 
   poet-validator-registry-tp-1:
+    restart: unless-stopped
     image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
     container_name: sawtooth-poet-validator-registry-tp-1
     expose:
@@ -562,6 +597,7 @@ services:
     command: poet-validator-registry-tp -C tcp://validator-1:4004
   
   poet-validator-registry-tp-2:
+    restart: unless-stopped
     image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
     container_name: sawtooth-poet-validator-registry-tp-2
     expose:
@@ -573,6 +609,7 @@ services:
     command: poet-validator-registry-tp -C tcp://validator-2:4004
       
   poet-validator-registry-tp-3:
+    restart: unless-stopped
     image: hyperledger/sawtooth-poet-validator-registry-tp:1.0
     container_name: sawtooth-poet-validator-registry-tp-3
     expose:
