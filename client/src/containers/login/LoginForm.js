@@ -66,7 +66,7 @@ class LoginForm extends Component {
     if (prevState.activeIndex === 0 && activeIndex === 1)
       setTimeout(() => this.passwordRef.focus(), 300);
 
-    if (error) {
+    if (error && this.state.activeIndex !== 0) {
       setTimeout(() => {
         this.setFlow(0);
         this.usernameRef.focus();
