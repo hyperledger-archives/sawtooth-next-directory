@@ -14,8 +14,16 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-member-list-owner-popup-box, 
+#next-requester-roles-member-list-container .ui.grid .ui.placeholder {
+  margin: 10px;
+}
+
+#next-member-list-owner-popup-box,
 #next-member-list-member-popup-box {
   border-radius: 8px;
   padding: 6px 8px;
+}
+
+#next-member-list-load-next-button {
+  margin-top: 50px;
 }

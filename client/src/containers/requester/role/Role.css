@@ -15,6 +15,7 @@ limitations under the License.
 
 
 #next-requester-roles-content {
+  padding-bottom: 50px;
   position: relative;
   top: 120px;
   width: calc(100% - 61px) !important;

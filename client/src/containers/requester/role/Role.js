@@ -116,8 +116,10 @@ export class Role extends Component {
             title={this.role.name}
             subtitle={
               this.role && utils.countLabel([
-                ...this.role.members,
-                ...this.role.owners,
+                ...new Set([
+                  ...this.role.members,
+                  ...this.role.owners,
+                ]),
               ]
                 .length, 'member')
             }

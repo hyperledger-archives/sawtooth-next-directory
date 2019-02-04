@@ -15,10 +15,19 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Grid, Header, Icon, Segment, Popup } from 'semantic-ui-react';
+import {
+  Button,
+  Container,
+  Grid,
+  Header,
+  Icon,
+  Placeholder,
+  Popup,
+  Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './MemberList.css';
 import Avatar from 'components/layouts/Avatar';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -36,6 +45,13 @@ class MemberList extends Component {
     owners:             PropTypes.array,
     users:              PropTypes.array,
   }
+
+
+  state = {
+    start: 0,
+    limit: 5,
+    memberList: [],
+  };
 
 
   /**
@@ -56,7 +72,8 @@ class MemberList extends Component {
    */
   componentDidUpdate (prevProps) {
     const { members, owners } = this.props;
-    if (prevProps.members !== members || prevProps.owners !== owners)
+    if (!utils.arraysEqual(prevProps.members, members) ||
+        !utils.arraysEqual(prevProps.owners, owners))
       this.init();
   }
 
@@ -66,12 +83,36 @@ class MemberList extends Component {
    * not already loaded in client.
    */
   init () {
-    const { getUsers, members, owners, users } = this.props;
-    const join = [...owners, ...members];
-    const diff = (users && join.filter(
-      userId => !users.find(user => user.id === userId)
-    )) || join;
-    diff && getUsers(diff, true);
+    this.reset();
+    this.loadNext(0);
+  }
+
+
+  reset = () => {
+    this.setState({ memberList: [] });
+  }
+
+
+  /**
+   * Load next set of data
+   * @param {number} start Loading start index
+   */
+  loadNext = (start) => {
+    const { getUsers, members, owners } = this.props;
+    const { limit } = this.state;
+    if (start === undefined || start === null)
+      start = this.state.start;
+
+    const join = [...new Set([...owners, ...members])];
+    join && getUsers(join.slice(start, start + limit), true);
+
+    this.setState(prevState => ({
+      memberList: [
+        ...prevState.memberList,
+        ...new Set([...join.slice(start, start + limit)]),
+      ],
+      start: start + limit,
+    }));
   }
 
 
@@ -82,62 +123,58 @@ class MemberList extends Component {
    * @returns {JSX}
    */
   renderUserSegment (userId, isOwner) {
-    const { users } = this.props;
-    if (users) {
-      const user = users.find((user) => user.id === userId);
-      if (!user) {
-        return (
-          <Grid.Column key={userId} largeScreen={8} widescreen={5}>
-            <Segment className='avatar secondary no-padding minimal'>
-              <Header as='h4' className='next-member-list-user-info'>
-                <div>
-                  <Avatar userId={userId} size='medium' {...this.props}/>
-                </div>
-                <div>
-                  Loading
-                </div>
-              </Header>
-            </Segment>
-          </Grid.Column>
-        );
-      }
+    const { userFromId } = this.props;
+    const user = userFromId(userId);
 
+    if (!user) {
       return (
-        user &&
-        <Grid.Column key={userId} largeScreen={8} widescreen={5}>
-          <Segment className='avatar no-padding minimal'>
-            { isOwner ?
-              <Popup trigger={<Icon
-                name='shield'
-                className='pull-right'
-                color='green'/>} content='Owner'
-              id='next-member-list-owner-popup-box'
-              position='top center' inverted/> :
-              <Popup trigger={<Icon
-                name='key'
-                className='pull-right'
-                color='grey'/>} content='Member'
-              id='next-member-list-member-popup-box'
-              position='top center' inverted/>
-            }
-            <Header as='h4' className='next-member-list-user-info'>
-              <div>
-                <Avatar userId={userId} size='medium' {...this.props}/>
-              </div>
-              <div>
-                {(user && user.name) || 'Unnamed'}
-                {isOwner && ' (Owner)'}
-                <Header.Subheader>
-                  {user && user.email}
-                </Header.Subheader>
-              </div>
-            </Header>
-
-          </Segment>
+        <Grid.Column
+          key={userId}
+          largeScreen={8}
+          widescreen={5}>
+          <Placeholder fluid>
+            <Placeholder.Header image>
+              <Placeholder.Line length='very long'/>
+              <Placeholder.Line length='medium'/>
+            </Placeholder.Header>
+          </Placeholder>
         </Grid.Column>
       );
     }
-    return null;
+
+    return (
+      <Grid.Column key={userId} largeScreen={8} widescreen={5}>
+        <Segment className='avatar no-padding minimal'>
+          { isOwner ?
+            <Popup trigger={<Icon
+              name='shield'
+              className='pull-right'
+              color='green'/>} content='Owner'
+            id='next-member-list-owner-popup-box'
+            position='top center' inverted/> :
+            <Popup trigger={<Icon
+              name='key'
+              className='pull-right'
+              color='grey'/>} content='Member'
+            id='next-member-list-member-popup-box'
+            position='top center' inverted/>
+          }
+          <Header as='h4' className='next-member-list-user-info'>
+            <div>
+              <Avatar userId={userId} size='medium' {...this.props}/>
+            </div>
+            <div>
+              {(user && user.name) || 'Unnamed'}
+              {isOwner && ' (Owner)'}
+              <Header.Subheader>
+                {user && user.email}
+              </Header.Subheader>
+            </div>
+          </Header>
+
+        </Segment>
+      </Grid.Column>
+    );
   }
 
 
@@ -147,19 +184,28 @@ class MemberList extends Component {
    */
   render () {
     const { members, owners } = this.props;
+    const { limit, memberList } = this.state;
+    const join = [...new Set([...owners, ...members])];
 
     return (
       <div>
         <Grid columns={3} stackable>
-          { owners && owners.map((owner) => (
-            this.renderUserSegment(owner, true)
-          )) }
-
-          { members && members.map((member) => (
-            this.renderUserSegment(member)
-          )) }
+          { memberList.map(userId => {
+            const isOwner = owners && owners.includes(userId);
+            return this.renderUserSegment(userId, isOwner);
+          }) }
         </Grid>
-
+        { join &&
+          join.length > limit &&
+          memberList.length !== join.length &&
+          <Container
+            id='next-member-list-load-next-button'
+            textAlign='center'>
+            <Button size='large' onClick={() => this.loadNext()}>
+              Load More
+            </Button>
+          </Container>
+        }
       </div>
     );
   }
