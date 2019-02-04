@@ -31,6 +31,7 @@ import './PeopleChat.css';
 import * as utils from 'services/Utils';
 import glyph from 'images/glyph-role.png';
 import Avatar from 'components/layouts/Avatar';
+import Organization from 'containers/approver/people/Organization';
 
 
 /**
@@ -41,7 +42,7 @@ import Avatar from 'components/layouts/Avatar';
  */
 class PeopleChat extends Component {
 
-  state = { activeIndex: 0, currentRolesMaxCount: 5 };
+  state = { accordionIndex: 0, currentRolesMaxCount: 5 };
 
 
   /**
@@ -94,14 +95,27 @@ class PeopleChat extends Component {
 
 
   /**
-   * Switch between accordion views
-   * @param {number} activeIndex Current accordion index
+   * Get user email from user ID
+   * @param {string} userId User ID
+   * @returns {string}
    */
-  setFlow = (activeIndex) => {
+  userEmail = (userId) => {
+    const { userFromId } = this.props;
+    const user = userFromId(userId);
+    if (user) return user.email;
+    return null;
+  };
+
+
+  /**
+   * Switch between accordion views
+   * @param {number} accordionIndex Current accordion index
+   */
+  setFlow = (accordionIndex) => {
     this.setState(prevState => ({
-      activeIndex: prevState.activeIndex === activeIndex ?
+      accordionIndex: prevState.accordionIndex === accordionIndex ?
         -1 :
-        activeIndex,
+        accordionIndex,
     }));
   };
 
@@ -145,6 +159,109 @@ class PeopleChat extends Component {
 
 
   /**
+   * Construct organization accordion panel
+   * @returns {object}
+   */
+  organizationPanel = () => {
+    const {
+      activeIndex,
+      activeUser,
+      organization } = this.props;
+    if (activeIndex === 1) return null;
+
+    return {
+      key: 'organization-panel',
+      title: {
+        content: (
+          <span>
+            Organization
+          </span>
+        ),
+      },
+      content: {
+        content: (
+          <div>
+            { organization &&
+              organization.managers.length === 0 &&
+              <div className='next-people-organization-no-items'>
+                <span>
+                  No organization info
+                </span>
+              </div>
+            }
+            <Organization
+              compact
+              activeUser={activeUser}
+              handleUserSelect={() => {}}
+              {...this.props}/>
+          </div>
+        ),
+      },
+    };
+  }
+
+
+  /**
+   * Construct roles accordion panel
+   * @param {object} user User
+   * @returns {object}
+   */
+  rolesPanel = (user) => {
+    const { currentRolesMaxCount } = this.state;
+    return {
+      key: 'roles-panel',
+      title: {
+        content: (
+          <span>
+            Current Roles
+          </span>
+        ),
+      },
+      content: {
+        content: (
+          <div>
+            <Grid columns={1} stackable>
+              { user.memberOf &&
+                user.memberOf.length > 0 &&
+                user.memberOf.slice(0, currentRolesMaxCount).map(
+                  roleId => this.renderUserRole(roleId)
+                )}
+              { user.memberOf && user.memberOf.length === 0 &&
+              <div className='next-people-organization-no-items'>
+                <span>
+                  No roles
+                </span>
+              </div>
+              }
+            </Grid>
+            { user.memberOf.length > currentRolesMaxCount &&
+            <Container
+              id='next-chat-organization-view-all-button'
+              textAlign='center'>
+              <Button
+                basic
+                animated
+                inverted
+                as={Link}
+                to={'/'}
+                size='mini'>
+                <Button.Content visible>
+                  VIEW ALL
+                </Button.Content>
+                <Button.Content hidden>
+                  <Icon name='arrow right'/>
+                </Button.Content>
+              </Button>
+            </Container>
+            }
+          </div>
+        ),
+      },
+    };
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
@@ -155,7 +272,6 @@ class PeopleChat extends Component {
       organization,
       userFromId } = this.props;
 
-    const { activeIndex, currentRolesMaxCount } = this.state;
     const user = userFromId(activeUser);
     if (!user) return null;
 
@@ -167,6 +283,9 @@ class PeopleChat extends Component {
               <Avatar userId={activeUser} size='large' {...this.props}/>
               <Header as='h2' inverted>
                 {this.userName(activeUser)}
+                <Header.Subheader>
+                  {this.userEmail(activeUser)}
+                </Header.Subheader>
               </Header>
               { organization &&
                 organization.direct_reports.includes(activeUser) &&
@@ -182,46 +301,14 @@ class PeopleChat extends Component {
               <Container
                 id='next-chat-organization-user-info'
                 textAlign='left'>
-                <Accordion inverted>
-                  { user.memberOf && user.memberOf.length > 0 &&
-                    <div>
-                      <Accordion.Title
-                        active={activeIndex === 0}
-                        index={0}
-                        onClick={() => this.setFlow(0)}>
-                        <Icon name='dropdown'/>
-                        Current Roles
-                      </Accordion.Title>
-                      <Accordion.Content active={activeIndex === 0}>
-                        <Grid columns={1} stackable>
-                          { user.memberOf.slice(0, currentRolesMaxCount).map(
-                            roleId => this.renderUserRole(roleId)
-                          )}
-                        </Grid>
-                        { user.memberOf.length > currentRolesMaxCount &&
-                          <Container
-                            id='next-chat-organization-view-all-button'
-                            textAlign='center'>
-                            <Button
-                              basic
-                              animated
-                              inverted
-                              as={Link}
-                              to={'/'}
-                              size='mini'>
-                              <Button.Content visible>
-                                VIEW ALL
-                              </Button.Content>
-                              <Button.Content hidden>
-                                <Icon name='arrow right'/>
-                              </Button.Content>
-                            </Button>
-                          </Container>
-                        }
-                      </Accordion.Content>
-                    </div>
-                  }
-                </Accordion>
+                <Accordion
+                  defaultActiveIndex={[0, 1]}
+                  inverted
+                  panels={[
+                    this.organizationPanel(),
+                    this.rolesPanel(user),
+                  ]}
+                  exclusive={false}/>
               </Container>
             </div>
           }

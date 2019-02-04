@@ -15,6 +15,7 @@ limitations under the License.
 
 
 #next-organization-container {
+  margin-bottom: 30px;
   min-width: 650px;
   padding: 0 30px;
   /* transform: translateY(-33%); */
@@ -53,7 +54,7 @@ limitations under the License.
 
 .next-organization-user-info {
   background: var(--dark-bg);
-  color: var(--magenta);
+  color: #ffffffb0;
   margin: 0 10px;
   padding: 0 10px;
   max-width: 246px;
@@ -63,6 +64,11 @@ limitations under the License.
 
 .next-organization-user-info h4 {
   color: white;
+  font-weight: bold;
+}
+
+#next-organization-current-person-user-info-container .next-organization-user-info h4 {
+  color: var(--magenta);
 }
 
 #next-organization-current-person-user-info-container,
@@ -113,10 +119,52 @@ limitations under the License.
   margin-top: 50px;
 }
 
+.compact .next-organization-manager-item:first-child {
+  margin-top: 0;
+}
+
+.compact #next-organization-current-person {
+  margin: 0 0 0 40px;
+}
+
+.compact .next-organization-manager-item:first-child:before {
+  border-bottom: 0;
+  content: '';
+  width: 0;
+}
+
+.compact #next-organization-current-person-user-info-container:before {
+  left: -1px;
+  margin-left: -1.3em;
+  position: relative;
+  top: -.3em;
+  width: 1.5em;
+}
+
+.compact.next-organization-empty #next-organization-current-person-user-info-container:before {
+  width: 0;
+}
+
+.compact .next-organization-user-info {
+  background: none;
+  font-size: .9em;
+  padding: 0;
+}
+
+.compact #next-organization-managers:after {
+  height: 100%;
+}
+
+.compact#next-organization-container {
+  margin: 30px 0;
+  min-width: 0;
+  padding: 0 5px;
+}
+
 #next-organization-managers:after {
   border-left: 1px solid #516073;
   content: '';
-  height: calc(100% + 4.1em);
+  height: calc(100% + 3.6em);
   margin-left: 1.5em;
   position: absolute;
   top: 1.5em;
@@ -144,19 +192,26 @@ limitations under the License.
 
 .next-organization-direct-report-item:before {
   border-bottom: 1px solid #516073;
+  border-left: 1px solid #516073;
   content: '';
+  height: .9em;
   margin-left: -4em;
-  position: absolute;
+  position: relative;
+  top: -.3em;
   width: 5em;
   z-index: -1;
 }
 
 #next-organization-current-person-user-info-container:before {
   border-bottom: 1px solid #516073;
+  border-left: 1px solid #516073;
   content: '';
+  height: .9em;
+  left: 0;
+  position: relative;
   margin-left: -3.5em;
-  position: absolute;
-  width: 5em;
+  top: -.3em;
+  width: 3em;
   z-index: -1;
 }
 

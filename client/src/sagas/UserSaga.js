@@ -81,16 +81,16 @@ export function * getUsers (api, action) {
  * @param {object} action Redux action
  * @generator
  */
-export function * getAllUsers (api, action) {
+export function * getPeople (api, action) {
   try {
     const { start, limit } = action;
     const res = yield call(api.getUsers, start, limit);
     res.ok ?
-      yield put(UserActions.allUsersSuccess(
+      yield put(UserActions.peopleSuccess(
         res.data.data,
         res.data.paging.total)
       ) :
-      yield put(UserActions.allUsersFailure(res.data.message));
+      yield put(UserActions.peopleFailure(res.data.message));
   } catch (err) {
     console.error(err);
   }

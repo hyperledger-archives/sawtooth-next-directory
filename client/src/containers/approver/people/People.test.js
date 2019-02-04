@@ -31,7 +31,7 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
 
   const props = {
-    getAllUsers:        () => {},
+    getPeople:          () => {},
     getOrganization:    () => {},
     handleUserSelect:   () => {},
     getUsers:           () => {},

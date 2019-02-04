@@ -87,8 +87,9 @@ export const appState = (state) => ({
   expiredCount:        UserSelectors.expiredCount(state),
   id:                  UserSelectors.id(state),
   me:                  UserSelectors.me(state),
+  people:              UserSelectors.people(state),
+  peopleTotalCount:    UserSelectors.peopleTotalCount(state),
   users:               UserSelectors.users(state),
-  usersTotalCount:     UserSelectors.usersTotalCount(state),
   userFromId:          (id) => UserSelectors.userFromId(state, id),
 });
 
@@ -156,8 +157,8 @@ export const appDispatch = (dispatch) => ({
     dispatch(User.userRequest(id, summary)),
   getUsers:    (ids, summary) =>
     dispatch(User.usersRequest(ids, summary)),
-  getAllUsers: (start, limit) =>
-    dispatch(User.allUsersRequest(start, limit)),
+  getPeople:   (start, limit) =>
+    dispatch(User.peopleRequest(start, limit)),
 });
 
 

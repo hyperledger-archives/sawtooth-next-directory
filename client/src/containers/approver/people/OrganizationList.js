@@ -36,8 +36,8 @@ import './OrganizationList.css';
 class OrganizationList extends Component {
 
   static propTypes = {
-    fetchingAllUsers:   PropTypes.bool,
-    getAllUsers:        PropTypes.func,
+    fetchingPeople:     PropTypes.bool,
+    getPeople:          PropTypes.func,
     getUsers:           PropTypes.func,
     handleUserSelect:   PropTypes.func,
     id:                 PropTypes.string,
@@ -73,20 +73,21 @@ class OrganizationList extends Component {
 
   }
 
+
   /**
    * Load next set of data
    * @param {number} start Loading start index
    */
   loadNext = (start) => {
-    const { getAllUsers, users } = this.props;
+    const { getPeople, people } = this.props;
     const { limit } = this.state;
     if (start === undefined || start === null)
       start = this.state.start;
 
-    if (users && users.length >= limit)
-      start = users.length;
+    if (people && people.length >= limit)
+      start = people.length;
 
-    getAllUsers(start, limit);
+    getPeople(start, limit);
     this.setState({ start: start + limit });
   }
 
@@ -110,33 +111,43 @@ class OrganizationList extends Component {
 
 
   /**
-   * Render segment containing user info
+   * Render segment containing person info
+   * @param {object} person Person in organization to render
    * @returns {JSX}
    */
-  renderUserSegment () {
-    const { handleUserSelect, id, users } = this.props;
+  renderPersonSegment (person) {
+    const { handleUserSelect, id } = this.props;
     return (
-      users && users.map((user, index) => (
-        <Segment
-          key={index}
-          onClick={() => handleUserSelect(user.id)}
-          className='no-padding minimal'>
-          <Header as='h3' className='next-member-list-user-info'>
-            <div>
-              <Avatar userId={user.id} size='medium' {...this.props}/>
-            </div>
-            <div>
-              {user.name}
-              {user.id === id && ' (You)'}
-              {user.email &&
-                <Header.Subheader>
-                  {user.email}
-                </Header.Subheader>
+      <Segment
+        onClick={() => handleUserSelect(person.id)}
+        className='no-padding minimal'>
+        <Header as='h3' className='next-member-list-person-info'>
+          <div>
+            <Avatar userId={person.id} size='medium' {...this.props}/>
+          </div>
+          <div>
+            {person.name}
+            {person.id === id && ' (You)'}
+            {person.email &&
+            <Header.Subheader>
+              {person.email}
+            </Header.Subheader>
+            }
+          </div>
+        </Header>
+        { person.memberOf &&
+          <div className='next-member-list-person-role-count'>
+            <h1>
+              {person.memberOf.length}
+            </h1>
+            <span>
+              { person.memberOf.length > 1 ||
+                person.memberOf.length === 0 ? 'Roles' : 'Role'
               }
-            </div>
-          </Header>
-        </Segment>
-      ))
+            </span>
+          </div>
+        }
+      </Segment>
     );
   }
 
@@ -146,15 +157,24 @@ class OrganizationList extends Component {
    * @returns {JSX}
    */
   render () {
-    const { fetchingAllUsers, users, usersTotalCount } = this.props;
+    const {
+      fetchingPeople,
+      me,
+      people,
+      peopleTotalCount } = this.props;
 
     return (
       <div id='next-approver-people-list-container'>
-        {this.renderUserSegment()}
-        {fetchingAllUsers && this.renderPlaceholder()}
-        { users && users.length < usersTotalCount &&
+        { me && this.renderPersonSegment(me) }
+        { people && people.map((person, index) =>
+          <div className='next-approver-people-list-item' key={index}>
+            {this.renderPersonSegment(person)}
+          </div>
+        )}
+        {fetchingPeople && this.renderPlaceholder()}
+        { people && people.length < peopleTotalCount &&
           <Container
-            id='next-users-load-next-button'
+            id='next-people-load-next-button'
             textAlign='center'>
             <Button size='large' onClick={() => this.loadNext()}>
               Load More

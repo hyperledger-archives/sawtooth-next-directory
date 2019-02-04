@@ -28,7 +28,7 @@ describe('OrganizationList component', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     const props = {
-      getAllUsers: () => {},
+      getPeople: () => {},
       getUsers: (collection) => {  },
       handleUserSelect: () => {},
       members: ['props'],
@@ -37,7 +37,7 @@ describe('OrganizationList component', () => {
 
     };
     const newProps = {
-      getAllUsers: () => {},
+      getPeople: () => {},
       getUsers: (collection) => {  },
       handleUserSelect: () => {},
       members: ['newProps'],

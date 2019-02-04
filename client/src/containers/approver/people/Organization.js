@@ -47,9 +47,12 @@ class Organization extends Component {
    * Entry point to perform tasks required to render component.
    */
   componentDidMount () {
-    const { getOrganization, handleUserSelect, id } = this.props;
-    getOrganization(id);
-    handleUserSelect(id);
+    const {
+      activeUser,
+      getOrganization,
+      handleUserSelect } = this.props;
+    getOrganization(activeUser);
+    handleUserSelect(activeUser);
   }
 
 
@@ -59,9 +62,22 @@ class Organization extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { getUsers, organization } = this.props;
-    if (prevProps.organization !== organization)
-      getUsers(Object.values(organization).flat());
+    const {
+      activeUser,
+      getOrganization,
+      getUsers,
+      organization,
+      users } = this.props;
+    if (prevProps.organization !== organization) {
+      const diff = Object.values(organization)
+        .flat()
+        .filter(userId =>
+          !users.find(user => userId === user.id)
+        );
+      getUsers(diff);
+    }
+    if (prevProps.activeUser !== activeUser)
+      getOrganization(activeUser);
   }
 
 
@@ -101,14 +117,15 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderPeers () {
-    const { handleUserSelect, organization } = this.props;
+    const { compact, handleUserSelect, organization } = this.props;
     return (
       <div className='pull-right' id='next-organization-peers'>
         { organization.peers &&
           organization.peers.slice(0, 3).map((userId, index) => (
             <div
               onClick={() => handleUserSelect(userId)}
-              className='cursor-pointer next-organization-peer-item'
+              className={`${!compact &&
+                'cursor-pointer'} next-organization-peer-item`}
               key={index}>
               <Popup
                 inverted
@@ -134,7 +151,11 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderManagers () {
-    const { handleUserSelect, organization } = this.props;
+    const {
+      compact,
+      handleUserSelect,
+      organization,
+      showPeers } = this.props;
     return (
       <div id='next-organization-managers'>
         { organization.managers &&
@@ -143,7 +164,7 @@ class Organization extends Component {
               key={index}
               className='next-organization-manager-item'>
               <div
-                className='pull-left cursor-pointer'
+                className={`pull-left ${!compact && 'cursor-pointer'}`}
                 onClick={() => handleUserSelect(userId)}>
                 <Avatar
                   userId={userId}
@@ -156,7 +177,7 @@ class Organization extends Component {
                   {this.userEmail(userId)}
                 </div>
               </div>
-              { index === 0 && this.renderPeers() }
+              { showPeers && index === 0 && this.renderPeers() }
             </div>
           ))}
       </div>
@@ -169,14 +190,15 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderDirectReports () {
-    const { handleUserSelect, organization } = this.props;
+    const { compact, handleUserSelect, organization } = this.props;
     return (
       <div id='next-organization-direct-reports'>
         { organization.direct_reports &&
           organization.direct_reports.map((userId, index) => (
             <div
               onClick={() => handleUserSelect(userId)}
-              className='cursor-pointer next-organization-direct-report-item'
+              className={`${!compact &&
+                'cursor-pointer'} next-organization-direct-report-item`}
               key={index}>
               <Avatar
                 userId={userId}
@@ -185,6 +207,7 @@ class Organization extends Component {
               <div className='next-organization-user-info'>
                 <h4>
                   {this.userName(userId)}
+                  {' (Direct Report)'}
                 </h4>
                 {this.userEmail(userId)}
               </div>
@@ -200,12 +223,18 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderPerson () {
-    const { handleUserSelect, id, organization } = this.props;
+    const {
+      compact,
+      handleUserSelect,
+      id,
+      organization,
+      showDirectReports } = this.props;
     return (
       <div id='next-organization-current-person'>
         <div
           onClick={() => handleUserSelect(organization.id)}
-          className='cursor-pointer'
+          className={`${compact && 'compact'} ${!compact &&
+            'cursor-pointer'}`}
           id='next-organization-current-person-user-info-container'>
           <Avatar
             userId={organization.id}
@@ -219,7 +248,7 @@ class Organization extends Component {
             {this.userEmail(organization.id)}
           </div>
         </div>
-        {this.renderDirectReports()}
+        { showDirectReports && this.renderDirectReports()}
       </div>
     );
   }
@@ -230,26 +259,17 @@ class Organization extends Component {
    * @returns {JSX}
    */
   render () {
-    const { organization } = this.props;
-    // const { showManagers } = this.state;
-
-    // let transition = '';
-    // if (showManagers)
-    //   transition ='next-organization-managers-show';
-    // else if (showManagers !== null)
-    //   transition = 'next-organization-managers-hide';
+    const { compact, organization } = this.props;
+    if (organization &&
+        organization.managers.length === 0)
+      return null;
 
     return (
       <div>
-        {/* <Container
-          id='next-organization-toggle-manager-button-container'
-          textAlign='right'>
-          <Button
-            onClick={() => this.toggleManagers()}>
-            {showManagers ? 'Hide Managers' : 'Show Managers'}
-          </Button>
-        </Container> */}
-        <div id='next-organization-container'>
+        <div
+          id='next-organization-container'
+          className={`${compact && 'compact'} ${organization &&
+            organization.managers.length === 0 && 'next-organization-empty'}`}>
           { organization && this.renderManagers() }
           { organization && this.renderPerson() }
         </div>

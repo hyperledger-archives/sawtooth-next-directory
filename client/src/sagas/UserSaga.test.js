@@ -19,7 +19,7 @@ import { call, put } from 'redux-saga/effects';
 
 import FixtureAPI from 'services/FixtureApi';
 import { UserActions } from 'state';
-import { me, getUser, getAllUsers } from 'sagas/UserSaga';
+import { me, getPeople, getUser } from 'sagas/UserSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;
@@ -80,28 +80,28 @@ test('getUser failure path', () => {
 });
 
 
-test('getAllUsers success path', () => {
+test('getPeople success path', () => {
   const res = { ok: true, data: {data: '', paging: { total: 0 }}};
   const start = 1;
   const limit = 10;
-  const step = stepper(getAllUsers(FixtureAPI, start, limit));
+  const step = stepper(getPeople(FixtureAPI, start, limit));
   step();
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(UserActions.allUsersSuccess(
+  expect(stepRes).toEqual(put(UserActions.peopleSuccess(
     res.data.data,
     res.data.paging.total,
   )));
 });
 
 
-test('getAllUsers failure path', () => {
+test('getPeople failure path', () => {
   const res = { ok: false, data: {message: '', data: ''}};
   const start = 1;
   const limit = 10;
-  const step = stepper(getAllUsers(FixtureAPI, start, limit));
+  const step = stepper(getPeople(FixtureAPI, start, limit));
   step();
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(UserActions.allUsersFailure(
+  expect(stepRes).toEqual(put(UserActions.peopleFailure(
     res.data.message
   )));
 });
