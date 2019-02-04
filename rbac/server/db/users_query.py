@@ -100,7 +100,7 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
     """Database query to compile general data on all user's in database."""
     return (
         await r.table("users")
-        .order_by(index="user_id")
+        .order_by(index="name")
         .slice(start, start + limit)
         .map(
             lambda user: user.merge(

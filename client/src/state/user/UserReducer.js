@@ -20,8 +20,8 @@ import * as utils from 'services/Utils';
 
 
 export const request = {
-  allUsers:   (state) => state.merge({ fetchingAllUsers: true }),
   me:         (state) => state.merge({ fetchingMe: true }),
+  people:     (state) => state.merge({ fetchingPeople: true }),
   user:       (state) => state.merge({ fetchingUser: true }),
   users:      (state) => state.merge({ fetchingUsers: true }),
 };
@@ -32,15 +32,19 @@ export const success = {
     state.merge({
       fetching: false, me, users: utils.merge(state.users || [], [me]),
     }),
+  people: (state, { people, peopleTotalCount }) =>
+    state.merge({
+      fetchingPeople: false,
+      peopleTotalCount,
+      people: utils.sort(
+        utils.merge(state.people || [], people),
+        'name',
+      ),
+      users: utils.merge(state.users || [], people),
+    }),
   user: (state, { user }) =>
     state.merge({
       fetching: false, users: utils.merge(state.users || [], [user]),
-    }),
-  allUsers: (state, { users, usersTotalCount }) =>
-    state.merge({
-      fetchingAllUsers: false,
-      usersTotalCount,
-      users: utils.merge(state.users || [], users),
     }),
 };
 
@@ -67,7 +71,7 @@ export const UserReducer = createReducer(INITIAL_STATE, {
   [Types.USER_SUCCESS]:       success.user,
   [Types.USER_FAILURE]:       failure,
 
-  [Types.ALL_USERS_REQUEST]:  request.allUsers,
-  [Types.ALL_USERS_SUCCESS]:  success.allUsers,
-  [Types.ALL_USERS_FAILURE]:  failure,
+  [Types.PEOPLE_REQUEST]:     request.people,
+  [Types.PEOPLE_SUCCESS]:     success.people,
+  [Types.PEOPLE_FAILURE]:     failure,
 });

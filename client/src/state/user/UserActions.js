@@ -28,9 +28,9 @@ const { Types, Creators } = createActions({
   userSuccess:     ['user'],
   userFailure:     ['error'],
 
-  allUsersRequest: ['start', 'limit'],
-  allUsersSuccess: ['users', 'usersTotalCount'],
-  allUsersFailure: ['error'],
+  peopleRequest:   ['start', 'limit'],
+  peopleSuccess:   ['people', 'peopleTotalCount'],
+  peopleFailure:   ['error'],
 
   resetAll:        null,
 });
@@ -44,9 +44,10 @@ export const INITIAL_STATE = Immutable({
   fetchingMe:       null,
   fetchingUser:     null,
   fetchingUsers:    null,
-  fetchingAllUsers: null,
+  fetchingPeople:   null,
 
   error:            null,
   me:               null,
   users:            null,
+  people:           null,
 });

@@ -20,9 +20,28 @@ limitations under the License.
 
 #next-approver-people-list-container .ui.segment {
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
 }
 
-h3.next-member-list-user-info div:first-child {
+#next-approver-people-list-container .next-member-list-person-role-count {
+  color: white;
+  height: 54px;
+  min-width: 70px;
+  text-align: center;
+}
+
+#next-approver-people-list-container .next-member-list-person-role-count h1 {
+  color: var(--magenta);
+  margin-bottom: 0;
+}
+
+#next-approver-people-list-container .ui.segment h3 {
+  margin-bottom: 0;
+  min-width: 75%;
+}
+
+h3.next-member-list-person-info div:first-child {
   flex: 0 0 66px;
 }
 
@@ -30,10 +49,14 @@ h3.next-member-list-user-info div:first-child {
   padding-top: 70px;
 }
 
-#next-users-load-next-button {
+#next-people-load-next-button {
   margin-top: 50px;
 }
 
 .next-member-list-placeholder {
   margin-top: 45px;
+}
+
+.next-approver-people-list-item {
+  margin-bottom: 15px;
 }

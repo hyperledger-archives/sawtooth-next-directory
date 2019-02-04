@@ -29,3 +29,9 @@ limitations under the License.
 #next-chat-organization-view-all-button {
   margin-top: 34px;
 }
+
+.next-people-organization-no-items {
+  padding: 30px;
+  text-align: center;
+  width: 100%;
+}

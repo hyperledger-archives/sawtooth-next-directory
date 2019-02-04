@@ -55,7 +55,7 @@ import {
 import { closeSocket, openSocket, sendSocket } from './AppSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation } from './ChatSaga';
-import { me, getUser, getUsers, getAllUsers } from './UserSaga';
+import { me, getPeople, getUser, getUsers } from './UserSaga';
 
 
 const api = API.create();
@@ -116,7 +116,7 @@ function * sagas () {
     takeLatest(UserTypes.ME_REQUEST, me, api),
     takeLatest(UserTypes.USER_REQUEST, getUser, api),
     takeLatest(UserTypes.USERS_REQUEST, getUsers, api),
-    takeLatest(UserTypes.ALL_USERS_REQUEST, getAllUsers, api),
+    takeLatest(UserTypes.PEOPLE_REQUEST, getPeople, api),
 
   ]);
 }

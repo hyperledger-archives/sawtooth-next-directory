@@ -24,9 +24,10 @@ export const UserSelectors = {
     (state.user.me && state.user.me.expired.length) || null,
   id:           (state) =>
     (state.user.me && state.user.me.id) || storage.getUserId(),
+  people:       (state) => state.user.people,
+  peopleTotalCount: (state) => state.user.peopleTotalCount,
   users:        (state) => state.user.users,
   userFromId:   (state, id) =>
     state.user.users &&
     state.user.users.find(user => user.id === id),
-  usersTotalCount: (state) => state.user.usersTotalCount,
 };

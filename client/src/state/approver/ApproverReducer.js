@@ -110,8 +110,10 @@ export const success = {
     }),
 
 
-  organization: (state, { organization }) =>
-    state.merge({ fetching: false, organization }),
+  organization: (state, { organization }) => {
+    const { created_date, ...filtered } = organization;
+    return state.merge({ fetching: false, organization: filtered });
+  },
 
 
   onBehalfOf: (state, { id }) =>
