@@ -32,14 +32,14 @@ describe('MemberList component', () => {
       members: ['props'],
       owners: [''],
       users: [{ id: 'proposal1' }],
-
+      userFromId: () => {},
     };
     const newProps = {
       getUsers: (collection) => {  },
       members: ['newProps'],
       owners: [''],
       users: [{ id: 'proposal1' }],
-
+      userFromId: () => {},
     };
 
     ReactDOM.render(
