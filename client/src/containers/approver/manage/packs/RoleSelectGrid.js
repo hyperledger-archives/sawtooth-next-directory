@@ -27,6 +27,7 @@ import PropTypes from 'prop-types';
 
 
 import './RoleSelectGrid.css';
+import Avatar from 'components/layouts/Avatar';
 import RoleSelectGridNav from 'components/nav/RoleSelectGridNav';
 
 
@@ -60,6 +61,38 @@ class RoleSelectGrid extends Component {
    */
   componentDidMount () {
     this.loadNext(0);
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const { roles } = this.props;
+    if (roles && prevProps.roles.length !== roles.length)
+      this.init();
+  }
+
+
+  /**
+   * Determine which owners are not currently loaded
+   * in the client and dispatch actions to retrieve them.
+   */
+  init () {
+    const { getUsers, roles, users } = this.props;
+    if (!roles) return;
+    const owners = [
+      ...new Set(
+        roles.map(role => role.owners).flat()
+      ),
+    ];
+    const diff = owners.filter(userId =>
+      !users || !users.find(user => user.id === userId)
+    );
+    diff && getUsers(diff);
   }
 
 
@@ -100,6 +133,30 @@ class RoleSelectGrid extends Component {
 
 
   /**
+   * Render role owner(s) info
+   * @param {array} owners Array of owners of
+   *                       a given role
+   * @returns {JSX}
+   */
+  renderOwners = (owners) => {
+    const { userFromId } = this.props;
+    if (!owners.length) return null;
+    const user = userFromId(owners[0]);
+    return (
+      <div className='next-role-select-grid-owners'>
+        <Avatar
+          userId={owners[0]}
+          size='small'
+          {...this.props}/>
+        <div className='next-role-select-grid-owner-label'>
+          {user && user.name}
+        </div>
+      </div>
+    );
+  }
+
+
+  /**
    * Render role toggle button
    * @param {string} role Role
    * @returns {JSX}
@@ -115,7 +172,10 @@ class RoleSelectGrid extends Component {
           active={selectedRoles.includes(role.id)}
           onClick={() => handleClick(role.id)}
           size='massive'>
-          {role.name}
+          <h3>
+            {role.name}
+          </h3>
+          {this.renderOwners(role.owners)}
           { selectedRoles.includes(role.id) &&
             <Icon name='check' color='pink'/>
           }

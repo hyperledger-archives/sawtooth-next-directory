@@ -76,7 +76,7 @@ class StackedAvatar extends Component {
    * @returns {JSX}
    */
   render () {
-    const { list } = this.props;
+    const { label, list } = this.props;
     const memberLabel = list && (list.length > 1 || list.length === 0) ?
       `${list.length} members` :
       `${list.length} member`;
@@ -86,9 +86,11 @@ class StackedAvatar extends Component {
         <div id='next-avatar' className='next-avatar'>
           {this.renderAvatars()}
         </div>
-        <div className='next-avatar-count'>
-          {memberLabel}
-        </div>
+        { label &&
+          <div className='next-avatar-count'>
+            {memberLabel}
+          </div>
+        }
       </div>
     );
   }
