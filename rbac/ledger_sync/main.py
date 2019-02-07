@@ -17,11 +17,11 @@
 import sys
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 from rbac.ledger_sync.outbound.listener import listener as outbound
 from rbac.ledger_sync.inbound.listener import listener as inbound
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 SCHEDULER = BlockingScheduler()
 
 

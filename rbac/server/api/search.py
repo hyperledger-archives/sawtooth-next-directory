@@ -15,11 +15,11 @@
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 from rbac.server.api.auth import authorized
 from rbac.server.db import db_utils
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 SEARCH_BP = Blueprint("search")
 
 

@@ -13,12 +13,11 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
-
+from rbac.common.logs import get_default_logger
 import rethinkdb as r
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 def fetch_relationships(table, index, identifier, head_block_num):

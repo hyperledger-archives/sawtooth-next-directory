@@ -13,14 +13,14 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
 import rethinkdb as r
 
+from rbac.common.logs import get_default_logger
 from rbac.server.api.errors import ApiNotFound
 
 from rbac.server.db.relationships_query import fetch_relationships_by_id
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 async def fetch_all_pack_resources(conn, head_block_num, start, limit):

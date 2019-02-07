@@ -13,16 +13,16 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
 import time
 
+from rbac.common.logs import get_default_logger
 import rethinkdb as r
 from rethinkdb import ReqlNonExistenceError, ReqlQueryLogicError, ReqlRuntimeError
 
 from rbac.server.api.errors import ApiNotFound, ApiInternalError
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 async def fetch_all_blocks(conn, head_block_num, start, limit):

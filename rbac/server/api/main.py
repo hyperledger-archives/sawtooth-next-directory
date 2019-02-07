@@ -23,7 +23,7 @@ from sanic import Sanic
 from sanic_cors import CORS
 from zmq.asyncio import ZMQEventLoop
 
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 from rbac.common.config import get_config
 from rbac.common.crypto.keys import Key
 from rbac.common.sawtooth.messaging import Connection
@@ -44,7 +44,7 @@ from rbac.server.db import db_utils
 
 APP_BP = Blueprint("utils")
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 async def init(app, loop):
@@ -89,6 +89,7 @@ def load_config(app):
     app.config.DB_NAME = get_config("DB_NAME")
     app.config.DB_PORT = get_config("DB_PORT")
     app.config.DEBUG = bool(get_config("DEBUG"))
+    app.config.LOGGING_LEVEL = get_config("LOGGING_LEVEL")
     app.config.SECRET_KEY = get_config("SECRET_KEY")
     app.config.PORT = get_config("SERVER_PORT")
     app.config.TIMEOUT = int(get_config("TIMEOUT"))

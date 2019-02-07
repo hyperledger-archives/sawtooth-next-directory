@@ -13,18 +13,19 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
 import rethinkdb as r
 
 from rbac.common import rbac
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
+from rbac.common.logs import get_default_logger
 from rbac.server.api import utils
 from rbac.server.api.errors import ApiNotFound
 
+
 from rbac.server.db import db_utils
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 async def create_auth_entry(conn, auth_entry):

@@ -13,14 +13,16 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
 import rethinkdb as r
 
+from rbac.common.logs import get_default_logger
 from rbac.server.api.errors import ApiNotFound
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 
-LOGGER = logging.getLogger(__name__)
+# from rbac.server.db.users_query import users_search_name, users_search_email
+
+LOGGER = get_default_logger(__name__)
 
 
 async def fetch_all_role_resources(conn, head_block_num, start, limit):
@@ -117,3 +119,61 @@ def fetch_expired_roles(user_id):
         .get_field("role_id")
         .coerce_to("array")
     )
+
+
+async def search_roles(conn, search_query, paging):
+    """Compiling all search fields for roles into one query."""
+    resource = (
+        await roles_search_name(search_query)
+        .union(roles_search_description(search_query))
+        .distinct()
+        .pluck("name", "description", "role_id")
+        .order_by("name")
+        .map(lambda doc: doc.merge({"id": doc["role_id"]}).without("role_id"))
+        .slice(paging[0], paging[1])
+        .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
+
+
+async def search_roles_count(conn, search_query):
+    """Get a count of all search fields for roles in one query."""
+    resource = (
+        await roles_search_name(search_query)
+        .union(roles_search_description(search_query))
+        .distinct()
+        .count()
+        .run(conn)
+    )
+
+    return resource
+
+
+def roles_search_name(search_query):
+    """Search for roles based a string int the name field."""
+    resource = (
+        r.table("roles")
+        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+def roles_search_description(search_query):
+    """Search for roles based a string in the description field."""
+    resource = (
+        r.table("roles")
+        .filter(
+            lambda doc: (
+                doc["description"].match("(?i)" + search_query["search_input"])
+            )
+        )
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource

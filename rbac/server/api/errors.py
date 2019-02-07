@@ -17,12 +17,11 @@ from sanic.response import json
 from sanic import Blueprint
 from sanic.exceptions import SanicException
 from sanic.exceptions import NotFound
-
-import rbac.common.logs as logging
+from rbac.common.logs import get_default_logger
 
 
 ERRORS_BP = Blueprint("errors")
-LOGGER = logging.get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 DEFAULT_MSGS = {
     400: "Bad Request",
     401: "Unauthorized",
