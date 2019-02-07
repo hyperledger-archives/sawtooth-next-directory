@@ -47,7 +47,7 @@ def fetch_ldap_data():
         and inserts data into RethinkDB.
     """
     LOGGER.debug("Connecting to RethinkDB...")
-    connect_to_db()
+    conn = connect_to_db()
     LOGGER.debug("Successfully connected to RethinkDB")
 
     for data_type in ["user", "group"]:
@@ -57,8 +57,9 @@ def fetch_ldap_data():
                 .filter({"provider_id": LDAP_DC, "source": "ldap-user"})
                 .max("timestamp")
                 .coerce_to("object")
-                .run()
+                .run(conn)
             )
+            conn.close()
             last_sync_time = last_sync["timestamp"]
             last_sync_time_formatted = to_date_ldap_query(
                 rethink_timestamp=last_sync_time

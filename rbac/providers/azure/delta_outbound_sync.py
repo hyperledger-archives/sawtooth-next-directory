@@ -29,7 +29,6 @@ from rbac.providers.common.outbound_filters import (
 )
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import (
-    connect_to_db,
     peek_at_queue,
     put_entry_changelog,
     delete_entry_queue,
@@ -209,10 +208,6 @@ def create_group_aad(queue_entry):
 def outbound_sync_listener():
     """Initialize a delta outbound sync with Azure Active Directory."""
     LOGGER.info("Starting outbound sync listener...")
-
-    LOGGER.info("Connecting to RethinkDB...")
-    connect_to_db()
-    LOGGER.info("Successfully connected to RethinkDB!")
 
     while True:
         try:

@@ -24,7 +24,7 @@ import rethinkdb as r
 from azure.eventhub import EventHubClient, Offset
 
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.db_queries import connect_to_db, save_sync_time
+from rbac.providers.common.db_queries import save_sync_time
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.rbac_transactions import add_transaction
 
@@ -49,6 +49,7 @@ CONSUMER_GROUP = os.environ.get("AAD_EH_CONSUMER_GROUP")
 OFFSET = Offset("-1")
 PARTITION = "0"
 
+
 VALID_OPERATIONS = {
     "Add user": "user",
     "Add group": "group",
@@ -68,10 +69,6 @@ def inbound_sync_listener():
     while True:  # pylint: disable=too-many-nested-blocks
         provider_id = TENANT_ID
         try:
-            LOGGER.info("Connecting to RethinkDB...")
-            connect_to_db()
-            LOGGER.info("Successfully connected to RethinkDB!")
-
             initial_sync_time = check_last_sync("azure-user", "initial")
             LOGGER.info(initial_sync_time)
             LOGGER.info("This is your initial sync time")
