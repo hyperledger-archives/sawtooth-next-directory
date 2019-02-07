@@ -22,7 +22,6 @@ import rethinkdb as r
 
 from rbac.common.logs import get_logger
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.provider_errors import DatabaseConnectionException
 
 LOGGER = get_logger(__name__)
 
@@ -37,11 +36,10 @@ DB_CONNECT_MAX_ATTEMPTS = 5
 def connect_to_db():
     """Polls the database until it comes up and opens a connection."""
     connected_to_db = False
-    attempt = 0
-
-    while not connected_to_db and attempt < DB_CONNECT_MAX_ATTEMPTS:
+    conn = None
+    while not connected_to_db:
         try:
-            r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME).repl()
+            conn = r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME)
             connected_to_db = True
         except r.ReqlDriverError:
             LOGGER.debug(
@@ -49,14 +47,7 @@ def connect_to_db():
                 DB_CONNECT_TIMEOUT,
             )
             time.sleep(DB_CONNECT_TIMEOUT)
-        attempt += 1
-
-    if attempt == DB_CONNECT_MAX_ATTEMPTS:
-        raise DatabaseConnectionException(
-            "Failed to connect to RethinkDb after {} attempts".format(
-                DB_CONNECT_MAX_ATTEMPTS
-            )
-        )
+    return conn
 
 
 def get_last_sync(source, sync_type):
@@ -65,13 +56,17 @@ def get_last_sync(source, sync_type):
         ExpectedError if sync_tracker table has not been initialized.
     """
     try:
+        LOGGER.info("Connecting to RethinkDB...")
+        conn = connect_to_db()
+        LOGGER.info("Successfully connected to RethinkDB!")
         last_sync = (
             r.table("sync_tracker")
             .filter({"source": source, "sync_type": sync_type})
             .max("timestamp")
             .coerce_to("object")
-            .run()
+            .run(conn)
         )
+        conn.close()
         return last_sync
     except (r.ReqlOpFailedError, r.ReqlDriverError) as err:
         raise ExpectedError(err)
@@ -102,13 +97,17 @@ def peek_at_queue(table_name, provider_id=None):
     provider_id."""
     try:
         if provider_id:
+            LOGGER.info("Connecting to RethinkDB...")
+            conn = connect_to_db()
+            LOGGER.info("Successfully connected to RethinkDB!")
             queue_entry = (
                 r.table(table_name)
                 .filter({"provider_id": provider_id})
                 .min("timestamp")
                 .coerce_to("object")
-                .run()
+                .run(conn)
             )
+            conn.close()
             return queue_entry
         queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run()
         return queue_entry

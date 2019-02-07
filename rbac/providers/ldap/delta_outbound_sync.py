@@ -23,7 +23,6 @@ from ldap3.core.exceptions import LDAPSessionTerminatedByServerError
 from rbac.common.logs import get_logger
 
 from rbac.providers.common.db_queries import (
-    connect_to_db,
     peek_at_queue,
     put_entry_changelog,
     delete_entry_queue,
@@ -175,10 +174,6 @@ def get_distinguished_name(queue_entry):
 def ldap_outbound_listener():
     """Initialize LDAP delta outbound sync with Active Directory."""
     LOGGER.info("Starting outbound sync listener...")
-
-    LOGGER.info("Connecting to RethinkDb...")
-    connect_to_db()
-    LOGGER.info("..connected to RethinkDb")
 
     ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
 
