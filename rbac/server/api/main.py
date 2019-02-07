@@ -35,10 +35,11 @@ from rbac.server.api.feed import FEED_BP
 from rbac.server.api.packs import PACKS_BP
 from rbac.server.api.proposals import PROPOSALS_BP
 from rbac.server.api.roles import ROLES_BP
+from rbac.server.api.search import SEARCH_BP
+from rbac.server.api.swagger import SWAGGER_BP
 from rbac.server.api.tasks import TASKS_BP
 from rbac.server.api.users import USERS_BP
 from rbac.server.api.webhooks import WEBHOOKS_BP
-from rbac.server.api.swagger import SWAGGER_BP
 from rbac.server.db import db_utils
 
 APP_BP = Blueprint("utils")
@@ -107,10 +108,11 @@ def main():
     app.blueprint(PACKS_BP)
     app.blueprint(PROPOSALS_BP)
     app.blueprint(ROLES_BP)
+    app.blueprint(SEARCH_BP)
+    app.blueprint(SWAGGER_BP)
     app.blueprint(TASKS_BP)
     app.blueprint(USERS_BP)
     app.blueprint(WEBHOOKS_BP)
-    app.blueprint(SWAGGER_BP)
     app.blueprint(APP_BP)
 
     load_config(app)
