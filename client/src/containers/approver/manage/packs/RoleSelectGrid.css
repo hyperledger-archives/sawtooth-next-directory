@@ -22,6 +22,31 @@ limitations under the License.
   margin: 40px 15px;
 }
 
+#next-role-select-grid .column .toggle-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26px;
+}
+
+#next-role-select-grid .column .toggle-card h3 {
+  margin-bottom: 0;
+}
+
+#next-role-select-grid .next-role-select-grid-owners {
+  align-items: center;
+  display: flex;
+  margin-top: 30px;
+}
+
+#next-role-select-grid .next-role-select-grid-owner-label {
+  font-size: .85em;
+}
+
+#next-role-select-grid .next-role-select-grid-owners > div:first-child {
+  margin-right: 10px;
+}
+
 #next-role-select-grid-load-next-button {
   margin-top: 100px;
 }

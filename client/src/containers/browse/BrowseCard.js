@@ -86,6 +86,7 @@ class BrowseCard extends Component {
         { !resource.roles &&
           <div className='browse-tile-members'>
             <StackedAvatar
+              label
               list={[...resource.owners, ...resource.members]}
               {...this.props}/>
           </div>

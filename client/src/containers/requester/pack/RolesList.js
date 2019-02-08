@@ -119,6 +119,15 @@ class RolesList extends Component {
    */
   renderUserInfo = (userId) => {
     const { userFromId } = this.props;
+    if (!userId) {
+      return (
+        <div>
+          <Header.Subheader>
+            No owner
+          </Header.Subheader>
+        </div>
+      );
+    }
     const user = userFromId(userId);
     if (!user) return null;
     return (

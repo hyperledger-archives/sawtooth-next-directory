@@ -38,7 +38,8 @@ limitations under the License.
 .next-avatar-container.small {
   font-size: 1.1em;
   height: 1.8em;
-  width: 1.8em;
-  padding-top: .25em;
   line-height: 1.4em;
+  min-width: 1.8em;
+  padding-top: .25em;
+  width: 1.8em;
 }

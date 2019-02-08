@@ -36,6 +36,7 @@ limitations under the License.
   padding: 18px;
   position: fixed;
   width: calc(100% - 245px);
+  z-index: 3;
 }
 
 #next-approver-manage-create-pack-done-button {
