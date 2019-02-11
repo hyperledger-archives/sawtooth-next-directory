@@ -24,7 +24,7 @@ import rethinkdb as r
 from azure.eventhub import EventHubClient, Offset
 
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.db_queries import save_sync_time
+from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.rbac_transactions import add_transaction
 
@@ -162,19 +162,23 @@ def insert_change_to_db(data, record_timestamp):
         "provider_id": TENANT_ID,
     }
     add_transaction(inbound_entry)
-    r.table("inbound_queue").insert(inbound_entry).run()
+    conn = connect_to_db()
+    r.table("inbound_queue").insert(inbound_entry).run(conn)
+    conn.close()
 
 
 def get_last_delta_sync(provider_id, sync_type):
     """Search and get last delta sync entry from the specified provider."""
     try:
+        conn = connect_to_db()
         last_sync = (
             r.table("sync_tracker")
             .filter({"provider_id": provider_id, "sync_type": sync_type})
             .max("timestamp")
             .coerce_to("object")
-            .run()
+            .run(conn)
         )
+        conn.close()
         return last_sync
     except r.ReqlNonExistenceError:
         return None
