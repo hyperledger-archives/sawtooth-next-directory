@@ -117,3 +117,18 @@ def fetch_expired_roles(user_id):
         .get_field("role_id")
         .coerce_to("array")
     )
+
+
+async def roles_search_name(conn, search_query):
+    """Search for roles based a string from front end."""
+    resource = (
+        await r.table("roles")
+        .filter(lambda doc: (doc["name"].match(search_query["search_input"])))
+        .order_by("name")
+        .distinct()
+        .pluck("name", "description", "role_id")
+        .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
