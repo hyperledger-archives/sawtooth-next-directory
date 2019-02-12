@@ -123,7 +123,7 @@ async def roles_search_name(conn, search_query):
     """Search for roles based a string from front end."""
     resource = (
         await r.table("roles")
-        .filter(lambda doc: (doc["name"].match(search_query["search_input"])))
+        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
         .order_by("name")
         .distinct()
         .pluck("name", "description", "role_id")
