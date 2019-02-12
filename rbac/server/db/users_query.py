@@ -250,7 +250,7 @@ async def fetch_user_relationships(conn, user_id, head_block_num):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
 
 
-async def search_users(conn, search_query):
+async def search_users(conn, search_query, paging):
     """Compiling all search fields for users into one query."""
     resource = (
         await users_search_name(search_query)
@@ -258,7 +258,21 @@ async def search_users(conn, search_query):
         .distinct()
         .pluck("name", "email", "user_id")
         .map(lambda doc: doc.merge({"id": doc["user_id"]}).without("user_id"))
+        .slice(paging[0], paging[1])
         .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
+
+
+async def search_users_count(conn, search_query):
+    """Get a count of all search fields for users in one query."""
+    resource = (
+        await users_search_name(search_query)
+        .union(users_search_email(search_query), interleave="name")
+        .distinct()
+        .count()
         .run(conn)
     )
 

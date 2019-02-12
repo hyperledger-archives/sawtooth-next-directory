@@ -121,7 +121,7 @@ def fetch_expired_roles(user_id):
     )
 
 
-async def search_roles(conn, search_query):
+async def search_roles(conn, search_query, paging):
     """Compiling all search fields for roles into one query."""
     resource = (
         await roles_search_name(search_query)
@@ -129,7 +129,21 @@ async def search_roles(conn, search_query):
         .distinct()
         .pluck("name", "description", "role_id")
         .map(lambda doc: doc.merge({"id": doc["role_id"]}).without("role_id"))
+        .slice(paging[0], paging[1])
         .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
+
+
+async def search_roles_count(conn, search_query):
+    """Get a count of all search fields for roles in one query."""
+    resource = (
+        await roles_search_name(search_query)
+        .union(roles_search_description(search_query), interleave="name")
+        .distinct()
+        .count()
         .run(conn)
     )
 
