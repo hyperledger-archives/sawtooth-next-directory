@@ -1,0 +1,37 @@
+{
+  "data": {
+    "total_pages": 1,
+    "page": 1,
+    "roles": [
+      {
+        "id": "41",
+        "name": "Role 41",
+        "description": "Lorem ipsum dolor sit amet."
+      },
+      {
+        "id": "42",
+        "name": "Role 42",
+        "description": "Lorem ipsum dolor sit amet."
+      },
+      {
+        "id": "43",
+        "name": "Role 43",
+        "description": "Lorem ipsum dolor sit amet."
+      }
+    ],
+    "packs": [
+      {
+        "id": "44",
+        "name": "Pack 5",
+        "description": "Lorem ipsum dolor sit amet.",
+        "roles": []
+      },
+      {
+        "id": "45",
+        "name": "Pack 6",
+        "description": "Lorem ipsum dolor sit amet.",
+        "roles": []
+      }
+    ]
+  }
+}

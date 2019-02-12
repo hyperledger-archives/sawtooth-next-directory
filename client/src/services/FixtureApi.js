@@ -22,6 +22,9 @@ import pack2 from 'mocks/pack2.json';
 import pack3 from 'mocks/pack3.json';
 import pack4 from 'mocks/pack4.json';
 import pack5 from 'mocks/pack5.json';
+import search1 from 'mocks/search1.json';
+import search2 from 'mocks/search2.json';
+import search3 from 'mocks/search3.json';
 
 
 export default {
@@ -104,4 +107,21 @@ export default {
       paging: {},
     },
   }),
+
+
+  search: (payload) => {
+    let data;
+    if (payload.query.search_input === 'a') {
+      if (payload.query.page === 1)
+        data = search1;
+      if (payload.query.page === 2)
+        data = search2;
+    } else if (payload.query.search_input === 'ab') {
+      if (payload.query.page === 1)
+        data = search3;
+    } else {
+      data = { data: {} };
+    }
+    return { ok: true, data };
+  },
 };

@@ -14,29 +14,27 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid > .column {
-  padding: 0.6rem;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
 
-#next-browse-container {
-  padding: 50px 0 100px 0;
-}
+import Search from './Search';
 
-.next-browse-search .ui {
-  width: 100%;
-}
 
-#next-browse-wrapper {
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 104px;
-  width: 90%;
-}
+describe('Search component', () => {
 
-#next-browse-load-next-button {
-  margin-top: 100px;
-}
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    const props = {};
+
+    ReactDOM.render(
+      <BrowserRouter>
+        <Search {...props}/>
+      </BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});

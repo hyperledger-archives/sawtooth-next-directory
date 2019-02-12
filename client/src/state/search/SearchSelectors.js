@@ -14,29 +14,17 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid > .column {
-  padding: 0.6rem;
-}
-
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
-
-#next-browse-container {
-  padding: 50px 0 100px 0;
-}
-
-.next-browse-search .ui {
-  width: 100%;
-}
-
-#next-browse-wrapper {
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 104px;
-  width: 90%;
-}
-
-#next-browse-load-next-button {
-  margin-top: 100px;
-}
+export const SearchSelectors = {
+  browse: (state) => {
+    const formatted = [[], [], [], []];
+    const data = [
+      ...state.search.packs || [],
+      ...state.search.roles || [],
+    ];
+    data.forEach((item, index) => {
+      formatted[index % 4].push(item);
+    });
+    return formatted;
+  },
+  totalPages: (state) => state.search.totalPages,
+};

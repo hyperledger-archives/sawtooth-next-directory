@@ -14,29 +14,27 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid > .column {
-  padding: 0.6rem;
-}
+import { delay } from 'redux-saga';
+import { call, put } from 'redux-saga/effects';
+import { SearchActions } from 'state';
 
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
 
-#next-browse-container {
-  padding: 50px 0 100px 0;
-}
+/**
+ * Call search endpoint for browse
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * searchBrowse (api, action) {
+  try {
+    const { query } = action;
+    yield delay(500);
+    const res = yield call(api.search, query);
 
-.next-browse-search .ui {
-  width: 100%;
-}
-
-#next-browse-wrapper {
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 104px;
-  width: 90%;
-}
-
-#next-browse-load-next-button {
-  margin-top: 100px;
+    res.ok ?
+      yield put(SearchActions.searchBrowseSuccess(res.data.data)) :
+      yield put(SearchActions.searchBrowseFailure(res.data.message));
+  } catch (err) {
+    console.error(err);
+  }
 }

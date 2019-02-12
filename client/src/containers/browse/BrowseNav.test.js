@@ -14,29 +14,26 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid > .column {
-  padding: 0.6rem;
-}
+import React from 'react';
 
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
 
-#next-browse-container {
-  padding: 50px 0 100px 0;
-}
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-.next-browse-search .ui {
-  width: 100%;
-}
 
-#next-browse-wrapper {
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 104px;
-  width: 90%;
-}
+import BrowseNav from './BrowseNav';
 
-#next-browse-load-next-button {
-  margin-top: 100px;
-}
+
+describe('BrowseNav component', () => {
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+
+    ReactDOM.render(
+      <BrowserRouter>
+        <BrowseNav/>
+      </BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+});
