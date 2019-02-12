@@ -18,6 +18,7 @@ from sanic.response import json
 from rbac.common.logs import get_logger
 from rbac.server.api.auth import authorized
 from rbac.server.db import db_utils
+from rbac.server.db.roles_query import roles_search_name
 
 LOGGER = get_logger(__name__)
 SEARCH_BP = Blueprint("search")
@@ -36,6 +37,9 @@ async def search_all(request):
     if "search_object_types" not in search_query:
         errors = {"errors": "No search_object_types for search recieved."}
         return json(errors)
+    if "search_input" not in search_query:
+        errors = {"errors": "No search_input string for search recieved."}
+        return json(errors)
 
     # Create resopnse data object
     data = {"packs": [], "roles": [], "users": []}
@@ -53,7 +57,7 @@ async def search_all(request):
 
     if "role" in search_query["search_object_types"]:
         # Fetch roles with search input string
-        role_results = []  # Future role query issue #1177
+        role_results = await roles_search_name(conn, search_query)
         data["roles"] = role_results
 
     if "user" in search_query["search_object_types"]:
