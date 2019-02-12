@@ -20,6 +20,8 @@ from rbac.server.api.errors import ApiNotFound
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 
+# from rbac.server.db.users_query import users_search_name, users_search_email
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -119,16 +121,54 @@ def fetch_expired_roles(user_id):
     )
 
 
-async def roles_search_name(conn, search_query):
-    """Search for roles based a string from front end."""
+async def search_roles(conn, search_query):
+    """Compiling all search fields for roles into one query."""
     resource = (
-        await r.table("roles")
-        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
-        .order_by("name")
+        await roles_search_name(search_query)
+        .union(roles_search_description(search_query), interleave="name")
         .distinct()
         .pluck("name", "description", "role_id")
+        .map(lambda doc: doc.merge({"id": doc["role_id"]}).without("role_id"))
         .coerce_to("array")
         .run(conn)
     )
 
     return resource
+
+
+def roles_search_name(search_query):
+    """Search for roles based a string int the name field."""
+    resource = (
+        r.table("roles")
+        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+def roles_search_description(search_query):
+    """Search for roles based a string in the description field."""
+    resource = (
+        r.table("roles")
+        .filter(
+            lambda doc: (
+                doc["description"].match("(?i)" + search_query["search_input"])
+            )
+        )
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+# def roles_search_owner_name(search_query):
+#     """Search for roles based on a string in a role owner's name."""
+#     users = users_search_name(search_query)
+
+
+# def roles_search_owner_email(search_query):
+#     """Search for roles based on a string in a role owner's email."""
+#     users = users_search_email(search_query)
