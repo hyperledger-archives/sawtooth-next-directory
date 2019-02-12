@@ -94,7 +94,7 @@ async def fetch_pack_resource(conn, pack_id, head_block_num):
         raise ApiNotFound("Not Found: No pack with the id {} exists".format(pack_id))
 
 
-async def search_packs(conn, search_query):
+async def search_packs(conn, search_query, paging):
     """Compiling all search fields for packs into one query."""
     resource = (
         await packs_search_name(search_query)
@@ -102,7 +102,21 @@ async def search_packs(conn, search_query):
         .distinct()
         .pluck("name", "description", "pack_id")
         .map(lambda doc: doc.merge({"id": doc["pack_id"]}).without("pack_id"))
+        .slice(paging[0], paging[1])
         .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
+
+
+async def search_packs_count(conn, search_query):
+    """Get count of all search fields for packs in one query."""
+    resource = (
+        await packs_search_name(search_query)
+        .union(packs_search_description(search_query), interleave="name")
+        .distinct()
+        .count()
         .run(conn)
     )
 
