@@ -18,7 +18,9 @@ from sanic.response import json
 from rbac.common.logs import get_logger
 from rbac.server.api.auth import authorized
 from rbac.server.db import db_utils
-from rbac.server.db.roles_query import roles_search_name
+from rbac.server.db.packs_query import search_packs
+from rbac.server.db.roles_query import search_roles
+from rbac.server.db.users_query import search_users
 
 LOGGER = get_logger(__name__)
 SEARCH_BP = Blueprint("search")
@@ -52,17 +54,17 @@ async def search_all(request):
     )
     if "pack" in search_query["search_object_types"]:
         # Fetch packs with search input string
-        pack_results = []  # Future pack query issue #1176
+        pack_results = await search_packs(conn, search_query)
         data["packs"] = pack_results
 
     if "role" in search_query["search_object_types"]:
         # Fetch roles with search input string
-        role_results = await roles_search_name(conn, search_query)
+        role_results = await search_roles(conn, search_query)
         data["roles"] = role_results
 
     if "user" in search_query["search_object_types"]:
         # Fetch users with search input string
-        user_results = []  # Future user query issue #1175
+        user_results = await search_users(conn, search_query)
         data["users"] = user_results
 
     conn.close()

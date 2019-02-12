@@ -248,3 +248,42 @@ async def fetch_user_relationships(conn, user_id, head_block_num):
         return resource[0]
     except IndexError:
         raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
+
+
+async def search_users(conn, search_query):
+    """Compiling all search fields for users into one query."""
+    resource = (
+        await users_search_name(search_query)
+        .union(users_search_email(search_query), interleave="name")
+        .distinct()
+        .pluck("name", "email", "user_id")
+        .map(lambda doc: doc.merge({"id": doc["user_id"]}).without("user_id"))
+        .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
+
+
+def users_search_name(search_query):
+    """Search for users based a string int the name field."""
+    resource = (
+        r.table("users")
+        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+def users_search_email(search_query):
+    """Search for users based a string in the description field."""
+    resource = (
+        r.table("users")
+        .filter(lambda doc: (doc["email"].match("(?i)" + search_query["search_input"])))
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource

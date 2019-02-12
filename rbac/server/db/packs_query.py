@@ -92,3 +92,46 @@ async def fetch_pack_resource(conn, pack_id, head_block_num):
         return resource[0]
     except IndexError:
         raise ApiNotFound("Not Found: No pack with the id {} exists".format(pack_id))
+
+
+async def search_packs(conn, search_query):
+    """Compiling all search fields for packs into one query."""
+    resource = (
+        await packs_search_name(search_query)
+        .union(packs_search_description(search_query), interleave="name")
+        .distinct()
+        .pluck("name", "description", "pack_id")
+        .map(lambda doc: doc.merge({"id": doc["pack_id"]}).without("pack_id"))
+        .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
+
+
+def packs_search_name(search_query):
+    """Search for packs based a string int the name field."""
+    resource = (
+        r.table("packs")
+        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+def packs_search_description(search_query):
+    """Search for packs based a string in the description field."""
+    resource = (
+        r.table("packs")
+        .filter(
+            lambda doc: (
+                doc["description"].match("(?i)" + search_query["search_input"])
+            )
+        )
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
