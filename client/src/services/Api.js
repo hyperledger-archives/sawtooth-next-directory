@@ -114,7 +114,7 @@ const create = (baseURL =
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const updateProposals = (payload) => api.patch('proposals', payload);
-  const search = (query) => api.post('', { q: query });
+  const search = (query) => api.post('search', query);
   const signup = (creds) => api.post('users', creds);
 
 

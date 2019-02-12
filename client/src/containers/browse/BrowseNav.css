@@ -14,29 +14,34 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid > .column {
-  padding: 0.6rem;
-}
-
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
-
-#next-browse-container {
-  padding: 50px 0 100px 0;
-}
-
-.next-browse-search .ui {
+#next-browse-nav {
+  background: var(--component-nav-bg);
+  display: flex;
+  padding: var(--page-content-padding) 5%;
+  position: fixed;
+  top: 40px;
   width: 100%;
+  z-index: 3;
 }
 
-#next-browse-wrapper {
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 104px;
-  width: 90%;
+#next-browse-nav .ui.grid .column > h1 {
+  color: white;
+  margin: 5px 0 0 -5px;
 }
 
-#next-browse-load-next-button {
-  margin-top: 100px;
+.dark #next-browse-nav {
+  background: var(--dark-bg);
+}
+
+#next-browse-nav .next-search-input .ui.large.fluid.icon.input {
+  width: calc(100% + 5px);
+}
+
+@media only screen and (max-width: 767px) {
+  #next-browse-nav .ui.container {
+    width: 100% !important;
+  }
+  #next-browse-grid > .column {
+    padding: 0 !important;
+  }
 }

@@ -14,29 +14,24 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid > .column {
-  padding: 0.6rem;
-}
+import { createActions } from 'reduxsauce';
+import Immutable from 'seamless-immutable';
 
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
 
-#next-browse-container {
-  padding: 50px 0 100px 0;
-}
+const { Types, Creators } = createActions({
+  searchBrowseRequest:     ['query'],
+  searchBrowseSuccess:     ['result'],
+  searchBrowseFailure:     ['error'],
+});
 
-.next-browse-search .ui {
-  width: 100%;
-}
 
-#next-browse-wrapper {
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 104px;
-  width: 90%;
-}
+export const SearchTypes = Types;
+export default Creators;
 
-#next-browse-load-next-button {
-  margin-top: 100px;
-}
+
+export const INITIAL_STATE = Immutable({
+  error:                null,
+  packs:                null,
+  roles:                null,
+  totalPages:           null,
+});

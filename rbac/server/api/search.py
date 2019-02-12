@@ -24,7 +24,7 @@ LOGGER = get_logger(__name__)
 SEARCH_BP = Blueprint("search")
 
 
-@SEARCH_BP.get("api/search")
+@SEARCH_BP.post("api/search")
 @authorized()
 async def search_all(request):
     """API Endpoint to get all roles, packs, or users containing a string."""

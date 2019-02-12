@@ -14,29 +14,26 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-browse-grid > .column {
-  padding: 0.6rem;
-}
+import Actions, { INITIAL_STATE } from './SearchActions';
+import { SearchReducer as reducer } from './SearchReducer';
 
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
 
-#next-browse-container {
-  padding: 50px 0 100px 0;
-}
+test('searchBrowseSuccess', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.searchBrowseSuccess([])
+  );
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
 
-.next-browse-search .ui {
-  width: 100%;
-}
 
-#next-browse-wrapper {
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 104px;
-  width: 90%;
-}
-
-#next-browse-load-next-button {
-  margin-top: 100px;
-}
+test('searchBrowseFailure', () => {
+  const error = '';
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.searchBrowseFailure(error)
+  );
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBe('');
+});

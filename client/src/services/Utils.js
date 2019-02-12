@@ -135,4 +135,8 @@ export const countLabel = (count, name, showMeLabelIfOne) => {
 };
 
 
+export const isWhitespace = (string) =>
+  !string.replace(/\s/g, '').length;
+
+
 export const noop = () => {};
