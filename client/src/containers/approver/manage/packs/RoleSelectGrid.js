@@ -92,7 +92,7 @@ class RoleSelectGrid extends Component {
     const diff = owners.filter(userId =>
       !users || !users.find(user => user.id === userId)
     );
-    diff && getUsers(diff);
+    diff && getUsers(diff, true);
   }
 
 
