@@ -98,9 +98,10 @@ async def search_packs(conn, search_query, paging):
     """Compiling all search fields for packs into one query."""
     resource = (
         await packs_search_name(search_query)
-        .union(packs_search_description(search_query), interleave="name")
+        .union(packs_search_description(search_query))
         .distinct()
         .pluck("name", "description", "pack_id")
+        .order_by("name")
         .map(
             lambda doc: doc.merge(
                 {
@@ -123,7 +124,7 @@ async def search_packs_count(conn, search_query):
     """Get count of all search fields for packs in one query."""
     resource = (
         await packs_search_name(search_query)
-        .union(packs_search_description(search_query), interleave="name")
+        .union(packs_search_description(search_query))
         .distinct()
         .count()
         .run(conn)
