@@ -38,3 +38,24 @@ export function * searchBrowse (api, action) {
     console.error(err);
   }
 }
+
+
+/**
+ * Call search endpoint for people
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * searchPeople (api, action) {
+  try {
+    const { query } = action;
+    yield delay(500);
+    const res = yield call(api.search, query);
+
+    res.ok ?
+      yield put(SearchActions.searchPeopleSuccess(res.data.data)) :
+      yield put(SearchActions.searchPeopleFailure(res.data.message));
+  } catch (err) {
+    console.error(err);
+  }
+}

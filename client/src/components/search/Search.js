@@ -31,13 +31,15 @@ import * as utils from 'services/Utils';
 class Search extends Component {
 
   static propTypes = {
+    clearSearchData:        PropTypes.func,
     fetchingSearchResults:  PropTypes.bool,
-    resetSearchStart:       PropTypes.func,
     search:                 PropTypes.func,
     searchInput:            PropTypes.string,
     searchLimit:            PropTypes.number,
+    searchTypes:            PropTypes.array,
     setSearchInput:         PropTypes.func,
-    types:                  PropTypes.array,
+    setSearchStart:         PropTypes.func,
+    type:                   PropTypes.string,
   };
 
 
@@ -50,27 +52,30 @@ class Search extends Component {
    */
   handleChange = (event, { name, value }) => {
     const {
-      resetSearchStart,
+      clearSearchData,
+      setSearchStart,
       searchLimit,
+      searchTypes,
       search,
       setSearchInput,
-      types } = this.props;
+      type } = this.props;
 
     setSearchInput(value);
-    resetSearchStart();
+    setSearchStart(1);
+    clearSearchData();
 
     if (utils.isWhitespace(value)) return;
 
     const query = {
       query: {
         search_input: value,
-        search_object_types: types,
+        search_object_types: searchTypes,
         page_size: searchLimit,
         page: 1,
       },
     };
 
-    search('browse', query);
+    search(type, query);
   }
 
 

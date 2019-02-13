@@ -27,6 +27,10 @@ export const failure = (state, { error }) =>
   state.merge({ fetching: false, error });
 
 
+export const clearSearchData = () =>
+  INITIAL_STATE;
+
+
 export const success = {
   browse: (state, { result }) =>
     result.page > 1 ?
@@ -42,6 +46,18 @@ export const success = {
         roles: result.roles,
         totalPages: result.total_pages,
       }),
+  people: (state, { result }) =>
+    result.page > 1 ?
+      state.merge({
+        fetching: false,
+        people: [...(state.people || []), ...result.users],
+        totalPages: result.total_pages,
+      }) :
+      state.merge({
+        fetching: false,
+        people: result.users,
+        totalPages: result.total_pages,
+      }),
 };
 
 
@@ -49,4 +65,10 @@ export const SearchReducer = createReducer(INITIAL_STATE, {
   [Types.SEARCH_BROWSE_REQUEST]:   request.search,
   [Types.SEARCH_BROWSE_SUCCESS]:   success.browse,
   [Types.SEARCH_BROWSE_FAILURE]:   failure,
+
+  [Types.SEARCH_PEOPLE_REQUEST]:   request.search,
+  [Types.SEARCH_PEOPLE_SUCCESS]:   success.people,
+  [Types.SEARCH_PEOPLE_FAILURE]:   failure,
+
+  [Types.CLEAR_SEARCH_DATA]:       clearSearchData,
 });

@@ -26,5 +26,6 @@ export const SearchSelectors = {
     });
     return formatted;
   },
+  people: (state) => state.search.people,
   totalPages: (state) => state.search.totalPages,
 };

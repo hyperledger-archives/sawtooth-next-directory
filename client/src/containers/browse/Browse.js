@@ -88,10 +88,11 @@ class Browse extends Component {
 
 
   /**
-   * Reset search start state
+   * Set search start state
+   * @param {string} searchStart Search start value
    */
-  resetSearchStart = () => {
-    this.setState({ searchStart: 1 });
+  setSearchStart = (searchStart) => {
+    this.setState({ searchStart });
   }
 
 
@@ -135,7 +136,6 @@ class Browse extends Component {
     this.setState({ searchStart: searchStart + 1 });
     search('browse', query);
   }
-
 
 
   /**
@@ -231,8 +231,8 @@ class Browse extends Component {
           searchInput={searchInput}
           searchLimit={searchLimit}
           searchTypes={searchTypes}
-          resetSearchStart={this.resetSearchStart}
           setSearchInput={this.setSearchInput}
+          setSearchStart={this.setSearchStart}
           {...this.props}/>
         <div id='next-browse-wrapper'>
           <Container fluid id='next-browse-container'>
@@ -255,7 +255,9 @@ class Browse extends Component {
                   </Grid.Column>
                 ))
               }
-              { (fetchingAllPacks || fetchingAllRoles) &&
+              { (fetchingAllPacks ||
+                fetchingAllRoles ||
+                fetchingSearchResults) &&
                 this.renderPlaceholder()
               }
             </Grid>
@@ -289,6 +291,8 @@ class Browse extends Component {
               </Header>
             }
             { showSearchData &&
+              !fetchingAllRoles &&
+              !fetchingAllPacks &&
               !fetchingSearchResults &&
               this.searchCount() === 0 &&
               <Header as='h3' textAlign='center' color='grey'>

@@ -56,7 +56,7 @@ import {
 import { closeSocket, openSocket, sendSocket } from './AppSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation } from './ChatSaga';
-import { searchBrowse } from './SearchSaga';
+import { searchBrowse, searchPeople } from './SearchSaga';
 import { me, getPeople, getUser, getUsers } from './UserSaga';
 
 
@@ -116,7 +116,7 @@ function * sagas () {
 
     // Search
     takeLatest(SearchTypes.SEARCH_BROWSE_REQUEST, searchBrowse, api),
-
+    takeLatest(SearchTypes.SEARCH_PEOPLE_REQUEST, searchPeople, api),
 
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),

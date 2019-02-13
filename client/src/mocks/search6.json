@@ -1,0 +1,16 @@
+{
+  "data": {
+    "total_pages": 1,
+    "page": 1,
+    "users": [
+      {
+        "id": "25",
+        "name": "User 25"
+      },
+      {
+        "id": "26",
+        "name": "User 26"
+      }
+    ]
+  }
+}

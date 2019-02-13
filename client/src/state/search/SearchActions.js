@@ -22,6 +22,12 @@ const { Types, Creators } = createActions({
   searchBrowseRequest:     ['query'],
   searchBrowseSuccess:     ['result'],
   searchBrowseFailure:     ['error'],
+
+  searchPeopleRequest:     ['query'],
+  searchPeopleSuccess:     ['result'],
+  searchPeopleFailure:     ['error'],
+
+  clearSearchData:         null,
 });
 
 
@@ -31,6 +37,7 @@ export default Creators;
 
 export const INITIAL_STATE = Immutable({
   error:                null,
+  people:               null,
   packs:                null,
   roles:                null,
   totalPages:           null,
