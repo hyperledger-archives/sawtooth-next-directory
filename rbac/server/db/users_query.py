@@ -254,9 +254,10 @@ async def search_users(conn, search_query, paging):
     """Compiling all search fields for users into one query."""
     resource = (
         await users_search_name(search_query)
-        .union(users_search_email(search_query), interleave="name")
+        .union(users_search_email(search_query))
         .distinct()
         .pluck("name", "email", "user_id")
+        .order_by("name")
         .map(lambda doc: doc.merge({"id": doc["user_id"]}).without("user_id"))
         .slice(paging[0], paging[1])
         .coerce_to("array")
@@ -270,7 +271,7 @@ async def search_users_count(conn, search_query):
     """Get a count of all search fields for users in one query."""
     resource = (
         await users_search_name(search_query)
-        .union(users_search_email(search_query), interleave="name")
+        .union(users_search_email(search_query))
         .distinct()
         .count()
         .run(conn)
