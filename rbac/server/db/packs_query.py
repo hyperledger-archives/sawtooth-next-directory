@@ -101,7 +101,16 @@ async def search_packs(conn, search_query, paging):
         .union(packs_search_description(search_query), interleave="name")
         .distinct()
         .pluck("name", "description", "pack_id")
-        .map(lambda doc: doc.merge({"id": doc["pack_id"]}).without("pack_id"))
+        .map(
+            lambda doc: doc.merge(
+                {
+                    "id": doc["pack_id"],
+                    "roles": fetch_relationships_by_id(
+                        "role_packs", doc["pack_id"], "role_id", None
+                    ),
+                }
+            ).without("pack_id")
+        )
         .slice(paging[0], paging[1])
         .coerce_to("array")
         .run(conn)
