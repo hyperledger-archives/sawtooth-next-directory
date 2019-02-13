@@ -69,8 +69,11 @@ class Organization extends Component {
       organization,
       users } = this.props;
     if (prevProps.organization !== organization) {
-      const diff = Object.values(organization)
-        .flat()
+      const diff = [
+        ...organization.direct_reports.slice(0, 5),
+        ...organization.managers.slice(0, 5),
+        ...organization.peers.slice(0, 5),
+      ]
         .filter(userId =>
           !users.find(user => userId === user.id)
         );

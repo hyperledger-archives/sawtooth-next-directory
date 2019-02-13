@@ -234,25 +234,26 @@ class PeopleChat extends Component {
               </div>
               }
             </Grid>
-            { user.memberOf.length > currentRolesMaxCount &&
-            <Container
-              id='next-chat-organization-view-all-button'
-              textAlign='center'>
-              <Button
-                basic
-                animated
-                inverted
-                as={Link}
-                to={'/'}
-                size='mini'>
-                <Button.Content visible>
+            { user.memberOf &&
+              user.memberOf.length > currentRolesMaxCount &&
+              <Container
+                id='next-chat-organization-view-all-button'
+                textAlign='center'>
+                <Button
+                  basic
+                  animated
+                  inverted
+                  as={Link}
+                  to={'/'}
+                  size='mini'>
+                  <Button.Content visible>
                   VIEW ALL
-                </Button.Content>
-                <Button.Content hidden>
-                  <Icon name='arrow right'/>
-                </Button.Content>
-              </Button>
-            </Container>
+                  </Button.Content>
+                  <Button.Content hidden>
+                    <Icon name='arrow right'/>
+                  </Button.Content>
+                </Button>
+              </Container>
             }
           </div>
         ),
