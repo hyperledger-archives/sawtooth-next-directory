@@ -125,9 +125,10 @@ async def search_roles(conn, search_query, paging):
     """Compiling all search fields for roles into one query."""
     resource = (
         await roles_search_name(search_query)
-        .union(roles_search_description(search_query), interleave="name")
+        .union(roles_search_description(search_query))
         .distinct()
         .pluck("name", "description", "role_id")
+        .order_by("name")
         .map(lambda doc: doc.merge({"id": doc["role_id"]}).without("role_id"))
         .slice(paging[0], paging[1])
         .coerce_to("array")
@@ -141,7 +142,7 @@ async def search_roles_count(conn, search_query):
     """Get a count of all search fields for roles in one query."""
     resource = (
         await roles_search_name(search_query)
-        .union(roles_search_description(search_query), interleave="name")
+        .union(roles_search_description(search_query))
         .distinct()
         .count()
         .run(conn)
@@ -176,13 +177,3 @@ def roles_search_description(search_query):
     )
 
     return resource
-
-
-# def roles_search_owner_name(search_query):
-#     """Search for roles based on a string in a role owner's name."""
-#     users = users_search_name(search_query)
-
-
-# def roles_search_owner_email(search_query):
-#     """Search for roles based on a string in a role owner's email."""
-#     users = users_search_email(search_query)
