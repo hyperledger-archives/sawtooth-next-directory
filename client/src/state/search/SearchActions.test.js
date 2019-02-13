@@ -37,3 +37,24 @@ test('searchBrowseFailure', () => {
   expect(state.fetching).toBe(false);
   expect(state.error).toBe('');
 });
+
+
+test('searchPeopleSuccess', () => {
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.searchPeopleSuccess([])
+  );
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBeNull();
+});
+
+
+test('searchPeopleFailure', () => {
+  const error = '';
+  const state = reducer(
+    INITIAL_STATE,
+    Actions.searchPeopleFailure(error)
+  );
+  expect(state.fetching).toBe(false);
+  expect(state.error).toBe('');
+});

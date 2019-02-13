@@ -19,7 +19,7 @@ import { put } from 'redux-saga/effects';
 
 import FixtureAPI from 'services/FixtureApi';
 import { SearchActions } from 'state';
-import { searchBrowse } from 'sagas/SearchSaga';
+import { searchBrowse, searchPeople } from 'sagas/SearchSaga';
 
 
 const stepper = (fn) => (mock) => fn.next(mock).value;
@@ -29,6 +29,7 @@ test('browse: success path', () => {
   const query = {
     query: {
       search_input: 'a',
+      search_object_types: ['role'],
       page: 1,
     },
   };
@@ -50,6 +51,7 @@ test('browse: failure path', () => {
   const query = {
     query: {
       search_input: 'a',
+      search_object_types: ['role'],
       page: NaN,
     },
   };
@@ -63,5 +65,49 @@ test('browse: failure path', () => {
   const stepRes = step(res);
   expect(stepRes).toEqual(
     put(SearchActions.searchBrowseFailure(res.data.error))
+  );
+});
+
+
+test('people: success path', () => {
+  const query = {
+    query: {
+      search_input: 'a',
+      search_object_types: ['user'],
+      page: 1,
+    },
+  };
+
+  const res = FixtureAPI.search(query);
+  const step = stepper(searchPeople(FixtureAPI, query));
+
+  step();
+  step();
+
+  const stepRes = step(res);
+  expect(stepRes).toEqual(
+    put(SearchActions.searchPeopleSuccess(res.data.data))
+  );
+});
+
+
+test('people: failure path', () => {
+  const query = {
+    query: {
+      search_input: 'a',
+      search_object_types: ['user'],
+      page: NaN,
+    },
+  };
+
+  const res = { ok: false, data: {} };
+  const step = stepper(searchPeople(FixtureAPI, query));
+
+  step();
+  step();
+
+  const stepRes = step(res);
+  expect(stepRes).toEqual(
+    put(SearchActions.searchPeopleFailure(res.data.error))
   );
 });

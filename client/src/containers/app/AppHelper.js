@@ -86,6 +86,7 @@ export const appState = (state) => ({
 
   // Search
   browseSearchData:    SearchSelectors.browse(state),
+  peopleSearchData:    SearchSelectors.people(state),
   totalSearchPages:    SearchSelectors.totalPages(state),
 
   // User
@@ -157,8 +158,10 @@ export const appDispatch = (dispatch) => ({
     dispatch(Requester.packAccessRequest(id, userId, reason)),
 
   // Search
-  search:     (type, query) => {
+  clearSearchData:    () => dispatch(Search.clearSearchData()),
+  search:  (type, query) => {
     type === 'browse' && dispatch(Search.searchBrowseRequest(query));
+    type === 'people' && dispatch(Search.searchPeopleRequest(query));
   },
 
   // User

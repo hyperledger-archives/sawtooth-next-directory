@@ -42,8 +42,8 @@ class BrowseNav extends Component {
       searchInput,
       searchLimit,
       searchTypes,
-      resetSearchStart,
-      setSearchInput } = this.props;
+      setSearchInput,
+      setSearchStart } = this.props;
     return (
       <div id='next-browse-nav'>
         <Container fluid>
@@ -56,11 +56,12 @@ class BrowseNav extends Component {
             <Grid.Column width={5}>
               <Search
                 fetchingSearchResults={fetchingSearchResults}
-                searchLimit={searchLimit}
                 searchInput={searchInput}
-                resetSearchStart={resetSearchStart}
+                searchLimit={searchLimit}
+                searchTypes={searchTypes}
                 setSearchInput={setSearchInput}
-                types={searchTypes}
+                setSearchStart={setSearchStart}
+                type='browse'
                 {...this.props}/>
             </Grid.Column>
           </Grid>
