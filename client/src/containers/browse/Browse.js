@@ -74,6 +74,8 @@ class Browse extends Component {
    * Component teardown
    */
   componentWillUnmount () {
+    const { clearSearchData } = this.props;
+    clearSearchData();
     theme.remove(this.themes);
   }
 

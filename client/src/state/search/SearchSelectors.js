@@ -26,6 +26,7 @@ export const SearchSelectors = {
     });
     return formatted;
   },
-  people: (state) => state.search.people,
-  totalPages: (state) => state.search.totalPages,
+  people:       (state) => state.search.people,
+  roles:        (state) => state.search.roles,
+  totalPages:   (state) => state.search.totalPages,
 };

@@ -87,6 +87,7 @@ export const appState = (state) => ({
   // Search
   browseSearchData:    SearchSelectors.browse(state),
   peopleSearchData:    SearchSelectors.people(state),
+  roleSearchData:      SearchSelectors.roles(state),
   totalSearchPages:    SearchSelectors.totalPages(state),
 
   // User

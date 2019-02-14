@@ -28,6 +28,7 @@ import Browse from './Browse';
 const store = customStore.create();
 const props = {
   browseData: [],
+  clearSearchData: () => {},
   getAllPacks: () => {},
   getAllRoles: () => {},
 };
