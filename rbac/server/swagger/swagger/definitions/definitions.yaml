@@ -612,6 +612,87 @@
         type: string
         description: Id of the proposal that was created
         example: 63467642-6067-4c82-a096-1a1972d776b3
+  searchRequest:
+    description: Payload of a search request POST message
+    type: object
+    required:
+      - query
+      - page_size
+      - page
+    properties:
+      query:
+        type: object
+        description: Query details
+        required:
+          - search_input
+          - search_object_types
+        properties:
+          search_input
+            type: string
+            description: The string we search for
+            example: Lev
+          search_object_types
+            type: array
+            description: List of object types across which we search
+            items:
+              type: string
+              example: roles
+      page_size:
+        type: string
+        description: Number of items on a page
+        example: 20
+      page:
+        type: string
+        description: Page number to be returned
+        example: 2
+  searchResponse:
+    description: Response for a Search Request POST message
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      proposals:
+        type: array
+        description: List of ids for open proposals for this user
+        items:
+          type: string
+          example:
+      ownerOf:
+        type: array
+        description: List of ids for roles and tasks this user is an owner of
+        items:
+          type: string
+          example:
+      id:
+        type: string
+        description: Id of the user
+        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
+      name:
+        type: string
+        description: Name of the user
+        example: Susan Susanson
+      username:
+        type: string
+        description: Username of the user
+        example: susan20
+      memberOf:
+        type: array
+        description: List of ids for roles this user is a member of
+        items:
+          type: string
+          example:
+      administratorOf:
+        type: array
+        description: >-
+          List of ids for roles and tasks this user is an administrator of
+        items:
+          type: string
+          example:
+      metadata:
+        type: string
+        description: Any client supplied metadata
+        example: hire-date:2009-07-17
   block:
     properties:
       num:
