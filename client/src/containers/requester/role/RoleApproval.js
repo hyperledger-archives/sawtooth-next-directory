@@ -17,7 +17,10 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Card, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+
+
 import './RoleApproval.css';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -103,15 +106,21 @@ class RoleApproval extends Component {
           <Card.Content extra id='next-role-approval-details'>
             <Grid columns={3} padded='vertically'>
               <Grid.Column>
-                <div>
-                  Request ID
-                </div>
-                <strong>
+                Request ID
+                <div id='next-role-approval-request-id'>
                   {proposal.id.slice(0, 7)}
-                </strong>
+                </div>
               </Grid.Column>
               <Grid.Column>
                 Request Date
+                <div id='next-role-approval-date'>
+                  { proposal.created_date &&
+                    utils.formatDate(
+                      proposal.created_date.epoch_time ||
+                      proposal.created_date
+                    )
+                  }
+                </div>
               </Grid.Column>
               <Grid.Column>
                 Approver(s)

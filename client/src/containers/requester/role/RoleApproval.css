@@ -45,7 +45,9 @@ limitations under the License.
   margin-top: 10px;
 }
 
-#next-role-approval-approver {
+#next-role-approval-approver,
+#next-role-approval-date,
+#next-role-approval-request-id {
   color: black;
   font-weight: bold;
 }

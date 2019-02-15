@@ -31,7 +31,9 @@ limitations under the License.
   font-weight: 100;
 }
 
-#next-pack-approval-approver {
+#next-pack-approval-approver,
+#next-pack-approval-date,
+#next-pack-approval-request-id {
   color: black;
   font-weight: bold;
 }
@@ -43,4 +45,8 @@ limitations under the License.
   font-size: .9em;
   justify-content: center;
   text-align: left;
+}
+
+#next-pack-approval-request-info div:first-child {
+  margin-bottom: 12px;
 }
