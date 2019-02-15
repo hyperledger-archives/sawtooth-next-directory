@@ -37,9 +37,10 @@ async def fetch_user_resource(conn, user_id, head_block_num):
                 "email": r.row["email"],
                 "subordinates": fetch_user_ids_by_manager(user_id, head_block_num),
                 "ownerOf": {
-                    "tasks": fetch_relationships_by_id(
-                        "task_owners", user_id, "task_id", head_block_num
-                    ),
+                    # NOTE: Not implemented.  Comment out for now.
+                    # "tasks": fetch_relationships_by_id(
+                    #     "task_owners", user_id, "task_id", head_block_num
+                    # ),
                     "roles": fetch_relationships_by_id(
                         "role_owners", user_id, "role_id", head_block_num
                     ),
@@ -47,14 +48,15 @@ async def fetch_user_resource(conn, user_id, head_block_num):
                         "pack_owners", user_id, "pack_id", head_block_num
                     ),
                 },
-                "administratorOf": {
-                    "tasks": fetch_relationships_by_id(
-                        "task_admins", user_id, "task_id", head_block_num
-                    ),
-                    "roles": fetch_relationships_by_id(
-                        "role_admins", user_id, "role_id", head_block_num
-                    ),
-                },
+                # NOTE: Not implemented.  Comment out for now.
+                # "administratorOf": {
+                #     "tasks": fetch_relationships_by_id(
+                #         "task_admins", user_id, "task_id", head_block_num
+                #     ),
+                #     "roles": fetch_relationships_by_id(
+                #         "role_admins", user_id, "role_id", head_block_num
+                #     ),
+                # },
                 "memberOf": fetch_relationships_by_id(
                     "role_members", user_id, "role_id", head_block_num
                 ),
@@ -122,14 +124,14 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
                             "pack_owners", user["user_id"], "pack_id", head_block_num
                         ),
                     },
-                    "administratorOf": {
-                        "tasks": fetch_relationships_by_id(
-                            "task_admins", user["user_id"], "task_id", head_block_num
-                        ),
-                        "roles": fetch_relationships_by_id(
-                            "role_admins", user["user_id"], "role_id", head_block_num
-                        ),
-                    },
+                    # "administratorOf": {
+                    #     "tasks": fetch_relationships_by_id(
+                    #         "task_admins", user["user_id"], "task_id", head_block_num
+                    #     ),
+                    #     "roles": fetch_relationships_by_id(
+                    #         "role_admins", user["user_id"], "role_id", head_block_num
+                    #     ),
+                    # },
                     "memberOf": fetch_relationships_by_id(
                         "role_members", user["user_id"], "role_id", head_block_num
                     ),
@@ -255,6 +257,8 @@ async def search_users(conn, search_query, paging):
     resource = (
         await users_search_name(search_query)
         .union(users_search_email(search_query))
+        .union(users_search_by_manager_name(search_query))
+        .union(users_search_by_manager_email(search_query))
         .distinct()
         .pluck("name", "email", "user_id")
         .order_by("name")
@@ -272,6 +276,8 @@ async def search_users_count(conn, search_query):
     resource = (
         await users_search_name(search_query)
         .union(users_search_email(search_query))
+        .union(users_search_by_manager_name(search_query))
+        .union(users_search_by_manager_email(search_query))
         .distinct()
         .count()
         .run(conn)
@@ -297,6 +303,48 @@ def users_search_email(search_query):
     resource = (
         r.table("users")
         .filter(lambda doc: (doc["email"].match("(?i)" + search_query["search_input"])))
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+def users_search_by_manager_name(search_query):
+    """Get a list of direct reports for a manager whose name has input string."""
+    resource = (
+        r.table("users")
+        .filter(
+            lambda doc: (
+                r.expr(
+                    r.table("users")
+                    .get_all(search_query["search_input"], index="name")
+                    .get_field("user_id")
+                    .coerce_to("array")
+                ).contains(doc["manager_id"])
+            )
+        )
+        .order_by("name")
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+def users_search_by_manager_email(search_query):
+    """Get a list of direct reports for a manager whose email has input string."""
+    resource = (
+        r.table("users")
+        .filter(
+            lambda doc: (
+                r.expr(
+                    r.table("users")
+                    .get_all(search_query["search_input"], index="email")
+                    .get_field("user_id")
+                    .coerce_to("array")
+                ).contains(doc["manager_id"])
+            )
+        )
         .order_by("name")
         .coerce_to("array")
     )

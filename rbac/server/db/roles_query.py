@@ -123,9 +123,12 @@ def fetch_expired_roles(user_id):
 
 async def search_roles(conn, search_query, paging):
     """Compiling all search fields for roles into one query."""
+
     resource = (
         await roles_search_name(search_query)
         .union(roles_search_description(search_query))
+        .union(role_search_by_owner_name(search_query))
+        .union(role_search_by_owner_email(search_query))
         .distinct()
         .pluck("name", "description", "role_id")
         .order_by("name")
@@ -143,6 +146,8 @@ async def search_roles_count(conn, search_query):
     resource = (
         await roles_search_name(search_query)
         .union(roles_search_description(search_query))
+        .union(role_search_by_owner_name(search_query))
+        .union(role_search_by_owner_email(search_query))
         .distinct()
         .count()
         .run(conn)
@@ -177,3 +182,54 @@ def roles_search_description(search_query):
     )
 
     return resource
+
+
+def role_search_by_owner_name(search_query):
+    """Search for roles by owner's name matching query string."""
+
+    users = (
+        r.table("users")
+        .get_all(search_query["search_input"], index="name")
+        .get_field("user_id")
+        .coerce_to("array")
+    )
+
+    owned_roles = (
+        r.table("role_owners")
+        .filter(lambda doc: (r.expr(users).contains(doc["identifiers"][0])))
+        .get_field("role_id")
+        .coerce_to("array")
+    )
+
+    roles = (
+        r.table("roles")
+        .filter(lambda doc: (r.expr(owned_roles).contains(doc["role_id"])))
+        .coerce_to("array")
+    )
+
+    return roles
+
+
+def role_search_by_owner_email(search_query):
+    """Search for roles by owner's email matching query string."""
+    users = (
+        r.table("users")
+        .get_all(search_query["search_input"], index="email")
+        .get_field("user_id")
+        .coerce_to("array")
+    )
+
+    owned_roles = (
+        r.table("role_owners")
+        .filter(lambda doc: (r.expr(users).contains(doc["identifiers"][0])))
+        .get_field("role_id")
+        .coerce_to("array")
+    )
+
+    roles = (
+        r.table("roles")
+        .filter(lambda doc: (r.expr(owned_roles).contains(doc["role_id"])))
+        .coerce_to("array")
+    )
+
+    return roles
