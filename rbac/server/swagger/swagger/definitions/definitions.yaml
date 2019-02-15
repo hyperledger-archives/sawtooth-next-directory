@@ -612,6 +612,67 @@
         type: string
         description: Id of the proposal that was created
         example: 63467642-6067-4c82-a096-1a1972d776b3
+  searchRequest:
+    type: object
+    description: Payload of a search request POST message
+    required:
+      - query
+      - page_size
+      - page
+    properties:
+      query:
+        type: object
+        description: Query details
+        required:
+          - search_input
+          - search_object_types
+        properties:
+          search_input
+            type: string
+            description: The string we search for
+            example: Lev
+          search_object_types
+            type: array
+            description: List of object types across which we search
+            items:
+              type: string
+              example: roles
+      page_size:
+        type: string
+        description: Number of items on a page
+        example: 20
+      page:
+        type: string
+        description: Page number to be returned
+        example: 2
+  searchResponse:
+    description: Response for a Search Request POST message
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        type: object
+        description: Response data
+        properties:
+          users
+            type: array
+            description: List of users
+            items:
+              type: "object"
+            example: []
+          packs
+            type: array
+            description: List of packs
+            items:
+              type: "object"
+            example: []
+          roles
+            type: array
+            description: List of roles
+            items:
+              type: "object"
+            example: []
   block:
     properties:
       num:
