@@ -649,50 +649,30 @@
     description: Response for a Search Request POST message
     type: object
     required:
-      - id
-      - name
+      - data
     properties:
-      proposals:
-        type: array
-        description: List of ids for open proposals for this user
-        items:
-          type: string
-          example:
-      ownerOf:
-        type: array
-        description: List of ids for roles and tasks this user is an owner of
-        items:
-          type: string
-          example:
-      id:
-        type: string
-        description: Id of the user
-        example: 02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a
-      name:
-        type: string
-        description: Name of the user
-        example: Susan Susanson
-      username:
-        type: string
-        description: Username of the user
-        example: susan20
-      memberOf:
-        type: array
-        description: List of ids for roles this user is a member of
-        items:
-          type: string
-          example:
-      administratorOf:
-        type: array
-        description: >-
-          List of ids for roles and tasks this user is an administrator of
-        items:
-          type: string
-          example:
-      metadata:
-        type: string
-        description: Any client supplied metadata
-        example: hire-date:2009-07-17
+      data:
+        type: object
+        description: Response data
+        properties:
+          users
+            type: array
+            description: List of users
+            items:
+              type: "object"
+            example: []
+          packs
+            type: array
+            description: List of packs
+            items:
+              type: "object"
+            example: []
+          roles
+            type: array
+            description: List of roles
+            items:
+              type: "object"
+            example: []
   block:
     properties:
       num:
