@@ -61,6 +61,8 @@ paths:
     parameters:
       - $ref: '../parameters/parameters.yaml#/taskId'
     $ref: './tasks/tasks-id-owners.yaml'
+  /search:
+    $ref: './search/search.yaml'
   /users:
     $ref: './users/users.yaml'
   '/users/{id}':

@@ -1,0 +1,34 @@
+    post:
+      description: Search for users, roles and packs, by issuing a search POST request
+      parameters:
+        - name: query
+          in: body
+          description: Json object containing the details of the search request
+          required: true
+          schema:
+            $ref: '../definitions/definitions.yaml#/searchRequest'
+      responses:
+        '200':
+          description: Success response
+          schema:
+            $ref: '../definitions/definitions.yaml#/searchResponse'
+        '400':
+          description: Response for a bad request
+          schema:
+            $ref: '../definitions/definitions.yaml#/400Error'
+        '401':
+          description: Response for an unauthorized request
+          schema:
+            $ref: '../definitions/definitions.yaml#/401Error'
+        '403':
+          description: Response for a forbidden request
+          schema:
+            $ref: '../definitions/definitions.yaml#/403Error'
+        '503':
+          description: Response for an internal unknown error
+          schema:
+            $ref: '../definitions/definitions.yaml#/503Error'
+        default:
+          description: Response for an unexpected error
+          schema:
+            $ref: '../definitions/definitions.yaml#/error'
