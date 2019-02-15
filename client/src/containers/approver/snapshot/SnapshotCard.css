@@ -1,0 +1,25 @@
+#next-snapshot-card {
+  border-radius: 0;
+  width: 27%;
+  margin:0.3em;
+  background: url('../../../images/img-requests-snapshot-secondary@2x.png');  
+  margin: 0 0 0.3em;
+}
+
+#next-snapshotcard-header {
+  font-size: 6em;
+  margin: 0.4em 0 0 0.3em;
+  color: #FEFEFE;
+}
+
+#next-snapshotcard-description {
+  margin-left: 2em;
+  color: #6F7C9A;
+}
+
+#next-expired-image {
+  margin-top: -14px;
+  height: 86px;
+  width: 86px;
+  margin: 0;
+}
