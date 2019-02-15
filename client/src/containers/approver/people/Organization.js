@@ -50,8 +50,9 @@ class Organization extends Component {
     const {
       activeUser,
       getOrganization,
-      handleUserSelect } = this.props;
-    getOrganization(activeUser);
+      handleUserSelect,
+      id } = this.props;
+    getOrganization(activeUser, activeUser === id);
     handleUserSelect(activeUser);
   }
 
@@ -262,9 +263,12 @@ class Organization extends Component {
    * @returns {JSX}
    */
   render () {
-    const { compact, organization } = this.props;
+    const { compact, id, organization } = this.props;
     if (organization &&
         organization.managers.length === 0)
+      return null;
+
+    if (!compact && organization && organization.id !== id)
       return null;
 
     return (

@@ -181,10 +181,10 @@ export function * rejectProposals (api, action) {
  */
 export function * getRelationships (api, action) {
   try {
-    const { id } = action;
+    const { id, isMe } = action;
     const res = yield call(api.getRelationships, id);
     res.ok ?
-      yield put(ApproverActions.organizationSuccess(res.data.data)) :
+      yield put(ApproverActions.organizationSuccess(res.data.data, isMe)) :
       yield put(ApproverActions.organizationFailure(res.data.error));
   } catch (err) {
     console.error(err);

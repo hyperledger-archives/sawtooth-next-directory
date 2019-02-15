@@ -110,9 +110,13 @@ export const success = {
     }),
 
 
-  organization: (state, { organization }) => {
+  organization: (state, { organization, isMe }) => {
     const { created_date, ...filtered } = organization;
-    return state.merge({ fetching: false, organization: filtered });
+    return state.merge({
+      fetching: false,
+      organization: filtered,
+      directReports: isMe ? filtered.direct_reports : state.directReports,
+    });
   },
 
 
