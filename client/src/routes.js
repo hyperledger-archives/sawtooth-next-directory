@@ -30,7 +30,6 @@ import Pack from 'containers/requester/pack/Pack';
 import Approved from 'containers/approver/proposals/Approved';
 import Delegated from 'containers/approver/proposals/Delegated';
 import Expired from 'containers/approver/proposals/Expired';
-import Snapshot from 'containers/approver/snapshot/Snapshot';
 import Expiring from 'containers/approver/proposals/Expiring';
 import Individual from 'containers/approver/proposals/Individual';
 import PeopleApproval from 'containers/approver/proposals/PeopleApproval';
@@ -166,13 +165,6 @@ const routes = (props) => [
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },
-  {
-    path:   '/approval/snapshot',
-    main:   (rest) => <Snapshot {...props} {...rest}/>,
-    nav:    () => <ApproverNav {...props}/>,
-    exact:  true,
-  },
-
 ];
 
 

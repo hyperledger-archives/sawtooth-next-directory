@@ -15,12 +15,15 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Header, Button} from 'semantic-ui-react';
+import { Button, Header, Image } from 'semantic-ui-react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import './Snapshot.css';
+import expireGlyph from 'images/glyph-expire-soon.png';
 import SnapshotCard from './SnapshotCard';
+import * as theme from 'services/Theme';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -33,19 +36,13 @@ import SnapshotCard from './SnapshotCard';
 class Snapshot extends Component {
 
   static propTypes = {
-    openProposalsByRole:   PropTypes.object,
-    openProposalsByUser:   PropTypes.object,
+    history:                  PropTypes.object,
+    openProposalsByRoleCount: PropTypes.number,
+    openProposalsCount:       PropTypes.number,
   };
 
 
-  state = {
-    snapshotData: [{ roleCount: '0', roleStatus: ''},
-      { roleCount: '9', roleStatus: 'About to Expire', isimageNeeded: true},
-      { roleCount: '3', roleStatus: 'Delegated'},
-      { roleCount: '5', roleStatus: 'Unattended Since 1 Week'},
-      { roleCount: '3', roleStatus: 'Escalated'},
-      { roleCount: '18', roleStatus: 'Messages'}],
-  };
+  themes = ['dark', 'gradient'];
 
 
   /**
@@ -53,17 +50,15 @@ class Snapshot extends Component {
    * component.
    */
   componentDidMount () {
-    const { openProposalsByUser, openProposalsByRole } = this.props;
-    const { snapshotData } = this.state;
-    const copyofSnapshotData = [...snapshotData];
-    const numberofRoles =  openProposalsByUser ?
-      Object.keys(openProposalsByUser).length : '0';
-    copyofSnapshotData[0].roleCount = numberofRoles;
-    const pendingRoles =  openProposalsByRole ? 'Pending across ' +
-      Object.keys(openProposalsByRole).length  + ' roles'
-      : 'Pending across 0 roles';
-    copyofSnapshotData[0].roleStatus = pendingRoles;
-    this.setState({ snapshotData: copyofSnapshotData });
+    theme.apply(this.themes);
+  }
+
+
+  /**
+   * Component teardown
+   */
+  componentWillUnmount () {
+    theme.remove(this.themes);
   }
 
 
@@ -72,28 +67,50 @@ class Snapshot extends Component {
    * @returns {JSX}
    */
   render () {
-    const { snapshotData } = this.state;
+    const {
+      history,
+      openProposalsCount,
+      openProposalsByRoleCount } = this.props;
+
     return (
-      <div className='snapshot-main-container'>
+      <div className='snapshot-container'>
         <div className='snapshot-header'>
-          <Header id='next-snapshot-header'>
+          <Header
+            as='h1'
+            id='next-snapshot-header'
+            inverted>
             Requests Snapshot
           </Header>
           <Button id='next-snapshot-button'
-            as={Link}
+            onClick={() => history.goBack()}
             icon='close'
-            size='huge'
-            to='/approval/manage'/>
+            size='huge'/>
         </div>
         <div className='snapshot-sub-container'>
-          {snapshotData.map((event, index) => (
-            <SnapshotCard
-              key= {index}
-              isimageNeeded = {event.isimageNeeded}
-              roleCount = {event.roleCount}
-              roleStatus = {event.roleStatus}
-            />
-          ))}
+          <SnapshotCard
+            count={openProposalsCount || 0}
+            status={`Pending across ${
+              utils.countLabel(openProposalsByRoleCount, 'role')
+            }`}/>
+          <SnapshotCard
+            image={<Image
+              floated='right'
+              src={expireGlyph}
+              className='next-snapshot-glyph'/>}
+            count={0}
+            status='About to Expire'/>
+          <SnapshotCard
+            count={0}
+            status='Delegated'/>
+          <SnapshotCard
+            count={0}
+            status='Unattended for 1 week'/>
+          <SnapshotCard
+            count={0}
+            status='Escalated'/>
+          <SnapshotCard
+            count={0}
+            status='Messages'/>
         </div>
       </div>
     );
@@ -102,4 +119,4 @@ class Snapshot extends Component {
 };
 
 
-export default Snapshot;
+export default withRouter(Snapshot);
