@@ -29,5 +29,6 @@ export const UserSelectors = {
   users:        (state) => state.user.users,
   userFromId:   (state, id) =>
     state.user.users &&
-    state.user.users.find(user => user.id === id),
+    [...state.user.users, ...(state.search.people || [])]
+      .find(user => user.id === id),
 };

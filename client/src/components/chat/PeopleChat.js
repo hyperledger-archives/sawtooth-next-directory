@@ -76,7 +76,7 @@ class PeopleChat extends Component {
         roleId => !roles.find(role => role.id === roleId)
       );
     }
-    getRoles(roleIds);
+    roleIds && getRoles(roleIds);
   }
 
 
