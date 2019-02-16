@@ -20,7 +20,7 @@ import time
 import ldap3
 from ldap3 import MODIFY_REPLACE
 from ldap3.core.exceptions import LDAPSessionTerminatedByServerError
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 
 from rbac.providers.common.db_queries import (
     peek_at_queue,
@@ -38,7 +38,7 @@ from rbac.providers.ldap.ldap_validator import (
     validate_update_entry,
 )
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 
 LISTENER_POLLING_DELAY = int(os.getenv("LISTENER_POLLING_DELAY", "1"))
 LDAP_DC = os.getenv("LDAP_DC")

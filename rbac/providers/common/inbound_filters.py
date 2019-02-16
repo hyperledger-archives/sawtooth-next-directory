@@ -15,11 +15,11 @@
 """Filters for stadardization of inbound json data to NEXT fields"""
 
 import datetime
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 
 from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 def inbound_user_filter(user, provider):

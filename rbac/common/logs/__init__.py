@@ -12,23 +12,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Sets up a standard logging format and setting"""
+"""Sets up a standard logger to be pulled and used by RBAC modules"""
 
 import logging
+import os
+import sys
 
-LIB_LEVELS = {"asyncio": logging.WARNING}
-LOGGER_FORMAT = "%(levelname)s %(asctime)s %(name)s %(module)s %(pathname)s %(message)s"
+from rbac.common.config import get_config
 
-logging.basicConfig(level=logging.INFO, format=LOGGER_FORMAT)
+# NOTE: Some imported libraries have been polluting INFO level logs
+# Set logging level for imported libraries
+LIB_LEVELS = {"asyncio": logging.WARNING, "urllib3": logging.WARNING}
 
+# Configurable settings for standard NEXT logger
+LOGGER_FORMAT = logging.Formatter(
+    "%(levelname)s %(asctime)s %(name)s %(module)s %(pathname)s %(message)s"
+)
+LOGGER_LEVEL_MAP = {
+    "INFO": logging.INFO,
+    "DEBUG": logging.DEBUG,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+}
+
+# Set logging levels for certain imported libraries
 for lib, level in LIB_LEVELS.items():
     logging.getLogger(lib).setLevel(level)
 
 
-def get_logger(name):
-    """Return the logger
-    Written to match the standard python logging.getLogger
-    function for ease of migration
+def get_default_logger(name):
+    """Returns a logger with custom logging format
+    This method allows NEXT contributors to use a logger that is
+    standardized across the project.
     """
     logger = logging.getLogger(name)
+
+    logger_level = LOGGER_LEVEL_MAP[get_config("LOGGING_LEVEL")]
+
+    logger.setLevel(logger_level)
+
+    # Stream Handler
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setLevel(logger_level)
+    stream_handler.setFormatter(LOGGER_FORMAT)
+
+    logger.addHandler(stream_handler)
+
     return logger

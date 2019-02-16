@@ -13,13 +13,13 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
 import os
 import time
 from datetime import datetime as dt
 import requests
 import rethinkdb as r
 
+from rbac.common.logs import get_default_logger
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.azure.delta_inbound_sync import inbound_sync_listener
 from rbac.providers.common.inbound_filters import (
@@ -30,9 +30,7 @@ from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 from rbac.providers.common.rbac_transactions import add_transaction
 
-logging.basicConfig(level=logging.INFO)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 DB_HOST = os.getenv("DB_HOST", "rethink")
 DB_PORT = os.getenv("DB_PORT", "28015")

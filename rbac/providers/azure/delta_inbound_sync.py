@@ -18,19 +18,17 @@ A receiver module that pulls entries from the Azure EventHub to be used by the
 Inbound AAD Delta Sync.
 """
 import os
-import logging
 from datetime import datetime
 import rethinkdb as r
 from azure.eventhub import EventHubClient, Offset
 
+from rbac.common.logs import get_default_logger
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.rbac_transactions import add_transaction
 
-# LOGGER levels: info, debug, warning, exception, error
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 TENANT_ID = os.getenv("TENANT_ID")
 NAMESPACE = os.environ.get("AAD_EH_NAMESPACE")
