@@ -110,9 +110,20 @@ class PackApproval extends Component {
               <Grid.Column id='next-pack-approval-request-info'>
                 <div>
                   Request ID
+                  <div id='next-pack-approval-request-id'>
+                    Unavailable
+                  </div>
                 </div>
                 <div>
                   Request Date
+                  <div id='next-pack-approval-date'>
+                    { proposals[0].created_date &&
+                      utils.formatDate(
+                        proposals[0].created_date.epoch_time ||
+                        proposals[0].created_date
+                      )
+                    }
+                  </div>
                 </div>
               </Grid.Column>
               <Grid.Column>
