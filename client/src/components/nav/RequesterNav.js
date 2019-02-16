@@ -86,21 +86,24 @@ class RequesterNav extends Component {
   /**
    * Render each list of sidebar groups by passing the root
    * route, title, and array of items to NavList
+   *
+   * Uncomment lines below to display recommended lists
+   *
    * @returns {JSX}
    */
   renderLists () {
     const {
-      recommendedPacks,
-      recommendedRoles,
-      packs,
+      // recommendedPacks,
+      // recommendedRoles,
+      // packs,
       memberOf,
       requests } = this.props;
 
     // Recommendedations are all roles. Format a separate array of
     // recommended packs to mirror roles and hydrate the sidebar
-    const packList = packs && recommendedPacks ?
-      packs.filter((pack) => recommendedPacks.includes(pack.id)) :
-      [];
+    // const packList = packs && recommendedPacks ?
+    //   packs.filter((pack) => recommendedPacks.includes(pack.id)) :
+    //   [];
 
     return (
       <div id='next-requester-nav-lists-container'>
@@ -110,14 +113,14 @@ class RequesterNav extends Component {
         <NavList
           listTitle='Your Requests'
           list={requests}/>
-        <NavList
+        {/* <NavList
           listTitle='Recommended Packs'
           route='/packs'
           list={packList}/>
         <NavList
           listTitle='Recommended Roles'
           route='/roles'
-          list={recommendedRoles}/>
+          list={recommendedRoles}/> */}
       </div>
     );
   }

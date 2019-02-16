@@ -139,4 +139,8 @@ export const isWhitespace = (string) =>
   !string.replace(/\s/g, '').length;
 
 
+export const formatDate = (timestamp) =>
+  new Date(timestamp * 1e3).toLocaleDateString();
+
+
 export const noop = () => {};
