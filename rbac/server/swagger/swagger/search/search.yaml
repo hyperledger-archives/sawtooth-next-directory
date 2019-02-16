@@ -1,9 +1,9 @@
     post:
       description: Search for users, roles and packs, by issuing a search POST request
       parameters:
-        - name: user
+        - name: query
           in: body
-          description: User to add to the system
+          description: Json object containing the details of the search request
           required: true
           schema:
             $ref: '../definitions/definitions.yaml#/searchRequest'

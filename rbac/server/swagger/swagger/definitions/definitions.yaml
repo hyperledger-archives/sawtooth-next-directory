@@ -613,8 +613,8 @@
         description: Id of the proposal that was created
         example: 63467642-6067-4c82-a096-1a1972d776b3
   searchRequest:
-    description: Payload of a search request POST message
     type: object
+    description: Payload of a search request POST message
     required:
       - query
       - page_size
