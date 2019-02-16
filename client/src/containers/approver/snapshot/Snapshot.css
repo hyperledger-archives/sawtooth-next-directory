@@ -1,42 +1,36 @@
 .snapshot-sub-container {
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
-  padding: 1em;
   justify-content: center;
-  margin-top: 6.8em;
+  margin-top: 62px;
+  padding: 1em;
+  width: 100%;
 }
 
 .snapshot-container {
-  margin: 1em;
-  width:30%;
-}
-
-.snapshot-main-container {
-  background: linear-gradient(to bottom, #44568F, #161718);
-  height: 100%;
-  margin-top: 2.8em;
-  position: relative;
-  z-index: 1;
+  margin-top: 26px;
 }
 
 .snapshot-header {
-  margin-top: 2em;
   display: flex;
   justify-content: space-between;
+  margin-top: 2em;
   padding-top: 1.5em;
 }
 
 #next-snapshot-header {
-  color: #FEFEFE;
-  font-size: 2em;
-  font-weight: bold;
-  margin-left: 1.5em; 
-  cursor: pointer;  
+  margin: 0 53px;
 }
 
 #next-snapshot-button {
-  margin-right: 1em;
   background: none;
   color:#DCDFE9;
+  margin: -10px 20px 0 0;
+}
+
+.next-snapshot-glyph {
+  position: absolute !important;
+  right: 8%;
+  top: 11px;
+  width: 30%;
 }

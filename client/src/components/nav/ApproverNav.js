@@ -134,7 +134,7 @@ class ApproverNav extends Component {
   render () {
     return (
       <Container>
-        <Link to='/approval/snapshot' id='next-approver-nav-snapshot'>
+        <Link to='/snapshot' id='next-approver-nav-snapshot'>
           <Button animated primary fluid>
             <Button.Content visible>
               SNAPSHOT

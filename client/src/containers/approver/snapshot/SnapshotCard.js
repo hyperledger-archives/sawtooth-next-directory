@@ -15,10 +15,9 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Card, Image } from 'semantic-ui-react';
+import { Card, Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './SnapshotCard.css';
-import myIcon from 'images/icon-expired@3x.png';
 
 
 /**
@@ -31,9 +30,9 @@ import myIcon from 'images/icon-expired@3x.png';
 class SnapshotCard extends Component {
 
   static propTypes = {
-    isimageNeeded:  PropTypes.bool,
-    roleCount:      PropTypes.string,
-    roleStatus:     PropTypes.string,
+    count:          PropTypes.number,
+    image:          PropTypes.object,
+    status:         PropTypes.string,
   };
 
   /**
@@ -41,16 +40,28 @@ class SnapshotCard extends Component {
    * @returns {JSX}
    */
   render () {
-    const { roleCount, roleStatus, isimageNeeded} = this.props;
+    const { image, count, status} = this.props;
 
     return (
       <Card id='next-snapshot-card'>
         <Card.Content>
-          { isimageNeeded ? <Image floated='right'
-            src={ myIcon } id='next-expired-image'/> : ''}
-          <Card.Header id='next-snapshotcard-header' content={roleCount}/>
-          <Card.Description id='next-snapshotcard-description'
-            content={roleStatus}/>
+          {image}
+          <Transition
+            visible={count !== null}
+            animation='swing down'
+            duration={500}>
+            <Card.Header
+              id='next-snapshot-card-header'
+              content={count}/>
+          </Transition>
+          <Transition
+            visible={count !== null && !!status}
+            animation='fade up'
+            duration={1000}>
+            <Card.Description
+              id='next-snapshot-card-description'
+              content={status}/>
+          </Transition>
         </Card.Content>
       </Card>
     );

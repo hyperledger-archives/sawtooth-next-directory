@@ -35,6 +35,12 @@ body,
   background: @contrastBackground;
 }
 
+.dark.gradient {
+  background: linear-gradient(to bottom, #44568F, #161718);
+  background-color: #161718;
+  background-repeat: no-repeat;
+}
+
 .flux {
   background: @darkBackground;
   background: linear-gradient(180deg, #6b00ff, #f7007d);
