@@ -64,7 +64,7 @@ test('browse: failure path', () => {
 
   const stepRes = step(res);
   expect(stepRes).toEqual(
-    put(SearchActions.searchBrowseFailure(res.data.error))
+    put(SearchActions.searchBrowseFailure(res.data))
   );
 });
 
@@ -108,6 +108,6 @@ test('people: failure path', () => {
 
   const stepRes = step(res);
   expect(stepRes).toEqual(
-    put(SearchActions.searchPeopleFailure(res.data.error))
+    put(SearchActions.searchPeopleFailure(res.data))
   );
 });

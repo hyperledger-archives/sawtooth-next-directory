@@ -122,7 +122,7 @@ export function * getAllRoles (api, action) {
         res.data.paging.total),
       );
     } else {
-      yield put(RequesterActions.allRolesFailure(res.data.error));
+      yield put(RequesterActions.allRolesFailure(res.data));
     }
 
   } catch (err) {
@@ -147,7 +147,7 @@ export function * getAllPacks (api, action) {
         res.data.paging.total),
       );
     } else {
-      yield put(RequesterActions.allPacksFailure(res.data.error));
+      yield put(RequesterActions.allPacksFailure(res.data));
     }
 
   } catch (err) {
@@ -205,7 +205,7 @@ export function * roleAccess (api, action) {
       yield put(RequesterActions.roleAccessSuccess(res.data));
       yield put(UserActions.meRequest());
     } else {
-      yield put(RequesterActions.roleAccessFailure(res.data.error));
+      yield put(RequesterActions.roleAccessFailure(res.data));
     }
   } catch (err) {
     console.error(err);
@@ -230,7 +230,7 @@ export function * packAccess (api, action) {
       yield put(RequesterActions.packAccessSuccess(res.data));
       yield put(UserActions.meRequest());
     } else {
-      yield put(RequesterActions.packAccessFailure(res.data.error));
+      yield put(RequesterActions.packAccessFailure(res.data));
     }
   } catch (err) {
     console.error(err);
@@ -265,7 +265,7 @@ export function * fetchRole (api, id) {
     const res = yield call(api.getRole, id);
     res.ok ?
       yield put(RequesterActions.roleSuccess(res.data.data)) :
-      yield put(RequesterActions.roleFailure(res.data.error));
+      yield put(RequesterActions.roleFailure(res.data));
   } catch (err) {
     console.error(err);
   }
@@ -283,7 +283,7 @@ export function * fetchPack (api, id) {
     const res = yield call(api.getPack, id);
     res.ok ?
       yield put(RequesterActions.packSuccess(res.data.data)) :
-      yield put(RequesterActions.packFailure(res.data.error));
+      yield put(RequesterActions.packFailure(res.data));
   } catch (err) {
     console.error(err);
   }
@@ -301,7 +301,7 @@ export function * fetchProposal (api, id) {
     const res = yield call(api.getProposal, id);
     res.ok ?
       yield put(RequesterActions.proposalSuccess(res.data.data)) :
-      yield put(RequesterActions.proposalFailure(res.data.error));
+      yield put(RequesterActions.proposalFailure(res.data));
   } catch (err) {
     console.error(err);
   }

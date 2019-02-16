@@ -208,7 +208,7 @@ class ManagePacks extends Component {
             { ownedPacks && ownedPacks.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  You haven&apos;t created any packs
+                  You haven&#39;t created any packs
                 </Header.Content>
               </Header>
             }

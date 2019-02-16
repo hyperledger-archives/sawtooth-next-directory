@@ -45,7 +45,7 @@ test('failure path', () => {
   const step = stepper(me(FixtureAPI, {}));
   step();
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(UserActions.meFailure(res.data.error)));
+  expect(stepRes).toEqual(put(UserActions.meFailure(res.data)));
 });
 
 
@@ -76,7 +76,7 @@ test('getUser failure path', () => {
   }));
   step();
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(UserActions.userFailure(res.data.error)));
+  expect(stepRes).toEqual(put(UserActions.userFailure(res.data)));
 });
 
 
@@ -102,7 +102,7 @@ test('getPeople failure path', () => {
   step();
   const stepRes = step(res);
   expect(stepRes).toEqual(put(UserActions.peopleFailure(
-    res.data.message
+    res.data
   )));
 });
 

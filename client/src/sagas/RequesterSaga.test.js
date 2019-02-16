@@ -65,7 +65,7 @@ test('fetchRole: failure path', () => {
 
   step();
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(RequesterActions.roleFailure(res.data.error)));
+  expect(stepRes).toEqual(put(RequesterActions.roleFailure(res.data)));
 });
 
 
@@ -90,7 +90,7 @@ test('fetchPack: failure path', () => {
 
   step();
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(RequesterActions.packFailure(res.data.error)));
+  expect(stepRes).toEqual(put(RequesterActions.packFailure(res.data)));
 });
 
 
@@ -120,7 +120,7 @@ test('getAllRoles: failure Path', () => {
   const stepRes = step(res);
 
   expect(stepRes)
-    .toEqual(put(RequesterActions.allRolesFailure(res.data.error)));
+    .toEqual(put(RequesterActions.allRolesFailure(res.data)));
 });
 
 
@@ -150,7 +150,7 @@ test('getAllPacks: failure Path', () => {
   const stepRes = step(res);
 
   expect(stepRes)
-    .toEqual(put(RequesterActions.allPacksFailure(res.data.error)));
+    .toEqual(put(RequesterActions.allPacksFailure(res.data)));
 });
 
 
@@ -247,5 +247,5 @@ test('fetchProposal: failure path', () => {
   step();
   const stepRes = step(res);
   expect(stepRes)
-    .toEqual(put(RequesterActions.proposalFailure(res.data.error)));
+    .toEqual(put(RequesterActions.proposalFailure(res.data)));
 });

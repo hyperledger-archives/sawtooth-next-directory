@@ -63,12 +63,22 @@ class Snapshot extends Component {
 
 
   /**
+   * Navigate to previous location
+   */
+  goBack () {
+    const { history } = this.props;
+    history.length < 3 ?
+      history.push('/approval/pending/individual') :
+      history.goBack();
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
     const {
-      history,
       openProposalsCount,
       openProposalsByRoleCount } = this.props;
 
@@ -82,7 +92,7 @@ class Snapshot extends Component {
             Requests Snapshot
           </Header>
           <Button id='next-snapshot-button'
-            onClick={() => history.goBack()}
+            onClick={() => this.goBack()}
             icon='close'
             size='huge'/>
         </div>

@@ -91,7 +91,7 @@ async def fetch_pack_resource(conn, pack_id, head_block_num):
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No pack with the id {} exists".format(pack_id))
+        raise ApiNotFound("Pack {} doesn't exist.".format(pack_id))
 
 
 async def search_packs(conn, search_query, paging):

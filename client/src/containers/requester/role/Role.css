@@ -50,3 +50,26 @@ limitations under the License.
   margin: 25px 38px;
   position: fixed;
 }
+
+#next-not-found-role-container {
+  margin-top: 245px;
+  text-align: center;
+}
+
+#next-not-found-role-container h1 {
+  font-size: 5em;
+  font-weight: lighter;
+}
+
+#next-not-found-role-container h1 .sub.header {
+  font-size: .24em;
+  margin: 24px auto 0 auto;
+  max-width: 500px;
+  word-break: break-word;
+}
+
+#next-not-found-role-container h1 .sub.header div:first-child {
+  color: #808080;
+  font-size: .7em;
+  margin-top: 15px;
+}

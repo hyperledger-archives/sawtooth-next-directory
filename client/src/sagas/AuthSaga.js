@@ -36,7 +36,7 @@ export function * login (api, action) {
 
     res.ok ?
       yield put(AuthActions.loginSuccess(true, res.data.data)) :
-      yield put(AuthActions.loginFailure(res.data.message));
+      yield put(AuthActions.loginFailure(res.data));
   } catch (err) {
     console.error(err);
   }
@@ -62,7 +62,7 @@ export function * signup (api, action) {
 
     res.ok ?
       yield put(AuthActions.signupSuccess(true, res.data.data)) :
-      yield put(AuthActions.signupFailure(res.data.message));
+      yield put(AuthActions.signupFailure(res.data));
   } catch (err) {
     console.error(err);
   } finally {
@@ -82,7 +82,7 @@ export function * logout (api, action) {
     const res = yield call(api.logout);
     res.ok ?
       yield put(AuthActions.logoutSuccess()) :
-      yield put(AuthActions.logoutFailure(res.data.message));
+      yield put(AuthActions.logoutFailure(res.data));
   } catch (err) {
     console.error(err);
   }
