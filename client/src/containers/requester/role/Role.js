@@ -16,11 +16,11 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, Container, Grid } from 'semantic-ui-react';
+import { Button, Container, Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import { RequesterSelectors } from 'state';
+import { RequesterActions, RequesterSelectors } from 'state';
 
 
 import Chat from 'components/chat/Chat';
@@ -73,7 +73,8 @@ export class Role extends Component {
    * Fetch role if not loaded in client
    */
   init () {
-    const { getRole, roleId, roleFromId } = this.props;
+    const { getRole, resetErrors, roleId, roleFromId } = this.props;
+    resetErrors();
     roleId && !roleFromId(roleId) && getRole(roleId);
   }
 
@@ -94,11 +95,32 @@ export class Role extends Component {
    */
   render () {
     const {
+      error,
       manualExpire,
       proposalFromId,
       proposalId,
       roleId,
       roleFromId } = this.props;
+
+    if (error && error.code === 404) {
+      return (
+        <div id='next-not-found-role-container'>
+          <Header as='h1'>
+            <span role='img' aria-label=''>
+              😕
+            </span>
+            <Header.Subheader>
+              {error.message}
+              <div>
+                {'(ERR CODE: '}
+                {error.code}
+                {')'}
+              </div>
+            </Header.Subheader>
+          </Header>
+        </div>
+      );
+    }
 
     this.role = roleFromId(roleId);
     if (!this.role) return null;
@@ -178,13 +200,16 @@ export class Role extends Component {
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
   return {
+    error: state.requester.error,
     roleId: id,
     proposalId: RequesterSelectors.roleProposalId(state, id),
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    resetErrors: () => dispatch(RequesterActions.resetErrors()),
+  };
 };
 
 

@@ -94,7 +94,7 @@ async def fetch_role_resource(conn, role_id, head_block_num):
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No role with the id {} exists".format(role_id))
+        raise ApiNotFound("Role {} doesn't exist.".format(role_id))
 
 
 async def expire_role_member(conn, role_id, user_id, head_block_num):

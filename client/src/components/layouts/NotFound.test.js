@@ -14,26 +14,27 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
-import { ChatActions } from 'state';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 
-/**
- * Get a conversation
- * @param {object} api    API service
- * @param {object} action Redux action
- * @generator
- */
-export function * getConversation (api, action) {
-  try {
-    const { id } = action;
-    const res = yield call(api.getConversation, id);
-    if (res.ok)
-      yield put(ChatActions.conversationSuccess(res.data));
-    else
-      yield put(ChatActions.conversationFailure(res.data));
+import NotFound from './NotFound';
 
-  } catch (err) {
-    console.error(err);
-  }
-}
+
+describe('NotFound component', () => {
+
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    const props = {};
+
+    ReactDOM.render(
+      <BrowserRouter>
+        <NotFound {...props}/>
+      </BrowserRouter>, div
+    );
+
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+});
