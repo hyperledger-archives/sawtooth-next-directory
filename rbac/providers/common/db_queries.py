@@ -20,10 +20,10 @@ from datetime import timezone
 from datetime import datetime as dt
 import rethinkdb as r
 
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 from rbac.providers.common.expected_errors import ExpectedError
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 
 DB_HOST = os.getenv("DB_HOST", "rethink")
 DB_PORT = os.getenv("DB_PORT", "28015")

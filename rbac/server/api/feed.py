@@ -13,12 +13,11 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import sys
 import json
-import logging
 
 from sanic import Blueprint
 
+from rbac.common.logs import get_default_logger
 from rbac.server.api.auth import authorized
 from rbac.server.api.proposals import compile_proposal_resource
 from rbac.server.api import utils
@@ -27,9 +26,7 @@ from rbac.server.db import proposals_query
 
 from rbac.server.db import db_utils
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = get_default_logger(__name__)
 
 FEED_BP = Blueprint("feed")
 

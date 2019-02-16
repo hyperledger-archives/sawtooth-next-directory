@@ -18,11 +18,9 @@ import os
 import sys
 import json
 import requests
-import logging
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = get_default_logger(__name__)
 
 
 def add_demo_data():

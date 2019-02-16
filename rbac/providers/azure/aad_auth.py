@@ -14,9 +14,10 @@
 # ------------------------------------------------------------------------------
 
 import os
-import logging
 import datetime as dt
 import requests
+
+from rbac.common.logs import get_default_logger
 
 CLIENT_ID = os.environ.get("CLIENT_ID")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
@@ -26,7 +27,7 @@ AUTH_TYPE = os.environ.get("AUTH_TYPE")
 AAD_AUTH_URL = "https://login.microsoftonline.com/{}".format(TENANT_ID)
 TOKEN_ENDPOINT = "/oauth2/v2.0/token"
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class AadAuth:

@@ -18,9 +18,9 @@
 import random
 
 from rbac.common import rbac
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 WORDS = (
     "awesome group hyperledger sawtooth jazz pacbot t-mobile intel microsoft "
     "opensource AWS azure access grants role manager permissions development "

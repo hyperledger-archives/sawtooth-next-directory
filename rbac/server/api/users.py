@@ -32,13 +32,13 @@ from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 
 from rbac.common.crypto.secrets import generate_api_key
 
 from rbac.server.db import db_utils
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 USERS_BP = Blueprint("users")
 
 
