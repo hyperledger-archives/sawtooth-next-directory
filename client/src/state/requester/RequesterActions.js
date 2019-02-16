@@ -52,6 +52,7 @@ const { Types, Creators } = createActions({
   roleAccessFailure:    null,
 
   resetAll:             null,
+  resetErrors:          null,
   feedReceive:          ['payload'],
   manualExpire:         ['id'],
 });

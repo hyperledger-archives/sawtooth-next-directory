@@ -61,5 +61,5 @@ test('conversation failure', () => {
 
   step();
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(ChatActions.conversationFailure(res.data.error)));
+  expect(stepRes).toEqual(put(ChatActions.conversationFailure(res.data)));
 });

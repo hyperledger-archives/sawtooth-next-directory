@@ -14,26 +14,33 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { call, put } from 'redux-saga/effects';
-import { ChatActions } from 'state';
+#next-not-found-container {
+  margin: 120px 13%;
+  text-align: center;
+}
 
+#next-not-found-container h1 {
+  color: white;
+  font-size: 5em;
+  font-weight: lighter;
+}
 
-/**
- * Get a conversation
- * @param {object} api    API service
- * @param {object} action Redux action
- * @generator
- */
-export function * getConversation (api, action) {
-  try {
-    const { id } = action;
-    const res = yield call(api.getConversation, id);
-    if (res.ok)
-      yield put(ChatActions.conversationSuccess(res.data));
-    else
-      yield put(ChatActions.conversationFailure(res.data));
+#next-not-found-container h1 .sub.header {
+  color: #5b6e82;
+  font-size: .3em;
+}
 
-  } catch (err) {
-    console.error(err);
-  }
+#next-not-found-actions {
+  display: flex;
+  width: 50%;
+  margin: 75px auto 0 auto;
+  max-width: 400px;
+}
+
+#next-not-found-actions button {
+  margin-right: 15px;
+}
+
+#next-not-found-actions a.fluid.animated.button {
+  padding-top: 15px;
 }

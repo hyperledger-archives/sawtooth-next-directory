@@ -30,6 +30,10 @@ export const failure = (state, { error }) =>
   state.merge({ fetching: false, error });
 
 
+export const resetErrors = (state) =>
+  state.merge({ error: null });
+
+
 export const resetAll = () =>
   INITIAL_STATE;
 
@@ -104,6 +108,7 @@ export const success = {
 
 export const RequesterReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]:              resetAll,
+  [Types.RESET_ERRORS]:           resetErrors,
   [Types.FEED_RECEIVE]:           feedReceive,
   [Types.MANUAL_EXPIRE]:          request.temp,
 

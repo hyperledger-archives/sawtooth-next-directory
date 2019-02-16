@@ -33,7 +33,7 @@ export function * searchBrowse (api, action) {
 
     res.ok ?
       yield put(SearchActions.searchBrowseSuccess(res.data.data)) :
-      yield put(SearchActions.searchBrowseFailure(res.data.message));
+      yield put(SearchActions.searchBrowseFailure(res.data));
   } catch (err) {
     console.error(err);
   }
@@ -54,7 +54,7 @@ export function * searchPeople (api, action) {
 
     res.ok ?
       yield put(SearchActions.searchPeopleSuccess(res.data.data)) :
-      yield put(SearchActions.searchPeopleFailure(res.data.message));
+      yield put(SearchActions.searchPeopleFailure(res.data));
   } catch (err) {
     console.error(err);
   }

@@ -284,7 +284,7 @@ class Rejected extends Component {
             { rejectedProposals && rejectedProposals.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  You haven&apos;t rejected any items
+                  You haven&#39;t rejected any items
                 </Header.Content>
               </Header>
             }

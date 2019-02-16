@@ -29,7 +29,7 @@ export function * me (api, action) {
     const res = yield call(api.me);
     res.ok ?
       yield put(UserActions.meSuccess(res.data.data)) :
-      yield put(UserActions.meFailure(res.data.message));
+      yield put(UserActions.meFailure(res.data));
   } catch (err) {
     console.error(err);
   }
@@ -51,7 +51,7 @@ export function * getUser (api, action) {
       yield call(api.getUser, id);
     res.ok ?
       yield put(UserActions.userSuccess(res.data.data)) :
-      yield put(UserActions.userFailure(res.data.message));
+      yield put(UserActions.userFailure(res.data));
   } catch (err) {
     console.error(err);
   }
@@ -90,7 +90,7 @@ export function * getPeople (api, action) {
         res.data.data,
         res.data.paging.total)
       ) :
-      yield put(UserActions.peopleFailure(res.data.message));
+      yield put(UserActions.peopleFailure(res.data));
   } catch (err) {
     console.error(err);
   }
