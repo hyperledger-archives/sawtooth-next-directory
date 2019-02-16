@@ -35,3 +35,7 @@ limitations under the License.
   text-align: center;
   width: 100%;
 }
+
+#next-people-chat-pending-approvals-button {
+  margin-top: 45px;
+}
