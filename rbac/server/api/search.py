@@ -17,14 +17,14 @@ import math
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 from rbac.server.api.auth import authorized
 from rbac.server.db import db_utils
 from rbac.server.db.packs_query import search_packs, search_packs_count
 from rbac.server.db.roles_query import search_roles, search_roles_count
 from rbac.server.db.users_query import search_users, search_users_count
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 SEARCH_BP = Blueprint("search")
 
 

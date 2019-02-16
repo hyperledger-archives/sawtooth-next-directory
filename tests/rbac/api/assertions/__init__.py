@@ -16,9 +16,9 @@
 
 import json
 import requests
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 def assert_api_error(response, message, status_code=400):

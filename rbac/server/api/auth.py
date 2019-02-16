@@ -28,13 +28,13 @@ from rbac.server.api.errors import ApiNotFound, ApiUnauthorized, ApiBadRequest
 from rbac.server.api import utils
 
 from rbac.server.db import auth_query
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 from rbac.common.crypto.secrets import generate_api_key
 from rbac.common.crypto.secrets import deserialize_api_key
 
 from rbac.server.db import db_utils
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 AUTH_BP = Blueprint("auth")
 
 LDAP_SERVER = os.getenv("LDAP_SERVER")

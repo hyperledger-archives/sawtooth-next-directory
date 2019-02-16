@@ -14,10 +14,10 @@
 # ------------------------------------------------------------------------------
 """ Validate LDAP messages
 """
-from rbac.common.logs import get_logger
+from rbac.common.logs import get_default_logger
 from rbac.providers.common.provider_errors import ValidationException
 
-LOGGER = get_logger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 def validate_create_entry(payload, data_type):

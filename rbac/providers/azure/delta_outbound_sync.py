@@ -15,9 +15,11 @@
 
 import time
 import os
-import logging
+
 from uuid import uuid4
 import requests
+
+from rbac.common.logs import get_default_logger
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.azure.azure_validators import (
     outbound_user_creation_filter,
@@ -34,9 +36,7 @@ from rbac.providers.common.db_queries import (
     delete_entry_queue,
 )
 
-# LOGGER levels: info, debug, warning, exception, error
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 LISTENER_POLLING_DELAY = int(os.getenv("LISTENER_POLLING_DELAY", "1"))
 TENANT_ID = os.getenv("TENANT_ID")
