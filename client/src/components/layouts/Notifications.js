@@ -213,7 +213,7 @@ class Notifications extends Component {
             expired.length === 0 &&
             <MenuHeader as='h3' icon inverted textAlign='center'>
               <Icon name='check circle outline' color='green'/>
-              You&apos;re all caught up
+              You&#39;re all caught up
               <MenuHeader.Subheader>
                 You have no pending notifications
               </MenuHeader.Subheader>

@@ -89,7 +89,7 @@ export function * createPack (api, action) {
       toast.success('Successfully created a new pack.');
       yield put(ApproverActions.createPackSuccess(res.data.data));
     } else {
-      yield put(ApproverActions.createPackFailure(res.data.error));
+      yield put(ApproverActions.createPackFailure(res.data));
     }
 
   } catch (err) {
@@ -112,7 +112,7 @@ export function * createRole (api, action) {
       toast.success('Successfully created a new role.');
       yield put(ApproverActions.createRoleSuccess(res.data.data));
     } else {
-      yield put(ApproverActions.createRoleFailure(res.data.error));
+      yield put(ApproverActions.createRoleFailure(res.data));
     }
 
   } catch (err) {
@@ -138,7 +138,7 @@ export function * approveProposals (api, action) {
     });
     res.ok ?
       yield put(ApproverActions.approveProposalsSuccess(res.data)) :
-      yield put(ApproverActions.approveProposalsFailure(res.data.error));
+      yield put(ApproverActions.approveProposalsFailure(res.data));
   } catch (err) {
     console.error(err);
   } finally {
@@ -164,7 +164,7 @@ export function * rejectProposals (api, action) {
     });
     res.ok ?
       yield put(ApproverActions.rejectProposalsSuccess(res.data)) :
-      yield put(ApproverActions.rejectProposalsFailure(res.data.error));
+      yield put(ApproverActions.rejectProposalsFailure(res.data));
   } catch (err) {
     console.error(err);
   } finally {
@@ -184,8 +184,8 @@ export function * getRelationships (api, action) {
     const { id } = action;
     const res = yield call(api.getRelationships, id);
     res.ok ?
-      yield put(ApproverActions.organizationSuccess(res.data.data)) :
-      yield put(ApproverActions.organizationFailure(res.data.error));
+      yield put(ApproverActions.organizationSuccess(res.data.data, isMe)) :
+      yield put(ApproverActions.organizationFailure(res.data));
   } catch (err) {
     console.error(err);
   }

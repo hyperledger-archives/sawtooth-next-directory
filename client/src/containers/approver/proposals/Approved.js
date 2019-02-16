@@ -284,7 +284,7 @@ class Approved extends Component {
             { confirmedProposals && confirmedProposals.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  You haven&apos;t approved any items
+                  You haven&#39;t approved any items
                 </Header.Content>
               </Header>
             }

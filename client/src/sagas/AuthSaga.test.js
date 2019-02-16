@@ -72,7 +72,7 @@ test('failure path', () => {
   step();
 
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(AuthActions.loginFailure(res.data.error)));
+  expect(stepRes).toEqual(put(AuthActions.loginFailure(res.data)));
 });
 
 test('signup API', async () => {
@@ -136,7 +136,7 @@ test('signup failure path', () => {
   step();
 
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(AuthActions.signupFailure(res.data.error)));
+  expect(stepRes).toEqual(put(AuthActions.signupFailure(res.data)));
 });
 
 test('logout API', () => {
@@ -167,5 +167,5 @@ test('failure path', () => {
   step();
 
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(AuthActions.logoutFailure(res.data.error)));
+  expect(stepRes).toEqual(put(AuthActions.logoutFailure(res.data)));
 });

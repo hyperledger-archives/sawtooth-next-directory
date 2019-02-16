@@ -86,7 +86,11 @@ it('renders without crashing', () => {
 
 
 it('calls the renderGrid function', () => {
-  wrapper.dive().instance().renderGrid();
+  wrapper.dive().instance().renderGrid(
+    () => {},
+    () => {},
+    {},
+  );
 });
 
 it('calls the hydrate function', () => {

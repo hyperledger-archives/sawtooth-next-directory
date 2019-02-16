@@ -31,6 +31,8 @@ import Login from 'containers/login/Login';
 import Signup from 'containers/signup/Signup';
 import Header from 'components/layouts/Header';
 import Waves from 'components/layouts/Waves';
+import NotFound from 'components/layouts/NotFound';
+import Snapshot from 'containers/approver/snapshot/Snapshot';
 
 
 import { appDispatch, appState } from './AppHelper';
@@ -190,56 +192,25 @@ class App extends Component {
 
 
   /**
-   * Render each navbar route as defined in the routes array
-   * for each top-level container
-   * @returns {JSX}
-   */
-  renderNav () {
-    return this.routes.map((route, index) => (
-      route.nav &&
-      <Route
-        key={index}
-        path={route.path}
-        exact={route.exact}
-        render={route.nav}
-      />
-    ));
-  }
-
-
-  /**
-   * Render each main route as defined in the routes array
-   * for each top-level container
-   * @returns {JSX}
-   */
-  renderMain () {
-    return this.routes.map((route, index) => (
-      <Route
-        key={index}
-        path={route.path}
-        exact={route.exact}
-        render={route.main}
-      />
-    ));
-  }
-
-
-  /**
    * Render grid system
    * Create a 2-up top-level grid structure that separates the
    * sidebar from main content. Each route is mapped via its own
    * route component.
+   *
+   * @param {function}  nav Nav component
+   * @param {function} main Main component
+   * @param {object}  props React Router props
    * @returns {JSX}
    */
-  renderGrid () {
+  renderGrid (nav, main, props) {
     return (
       <Grid id='next-outer-grid'>
         <Grid.Column id='next-outer-grid-nav'>
-          { this.renderNav() }
+          { nav(props) }
         </Grid.Column>
         <Grid.Column id='next-inner-grid-main'>
           <Waves {...this.props}/>
-          { this.renderMain() }
+          { main(props) }
         </Grid.Column>
       </Grid>
     );
@@ -266,7 +237,21 @@ class App extends Component {
               exact
               path='/browse'
               render={() => <Browse {...this.props}/>}/>
-            <Route render={() => ( this.renderGrid() )}/>
+            <Route
+              exact
+              path='/snapshot'
+              render={() => <Snapshot {...this.props}/>}/>
+            { this.routes &&
+              this.routes.map((route, index) => (
+                <Route
+                  key={index}
+                  path={route.path}
+                  exact={route.exact}
+                  render={props =>
+                    this.renderGrid(route.nav, route.main, props)
+                  }/>
+              ))}
+            <Route render={() => <NotFound {...this.props}/>}/>
           </Switch>
         </div>
       </Router>

@@ -214,7 +214,7 @@ class ManageRoles extends Component {
             { ownedRoles && ownedRoles.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  You haven&apos;t created any roles
+                  You haven&#39;t created any roles
                 </Header.Content>
               </Header>
             }

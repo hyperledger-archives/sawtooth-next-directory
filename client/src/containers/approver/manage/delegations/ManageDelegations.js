@@ -211,7 +211,7 @@ class ManageDelegations extends Component {
             { delegations && delegations.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  You haven&apos;t created any delegations
+                  You haven&#39;t created any delegations
                 </Header.Content>
               </Header>
             }

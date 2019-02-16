@@ -16,11 +16,13 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid } from 'semantic-ui-react';
+import { Container, Grid, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
-import { RequesterSelectors } from 'state';
+import { RequesterActions, RequesterSelectors } from 'state';
+
+
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import PackApproval from './PackApproval';
@@ -71,7 +73,8 @@ export class Pack extends Component {
    * Fetch pack if not loaded in client
    */
   init () {
-    const { getPack, packId, packFromId } = this.props;
+    const { getPack, packId, packFromId, resetErrors } = this.props;
+    resetErrors();
     packId && !packFromId(packId) && getPack(packId);
   }
 
@@ -82,10 +85,31 @@ export class Pack extends Component {
    */
   render () {
     const {
+      error,
       packId,
       packFromId,
       proposalsFromIds,
       proposalIds } = this.props;
+
+    if (error) {
+      return (
+        <div id='next-not-found-pack-container'>
+          <Header as='h1'>
+            <span role='img' aria-label=''>
+              🤯
+            </span>
+            <Header.Subheader>
+              {error.message}
+              <div>
+                {'(ERR CODE: '}
+                {error.code}
+                {')'}
+              </div>
+            </Header.Subheader>
+          </Header>
+        </div>
+      );
+    }
 
     this.pack = packFromId(packId);
     if (!this.pack) return null;
@@ -156,13 +180,16 @@ const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
 
   return {
+    error: state.requester.error,
     packId: id,
     proposalIds: RequesterSelectors.packProposalIds(state, id),
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    resetErrors: () => dispatch(RequesterActions.resetErrors()),
+  };
 };
 
 
