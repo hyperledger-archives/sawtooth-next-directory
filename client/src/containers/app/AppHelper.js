@@ -20,12 +20,14 @@ import {
   AuthActions as Auth,
   ChatActions as Chat,
   RequesterActions as Requester,
+  SearchActions as Search,
   UserActions as User,
   AppSelectors,
   ApproverSelectors,
   AuthSelectors,
   ChatSelectors,
   RequesterSelectors,
+  SearchSelectors,
   UserSelectors } from 'state';
 
 
@@ -81,6 +83,12 @@ export const appState = (state) => ({
     RequesterSelectors.proposalsFromIds(state, ids),
   roleFromId:          (id)  => RequesterSelectors.roleFromId(state, id),
   packFromId:          (id)  => RequesterSelectors.packFromId(state, id),
+
+  // Search
+  browseSearchData:    SearchSelectors.browse(state),
+  peopleSearchData:    SearchSelectors.people(state),
+  roleSearchData:      SearchSelectors.roles(state),
+  totalSearchPages:    SearchSelectors.totalPages(state),
 
   // User
   expired:             UserSelectors.expired(state),
@@ -150,10 +158,17 @@ export const appDispatch = (dispatch) => ({
   requestPackAccess: (id, userId, reason) =>
     dispatch(Requester.packAccessRequest(id, userId, reason)),
 
+  // Search
+  clearSearchData:    () => dispatch(Search.clearSearchData()),
+  search:  (type, query) => {
+    type === 'browse' && dispatch(Search.searchBrowseRequest(query));
+    type === 'people' && dispatch(Search.searchPeopleRequest(query));
+  },
+
   // User
   getMe:              () => dispatch(User.meRequest()),
   logout:             () => logout(dispatch),
-  getUser:     (id, summary) =>
+  getUser:      (id, summary) =>
     dispatch(User.userRequest(id, summary)),
   getUsers:    (ids, summary) =>
     dispatch(User.usersRequest(ids, summary)),

@@ -23,6 +23,7 @@ import { ApproverReducer } from './approver/ApproverReducer';
 import { AuthReducer } from './auth/AuthReducer';
 import { ChatReducer } from './chat/ChatReducer';
 import { RequesterReducer } from './requester/RequesterReducer';
+import { SearchReducer } from './search/SearchReducer';
 import { UserReducer } from './user/UserReducer';
 
 
@@ -55,6 +56,13 @@ export { RequesterReducer } from './requester/RequesterReducer';
 export { RequesterSelectors } from './requester/RequesterSelectors';
 
 
+export {
+  default as SearchActions,
+  SearchTypes } from './search/SearchActions';
+export { SearchReducer } from './search/SearchReducer';
+export { SearchSelectors } from './search/SearchSelectors';
+
+
 export { default as UserActions, UserTypes } from './user/UserActions';
 export { UserReducer } from './user/UserReducer';
 export { UserSelectors } from './user/UserSelectors';
@@ -66,6 +74,7 @@ const reducers = combineReducers({
   auth:       AuthReducer,
   chat:       ChatReducer,
   requester:  RequesterReducer,
+  search:     SearchReducer,
   user:       UserReducer,
   loadingBar: loadingBarReducer,
 });

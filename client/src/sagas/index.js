@@ -27,6 +27,7 @@ import {
   AuthTypes,
   ChatTypes,
   RequesterTypes,
+  SearchTypes,
   UserTypes } from 'state';
 import {
   approveProposals,
@@ -55,6 +56,7 @@ import {
 import { closeSocket, openSocket, sendSocket } from './AppSaga';
 import { login, signup, logout } from './AuthSaga';
 import { getConversation } from './ChatSaga';
+import { searchBrowse, searchPeople } from './SearchSaga';
 import { me, getPeople, getUser, getUsers } from './UserSaga';
 
 
@@ -111,6 +113,10 @@ function * sagas () {
     takeLatest(RequesterTypes.PACK_ACCESS_REQUEST, packAccess, api),
     takeLatest(RequesterTypes.ROLE_ACCESS_REQUEST, roleAccess, api),
     takeLatest(RequesterTypes.MANUAL_EXPIRE, manualExpire, api),
+
+    // Search
+    takeLatest(SearchTypes.SEARCH_BROWSE_REQUEST, searchBrowse, api),
+    takeLatest(SearchTypes.SEARCH_PEOPLE_REQUEST, searchPeople, api),
 
     // User
     takeLatest(UserTypes.ME_REQUEST, me, api),

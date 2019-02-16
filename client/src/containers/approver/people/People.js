@@ -43,6 +43,10 @@ class People extends Component {
 
 
   state = {
+    searchInput:    '',
+    searchStart:    1,
+    searchLimit:    20,
+    searchTypes:    ['user'],
     activeIndex:    0,
     activeUser:     null,
   };
@@ -61,6 +65,8 @@ class People extends Component {
   * Component teardown
   */
   componentWillUnmount () {
+    const { clearSearchData } = this.props;
+    clearSearchData();
     theme.remove(this.themes);
   }
 
@@ -91,12 +97,37 @@ class People extends Component {
 
 
   /**
+   * Set search input state
+   * @param {string} searchInput Search input value
+   */
+  setSearchInput = (searchInput) => {
+    this.setState({ searchInput });
+  }
+
+
+  /**
+   * Set search start state
+   * @param {string} searchStart Search start value
+   */
+  setSearchStart = (searchStart) => {
+    this.setState({ searchStart });
+  }
+
+
+  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
-    const { id } = this.props;
-    const { activeIndex, activeUser } = this.state;
+    const { fetchingSearchResults, id } = this.props;
+    const {
+      activeIndex,
+      activeUser,
+      searchInput,
+      searchLimit,
+      searchStart,
+      searchTypes } = this.state;
+
     return (
       <Grid id='next-approver-grid'>
         <Grid.Column
@@ -109,11 +140,24 @@ class People extends Component {
             {...this.props}/>
           <div id='next-approver-people-content'>
             <PeopleNav
+              fetchingSearchResults={fetchingSearchResults}
+              searchInput={searchInput}
+              searchLimit={searchLimit}
+              searchTypes={searchTypes}
+              setSearchInput={this.setSearchInput}
+              setSearchStart={this.setSearchStart}
               activeIndex={activeIndex}
-              setFlow={this.setFlow}/>
+              setFlow={this.setFlow}
+              {...this.props}/>
             <div>
               { activeIndex === 0 &&
                 <OrganizationList
+                  fetchingSearchResults={fetchingSearchResults}
+                  searchInput={searchInput}
+                  searchLimit={searchLimit}
+                  searchStart={searchStart}
+                  searchTypes={searchTypes}
+                  setSearchStart={this.setSearchStart}
                   handleUserSelect={this.handleUserSelect}
                   {...this.props}/>
               }
@@ -149,6 +193,7 @@ class People extends Component {
 const mapStateToProps = (state) => {
   return {
     fetchingPeople: state.user.fetchingPeople,
+    fetchingSearchResults: state.search.fetching,
   };
 };
 

@@ -18,6 +18,10 @@ limitations under the License.
   padding: 0 30px;
 }
 
+#next-approver-people-list-container #next-approver-people-list-no-results {
+  margin-top: 40px;
+}
+
 #next-approver-people-list-container .ui.segment {
   cursor: pointer;
   display: flex;
