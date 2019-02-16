@@ -22,11 +22,8 @@ import {
   Placeholder,
   Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-
 import Avatar from 'components/layouts/Avatar';
 import './OrganizationList.css';
-import * as utils from 'services/Utils';
 
 
 /**
@@ -92,33 +89,6 @@ class OrganizationList extends Component {
 
     getPeople(start, limit);
     this.setState({ start: start + limit });
-  }
-
-
-  /**
-   * Load next set of search data
-   * @param {number} start Loading start index
-   */
-  loadNextSearch = () => {
-    const {
-      search,
-      searchInput,
-      searchLimit,
-      searchStart,
-      searchTypes,
-      setSearchStart } = this.props;
-
-    const query = {
-      query: {
-        search_input: searchInput,
-        search_object_types: searchTypes,
-        page_size: searchLimit,
-        page: searchStart + 1,
-      },
-    };
-
-    setSearchStart(searchStart + 1);
-    search('people', query);
   }
 
 
@@ -189,45 +159,20 @@ class OrganizationList extends Component {
   render () {
     const {
       fetchingPeople,
-      fetchingSearchResults,
       me,
       people,
-      peopleSearchData,
-      peopleTotalCount,
-      searchInput,
-      searchStart,
-      totalSearchPages } = this.props;
-
-    const showSearchData = searchInput && !utils.isWhitespace(searchInput);
+      peopleTotalCount } = this.props;
 
     return (
       <div id='next-approver-people-list-container'>
-        { !showSearchData &&
-          me &&
-          this.renderPersonSegment(me)
-        }
-        { showSearchData &&
-          peopleSearchData &&
-          peopleSearchData.map((person, index) =>
-            <div className='next-approver-people-list-item' key={index}>
-              {this.renderPersonSegment(person)}
-            </div>
-          )
-        }
-        { !showSearchData &&
-          people &&
-          people.map((person, index) =>
-            <div className='next-approver-people-list-item' key={index}>
-              {this.renderPersonSegment(person)}
-            </div>
-          )
-        }
-        { (fetchingPeople || fetchingSearchResults) &&
-          this.renderPlaceholder()
-        }
-        { !showSearchData &&
-          people &&
-          people.length < peopleTotalCount &&
+        { me && this.renderPersonSegment(me) }
+        { people && people.map((person, index) =>
+          <div className='next-approver-people-list-item' key={index}>
+            {this.renderPersonSegment(person)}
+          </div>
+        )}
+        {fetchingPeople && this.renderPlaceholder()}
+        { people && people.length < peopleTotalCount &&
           <Container
             id='next-people-load-next-button'
             textAlign='center'>
@@ -235,29 +180,6 @@ class OrganizationList extends Component {
               Load More
             </Button>
           </Container>
-        }
-        { showSearchData &&
-          totalSearchPages > 1 &&
-          searchStart < totalSearchPages &&
-          <Container
-            id='next-people-load-next-button'
-            textAlign='center'>
-            <Button size='large' onClick={() => this.loadNextSearch()}>
-              More Results
-            </Button>
-          </Container>
-        }
-        { showSearchData &&
-          !fetchingPeople &&
-          !fetchingSearchResults &&
-          (!peopleSearchData || peopleSearchData.length === 0) &&
-          <div id='next-approver-people-list-no-results'>
-            <Header as='h3' textAlign='center' color='grey'>
-              <Header.Content>
-                No search results
-              </Header.Content>
-            </Header>
-          </div>
         }
       </div>
     );

@@ -18,10 +18,6 @@ limitations under the License.
   margin-top: 46px;
 }
 
-#next-role-select-grid-container #next-role-select-grid-no-results {
-  margin-top: 40px;
-}
-
 #next-role-select-grid .column .ui.placeholder {
   margin: 40px 15px;
 }
@@ -30,7 +26,7 @@ limitations under the License.
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 23px;
+  padding: 26px;
 }
 
 #next-role-select-grid .column .toggle-card h3 {

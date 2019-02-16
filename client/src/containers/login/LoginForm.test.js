@@ -45,17 +45,33 @@ describe('LoginForm component', () => {
 
 
   test('username form', () => {
+    wrapper.find('#next-username-form').simulate('submit');
     wrapper.find('#next-username-input').simulate('change',
       { event: {} }, { name: 'username', value: '' });
-    wrapper.find('#next-password-input').simulate('change',
+    wrapper.find('#next-username-input').simulate('change',
       { event: {} }, { name: 'password', value: '' });
     wrapper.find('#next-username-input').simulate('change',
       { event: {} }, { name: 'resetEmail', value: '' });
   });
 
 
+  test('password form', () => {
+    wrapper.find('#next-password-form').simulate('submit');
+  });
+
+
+  test('form back button click event', () => {
+    wrapper.find('#next-login-form-back-button').simulate('click');
+  });
+
+
   test('reset password form', () => {
     wrapper.find('#next-login-form-reset-password').simulate('submit');
+  });
+
+
+  test('form email back button', () => {
+    wrapper.find('#next-login-reset-email-back-button').simulate('click');
   });
 
 

@@ -24,11 +24,6 @@ limitations under the License.
   z-index: 2;
 }
 
-#next-people-nav div:nth-child(2) {
-  flex: 1;
-  margin: 0 5px 0 28px;
-}
-
 .dark #next-people-nav {
   background: var(--dark-bg);
 }

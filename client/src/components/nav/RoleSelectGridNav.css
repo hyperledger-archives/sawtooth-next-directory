@@ -24,12 +24,12 @@ limitations under the License.
   z-index: 3;
 }
 
-#next-role-select-grid-search {
+.next-role-select-grid-search {
   margin-top: 50px;
   width: 100%;
 }
 
-#next-role-select-grid-search .ui.large.fluid.icon.input input {
+.next-role-select-grid-search .ui.large.fluid.icon.input input {
   background: #eceef1;
   border: 2px solid #eceef1;
 }

@@ -84,8 +84,6 @@ class BrowseCard extends Component {
         </div>
         }
         { !resource.roles &&
-          resource.members &&
-          resource.owners &&
           <div className='browse-tile-members'>
             <StackedAvatar
               label

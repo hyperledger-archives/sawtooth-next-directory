@@ -59,6 +59,7 @@ def fetch_ldap_data():
                 .coerce_to("object")
                 .run(conn)
             )
+            conn.close()
             last_sync_time = last_sync["timestamp"]
             last_sync_time_formatted = to_date_ldap_query(
                 rethink_timestamp=last_sync_time
@@ -74,8 +75,9 @@ def fetch_ldap_data():
                 .filter({"provider_id": LDAP_DC, "source": "ldap-group"})
                 .max("timestamp")
                 .coerce_to("object")
-                .run(conn)
+                .run()
             )
+
             last_sync_time = last_sync["timestamp"]
             last_sync_time_formatted = to_date_ldap_query(
                 rethink_timestamp=last_sync_time
@@ -102,7 +104,6 @@ def fetch_ldap_data():
             when_changed=parsed_last_sync_time,
             data_type=data_type,
         )
-    conn.close()
 
 
 def to_date_ldap_query(rethink_timestamp):
@@ -117,7 +118,7 @@ def to_date_ldap_query(rethink_timestamp):
 def insert_to_db(data_dict, when_changed, data_type):
     """Insert (Users | Groups) individually to RethinkDB from dict of data and begins delta sync timer."""
     insertion_counter = 0
-    conn = connect_to_db()
+
     for entry in data_dict:
         entry_to_insert = {}
         entry_json = json.loads(entry.entry_to_json())
@@ -144,13 +145,12 @@ def insert_to_db(data_dict, when_changed, data_type):
                 "provider_id": LDAP_DC,
             }
             add_transaction(inbound_entry)
-            r.table("inbound_queue").insert(inbound_entry).run(conn)
+            r.table("inbound_queue").insert(inbound_entry).run()
 
             sync_source = "ldap-" + data_type
             provider_id = LDAP_DC
             save_sync_time(provider_id, sync_source, "delta", entry_modified_timestamp)
             insertion_counter += 1
-    conn.close()
     LOGGER.info("Inserted %s records into inbound_queue.", insertion_counter)
 
 

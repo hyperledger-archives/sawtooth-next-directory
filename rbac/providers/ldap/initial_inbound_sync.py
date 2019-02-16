@@ -53,6 +53,8 @@ def fetch_ldap_data(data_type):
         Call to get entries for all (Users | Groups) in Active Directory, saves the time of the sync,
         inserts data into RethinkDB, and initiates a new thread for a delta sync for data_type.
     """
+    connect_to_db()
+
     if data_type == "user":
         search_filter = "(objectClass=person)"
         search_base = USER_BASE_DN
@@ -118,9 +120,7 @@ def insert_to_db(entry, data_type):
         "provider_id": LDAP_DC,
     }
     add_transaction(inbound_entry)
-    conn = connect_to_db()
-    r.table("inbound_queue").insert(inbound_entry).run(conn)
-    conn.close()
+    r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def initiate_delta_sync():
@@ -133,11 +133,14 @@ def initialize_ldap_sync():
         Checks if LDAP initial syncs has been ran. If not, run initial sync for both ldap users
         and groups. If initial syncs have been completed, restart the inbound delta syncs.
     """
+
     if not LDAP_DC:
         LOGGER.info("Ldap Domain Controller is not provided, skipping Ldap sync.")
     elif not ldap_connector.can_connect_to_ldap(LDAP_SERVER, LDAP_USER, LDAP_PASS):
         LOGGER.info("Ldap Connection failed. Skipping Ldap sync.")
     else:
+        connect_to_db()
+
         # Check to see if User Sync has occurred.  If not - Sync
         db_user_payload = check_last_sync("ldap-user", "initial")
         if not db_user_payload:

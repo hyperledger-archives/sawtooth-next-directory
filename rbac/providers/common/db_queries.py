@@ -56,7 +56,9 @@ def get_last_sync(source, sync_type):
         ExpectedError if sync_tracker table has not been initialized.
     """
     try:
+        LOGGER.info("Connecting to RethinkDB...")
         conn = connect_to_db()
+        LOGGER.info("Successfully connected to RethinkDB!")
         last_sync = (
             r.table("sync_tracker")
             .filter({"source": source, "sync_type": sync_type})
@@ -87,17 +89,17 @@ def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
         "source": sync_source,
         "sync_type": sync_type,
     }
-    conn = connect_to_db()
-    r.table("sync_tracker").insert(sync_entry).run(conn)
-    conn.close()
+    r.table("sync_tracker").insert(sync_entry).run()
 
 
 def peek_at_queue(table_name, provider_id=None):
     """Returns a single entry from table_name with the oldest timestamp and matching
     provider_id."""
     try:
-        conn = connect_to_db()
         if provider_id:
+            LOGGER.info("Connecting to RethinkDB...")
+            conn = connect_to_db()
+            LOGGER.info("Successfully connected to RethinkDB!")
             queue_entry = (
                 r.table(table_name)
                 .filter({"provider_id": provider_id})
@@ -107,8 +109,7 @@ def peek_at_queue(table_name, provider_id=None):
             )
             conn.close()
             return queue_entry
-        queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run(conn)
-        conn.close()
+        queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run()
         return queue_entry
     except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError):
         return None
@@ -118,19 +119,15 @@ def put_entry_changelog(queue_entry, direction):
     """Puts the referenced document in the changelog table."""
     queue_entry["changelog_timestamp"] = dt.now().isoformat()
     queue_entry["direction"] = direction
-    conn = connect_to_db()
     result = (
         r.table("changelog")
         .insert(queue_entry, return_changes=True, conflict="error")
-        .run(conn)
+        .run()
     )
-    conn.close()
     LOGGER.debug(result)
 
 
 def delete_entry_queue(object_id, table_name):
     """Delete a document from the outbound queue table."""
-    conn = connect_to_db
-    result = r.table(table_name).get(object_id).delete(return_changes=True).run(conn)
-    conn.close()
+    result = r.table(table_name).get(object_id).delete(return_changes=True).run()
     LOGGER.debug(result)

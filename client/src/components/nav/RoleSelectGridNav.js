@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import Search from 'components/search/Search';
+import { Input, Search } from 'semantic-ui-react';
 import './RoleSelectGridNav.css';
 
 
@@ -34,26 +34,18 @@ class RoleSelectGridNav extends Component {
    * @returns {JSX}
    */
   render () {
-    const {
-      fetchingSearchResults,
-      searchInput,
-      searchLimit,
-      searchTypes,
-      setSearchInput,
-      setSearchStart } = this.props;
     return (
       <div id='next-role-select-grid-nav'>
-        <div id='next-role-select-grid-search'>
-          <Search
-            fetchingSearchResults={fetchingSearchResults}
-            searchInput={searchInput}
-            searchLimit={searchLimit}
-            searchTypes={searchTypes}
-            setSearchInput={setSearchInput}
-            setSearchStart={setSearchStart}
-            type='browse'
-            {...this.props}/>
-        </div>
+        <Search
+          fluid
+          input={() => <Input
+            fluid
+            size='large'
+            icon='search'
+            placeholder='Search...'/>}
+          className='next-role-select-grid-search'
+          category
+          loading={false}/>
       </div>
     );
   }

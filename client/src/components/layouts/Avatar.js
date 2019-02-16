@@ -30,11 +30,10 @@ import './Avatar.css';
 class Avatar extends Component {
 
   static propTypes = {
-    onClick:          PropTypes.func,
-    peopleSearchData: PropTypes.array,
-    size:             PropTypes.string,
-    userId:           PropTypes.string,
-    users:            PropTypes.array,
+    onClick:        PropTypes.func,
+    size:           PropTypes.string,
+    userId:         PropTypes.string,
+    users:          PropTypes.array,
   }
 
 
@@ -46,9 +45,8 @@ class Avatar extends Component {
    * @returns {string}
    */
   generatePlaceholder = () => {
-    const { peopleSearchData, userId, users } = this.props;
-    const user = [...users, ...(peopleSearchData || [])]
-      .find(user => user.id === userId);
+    const { users, userId } = this.props;
+    const user = users && users.find(user => user.id === userId);
 
     if (!user) return '?';
     const names = user.name.split(' ');

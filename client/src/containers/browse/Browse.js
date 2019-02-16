@@ -27,9 +27,7 @@ import PropTypes from 'prop-types';
 
 import './Browse.css';
 import BrowseCard from './BrowseCard';
-import BrowseNav from './BrowseNav';
 import * as theme from 'services/Theme';
-import * as utils from 'services/Utils';
 
 
 /**
@@ -51,12 +49,8 @@ class Browse extends Component {
 
 
   state = {
-    searchInput:    '',
-    searchStart:    1,
-    searchLimit:    20,
-    searchTypes:    ['pack', 'role'],
-    start:          0,
-    limit:          100,
+    start: 0,
+    limit: 100,
   };
 
 
@@ -74,27 +68,7 @@ class Browse extends Component {
    * Component teardown
    */
   componentWillUnmount () {
-    const { clearSearchData } = this.props;
-    clearSearchData();
     theme.remove(this.themes);
-  }
-
-
-  /**
-   * Set search input state
-   * @param {string} searchInput Search input value
-   */
-  setSearchInput = (searchInput) => {
-    this.setState({ searchInput });
-  }
-
-
-  /**
-   * Set search start state
-   * @param {string} searchStart Search start value
-   */
-  setSearchStart = (searchStart) => {
-    this.setState({ searchStart });
   }
 
 
@@ -111,32 +85,6 @@ class Browse extends Component {
     getAllPacks(start, limit);
     getAllRoles(start, limit);
     this.setState({ start: start + limit });
-  }
-
-
-  /**
-   * Load next set of search data
-   * @param {number} start Loading start index
-   */
-  loadNextSearch = () => {
-    const { search } = this.props;
-    const {
-      searchInput,
-      searchLimit,
-      searchStart,
-      searchTypes } = this.state;
-
-    const query = {
-      query: {
-        search_input: searchInput,
-        search_object_types: searchTypes,
-        page_size: searchLimit,
-        page: searchStart + 1,
-      },
-    };
-
-    this.setState({ searchStart: searchStart + 1 });
-    search('browse', query);
   }
 
 
@@ -188,123 +136,51 @@ class Browse extends Component {
 
 
   /**
-   * Get count of resource in search state
-   * @returns {number}
-   */
-  searchCount = () => {
-    const { browseSearchData } = this.props;
-    return browseSearchData && browseSearchData.reduce(
-      (count, row) => count + row.length, 0
-    );
-  }
-
-
-  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
     const {
       browseData,
-      browseSearchData,
       fetchingAllPacks,
       fetchingAllRoles,
-      fetchingSearchResults,
-      rolesTotalCount,
-      totalSearchPages } = this.props;
-    const {
-      limit,
-      searchInput,
-      searchLimit,
-      searchStart,
-      searchTypes } = this.state;
+      rolesTotalCount } = this.props;
+
+    const { limit } = this.state;
 
     const showNoContentLabel = !fetchingAllPacks &&
-      !fetchingAllRoles &&
-      this.browseCount() === 0;
+      !fetchingAllRoles && this.browseCount() === 0;
     const showData = this.browseCount() >= limit ||
       (!fetchingAllPacks && !fetchingAllRoles);
-    const showSearchData = !utils.isWhitespace(searchInput);
 
     return (
-      <div>
-        <BrowseNav
-          fetchingSearchResults={fetchingSearchResults}
-          searchInput={searchInput}
-          searchLimit={searchLimit}
-          searchTypes={searchTypes}
-          setSearchInput={this.setSearchInput}
-          setSearchStart={this.setSearchStart}
-          {...this.props}/>
-        <div id='next-browse-wrapper'>
-          <Container fluid id='next-browse-container'>
-            <Grid
-              stackable
-              columns={4}
-              id='next-browse-grid'>
-              { showSearchData &&
-                browseSearchData.map((column, index) => (
-                  <Grid.Column key={index}>
-                    {this.renderColumns(column)}
-                  </Grid.Column>
-                ))
-              }
-              { showData &&
-                !showSearchData &&
-                browseData.map((column, index) => (
-                  <Grid.Column key={index}>
-                    {this.renderColumns(column)}
-                  </Grid.Column>
-                ))
-              }
-              { (fetchingAllPacks ||
-                fetchingAllRoles ||
-                fetchingSearchResults) &&
-                this.renderPlaceholder()
-              }
-            </Grid>
-            { !showSearchData &&
-              this.browseCount() < rolesTotalCount &&
-              this.browseCount() !== 0 &&
-              <Container
-                id='next-browse-load-next-button'
-                textAlign='center'>
-                <Button size='large' onClick={() => this.loadNext()}>
-                  Load More
-                </Button>
-              </Container>
-            }
-            { showSearchData &&
-              totalSearchPages > 1 &&
-              searchStart < totalSearchPages &&
-              <Container
-                id='next-browse-load-next-button'
-                textAlign='center'>
-                <Button size='large' onClick={() => this.loadNextSearch()}>
-                  More Results
-                </Button>
-              </Container>
-            }
-            { showNoContentLabel &&
-              <Header as='h3' textAlign='center' color='grey'>
-                <Header.Content>
-                  No roles or packs
-                </Header.Content>
-              </Header>
-            }
-            { showSearchData &&
-              !fetchingAllRoles &&
-              !fetchingAllPacks &&
-              !fetchingSearchResults &&
-              this.searchCount() === 0 &&
-              <Header as='h3' textAlign='center' color='grey'>
-                <Header.Content>
-                  No search results
-                </Header.Content>
-              </Header>
-            }
-          </Container>
-        </div>
+      <div id='next-browse-wrapper'>
+        <Container fluid id='next-browse-container'>
+          <Grid stackable columns={4} id='next-browse-grid'>
+            { showData && browseData.map((column, index) => (
+              <Grid.Column key={index}>
+                {this.renderColumns(column)}
+              </Grid.Column>
+            ))}
+            {(fetchingAllPacks || fetchingAllRoles) && this.renderPlaceholder()}
+          </Grid>
+          { this.browseCount() < rolesTotalCount && this.browseCount() !== 0 &&
+            <Container
+              id='next-browse-load-next-button'
+              textAlign='center'>
+              <Button size='large' onClick={() => this.loadNext()}>
+                Load More
+              </Button>
+            </Container>
+          }
+          { showNoContentLabel &&
+            <Header as='h3' textAlign='center' color='grey'>
+              <Header.Content>
+                No roles or packs
+              </Header.Content>
+            </Header>
+          }
+        </Container>
       </div>
     );
   }
@@ -316,7 +192,6 @@ const mapStateToProps = (state) => {
   return {
     fetchingAllPacks: state.requester.fetchingAllPacks,
     fetchingAllRoles: state.requester.fetchingAllRoles,
-    fetchingSearchResults: state.search.fetching,
   };
 };
 

@@ -24,28 +24,15 @@ limitations under the License.
 
 .browse-tile-description {
   color: black;
-  margin-top: 10%;
   max-height: 97px;
   overflow: hidden;
   padding: 22px;
 }
 
 .browse-tile-expanded .browse-tile-title-container {
-  background: linear-gradient(to bottom, #9600e8 0%,#fb009a 100%);
-  padding: 22px 22px 12px 22px;
+  background: linear-gradient(to bottom, #9600e8 0%,#f70597 100%);
+  padding: 22px;
   overflow: hidden;
-  width: calc(100% + 10px);
-}
-
-.browse-tile-expanded .browse-tile-title-container:after {
-  background: repeat-x url('../../images/next-tile-wave.png');
-  background-size: 75%;
-  content: '';
-  height: 55px;
-  left: 0;
-  position: absolute;
-  top: 74px;
-  width: 100%;
 }
 
 .ui.segment .browse-tile-title-container .ui.header {

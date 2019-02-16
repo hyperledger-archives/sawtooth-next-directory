@@ -29,7 +29,6 @@ import PropTypes from 'prop-types';
 import './RoleSelectGrid.css';
 import Avatar from 'components/layouts/Avatar';
 import RoleSelectGridNav from 'components/nav/RoleSelectGridNav';
-import * as utils from 'services/Utils';
 
 
 /**
@@ -51,12 +50,8 @@ class RoleSelectGrid extends Component {
 
 
   state = {
-    searchInput:    '',
-    searchStart:    1,
-    searchLimit:    20,
-    searchTypes:    ['role'],
-    start:          0,
-    limit:          25,
+    start: 0,
+    limit: 25,
   };
 
 
@@ -83,15 +78,6 @@ class RoleSelectGrid extends Component {
 
 
   /**
-   * Component teardown
-   */
-  componentWillUnmount () {
-    const { clearSearchData } = this.props;
-    clearSearchData();
-  }
-
-
-  /**
    * Determine which owners are not currently loaded
    * in the client and dispatch actions to retrieve them.
    */
@@ -106,7 +92,7 @@ class RoleSelectGrid extends Component {
     const diff = owners.filter(userId =>
       !users || !users.find(user => user.id === userId)
     );
-    diff && getUsers(diff, true);
+    diff && getUsers(diff);
   }
 
 
@@ -122,50 +108,6 @@ class RoleSelectGrid extends Component {
 
     getAllRoles(start, limit);
     this.setState({ start: start + limit });
-  }
-
-
-  /**
-   * Load next set of search data
-   * @param {number} start Loading start index
-   */
-  loadNextSearch = () => {
-    const { search } = this.props;
-    const {
-      searchInput,
-      searchLimit,
-      searchStart,
-      searchTypes } = this.state;
-
-    const query = {
-      query: {
-        search_input: searchInput,
-        search_object_types: searchTypes,
-        page_size: searchLimit,
-        page: searchStart + 1,
-      },
-    };
-
-    this.setState({ searchStart: searchStart + 1 });
-    search('browse', query);
-  }
-
-
-  /**
-   * Set search input state
-   * @param {string} searchInput Search input value
-   */
-  setSearchInput = (searchInput) => {
-    this.setState({ searchInput });
-  }
-
-
-  /**
-   * Set search start state
-   * @param {string} searchStart Search start value
-   */
-  setSearchStart = (searchStart) => {
-    this.setState({ searchStart });
   }
 
 
@@ -233,9 +175,7 @@ class RoleSelectGrid extends Component {
           <h3>
             {role.name}
           </h3>
-          { role.owners &&
-            this.renderOwners(role.owners)
-          }
+          {this.renderOwners(role.owners)}
           { selectedRoles.includes(role.id) &&
             <Icon name='check' color='pink'/>
           }
@@ -252,48 +192,20 @@ class RoleSelectGrid extends Component {
   render () {
     const {
       fetchingAllRoles,
-      fetchingSearchResults,
       roles,
-      roleSearchData,
-      rolesTotalCount,
-      totalSearchPages } = this.props;
-    const {
-      limit,
-      searchInput,
-      searchLimit,
-      searchStart,
-      searchTypes } = this.state;
-
-    const showSearchData = !utils.isWhitespace(searchInput);
-
+      rolesTotalCount } = this.props;
+    const { limit } = this.state;
     return (
-      <div id='next-role-select-grid-container'>
-        <RoleSelectGridNav
-          fetchingSearchResults={fetchingSearchResults}
-          searchInput={searchInput}
-          searchLimit={searchLimit}
-          searchTypes={searchTypes}
-          setSearchInput={this.setSearchInput}
-          setSearchStart={this.setSearchStart}
-          {...this.props}/>
+      <div>
+        <RoleSelectGridNav/>
         <Grid centered columns={3} id='next-role-select-grid'>
-          { showSearchData && roleSearchData &&
-            roleSearchData.map(role => (
-              <Grid.Column key={role.id} width={5}>
-                {this.renderRoleToggle(role)}
-              </Grid.Column>
-            ))
-          }
-          { !showSearchData &&
-            roles &&
-            (roles.length >= limit || !fetchingAllRoles) &&
+          { roles && (roles.length >= limit || !fetchingAllRoles) &&
             roles.map(role => (
               <Grid.Column key={role.id} width={5}>
                 {this.renderRoleToggle(role)}
               </Grid.Column>
-            ))
-          }
-          { (fetchingAllRoles || fetchingSearchResults) &&
+            ))}
+          { fetchingAllRoles &&
             this.renderPlaceholder()
           }
         </Grid>
@@ -306,31 +218,6 @@ class RoleSelectGrid extends Component {
                 No roles available
               </Header.Content>
             </Header>
-          </Container>
-        }
-        { showSearchData &&
-          !fetchingAllRoles &&
-          !fetchingSearchResults &&
-          (!roleSearchData || roleSearchData.length === 0) &&
-          <Container
-            id='next-role-select-grid-no-results'
-            textAlign='center'>
-            <Header as='h3' textAlign='center' color='grey'>
-              <Header.Content>
-                No search results
-              </Header.Content>
-            </Header>
-          </Container>
-        }
-        { showSearchData &&
-          totalSearchPages > 1 &&
-          searchStart < totalSearchPages &&
-          <Container
-            id='next-role-select-grid-load-next-button'
-            textAlign='center'>
-            <Button size='large' onClick={() => this.loadNextSearch()}>
-              More Results
-            </Button>
           </Container>
         }
         { roles && (roles.length < rolesTotalCount) &&
@@ -352,7 +239,6 @@ class RoleSelectGrid extends Component {
 const mapStateToProps = (state) => {
   return {
     fetchingAllRoles: state.requester.fetchingAllRoles,
-    fetchingSearchResults: state.search.fetching,
   };
 };
 

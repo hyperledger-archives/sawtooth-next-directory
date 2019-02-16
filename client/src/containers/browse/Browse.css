@@ -18,10 +18,6 @@ limitations under the License.
   padding: 0.6rem;
 }
 
-#next-browse-grid .column > .ui.placeholder {
-  margin-bottom: 50px;
-}
-
 #next-browse-container {
   padding: 50px 0 100px 0;
 }
@@ -33,7 +29,7 @@ limitations under the License.
 #next-browse-wrapper {
   height: 100%;
   margin: 0 auto;
-  padding-top: 104px;
+  padding-top: 40px;
   width: 90%;
 }
 

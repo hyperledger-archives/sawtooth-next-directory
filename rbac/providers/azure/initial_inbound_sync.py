@@ -21,7 +21,6 @@ import requests
 import rethinkdb as r
 
 from rbac.providers.azure.aad_auth import AadAuth
-from rbac.providers.azure.delta_inbound_sync import inbound_sync_listener
 from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
@@ -158,7 +157,6 @@ def get_ids_from_list_of_dicts(lst):
 
 def insert_group_to_db(groups_dict):
     """Insert groups individually to rethinkdb from dict of groups"""
-    conn = connect_to_db()
     for group in groups_dict["value"]:
         owner = fetch_group_owner(group["id"])
         if owner and "error" not in owner:
@@ -176,13 +174,11 @@ def insert_group_to_db(groups_dict):
             "raw": group,
         }
         add_transaction(inbound_entry)
-        r.table("inbound_queue").insert(inbound_entry).run(conn)
-    conn.close()
+        r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def insert_user_to_db(users_dict):
     """Insert users individually to rethinkdb from dict of users.  This will also look up a user's manager."""
-    conn = connect_to_db()
     for user in users_dict["value"]:
         manager = fetch_user_manager(user["id"])
         if manager:
@@ -199,13 +195,16 @@ def insert_user_to_db(users_dict):
             "raw": user,
         }
         add_transaction(inbound_entry)
-        r.table("inbound_queue").insert(inbound_entry).run(conn)
-    conn.close()
+        r.table("inbound_queue").insert(inbound_entry).run()
 
 
 def initialize_aad_sync():
     """Initialize a sync with Azure Active Directory."""
+    LOGGER.info("connecting to RethinkDB...")
+    connect_to_db()
+    LOGGER.info("Successfully connected to RethinkDB!")
     provider_id = TENANT_ID
+
     db_user_payload = check_last_sync("azure-user", "initial")
     if not db_user_payload:
         LOGGER.info(
@@ -253,4 +252,3 @@ def initialize_aad_sync():
 
     if db_group_payload and db_user_payload:
         LOGGER.info("The initial sync has already been run.")
-    inbound_sync_listener()

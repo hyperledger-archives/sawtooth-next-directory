@@ -157,8 +157,7 @@ class LoginForm extends Component {
           duration={{ hide, show }}>
           <div id='next-login-form-1'>
             {this.renderMenu()}
-            <Form id='next-login-form'
-              onSubmit={() => submit(username, password, authSource)}>
+            <Form id='next-username-form' onSubmit={() => this.setFlow(1)}>
               <Form.Field>
                 <Input
                   id='next-username-input'
@@ -170,9 +169,32 @@ class LoginForm extends Component {
                   value={username}
                   onChange={this.handleChange}/>
               </Form.Field>
-              <Form.Field>
+              <Container textAlign='center'>
+                <Form.Button
+                  content='Next'
+                  disabled={!validUsername}
+                  icon='right arrow'
+                  labelPosition='right'/>
+              </Container>
+            </Form>
+          </div>
+        </Transition>
+        <Transition
+          visible={activeIndex === 1}
+          animation='fade down'
+          duration={{ hide, show }}>
+          <div id='next-login-form-2'>
+            <Form id='next-password-form'
+              onSubmit={() => submit(username, password, authSource)}>
+              <Form.Button
+                id='next-login-form-back-button'
+                content='Back'
+                type='button'
+                icon='left arrow'
+                labelPosition='left'
+                onClick={() => this.setFlow(0)}/>
+              <Form.Field id='next-login-form-password'>
                 <Input
-                  id='next-password-input'
                   ref={ref => this.passwordRef = ref}
                   error={validPassword === false}
                   name='password'
@@ -185,7 +207,7 @@ class LoginForm extends Component {
                     id='next-login-form-forgot-password'
                     className='link'
                     type='button'
-                    onClick={() => this.setFlow(1)}>
+                    onClick={() => this.setFlow(2)}>
                   Forgot Password?
                   </Button>
                 </Label>
@@ -201,13 +223,20 @@ class LoginForm extends Component {
           </div>
         </Transition>
         <Transition
-          visible={activeIndex === 1}
+          visible={activeIndex === 2}
           animation='fade up'
           duration={{ hide, show }}>
           <div>
             <Form id='next-login-form-reset-password'
               onSubmit={() => this.setFlow(0)}>
               <Form.Field >
+                <Form.Button
+                  id='next-login-reset-email-back-button'
+                  content='Back'
+                  type='button'
+                  icon='left arrow'
+                  labelPosition='left'
+                  onClick={() => this.setFlow(1)}/>
                 <Input
                   autoFocus
                   name='resetEmail'

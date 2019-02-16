@@ -76,7 +76,7 @@ class PeopleChat extends Component {
         roleId => !roles.find(role => role.id === roleId)
       );
     }
-    roleIds && getRoles(roleIds);
+    getRoles(roleIds);
   }
 
 
@@ -234,26 +234,25 @@ class PeopleChat extends Component {
               </div>
               }
             </Grid>
-            { user.memberOf &&
-              user.memberOf.length > currentRolesMaxCount &&
-              <Container
-                id='next-chat-organization-view-all-button'
-                textAlign='center'>
-                <Button
-                  basic
-                  animated
-                  inverted
-                  as={Link}
-                  to={'/'}
-                  size='mini'>
-                  <Button.Content visible>
+            { user.memberOf.length > currentRolesMaxCount &&
+            <Container
+              id='next-chat-organization-view-all-button'
+              textAlign='center'>
+              <Button
+                basic
+                animated
+                inverted
+                as={Link}
+                to={'/'}
+                size='mini'>
+                <Button.Content visible>
                   VIEW ALL
-                  </Button.Content>
-                  <Button.Content hidden>
-                    <Icon name='arrow right'/>
-                  </Button.Content>
-                </Button>
-              </Container>
+                </Button.Content>
+                <Button.Content hidden>
+                  <Icon name='arrow right'/>
+                </Button.Content>
+              </Button>
+            </Container>
             }
           </div>
         ),

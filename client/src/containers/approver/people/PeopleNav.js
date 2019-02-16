@@ -15,11 +15,8 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Menu } from 'semantic-ui-react';
+import { Menu, Input, Search } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-
-import Search from 'components/search/Search';
 import './PeopleNav.css';
 
 
@@ -44,15 +41,7 @@ class PeopleNav extends Component {
    * @returns {JSX}
    */
   render () {
-    const {
-      activeIndex,
-      fetchingSearchResults,
-      searchInput,
-      searchLimit,
-      searchTypes,
-      setFlow,
-      setSearchInput,
-      setSearchStart } = this.props;
+    const { activeIndex, setFlow } = this.props;
 
     return (
       <div id='next-people-nav'>
@@ -71,14 +60,15 @@ class PeopleNav extends Component {
           </Menu.Item>
         </Menu>
         <Search
-          fetchingSearchResults={fetchingSearchResults}
-          searchInput={searchInput}
-          searchLimit={searchLimit}
-          searchTypes={searchTypes}
-          setSearchInput={setSearchInput}
-          setSearchStart={setSearchStart}
-          type='people'
-          {...this.props}/>
+          fluid
+          input={() => <Input
+            fluid
+            size='large'
+            icon='search'
+            placeholder='Search...'/>}
+          className='next-people-search'
+          category
+          loading={false}/>
       </div>
     );
   }
