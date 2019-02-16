@@ -24,7 +24,8 @@ import {
   Grid,
   Header,
   Icon,
-  Image } from 'semantic-ui-react';
+  Image,
+  Label } from 'semantic-ui-react';
 
 
 import './PeopleChat.css';
@@ -269,8 +270,8 @@ class PeopleChat extends Component {
   render () {
     const {
       activeUser,
+      directReports,
       handleOnBehalfOf,
-      organization,
       userFromId } = this.props;
 
     const user = userFromId(activeUser);
@@ -288,15 +289,21 @@ class PeopleChat extends Component {
                   {this.userEmail(activeUser)}
                 </Header.Subheader>
               </Header>
-              { organization &&
-                organization.direct_reports.includes(activeUser) &&
+              { directReports &&
+                directReports.includes(activeUser) &&
                 <div>
-                  <Button
-                    as={Link}
-                    to={`people/${activeUser}/pending`}
-                    onClick={handleOnBehalfOf}>
-                    Pending Approvals
-                  </Button>
+                  <Label color='green' horizontal>
+                    Direct Report
+                  </Label>
+                  <div id='next-people-chat-pending-approvals-button'>
+                    <Button
+                      as={Link}
+                      size='large'
+                      to={`people/${activeUser}/pending`}
+                      onClick={handleOnBehalfOf}>
+                      Pending Approvals
+                    </Button>
+                  </div>
                 </div>
               }
               <Container

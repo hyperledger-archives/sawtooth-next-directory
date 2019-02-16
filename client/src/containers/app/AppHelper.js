@@ -47,6 +47,7 @@ export const appState = (state) => ({
   // Approver
   confirmedProposals:  ApproverSelectors.confirmedProposals(state),
   delegations:         ApproverSelectors.delegations(state),
+  directReports:       ApproverSelectors.directReports(state),
   rejectedProposals:   ApproverSelectors.rejectedProposals(state),
   openProposals:       ApproverSelectors.openProposals(state),
   openProposalsByRole: ApproverSelectors.openProposalsByRole(state),
@@ -126,8 +127,9 @@ export const appDispatch = (dispatch) => ({
   getOpenProposals:   (id) => dispatch(Approver.openProposalsRequest(id)),
   createRole:    (payload) => dispatch(Approver.createRoleRequest(payload)),
   createPack:    (payload) => dispatch(Approver.createPackRequest(payload)),
-  getOrganization:    (id) => dispatch(Approver.organizationRequest(id)),
   setOnBehalfOf:      (id) => dispatch(Approver.onBehalfOfSet(id)),
+  getOrganization: (id, isMe) =>
+    dispatch(Approver.organizationRequest(id, isMe)),
   getConfirmedProposals: (id) =>
     dispatch(Approver.confirmedProposalsRequest(id)),
   getRejectedProposals:  (id) =>
