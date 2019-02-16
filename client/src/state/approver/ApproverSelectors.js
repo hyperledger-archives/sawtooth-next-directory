@@ -35,6 +35,9 @@ export const ApproverSelectors = {
         .length
     ) || null;
   },
+  openProposalsByRoleCount: (state) =>
+    utils.groupBy(state.approver.openProposals, 'object') &&
+    Object.keys(utils.groupBy(state.approver.openProposals, 'object')).length,
   openProposalFromId:    (state, id) =>
     state.approver.openProposals &&
     state.approver.openProposals.find(proposal => proposal.id === id),
