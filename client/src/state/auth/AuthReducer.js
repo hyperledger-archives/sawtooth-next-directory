@@ -20,7 +20,7 @@ import * as storage from 'services/Storage';
 
 
 export const request = (state) =>
-  state.merge({ fetching: true, error: false });
+  state.merge({ fetching: true, error: null });
 
 
 export const success = (state, { isAuthenticated, payload }) => {
@@ -40,6 +40,10 @@ export const failure = (state, { error }) => {
 };
 
 
+export const resetErrors = (state) =>
+  state.merge({ error: null });
+
+
 export const logout = (state) => {
   storage.removeToken();
   storage.removeUserId();
@@ -48,15 +52,17 @@ export const logout = (state) => {
 
 
 export const AuthReducer = createReducer(INITIAL_STATE, {
-  [Types.LOGIN_REQUEST]: request,
-  [Types.LOGIN_SUCCESS]: success,
-  [Types.LOGIN_FAILURE]: failure,
+  [Types.RESET_ERRORS]:     resetErrors,
 
-  [Types.SIGNUP_REQUEST]: request,
-  [Types.SIGNUP_SUCCESS]: success,
-  [Types.SIGNUP_FAILURE]: failure,
+  [Types.LOGIN_REQUEST]:    request,
+  [Types.LOGIN_SUCCESS]:    success,
+  [Types.LOGIN_FAILURE]:    failure,
 
-  [Types.LOGOUT_REQUEST]: request,
-  [Types.LOGOUT_SUCCESS]: logout,
-  [Types.LOGOUT_FAILURE]: failure,
+  [Types.SIGNUP_REQUEST]:   request,
+  [Types.SIGNUP_SUCCESS]:   success,
+  [Types.SIGNUP_FAILURE]:   failure,
+
+  [Types.LOGOUT_REQUEST]:   request,
+  [Types.LOGOUT_SUCCESS]:   logout,
+  [Types.LOGOUT_FAILURE]:   failure,
 });

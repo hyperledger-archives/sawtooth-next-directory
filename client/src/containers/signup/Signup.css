@@ -27,6 +27,7 @@ limitations under the License.
 #next-signup-column {
   margin-top: 130px;
   max-width: 450px;
+  width: 100%;
 }
 
 #next-signup-column a,
@@ -51,8 +52,5 @@ limitations under the License.
 
 .next-username-signup-hint,
 .next-name-signup-hint {
-  margin: 0 !important;
-  /* padding: 0 !important; */
-  font-size: 11px !important;
   color: var(--text-light) !important;
 }

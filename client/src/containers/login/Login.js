@@ -140,7 +140,8 @@ class Login extends Component {
             <LoginForm
               authSource={authSource}
               setAuthSource={this.setAuthSource}
-              submit={login}/>
+              submit={login}
+              {...this.props}/>
           </Grid.Column>
         </Grid>
         <div id='next-login-new-account-container'>
@@ -166,6 +167,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     login: (username, password, authSource) =>
       dispatch(AuthActions.loginRequest(username, password, authSource)),
+    resetErrors: () => dispatch(AuthActions.resetErrors()),
   };
 };
 

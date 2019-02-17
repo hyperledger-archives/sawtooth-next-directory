@@ -47,17 +47,17 @@ INVALID_INPUTS = [
     ({}, "Bad Request: id field is required", 400),
     (
         {"id": "susan20", "password": "123456", "auth_source": "my-id-provider"},
-        "Authentication failed: Invalid authentication source.",
+        "Invalid authentication source.",
         400,
     ),
     (
         {"id": "susan20", "password": "", "auth_source": "next"},
-        "Unauthorized: Incorrect password",
+        "The password you entered is incorrect.",
         401,
     ),
     (
         {"id": "_test1", "password": "", "auth_source": "next"},
-        "No user with username '_test1' exists.",
+        "The username you entered is incorrect.",
         404,
     ),
 ]
@@ -65,7 +65,7 @@ INVALID_INPUTS = [
 INVALID_LDAP_INPUTS = [
     (
         {"id": "", "password": "", "auth_source": "ldap"},
-        "Authentication failed: Invalid username/password",
+        "Incorrect username or password.",
         400,
     )
 ]
@@ -114,10 +114,7 @@ def test_missing_ldap_server():
         Test is skipped if LDAP server is set.
     """
     login_inputs = {"id": "susan20", "password": "123456", "auth_source": "ldap"}
-    expected = {
-        "message": "Authentication failed: Missing LDAP Server information.",
-        "code": 400,
-    }
+    expected = {"message": "Missing LDAP server information.", "code": 400}
     test_invalid_auth_inputs(
         login_inputs=login_inputs,
         expected_result=expected["message"],
@@ -132,10 +129,7 @@ def test_missing_ldap_login_():
         not set in environment variables.
     """
     login_inputs = {"id": "", "password": "", "auth_source": "ldap"}
-    expected = {
-        "message": "Authentication failed: Invalid username/password",
-        "code": 400,
-    }
+    expected = {"message": "Incorrect username or password.", "code": 400}
 
     test_invalid_auth_inputs(
         login_inputs=login_inputs,

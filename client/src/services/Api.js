@@ -82,10 +82,12 @@ const create = (baseURL =
       case 200:
         break;
       case 401:
-        toast.warn('For security reasons, your session has expired.', {
-          toastId: utils.nearestMinute(),
-        });
-        logout(store.dispatch);
+        if (!res.config.url.includes('authorization')) {
+          toast.warn('For security reasons, your session has expired.', {
+            toastId: utils.nearestMinute(),
+          });
+          logout(store.dispatch);
+        }
         break;
       case 404:
         break;
