@@ -30,6 +30,8 @@ const { Types, Creators } = createActions({
   logoutRequest:    null,
   logoutSuccess:    null,
   logoutFailure:    ['error'],
+
+  resetErrors:      null,
 });
 
 

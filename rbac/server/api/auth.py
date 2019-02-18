@@ -40,14 +40,14 @@ AUTH_BP = Blueprint("auth")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 
 LDAP_ERR_MESSAGES = {
-    "530": "AD account not permitted to login at this time",
-    "531": "AD account not permitted to logon at this workstation",
-    "532": "AD password has expired",
-    "533": "AD account has been disabled",
-    "701": "AD account has expired",
-    "773": "AD User must reset password",
-    "775": "AD User account has been locked",
-    "default": "Invalid username/password",
+    "530": "AD account not permitted to login at this time.",
+    "531": "AD account not permitted to logon at this workstation.",
+    "532": "AD password has expired.",
+    "533": "AD account has been disabled.",
+    "701": "AD account has expired.",
+    "773": "AD User must reset password.",
+    "775": "AD User account has been locked.",
+    "default": "Incorrect username or password.",
 }
 
 
@@ -106,14 +106,12 @@ async def authorize(request):
                     },
                 )
             if not email:
-                raise ApiUnauthorized(
-                    "Unauthorized: No password nor email is set on this account"
-                )
+                raise ApiUnauthorized("No password or email is set on this account.")
             # TODO: send email confirmation with password set link
-            raise ApiUnauthorized("Unauthorized: No password is set")
+            raise ApiUnauthorized("No password is set on this account.")
         if auth_info.get("hashed_password") != hashed_pwd:
             # TODO: rate limit password attempts
-            raise ApiUnauthorized("Unauthorized: Incorrect password")
+            raise ApiUnauthorized("The password you entered is incorrect.")
 
         token = generate_api_key(
             request.app.config.SECRET_KEY, auth_info.get("user_id")
@@ -146,7 +144,7 @@ async def authorize(request):
                     else:
                         login_error = LDAP_ERR_MESSAGES["default"]
 
-                    raise ApiUnauthorized("LDAP Authentication failed: " + login_error)
+                    raise ApiUnauthorized(login_error)
 
                 auth_info = await auth_query.fetch_info_by_username(request)
                 conn.unbind()
@@ -162,13 +160,9 @@ async def authorize(request):
                     },
                 )
             else:
-                raise ApiBadRequest(
-                    "Authentication failed: " + LDAP_ERR_MESSAGES["default"]
-                )
+                raise ApiBadRequest(LDAP_ERR_MESSAGES["default"])
         else:
-            raise ApiBadRequest(
-                "Authentication failed: Missing LDAP Server information."
-            )
+            raise ApiBadRequest("Missing LDAP server information.")
 
     else:
-        raise ApiBadRequest("Authentication failed: Invalid authentication source.")
+        raise ApiBadRequest("Invalid authentication source.")

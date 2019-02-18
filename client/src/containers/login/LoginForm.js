@@ -22,6 +22,7 @@ import {
   Label,
   Input,
   Menu,
+  Message,
   Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
@@ -36,6 +37,8 @@ class LoginForm extends Component {
 
   static propTypes = {
     authSource:     PropTypes.string,
+    error:          PropTypes.object,
+    resetErrors:    PropTypes.func,
     setAuthSource:  PropTypes.func,
     submit:         PropTypes.func.isRequired,
   };
@@ -71,6 +74,8 @@ class LoginForm extends Component {
    * @param {string} value Value of form field
    */
   handleChange = (event, { name, value }) => {
+    const { error } = this.props;
+    error && this.handleDismiss();
     this.setState({ [name]: value });
     this.validate(name, value);
   }
@@ -98,6 +103,15 @@ class LoginForm extends Component {
       this.setState({ validPassword: value.length > 0 });
     name === 'resetEmail' &&
       this.setState({ validEmail: /\S+@\S+\.\S+/.test(value) });
+  }
+
+
+  /**
+   * Dismiss error message
+   */
+  handleDismiss = () => {
+    const { resetErrors } = this.props;
+    resetErrors();
   }
 
 
@@ -136,7 +150,7 @@ class LoginForm extends Component {
    * @returns {JSX}
    */
   render () {
-    const { submit, authSource } = this.props;
+    const { error, submit, authSource } = this.props;
     const {
       activeIndex,
       username,
@@ -157,6 +171,18 @@ class LoginForm extends Component {
           duration={{ hide, show }}>
           <div id='next-login-form-1'>
             {this.renderMenu()}
+            { error &&
+              <div id='next-login-form-error'>
+                <Message
+                  error
+                  size='tiny'
+                  icon='exclamation triangle'
+                  onDismiss={this.handleDismiss}
+                  header='Authentication unsuccessful'
+                  content={error.message}
+                />
+              </div>
+            }
             <Form id='next-login-form'
               onSubmit={() => submit(username, password, authSource)}>
               <Form.Field>
