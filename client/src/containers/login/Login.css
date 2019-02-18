@@ -99,3 +99,27 @@ limitations under the License.
   text-align: center;
   width: 105px;
 }
+
+#next-login-form-error {
+  margin: -30px auto 25px auto;
+  width: fit-content;
+}
+
+#next-login-form-error .ui.message {
+  background: #ff008d;
+  box-shadow: none;
+  color: white;
+}
+
+#next-login-form-error .ui.message .header {
+  color: white;
+  font-weight: normal;
+}
+
+#next-login-form-error .ui.message .content {
+  padding: 0 10px;
+}
+
+#next-login-form-error .ui.message i:nth-child(2) {
+  font-size: 1.7em;
+}

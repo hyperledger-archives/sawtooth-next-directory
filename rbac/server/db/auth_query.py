@@ -64,7 +64,7 @@ async def fetch_info_by_username(request):
         .run(conn)
     )
     if not result:
-        raise ApiNotFound("No user with username '{}' exists.".format(username))
+        raise ApiNotFound("The username you entered is incorrect.")
     result = result[0]
 
     # Generate and store key and auth record first time a user logs in
