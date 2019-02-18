@@ -19,6 +19,11 @@ h4.ui.header.next-roles-list-role-info {
   display: flex;
 }
 
+h4.ui.header.next-roles-list-role-info div:nth-child(2) {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 .next-roles-list-role-info img {
   margin-right: 18px;
 }
