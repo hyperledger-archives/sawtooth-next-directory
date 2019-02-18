@@ -35,14 +35,8 @@ async def search_all(request):
     search_query = request.json.get("query")
 
     # Check for valid payload containing query and search object types
-    if search_query is None:
-        errors = {"errors": "No query parameter recieved."}
-        return json(errors)
-    if "search_object_types" not in search_query:
-        errors = {"errors": "No search_object_types for search recieved."}
-        return json(errors)
-    if "search_input" not in search_query:
-        errors = {"errors": "No search_input string for search recieved."}
+    errors = validate_search_payload(search_query)
+    if errors:
         return json(errors)
 
     # Create response data object
@@ -50,9 +44,7 @@ async def search_all(request):
 
     # Pagination and total pages
     try:
-        paging = search_paginate(
-            int(search_query["page_size"]), int(search_query["page"])
-        )
+        paging = search_paginate(search_query["page_size"], search_query["page"])
     except KeyError:
         paging = (0, 50)
 
@@ -85,24 +77,40 @@ async def search_all(request):
 
     conn.close()
 
-    total_pages = get_total_pages(object_counts, int(search_query["page_size"]))
+    total_pages = get_total_pages(object_counts, search_query["page_size"])
 
     return json(
         {"data": data, "page": search_query["page"], "total_pages": total_pages}
     )
 
 
-def search_paginate(page_size, page_num):
+def validate_search_payload(search_query):
+    """Validate the search payload for necessary fields and return errors on non-existence."""
+    if search_query is None:
+        return {"errors": "No query parameter received."}
+    if "search_object_types" not in search_query:
+        return {"errors": "No search_object_types for search received."}
+    if "search_input" not in search_query:
+        return {"errors": "No search_input string for search received."}
+    return {}
+
+
+def search_paginate(page_size=50, page_num=1):
     """Paginate the results for the frontend."""
+    page_size = int(page_size)
+    page_num = int(page_num)
     if page_size <= 0:
         page_size = 50
+    if page_num <= 0:
+        page_num = 1
     start = (page_num - 1) * page_size
     end = page_num * page_size
     return (start, end)
 
 
-def get_total_pages(size_list, page_size):
+def get_total_pages(size_list, page_size=50):
     """Get the maximum total pages to request."""
+    page_size = int(page_size)
     if size_list:
         return int(math.ceil(max(size_list) / page_size))
     return 0
