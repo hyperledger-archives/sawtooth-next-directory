@@ -47,18 +47,17 @@ async def fetch_info_by_username(request):
     )
     result = (
         await r.table("auth")
-        .get_all(username, index="username")
+        .filter(lambda doc: (doc["username"].match("(?i)" + username)))
         .limit(1)
         .coerce_to("array")
         .run(conn)
     )
     if result:
         return result[0]
-
     # Auth record not found, check if the username exists
     result = (
         await r.table("users")
-        .get_all(username, index="username")
+        .filter(lambda doc: (doc["username"].match("(?i)" + username)))
         .limit(1)
         .coerce_to("array")
         .run(conn)
