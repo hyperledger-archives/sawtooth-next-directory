@@ -85,11 +85,10 @@ class BrowseCard extends Component {
         }
         { !resource.roles &&
           resource.members &&
-          resource.owners &&
           <div className='browse-tile-members'>
             <StackedAvatar
               label
-              list={[...resource.owners, ...resource.members]}
+              list={resource.members}
               {...this.props}/>
           </div>
         }

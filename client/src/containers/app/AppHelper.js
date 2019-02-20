@@ -71,7 +71,7 @@ export const appState = (state) => ({
 
   // Requester
   memberOf:            RequesterSelectors.memberOf(state),
-  memberAndOwnerOf:    RequesterSelectors.memberAndOwnerOf(state),
+  ownerOf:             RequesterSelectors.ownerOf(state),
   recommendedRoles:    RequesterSelectors.recommendedRoles(state),
   recommendedPacks:    RequesterSelectors.recommendedPacks(state),
   requests:            RequesterSelectors.requests(state),

@@ -42,7 +42,6 @@ class MemberList extends Component {
   static propTypes = {
     getUsers:           PropTypes.func,
     members:            PropTypes.array,
-    owners:             PropTypes.array,
     users:              PropTypes.array,
   }
 
@@ -58,8 +57,8 @@ class MemberList extends Component {
    * Entry point to perform tasks required to render component.
    */
   componentDidMount () {
-    const { members, owners } = this.props;
-    if (!owners || !members) return;
+    const { members } = this.props;
+    if (!members) return;
     this.init();
   }
 
@@ -71,9 +70,8 @@ class MemberList extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { members, owners } = this.props;
-    if (!utils.arraysEqual(prevProps.members, members) ||
-        !utils.arraysEqual(prevProps.owners, owners))
+    const { members } = this.props;
+    if (!utils.arraysEqual(prevProps.members, members))
       this.init();
   }
 
@@ -98,18 +96,17 @@ class MemberList extends Component {
    * @param {number} start Loading start index
    */
   loadNext = (start) => {
-    const { getUsers, members, owners } = this.props;
+    const { getUsers, members } = this.props;
     const { limit } = this.state;
     if (start === undefined || start === null)
       start = this.state.start;
 
-    const join = [...new Set([...owners, ...members])];
-    join && getUsers(join.slice(start, start + limit), true);
+    members && getUsers(members.slice(start, start + limit), true);
 
     this.setState(prevState => ({
       memberList: [
         ...prevState.memberList,
-        ...new Set([...join.slice(start, start + limit)]),
+        ...members.slice(start, start + limit),
       ],
       start: start + limit,
     }));
@@ -122,8 +119,8 @@ class MemberList extends Component {
    * @param {boolean} isOwner If user is owner
    * @returns {JSX}
    */
-  renderUserSegment (userId, isOwner) {
-    const { userFromId } = this.props;
+  renderUserSegment (userId) {
+    const { isOwner, userFromId } = this.props;
     const user = userFromId(userId);
 
     if (!user) {
@@ -146,18 +143,24 @@ class MemberList extends Component {
       <Grid.Column key={userId} largeScreen={8} widescreen={5}>
         <Segment className='avatar no-padding minimal'>
           { isOwner ?
-            <Popup trigger={<Icon
-              name='shield'
-              className='pull-right'
-              color='green'/>} content='Owner'
-            id='next-member-list-owner-popup-box'
-            position='top center' inverted/> :
-            <Popup trigger={<Icon
-              name='key'
-              className='pull-right'
-              color='grey'/>} content='Member'
-            id='next-member-list-member-popup-box'
-            position='top center' inverted/>
+            <Popup
+              inverted
+              trigger={<Icon
+                name='shield'
+                className='pull-right'
+                color='green'/>}
+              content='Owner'
+              id='next-member-list-owner-popup-box'
+              position='top center'/> :
+            <Popup
+              inverted
+              trigger={<Icon
+                name='key'
+                className='pull-right'
+                color='grey'/>}
+              content='Member'
+              id='next-member-list-member-popup-box'
+              position='top center'/>
           }
           <Header as='h4' className='next-member-list-user-info'>
             <div>
@@ -165,7 +168,6 @@ class MemberList extends Component {
             </div>
             <div>
               {(user && user.name) || 'Unnamed'}
-              {isOwner && ' (Owner)'}
               <Header.Subheader>
                 {user && user.email}
               </Header.Subheader>
@@ -183,21 +185,19 @@ class MemberList extends Component {
    * @returns {JSX}
    */
   render () {
-    const { members, owners } = this.props;
+    const { members } = this.props;
     const { limit, memberList } = this.state;
-    const join = [...new Set([...owners, ...members])];
 
     return (
       <div>
         <Grid columns={3} stackable>
           { memberList.map(userId => {
-            const isOwner = owners && owners.includes(userId);
-            return this.renderUserSegment(userId, isOwner);
+            return this.renderUserSegment(userId);
           }) }
         </Grid>
-        { join &&
-          join.length > limit &&
-          memberList.length !== join.length &&
+        { members &&
+          members.length > limit &&
+          memberList.length !== members.length &&
           <Container
             id='next-member-list-load-next-button'
             textAlign='center'>
