@@ -26,6 +26,14 @@
         "text": "/member"
       },
       {
+        "intent": "owner",
+        "text": "/owner"
+      },
+      {
+        "intent": "owner",
+        "text": "/owner"
+      },
+      {
         "intent": "pending",
         "text": "/pending"
       },

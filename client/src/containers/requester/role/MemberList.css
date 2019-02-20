@@ -14,7 +14,8 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-#next-requester-roles-member-list-container .ui.grid .ui.placeholder {
+#next-requester-roles-member-list-container .ui.grid .ui.placeholder,
+#next-requester-roles-owner-list-container .ui.grid .ui.placeholder {
   margin: 10px;
 }
 

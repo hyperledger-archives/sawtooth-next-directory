@@ -32,6 +32,7 @@ intents:
   - name
   - no_owner
   - offer
+  - owner
   - pending
   - reason
   - recommend
@@ -47,6 +48,7 @@ entities:
   - approver_name
   - batch_status
   - member_status
+  - owner_status
   - reason
   - resource_id
   - resource_name
@@ -71,6 +73,10 @@ slots:
       - PENDING
       - MEMBER
       - NOT_MEMBER
+  owner_status:
+    type: categorical
+    values:
+      - OWNER
   reason:
     type: unfeaturized
   resource_id:
@@ -109,6 +115,7 @@ actions:
   - utter_no_owner
   - utter_noop
   - utter_offer
+  - utter_owner
   - utter_passive
   - utter_pending_pack
   - utter_pending_role
@@ -154,6 +161,11 @@ templates:
   utter_member:
     - text: You are a member of this resource.
     - text: Are you a member of this resource? Indeed you are.
+
+  utter_owner:
+    - text: You are an owner of this resource.
+    - text: You own this! In other words, this belongs to you.
+    - text: Congratulations, you are an owner of this resource.
 
   utter_access_member:
     - text: You already have access to this resource, silly.

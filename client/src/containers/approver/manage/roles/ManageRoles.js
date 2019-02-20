@@ -141,11 +141,8 @@ class ManageRoles extends Component {
             </div>
           </Header>
           <Card.Content extra>
-            { role && utils.countLabel([
-              ...role.members,
-              ...role.owners,
-            ]
-              .length, 'member', true)
+            { role &&
+              utils.countLabel(role.members.length, 'member')
             }
           </Card.Content>
         </Card>

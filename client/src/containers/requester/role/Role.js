@@ -137,13 +137,9 @@ export class Role extends Component {
             waves
             title={this.role.name}
             subtitle={
-              this.role && utils.countLabel([
-                ...new Set([
-                  ...this.role.members,
-                  ...this.role.owners,
-                ]),
-              ]
-                .length, 'member')
+              this.role && utils.countLabel(
+                this.role.members.length, 'member'
+              )
             }
             {...this.props}/>
           <div id='next-requester-roles-content'>
@@ -164,13 +160,22 @@ export class Role extends Component {
                 {this.role.description || 'No description available.'}
               </div>
             </Container>
+            <Container id='next-requester-roles-owner-list-container'>
+              <h5>
+                OWNERS
+                {this.role.owners.length === 0 && ' (0)'}
+              </h5>
+              <MemberList {...this.props}
+                isOwner
+                members={this.role.owners}/>
+            </Container>
             <Container id='next-requester-roles-member-list-container'>
               <h5>
                 MEMBERS
+                {this.role.members.length === 0 && ' (0)'}
               </h5>
               <MemberList {...this.props}
-                members={this.role.members}
-                owners={this.role.owners}/>
+                members={this.role.members}/>
             </Container>
           </div>
           <div id='next-requester-roles-manual-expire'>

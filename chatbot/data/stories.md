@@ -10,6 +10,10 @@
 * update{"member_status": "PENDING", "resource_name": "abc"}
   - utter_noop
 
+## story_update_owner
+* update{"owner_status": "OWNER", "resource_name": "abc"}
+  - utter_noop
+
 ## story_offer
 * offer{"member_status": "NOT_MEMBER", "resource_id": "123", "resource_name": "abc"}
   - utter_offer
@@ -21,6 +25,10 @@
 ## story_member
 * member{"member_status": "MEMBER", "resource_id": "123", "resource_name": "abc"}
   - utter_member
+
+## story_owner
+* owner{"owner_status": "OWNER", "resource_id": "123", "resource_name": "abc"}
+  - utter_owner
 
 ## story_pending_role
 * pending{"member_status": "PENDING", "resource_type": "ROLE", "resource_id": "123", "resource_name": "abc"}
