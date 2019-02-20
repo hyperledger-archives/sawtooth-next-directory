@@ -258,7 +258,16 @@ async def search_users(conn, search_query, paging):
         .distinct()
         .pluck("name", "email", "user_id")
         .order_by("name")
-        .map(lambda doc: doc.merge({"id": doc["user_id"]}).without("user_id"))
+        .map(
+            lambda doc: doc.merge(
+                {
+                    "id": doc["user_id"],
+                    "memberOf": fetch_relationships_by_id(
+                        "role_members", doc["user_id"], "role_id", None
+                    ),
+                }
+            ).without("user_id")
+        )
         .slice(paging[0], paging[1])
         .coerce_to("array")
         .run(conn)
