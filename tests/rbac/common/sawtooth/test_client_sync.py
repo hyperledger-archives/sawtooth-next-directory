@@ -21,7 +21,7 @@ from base64 import b64decode
 import pytest
 
 from rbac.common import addresser
-from rbac.common.sawtooth import client
+from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.protobuf import proposal_state_pb2
 from rbac.common.protobuf import role_state_pb2
 from rbac.common.protobuf import task_state_pb2
@@ -41,7 +41,7 @@ class TestRestClient(TestAssertions):
     def test_state(self):
         """Grab the entire blockchain state and deserialize it"""
         subtree = addresser.family.namespace
-        for item in client.list_state(subtree=subtree)["data"]:
+        for item in ClientSync().list_state(subtree=subtree)["data"]:
             address_type = item["address_type"] = addresser.get_address_type(
                 item["address"]
             )
