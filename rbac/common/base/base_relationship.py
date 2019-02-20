@@ -19,7 +19,7 @@ import logging
 
 from rbac.common import protobuf
 from rbac.common.protobuf import relationship_state_pb2
-from rbac.common.sawtooth import client
+from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.base.base_address import AddressBase
 
 LOGGER = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ class BaseRelationship(AddressBase):
         # pylint: disable=not-callable
         container = self._state_container()
         address = self.address(object_id=object_id, related_id=related_id)
-        data = client.get_address(address=address)
+        data = ClientSync().get_address(address=address)
         if not data:
             return False
         container.ParseFromString(data)

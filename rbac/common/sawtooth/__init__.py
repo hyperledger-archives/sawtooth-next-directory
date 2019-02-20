@@ -12,12 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Classes and helper functions for interfacing with the Sawtooth blockchain
-Exports a singleton instance of the Sawtooth REST client"""
-
-from rbac.common.sawtooth.client_sync import ClientSync
-
-# pylint: disable=invalid-name
-client = ClientSync()
-
-__all__ = ["client"]
