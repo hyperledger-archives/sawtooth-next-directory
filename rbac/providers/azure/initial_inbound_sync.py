@@ -140,9 +140,8 @@ def fetch_retry(headers, func, *args):
     if "Retry-After" in headers:
         time.sleep(headers["Retry-After"])
         return func(*args)
-    else:
-        time.sleep(30)
-        return func(*args)
+    time.sleep(30)
+    return func(*args)
 
 
 def get_ids_from_list_of_dicts(lst):

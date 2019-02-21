@@ -51,7 +51,7 @@ def is_entry_in_aad(queue_entry):
     data_type = queue_entry["data_type"]
     if data_type == "user":
         return is_user_in_aad(queue_entry)
-    elif data_type == "group":
+    if data_type == "group":
         return is_group_in_aad(queue_entry)
     return None
 
@@ -68,12 +68,11 @@ def is_user_in_aad(queue_entry):
     response = fetch_user_aad(user_id)
     if response.status_code >= 200 and response.status_code < 300:
         return True
-    elif response.status_code == 404:
+    if response.status_code == 404:
         return False
-    else:
-        raise Exception(
-            ("Error getting user in Azure AD: Status code %s", response.status_code)
-        )
+    raise Exception(
+        ("Error getting user in Azure AD: Status code %s", response.status_code)
+    )
 
 
 def is_group_in_aad(queue_entry):
@@ -86,12 +85,11 @@ def is_group_in_aad(queue_entry):
     response = fetch_group_aad(group["role_id"])
     if response.status_code >= 200 and response.status_code < 300:
         return True
-    elif response.status_code == 404:
+    if response.status_code == 404:
         return False
-    else:
-        raise Exception(
-            ("Error getting user in Azure AD: Status code %s", response.status_code)
-        )
+    raise Exception(
+        ("Error getting user in Azure AD: Status code %s", response.status_code)
+    )
 
 
 def fetch_user_aad(user_id):
