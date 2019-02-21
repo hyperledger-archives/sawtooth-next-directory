@@ -146,12 +146,7 @@ class PeopleChat extends Component {
             </div>
           </Header>
           <Card.Content extra>
-            { utils.countLabel([
-              ...role.members,
-              ...role.owners,
-            ]
-              .length, 'member')
-            }
+            {utils.countLabel(role.members.length, 'member')}
           </Card.Content>
         </Card>
       </Grid.Column>

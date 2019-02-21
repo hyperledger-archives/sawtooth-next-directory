@@ -62,3 +62,32 @@ limitations under the License.
   margin-left: 15px;
   transform: rotate(45deg);
 }
+
+.next-browse-tile-owners-container {
+  color: white;
+}
+
+.next-browse-tile-owners {
+  align-items: center;
+  display: flex;
+}
+
+.next-browse-tile-members {
+  font-size: .85em;
+}
+
+.next-browse-tile-owners > div:first-child {
+  margin-right: 10px;
+}
+
+.next-browse-tile-owner-label {
+  font-size: .85em;
+  line-height: 1.6em;
+  text-align: left;
+  word-break: break-word;
+}
+
+.next-browse-tile-owner-label div:first-child {
+  font-size: 1.2em;
+  font-weight: bold;
+}

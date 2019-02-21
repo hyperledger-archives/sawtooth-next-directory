@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 
 
 import './BrowseCard.css';
-import StackedAvatar from './StackedAvatar';
+import Avatar from 'components/layouts/Avatar';
 import * as utils from 'services/Utils';
 
 
@@ -46,6 +46,45 @@ class BrowseCard extends Component {
     this.setState({
       isPinned: !this.state.isPinned,
     });
+  }
+
+
+  /**
+   * Render role owner(s) info
+   * @returns {JSX}
+   */
+  renderOwners = () => {
+    const { resource, userFromId } = this.props;
+
+    if (resource.owners && resource.owners.length > 0) {
+      const user = userFromId(resource.owners[0]);
+      return (
+        <div className='next-browse-tile-owners'>
+          <Avatar
+            userId={resource.owners[0]}
+            size='small'
+            {...this.props}/>
+          <div className='next-browse-tile-owner-label'>
+            <div>
+              {user && user.name}
+            </div>
+            { resource.members &&
+              <div>
+                {utils.countLabel(resource.members.length, 'member')}
+              </div>
+            }
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className='next-browse-tile-members'>
+        { resource.members &&
+          utils.countLabel(resource.members.length, 'member')
+        }
+      </div>
+    );
   }
 
 
@@ -83,15 +122,11 @@ class BrowseCard extends Component {
           {resource.description || 'No description available.'}
         </div>
         }
-        { !resource.roles &&
-          resource.members &&
-          <div className='browse-tile-members'>
-            <StackedAvatar
-              label
-              list={resource.members}
-              {...this.props}/>
-          </div>
-        }
+        <div className='next-browse-tile-owners-container'>
+          { !resource.roles &&
+            this.renderOwners()
+          }
+        </div>
       </Segment>
     );
   }
