@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 
 
 import './RolesList.css';
+import Avatar from 'components/layouts/Avatar';
 import glyph from 'images/glyph-role.png';
 
 
@@ -131,19 +132,25 @@ class RolesList extends Component {
     const user = userFromId(userId);
     if (!user) return null;
     return (
-      <div>
-        { user.name &&
+      <div className='next-roles-list-owner'>
+        <div>
+          <Avatar
+            userId={userId}
+            size='small'
+            {...this.props}/>
+        </div>
+        <div>
           <Header.Subheader>
-            By
-            {' '}
-            {user.name}
+            <strong>
+              {user.name}
+            </strong>
           </Header.Subheader>
-        }
-        { user.email &&
-          <Header.Subheader className='next-roles-list-email-subheader'>
-            {user.email}
-          </Header.Subheader>
-        }
+          { user.email &&
+            <Header.Subheader className='next-roles-list-email-subheader'>
+              {user.email}
+            </Header.Subheader>
+          }
+        </div>
       </div>
     );
   }

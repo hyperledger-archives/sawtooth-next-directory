@@ -67,6 +67,19 @@ class Browse extends Component {
   componentDidMount () {
     theme.apply(this.themes);
     this.loadNext(0);
+    this.init();
+  }
+
+
+  /**
+   * Called whenever Redux state changes.
+   * @param {object} prevProps Props before update
+   * @returns {undefined}
+   */
+  componentDidUpdate (prevProps) {
+    const { roles } = this.props;
+    if (roles && prevProps.roles.length !== roles.length)
+      this.init();
   }
 
 
@@ -77,6 +90,25 @@ class Browse extends Component {
     const { clearSearchData } = this.props;
     clearSearchData();
     theme.remove(this.themes);
+  }
+
+
+  /**
+   * Determine which owners are not currently loaded
+   * in the client and dispatch actions to retrieve them.
+   */
+  init () {
+    const { getUsers, roles, users } = this.props;
+    if (!roles) return;
+    const owners = [
+      ...new Set(
+        roles.map(role => role.owners).flat()
+      ),
+    ];
+    const diff = owners.filter(userId =>
+      !users || !users.find(user => user.id === userId)
+    );
+    diff && getUsers(diff, true);
   }
 
 
@@ -285,7 +317,8 @@ class Browse extends Component {
                 </Button>
               </Container>
             }
-            { showNoContentLabel &&
+            { !showSearchData &&
+              showNoContentLabel &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
                   No roles or packs
