@@ -124,7 +124,7 @@ async def authorize(request):
             },
         )
 
-    elif auth_source == "ldap":
+    if auth_source == "ldap":
         if LDAP_SERVER:
             if username != "" and password != "":
                 server = Server(LDAP_SERVER)
@@ -159,10 +159,6 @@ async def authorize(request):
                         "user_id": auth_info.get("user_id"),
                     },
                 )
-            else:
-                raise ApiBadRequest(LDAP_ERR_MESSAGES["default"])
-        else:
-            raise ApiBadRequest("Missing LDAP server information.")
-
-    else:
-        raise ApiBadRequest("Invalid authentication source.")
+            raise ApiBadRequest(LDAP_ERR_MESSAGES["default"])
+        raise ApiBadRequest("Missing LDAP server information.")
+    raise ApiBadRequest("Invalid authentication source.")
