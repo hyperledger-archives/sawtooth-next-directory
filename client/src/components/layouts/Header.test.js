@@ -36,6 +36,9 @@ describe('Header component', () => {
       id: '1234',
       isSocketOpen: () => {},
       me: { name: 'username' },
+      history: {
+        location: { pathname: '' },
+      },
       openProposalsCount: 5,
       renderMenu: () => {  },
       logout: () => { },
@@ -56,6 +59,9 @@ describe('Header component', () => {
     const props = {
       isSocketOpen: () => {},
       me: { name: 'username' },
+      history: {
+        location: { pathname: '' },
+      },
       openProposalsCount: 5,
       renderMenu: () => {  },
       logout: () => { },

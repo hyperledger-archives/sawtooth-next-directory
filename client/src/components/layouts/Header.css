@@ -53,9 +53,24 @@ limitations under the License.
   text-overflow: ellipsis;
 }
 
-#next-header-global-menu .next-toggle-state-label {
+#next-header-global-menu {
   color: coral;
   margin-left: 7px;
+}
+
+.next-toggle-state-header{
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  font-size: 1.3em;
+}
+
+.next-toggle-state-label {
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.next-render-approver {
+  margin-right: 4em;
 }
 
 #next-header-actions {
@@ -126,4 +141,13 @@ limitations under the License.
 
 #next-header-notification-menu:before {
   width: 42px;
+}
+
+.next-render-approver {
+  margin-top: 2px;
+}
+
+label ::after {
+  width: 1.2em;
+  height: 1.2em;
 }
