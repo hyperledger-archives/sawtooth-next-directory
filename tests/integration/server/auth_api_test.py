@@ -114,7 +114,7 @@ def test_missing_ldap_server():
         Test is skipped if LDAP server is set.
     """
     login_inputs = {"id": "susan20", "password": "123456", "auth_source": "ldap"}
-    expected = {"message": "Missing LDAP server information.", "code": 400}
+    expected = {"message": "Missing LDAP_SERVER env variable.", "code": 400}
     test_invalid_auth_inputs(
         login_inputs=login_inputs,
         expected_result=expected["message"],
