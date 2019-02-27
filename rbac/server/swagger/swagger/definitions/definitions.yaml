@@ -693,6 +693,10 @@
         type: string
         description: Password of user attempting to authenticate
         example: '12345'
+      auth_source:
+        type: string
+        description: Identity provider to authenticate users against.
+        example: next
   authToken:
     description: An token used to authorize later requests
     type: string

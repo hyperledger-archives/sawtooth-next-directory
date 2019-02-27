@@ -127,9 +127,10 @@ async def authorize(request):
     if auth_source == "ldap":
         if LDAP_SERVER:
             if username != "" and password != "":
+                ldap_user_dn = await auth_query.fetch_dn_by_username(request)
                 server = Server(LDAP_SERVER)
                 conn = Connection(
-                    server, user=username, password=password, read_only=True
+                    server, user=ldap_user_dn, password=password, read_only=True
                 )
 
                 if not conn.bind():
@@ -160,5 +161,5 @@ async def authorize(request):
                     },
                 )
             raise ApiBadRequest(LDAP_ERR_MESSAGES["default"])
-        raise ApiBadRequest("Missing LDAP server information.")
+        raise ApiBadRequest("Missing LDAP_SERVER env variable.")
     raise ApiBadRequest("Invalid authentication source.")
