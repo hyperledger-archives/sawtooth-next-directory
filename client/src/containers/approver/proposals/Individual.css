@@ -15,10 +15,11 @@ limitations under the License.
 
 
 #next-approver-individual-content {
-  margin-top: 253px;
+  margin-top: 233px;
+  overflow: auto;
+  padding-bottom: var(--container-scroll-padding-bottom);
   position: relative;
   width: calc(100% - 61px) !important;
-  padding-bottom: var(--container-scroll-padding-bottom);
 }
 
 #next-approver-individual-pending h5 {

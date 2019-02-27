@@ -80,7 +80,8 @@ class ApproverChat extends Component {
 
     return (
       <div>
-        {((groupBy === 0 && selectedUsers && selectedUsers.length === 0) ||
+        {(((groupBy === 0 || groupBy === 2) &&
+            selectedUsers && selectedUsers.length === 0) ||
           (groupBy === 1 && selectedRoles && selectedRoles.length === 0)) &&
           <div id='next-chat-message-info-container'>
             <Header
@@ -120,7 +121,7 @@ class ApproverChat extends Component {
             </Transition>
           </div>
         }
-        { groupBy === 0 && selectedUsers &&
+        { (groupBy === 0 || groupBy === 2) && selectedUsers &&
           <div id='next-chat-users-selection-container'>
             <Transition.Group
               as={List}
