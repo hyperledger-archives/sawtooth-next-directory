@@ -51,59 +51,34 @@ TABLES = {
 }
 
 
-class Status(object):  # pylint: disable=too-few-public-methods
-    REJECTED = "REJECTED"
-    APPROVED = "APPROVED"
-
-
-class ProposalType(object):  # pylint: disable=too-few-public-methods
-    ADD_ROLE_TASK = "ADD_ROLE_TASK"
-    ADD_ROLE_MEMBER = "ADD_ROLE_MEMBER"
-    ADD_ROLE_OWNER = "ADD_ROLE_OWNER"
-    ADD_ROLE_ADMIN = "ADD_ROLE_ADMIN"
-
-    REMOVE_ROLE_TASK = "REMOVE_ROLE_TASK"
-    REMOVE_ROLE_MEMBER = "REMOVE_ROLE_MEMBER"
-    REMOVE_ROLE_OWNER = "REMOVE_ROLE_OWNER"
-    REMOVE_ROLE_ADMIN = "REMOVE_ROLE_ADMIN"
-
-    ADD_TASK_OWNER = "ADD_TASK_OWNER"
-    ADD_TASK_ADMIN = "ADD_TASK_ADMIN"
-
-    REMOVE_TASK_OWNER = "REMOVE_TASK_OWNER"
-    REMOVE_TASK_ADMIN = "REMOVE_TASK_ADMIN"
-
-    UPDATE_USER_MANAGER = "UPDATE_USER_MANAGER"
-
-
 PROPOSAL_TRANSACTION = {
-    ProposalType.ADD_ROLE_TASK: {
-        Status.REJECTED: rbac.role.task.reject.batch_list,
-        Status.APPROVED: rbac.role.task.confirm.batch_list,
+    "ADD_ROLE_TASK": {
+        "REJECTED": rbac.role.task.reject.batch_list,
+        "APPROVED": rbac.role.task.confirm.batch_list,
     },
-    ProposalType.ADD_ROLE_MEMBER: {
-        Status.REJECTED: rbac.role.member.reject.batch_list,
-        Status.APPROVED: rbac.role.member.confirm.batch_list,
+    "ADD_ROLE_MEMBER": {
+        "REJECTED": rbac.role.member.reject.batch_list,
+        "APPROVED": rbac.role.member.confirm.batch_list,
     },
-    ProposalType.ADD_ROLE_OWNER: {
-        Status.REJECTED: rbac.role.owner.reject.batch_list,
-        Status.APPROVED: rbac.role.owner.confirm.batch_list,
+    "ADD_ROLE_OWNER": {
+        "REJECTED": rbac.role.owner.reject.batch_list,
+        "APPROVED": rbac.role.owner.confirm.batch_list,
     },
-    ProposalType.ADD_ROLE_ADMIN: {
-        Status.REJECTED: rbac.role.admin.reject.batch_list,
-        Status.APPROVED: rbac.role.admin.confirm.batch_list,
+    "ADD_ROLE_ADMIN": {
+        "REJECTED": rbac.role.admin.reject.batch_list,
+        "APPROVED": rbac.role.admin.confirm.batch_list,
     },
-    ProposalType.ADD_TASK_OWNER: {
-        Status.REJECTED: rbac.task.owner.reject.batch_list,
-        Status.APPROVED: rbac.task.owner.confirm.batch_list,
+    "ADD_TASK_OWNER": {
+        "REJECTED": rbac.task.owner.reject.batch_list,
+        "APPROVED": rbac.task.owner.confirm.batch_list,
     },
-    ProposalType.ADD_TASK_ADMIN: {
-        Status.REJECTED: rbac.task.admin.reject.batch_list,
-        Status.APPROVED: rbac.task.admin.confirm.batch_list,
+    "ADD_TASK_ADMIN": {
+        "REJECTED": rbac.task.admin.reject.batch_list,
+        "APPROVED": rbac.task.admin.confirm.batch_list,
     },
-    ProposalType.UPDATE_USER_MANAGER: {
-        Status.REJECTED: rbac.user.manager.reject.batch_list,
-        Status.APPROVED: rbac.user.manager.confirm.batch_list,
+    "UPDATE_USER_MANAGER": {
+        "REJECTED": rbac.user.manager.reject.batch_list,
+        "APPROVED": rbac.user.manager.confirm.batch_list,
     },
 }
 
@@ -173,7 +148,7 @@ async def update_proposal(request, proposal_id):
     LOGGER.debug("update proposal %s\n%s", proposal_id, request.json)
     required_fields = ["reason", "status"]
     utils.validate_fields(required_fields, request.json)
-    if request.json["status"] not in [Status.REJECTED, Status.APPROVED]:
+    if request.json["status"] not in ("REJECTED", "APPROVED"):
         raise ApiBadRequest(
             "Bad Request: status must be either 'REJECTED' or 'APPROVED'"
         )
