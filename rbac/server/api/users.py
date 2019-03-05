@@ -375,29 +375,6 @@ async def update_expired_roles(request, user_id):
     return json({"role_id": request.json.get("id")})
 
 
-@USERS_BP.get("api/users/<user_id>/roles/recommended")
-@authorized()
-async def fetch_recommended_roles(request, user_id):
-
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
-    recommended_resources = await roles_query.fetch_all_role_resources(
-        conn, head_block.get("num"), 0, 10
-    )
-
-    conn.close()
-
-    return await utils.create_response(
-        conn, request.url, recommended_resources, head_block, start=start, limit=limit
-    )
-
-
 def create_user_response(request, user_id):
     token = generate_api_key(request.app.config.SECRET_KEY, user_id)
     user_resource = {
