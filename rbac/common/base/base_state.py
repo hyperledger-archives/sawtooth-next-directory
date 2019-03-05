@@ -23,7 +23,7 @@ import logging
 
 from rbac.common import protobuf
 from rbac.common.crypto.hash import unique_id, hash_id
-from rbac.common.sawtooth import batcher
+from rbac.common.sawtooth.batcher import message_to_message
 from rbac.common.sawtooth import state_client
 
 LOGGER = logging.getLogger(__name__)
@@ -412,7 +412,7 @@ class StateBase:
             container, store = self._get_new_state()
             output_state[address] = container
 
-        batcher.message_to_message(
+        message_to_message(
             message_to=store, message_from=message, message_name=self._name_camel
         )
         output_state["changed"].add(address)

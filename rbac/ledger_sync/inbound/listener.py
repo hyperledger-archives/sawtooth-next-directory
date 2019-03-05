@@ -19,7 +19,7 @@ from rethinkdb import r
 from sawtooth_sdk.protobuf import batch_pb2
 from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth.client_sync import ClientSync
-from rbac.common.sawtooth import batcher
+from rbac.common.sawtooth.batcher import batch_to_list
 from rbac.ledger_sync.database import Database
 
 LOGGER = get_default_logger(__name__)
@@ -39,7 +39,7 @@ def process(rec, database):
 
         batch = batch_pb2.Batch()
         batch.ParseFromString(rec["batch"])
-        batch_list = batcher.batch_to_list(batch=batch)
+        batch_list = batch_to_list(batch=batch)
         status = ClientSync().send_batches_get_status(batch_list=batch_list)
         if status[0]["status"] == "COMMITTED":
             if "metadata" in rec and rec["metadata"]:
