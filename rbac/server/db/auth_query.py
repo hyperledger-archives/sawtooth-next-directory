@@ -112,7 +112,7 @@ async def fetch_dn_by_username(request):
     )
     result = (
         await r.table("users")
-        .filter(lambda doc: (doc["username"].match("(?i)" + username)))
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
         .limit(1)
         .coerce_to("array")
         .run(conn)
