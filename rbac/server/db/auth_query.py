@@ -47,7 +47,7 @@ async def fetch_info_by_username(request):
     )
     result = (
         await r.table("auth")
-        .filter(lambda doc: (doc["username"].match("(?i)" + username)))
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
         .limit(1)
         .coerce_to("array")
         .run(conn)
@@ -57,7 +57,7 @@ async def fetch_info_by_username(request):
     # Auth record not found, check if the username exists
     result = (
         await r.table("users")
-        .filter(lambda doc: (doc["username"].match("(?i)" + username)))
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
         .limit(1)
         .coerce_to("array")
         .run(conn)
@@ -112,7 +112,7 @@ async def fetch_dn_by_username(request):
     )
     result = (
         await r.table("users")
-        .filter(lambda doc: (doc["username"].match("(?i)" + username)))
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
         .limit(1)
         .coerce_to("array")
         .run(conn)
