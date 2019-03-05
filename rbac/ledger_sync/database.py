@@ -21,6 +21,7 @@ from rbac.common.config import get_config
 from rbac.common.logs import get_default_logger
 
 LOGGER = get_default_logger(__name__)
+
 DB_HOST = get_config("DB_HOST")
 DB_PORT = get_config("DB_PORT")
 DB_NAME = get_config("DB_NAME")
@@ -136,3 +137,41 @@ class Database:
         """Takes a query based on get_table, and runs it.
         """
         return query.run(self._conn)
+
+    def clear_role(self, role_id, update_time):
+        """Takes a role ID and update_time and removes all role admins,
+        role owners, role members, and base role objects in rethinkDB that are
+        older than the update_time.
+        """
+        # NOTE: created_date in rethink is being overwritten on ingestion by
+        #   /rbac/ledger_sync/inbound/listener.py and actually tracks the
+        #   time the object was last updated/modified. It is NOT the time the
+        #   object was created.
+        update_time = r.epoch_time(int(update_time) - 1)
+        # remove all old entries in role_attributes with role_id
+        (
+            r.db(self._name)
+            .table("role_members")
+            .filter({"role_id": role_id})
+            .filter(lambda role_member: role_member["created_date"] < update_time)
+            .delete(durability="hard", return_changes=False)
+            .run(self._conn)
+        )
+        # remove all old ntries in role_admins with role_id
+        (
+            r.db(self._name)
+            .table("role_admins")
+            .filter({"role_id": role_id})
+            .filter(lambda role_admin: role_admin["created_date"] < update_time)
+            .delete(durability="hard", return_changes=False)
+            .run(self._conn)
+        )
+        # remove all old entries in role_owners with role_id
+        (
+            r.db(self._name)
+            .table("role_owners")
+            .filter({"role_id": role_id})
+            .filter(lambda role_owner: role_owner["created_date"] < update_time)
+            .delete(durability="hard", return_changes=False)
+            .run(self._conn)
+        )
