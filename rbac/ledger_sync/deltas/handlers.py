@@ -52,7 +52,7 @@ def _handle_delta(database, delta):
 
         # Parse changes and update database
         update = get_updater(database, delta.block_num)
-        remove = get_remover(database, delta.block_num)
+        remove = get_remover(database)
         for change in delta.state_changes:
             if addresser.family.is_family(change.address):
                 if not change.value:

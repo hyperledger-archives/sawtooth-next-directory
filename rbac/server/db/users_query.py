@@ -25,7 +25,7 @@ from rbac.server.db.roles_query import fetch_expired_roles
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_user_resource(conn, user_id, head_block_num):
+async def fetch_user_resource(conn, user_id):
     """Database query to get data on an individual user."""
     resource = (
         await r.table("users")
@@ -35,31 +35,31 @@ async def fetch_user_resource(conn, user_id, head_block_num):
                 "id": r.row["user_id"],
                 "name": r.row["name"],
                 "email": r.row["email"],
-                "subordinates": fetch_user_ids_by_manager(user_id, head_block_num),
+                "subordinates": fetch_user_ids_by_manager(user_id),
                 "ownerOf": {
                     "tasks": fetch_relationships_by_id(
-                        "task_owners", user_id, "task_id", head_block_num
+                        "task_owners", user_id, "task_id"
                     ),
                     "roles": fetch_relationships_by_id(
-                        "role_owners", user_id, "role_id", head_block_num
+                        "role_owners", user_id, "role_id"
                     ),
                     "packs": fetch_relationships_by_id(
-                        "pack_owners", user_id, "pack_id", head_block_num
+                        "pack_owners", user_id, "pack_id"
                     ),
                 },
                 "administratorOf": {
                     "tasks": fetch_relationships_by_id(
-                        "task_admins", user_id, "task_id", head_block_num
+                        "task_admins", user_id, "task_id"
                     ),
                     "roles": fetch_relationships_by_id(
-                        "role_admins", user_id, "role_id", head_block_num
+                        "role_admins", user_id, "role_id"
                     ),
                 },
                 "memberOf": fetch_relationships_by_id(
-                    "role_members", user_id, "role_id", head_block_num
+                    "role_members", user_id, "role_id"
                 ),
                 "expired": fetch_expired_roles(user_id),
-                "proposals": fetch_proposal_ids_by_opener(user_id, head_block_num),
+                "proposals": fetch_proposal_ids_by_opener(user_id),
             }
         )
         .map(
@@ -80,7 +80,7 @@ async def fetch_user_resource(conn, user_id, head_block_num):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
 
 
-async def fetch_user_resource_summary(conn, user_id, head_block_num):
+async def fetch_user_resource_summary(conn, user_id):
     """Database query to get summary data on an individual user."""
     resource = (
         await r.table("users")
@@ -96,7 +96,7 @@ async def fetch_user_resource_summary(conn, user_id, head_block_num):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
 
 
-async def fetch_all_user_resources(conn, head_block_num, start, limit):
+async def fetch_all_user_resources(conn, start, limit):
     """Database query to compile general data on all user's in database."""
     return (
         await r.table("users")
@@ -108,34 +108,30 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
                     "id": user["user_id"],
                     "name": user["name"],
                     "email": user["email"],
-                    "subordinates": fetch_user_ids_by_manager(
-                        user["user_id"], head_block_num
-                    ),
+                    "subordinates": fetch_user_ids_by_manager(user["user_id"]),
                     "ownerOf": {
                         "tasks": fetch_relationships_by_id(
-                            "task_owners", user["user_id"], "task_id", head_block_num
+                            "task_owners", user["user_id"], "task_id"
                         ),
                         "roles": fetch_relationships_by_id(
-                            "role_owners", user["user_id"], "role_id", head_block_num
+                            "role_owners", user["user_id"], "role_id"
                         ),
                         "packs": fetch_relationships_by_id(
-                            "pack_owners", user["user_id"], "pack_id", head_block_num
+                            "pack_owners", user["user_id"], "pack_id"
                         ),
                     },
                     "administratorOf": {
                         "tasks": fetch_relationships_by_id(
-                            "task_admins", user["user_id"], "task_id", head_block_num
+                            "task_admins", user["user_id"], "task_id"
                         ),
                         "roles": fetch_relationships_by_id(
-                            "role_admins", user["user_id"], "role_id", head_block_num
+                            "role_admins", user["user_id"], "role_id"
                         ),
                     },
                     "memberOf": fetch_relationships_by_id(
-                        "role_members", user["user_id"], "role_id", head_block_num
+                        "role_members", user["user_id"], "role_id"
                     ),
-                    "proposals": fetch_proposal_ids_by_opener(
-                        user["user_id"], head_block_num
-                    ),
+                    "proposals": fetch_proposal_ids_by_opener(user["user_id"]),
                 }
             )
         )
@@ -153,7 +149,7 @@ async def fetch_all_user_resources(conn, head_block_num, start, limit):
     )
 
 
-def fetch_user_ids_by_manager(manager_id, head_block_num):
+def fetch_user_ids_by_manager(manager_id):
     """Fetch all users that have the same manager."""
     return (
         r.table("users")
@@ -213,7 +209,7 @@ async def fetch_manager_chain(conn, user_id):
     return manager_chain
 
 
-async def fetch_user_relationships(conn, user_id, head_block_num):
+async def fetch_user_relationships(conn, user_id):
     """Database Query to get an individual's surrounding org connections."""
     resource = (
         await r.table("users")
@@ -221,7 +217,7 @@ async def fetch_user_relationships(conn, user_id, head_block_num):
         .merge(
             {
                 "id": r.row["user_id"],
-                "direct_reports": fetch_user_ids_by_manager(user_id, head_block_num),
+                "direct_reports": fetch_user_ids_by_manager(user_id),
             }
         )
         .without(
@@ -263,7 +259,7 @@ async def search_users(conn, search_query, paging):
                 {
                     "id": doc["user_id"],
                     "memberOf": fetch_relationships_by_id(
-                        "role_members", doc["user_id"], "role_id", None
+                        "role_members", doc["user_id"], "role_id"
                     ),
                 }
             ).without("user_id")

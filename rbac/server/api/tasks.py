@@ -20,7 +20,6 @@ from sanic.response import json
 
 from rbac.common import rbac
 
-from rbac.server.api.errors import ApiNotImplemented
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 
@@ -43,9 +42,7 @@ async def get_all_tasks(request):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    task_resources = await tasks_query.fetch_all_task_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    task_resources = await tasks_query.fetch_all_task_resources(conn, start, limit)
     conn.close()
     return await utils.create_response(
         conn, request.url, task_resources, head_block, start=start, limit=limit
@@ -86,17 +83,9 @@ async def get_task(request, task_id):
     )
 
     head_block = await utils.get_request_block(request)
-    task_resource = await tasks_query.fetch_task_resource(
-        conn, task_id, head_block.get("num")
-    )
+    task_resource = await tasks_query.fetch_task_resource(conn, task_id)
     conn.close()
     return await utils.create_response(conn, request.url, task_resource, head_block)
-
-
-@TASKS_BP.patch("api/tasks/<task_id>")
-@authorized()
-async def update_task(request, task_id):
-    raise ApiNotImplemented()
 
 
 @TASKS_BP.post("api/tasks/<task_id>/admins")
@@ -122,12 +111,6 @@ async def add_task_admin(request, task_id):
     return json({"proposal_id": proposal_id})
 
 
-@TASKS_BP.delete("api/tasks/<task_id>/admins")
-@authorized()
-async def remove_task_admin(request, task_id):
-    raise ApiNotImplemented()
-
-
 @TASKS_BP.post("api/tasks/<task_id>/owners")
 @authorized()
 async def add_task_owner(request, task_id):
@@ -149,12 +132,6 @@ async def add_task_owner(request, task_id):
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     return json({"proposal_id": proposal_id})
-
-
-@TASKS_BP.delete("api/tasks/<task_id>/owners")
-@authorized()
-async def remove_task_owner(request, task_id):
-    raise ApiNotImplemented()
 
 
 def create_task_response(request, task_id):

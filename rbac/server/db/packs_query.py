@@ -23,7 +23,7 @@ from rbac.server.db.relationships_query import fetch_relationships_by_id
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_all_pack_resources(conn, head_block_num, start, limit):
+async def fetch_all_pack_resources(conn, start, limit):
     """Get all pack resources"""
     resources = (
         await r.table("packs")
@@ -34,7 +34,7 @@ async def fetch_all_pack_resources(conn, head_block_num, start, limit):
                 {
                     "id": pack["pack_id"],
                     "roles": fetch_relationships_by_id(
-                        "role_packs", pack["pack_id"], "role_id", head_block_num
+                        "role_packs", pack["pack_id"], "role_id"
                     ),
                 }
             )
@@ -71,7 +71,7 @@ async def add_roles(conn, pack_id, roles):
     return resource
 
 
-async def fetch_pack_resource(conn, pack_id, head_block_num):
+async def fetch_pack_resource(conn, pack_id):
     """Get a pack resource"""
     resource = (
         await r.table("packs")
@@ -79,9 +79,7 @@ async def fetch_pack_resource(conn, pack_id, head_block_num):
         .merge(
             {
                 "id": r.row["pack_id"],
-                "roles": fetch_relationships_by_id(
-                    "role_packs", pack_id, "role_id", head_block_num
-                ),
+                "roles": fetch_relationships_by_id("role_packs", pack_id, "role_id"),
             }
         )
         .without("pack_id")
@@ -107,7 +105,7 @@ async def search_packs(conn, search_query, paging):
                 {
                     "id": doc["pack_id"],
                     "roles": fetch_relationships_by_id(
-                        "role_packs", doc["pack_id"], "role_id", None
+                        "role_packs", doc["pack_id"], "role_id"
                     ),
                 }
             ).without("pack_id")

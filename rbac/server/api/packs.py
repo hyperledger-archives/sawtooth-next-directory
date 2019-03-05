@@ -43,9 +43,7 @@ async def get_all_packs(request):
         request.app.config.DB_NAME,
     )
 
-    pack_resources = await packs_query.fetch_all_pack_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    pack_resources = await packs_query.fetch_all_pack_resources(conn, start, limit)
 
     conn.close()
 
@@ -94,9 +92,7 @@ async def get_pack(request, pack_id):
     )
 
     head_block = await utils.get_request_block(request)
-    pack_resource = await packs_query.fetch_pack_resource(
-        conn, pack_id, head_block.get("num")
-    )
+    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
 
     conn.close()
 
@@ -117,9 +113,7 @@ async def add_pack_member(request, pack_id):
     )
 
     head_block = await utils.get_request_block(request)
-    pack_resource = await packs_query.fetch_pack_resource(
-        conn, pack_id, head_block.get("num")
-    )
+    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
 
     conn.close()
 

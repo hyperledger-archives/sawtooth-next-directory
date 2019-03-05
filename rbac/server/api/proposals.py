@@ -95,14 +95,10 @@ async def get_all_proposals(request):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            conn, proposal, head_block.get("num")
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
     conn.close()
     return await utils.create_response(
@@ -121,12 +117,8 @@ async def get_proposal(request, proposal_id):
     )
 
     head_block = await utils.get_request_block(request)
-    proposal = await proposals_query.fetch_proposal_resource(
-        conn, proposal_id, head_block.get("num")
-    )
-    proposal_resource = await compile_proposal_resource(
-        conn, proposal, head_block.get("num")
-    )
+    proposal = await proposals_query.fetch_proposal_resource(conn, proposal_id)
+    proposal_resource = await compile_proposal_resource(conn, proposal)
     conn.close()
     return await utils.create_response(conn, request.url, proposal_resource, head_block)
 
@@ -162,7 +154,7 @@ async def update_proposal(request, proposal_id):
     )
 
     proposal_resource = await proposals_query.fetch_proposal_resource(
-        conn, proposal_id=proposal_id, head_block_num=block.get("num")
+        conn, proposal_id=proposal_id
     )
     conn.close()
 
@@ -182,24 +174,22 @@ async def update_proposal(request, proposal_id):
     return json({"proposal_id": proposal_id})
 
 
-async def compile_proposal_resource(conn, proposal_resource, head_block_num):
+async def compile_proposal_resource(conn, proposal_resource):
     conn.reconnect(noreply_wait=False)
     table = TABLES[proposal_resource["type"]]
     if "role" in table:
         proposal_resource["approvers"] = await fetch_relationships(
-            table, "role_id", proposal_resource.get("object"), head_block_num
+            table, "role_id", proposal_resource.get("object")
         ).run(conn)
     elif "task" in table:
         proposal_resource["approvers"] = await fetch_relationships(
-            table, "task_id", proposal_resource.get("object"), head_block_num
+            table, "task_id", proposal_resource.get("object")
         ).run(conn)
     elif "users" in table:
         # approvers needs to be new manager in update manager scenario
         proposal_resource["approvers"] = [proposal_resource.get("target")]
     else:
-        user_resource = await fetch_user_resource(
-            conn, proposal_resource.get("object"), head_block_num
-        )
+        user_resource = await fetch_user_resource(conn, proposal_resource.get("object"))
         proposal_resource["approvers"] = [user_resource.get("manager")]
     conn.close()
     return proposal_resource

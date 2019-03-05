@@ -23,14 +23,14 @@ from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
 LOGGER = logging.getLogger(__name__)
 
 
-def get_remover(database, block_num):
+def get_remover(database):
     """ Returns an remover function, which can be used to remove from the database
         appropriately for a particular address.
     """
-    return lambda adr: _remove(database, block_num, adr)
+    return lambda adr: _remove(database, adr)
 
 
-def _remove_state(database, block_num, address):
+def _remove_state(database, address):
     """ Update the state, state_history and metadata tables
     """
     try:
@@ -66,7 +66,7 @@ def _remove_state(database, block_num, address):
         LOGGER.warning(err)
 
 
-def _remove_legacy(database, block_num, address, data_type):
+def _remove_legacy(database, address, data_type):
     """ Remove from the legacy sync tables (expansion by object type name)
     """
     try:
@@ -83,12 +83,12 @@ def _remove_legacy(database, block_num, address, data_type):
         LOGGER.warning(err)
 
 
-def _remove(database, block_num, address):
+def _remove(database, address):
     """ Handle the removal of a given address
     """
     data_type = addresser.get_address_type(address)
 
-    _remove_state(database, block_num, address)
+    _remove_state(database, address)
 
     if data_type in TABLE_NAMES:
-        _remove_legacy(database, block_num, address, data_type)
+        _remove_legacy(database, address, data_type)

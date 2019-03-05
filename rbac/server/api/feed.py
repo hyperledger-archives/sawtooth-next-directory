@@ -56,7 +56,7 @@ async def proposal_feed(request, web_socket, recv):
     while await subscription.fetch_next():
         proposal = await subscription.next()
         proposal_resource = await compile_proposal_resource(
-            conn, proposal.get("new_val"), None
+            conn, proposal.get("new_val")
         )
 
         conn.close()

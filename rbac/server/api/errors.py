@@ -88,6 +88,8 @@ class ApiInternalError(ApiException):
 
 @ERRORS_BP.exception(NotFound)
 async def handle_not_found(request, exception):
+    if not request:
+        LOGGER.debug(request)
     return json(
         {"code": exception.status_code, "message": exception.message},
         status=exception.status_code,
@@ -96,6 +98,8 @@ async def handle_not_found(request, exception):
 
 @ERRORS_BP.exception(ApiException)
 def api_json_error(request, exception):
+    if not request:
+        LOGGER.debug(request)
     return json(
         {"code": exception.status_code, "message": exception.message},
         status=exception.status_code,
@@ -104,7 +108,8 @@ def api_json_error(request, exception):
 
 @ERRORS_BP.exception(SanicException)
 async def handle_errors(request, exception):
-    LOGGER.exception(exception)
+    if not request:
+        LOGGER.debug(request)
     return json(
         {"code": exception.status_code, "message": exception.message},
         status=exception.status_code,
@@ -113,6 +118,8 @@ async def handle_errors(request, exception):
 
 @ERRORS_BP.exception(Exception)
 def json_error(request, exception):
+    if not request:
+        LOGGER.debug(request)
     try:
         code = exception.status_code
     except AttributeError:
