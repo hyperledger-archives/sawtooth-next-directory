@@ -216,10 +216,13 @@ class OrganizationList extends Component {
         }
         { !showSearchData &&
           people &&
-          people.map((person, index) =>
-            <div className='next-approver-people-list-item' key={index}>
-              {this.renderPersonSegment(person)}
-            </div>
+          people.filter(person => me.id !== person.id).map((person, index) => {
+            return (
+              <div className='next-approver-people-list-item' key={index}>
+                {this.renderPersonSegment(person)}
+              </div>
+            );
+          }
           )
         }
         { (fetchingPeople || fetchingSearchResults) &&
