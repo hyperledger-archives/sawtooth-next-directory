@@ -108,7 +108,9 @@ class RequesterChat extends Component {
         payload.text = `/${update || 'expired'}${JSON.stringify(
           {...slots, member_status: 'NOT_MEMBER'})}`;
 
-      } else if (memberOf.includes(resource.id)) {
+      } else if (memberOf && memberOf.find(
+        item => item.id === resource.id)
+      ) {
 
         // Construct intent message given user is a member
         // of the current pack or role
