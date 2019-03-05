@@ -18,7 +18,7 @@ import logging
 from base64 import b64decode
 from rbac.common.sawtooth.rest_client import RestClient
 from rbac.common.sawtooth.rest_client import BaseMessage
-from rbac.common.sawtooth import batcher
+from rbac.common.sawtooth.batcher import get_batch_ids
 from rbac.common.config import get_config
 
 LOGGER = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ class ClientSync:
     def send_batches_get_status(self, batch_list):
         """Send a batch list and get the result statuses
         of the execution of that batch list"""
-        batch_ids = batcher.get_batch_ids(batch_list)
+        batch_ids = get_batch_ids(batch_list)
         self.send_batches(batch_list)
         return self.get_statuses(batch_ids, wait=10)
 
