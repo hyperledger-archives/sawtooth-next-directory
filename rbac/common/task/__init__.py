@@ -15,13 +15,13 @@
 """Implements the Task library: rbac.task.*"""
 # pylint: disable=too-few-public-methods
 
-import logging
 from rbac.common.task.create_task import CreateTask
 
 from rbac.common.task.relationship_owner import OwnerRelationship
 from rbac.common.task.relationship_admin import AdminRelationship
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class Task(CreateTask):

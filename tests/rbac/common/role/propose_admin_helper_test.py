@@ -16,15 +16,15 @@
 
 # pylint: disable=no-member
 
-import logging
 import pytest
 
 
 from rbac.common.crypto.keys import Key
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.role

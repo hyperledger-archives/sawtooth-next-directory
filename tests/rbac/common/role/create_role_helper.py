@@ -15,14 +15,13 @@
 """Create Role test helper"""
 # pylint: disable=no-member,too-few-public-methods
 
-import logging
-
 from rbac.common import rbac
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.testdata.role import RoleTestData
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StubTestHelper:

@@ -18,15 +18,14 @@ from rbac.common import rbac
 Exports a singleton class instance"""
 # pylint: disable=too-few-public-methods
 
-import logging
-
 from rbac.common import addresser
 from rbac.common.user import USER as user
 from rbac.common.role import ROLE as role
 from rbac.common.task import TASK as task
 from rbac.common.key import KEY as key
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class RbacLibrary:

@@ -15,7 +15,6 @@
 """Key assertion helpers"""
 # pylint: disable=invalid-name,no-member
 
-import logging
 import binascii
 
 import sawtooth_signing
@@ -28,9 +27,10 @@ from rbac.common.crypto.keys import PRIVATE_KEY_LENGTH
 from rbac.common.crypto.keys import PUBLIC_KEY_LENGTH
 from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions.common import CommonAssertions
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class KeyAssertions(CommonAssertions):

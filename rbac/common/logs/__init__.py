@@ -22,7 +22,11 @@ from rbac.common.config import get_config
 
 # NOTE: Some imported libraries have been polluting INFO level logs
 # Set logging level for imported libraries
-LIB_LEVELS = {"asyncio": logging.WARNING, "urllib3": logging.WARNING}
+LIB_LEVELS = {
+    "asyncio": logging.WARNING,
+    "urllib3": logging.WARNING,
+    "sawtooth_sdk.processor.core": logging.WARNING,
+}
 
 # Configurable settings for standard NEXT logger
 LOGGER_FORMAT = logging.Formatter(

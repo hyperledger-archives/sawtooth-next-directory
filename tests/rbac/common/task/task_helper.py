@@ -14,14 +14,12 @@
 # -----------------------------------------------------------------------------
 """Task Test Helper Class"""
 # pylint: disable=no-member,too-few-public-methods,invalid-name
-
-import logging
-
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.task.create_task_helper import CreateTaskTestHelper
 from tests.rbac.common.task.propose_admin_helper import ProposeTaskAdminTestHelper
 from tests.rbac.common.task.propose_owner_helper import ProposeTaskOwnerTestHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class TaskAdminTestHelper:

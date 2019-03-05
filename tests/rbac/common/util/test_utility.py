@@ -13,8 +13,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Test the common utility functions"""
-
-import logging
 import pytest
 
 # pylint: disable=redefined-outer-name,missing-docstring
@@ -22,8 +20,9 @@ from rbac.common.util import get_attribute
 from rbac.common.util import bytes_from_hex
 from rbac.common.util import has_duplicates
 from rbac.common.util import duplicates
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.fixture

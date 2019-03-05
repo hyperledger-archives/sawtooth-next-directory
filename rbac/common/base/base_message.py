@@ -17,7 +17,7 @@
 common functionality and facilitating differences via
 property and method overrides"""
 import time
-import logging
+
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
@@ -35,8 +35,9 @@ from rbac.common.base import base_processor as processor
 from rbac.common.base.base_address import AddressBase
 from rbac.common.protobuf.rbac_payload_pb2 import Signer
 from rbac.common.sawtooth.rbac_payload import MessagePayload
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class BaseMessage(AddressBase):

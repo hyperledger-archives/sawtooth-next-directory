@@ -13,13 +13,13 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Test SysAdmin Addresser"""
-import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions import TestAssertions
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.addressing

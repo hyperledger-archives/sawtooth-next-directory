@@ -16,14 +16,14 @@
 """
 # pylint: disable=no-member,invalid-name
 
-import logging
 import pytest
 
 from rbac.common import rbac
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.add_key

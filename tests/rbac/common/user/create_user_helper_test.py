@@ -14,17 +14,16 @@
 # -----------------------------------------------------------------------------
 """Test Create User Test Helper"""
 # pylint: disable=no-member
-
-import logging
 import pytest
 
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.user

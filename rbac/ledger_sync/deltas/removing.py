@@ -14,13 +14,12 @@
 # -----------------------------------------------------------------------------
 """ Syncs the blockchain state to RethinkDB
 """
-import logging
-
 from rbac.common import addresser
 from rbac.common.util import bytes_from_hex
 from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 def get_remover(database):

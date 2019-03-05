@@ -15,15 +15,15 @@
 """Implementation of the Role-Owner relationship
 Usage: rbac.role.owner.exists(role_id, user_id)
 """
-import logging
 
 from rbac.common import addresser
 from rbac.common.base.base_relationship import BaseRelationship
 from rbac.common.role.propose_owner import ProposeAddRoleOwner
 from rbac.common.role.confirm_owner import ConfirmAddRoleOwner
 from rbac.common.role.reject_owner import RejectAddRoleOwner
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class OwnerRelationship(BaseRelationship):

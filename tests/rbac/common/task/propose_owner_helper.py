@@ -14,16 +14,15 @@
 # -----------------------------------------------------------------------------
 """Propose Task Owner Test Helper"""
 # pylint: disable=no-member,too-few-public-methods
-
-import logging
 import random
 
 from rbac.common import rbac
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.common.task.create_task_helper import CreateTaskTestHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StubTestHelper:

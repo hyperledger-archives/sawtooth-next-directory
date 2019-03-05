@@ -14,10 +14,11 @@
 # -----------------------------------------------------------------------------
 """Base Family acts as a base class for all transaction families.
 Sawtooth applications may have one or more transaction families."""
-import logging
 import re as regex
 
-LOGGER = logging.getLogger(__name__)
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
 
 PATTERN_32_HEX_BYTES = r"[0-9a-f]{64}"
 

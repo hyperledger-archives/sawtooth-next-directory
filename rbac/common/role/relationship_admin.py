@@ -15,15 +15,15 @@
 """Implementation of the Role-Admin relationship
 Usage: rbac.role.admin.exists(role_id, user_id)
 """
-import logging
 
 from rbac.common import addresser
 from rbac.common.base.base_relationship import BaseRelationship
 from rbac.common.role.propose_admin import ProposeAddRoleAdmin
 from rbac.common.role.confirm_admin import ConfirmAddRoleAdmin
 from rbac.common.role.reject_admin import RejectAddRoleAdmin
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class AdminRelationship(BaseRelationship):

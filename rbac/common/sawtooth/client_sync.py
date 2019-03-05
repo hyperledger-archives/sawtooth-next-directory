@@ -14,14 +14,14 @@
 # -----------------------------------------------------------------------------
 """Sawtooth REST API client wrapper"""
 
-import logging
 from base64 import b64decode
 from rbac.common.sawtooth.rest_client import RestClient
 from rbac.common.sawtooth.rest_client import BaseMessage
 from rbac.common.sawtooth.batcher import get_batch_ids
 from rbac.common.config import get_config
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 VALIDATOR_REST_ENDPOINT = get_config("VALIDATOR_REST_ENDPOINT")
 _CLIENT = RestClient(base_url=VALIDATOR_REST_ENDPOINT)

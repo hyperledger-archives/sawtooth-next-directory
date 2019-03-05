@@ -14,11 +14,12 @@
 # -----------------------------------------------------------------------------
 """Implements the CONFIRM_ADD_ROLE_OWNER message
 usage: rbac.role.owner.confirm.create()"""
-import logging
+
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ConfirmAddRoleOwner(ProposalConfirm):
