@@ -124,10 +124,9 @@ class App extends Component {
    * Update user, recommended resources, and open requests
    */
   hydrate () {
-    const { getBase, getMe, getOpenProposals } = this.props;
+    const { getMe, getOpenProposals } = this.props;
 
     getMe();
-    getBase();
     getOpenProposals();
   }
 
