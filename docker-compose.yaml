@@ -149,6 +149,7 @@ services:
         ./bin/setup_db --host rethink &&
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
+
   client:
     build:
       context: .
@@ -162,6 +163,7 @@ services:
       - REACT_APP_HTTP_PROTOCOL=${REACT_APP_HTTP_PROTOCOL}
       - REACT_APP_WS_PROTOCOL=${REACT_APP_WS_PROTOCOL}
       - REACT_APP_DEFAULT_LANDING=${REACT_APP_DEFAULT_LANDING}
+      - VERSION_NUMBER=${VERSION_NUMBER}
     image: rbac-client:${ISOLATION_ID-latest}
     volumes:
       - ./client:/client
