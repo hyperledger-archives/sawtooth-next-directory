@@ -19,14 +19,14 @@ From the object_type name, it is able to infer information about how
 the object is stored on the blockchain: the state and container protubufs,
 and the unique identifier name"""
 # pylint: disable=too-many-public-methods
-import logging
 
 from rbac.common import protobuf
 from rbac.common.crypto.hash import unique_id, hash_id
 from rbac.common.sawtooth.batcher import message_to_message
 from rbac.common.sawtooth import state_client
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StateBase:

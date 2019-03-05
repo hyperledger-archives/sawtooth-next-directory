@@ -16,13 +16,13 @@
 It addresses information on the blockchain using three enumeration
 fields: object_type, related_type and relationship_type; combined
 with the hash of the object_id and the related_id (if any)."""
-import logging
 import re as regex
 from rbac.common.addresser.family_address import family
 from rbac.common.base.base_state import StateBase
 from rbac.common.addresser.addressers import register_addresser
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 PATTERN_ZERO_BYTE = r"00"
 PATTERN_12_HEX_BYTES = r"[0-9a-f]{24}"

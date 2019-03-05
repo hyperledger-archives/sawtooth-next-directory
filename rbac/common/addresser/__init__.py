@@ -14,7 +14,6 @@
 # -----------------------------------------------------------------------------
 # pylint: disable=cyclic-import
 """Addresser class used by message classes to address and access blockchain state"""
-import logging
 from rbac.common.addresser.address_space import AddressSpace
 from rbac.common.addresser.address_space import ObjectType
 from rbac.common.addresser.address_space import RelationshipType
@@ -33,8 +32,9 @@ from rbac.common.task.task_address import TASK_ADDRESS as task
 from rbac.common.email.email_address import EMAIL_ADDRESS as email
 from rbac.common.proposal.proposal_address import PROPOSAL_ADDRESS as proposal
 from rbac.common.sysadmin.sysadmin_address import SYSADMIN_ADDRESS as sysadmin
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 __all__ = [

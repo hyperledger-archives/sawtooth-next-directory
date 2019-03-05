@@ -13,13 +13,13 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """A Base Sawtooth Transaction Processor"""
-import logging
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.sawtooth.batcher import get_message_type_name
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 message_handlers = {}  # pylint: disable=invalid-name
 

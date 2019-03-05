@@ -14,7 +14,6 @@
 # -----------------------------------------------------------------------------
 """Test the symmetric encryption library"""
 
-import logging
 import pytest
 
 from rbac.common.crypto.secrets import AES_KEY_LENGTH
@@ -26,9 +25,11 @@ from rbac.common.crypto.secrets import generate_aes_key
 from rbac.common.crypto.secrets import encrypt_private_key
 from rbac.common.crypto.secrets import decrypt_private_key
 from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions import TestAssertions
 
-LOGGER = logging.getLogger(__name__)
+
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.library

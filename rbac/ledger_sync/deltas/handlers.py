@@ -23,6 +23,7 @@ from rbac.ledger_sync.deltas.updating import get_updater
 from rbac.ledger_sync.deltas.removing import get_remover
 from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
 
+
 LOGGER = get_default_logger(__name__)
 
 

@@ -22,17 +22,15 @@
 
 import asyncio
 from enum import Enum
-import logging
 import uuid
-
 from google.protobuf.message import DecodeError
-
 import zmq
 from zmq.asyncio import Context
 
 from sawtooth_sdk.protobuf.validator_pb2 import Message
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class _Backoff:

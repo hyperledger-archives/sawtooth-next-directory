@@ -15,12 +15,12 @@
 """Common assertion helpers"""
 # pylint: disable=no-member,invalid-name
 
-import logging
 import re
 from unittest import TestCase
+from rbac.common.logs import get_default_logger
 
+LOGGER = get_default_logger(__name__)
 HEX_PATTERN = re.compile(r"^[0-9a-fA-F]{2,}$")
-LOGGER = logging.getLogger(__name__)
 
 
 class CommonAssertions(TestCase):

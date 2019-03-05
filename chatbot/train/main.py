@@ -16,7 +16,6 @@
 import argparse
 import os
 import sys
-import logging
 from os.path import dirname as DIRNAME
 
 from rasa_nlu.training_data import load_data
@@ -27,10 +26,9 @@ from rasa_core.agent import Agent
 from rasa_core.policies.memoization import MemoizationPolicy
 from rasa_core.policies.keras_policy import KerasPolicy
 from rasa_core.policies.fallback import FallbackPolicy
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = get_default_logger(__name__)
 
 TOP_DIR = DIRNAME(DIRNAME(__file__))
 CONFIG_DIR = os.path.join(TOP_DIR, "config")

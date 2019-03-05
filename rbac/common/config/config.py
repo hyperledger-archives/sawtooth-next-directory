@@ -15,8 +15,8 @@
 """Gets configuration values for any application, daemon or test
 config.yaml (default values) should be in the project top directory
 """
-import os
 import logging
+import os
 import sys
 import io
 import yaml

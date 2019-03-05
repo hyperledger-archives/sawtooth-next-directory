@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-import logging
-
 import os
+
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import generate_aes_key
 from rbac.common.crypto.secrets import generate_secret_key
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 DEFAULT_CONFIG = {

@@ -15,10 +15,10 @@
 """Implements the User library: rbac.key.*"""
 # pylint: disable=too-few-public-methods
 
-import logging
 from rbac.common.key.add_key import AddKey
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class Key(AddKey):

@@ -14,11 +14,12 @@
 # -----------------------------------------------------------------------------
 """Implements the REJECT_ADD_ROLE_MEMBER message
 usage: rbac.role.member.reject.create()"""
-import logging
+
 from rbac.common import addresser
 from rbac.common.proposal.proposal_reject import ProposalReject
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class RejectAddRoleMember(ProposalReject):

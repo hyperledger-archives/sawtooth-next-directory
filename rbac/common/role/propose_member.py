@@ -14,11 +14,12 @@
 # -----------------------------------------------------------------------------
 """Implements the PROPOSE_ADD_ROLE_MEMBER message
 usage: rbac.role.member.propose.create()"""
-import logging
+
 from rbac.common import addresser
 from rbac.common.proposal.proposal_propose import ProposalPropose
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ProposeAddRoleMember(ProposalPropose):

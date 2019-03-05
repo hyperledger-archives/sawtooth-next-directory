@@ -15,12 +15,12 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 import os
+import logging
 import sys
 import json
 import requests
-from rbac.common.logs import get_default_logger
 
-LOGGER = get_default_logger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def add_demo_data():

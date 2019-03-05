@@ -16,7 +16,6 @@
 
 # pylint: disable=invalid-name
 
-import logging
 import pytest
 
 import sawtooth_signing
@@ -34,9 +33,11 @@ from rbac.common.crypto.keys import PRIVATE_KEY_PATTERN
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.crypto.keys import SIGNATURE_PATTERN
 from rbac.common.crypto.secrets import generate_random_string
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions import TestAssertions
 
-LOGGER = logging.getLogger(__name__)
+
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.library

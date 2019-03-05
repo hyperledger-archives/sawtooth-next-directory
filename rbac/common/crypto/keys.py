@@ -14,15 +14,13 @@
 # -----------------------------------------------------------------------------
 """Eliptical curve library wrapper (secp256k1)"""
 
-import logging
 import re
 from sawtooth_signing import create_context
 from sawtooth_signing.secp256k1 import Secp256k1PrivateKey
 from sawtooth_signing.secp256k1 import Secp256k1PublicKey
+from rbac.common.logs import get_default_logger
 
-# from sawtooth_signing.core import ParseError
-
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 SIGNATURE_LENGTH = 64
 PUBLIC_KEY_LENGTH = 33

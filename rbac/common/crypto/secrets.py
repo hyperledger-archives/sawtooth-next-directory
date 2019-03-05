@@ -16,16 +16,12 @@
 and for generating a key for validating web authentication tokens"""
 
 import os
-import logging
 import binascii
 import string
 import re as regex
 import random
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from rbac.common.crypto.cipher import AES
-
-
-LOGGER = logging.getLogger(__name__)
 
 AES_KEY_LENGTH = 32
 SECRET_KEY_LENGTH = 36

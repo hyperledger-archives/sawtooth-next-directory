@@ -14,11 +14,11 @@
 # -----------------------------------------------------------------------------
 """Implements the CONFIRM_ADD_TASK_ADMIN message
 usage: rbac.task.admin.confirm.create()"""
-import logging
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ConfirmAddTaskAdmin(ProposalConfirm):

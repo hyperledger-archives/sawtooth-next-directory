@@ -15,15 +15,14 @@
 """Functions for reading and manipulating blockchain state
 given the state context object available from the transaction processor"""
 
-import logging
-
 from sawtooth_sdk.messaging.future import FutureTimeoutError
 from sawtooth_sdk.processor.exceptions import InternalError
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
 
 TIMEOUT_SECONDS = 2
 ERROR_MESSAGE_TIMEOUT = "Timeout after %s seconds during get from state"
-
-LOGGER = logging.getLogger(__name__)
 
 
 def get_address(context, address):
