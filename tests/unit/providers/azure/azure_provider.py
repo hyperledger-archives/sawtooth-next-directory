@@ -18,9 +18,12 @@ import unittest
 from unittest import mock
 import pytest
 
+from rbac.common.logs import get_default_logger
 from rbac.providers.azure.aad_auth import AadAuth
 from rbac.providers.azure.initial_inbound_sync import get_ids_from_list_of_dicts
 from tests.unit.providers.azure.azure_response_mocks import mock_requests_post
+
+LOGGER = get_default_logger(__name__)
 
 # Tests are commented out until function level testing can occur.
 AADAUTH = AadAuth()
@@ -81,6 +84,8 @@ class AzureResponseTestCase(unittest.TestCase):
     @mock.patch("requests.post", side_effect=mock_requests_post)
     def test_get_token_secret_auth_type(self, mock_post):
         """Test secret type authorization."""
+        if not mock_post:
+            LOGGER.info(mock_post)
         json_data = AADAUTH.get_token().json()
         self.assertEqual(json_data, {"access_token": "you_got_access_token"})
 
@@ -93,6 +98,8 @@ class AzureResponseTestCase(unittest.TestCase):
     @mock.patch("requests.post", side_effect=mock_requests_post)
     def test_check_token_get_secret(self, mock_post):
         """"Test when there is no graph_token."""
+        if not mock_post:
+            LOGGER.info(mock_post)
         result = AADAUTH.check_token("GET")
         assert result == {
             "Authorization": "you_got_access_token",
@@ -102,6 +109,8 @@ class AzureResponseTestCase(unittest.TestCase):
     @mock.patch("requests.post", side_effect=mock_requests_post)
     def test_check_token_post_secret(self, mock_post):
         """"Test when there is no graph_token."""
+        if not mock_post:
+            LOGGER.info(mock_post)
         result = AADAUTH.check_token("PATCH")
         assert result == {
             "Authorization": "you_got_access_token",

@@ -68,7 +68,7 @@ async def update_tracker(request, recv):
 
         head_block = await utils.get_request_block(request)
         owner_resource = await users_query.fetch_user_resource_summary(
-            conn, recv.get("approver_id"), head_block.get("num")
+            conn, recv.get("approver_id")
         )
         await create_event(request, recv, "approver_name", owner_resource.get("name"))
     await create_event(request, recv, "token", utils.extract_request_token(request))

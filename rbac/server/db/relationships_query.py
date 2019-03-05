@@ -21,7 +21,7 @@ from rbac.common.logs import get_default_logger
 LOGGER = get_default_logger(__name__)
 
 
-def fetch_relationships(table, index, identifier, head_block_num):
+def fetch_relationships(table, index, identifier):
     return (
         r.table(table)
         .get_all(identifier, index=index)
@@ -31,7 +31,7 @@ def fetch_relationships(table, index, identifier, head_block_num):
     )
 
 
-def fetch_relationships_by_id(table, identifier, key, head_block_num):
+def fetch_relationships_by_id(table, identifier, key):
     return (
         r.table(table)
         .filter(lambda doc: doc["identifiers"].contains(identifier), default=True)

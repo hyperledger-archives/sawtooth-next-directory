@@ -565,7 +565,7 @@ class StateBase:
         output_state[address] = container
         output_state["changed"].add(address)
 
-    def remove_relationship(self, object_id, related_id, outputs, output_state, now):
+    def remove_relationship(self, object_id, related_id, outputs, output_state):
         """ Removes a relationship record
         """
         address = self.address(object_id=object_id, related_id=related_id)

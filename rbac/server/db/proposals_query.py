@@ -21,7 +21,7 @@ from rbac.server.api.errors import ApiNotFound
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
+async def fetch_all_proposal_resources(conn, start, limit):
     return (
         await r.table("proposals")
         .order_by(index="proposal_id")
@@ -54,7 +54,7 @@ async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
     )
 
 
-async def fetch_proposal_resource(conn, proposal_id, head_block_num):
+async def fetch_proposal_resource(conn, proposal_id):
     resource = (
         await r.table("proposals")
         .get_all(proposal_id, index="proposal_id")
@@ -123,7 +123,7 @@ async def subscribe_to_proposals(conn):
     )
 
 
-def fetch_approver_ids(table, object_id, head_block_num):
+def fetch_approver_ids(table, object_id):
     return (
         r.table(table)
         .get_all(object_id)
@@ -133,7 +133,7 @@ def fetch_approver_ids(table, object_id, head_block_num):
     )
 
 
-def fetch_proposal_ids_by_target(target, head_block_num):
+def fetch_proposal_ids_by_target(target):
     return (
         r.table("proposals")
         .get_all(target, index="related_id")
@@ -142,7 +142,7 @@ def fetch_proposal_ids_by_target(target, head_block_num):
     )
 
 
-def fetch_proposal_ids_by_opener(opener, head_block_num):
+def fetch_proposal_ids_by_opener(opener):
     return (
         r.table("proposals")
         .get_all(opener, index="opener")

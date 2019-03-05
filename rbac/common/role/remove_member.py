@@ -144,5 +144,4 @@ class RemoveRoleMember(ProposalMessage):
             related_id=related_id,
             outputs=payload.outputs,
             output_state=output_state,
-            now=payload.now,
         )

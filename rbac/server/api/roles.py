@@ -20,7 +20,6 @@ from sanic.response import json
 
 from rbac.common import rbac
 
-from rbac.server.api.errors import ApiNotImplemented
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 
@@ -43,9 +42,7 @@ async def get_all_roles(request):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    role_resources = await roles_query.fetch_all_role_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    role_resources = await roles_query.fetch_all_role_resources(conn, start, limit)
     conn.close()
     return await utils.create_response(
         conn, request.url, role_resources, head_block, start=start, limit=limit
@@ -87,9 +84,7 @@ async def get_role(request, role_id):
     )
 
     head_block = await utils.get_request_block(request)
-    role_resource = await roles_query.fetch_role_resource(
-        conn, role_id, head_block.get("num")
-    )
+    role_resource = await roles_query.fetch_role_resource(conn, role_id)
     conn.close()
     return await utils.create_response(conn, request.url, role_resource, head_block)
 
@@ -136,12 +131,6 @@ async def add_role_admin(request, role_id):
     return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete("api/roles/<role_id>/admins")
-@authorized()
-async def delete_role_admin(request, role_id):
-    raise ApiNotImplemented()
-
-
 @ROLES_BP.post("api/roles/<role_id>/members")
 @authorized()
 async def add_role_member(request, role_id):
@@ -169,12 +158,6 @@ async def add_role_member(request, role_id):
     return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete("api/roles/<role_id>/members")
-@authorized()
-async def delete_role_member(request, role_id):
-    raise ApiNotImplemented()
-
-
 @ROLES_BP.post("api/roles/<role_id>/owners")
 @authorized()
 async def add_role_owner(request, role_id):
@@ -198,12 +181,6 @@ async def add_role_owner(request, role_id):
     return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete("api/roles/<role_id>/owners")
-@authorized()
-async def delete_role_owner(request, role_id):
-    raise ApiNotImplemented()
-
-
 @ROLES_BP.post("api/roles/<role_id>/tasks")
 @authorized()
 async def add_role_task(request, role_id):
@@ -225,12 +202,6 @@ async def add_role_task(request, role_id):
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     return json({"proposal_id": proposal_id})
-
-
-@ROLES_BP.delete("api/roles/<role_id>/tasks")
-@authorized()
-async def delete_role_task(request, role_id):
-    raise ApiNotImplemented()
 
 
 def create_role_response(request, role_id):

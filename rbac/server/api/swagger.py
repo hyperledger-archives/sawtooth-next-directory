@@ -16,11 +16,17 @@
 from sanic import Blueprint
 from sanic import response
 
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
+
 SWAGGER_BP = Blueprint("swagger")
 
 
 @SWAGGER_BP.get("api/swagger")
 async def get_swagger(request):
+    if not request:
+        LOGGER.debug(str(request))
     return await response.file(
         "/project/hyperledger-rbac/rbac/server/swagger/index.html",
         headers={"Content-Type": "text/html; charset=utf-8"},

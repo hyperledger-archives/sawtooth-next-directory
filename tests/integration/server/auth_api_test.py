@@ -92,6 +92,7 @@ def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
             "http://rbac-server:8000/api/authorization/", json=login_inputs
         )
         assert response.json()["data"]["message"] == expected_result
+        assert response.status_code == expected_status_code
 
 
 @pytest.mark.parametrize(

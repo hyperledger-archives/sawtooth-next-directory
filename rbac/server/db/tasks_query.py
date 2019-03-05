@@ -26,7 +26,7 @@ from rbac.server.db.relationships_query import (
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_all_task_resources(conn, head_block_num, start, limit):
+async def fetch_all_task_resources(conn, start, limit):
     resources = (
         await r.table("tasks")
         .order_by(index="task_id")
@@ -36,17 +36,15 @@ async def fetch_all_task_resources(conn, head_block_num, start, limit):
                 {
                     "id": task["task_id"],
                     "owners": fetch_relationships(
-                        "task_owners", "task_id", task["task_id"], head_block_num
+                        "task_owners", "task_id", task["task_id"]
                     ),
                     "administrators": fetch_relationships(
-                        "task_admins", "task_id", task["task_id"], head_block_num
+                        "task_admins", "task_id", task["task_id"]
                     ),
                     "roles": fetch_relationships_by_id(
-                        "role_tasks", task["task_id"], "role_id", head_block_num
+                        "role_tasks", task["task_id"], "role_id"
                     ),
-                    "proposals": fetch_proposal_ids_by_opener(
-                        task["task_id"], head_block_num
-                    ),
+                    "proposals": fetch_proposal_ids_by_opener(task["task_id"]),
                 }
             )
         )
@@ -57,23 +55,19 @@ async def fetch_all_task_resources(conn, head_block_num, start, limit):
     return resources
 
 
-async def fetch_task_resource(conn, task_id, head_block_num):
+async def fetch_task_resource(conn, task_id):
     resource = (
         await r.table("tasks")
         .get_all(task_id, index="task_id")
         .merge(
             {
                 "id": r.row["task_id"],
-                "owners": fetch_relationships(
-                    "task_owners", "task_id", task_id, head_block_num
-                ),
+                "owners": fetch_relationships("task_owners", "task_id", task_id),
                 "administrators": fetch_relationships(
-                    "task_admins", "task_id", task_id, head_block_num
+                    "task_admins", "task_id", task_id
                 ),
-                "roles": fetch_relationships_by_id(
-                    "role_tasks", task_id, "role_id", head_block_num
-                ),
-                "proposals": fetch_proposal_ids_by_opener(task_id, head_block_num),
+                "roles": fetch_relationships_by_id("role_tasks", task_id, "role_id"),
+                "proposals": fetch_proposal_ids_by_opener(task_id),
             }
         )
         .without("task_id")
