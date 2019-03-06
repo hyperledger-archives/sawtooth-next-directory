@@ -79,7 +79,8 @@ class RequesterChat extends Component {
       id,
       isSocketOpen,
       messagesCountById,
-      memberAndOwnerOf,
+      memberOf,
+      ownerOf,
       recommendedPacks,
       recommendedRoles,
       requests,
@@ -107,12 +108,21 @@ class RequesterChat extends Component {
         payload.text = `/${update || 'expired'}${JSON.stringify(
           {...slots, member_status: 'NOT_MEMBER'})}`;
 
-      } else if (memberAndOwnerOf.includes(resource.id)) {
+      } else if (memberOf && memberOf.find(
+        item => item.id === resource.id)
+      ) {
 
         // Construct intent message given user is a member
         // of the current pack or role
         payload.text = `/${update || 'member'}${JSON.stringify(
           {...slots, member_status: 'MEMBER'})}`;
+
+      } else if (ownerOf.includes(resource.id)) {
+
+        // Construct intent message given user is an owner
+        // of the current pack or role
+        payload.text = `/${update || 'owner'}${JSON.stringify(
+          {...slots, owner_status: 'OWNER'})}`;
 
       } else if (requests && requests.find(
         request => request.object === resource.id || request.id === resource.id)

@@ -31,6 +31,11 @@ limitations under the License.
   padding: 0 40px;
 }
 
+#next-requester-roles-owner-list-container {
+  margin-bottom: 40px;
+  padding: 0 40px;
+}
+
 #next-requester-roles-description {
   padding: 20px 10px;
 }

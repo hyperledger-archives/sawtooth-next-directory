@@ -229,12 +229,10 @@ export const RequesterSelectors = {
   },
 
 
-  memberAndOwnerOf: (state) =>
+  ownerOf: (state) =>
     [...new Set([
       ...(ApproverSelectors.ownedPacks(state) || []),
       ...(ApproverSelectors.ownedRoles(state) || []),
-      ...(RequesterSelectors.memberOf(state) || [])
-        .map(resource => resource.id),
     ])],
 
 

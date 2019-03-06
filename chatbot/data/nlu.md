@@ -10,6 +10,10 @@
 - /member
 - /member
 
+## intent:owner
+- /owner
+- /owner
+
 ## intent:pending
 - /pending
 - /pending

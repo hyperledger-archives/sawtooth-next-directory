@@ -30,7 +30,7 @@ limitations under the License.
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 18px 20px;
+  padding: 20px 22px;
 }
 
 #next-role-select-grid .column .toggle-card h3 {
@@ -44,10 +44,13 @@ limitations under the License.
 #next-role-select-grid .next-role-select-grid-owners {
   align-items: center;
   display: flex;
+  font-size: .85em;
 }
 
 #next-role-select-grid .next-role-select-grid-owner-label {
   font-size: .85em;
+
+  font-weight: bold;
   text-align: left;
   word-break: break-word;
 }

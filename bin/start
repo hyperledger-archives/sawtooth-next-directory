@@ -28,8 +28,9 @@ usage() {
 
         Options:
                                start from genesis (no data) [default]
-            -p --persist       start with persistent data
+            -c --persist       start with persistent data
             -b --build         (re)build docker images before starting
+            -p --prod          start NEXT with SSL configuration
 
 EOM
 
@@ -50,8 +51,9 @@ while [[ $# -gt 0 ]]; do
     case "$opt" in
     "-h"|"--help"       ) usage; exit 0;;
     "-b"|"--build"      ) BUILD=1;;
-    "-p"|"--persist"    ) PERSIST=1;;
+    "-c"|"--persist"    ) PERSIST=1;;
     "-d"|"--dev"        ) DEV=1;;
+    "-p"|"--prod"       ) PROD=1;;
     *                   ) echo "ERROR: Invalid option: \""$opt"\"" >&2
                             usage
                             exit 1;;
@@ -63,6 +65,16 @@ CMD="docker-compose -f docker-compose.yaml"
 
 if [[ "$PERSIST" == "1" ]]; then
     CMD="$CMD -f docker-persist.yaml"
+fi
+if [[ "$PROD" == "1" ]]; then
+    CMD="$CMD -f docker-compose.prod.yaml"
+    if ! [ -e nginx.conf ] 
+    then
+        echo "nginx.conf file not found. Creating one from nginx.conf-example ..."
+        cp ./nginx.conf-example ./nginx.conf
+    fi
+else
+    CMD="$CMD -f docker-compose.override.yaml"
 fi
 CMD="$CMD up"
 if [[ "$BUILD" == "1" ]]; then

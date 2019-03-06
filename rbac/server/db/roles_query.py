@@ -129,7 +129,19 @@ async def search_roles(conn, search_query, paging):
         .distinct()
         .pluck("name", "description", "role_id")
         .order_by("name")
-        .map(lambda doc: doc.merge({"id": doc["role_id"]}).without("role_id"))
+        .map(
+            lambda doc: doc.merge(
+                {
+                    "id": doc["role_id"],
+                    "members": fetch_relationships(
+                        "role_members", "role_id", doc["role_id"], None
+                    ),
+                    "owners": fetch_relationships(
+                        "role_owners", "role_id", doc["role_id"], None
+                    ),
+                }
+            ).without("role_id")
+        )
         .slice(paging[0], paging[1])
         .coerce_to("array")
         .run(conn)

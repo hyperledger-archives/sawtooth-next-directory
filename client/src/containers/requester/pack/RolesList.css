@@ -19,16 +19,34 @@ h4.ui.header.next-roles-list-role-info {
   display: flex;
 }
 
+h4.ui.header.next-roles-list-role-info div:first-child {
+  flex: 0 0 40px !important;
+}
+
 h4.ui.header.next-roles-list-role-info div:nth-child(2) {
+  flex: 1;
+  margin-top: 3px;
   overflow-x: hidden;
   text-overflow: ellipsis;
 }
 
 .next-roles-list-role-info img {
   margin-right: 18px;
+  width: 25px !important;
 }
 
 .ui.header .sub.header.next-roles-list-email-subheader {
   color: var(--magenta);
+  margin-top: 4px;
   word-break: break-word;
+}
+
+.next-roles-list-owner {
+  display: flex;
+  margin-top: 12px;
+}
+
+.next-roles-list-owner div:first-child {
+  flex: 0 0 40px !important;
+  margin-top: 3px;
 }

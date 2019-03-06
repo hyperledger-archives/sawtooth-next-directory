@@ -12,18 +12,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ----------------------------------------------------------------------------- */
-
-
-#next-approver-delegated-content {
-  margin-top: 233px;
-  overflow: auto;
-  padding-bottom: var(--container-scroll-padding-bottom);
-  position: relative;
-  width: calc(100% - 61px) !important;
-}
-
-#next-approver-delegated-pending h5 {
-  color: var(--small-heading-color);
-  font-weight: bold;
-  margin: 20px 30px;
-}

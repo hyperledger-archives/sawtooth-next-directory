@@ -23,7 +23,7 @@ from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
 from rbac.common.sawtooth import batcher
-from rbac.common.sawtooth import client
+from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.sawtooth import state_client
 from rbac.common.base import base_processor as processor
 from rbac.common.base.base_address import AddressBase
@@ -438,7 +438,7 @@ class BaseMessage(AddressBase):
         _, _, batch_list, _ = batcher.make(
             payload=payload, signer_keypair=signer_keypair
         )
-        status = client.send_batches_get_status(batch_list=batch_list)
+        status = ClientSync().send_batches_get_status(batch_list=batch_list)
         return status
 
     def get(self, object_id, related_id=None):
@@ -446,7 +446,7 @@ class BaseMessage(AddressBase):
         address = self.address(object_id=object_id, related_id=related_id)
         # pylint: disable=not-callable
         container = self._state_container()
-        container.ParseFromString(client.get_address(address=address))
+        container.ParseFromString(ClientSync().get_address(address=address))
         return self._find_in_state_container(
             container=container,
             address=address,

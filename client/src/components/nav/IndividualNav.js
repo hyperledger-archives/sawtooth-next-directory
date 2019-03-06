@@ -72,6 +72,13 @@ class IndividualNav extends Component {
             onClick={() => setFlow(1)}>
             People
           </Menu.Item>
+          <Menu.Item
+            name='table'
+            id='next-individual-nav-table-click'
+            active={activeIndex === 2}
+            onClick={() => setFlow(2)}>
+            Table
+          </Menu.Item>
         </Menu>
         <div id='next-individual-nav-select-dropdown'>
           <Checkbox

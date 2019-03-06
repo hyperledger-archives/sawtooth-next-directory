@@ -25,6 +25,7 @@ import TrackHeader from 'components/layouts/TrackHeader';
 import IndividualNav from 'components/nav/IndividualNav';
 import PeopleList from './PeopleList';
 import RoleList from './RoleList';
+import TableList from './TableList';
 import { syncAll } from './IndividualHelper';
 
 
@@ -206,6 +207,13 @@ class Individual extends Component {
                 }
                 { activeIndex === 1 &&
                   <PeopleList
+                    selectedProposals={selectedProposals}
+                    selectedUsers={selectedUsers}
+                    handleChange={this.handleChange}
+                    {...this.props}/>
+                }
+                { activeIndex === 2 &&
+                  <TableList
                     selectedProposals={selectedProposals}
                     selectedUsers={selectedUsers}
                     handleChange={this.handleChange}

@@ -47,18 +47,17 @@ async def fetch_info_by_username(request):
     )
     result = (
         await r.table("auth")
-        .get_all(username, index="username")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
         .limit(1)
         .coerce_to("array")
         .run(conn)
     )
     if result:
         return result[0]
-
     # Auth record not found, check if the username exists
     result = (
         await r.table("users")
-        .get_all(username, index="username")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
         .limit(1)
         .coerce_to("array")
         .run(conn)
@@ -95,3 +94,32 @@ async def fetch_info_by_username(request):
     conn.close()
 
     return auth_entry
+
+
+async def fetch_dn_by_username(request):
+    """Given a login request, return the user's AD Distinguished Name.
+
+    Args:
+        request (dict): The login request containing an id, password, and
+                        app configurations.
+
+    """
+    username = request.json.get("id")
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+    result = (
+        await r.table("users")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
+        .limit(1)
+        .coerce_to("array")
+        .run(conn)
+    )
+    if not result:
+        raise ApiNotFound("The username you entered is incorrect.")
+    result = result[0]
+    user_dn = result.get("user_id")
+    conn.close()
+    return user_dn

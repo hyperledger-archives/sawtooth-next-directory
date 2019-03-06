@@ -98,10 +98,10 @@ bin/stop
 By default, the data in the development environment is ephemeral.
 It will be lost when the application is stopped and restarted.
 
-To enable persistent data, use the -p flag:
+To enable persistent data, use the -c flag:
 
 ```bash
-bin/start -p
+bin/start -c
 ```
 
 To delete the persistent data, delete the related docker volumes:
@@ -185,6 +185,13 @@ Once that work is complete, the random key generation can be removed as well.
 In other words: It must be made obvious to a user when startup fails due to 
 missing keys.
 
+#### Configure SSL/TLS on NEXT
+
+To configure SSL/TLS on NEXT, visit our Sphinx Docs and navigate to the Configure SSL/TLS page.
+
+After following those steps, run the following command to run the containers with SSL/TLS enabled:
+
+```./bin/start -b -p```
 
 ## Testing
 

@@ -14,7 +14,7 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-import { all, call, fork, put } from 'redux-saga/effects';
+import { all, call, put, spawn } from 'redux-saga/effects';
 import { UserActions } from 'state';
 
 
@@ -68,7 +68,7 @@ export function * getUsers (api, action) {
   try {
     const { ids, summary } = action;
     if (ids.length > 0)
-      yield all(ids.map(id => fork(getUser, api, { id, summary })));
+      yield all(ids.map(id => spawn(getUser, api, { id, summary })));
   } catch (err) {
     console.error(err);
   }

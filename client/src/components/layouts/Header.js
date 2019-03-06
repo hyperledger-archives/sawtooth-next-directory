@@ -55,7 +55,7 @@ class Header extends Component {
 
 
   state = {
-    approverViewEnabled:     null,
+    approverViewEnabled:     false,
     globalMenuVisible:       false,
     notificationMenuVisible: false,
   };
@@ -66,13 +66,19 @@ class Header extends Component {
    * component. Add event listener to handle click outside menu.
    */
   componentDidMount () {
+    const {history} = this.props;
+    if ( history.location.pathname === '/approval/manage'){
+      this.setState({approverViewEnabled: true}
+      );
+    } else {
+      this.setState({
+        approverViewEnabled: !!storage.getViewState(),
+      });
+    }
     const { id, isSocketOpen, sendSocket } = this.props;
     document.addEventListener(
       'mousedown', this.handleClickOutside
     );
-    this.setState({
-      approverViewEnabled: !!storage.getViewState(),
-    });
     if (isSocketOpen('feed'))
       sendSocket('feed', { user_id: id });
   }
@@ -82,9 +88,21 @@ class Header extends Component {
    * Called whenever Redux state changes. On socket open, send
    * message to feed socket.
    * @param {object} prevProps Props before update
+   * @param {object} prevState State before update
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
+    const {history} = this.props;
+    if (history.location.pathname.includes('/approval')  &&
+    this.state.approverViewEnabled === false){
+      this.setState({approverViewEnabled: true}
+      );
+    }
+    if (history.location.pathname === '/'  &&
+    this.state.approverViewEnabled === true){
+      this.setState({approverViewEnabled: false}
+      );
+    }
     const { id, isAuthenticated, isSocketOpen, sendSocket } = this.props;
     if (prevProps.isAuthenticated !== isAuthenticated) {
       this.setState({
@@ -210,6 +228,36 @@ class Header extends Component {
     );
   }
 
+  /**
+   * Render aprrover view button
+   * @returns {JSX}
+   */
+  renderApprover = () => {
+
+    const { approverViewEnabled } = this.state;
+    return (
+      <Menu.Item id='next-header-global-menu-view-toggle'>
+        <MenuHeader as='h5'>
+          <Icon name='window maximize outline' color='red'/>
+          <MenuHeader.Content>
+            <span className= 'next-toggle-state-header'>
+                  Approver View:
+              <span className='next-toggle-state-label'>
+                {approverViewEnabled ? 'ON' : 'OFF'}
+              </span>
+            </span>
+            <Checkbox
+              id='next-approver-checkbox'
+              toggle
+              className='pull-right'
+              checked={approverViewEnabled}
+              onChange={this.toggleApproverView}/>
+          </MenuHeader.Content>
+        </MenuHeader>
+      </Menu.Item>
+    );
+  };
+
 
   /**
    * Render global dropdown menu
@@ -217,7 +265,6 @@ class Header extends Component {
    */
   renderGlobalMenu () {
     const { id, me } = this.props;
-    const { approverViewEnabled } = this.state;
 
     return (
       <div id='next-header-global-menu'>
@@ -234,28 +281,6 @@ class Header extends Component {
               </MenuHeader>
             </Menu.Item>
           }
-          <Menu.Item id='next-header-global-menu-view-toggle'>
-            <MenuHeader as='h5'>
-              <Icon name='window maximize outline' color='grey'/>
-              <MenuHeader.Content>
-                <span>
-                  Approver View:
-                  <span className='next-toggle-state-label'>
-                    {approverViewEnabled ? 'ON' : 'OFF'}
-                  </span>
-                </span>
-                <Checkbox
-                  slider
-                  className='pull-right'
-                  checked={approverViewEnabled}
-                  onChange={this.toggleApproverView}/>
-                <p>
-                  Approver View adjusts the default experience to
-                  enable role and pack approvals.
-                </p>
-              </MenuHeader.Content>
-            </MenuHeader>
-          </Menu.Item>
           <Menu.Item
             as={Link} to='/approval/manage'
             onClick={this.toggleGlobalMenu}>
@@ -297,7 +322,6 @@ class Header extends Component {
       approverViewEnabled,
       globalMenuVisible,
       notificationMenuVisible } = this.state;
-
     return (
       <header className='next-header' ref={this.setRef}>
         <LoadingBar className='next-global-loading-bar'/>
@@ -311,6 +335,12 @@ class Header extends Component {
             onClick={startAnimation}
             size='tiny'/>
         </div>
+        { me &&
+        <div className='next-render-approver'>
+          {this.renderApprover()}
+        </div>
+
+        }
         { me &&
         <div id='next-header-actions'>
           <div
