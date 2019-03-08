@@ -81,6 +81,10 @@ def setup_db(host, port, name):
         r.db(name).table("users").index_create("email").run(conn)
         r.db(name).table("users").index_create("name").run(conn)
 
+        LOGGER.info('Creating table: user_mapping')
+        r.db(name).table_create('user_mapping').run(conn)
+        r.db(name).table("users").index_create("next_id").run(conn)
+
         LOGGER.info('Creating table: sync_tracker')
         r.db(name).table_create('sync_tracker').run(conn)
 
