@@ -64,3 +64,8 @@ limitations under the License.
   font-size: .7em;
   margin-top: 15px;
 }
+
+#next-requester-packs-owner-list-container {
+  margin-bottom: 40px;
+  padding: 0 40px;
+}
