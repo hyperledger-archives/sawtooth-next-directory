@@ -75,7 +75,7 @@ def add_transaction(inbound_entry):
         elif inbound_entry["data_type"] == "group":
 
             role_id = data["relationship_id"]
-            next_id = str(uuid4)
+            next_id = str(uuid4())
             object_id = rbac.role.hash(next_id)
             address = rbac.role.address(object_id=object_id)
 

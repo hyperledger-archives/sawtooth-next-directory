@@ -149,11 +149,11 @@ async def fetch_all_user_resources(conn, start, limit):
     )
 
 
-def fetch_user_ids_by_manager(manager_id):
+def fetch_user_ids_by_manager(remote_id):
     """Fetch all users that have the same manager."""
     return (
         r.table("users")
-        .filter(lambda user: (manager_id == user["manager_id"]))
+        .filter(lambda user: (remote_id == user["manager_id"]))
         .get_field("user_id")
         .coerce_to("array")
     )
@@ -200,8 +200,15 @@ async def fetch_manager_chain(conn, user_id):
         if "manager_id" in user_object[0]:
             if user_object[0]["manager_id"]:
                 manager_id = user_object[0]["manager_id"]
-                manager_chain.append(manager_id)
-                user_id = manager_id
+                manager_object = await (
+                    r.db("rbac")
+                    .table("users")
+                    .filter({"remote_id": manager_id})
+                    .coerce_to("array")
+                    .run(conn)
+                )
+                manager_chain.append(manager_object[0]["user_id"])
+                user_id = manager_object[0]["user_id"]
             else:
                 break
         else:

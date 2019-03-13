@@ -16,7 +16,7 @@
 """
 
 USER_TRANSFORM = {
-    "remote_id": {"azure": "id", "ldap": "objectGUID"},
+    "remote_id": {"azure": "id", "ldap": "distinguishedName"},
     "deleted_date": {"azure": "deletedDateTime", "ldap": None},
     "account_enabled": {"azure": "accountEnabled", "ldap": None},
     "business_phones": {"azure": "businessPhones", "ldap": "telephoneNumber"},
