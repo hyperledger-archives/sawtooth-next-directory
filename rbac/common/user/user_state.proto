@@ -40,4 +40,7 @@ message User {
     string username = 7;
 
     int64 created_date = 8;
+
+    string distinguished_name = 9;
+
 }
