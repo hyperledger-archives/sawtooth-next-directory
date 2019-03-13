@@ -151,7 +151,7 @@ async def authorize(request):
                 conn.unbind()
 
                 token = generate_api_key(
-                    request.app.config.SECRET_KEY, auth_info.get("user_id")
+                    request.app.config.SECRET_KEY, auth_info.get("distinguished_name")
                 )
                 return utils.create_authorization_response(
                     token,

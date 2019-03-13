@@ -53,6 +53,15 @@ async def fetch_info_by_username(request):
         .run(conn)
     )
     if result:
+        if request.json.get("auth_source") == "ldap":
+            dn_lookup = (
+                await r.table("metadata")
+                .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
+                .limit(1)
+                .coerce_to("array")
+                .run(conn)
+            )
+            return dn_lookup[0]
         return result[0]
     # Auth record not found, check if the username exists
     result = (
@@ -119,7 +128,15 @@ async def fetch_dn_by_username(request):
     )
     if not result:
         raise ApiNotFound("The username you entered is incorrect.")
-    result = result[0]
-    user_dn = result.get("user_id")
+
+    dn_lookup = (
+        await r.table("metadata")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
+        .limit(1)
+        .coerce_to("array")
+        .run(conn)
+    )
+
+    user_dn = dn_lookup[0].get("distinguished_name")
     conn.close()
     return user_dn
