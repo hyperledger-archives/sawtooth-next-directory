@@ -26,8 +26,11 @@ from rbac.server.api import roles, utils
 from rbac.server.db import packs_query
 
 from rbac.server.db import db_utils
-
+from rbac.common.logs import get_default_logger
 PACKS_BP = Blueprint("packs")
+LOGGER = get_default_logger(__name__)
+
+
 
 
 @PACKS_BP.get("api/packs")
@@ -117,7 +120,9 @@ async def add_pack_member(request, pack_id):
 
     conn.close()
 
-    request.json["metadata"] = json_encode.dumps({"pack_id": pack_id})
+    request.json["metadata"] = ""
+    request.json["pack_id"] = pack_id
+    
     for role_id in pack_resource.get("roles"):
         await roles.add_role_member(request, role_id)
     return json({"pack_id": pack_id})

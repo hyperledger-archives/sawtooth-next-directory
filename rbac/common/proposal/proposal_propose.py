@@ -89,3 +89,4 @@ class ProposalPropose(ProposalMessage):
         store.opener = payload.signer.user_id
         store.created_date = payload.now
         store.metadata = message.metadata
+        store.pack_id = message.pack_id

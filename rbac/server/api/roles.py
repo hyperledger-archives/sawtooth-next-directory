@@ -26,6 +26,10 @@ from rbac.server.api import utils
 from rbac.server.db import roles_query
 
 from rbac.server.db import db_utils
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
+
 
 ROLES_BP = Blueprint("roles")
 
@@ -143,6 +147,7 @@ async def add_role_member(request, role_id):
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
+        pack_id=request.json.get("pack_id"),
         user_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
@@ -153,6 +158,7 @@ async def add_role_member(request, role_id):
         request.app.config.TIMEOUT,
         request.json.get("tracker") and True,
     )
+     
     if request.json.get("tracker"):
         return utils.create_tracker_response("batch_status", batch_status)
     return json({"proposal_id": proposal_id})
