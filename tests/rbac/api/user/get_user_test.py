@@ -35,7 +35,7 @@ def test_api_user_get_self():
     """ Test a user getting their self
     """
     user = helper.api.user.current
-    url = helper.api.user.get_url(user_id=user["user_id"])
+    url = helper.api.user.get_url(next_id=user["next_id"])
 
     # assert assert_api_get_requires_auth(url)
 
@@ -54,7 +54,7 @@ def test_api_user_get_other():
     """
     other = helper.api.user.current
     user = helper.api.user.current2
-    url = helper.api.user.get_url(user_id=other["user_id"])
+    url = helper.api.user.get_url(next_id=other["next_id"])
 
     # assert assert_api_get_requires_auth(url)
 

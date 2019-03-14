@@ -32,7 +32,7 @@ test('loginSuccess', () => {
   const isAuthenticated = true;
   const authData = {
     authorization: '',
-    user_id: '',
+    next_id: '',
   };
   const state = reducer(INITIAL_STATE,
     Actions.loginSuccess(isAuthenticated, authData));

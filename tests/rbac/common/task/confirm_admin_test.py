@@ -99,7 +99,7 @@ def test_create():
 
     status = Task().admin.confirm.new(
         signer_keypair=task_admin_key,
-        signer_user_id=task_admin.user_id,
+        signer_user_id=task_admin.next_id,
         message=message,
     )
 
@@ -116,7 +116,7 @@ def test_create():
     assert confirm.object_id == proposal.object_id
     assert confirm.related_id == proposal.related_id
     assert confirm.close_reason == reason
-    assert confirm.closer == task_admin.user_id
+    assert confirm.closer == task_admin.next_id
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
     assert Task().admin.exists(
         object_id=proposal.object_id, related_id=proposal.related_id

@@ -61,6 +61,6 @@ def test_create():
     assert isinstance(manager, protobuf.user_state_pb2.User)
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
-    assert proposal.object_id == user.user_id
-    assert proposal.related_id == manager.user_id
+    assert proposal.object_id == user.next_id
+    assert proposal.related_id == manager.next_id
     assert user.manager_id == ""

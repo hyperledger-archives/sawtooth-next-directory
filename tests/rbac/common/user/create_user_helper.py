@@ -29,12 +29,12 @@ class CreateUserTestHelper(UserTestData):
 
     def message(self):
         """Get a test data CreateUser message with a new keypair"""
-        user_id = self.id()
+        next_id = self.id()
         name = self.name()
         keypair = self.key()
-        user = User().make(user_id=user_id, name=name, key=keypair.public_key)
+        user = User().make(next_id=next_id, name=name, key=keypair.public_key)
         assert isinstance(user, protobuf.user_transaction_pb2.CreateUser)
-        assert user.user_id == user_id
+        assert user.next_id == next_id
         assert user.name == name
         assert user.key == keypair.public_key
         return user, keypair
@@ -52,15 +52,15 @@ class CreateUserTestHelper(UserTestData):
     def message_with_manager(self):
         """Get a test data CreateUser message for user and manager"""
         manager, manager_key = self.message()
-        user_id = self.id()
+        next_id = self.id()
         user_key = self.key()
         user = User().make(
-            user_id=user_id,
+            next_id=next_id,
             name=self.name(),
-            manager_id=manager.user_id,
+            manager_id=manager.next_id,
             key=user_key.public_key,
         )
-        assert manager.user_id == user.manager_id
+        assert manager.next_id == user.manager_id
         return user, user_key, manager, manager_key
 
     def create(self):
@@ -68,15 +68,15 @@ class CreateUserTestHelper(UserTestData):
         message, keypair = self.message()
 
         status = User().new(
-            signer_user_id=message.user_id, signer_keypair=keypair, message=message
+            signer_user_id=message.next_id, signer_keypair=keypair, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        user = User().get(object_id=message.user_id)
+        user = User().get(object_id=message.next_id)
 
-        assert user.user_id == message.user_id
+        assert user.next_id == message.next_id
         assert user.name == message.name
         return user, keypair
 
@@ -89,7 +89,7 @@ class CreateUserTestHelper(UserTestData):
         message = self.imports_message()
 
         status = User().imports.new(
-            signer_user_id=message.user_id,
+            signer_user_id=message.next_id,
             signer_keypair=signer_keypair,
             message=message,
         )
@@ -97,9 +97,9 @@ class CreateUserTestHelper(UserTestData):
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        user = User().get(object_id=message.user_id)
+        user = User().get(object_id=message.next_id)
 
-        assert user.user_id == message.user_id
+        assert user.next_id == message.next_id
         assert user.name == message.name
         return user
 
@@ -108,7 +108,7 @@ class CreateUserTestHelper(UserTestData):
         manager, manager_key = self.create()
 
         message, user_key = self.message()
-        message.manager_id = manager.user_id
+        message.manager_id = manager.next_id
 
         status = User().new(
             signer_user_id=message.manager_id,
@@ -119,11 +119,11 @@ class CreateUserTestHelper(UserTestData):
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        user = User().get(object_id=message.user_id)
+        user = User().get(object_id=message.next_id)
 
-        assert user.user_id == message.user_id
+        assert user.next_id == message.next_id
         assert user.name == message.name
-        assert user.manager_id == manager.user_id
+        assert user.manager_id == manager.next_id
         return user, user_key, manager, manager_key
 
     def create_with_grand_manager(self):
@@ -131,10 +131,10 @@ class CreateUserTestHelper(UserTestData):
         grandmgr, grandmgr_key = self.create()
 
         message, manager_key = self.message()
-        message.manager_id = grandmgr.user_id
+        message.manager_id = grandmgr.next_id
 
         status = User().new(
-            signer_user_id=grandmgr.user_id,
+            signer_user_id=grandmgr.next_id,
             signer_keypair=grandmgr_key,
             message=message,
         )
@@ -142,24 +142,24 @@ class CreateUserTestHelper(UserTestData):
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        manager = User().get(object_id=message.user_id)
-        assert manager.user_id == message.user_id
+        manager = User().get(object_id=message.next_id)
+        assert manager.next_id == message.next_id
         assert manager.name == message.name
-        assert manager.manager_id == grandmgr.user_id
+        assert manager.manager_id == grandmgr.next_id
 
         message, user_key = self.message()
-        message.manager_id = manager.user_id
+        message.manager_id = manager.next_id
 
         status = User().new(
-            signer_user_id=manager.user_id, signer_keypair=manager_key, message=message
+            signer_user_id=manager.next_id, signer_keypair=manager_key, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        user = User().get(object_id=message.user_id)
+        user = User().get(object_id=message.next_id)
 
-        assert user.user_id == message.user_id
+        assert user.next_id == message.next_id
         assert user.name == message.name
-        assert user.manager_id == manager.user_id
+        assert user.manager_id == manager.next_id
         return user, user_key, manager, manager_key, grandmgr, grandmgr_key

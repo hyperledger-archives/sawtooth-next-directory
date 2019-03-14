@@ -111,5 +111,4 @@ class ClientSync:
         """
         if isinstance(batch_list, BaseMessage):
             batch_list = batch_list.SerializeToString()
-
         return self._client.post("/batches", batch_list)

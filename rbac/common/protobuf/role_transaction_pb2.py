@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16role_transaction.proto\"\x80\x01\n\x14ProposeAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\x0f\n\x07pack_id\x18\x06 \x01(\t\"n\n\x13ProposeAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"m\n\x12ProposeAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"\x99\x01\n\nCreateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12\x10\n\x08metadata\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\"\xad\x01\n\x0bImportsRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12\x10\n\x08metadata\x18\x07 \x01(\t\x12\x11\n\tremote_id\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\"2\n\nUpdateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16role_transaction.proto\"\x80\x01\n\x14ProposeAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\x0f\n\x07pack_id\x18\x06 \x01(\t\"n\n\x13ProposeAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"m\n\x12ProposeAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"\x99\x01\n\nCreateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12\x10\n\x08metadata\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\"\xad\x01\n\x0bImportsRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12\x10\n\x08metadata\x18\x07 \x01(\t\x12\x11\n\tremote_id\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\"2\n\nUpdateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\tb\x06proto3')
 )
 
 
@@ -47,7 +47,7 @@ _PROPOSEADDROLEMEMBER = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='user_id', full_name='ProposeAddRoleMember.user_id', index=2,
+      name='next_id', full_name='ProposeAddRoleMember.next_id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -113,7 +113,7 @@ _PROPOSEADDROLEOWNER = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='user_id', full_name='ProposeAddRoleOwner.user_id', index=2,
+      name='next_id', full_name='ProposeAddRoleOwner.next_id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -172,7 +172,7 @@ _PROPOSEADDROLEADMIN = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='user_id', full_name='ProposeAddRoleAdmin.user_id', index=2,
+      name='next_id', full_name='ProposeAddRoleAdmin.next_id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,

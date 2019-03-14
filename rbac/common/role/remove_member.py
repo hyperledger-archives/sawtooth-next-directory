@@ -105,14 +105,14 @@ class RemoveRoleMember(ProposalMessage):
         ):
             raise ValueError(
                 "User {} is not a member of role {}".format(
-                    message.user_id, message.role_id
+                    message.next_id, message.role_id
                 )
             )
         if not addresser.role.owner.exists_in_state_inputs(
             inputs=payload.inputs,
             input_state=input_state,
             object_id=message.object_id,
-            related_id=payload.signer.user_id,
+            related_id=payload.signer.next_id,
         ):
             raise ValueError(
                 "Signer {} must be an owner of the role {}".format(
@@ -132,8 +132,8 @@ class RemoveRoleMember(ProposalMessage):
         store.related_id = self._get_related_id(message)
         store.open_reason = message.reason
         store.close_reason = ""
-        store.opener = payload.signer.user_id
-        store.closer = payload.signer.user_id
+        store.opener = payload.signer.next_id
+        store.closer = payload.signer.next_id
         store.created_date = payload.now
         store.closed_date = payload.now
 

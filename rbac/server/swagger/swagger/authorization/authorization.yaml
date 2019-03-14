@@ -15,7 +15,7 @@ post:
             properties:
               data:
                 properties:
-                  user_id:
+                  next_id:
                     $ref: '../definitions/definitions.yaml#/userId'
                   authorization:
                     $ref: '../definitions/definitions.yaml#/authToken'

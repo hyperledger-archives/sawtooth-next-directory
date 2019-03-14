@@ -37,7 +37,7 @@ FEED_BP = Blueprint("feed")
 async def feed(request, web_socket):
     """Socket feed enabling real-time notifications"""
     while True:
-        required_fields = ["user_id"]
+        required_fields = ["next_id"]
         recv = json.loads(await web_socket.recv())
 
         utils.validate_fields(required_fields, recv)
@@ -64,8 +64,8 @@ async def proposal_feed(request, web_socket, recv):
 
         if (
             proposal_resource["status"] == "OPEN"
-            and recv.get("user_id") in proposal_resource["approvers"]
+            and recv.get("next_id") in proposal_resource["approvers"]
         ):
             await web_socket.send(json.dumps({"open_proposal": proposal_resource}))
-        elif recv.get("user_id") == proposal_resource["opener"]:
+        elif recv.get("next_id") == proposal_resource["opener"]:
             await web_socket.send(json.dumps({"user_proposal": proposal_resource}))

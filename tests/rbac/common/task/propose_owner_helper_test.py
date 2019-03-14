@@ -66,4 +66,4 @@ def test_create():
     assert isinstance(user_key, Key)
     assert isinstance(task_owner_key, Key)
     assert proposal.object_id == task.task_id
-    assert proposal.related_id == user.user_id
+    assert proposal.related_id == user.next_id

@@ -82,7 +82,7 @@ def test_create():
     reason = helper.user.manager.propose.reason()
 
     status = User().manager.reject.new(
-        signer_user_id=manager.user_id,
+        signer_user_id=manager.next_id,
         signer_keypair=manager_key,
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,

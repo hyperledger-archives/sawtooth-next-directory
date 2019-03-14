@@ -82,8 +82,10 @@ class StateBase:
     @property
     def _name_id(self):
         """The attribute name for the object type
-        Example: ObjectType.USER -> 'user_id'
+        Example: ObjectType.Role -> 'role_id'
         Override where behavior deviates from this norm"""
+        if self._name_lower == "user":
+            return "next_id"
         return self._name_lower + "_id"
 
     @property
@@ -216,7 +218,7 @@ class StateBase:
 
     def _get_object_id(self, item):
         """Find the object_id attribute value on an object
-        Prefers object_id over specific IDs like user_id"""
+        Prefers object_id over specific IDs like next_id"""
         if hasattr(item, "object_id"):
             return getattr(item, "object_id")
         if hasattr(item, self._name_id):
@@ -228,7 +230,7 @@ class StateBase:
 
     def _get_related_id(self, item):
         """Find the related_id attribute value on an object
-        Prefers related_id over specific IDs like user_id"""
+        Prefers related_id over specific IDs like next_id"""
         if hasattr(item, "related_id"):
             return getattr(item, "related_id")
         if self._related_id != "related_id" and hasattr(item, self._related_id):

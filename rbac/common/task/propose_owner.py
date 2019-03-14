@@ -53,19 +53,19 @@ class ProposeAddTaskOwner(ProposalPropose):
         """Makes the appropriate inputs & output addresses for the message"""
         inputs, outputs = super().make_addresses(message, signer_user_id)
 
-        user_address = addresser.user.address(message.user_id)
+        user_address = addresser.user.address(message.next_id)
         inputs.add(user_address)
 
         task_address = addresser.task.address(message.task_id)
         inputs.add(task_address)
 
         relationship_address = addresser.task.owner.address(
-            message.task_id, message.user_id
+            message.task_id, message.next_id
         )
         inputs.add(relationship_address)
 
         proposal_address = self.address(
-            object_id=message.task_id, related_id=message.user_id
+            object_id=message.task_id, related_id=message.next_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -86,10 +86,10 @@ class ProposeAddTaskOwner(ProposalPropose):
             inputs=payload.inputs,
             input_state=input_state,
             object_id=message.task_id,
-            related_id=message.user_id,
+            related_id=message.next_id,
         ):
             raise ValueError(
                 "User {} is already an owner of task {}".format(
-                    message.user_id, message.task_id
+                    message.next_id, message.task_id
                 )
             )

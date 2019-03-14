@@ -16,7 +16,7 @@
 syntax = "proto3";
 
 message Signer {
-    string user_id = 1;
+    string next_id = 1;
     string public_key = 2;
 }
 

@@ -13,16 +13,10 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Queries for working with auth table."""
-
 import rethinkdb as r
 
-from rbac.common.key import KEY
 from rbac.common.logs import get_default_logger
-from rbac.common.crypto.keys import Key
-from rbac.common.crypto.secrets import encrypt_private_key
-from rbac.server.api import utils
 from rbac.server.api.errors import ApiNotFound
-
 from rbac.server.db import db_utils
 
 LOGGER = get_default_logger(__name__)
@@ -33,11 +27,11 @@ async def create_auth_entry(conn, auth_entry):
     return await r.table("auth").insert(auth_entry).run(conn)
 
 
-async def fetch_info_by_user_id(conn, user_id):
-    """Get user info from auth table for specific user_id."""
-    auth_info = await r.table("auth").get(user_id).run(conn)
+async def fetch_info_by_user_id(conn, next_id):
+    """Get user info from auth table for specific next_id."""
+    auth_info = await r.table("auth").get(next_id).run(conn)
     if not auth_info:
-        raise ApiNotFound("No user with id '{}' exists.".format(user_id))
+        raise ApiNotFound("No user with id '{}' exists.".format(next_id))
     return auth_info
 
 
@@ -71,27 +65,21 @@ async def fetch_info_by_username(request):
     result = result[0]
 
     # Generate and store key and auth record first time a user logs in
-    user_id = result.get("user_id")
-    user_key = Key()
-
-    batch_list = KEY.batch_list(
-        signer_keypair=user_key,
-        signer_user_id=user_id,
-        user_id=user_id,
-        key_id=user_key.public_key,
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    next_id = result.get("next_id")
+    user_map = (
+        await r.table("user_mapping")
+        .filter(lambda doc: (doc["next_id"].match("(?i)^" + next_id + "$")))
+        .limit(1)
+        .coerce_to("array")
+        .run(conn)
     )
 
-    encrypted_private_key = encrypt_private_key(
-        request.app.config.AES_KEY, user_key.public_key, user_key.private_key_bytes
-    )
     auth_entry = {
-        "user_id": user_id,
+        "next_id": next_id,
         "username": result.get("username"),
         "email": result.get("email"),
-        "encrypted_private_key": encrypted_private_key,
+        "encrypted_private_key": user_map[0]["encrypted_key"],
+        "public_key": user_map[0]["public_key"],
     }
     await r.table("auth").insert(auth_entry).run(conn)
 

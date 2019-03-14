@@ -27,9 +27,9 @@ class UserTestHelper(UserTestData, BaseApiHelper):
         super().__init__()
         self.create = CreateUserTestHelper()
 
-    def get_url(self, user_id):
+    def get_url(self, next_id):
         """ User get endpoint """
-        return self.url_base + "/api/users/{}".format(user_id)
+        return self.url_base + "/api/users/{}".format(next_id)
 
     @property
     def list_url(self):

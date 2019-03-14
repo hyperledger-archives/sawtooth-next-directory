@@ -80,16 +80,16 @@ class TestCryptoSecrets(TestAssertions):
         """Test that we can encrypt an AES key using a keypair"""
         aes_key = self.test_generate_aes_key()
         user_key = Key()
-        user_id = user_key.public_key
+        next_id = user_key.public_key
         encrypted = encrypt_private_key(
-            aes_key=aes_key, user_id=user_id, private_key=user_key.private_key
+            aes_key=aes_key, next_id=next_id, private_key=user_key.private_key
         )
-        return encrypted, aes_key, user_key, user_id
+        return encrypted, aes_key, user_key, next_id
 
     def test_decrypt_private_key(self):
         """Test that we can decrypt an AES key using a keypair"""
-        encrypted, aes_key, user_key, user_id = self.test_encrypt_private_key()
+        encrypted, aes_key, user_key, next_id = self.test_encrypt_private_key()
         decrypted = decrypt_private_key(
-            aes_key=aes_key, user_id=user_id, encrypted_private_key=encrypted
+            aes_key=aes_key, next_id=next_id, encrypted_private_key=encrypted
         )
         self.assertEqual(user_key.private_key, decrypted.decode("ascii"))

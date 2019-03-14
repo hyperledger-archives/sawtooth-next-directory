@@ -38,7 +38,7 @@ def test_api_propose_role_member():
     role = helper.api.role.create.new(user=owner)
     user = helper.api.user.current2
     url = helper.api.role.member.propose.url(role_id=role["id"])
-    data = {"id": user["user_id"]}
+    data = {"id": user["next_id"]}
     assert assert_api_post_requires_auth(url=url, json=data)
     response = requests.post(
         url=url, headers={"Authorization": user["token"]}, json=data
@@ -51,8 +51,8 @@ def test_api_propose_role_member():
     assert proposal["status"] == "OPEN"
     assert proposal["type"] == "ADD_ROLE_MEMBER"
     assert proposal["object"] == role["id"]
-    assert proposal["target"] == user["user_id"]
-    assert proposal["opener"] == user["user_id"]
+    assert proposal["target"] == user["next_id"]
+    assert proposal["opener"] == user["next_id"]
 
 
 @pytest.mark.api

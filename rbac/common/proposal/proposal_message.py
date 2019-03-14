@@ -62,15 +62,15 @@ class ProposalMessage(BaseMessage):
             input_state=input_state,
             store=store,
         )
-        if hasattr(message, "user_id") and not addresser.user.exists_in_state_inputs(
+        if hasattr(message, "next_id") and not addresser.user.exists_in_state_inputs(
             inputs=payload.inputs,
             input_state=input_state,
-            object_id=getattr(message, "user_id"),
+            object_id=getattr(message, "next_id"),
             skip_if_not_in_inputs=True,
         ):
             raise ValueError(
                 "User with id {} does not exist in state".format(
-                    getattr(message, "user_id")
+                    getattr(message, "next_id")
                 )
             )
         if hasattr(message, "role_id") and not addresser.role.exists_in_state_inputs(

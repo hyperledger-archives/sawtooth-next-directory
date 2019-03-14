@@ -56,9 +56,9 @@ class CreateTaskTestHelper:
         """Get a test data CreateTask message"""
         task_id = self.id()
         name = self.name()
-        user_id = helper.user.id()
+        next_id = helper.user.id()
         message = Task().make(
-            task_id=task_id, name=name, owners=[user_id], admins=[user_id]
+            task_id=task_id, name=name, owners=[next_id], admins=[next_id]
         )
         assert isinstance(message, protobuf.task_transaction_pb2.CreateTask)
         assert message.task_id == task_id
@@ -71,11 +71,11 @@ class CreateTaskTestHelper:
         name = self.name()
         user, keypair = helper.user.create()
         message = Task().make(
-            task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
+            task_id=task_id, name=name, owners=[user.next_id], admins=[user.next_id]
         )
 
         status = Task().new(
-            signer_keypair=keypair, signer_user_id=user.user_id, message=message
+            signer_keypair=keypair, signer_user_id=user.next_id, message=message
         )
 
         assert len(status) == 1
@@ -85,6 +85,6 @@ class CreateTaskTestHelper:
 
         assert task.task_id == message.task_id
         assert task.name == message.name
-        assert Task().owner.exists(object_id=task.task_id, related_id=user.user_id)
-        assert Task().admin.exists(object_id=task.task_id, related_id=user.user_id)
+        assert Task().owner.exists(object_id=task.task_id, related_id=user.next_id)
+        assert Task().admin.exists(object_id=task.task_id, related_id=user.next_id)
         return task, user, keypair

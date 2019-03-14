@@ -32,17 +32,17 @@ LOGGER = get_default_logger(__name__)
 def test_make():
     """ Test making the message
     """
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     role_id = helper.role.id()
     reason = helper.proposal.reason()
     proposal_id = addresser.proposal.unique_id()
     message = Role().member.remove.make(
-        proposal_id=proposal_id, object_id=role_id, related_id=user_id, reason=reason
+        proposal_id=proposal_id, object_id=role_id, related_id=next_id, reason=reason
     )
     assert isinstance(message, protobuf.proposal_transaction_pb2.RemovalProposal)
     assert message.proposal_id == proposal_id
     assert message.object_id == role_id
-    assert message.related_id == user_id
+    assert message.related_id == next_id
     assert message.reason == reason
 
 
@@ -51,17 +51,17 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses():
     """Test making the message addresses"""
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     role_id = helper.role.id()
     proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     signer_user_id = helper.user.id()
-    relationship_address = Role().member.address(role_id, user_id)
-    proposal_address = Role().member.remove.address(role_id, user_id)
+    relationship_address = Role().member.address(role_id, next_id)
+    proposal_address = Role().member.remove.address(role_id, next_id)
     role_owner_address = Role().owner.address(role_id, signer_user_id)
 
     message = Role().member.remove.make(
-        proposal_id=proposal_id, object_id=role_id, related_id=user_id, reason=reason
+        proposal_id=proposal_id, object_id=role_id, related_id=next_id, reason=reason
     )
 
     inputs, outputs = Role().member.remove.make_addresses(
@@ -86,7 +86,7 @@ def test_new():
 
     status = Role().member.confirm.new(
         signer_keypair=role_owner_key,
-        signer_user_id=role_owner.user_id,
+        signer_user_id=role_owner.next_id,
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -109,7 +109,7 @@ def test_new():
 
     status2 = Role().member.remove.new(
         signer_keypair=role_owner_key,
-        signer_user_id=role_owner.user_id,
+        signer_user_id=role_owner.next_id,
         proposal_id=proposal_id,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -132,8 +132,8 @@ def test_new():
     assert removal.related_id == proposal.related_id
     assert removal.open_reason == reason
     assert removal.close_reason == ""
-    assert removal.opener == role_owner.user_id
-    assert removal.closer == role_owner.user_id
+    assert removal.opener == role_owner.next_id
+    assert removal.closer == role_owner.next_id
     assert removal.status == protobuf.proposal_state_pb2.Proposal.REMOVED
 
     assert Role().member.not_exists(

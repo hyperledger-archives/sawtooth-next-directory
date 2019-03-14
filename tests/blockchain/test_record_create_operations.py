@@ -47,7 +47,7 @@ class TestUserOperations(unittest.TestCase):
                 key=self.user_key,
                 name=self.username,
                 username=self.username,
-                user_id=self.user_key.public_key,
+                next_id=self.user_key.public_key,
             )[0]["status"],
             "COMMITTED",
         )

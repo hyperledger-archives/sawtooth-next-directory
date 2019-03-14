@@ -61,7 +61,7 @@ class MessagePayload:
 
     @property
     def signer(self):
-        """ The signer of the message (user_id, public_key) """
+        """ The signer of the message (next_id, public_key) """
         return self._signer
 
     @property
@@ -82,10 +82,10 @@ def get_message_type_name(message_type):
     return None
 
 
-def make_signer(user_id, public_key):
+def make_signer(next_id, public_key):
     """Make a signer object
     """
-    return Signer(user_id=user_id, public_key=public_key)
+    return Signer(next_id=next_id, public_key=public_key)
 
 
 def make_payload(message, message_type, inputs, outputs, signer):

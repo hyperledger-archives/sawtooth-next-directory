@@ -60,24 +60,24 @@ class ProposeTaskAdminTestHelper:
         message = Task().admin.propose.make(
             proposal_id=proposal_id,
             task_id=task.task_id,
-            user_id=user.user_id,
+            next_id=user.next_id,
             reason=reason,
             metadata=None,
         )
 
         status = Task().admin.propose.new(
             signer_keypair=user_key,
-            signer_user_id=user.user_id,
+            signer_user_id=user.next_id,
             message=message,
             object_id=task.task_id,
-            related_id=user.user_id,
+            related_id=user.next_id,
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         proposal = Task().admin.propose.get(
-            object_id=task.task_id, related_id=user.user_id
+            object_id=task.task_id, related_id=user.next_id
         )
 
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -87,7 +87,7 @@ class ProposeTaskAdminTestHelper:
         )
         assert proposal.proposal_id == proposal_id
         assert proposal.object_id == task.task_id
-        assert proposal.related_id == user.user_id
-        assert proposal.opener == user.user_id
+        assert proposal.related_id == user.next_id
+        assert proposal.opener == user.next_id
         assert proposal.open_reason == reason
         return proposal, task, task_owner, task_owner_key, user, user_key

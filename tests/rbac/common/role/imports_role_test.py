@@ -34,17 +34,17 @@ def test_make():
     """Test making a message"""
     name = helper.role.name()
     role_id = helper.role.id()
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     message = Role().imports.make(
-        role_id=role_id, name=name, owners=[user_id], admins=[user_id]
+        role_id=role_id, name=name, owners=[next_id], admins=[next_id]
     )
     assert isinstance(message, protobuf.role_transaction_pb2.ImportsRole)
     assert isinstance(message.role_id, str)
     assert isinstance(message.name, str)
     assert message.role_id == role_id
     assert message.name == name
-    assert message.owners == [user_id]
-    assert message.admins == [user_id]
+    assert message.owners == [next_id]
+    assert message.admins == [next_id]
 
 
 @pytest.mark.library
@@ -55,13 +55,13 @@ def test_make_addresses():
     name = helper.role.name()
     role_id = helper.role.id()
     role_address = Role().address(role_id)
-    user_id = helper.user.id()
-    user_address = User().address(user_id)
+    next_id = helper.user.id()
+    user_address = User().address(next_id)
     signer_user_id = helper.user.id()
-    owner_address = Role().owner.address(role_id, user_id)
-    admin_address = Role().admin.address(role_id, user_id)
+    owner_address = Role().owner.address(role_id, next_id)
+    admin_address = Role().admin.address(role_id, next_id)
     message = Role().imports.make(
-        role_id=role_id, name=name, owners=[user_id], admins=[user_id]
+        role_id=role_id, name=name, owners=[next_id], admins=[next_id]
     )
 
     inputs, outputs = Role().imports.make_addresses(
@@ -89,12 +89,12 @@ def test_create():
 
     status = Role().imports.new(
         signer_keypair=keypair,
-        signer_user_id=user.user_id,
+        signer_user_id=user.next_id,
         role_id=role_id,
         name=name,
-        owners=[user.user_id],
-        admins=[user.user_id],
-        members=[user.user_id],
+        owners=[user.next_id],
+        admins=[user.next_id],
+        members=[user.next_id],
     )
 
     assert len(status) == 1
@@ -104,6 +104,6 @@ def test_create():
 
     assert role.role_id == role_id
     assert role.name == name
-    assert Role().owner.exists(object_id=role.role_id, related_id=user.user_id)
-    assert Role().admin.exists(object_id=role.role_id, related_id=user.user_id)
-    assert Role().member.exists(object_id=role.role_id, related_id=user.user_id)
+    assert Role().owner.exists(object_id=role.role_id, related_id=user.next_id)
+    assert Role().admin.exists(object_id=role.role_id, related_id=user.next_id)
+    assert Role().member.exists(object_id=role.role_id, related_id=user.next_id)

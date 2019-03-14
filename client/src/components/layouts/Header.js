@@ -81,7 +81,7 @@ class Header extends Component {
       'mousedown', this.handleClickOutside
     );
     if (isSocketOpen('feed'))
-      sendSocket('feed', { user_id: id });
+      sendSocket('feed', { next_id: id });
   }
 
 
@@ -113,7 +113,7 @@ class Header extends Component {
     }
     if (prevProps.isSocketOpen('feed') !== isSocketOpen('feed') &&
       isSocketOpen('feed'))
-      sendSocket('feed', { user_id: id });
+      sendSocket('feed', { next_id: id });
   }
 
 

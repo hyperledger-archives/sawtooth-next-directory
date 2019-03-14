@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Implementation of the Role-Admin relationship
-Usage: rbac.role.admin.exists(role_id, user_id)
+Usage: rbac.role.admin.exists(role_id, next_id)
 """
 
 from rbac.common import addresser
@@ -28,7 +28,7 @@ LOGGER = get_default_logger(__name__)
 
 class AdminRelationship(BaseRelationship):
     """Implementation of the Role-Admin relationship
-    Usage: rbac.role.admin.exists(role_id, user_id)
+    Usage: rbac.role.admin.exists(role_id, next_id)
     """
 
     def __init__(self):

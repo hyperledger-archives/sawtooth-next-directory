@@ -98,13 +98,13 @@ async def authorize(request):
         if auth_info.get("hashed_password") is None:
             if request.app.config.DEMO_MODE:
                 token = generate_api_key(
-                    request.app.config.SECRET_KEY, auth_info.get("user_id")
+                    request.app.config.SECRET_KEY, auth_info.get("next_id")
                 )
                 return utils.create_authorization_response(
                     token,
                     {
                         "message": "Authorization (demo mode) successful",
-                        "user_id": auth_info.get("user_id"),
+                        "next_id": auth_info.get("next_id"),
                     },
                 )
             if not email:
@@ -116,13 +116,13 @@ async def authorize(request):
             raise ApiUnauthorized("The password you entered is incorrect.")
 
         token = generate_api_key(
-            request.app.config.SECRET_KEY, auth_info.get("user_id")
+            request.app.config.SECRET_KEY, auth_info.get("next_id")
         )
         return utils.create_authorization_response(
             token,
             {
                 "message": "Authorization successful",
-                "user_id": auth_info.get("user_id"),
+                "next_id": auth_info.get("next_id"),
             },
         )
 
@@ -153,13 +153,13 @@ async def authorize(request):
                 conn.unbind()
 
                 token = generate_api_key(
-                    request.app.config.SECRET_KEY, auth_info.get("user_id")
+                    request.app.config.SECRET_KEY, auth_info.get("next_id")
                 )
                 return utils.create_authorization_response(
                     token,
                     {
                         "message": "Authorization successful",
-                        "user_id": auth_info.get("user_id"),
+                        "next_id": auth_info.get("next_id"),
                     },
                 )
             raise ApiBadRequest(LDAP_ERR_MESSAGES["default"])

@@ -35,13 +35,13 @@ def test_manager_not_in_state():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
-        new_manager_id=manager.user_id,
+        next_id=user.next_id,
+        new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
     )
     status = User().manager.propose.new(
-        signer_user_id=user.user_id, signer_keypair=user_key, message=message
+        signer_user_id=user.next_id, signer_keypair=user_key, message=message
     )
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
@@ -57,14 +57,14 @@ def test_user_not_in_state():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
-        new_manager_id=manager.user_id,
+        next_id=user.next_id,
+        new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
     )
 
     status = User().manager.propose.new(
-        signer_user_id=user.user_id, signer_keypair=user_key, message=message
+        signer_user_id=user.next_id, signer_keypair=user_key, message=message
     )
 
     assert len(status) == 1
@@ -80,14 +80,14 @@ def test_user_proposes_manager_change():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
-        new_manager_id=manager.user_id,
+        next_id=user.next_id,
+        new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
     )
 
     status = User().manager.propose.new(
-        signer_user_id=user.user_id, signer_keypair=user_key, message=message
+        signer_user_id=user.next_id, signer_keypair=user_key, message=message
     )
 
     assert len(status) == 1
@@ -104,14 +104,14 @@ def test_another_proposes_manager_change():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
-        new_manager_id=manager.user_id,
+        next_id=user.next_id,
+        new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
     )
 
     status = User().manager.propose.new(
-        signer_user_id=other.user_id, signer_keypair=other_key, message=message
+        signer_user_id=other.next_id, signer_keypair=other_key, message=message
     )
 
     assert len(status) == 1
@@ -129,14 +129,14 @@ def test_other_propose_manager_has_no_manager():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
-        new_manager_id=manager.user_id,
+        next_id=user.next_id,
+        new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
     )
 
     status = User().manager.propose.new(
-        signer_user_id=other.user_id, signer_keypair=other_key, message=message
+        signer_user_id=other.next_id, signer_keypair=other_key, message=message
     )
 
     assert len(status) == 1
@@ -153,14 +153,14 @@ def test_manager_already_is_manager():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
-        new_manager_id=manager.user_id,
+        next_id=user.next_id,
+        new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
     )
 
     status = User().manager.propose.new(
-        signer_user_id=manager.user_id, signer_keypair=manager_key, message=message
+        signer_user_id=manager.next_id, signer_keypair=manager_key, message=message
     )
 
     assert len(status) == 1
@@ -177,14 +177,14 @@ def test_proposed_manager_is_self():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
-        new_manager_id=user.user_id,
+        next_id=user.next_id,
+        new_manager_id=user.next_id,
         reason=reason,
         metadata=None,
     )
 
     status = User().manager.propose.new(
-        signer_user_id=user.user_id, signer_keypair=manager_key, message=message
+        signer_user_id=user.next_id, signer_keypair=manager_key, message=message
     )
 
     assert len(status) == 1
@@ -200,14 +200,14 @@ def test_proposed_manager_is_already_proposed():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        user_id=proposal.object_id,
-        new_manager_id=manager.user_id,
+        next_id=proposal.object_id,
+        new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
     )
 
     status = User().manager.propose.new(
-        signer_user_id=manager.user_id, signer_keypair=manager_key, message=message
+        signer_user_id=manager.next_id, signer_keypair=manager_key, message=message
     )
 
     assert len(status) == 1

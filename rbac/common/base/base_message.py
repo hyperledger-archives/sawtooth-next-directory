@@ -108,10 +108,14 @@ class BaseMessage(AddressBase):
     @property
     def _name_id(self):
         """The attribute name for the object type
-        Example: ObjectType.USER -> 'user_id'
+        Example: ObjectType.ROLE -> 'role_id'
         Override where behavior deviates from this norm"""
         if self.message_object_type == self.object_type:
+            if self._name_lower == "user":
+                return "next_id"
             return self._name_lower + "_id"
+        if self.message_object_type.name.lower() == "user":
+            return "next_id"
         return self.message_object_type.name.lower() + "_id"
 
     @property
@@ -124,6 +128,8 @@ class BaseMessage(AddressBase):
             return "related_id"
         if self.message_related_type == self.message_object_type:
             return self.message_relationship_type.name.lower() + "_id"
+        if self.message_related_type.name.lower() == "user":
+            return "next_id"
         return self.message_related_type.name.lower() + "_id"
 
     @property
@@ -292,7 +298,7 @@ class BaseMessage(AddressBase):
         """Common state validation for all messages"""
         if payload.signer.public_key is None:
             raise ValueError("Signer public key is required")
-        if payload.signer.user_id is None:
+        if payload.signer.next_id is None:
             raise ValueError("Signer user id is required")
         if message is None:
             raise ValueError("Message is required")
@@ -333,7 +339,7 @@ class BaseMessage(AddressBase):
             )
         self.validate(
             message=message,
-            signer=Signer(user_id=signer_user_id, public_key=signer_keypair.public_key),
+            signer=Signer(next_id=signer_user_id, public_key=signer_keypair.public_key),
         )
 
         message_type = self.message_type
@@ -588,7 +594,7 @@ class BaseMessage(AddressBase):
     def authenticate_state(self, message, payload, input_state):
         """Check to see if the signer of the transaction is
         eligible to perform the action"""
-        # signer_address = addresser.user.address(object_id=payload.signer.user_id)
+        # signer_address = addresser.user.address(object_id=payload.signer.next_id)
         # key_address = addresser.key.address(object_id=payload.signer.public_key)
         # if key_address not in payload.inputs:
         #    raise ValueError(

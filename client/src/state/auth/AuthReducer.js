@@ -26,7 +26,7 @@ export const request = (state) =>
 export const success = (state, { isAuthenticated, payload }) => {
   payload.user ?
     storage.setUserId(payload.user.id) :
-    storage.setUserId(payload.user_id);
+    storage.setUserId(payload.next_id);
   return state.merge({
     isAuthenticated,
     fetching: false,

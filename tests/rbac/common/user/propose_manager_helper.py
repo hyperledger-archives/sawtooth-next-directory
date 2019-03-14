@@ -55,21 +55,21 @@ class ProposeManagerTestHelper:
         reason = helper.user.reason()
         message = User().manager.propose.make(
             proposal_id=proposal_id,
-            user_id=user.user_id,
-            new_manager_id=manager.user_id,
+            next_id=user.next_id,
+            new_manager_id=manager.next_id,
             reason=reason,
             metadata=None,
         )
 
         status = User().manager.propose.new(
-            signer_user_id=user.user_id, signer_keypair=user_key, message=message
+            signer_user_id=user.next_id, signer_keypair=user_key, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         proposal = User().manager.propose.get(
-            object_id=user.user_id, related_id=manager.user_id
+            object_id=user.next_id, related_id=manager.next_id
         )
 
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -78,8 +78,8 @@ class ProposeManagerTestHelper:
             == protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
         )
         assert proposal.proposal_id == proposal_id
-        assert proposal.object_id == user.user_id
-        assert proposal.related_id == manager.user_id
-        assert proposal.opener == user.user_id
+        assert proposal.object_id == user.next_id
+        assert proposal.related_id == manager.next_id
+        assert proposal.opener == user.next_id
         assert proposal.open_reason == reason
         return proposal, user, user_key, manager, manager_key
