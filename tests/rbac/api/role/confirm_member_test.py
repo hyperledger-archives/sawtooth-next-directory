@@ -43,5 +43,5 @@ def test_api_confirm_add_role_member():
     assert confirmed["type"] == "ADD_ROLE_MEMBER"
     assert confirmed["object"] == proposal["object"]
     assert confirmed["target"] == proposal["target"]
-    assert confirmed["closer"] == owner["user_id"]
+    assert confirmed["closer"] == owner["next_id"]
     assert confirmed["close_reason"] == reason

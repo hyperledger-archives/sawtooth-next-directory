@@ -69,11 +69,11 @@ class AddKey(BaseMessage):
         key_address = self.address(object_id=message.key_id)
         inputs.add(key_address)
 
-        user_address = addresser.user.address(object_id=message.user_id)
+        user_address = addresser.user.address(object_id=message.next_id)
         inputs.add(user_address)
 
         user_key_address = addresser.user.key.address(
-            object_id=message.user_id, related_id=message.key_id
+            object_id=message.next_id, related_id=message.key_id
         )
         inputs.add(user_key_address)
 
@@ -98,17 +98,17 @@ class AddKey(BaseMessage):
             store=store,
         )
         if not addresser.user.exists_in_state_inputs(
-            inputs=payload.inputs, input_state=input_state, object_id=message.user_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.next_id
         ):
             raise ValueError(
-                "User with id {} does not exists in state".format(message.user_id)
+                "User with id {} does not exists in state".format(message.next_id)
             )
 
     def apply_update(self, message, payload, object_id, related_id, output_state):
         """ Stores additional data and relationships
         """
         addresser.user.key.create_relationship(
-            object_id=message.user_id,
+            object_id=message.next_id,
             related_id=message.key_id,
             outputs=payload.outputs,
             output_state=output_state,

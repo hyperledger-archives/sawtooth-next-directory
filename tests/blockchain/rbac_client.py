@@ -34,14 +34,14 @@ class RbacClient(object):
         self._client = RestClient(base_url=url)
         self._key = key
 
-    def create_user(self, key, name, username, user_id, manager_id=None):
+    def create_user(self, key, name, username, next_id, manager_id=None):
         """Create a new user."""
         batch_list = User().batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             name=name,
             username=username,
-            user_id=user_id,
+            next_id=next_id,
             metadata=uuid4().hex,
             manager_id=manager_id,
         )
@@ -65,14 +65,14 @@ class RbacClient(object):
         return self._client.get_statuses(batch_ids, wait=10)
 
     def propose_update_manager(
-        self, key, proposal_id, user_id, new_manager_id, reason, metadata
+        self, key, proposal_id, next_id, new_manager_id, reason, metadata
     ):
         """Propose an update of user's manager."""
         batch_list = User().manager.propose.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
-            user_id=user_id,
+            next_id=next_id,
             new_manager_id=new_manager_id,
             reason=reason,
             metadata=metadata,
@@ -81,28 +81,28 @@ class RbacClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def confirm_update_manager(self, key, proposal_id, reason, user_id, manager_id):
+    def confirm_update_manager(self, key, proposal_id, reason, next_id, manager_id):
         """Confirm the update of a user's manager."""
         batch_list = User().manager.confirm.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             reason=reason,
-            object_id=user_id,
+            object_id=next_id,
             related_id=manager_id,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def reject_update_manager(self, key, proposal_id, reason, user_id, manager_id):
+    def reject_update_manager(self, key, proposal_id, reason, next_id, manager_id):
         """Reject the update of a user's manager."""
         batch_list = User().manager.reject.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             reason=reason,
-            object_id=user_id,
+            object_id=next_id,
             related_id=manager_id,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
@@ -110,7 +110,7 @@ class RbacClient(object):
         return self._client.get_statuses(batch_ids, wait=10)
 
     def propose_add_role_admins(
-        self, key, proposal_id, role_id, user_id, reason, metadata
+        self, key, proposal_id, role_id, next_id, reason, metadata
     ):
         """Propose adding admin to role."""
         batch_list = Role().admin.propose.batch_list(
@@ -118,7 +118,7 @@ class RbacClient(object):
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             role_id=role_id,
-            user_id=user_id,
+            next_id=next_id,
             reason=reason,
             metadata=metadata,
         )
@@ -126,28 +126,28 @@ class RbacClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def confirm_add_role_admins(self, key, proposal_id, role_id, user_id, reason):
+    def confirm_add_role_admins(self, key, proposal_id, role_id, next_id, reason):
         """Confirm addition of admin to role."""
         batch_list = Role().admin.confirm.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def reject_add_role_admins(self, key, proposal_id, role_id, user_id, reason):
+    def reject_add_role_admins(self, key, proposal_id, role_id, next_id, reason):
         """Reject addition of admin to role."""
         batch_list = Role().admin.reject.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
@@ -155,7 +155,7 @@ class RbacClient(object):
         return self._client.get_statuses(batch_ids, wait=10)
 
     def propose_add_role_owners(
-        self, key, proposal_id, role_id, user_id, reason, metadata
+        self, key, proposal_id, role_id, next_id, reason, metadata
     ):
         """Propose adding owner to role."""
         batch_list = Role().owner.propose.batch_list(
@@ -163,7 +163,7 @@ class RbacClient(object):
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             role_id=role_id,
-            user_id=user_id,
+            next_id=next_id,
             reason=reason,
             metadata=metadata,
         )
@@ -171,28 +171,28 @@ class RbacClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def confirm_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
+    def confirm_add_role_owners(self, key, proposal_id, role_id, next_id, reason):
         """Confirm addition of owner to role."""
         batch_list = Role().owner.confirm.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def reject_add_role_owners(self, key, proposal_id, role_id, user_id, reason):
+    def reject_add_role_owners(self, key, proposal_id, role_id, next_id, reason):
         """Reject addition of role owner."""
         batch_list = Role().owner.reject.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
@@ -200,7 +200,7 @@ class RbacClient(object):
         return self._client.get_statuses(batch_ids, wait=10)
 
     def propose_add_role_members(
-        self, key, proposal_id, role_id, user_id, reason, metadata
+        self, key, proposal_id, role_id, next_id, reason, metadata
     ):
         """Propose adding role member."""
         batch_list = Role().member.propose.batch_list(
@@ -208,7 +208,7 @@ class RbacClient(object):
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             role_id=role_id,
-            user_id=user_id,
+            next_id=next_id,
             reason=reason,
             metadata=metadata,
         )
@@ -216,28 +216,28 @@ class RbacClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def confirm_add_role_members(self, key, proposal_id, role_id, user_id, reason):
+    def confirm_add_role_members(self, key, proposal_id, role_id, next_id, reason):
         """Confirm addition of role member."""
         batch_list = Role().member.confirm.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def reject_add_role_members(self, key, proposal_id, role_id, user_id, reason):
+    def reject_add_role_members(self, key, proposal_id, role_id, next_id, reason):
         """Reject addition of role member."""
         batch_list = Role().member.reject.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=role_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
@@ -305,7 +305,7 @@ class RbacClient(object):
         return self._client.get_statuses(batch_ids, wait=10)
 
     def propose_add_task_admins(
-        self, key, proposal_id, task_id, user_id, reason, metadata
+        self, key, proposal_id, task_id, next_id, reason, metadata
     ):
         """Propose adding a task admin."""
         batch_list = Task().admin.propose.batch_list(
@@ -313,7 +313,7 @@ class RbacClient(object):
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             task_id=task_id,
-            user_id=user_id,
+            next_id=next_id,
             reason=reason,
             metadata=metadata,
         )
@@ -321,28 +321,28 @@ class RbacClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def confirm_add_task_admins(self, key, proposal_id, task_id, user_id, reason):
+    def confirm_add_task_admins(self, key, proposal_id, task_id, next_id, reason):
         """Confirm addition of task admin."""
         batch_list = Task().admin.confirm.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def reject_add_task_admins(self, key, proposal_id, task_id, user_id, reason):
+    def reject_add_task_admins(self, key, proposal_id, task_id, next_id, reason):
         """Reject addition of task admin."""
         batch_list = Task().admin.reject.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
@@ -350,7 +350,7 @@ class RbacClient(object):
         return self._client.get_statuses(batch_ids, wait=10)
 
     def propose_add_task_owners(
-        self, key, proposal_id, task_id, user_id, reason, metadata
+        self, key, proposal_id, task_id, next_id, reason, metadata
     ):
         """Propose adding a task owner."""
         batch_list = Task().owner.propose.batch_list(
@@ -358,7 +358,7 @@ class RbacClient(object):
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             task_id=task_id,
-            user_id=user_id,
+            next_id=next_id,
             reason=reason,
             metadata=metadata,
         )
@@ -366,28 +366,28 @@ class RbacClient(object):
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def confirm_add_task_owners(self, key, proposal_id, task_id, user_id, reason):
+    def confirm_add_task_owners(self, key, proposal_id, task_id, next_id, reason):
         """Confirm addition of task owner."""
         batch_list = Task().owner.confirm.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)
         self._client.send_batches(batch_list)
         return self._client.get_statuses(batch_ids, wait=10)
 
-    def reject_add_task_owners(self, key, proposal_id, task_id, user_id, reason):
+    def reject_add_task_owners(self, key, proposal_id, task_id, next_id, reason):
         """Reject addition of task owner."""
         batch_list = Task().owner.reject.batch_list(
             signer_keypair=key,
             signer_user_id=key.public_key,
             proposal_id=proposal_id,
             object_id=task_id,
-            related_id=user_id,
+            related_id=next_id,
             reason=reason,
         )
         batch_ids = batcher.get_batch_ids(batch_list=batch_list)

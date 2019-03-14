@@ -72,13 +72,13 @@ def test_addressing_user_key():
     7. the related identifier is a hash of the public key
     """
     key = helper.user.key().public_key
-    user_id = helper.user.id()
-    address = addresser.user.key.address(user_id, key)
+    next_id = helper.user.id()
+    address = addresser.user.key.address(next_id, key)
 
     assert assert_is_address(address)
-    assert address != addresser.user.key.address(user_id, helper.user.key().public_key)
+    assert address != addresser.user.key.address(next_id, helper.user.key().public_key)
     assert address != addresser.user.key.address(helper.user.id(), key)
-    assert address == addresser.user.key.address(user_id, key)
+    assert address == addresser.user.key.address(next_id, key)
 
     assert addresser.get_address_type(address) == addresser.AddressSpace.USER_KEY
     assert addresser.get_address_type(address) == addresser.AddressSpace.USER_KEY
@@ -90,5 +90,5 @@ def test_addressing_user_key():
     assert parsed.relationship_type == addresser.RelationshipType.OWNER
     assert assert_is_identifier(parsed.object_id)
 
-    assert parsed.object_id == addresser.user.hash(user_id)
+    assert parsed.object_id == addresser.user.hash(next_id)
     assert parsed.related_id == addresser.key.hash(key)

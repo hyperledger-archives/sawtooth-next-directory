@@ -37,7 +37,7 @@ class UserTestData:
         self.last_password = None
 
     def id(self):
-        """Get a test user_id (not created)"""
+        """Get a test next_id (not created)"""
         self.last_id = addresser.user.unique_id()
         return self.last_id
 

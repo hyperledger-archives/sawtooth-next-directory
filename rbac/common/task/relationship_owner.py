@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Implementation of the Task-Owner relationship
-Usage: rbac.task.owner.exists(task_id, user_id)
+Usage: rbac.task.owner.exists(task_id, next_id)
 """
 
 from rbac.common import addresser
@@ -28,7 +28,7 @@ LOGGER = get_default_logger(__name__)
 
 class OwnerRelationship(BaseRelationship):
     """Implementation of the Task-Owner relationship
-    Usage: rbac.task.owner.exists(task_id, user_id)
+    Usage: rbac.task.owner.exists(task_id, next_id)
     """
 
     def __init__(self):

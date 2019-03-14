@@ -60,7 +60,7 @@ class ImportsUser(BaseMessage):
         """Makes the appropriate inputs & output addresses for the message type"""
         inputs, _ = super().make_addresses(message, signer_user_id)
 
-        user_address = self.address(object_id=message.user_id)
+        user_address = self.address(object_id=message.next_id)
         inputs.add(user_address)
 
         if message.manager_id:
@@ -70,7 +70,7 @@ class ImportsUser(BaseMessage):
         if message.key:
             key_address = addresser.key.address(object_id=message.key)
             user_key_address = addresser.user.key.address(
-                object_id=message.user_id, related_id=message.key
+                object_id=message.next_id, related_id=message.key
             )
             inputs.add(key_address)
             inputs.add(user_key_address)
@@ -95,12 +95,12 @@ class ImportsUser(BaseMessage):
             store=store,
         )
         if addresser.user.exists_in_state_inputs(
-            inputs=payload.inputs, input_state=input_state, object_id=message.user_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.next_id
         ):
             LOGGER.warning(
                 # import is replayable, we'll verify information is up-to-date instead
                 "User with id %s already exists in state",
-                message.user_id,
+                message.next_id,
             )
 
     def apply_update(self, message, payload, object_id, related_id, output_state):

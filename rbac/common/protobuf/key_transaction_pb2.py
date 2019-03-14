@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x15key_transaction.proto\")\n\x06\x41\x64\x64Key\x12\x0e\n\x06key_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x15key_transaction.proto\")\n\x06\x41\x64\x64Key\x12\x0e\n\x06key_id\x18\x01 \x01(\t\x12\x0f\n\x07next_id\x18\x02 \x01(\tb\x06proto3')
 )
 
 
@@ -40,7 +40,7 @@ _ADDKEY = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='user_id', full_name='AddKey.user_id', index=1,
+      name='next_id', full_name='AddKey.next_id', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,

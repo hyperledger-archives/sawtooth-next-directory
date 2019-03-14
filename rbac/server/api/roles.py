@@ -122,7 +122,7 @@ async def add_role_admin(request, role_id):
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get("id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
@@ -146,7 +146,7 @@ async def add_role_member(request, role_id):
         proposal_id=proposal_id,
         role_id=role_id,
         pack_id=request.json.get("pack_id"),
-        user_id=request.json.get("id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
@@ -175,7 +175,7 @@ async def add_role_owner(request, role_id):
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get("id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )

@@ -32,11 +32,11 @@ LOGGER = get_default_logger(__name__)
 def test_make():
     """ Test making a add key message
     """
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     keypair = helper.user.key()
-    message = Key().make(user_id=user_id, key_id=keypair.public_key)
+    message = Key().make(next_id=next_id, key_id=keypair.public_key)
     assert isinstance(message, protobuf.key_transaction_pb2.AddKey)
-    assert message.user_id == user_id
+    assert message.next_id == next_id
     assert message.key_id == keypair.public_key
 
 
@@ -45,15 +45,15 @@ def test_make():
 def test_make_addresses():
     """ Test making add key addresses
     """
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     keypair = helper.user.key()
-    message = Key().make(user_id=user_id, key_id=keypair.public_key)
-    inputs, outputs = Key().make_addresses(message=message, signer_user_id=user_id)
+    message = Key().make(next_id=next_id, key_id=keypair.public_key)
+    inputs, outputs = Key().make_addresses(message=message, signer_user_id=next_id)
 
-    user_address = User().address(object_id=user_id)
+    user_address = User().address(object_id=next_id)
     key_address = Key().address(object_id=keypair.public_key)
     user_key_address = User().key.address(
-        object_id=user_id, related_id=keypair.public_key
+        object_id=next_id, related_id=keypair.public_key
     )
 
     assert isinstance(inputs, set)
@@ -75,12 +75,12 @@ def test_add_key():
 
     status = Key().new(
         signer_keypair=new_key,
-        signer_user_id=user.user_id,
-        user_id=user.user_id,
+        signer_user_id=user.next_id,
+        next_id=user.next_id,
         key_id=new_key.public_key,
     )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    assert User().key.exists(object_id=user.user_id, related_id=new_key.public_key)
+    assert User().key.exists(object_id=user.next_id, related_id=new_key.public_key)

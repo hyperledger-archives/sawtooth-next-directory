@@ -71,7 +71,7 @@ def make_payload(
         message_type=message_type,
         inputs=inputs,
         outputs=outputs,
-        signer=Signer(user_id=signer_user_id, public_key=signer_public_key),
+        signer=Signer(next_id=signer_user_id, public_key=signer_public_key),
     )
 
 

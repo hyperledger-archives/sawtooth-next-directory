@@ -29,8 +29,8 @@ class TestUserAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        user_id = addresser.user.unique_id()
-        user_address = addresser.user.address(user_id)
+        next_id = addresser.user.unique_id()
+        user_address = addresser.user.address(next_id)
         self.assertIsAddress(user_address)
         self.assertEqual(
             addresser.get_address_type(user_address), addresser.AddressSpace.USER
@@ -76,8 +76,8 @@ class TestUserAddresser(TestAssertions):
 
     def test_user_parse(self):
         """Test addresser.user.parse returns a parsed address if it is a user address"""
-        user_id = addresser.user.unique_id()
-        user_address = addresser.user.address(user_id)
+        next_id = addresser.user.unique_id()
+        user_address = addresser.user.address(next_id)
         parsed = addresser.user.parse(user_address)
 
         self.assertEqual(parsed.object_type, addresser.ObjectType.USER)
@@ -86,13 +86,13 @@ class TestUserAddresser(TestAssertions):
             parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
         self.assertEqual(parsed.address_type, addresser.AddressSpace.USER)
-        self.assertEqual(parsed.object_id, user_id)
+        self.assertEqual(parsed.object_id, next_id)
         self.assertEqual(parsed.related_id, None)
 
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
-        user_id = addresser.user.unique_id()
-        user_address = addresser.user.address(user_id)
+        next_id = addresser.user.unique_id()
+        user_address = addresser.user.address(next_id)
         parsed = addresser.parse(user_address)
 
         self.assertEqual(parsed.object_type, addresser.ObjectType.USER)
@@ -101,7 +101,7 @@ class TestUserAddresser(TestAssertions):
             parsed.relationship_type, addresser.RelationshipType.ATTRIBUTES
         )
         self.assertEqual(parsed.address_type, addresser.AddressSpace.USER)
-        self.assertEqual(parsed.object_id, user_id)
+        self.assertEqual(parsed.object_id, next_id)
         self.assertEqual(parsed.related_id, None)
 
     def test_parse_other(self):

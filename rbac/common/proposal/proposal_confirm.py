@@ -36,5 +36,5 @@ class ProposalConfirm(ProposalAction):
         # pylint: disable=no-member
         store.status = protobuf.proposal_state_pb2.Proposal.CONFIRMED
         store.close_reason = message.reason
-        store.closer = payload.signer.user_id
+        store.closer = payload.signer.next_id
         store.closed_date = payload.now

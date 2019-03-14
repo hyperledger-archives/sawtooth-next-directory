@@ -60,20 +60,20 @@ class ProposeRoleMemberTestHelper:
         message = Role().member.propose.make(
             proposal_id=proposal_id,
             role_id=role.role_id,
-            user_id=user.user_id,
+            next_id=user.next_id,
             reason=reason,
             metadata=None,
         )
 
         status = Role().member.propose.new(
-            signer_keypair=user_key, signer_user_id=user.user_id, message=message
+            signer_keypair=user_key, signer_user_id=user.next_id, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
         proposal = Role().member.propose.get(
-            object_id=role.role_id, related_id=user.user_id
+            object_id=role.role_id, related_id=user.next_id
         )
 
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -82,7 +82,7 @@ class ProposeRoleMemberTestHelper:
         ), protobuf.proposal_state_pb2.Proposal.ADD_ROLE_MEMBER
         assert proposal.proposal_id == proposal_id
         assert proposal.object_id == role.role_id
-        assert proposal.related_id == user.user_id
-        assert proposal.opener == user.user_id
+        assert proposal.related_id == user.next_id
+        assert proposal.opener == user.next_id
         assert proposal.open_reason == reason
         return proposal, role, role_owner, role_owner_key, user, user_key

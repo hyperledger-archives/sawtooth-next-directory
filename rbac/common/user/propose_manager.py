@@ -58,14 +58,14 @@ class ProposeUpdateUserManager(ProposalPropose):
         """Makes the appropriate inputs & output addresses for the message"""
         inputs, outputs = super().make_addresses(message, signer_user_id)
 
-        user_address = addresser.user.address(message.user_id)
+        user_address = addresser.user.address(message.next_id)
         inputs.add(user_address)
 
         manager_address = addresser.user.address(message.new_manager_id)
         inputs.add(manager_address)
 
         proposal_address = addresser.proposal.address(
-            object_id=message.user_id, related_id=message.new_manager_id
+            object_id=message.next_id, related_id=message.new_manager_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -94,14 +94,14 @@ class ProposeUpdateUserManager(ProposalPropose):
                 )
             )
         addresser.user.get_from_input_state(
-            inputs=payload.inputs, input_state=input_state, object_id=message.user_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.next_id
         )
 
 
 # TODO: change to verify proposal assignment and hierarchy
-#        if user.manager_id and user.manager_id != payload.signer.user_id:
+#        if user.manager_id and user.manager_id != payload.signer.next_id:
 #            raise ValueError(
 #                "Existing manager {} is not the transaction signer {}".format(
-#                    user.manager_id, payload.signer.user_id
+#                    user.manager_id, payload.signer.next_id
 #                )
 #            )

@@ -80,7 +80,7 @@ def test_api_create_user_with_manager(data):
     """ Test creating a user
     """
     url = helper.api.user.create.url
-    data["manager"] = helper.api.user.current["user_id"]
+    data["manager"] = helper.api.user.current["next_id"]
     response = requests.post(url=url, headers=None, json=data)
     result = assert_api_success(response)
     assert result["data"]

@@ -30,9 +30,9 @@ class TestTaskOwnerAddresser(TestAssertions):
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
         task_id = addresser.task.owner.unique_id()
-        user_id = addresser.user.unique_id()
+        next_id = addresser.user.unique_id()
         rel_address = addresser.task.owner.address(
-            object_id=task_id, related_id=user_id
+            object_id=task_id, related_id=next_id
         )
         self.assertIsAddress(rel_address)
         self.assertEqual(
@@ -42,12 +42,12 @@ class TestTaskOwnerAddresser(TestAssertions):
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
         task_id = addresser.task.owner.unique_id()
-        user_id = addresser.user.unique_id()
+        next_id = addresser.user.unique_id()
         rel_address1 = addresser.task.owner.address(
-            object_id=task_id, related_id=user_id
+            object_id=task_id, related_id=next_id
         )
         rel_address2 = addresser.task.owner.address(
-            object_id=task_id, related_id=user_id
+            object_id=task_id, related_id=next_id
         )
         self.assertIsAddress(rel_address1)
         self.assertIsAddress(rel_address2)
@@ -84,8 +84,8 @@ class TestTaskOwnerAddresser(TestAssertions):
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
         task_id = addresser.task.unique_id()
-        user_id = addresser.user.unique_id()
-        rel_address = addresser.task.owner.address(task_id, user_id)
+        next_id = addresser.user.unique_id()
+        rel_address = addresser.task.owner.address(task_id, next_id)
 
         parsed = addresser.parse(rel_address)
 
@@ -94,4 +94,4 @@ class TestTaskOwnerAddresser(TestAssertions):
         self.assertEqual(parsed.relationship_type, addresser.RelationshipType.OWNER)
         self.assertEqual(parsed.address_type, addresser.AddressSpace.TASKS_OWNERS)
         self.assertEqual(parsed.object_id, task_id)
-        self.assertEqual(parsed.related_id, user_id)
+        self.assertEqual(parsed.related_id, next_id)

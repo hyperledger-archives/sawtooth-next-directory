@@ -29,8 +29,8 @@ class TestSysAdminMemberAddresser(TestAssertions):
 
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        user_id = addresser.user.unique_id()
-        rel_address = addresser.sysadmin.member.address(object_id=user_id)
+        next_id = addresser.user.unique_id()
+        rel_address = addresser.sysadmin.member.address(object_id=next_id)
         self.assertIsAddress(rel_address)
         self.assertEqual(
             addresser.get_address_type(rel_address),
@@ -39,9 +39,9 @@ class TestSysAdminMemberAddresser(TestAssertions):
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
-        user_id = addresser.user.unique_id()
-        rel_address1 = addresser.sysadmin.member.address(object_id=user_id)
-        rel_address2 = addresser.sysadmin.member.address(object_id=user_id)
+        next_id = addresser.user.unique_id()
+        rel_address1 = addresser.sysadmin.member.address(object_id=next_id)
+        rel_address2 = addresser.sysadmin.member.address(object_id=next_id)
         self.assertIsAddress(rel_address1)
         self.assertIsAddress(rel_address2)
         self.assertEqual(rel_address1, rel_address2)
@@ -70,8 +70,8 @@ class TestSysAdminMemberAddresser(TestAssertions):
 
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
-        user_id = addresser.user.unique_id()
-        rel_address = addresser.sysadmin.member.address(user_id)
+        next_id = addresser.user.unique_id()
+        rel_address = addresser.sysadmin.member.address(next_id)
 
         parsed = addresser.parse(rel_address)
 
@@ -79,5 +79,5 @@ class TestSysAdminMemberAddresser(TestAssertions):
         self.assertEqual(parsed.related_type, addresser.ObjectType.USER)
         self.assertEqual(parsed.relationship_type, addresser.RelationshipType.MEMBER)
         self.assertEqual(parsed.address_type, addresser.AddressSpace.SYSADMIN_MEMBERS)
-        self.assertEqual(parsed.object_id, user_id)
+        self.assertEqual(parsed.object_id, next_id)
         self.assertEqual(parsed.related_id, None)

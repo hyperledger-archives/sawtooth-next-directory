@@ -23,7 +23,7 @@ message ProposeAddTaskOwner {
 
     string task_id = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string reason = 4;
 
@@ -38,7 +38,7 @@ message ProposeAddTaskAdmin {
 
     string task_id = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string reason = 4;
 

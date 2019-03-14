@@ -33,11 +33,11 @@ async def create_auth_entry(conn, auth_entry):
     return await r.table("auth").insert(auth_entry).run(conn)
 
 
-async def fetch_info_by_user_id(conn, user_id):
-    """Get user info from auth table for specific user_id."""
-    auth_info = await r.table("auth").get(user_id).run(conn)
+async def fetch_info_by_user_id(conn, next_id):
+    """Get user info from auth table for specific next_id."""
+    auth_info = await r.table("auth").get(next_id).run(conn)
     if not auth_info:
-        raise ApiNotFound("No user with id '{}' exists.".format(user_id))
+        raise ApiNotFound("No user with id '{}' exists.".format(next_id))
     return auth_info
 
 
@@ -71,13 +71,13 @@ async def fetch_info_by_username(request):
     result = result[0]
 
     # Generate and store key and auth record first time a user logs in
-    user_id = result.get("user_id")
+    next_id = result.get("next_id")
     user_key = Key()
 
     batch_list = KEY.batch_list(
         signer_keypair=user_key,
-        signer_user_id=user_id,
-        user_id=user_id,
+        signer_user_id=next_id,
+        next_id=next_id,
         key_id=user_key.public_key,
     )
     await utils.send(
@@ -88,7 +88,7 @@ async def fetch_info_by_username(request):
         request.app.config.AES_KEY, user_key.public_key, user_key.private_key_bytes
     )
     auth_entry = {
-        "user_id": user_id,
+        "next_id": next_id,
         "username": result.get("username"),
         "email": result.get("email"),
         "encrypted_private_key": encrypted_private_key,
