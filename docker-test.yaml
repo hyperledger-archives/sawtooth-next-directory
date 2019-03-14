@@ -73,6 +73,7 @@ services:
     environment:
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - HOST=${HOST:-localhost}
+      - AES_KEY=${AES_KEY}
     command: |
       bash -c "
         ./bin/setup_db --host rethink &&

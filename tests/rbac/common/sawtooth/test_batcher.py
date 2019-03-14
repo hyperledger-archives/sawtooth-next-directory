@@ -31,7 +31,6 @@ from rbac.common.sawtooth.batcher import (
     make_batch_list,
     make_batch_request,
 )
-from rbac.common.sawtooth.batcher import BATCHER_KEY_PAIR
 from rbac.common.crypto.keys import Key
 from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions import TestAssertions
@@ -49,8 +48,8 @@ class TestBatchClient(TestAssertions):
         if message_type == RBACPayload.CREATE_USER:
             signer = Key()
             message = user_transaction_pb2.CreateUser(name="foobar")
-            message.user_id = signer.public_key
-            inputs = [addresser.user.address(message.user_id)]
+            message.next_id = signer.public_key
+            inputs = [addresser.user.address(message.next_id)]
             outputs = inputs
             return message, message_type, inputs, outputs, signer
 
@@ -67,7 +66,7 @@ class TestBatchClient(TestAssertions):
                 message_type=message_type,
                 inputs=inputs,
                 outputs=outputs,
-                signer_user_id=message.user_id,
+                signer_user_id=message.next_id,
                 signer_public_key=signer.public_key,
             ),
             signer,
@@ -99,7 +98,7 @@ class TestBatchClient(TestAssertions):
             message_type=message_type,
             inputs=inputs,
             outputs=outputs,
-            signer_user_id=message.user_id,
+            signer_user_id=message.next_id,
             signer_public_key=signer.public_key,
         )
         self.assertIsInstance(payload, RBACPayload)
@@ -119,7 +118,7 @@ class TestBatchClient(TestAssertions):
             message_type=message_type,
             inputs=inputs,
             outputs=outputs,
-            signer_user_id=message.user_id,
+            signer_user_id=message.next_id,
             signer_public_key=signer.public_key,
         )
         messages = unmake(batch_object=payload, signer_public_key=signer.public_key)
@@ -140,7 +139,7 @@ class TestBatchClient(TestAssertions):
             message_type=message_type,
             inputs=inputs,
             outputs=outputs,
-            signer_user_id=message.user_id,
+            signer_user_id=message.next_id,
             signer_public_key=signer_keypair.public_key,
         )
         transaction, batch, batch_list, batch_request = make(
@@ -209,13 +208,13 @@ class TestBatchClient(TestAssertions):
 
         transaction = make_transaction(payload=payload, signer_keypair=signer)
 
-        batch = make_batch(transaction=transaction)
+        batch = make_batch(transaction=transaction, signer_keypair=signer)
 
         self.assertValidBatch(
             batch=batch,
             payload=payload,
             signer_public_key=signer.public_key,
-            batcher_public_key=BATCHER_KEY_PAIR.public_key,
+            batcher_public_key=signer.public_key,
         )
 
     def test_batch_to_list(self):
@@ -224,7 +223,7 @@ class TestBatchClient(TestAssertions):
 
         transaction = make_transaction(payload=payload, signer_keypair=signer)
 
-        batch = make_batch(transaction=transaction)
+        batch = make_batch(transaction=transaction, signer_keypair=signer)
 
         batch_list = batch_to_list(batch)
 
@@ -232,7 +231,7 @@ class TestBatchClient(TestAssertions):
             batch_list=batch_list,
             payload=payload,
             signer_public_key=signer.public_key,
-            batcher_public_key=BATCHER_KEY_PAIR.public_key,
+            batcher_public_key=signer.public_key,
         )
 
     def test_make_batch_list(self):
@@ -241,13 +240,13 @@ class TestBatchClient(TestAssertions):
 
         transaction = make_transaction(payload=payload, signer_keypair=signer)
 
-        batch_list = make_batch_list(transaction=transaction)
+        batch_list = make_batch_list(transaction=transaction, signer_keypair=signer)
 
         self.assertValidBatchList(
             batch_list=batch_list,
             payload=payload,
             signer_public_key=signer.public_key,
-            batcher_public_key=BATCHER_KEY_PAIR.public_key,
+            batcher_public_key=signer.public_key,
         )
 
     def test_make_batch_request(self):
@@ -256,7 +255,7 @@ class TestBatchClient(TestAssertions):
 
         transaction = make_transaction(payload=payload, signer_keypair=signer)
 
-        batch_list = make_batch_list(transaction=transaction)
+        batch_list = make_batch_list(transaction=transaction, signer_keypair=signer)
 
         batch_request = make_batch_request(batch_list=batch_list)
 
@@ -264,7 +263,7 @@ class TestBatchClient(TestAssertions):
             batch_request=batch_request,
             payload=payload,
             signer_public_key=signer.public_key,
-            batcher_public_key=BATCHER_KEY_PAIR.public_key,
+            batcher_public_key=signer.public_key,
         )
 
     def test_make(self):
@@ -283,17 +282,17 @@ class TestBatchClient(TestAssertions):
             batch=batch,
             payload=payload,
             signer_public_key=signer.public_key,
-            batcher_public_key=BATCHER_KEY_PAIR.public_key,
+            batcher_public_key=signer.public_key,
         )
         self.assertValidBatchList(
             batch_list=batch_list,
             payload=payload,
             signer_public_key=signer.public_key,
-            batcher_public_key=BATCHER_KEY_PAIR.public_key,
+            batcher_public_key=signer.public_key,
         )
         self.assertValidBatchRequest(
             batch_request=batch_request,
             payload=payload,
             signer_public_key=signer.public_key,
-            batcher_public_key=BATCHER_KEY_PAIR.public_key,
+            batcher_public_key=signer.public_key,
         )

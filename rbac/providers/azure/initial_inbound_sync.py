@@ -93,19 +93,19 @@ def fetch_users():
     return None
 
 
-def fetch_user_manager(user_id):
+def fetch_user_manager(next_id):
     """Call to get JSON payload for a user's manager in Azure Active Directory."""
     headers = AUTH.check_token("GET")
     if headers:
         manager_payload = requests.get(
-            url=GRAPH_URL + "users/" + user_id + "/manager", headers=headers
+            url=GRAPH_URL + "users/" + next_id + "/manager", headers=headers
         )
         if manager_payload.status_code == 200:
             return manager_payload.json()
         if manager_payload.status_code == 404:
             return None
         if manager_payload.status_code == 429:
-            return fetch_retry(manager_payload.headers, fetch_user_manager, user_id)
+            return fetch_retry(manager_payload.headers, fetch_user_manager, next_id)
         LOGGER.error(
             "A %s error has occurred when getting the user's manger: %s",
             manager_payload.status_code,

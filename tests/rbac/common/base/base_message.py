@@ -32,11 +32,11 @@ def test_make_message():
     """Test making a message"""
     name = helper.user.name()
     keypair = helper.user.key()
-    message = User().make(user_id=keypair.public_key, name=name)
+    message = User().make(next_id=keypair.public_key, name=name)
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
-    assert isinstance(message.user_id, str)
+    assert isinstance(message.next_id, str)
     assert isinstance(message.name, str)
-    assert message.user_id == keypair.public_key
+    assert message.next_id == keypair.public_key
     assert message.name == name
 
 
@@ -46,12 +46,12 @@ def test_make_payload():
     """Test making a payload with a message"""
     name = helper.user.name()
     user_key = helper.user.key()
-    user_id = user_key.public_key
-    user_address = User().address(object_id=user_id)
-    message = User().make(user_id=user_id, name=name)
+    next_id = user_key.public_key
+    user_address = User().address(object_id=next_id)
+    message = User().make(next_id=next_id, name=name)
 
     payload = User().make_payload(
-        message=message, signer_user_id=user_id, signer_keypair=user_key
+        message=message, signer_user_id=next_id, signer_keypair=user_key
     )
     inputs = list(payload.inputs)
     outputs = list(payload.outputs)
@@ -67,16 +67,16 @@ def test_batch_with_message():
     """Test making a batch with a message"""
     name = helper.user.name()
     user_key = helper.user.key()
-    user_id = user_key.public_key
-    message = User().make(user_id=user_id, name=name)
+    next_id = user_key.public_key
+    message = User().make(next_id=next_id, name=name)
 
     batch = User().batch(
-        signer_user_id=user_id, signer_keypair=user_key, message=message
+        signer_user_id=next_id, signer_keypair=user_key, message=message
     )
 
     messages = unmake(batch)
     assert len(messages) == 1
-    assert messages[0].user_id == user_id
+    assert messages[0].next_id == next_id
     assert messages[0].name == name
 
 
@@ -86,15 +86,15 @@ def test_batch_with_kargs():
     """Test making a batch with key arguments"""
     name = helper.user.name()
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
 
     batch = User().batch(
-        signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
+        signer_user_id=next_id, signer_keypair=user_key, next_id=next_id, name=name
     )
 
     messages = unmake(batch)
     assert len(messages) == 1
-    assert messages[0].user_id == user_id
+    assert messages[0].next_id == next_id
     assert messages[0].name == name
 
 
@@ -105,12 +105,12 @@ def test_batch_add_with_message():
     name1 = helper.user.name()
     user_key1 = helper.user.key()
     user_id1 = user_key1.public_key
-    message1 = User().make(user_id=user_id1, name=name1)
+    message1 = User().make(next_id=user_id1, name=name1)
 
     name2 = helper.user.name()
     user_key2 = helper.user.key()
     user_id2 = user_key2.public_key
-    message2 = User().make(user_id=user_id2, name=name2)
+    message2 = User().make(next_id=user_id2, name=name2)
 
     batch = User().batch(
         signer_user_id=user_id1, signer_keypair=user_key1, message=message1
@@ -122,9 +122,9 @@ def test_batch_add_with_message():
 
     messages = unmake(batch)
     assert len(messages) == 2
-    assert messages[0].user_id == user_id1
+    assert messages[0].next_id == user_id1
     assert messages[0].name == name1
-    assert messages[1].user_id == user_id2
+    assert messages[1].next_id == user_id2
     assert messages[1].name == name2
 
 
@@ -141,22 +141,22 @@ def test_batch_add_with_kargs():
     user_id2 = user_key2.public_key
 
     batch = User().batch(
-        signer_user_id=user_id1, signer_keypair=user_key1, user_id=user_id1, name=name1
+        signer_user_id=user_id1, signer_keypair=user_key1, next_id=user_id1, name=name1
     )
 
     batch = User().batch(
         signer_user_id=user_id2,
         signer_keypair=user_key2,
-        user_id=user_id2,
+        next_id=user_id2,
         name=name2,
         batch=batch,
     )
 
     messages = unmake(batch)
     assert len(messages) == 2
-    assert messages[0].user_id == user_id1
+    assert messages[0].next_id == user_id1
     assert messages[0].name == name1
-    assert messages[1].user_id == user_id2
+    assert messages[1].next_id == user_id2
     assert messages[1].name == name2
 
 
@@ -166,16 +166,16 @@ def test_batch_list_with_message():
     """Test making a batch list from a message"""
     name = helper.user.name()
     user_key = helper.user.key()
-    user_id = user_key.public_key
-    message = User().make(user_id=user_id, name=name)
+    next_id = user_key.public_key
+    message = User().make(next_id=next_id, name=name)
 
     batch_list = User().batch_list(
-        signer_user_id=user_id, signer_keypair=user_key, message=message
+        signer_user_id=next_id, signer_keypair=user_key, message=message
     )
 
     messages = unmake(batch_list)
     assert len(messages) == 1
-    assert messages[0].user_id == user_id
+    assert messages[0].next_id == next_id
     assert messages[0].name == name
 
 
@@ -185,15 +185,15 @@ def test_batch_list_with_kargs():
     """Test making a batch list with key arguments"""
     name = helper.user.name()
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
 
     batch_list = User().batch_list(
-        signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
+        signer_user_id=next_id, signer_keypair=user_key, next_id=next_id, name=name
     )
 
     messages = unmake(batch_list)
     assert len(messages) == 1
-    assert messages[0].user_id == user_id
+    assert messages[0].next_id == next_id
     assert messages[0].name == name
 
 
@@ -204,12 +204,12 @@ def test_batch_list_add_with_message():
     name1 = helper.user.name()
     user_key1 = helper.user.key()
     user_id1 = user_key1.public_key
-    message1 = User().make(user_id=user_id1, name=name1)
+    message1 = User().make(next_id=user_id1, name=name1)
 
     name2 = helper.user.name()
     user_key2 = helper.user.key()
     user_id2 = user_key2.public_key
-    message2 = User().make(user_id=user_id2, name=name2)
+    message2 = User().make(next_id=user_id2, name=name2)
 
     batch_list = User().batch_list(
         signer_user_id=user_id2, signer_keypair=user_key1, message=message1
@@ -224,9 +224,9 @@ def test_batch_list_add_with_message():
 
     messages = unmake(batch_list)
     assert len(messages) == 2
-    assert messages[0].user_id == user_id1
+    assert messages[0].next_id == user_id1
     assert messages[0].name == name1
-    assert messages[1].user_id == user_id2
+    assert messages[1].next_id == user_id2
     assert messages[1].name == name2
 
 
@@ -243,22 +243,22 @@ def test_batch_list_add_with_kargs():
     user_id2 = user_key2.public_key
 
     batch_list = User().batch_list(
-        signer_user_id=user_id1, signer_keypair=user_key1, user_id=user_id1, name=name1
+        signer_user_id=user_id1, signer_keypair=user_key1, next_id=user_id1, name=name1
     )
 
     batch_list = User().batch_list(
         signer_user_id=user_id2,
         signer_keypair=user_key2,
-        user_id=user_id2,
+        next_id=user_id2,
         name=name2,
         batch_list=batch_list,
     )
 
     messages = unmake(batch_list)
     assert len(messages) == 2
-    assert messages[0].user_id == user_id1
+    assert messages[0].next_id == user_id1
     assert messages[0].name == name1
-    assert messages[1].user_id == user_id2
+    assert messages[1].next_id == user_id2
     assert messages[1].name == name2
 
 
@@ -267,16 +267,16 @@ def test_create_with_kargs():
     """Test create passing named arguments"""
     name = helper.user.name()
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
 
     status = User().new(
-        signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
+        signer_user_id=next_id, signer_keypair=user_key, next_id=next_id, name=name
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = User().get(object_id=user_id)
-    assert user.user_id == user_id
+    user = User().get(object_id=next_id)
+    assert user.next_id == next_id
     assert user.name == name
 
 
@@ -285,17 +285,17 @@ def test_create_with_message():
     """Test create passing a message"""
     name = helper.user.name()
     user_key = helper.user.key()
-    user_id = user_key.public_key
-    message = User().make(user_id=user_id, name=name)
+    next_id = user_key.public_key
+    message = User().make(next_id=next_id, name=name)
 
     status = User().new(
-        signer_user_id=user_id, signer_keypair=user_key, message=message
+        signer_user_id=next_id, signer_keypair=user_key, message=message
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = User().get(object_id=user_id)
-    assert user.user_id == user_id
+    user = User().get(object_id=next_id)
+    assert user.next_id == next_id
     assert user.name == name
 
 
@@ -304,11 +304,11 @@ def test_create_with_message():
 def test_make_payload_with_wrong_message_type():
     """Test making a payload with a wrong message type"""
     signer_keypair = helper.user.key()
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     message = protobuf.user_state_pb2.User(
-        user_id=user_id, name=helper.user.name(), metadata=None
+        next_id=next_id, name=helper.user.name(), metadata=None
     )
     with pytest.raises(TypeError):
         User().make_payload(
-            message=message, signer_user_id=user_id, signer_keypair=signer_keypair
+            message=message, signer_user_id=next_id, signer_keypair=signer_keypair
         )

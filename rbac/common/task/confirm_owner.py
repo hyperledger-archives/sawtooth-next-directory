@@ -97,16 +97,16 @@ class ConfirmAddTaskOwner(ProposalConfirm):
     #            inputs=payload.inputs,
     #            input_state=input_state,
     #            object_id=message.object_id,
-    #            related_id=payload.signer.user_id,
+    #            related_id=payload.signer.next_id,
     #        ) and not addresser.task.admin.exists_in_state_inputs(
     #            inputs=payload.inputs,
     #            input_state=input_state,
     #            object_id=message.object_id,
-    #            related_id=payload.signer.user_id,
+    #            related_id=payload.signer.next_id,
     #        ):
     #            raise ValueError(
     #                "Signer {} must be an owner or admin of the task {}".format(
-    #                    payload.signer.user_id, message.object_id
+    #                    payload.signer.next_id, message.object_id
     #                )
     #            )
 

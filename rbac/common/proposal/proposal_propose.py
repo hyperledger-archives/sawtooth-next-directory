@@ -44,11 +44,11 @@ class ProposalPropose(ProposalMessage):
         object_id = self._get_object_id(message)
         related_id = self._get_related_id(message)
         # TODO: change signer verification method
-        # if hasattr(message, "user_id") and getattr(message, "user_id") != payload.signer.user_id:
+        # if hasattr(message, "next_id") and getattr(message, "next_id") != payload.signer.next_id:
         #    user = addresser.user.get_from_input_state(
-        #        inputs=payload.inputs, input_state=input_state, object_id=message.user_id
+        #        inputs=payload.inputs, input_state=input_state, object_id=message.next_id
         #    )
-        #    if user.manager_id != payload.signer.user_id:
+        #    if user.manager_id != payload.signer.next_id:
         #        raise ValueError(
         #            "{}: the user or their manager must be the proposal signer, got {}\n{}".format(
         #                self.message_type_name, signer, user
@@ -86,7 +86,7 @@ class ProposalPropose(ProposalMessage):
         store.object_id = self._get_object_id(message)
         store.related_id = self._get_related_id(message)
         store.open_reason = message.reason
-        store.opener = payload.signer.user_id
+        store.opener = payload.signer.next_id
         store.created_date = payload.now
         store.metadata = message.metadata
         if self.proposal_type == 1:

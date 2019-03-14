@@ -31,9 +31,9 @@ class TestRoleMemberAddresser(TestAssertions):
     def test_address(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id = addresser.role.member.unique_id()
-        user_id = addresser.user.unique_id()
+        next_id = addresser.user.unique_id()
         rel_address = addresser.role.member.address(
-            object_id=role_id, related_id=user_id
+            object_id=role_id, related_id=next_id
         )
         self.assertIsAddress(rel_address)
         self.assertEqual(
@@ -44,9 +44,9 @@ class TestRoleMemberAddresser(TestAssertions):
     @pytest.mark.parse_role_member_address
     def test_parse_role_member_address(self):
         """Test addresser.user.parse returns a parsed address if it is a user address"""
-        user_id = addresser.user.unique_id()
+        next_id = addresser.user.unique_id()
         role_id = addresser.role.unique_id()
-        address = addresser.role.member.address(role_id, user_id)
+        address = addresser.role.member.address(role_id, next_id)
         parsed = addresser.role.member.parse(address)
 
         self.assertEqual(parsed.object_type, addresser.ObjectType.ROLE)
@@ -54,14 +54,14 @@ class TestRoleMemberAddresser(TestAssertions):
         self.assertEqual(parsed.relationship_type, addresser.RelationshipType.MEMBER)
         self.assertEqual(parsed.address_type, addresser.AddressSpace.ROLES_MEMBERS)
         self.assertEqual(parsed.object_id, role_id)
-        self.assertEqual(parsed.related_id, user_id)
+        self.assertEqual(parsed.related_id, next_id)
 
     @pytest.mark.parse_role_member_address
     def test_role_member_address_hash(self):
         """Test addresser.user.parse returns a parsed address if it is a user address"""
-        user_id = "foo"
+        next_id = "foo"
         role_id = "bar"
-        address = addresser.role.member.address(role_id, user_id)
+        address = addresser.role.member.address(role_id, next_id)
         parsed = addresser.role.member.parse(address)
 
         self.assertEqual(parsed.object_type, addresser.ObjectType.ROLE)
@@ -69,17 +69,17 @@ class TestRoleMemberAddresser(TestAssertions):
         self.assertEqual(parsed.relationship_type, addresser.RelationshipType.MEMBER)
         self.assertEqual(parsed.address_type, addresser.AddressSpace.ROLES_MEMBERS)
         self.assertEqual(parsed.object_id, addresser.role.member.hash(role_id))
-        self.assertEqual(parsed.related_id, addresser.role.member.hash(user_id))
+        self.assertEqual(parsed.related_id, addresser.role.member.hash(next_id))
 
     def test_address_deterministic(self):
         """Tests address makes an address that identifies as the correct AddressSpace"""
         role_id = addresser.role.member.unique_id()
-        user_id = addresser.user.unique_id()
+        next_id = addresser.user.unique_id()
         rel_address1 = addresser.role.member.address(
-            object_id=role_id, related_id=user_id
+            object_id=role_id, related_id=next_id
         )
         rel_address2 = addresser.role.member.address(
-            object_id=role_id, related_id=user_id
+            object_id=role_id, related_id=next_id
         )
         self.assertIsAddress(rel_address1)
         self.assertIsAddress(rel_address2)
@@ -116,8 +116,8 @@ class TestRoleMemberAddresser(TestAssertions):
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
         role_id = addresser.role.unique_id()
-        user_id = addresser.user.unique_id()
-        rel_address = addresser.role.member.address(role_id, user_id)
+        next_id = addresser.user.unique_id()
+        rel_address = addresser.role.member.address(role_id, next_id)
 
         parsed = addresser.parse(rel_address)
 
@@ -126,4 +126,4 @@ class TestRoleMemberAddresser(TestAssertions):
         self.assertEqual(parsed.relationship_type, addresser.RelationshipType.MEMBER)
         self.assertEqual(parsed.address_type, addresser.AddressSpace.ROLES_MEMBERS)
         self.assertEqual(parsed.object_id, role_id)
-        self.assertEqual(parsed.related_id, user_id)
+        self.assertEqual(parsed.related_id, next_id)

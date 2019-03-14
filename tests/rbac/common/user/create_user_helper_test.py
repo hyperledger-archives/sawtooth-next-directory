@@ -29,7 +29,7 @@ LOGGER = get_default_logger(__name__)
 @pytest.mark.user
 @pytest.mark.library
 def test_id():
-    """Test get a random user_id"""
+    """Test get a random next_id"""
     user_id1 = helper.user.id()
     user_id2 = helper.user.id()
     assert isinstance(user_id1, str)
@@ -99,7 +99,7 @@ def test_message():
     message, keypair = helper.user.message()
 
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
-    assert isinstance(message.user_id, str)
+    assert isinstance(message.next_id, str)
     assert isinstance(message.name, str)
     assert isinstance(keypair, Key)
 
@@ -112,14 +112,14 @@ def test_message_with_manager():
 
     assert isinstance(user, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(manager, protobuf.user_transaction_pb2.CreateUser)
-    assert isinstance(user.user_id, str)
-    assert isinstance(manager.user_id, str)
+    assert isinstance(user.next_id, str)
+    assert isinstance(manager.next_id, str)
     assert isinstance(user.name, str)
     assert isinstance(manager.name, str)
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
-    assert user.manager_id == manager.user_id
-    assert user.user_id != manager.user_id
+    assert user.manager_id == manager.next_id
+    assert user.next_id != manager.next_id
 
 
 @pytest.mark.user
@@ -129,7 +129,7 @@ def test_create():
     user, keypair = helper.user.create()
 
     assert isinstance(user, protobuf.user_state_pb2.User)
-    assert isinstance(user.user_id, str)
+    assert isinstance(user.next_id, str)
     assert isinstance(user.name, str)
     assert isinstance(keypair, Key)
 
@@ -140,7 +140,7 @@ def test_imports():
     user = helper.user.imports()
 
     assert isinstance(user, protobuf.user_state_pb2.User)
-    assert isinstance(user.user_id, str)
+    assert isinstance(user.next_id, str)
     assert isinstance(user.name, str)
 
 
@@ -152,14 +152,14 @@ def test_create_with_manager():
 
     assert isinstance(user, protobuf.user_state_pb2.User)
     assert isinstance(manager, protobuf.user_state_pb2.User)
-    assert isinstance(user.user_id, str)
-    assert isinstance(manager.user_id, str)
+    assert isinstance(user.next_id, str)
+    assert isinstance(manager.next_id, str)
     assert isinstance(user.name, str)
     assert isinstance(manager.name, str)
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
-    assert user.manager_id == manager.user_id
-    assert user.user_id != manager.user_id
+    assert user.manager_id == manager.next_id
+    assert user.next_id != manager.next_id
 
 
 @pytest.mark.user
@@ -173,16 +173,16 @@ def test_create_with_grand_manager():
     assert isinstance(user, protobuf.user_state_pb2.User)
     assert isinstance(manager, protobuf.user_state_pb2.User)
     assert isinstance(grandmgr, protobuf.user_state_pb2.User)
-    assert isinstance(user.user_id, str)
-    assert isinstance(manager.user_id, str)
-    assert isinstance(grandmgr.user_id, str)
+    assert isinstance(user.next_id, str)
+    assert isinstance(manager.next_id, str)
+    assert isinstance(grandmgr.next_id, str)
     assert isinstance(user.name, str)
     assert isinstance(manager.name, str)
     assert isinstance(grandmgr.name, str)
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
     assert isinstance(grandmgr_key, Key)
-    assert user.manager_id == manager.user_id
-    assert manager.manager_id == grandmgr.user_id
-    assert user.user_id != manager.user_id
-    assert manager.user_id != grandmgr.user_id
+    assert user.manager_id == manager.next_id
+    assert manager.manager_id == grandmgr.next_id
+    assert user.next_id != manager.next_id
+    assert manager.next_id != grandmgr.next_id

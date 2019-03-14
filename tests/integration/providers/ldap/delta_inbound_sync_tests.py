@@ -13,11 +13,9 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """LDAP Inbound Delta Sync Test"""
-
 # pylint: disable=redefined-outer-name
 # NOTE: disabling for pytest as per:
 # https://stackoverflow.com/questions/46089480/pytest-fixtures-redefining-name-from-outer-scope-pylint
-
 
 import time
 from datetime import datetime, timedelta, timezone
@@ -32,8 +30,10 @@ from ldap3 import (
     MODIFY_REPLACE,
 )
 from ldap3.extend.microsoft import addMembersToGroups, removeMembersFromGroups
+
 from rbac.providers.ldap.delta_inbound_sync import insert_to_db
 from rbac.providers.common.db_queries import connect_to_db
+
 
 # ------------------------------------------------------------------------------
 # <==== BEGIN TEST PARAMETERS =================================================>
@@ -175,7 +175,8 @@ def create_fake_group(ldap_connection, common_name, name):
     Args:
         ldap_connection:
             obj: A bound ldap connection object.
-
+        common_name:
+            str: A string containing the common name of a fake AD role.
         name:
             str: A string containing the name of a fake group.
     """
@@ -215,7 +216,7 @@ def get_fake_group(ldap_connection, group_common_name):
     """Gets a fake user from the mock AD server.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: a mock ldap connection object.
 
         group_common_name:
@@ -243,6 +244,8 @@ def put_in_inbound_queue(fake_data, data_type):
     Args:
         fake_data:
             obj: a fake ( user | group ) object to insert.
+        data_type:
+            str: type of object "user"/"group"
     """
     when_changed = (datetime.utcnow() - timedelta(days=1)).replace(tzinfo=timezone.utc)
     insert_to_db(fake_data, when_changed, data_type)
@@ -258,6 +261,28 @@ def is_user_in_db(email):
     with connect_to_db() as db_connection:
         result = r.table("users").filter({"email": email}).count().run(db_connection)
         return result > 0
+
+
+def get_user_next_id(distinguished_name):
+    """Returns the next_id for a given user's distinguished name.
+
+    Args:
+        distinguished_name:
+            str: A string containing the user's AD distinguished name.
+
+    Returns:
+        next_id:
+            str: A string containing the user's unique next_id.
+    """
+    with connect_to_db() as db_connection:
+        results = list(
+            r.table("users")
+            .filter({"remote_id": distinguished_name})
+            .pluck("next_id")
+            .run(db_connection)
+        )[0]
+        next_id = results["next_id"]
+    return next_id
 
 
 def is_group_in_db(name):
@@ -335,9 +360,10 @@ def is_user_a_role_member(role_common_name, user_common_name):
     user_distinct_name = (
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user_common_name
     )
+    next_id = get_user_next_id(user_distinct_name)
     user_is_role_member = False
     for member in get_role_members(role_id):
-        if member["related_id"] == user_distinct_name:
+        if member["related_id"] == next_id:
             user_is_role_member = True
     return user_is_role_member
 
@@ -347,7 +373,7 @@ def update_when_changed(ldap_connection, object_distinct_name):
     for delta inbound sync as old timestamps are ignored.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: a mock ldap connection object.
 
         object_distinct_name:
@@ -357,7 +383,7 @@ def update_when_changed(ldap_connection, object_distinct_name):
         object_distinct_name,
         {
             "whenChanged": [
-                (MODIFY_REPLACE),
+                MODIFY_REPLACE,
                 datetime.utcnow().replace(tzinfo=timezone.utc),
             ]
         },
@@ -368,6 +394,8 @@ def set_role_owner(ldap_connection, user_common_name, role_common_name):
     """adds or replaces the role owner of the given group with the given user.
 
     Args:
+        ldap_connection:
+            obj: a mock ldap connection object.
         user_common_name:
             str: string containing the common name of an AD user object.
 
@@ -381,7 +409,7 @@ def set_role_owner(ldap_connection, user_common_name, role_common_name):
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % role_common_name
     )
     ldap_connection.modify(
-        role_distinct_name, {"managedBy": [(MODIFY_REPLACE), user_distinct_name]}
+        role_distinct_name, {"managedBy": [MODIFY_REPLACE, user_distinct_name]}
     )
 
 
@@ -407,13 +435,15 @@ def clear_role_owners(ldap_connection, role_common_name):
     """removes any owners in the given role.
 
     Args:
-        user_common_name:
+        ldap_connection:
+            obj: a mock ldap connection object.
+        role_common_name:
             str: string containing the common name of an AD user object.
     """
     role_distinct_name = (
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % role_common_name
     )
-    ldap_connection.modify(role_distinct_name, {"managedBy": [(MODIFY_REPLACE), []]})
+    ldap_connection.modify(role_distinct_name, {"managedBy": [MODIFY_REPLACE, []]})
 
 
 def is_user_the_role_owner(role_common_name, user_common_name):
@@ -525,7 +555,7 @@ def test_create_fake_user(ldap_connection, user):
     the users table in rethinkDB.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: A bound mock ldap connection object
 
         user:
@@ -556,7 +586,7 @@ def test_create_fake_group(ldap_connection, group):
     the groups table in rethinkDB.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: A bound mock ldap connection
 
         group:
@@ -581,7 +611,7 @@ def test_add_group_member(ldap_connection, group, user):
     """Adds a user as a member of the given group.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: A bound mock ldap connection
 
         group:
@@ -626,7 +656,7 @@ def test_remove_group_member(ldap_connection, group, user):
     """removes a user as a member of the given group.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: A bound mock mock_ldap_connection
 
         group:
@@ -671,7 +701,7 @@ def test_add_replace_group_owner(ldap_connection, group, user):
     """adds a user as an owner of the given group.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: A bound mock ldap connection
 
         group:
@@ -701,6 +731,7 @@ def test_add_replace_group_owner(ldap_connection, group, user):
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
     time.sleep(1)
+
     result = is_user_the_role_owner(group["common_name"], user["common_name"])
     assert result is True
 
@@ -710,7 +741,7 @@ def test_remove_group_owner(ldap_connection, group):
     """removes any owners of the given group.
 
     Args:
-        mock_ldap_connection:
+        ldap_connection:
             obj: A bound mock mock_ldap_connection
 
         group:
@@ -719,17 +750,6 @@ def test_remove_group_owner(ldap_connection, group):
                     str: A common name of a group AD object.
                 name:
                     str: A name of a group AD object.
-
-        user:
-            obj: dict:
-                common_name:
-                    str: A common name of an AD user object.
-
-                name:
-                    str: A username of an AD user object.
-
-                given_name:
-                    str: A given name of an AD suer object.
     """
     group_distinct_name = (
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % group["common_name"]

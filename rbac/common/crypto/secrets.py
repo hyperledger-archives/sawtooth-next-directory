@@ -44,10 +44,10 @@ def generate_random_string(length, chars=string.ascii_uppercase + string.digits)
     return "".join(random.SystemRandom().choice(chars) for _ in range(length))
 
 
-def generate_api_key(secret_key, user_id):
+def generate_api_key(secret_key, next_id):
     """Generate an API key for a user"""
     serializer = Serializer(secret_key)
-    token = serializer.dumps({"id": user_id})
+    token = serializer.dumps({"id": next_id})
     return token.decode("ascii")
 
 
@@ -58,14 +58,14 @@ def deserialize_api_key(secret_key, token):
 
 
 # pylint: disable=unused-argument
-def encrypt_private_key(aes_key, user_id, private_key):
+def encrypt_private_key(aes_key, next_id, private_key):
     """Encrypt the private key of a user"""
     cipher = AES(aes_key)
     return cipher.encrypt(private_key)
 
 
 # pylint: disable=unused-argument
-def decrypt_private_key(aes_key, user_id, encrypted_private_key):
+def decrypt_private_key(aes_key, next_id, encrypted_private_key):
     """Decrypt the private key of the user"""
     cipher = AES(aes_key)
     return cipher.decrypt(encrypted_private_key)

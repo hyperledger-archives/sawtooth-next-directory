@@ -31,9 +31,9 @@ LOGGER = get_default_logger(__name__)
 @pytest.mark.address
 def test_address():
     """Test the address method and that it is in sync with the addresser"""
-    user_id = helper.user.id()
-    address1 = User().address(object_id=user_id)
-    address2 = addresser.user.address(user_id)
+    next_id = helper.user.id()
+    address1 = User().address(object_id=next_id)
+    address2 = addresser.user.address(next_id)
     assert address1 == address2
 
 
@@ -41,22 +41,22 @@ def test_address():
 @pytest.mark.library
 def test_make():
     """Test making a create user message"""
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     name = helper.user.name()
     username = helper.user.username()
     email = helper.user.email()
     keypair = helper.user.key()
     message = User().make(
-        user_id=user_id,
+        next_id=next_id,
         name=name,
         username=username,
         email=email,
         key=keypair.public_key,
     )
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
-    assert isinstance(message.user_id, str)
+    assert isinstance(message.next_id, str)
     assert isinstance(message.name, str)
-    assert message.user_id == user_id
+    assert message.next_id == next_id
     assert message.name == name
     assert message.username == username
     assert message.email == email
@@ -67,22 +67,22 @@ def test_make():
 @pytest.mark.skip("TODO: support metadata")
 def test_make_with_metadata():
     """test making a create user message with metadata"""
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     name = helper.user.name()
     email = helper.user.email()
     keypair = helper.user.key()
     metadata = {"employeeId": "12345", "mobile": "555-1212"}
     message = User().make(
-        user_id=user_id,
+        next_id=next_id,
         name=name,
         email=email,
         key=keypair.public_key,
         metadata=metadata,
     )
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
-    assert isinstance(message.user_id, str)
+    assert isinstance(message.next_id, str)
     assert isinstance(message.name, str)
-    assert message.user_id == user_id
+    assert message.next_id == next_id
     assert message.name == name
     assert message.email == email
     assert message.key == keypair.public_key
@@ -96,16 +96,16 @@ def test_make_addresses():
     name = helper.user.name()
     email = helper.user.email()
     user_key = helper.user.key()
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     message = User().make(
-        user_id=user_id, name=name, email=email, key=user_key.public_key
+        next_id=next_id, name=name, email=email, key=user_key.public_key
     )
-    inputs, outputs = User().make_addresses(message=message, signer_user_id=user_id)
+    inputs, outputs = User().make_addresses(message=message, signer_user_id=next_id)
 
-    user_address = User().address(object_id=message.user_id)
+    user_address = User().address(object_id=message.next_id)
     key_address = Key().address(object_id=user_key.public_key)
     user_key_address = User().key.address(
-        object_id=message.user_id, related_id=user_key.public_key
+        object_id=message.next_id, related_id=user_key.public_key
     )
 
     assert isinstance(inputs, set)
@@ -127,15 +127,15 @@ def test_make_addresses_with_manager():
     name = helper.user.name()
     email = helper.user.email()
     helper.user.key()
-    user_id = helper.user.id()
-    user_address = User().address(object_id=user_id)
+    next_id = helper.user.id()
+    user_address = User().address(object_id=next_id)
     manager_id = helper.user.id()
     manager_address = User().address(object_id=manager_id)
 
     message = User().make(
-        user_id=user_id, name=name, email=email, manager_id=manager_id
+        next_id=next_id, name=name, email=email, manager_id=manager_id
     )
-    inputs, outputs = User().make_addresses(message=message, signer_user_id=user_id)
+    inputs, outputs = User().make_addresses(message=message, signer_user_id=next_id)
 
     assert isinstance(inputs, set)
     assert isinstance(outputs, set)
@@ -154,12 +154,12 @@ def test_create_user():
     username = helper.user.username()
     email = helper.user.email()
     user_key = helper.user.key()
-    user_id = helper.user.id()
+    next_id = helper.user.id()
 
     status = User().new(
-        signer_user_id=user_id,
+        signer_user_id=next_id,
         signer_keypair=user_key,
-        user_id=user_id,
+        next_id=next_id,
         name=name,
         username=username,
         email=email,
@@ -169,14 +169,14 @@ def test_create_user():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = User().get(object_id=user_id)
+    user = User().get(object_id=next_id)
 
-    assert user.user_id == user_id
+    assert user.next_id == next_id
     assert user.name == name
     assert user.username == username
     assert user.email == email
 
-    assert User().key.exists(object_id=user.user_id, related_id=user_key.public_key)
+    assert User().key.exists(object_id=user.next_id, related_id=user_key.public_key)
 
 
 @pytest.mark.user
@@ -184,7 +184,7 @@ def test_create_user():
 def test_create_with_manager():
     """Test creating a user with a manager on the blockchain"""
     user_key = helper.user.key()
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     username = helper.user.username()
     name = helper.user.name()
     email = helper.user.email()
@@ -197,7 +197,7 @@ def test_create_with_manager():
     status = User().new(
         signer_user_id=manager_id,
         signer_keypair=manager_key,
-        user_id=manager_id,
+        next_id=manager_id,
         name=manager_name,
         username=manager_username,
         email=manager_email,
@@ -209,15 +209,15 @@ def test_create_with_manager():
 
     manager = User().get(object_id=manager_id)
 
-    assert manager.user_id == manager_id
+    assert manager.next_id == manager_id
     assert manager.username == manager_username
     assert manager.name == manager_name
     assert manager.email == manager_email
 
     status = User().new(
-        signer_user_id=user_id,
+        signer_user_id=next_id,
         signer_keypair=user_key,
-        user_id=user_id,
+        next_id=next_id,
         name=name,
         username=username,
         email=email,
@@ -228,15 +228,15 @@ def test_create_with_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = User().get(object_id=user_id)
+    user = User().get(object_id=next_id)
 
-    assert user.user_id == user_id
+    assert user.next_id == next_id
     assert user.username == username
     assert user.name == name
     assert user.email == email
     assert user.manager_id == manager_id
 
-    assert User().key.exists(object_id=user.user_id, related_id=user_key.public_key)
-    # assert User().manager.exists(object_id=user.user_id, related_id=user.manager_id)
-    # assert User().direct_report.exists(object_id=user.manager_id, related_id=user.user_id)
-    # assert User().email.exists(object_id=user.user_id, related_id=user.email)
+    assert User().key.exists(object_id=user.next_id, related_id=user_key.public_key)
+    # assert User().manager.exists(object_id=user.next_id, related_id=user.manager_id)
+    # assert User().direct_report.exists(object_id=user.manager_id, related_id=user.next_id)
+    # assert User().email.exists(object_id=user.next_id, related_id=user.email)

@@ -69,7 +69,7 @@ class BaseModelTest(TestAssertions):
         self.assertEqual(model._name_lower, "user")
         self.assertEqual(model._name_title, "User")
         self.assertEqual(model._name_camel, "User")
-        self.assertEqual(model._name_id, "user_id")
+        self.assertEqual(model._name_id, "next_id")
         self.assertEqual(model._name_lower_plural, "users")
         self.assertEqual(model._name_title_plural, "Users")
         self.assertEqual(model._name_camel_plural, "Users")

@@ -92,7 +92,7 @@ class RequesterChat extends Component {
     if ((recommendedPacks || recommendedRoles) && isSocketOpen('chatbot')) {
       const payload = {
         resource_id: resource.id,
-        user_id: id,
+        next_id: id,
       };
       const slots = {
         resource_name: resource.name,

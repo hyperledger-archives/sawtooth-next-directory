@@ -21,7 +21,7 @@ message ProposeUpdateUserManager {
 
     string proposal_id = 1;
 
-    string user_id = 2;
+    string next_id = 2;
 
     string new_manager_id = 3;
 
@@ -38,7 +38,7 @@ message CreateUser {
 
     string username = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string manager_id = 4;
 
@@ -60,7 +60,7 @@ message ImportsUser {
 
     string username = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string manager_id = 4;
 
@@ -84,7 +84,7 @@ message UpdateUser {
 
     string username = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string manager_id = 4;
 

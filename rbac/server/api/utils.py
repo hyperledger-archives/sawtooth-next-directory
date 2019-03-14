@@ -182,17 +182,17 @@ async def get_transactor_key(request):
     id_dict = deserialize_api_key(
         request.app.config.SECRET_KEY, extract_request_token(request)
     )
-    user_id = id_dict.get("id")
+    next_id = id_dict.get("id")
 
     auth_data = await auth_query.fetch_info_by_user_id(
-        request.app.config.DB_CONN, user_id
+        request.app.config.DB_CONN, next_id
     )
     encrypted_private_key = auth_data.get("encrypted_private_key")
     private_key = decrypt_private_key(
-        request.app.config.AES_KEY, user_id, encrypted_private_key
+        request.app.config.AES_KEY, next_id, encrypted_private_key
     )
     hex_private_key = binascii.hexlify(private_key)
-    return Key(hex_private_key), user_id
+    return Key(hex_private_key), next_id
 
 
 async def send(conn, batch_list, timeout, webhook=False):

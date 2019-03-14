@@ -102,7 +102,7 @@ const create = (baseURL =
   const createPack = (payload) => api.post('packs', payload);
   const createRole = (payload) => api.post('roles', payload);
   const login = (creds) => api.post('authorization', creds);
-  const me = () => api.get(`users/${storage.get('user_id')}`);
+  const me = () => api.get(`users/${storage.get('next_id')}`);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRole = (id) => api.get(`roles/${id}`);
   const getRoles = (start, limit) => api.get('roles', { start, limit });
@@ -120,16 +120,16 @@ const create = (baseURL =
   const signup = (creds) => api.post('users', creds);
 
 
-  const getConfirmedProposals = (id = storage.get('user_id')) =>
+  const getConfirmedProposals = (id = storage.get('next_id')) =>
     api.get(`users/${id}/proposals/confirmed`);
-  const getOpenProposals = (id = storage.get('user_id')) =>
+  const getOpenProposals = (id = storage.get('next_id')) =>
     api.get(`users/${id}/proposals/open`);
-  const getRecommended = (id = storage.get('user_id')) =>
+  const getRecommended = (id = storage.get('next_id')) =>
     api.get(`users/${id}/roles/recommended`);
-  const getRejectedProposals = (id = storage.get('user_id')) =>
+  const getRejectedProposals = (id = storage.get('next_id')) =>
     api.get(`users/${id}/proposals/rejected`);
   const expire = (id) =>
-    api.patch(`users/${storage.get('user_id')}/roles/expired`, id);
+    api.patch(`users/${storage.get('next_id')}/roles/expired`, id);
 
 
   return {

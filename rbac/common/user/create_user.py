@@ -61,7 +61,7 @@ class CreateUser(BaseMessage):
         """Makes the appropriate inputs & output addresses for the message type"""
         inputs, _ = super().make_addresses(message, signer_user_id)
 
-        user_address = self.address(object_id=message.user_id)
+        user_address = self.address(object_id=message.next_id)
         inputs.add(user_address)
 
         if message.manager_id:
@@ -71,7 +71,7 @@ class CreateUser(BaseMessage):
         if message.key:
             key_address = addresser.key.address(object_id=message.key)
             user_key_address = addresser.user.key.address(
-                object_id=message.user_id, related_id=message.key
+                object_id=message.next_id, related_id=message.key
             )
             inputs.add(key_address)
             inputs.add(user_key_address)
@@ -92,7 +92,7 @@ class CreateUser(BaseMessage):
         if len(message.name) < 5:
             raise ValueError("Users must have names longer than 4 characters")
         if message.manager_id is not None:
-            if message.user_id == message.manager_id:
+            if message.next_id == message.manager_id:
                 raise ValueError("User cannot be their own manager")
 
     def validate_state(self, context, message, payload, input_state, store):
@@ -105,10 +105,10 @@ class CreateUser(BaseMessage):
             store=store,
         )
         if addresser.user.exists_in_state_inputs(
-            inputs=payload.inputs, input_state=input_state, object_id=message.user_id
+            inputs=payload.inputs, input_state=input_state, object_id=message.next_id
         ):
             raise ValueError(
-                "User with id {} already exists in state".format(message.user_id)
+                "User with id {} already exists in state".format(message.next_id)
             )
         if message.manager_id and not addresser.user.exists_in_state_inputs(
             inputs=payload.inputs, input_state=input_state, object_id=message.manager_id

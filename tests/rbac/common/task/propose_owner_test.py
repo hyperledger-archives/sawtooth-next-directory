@@ -30,20 +30,20 @@ LOGGER = get_default_logger(__name__)
 @pytest.mark.library
 def test_make():
     """Test making the message"""
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     task_id = helper.task.id()
     proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     message = Task().owner.propose.make(
         proposal_id=proposal_id,
-        user_id=user_id,
+        next_id=next_id,
         task_id=task_id,
         reason=reason,
         metadata=None,
     )
     assert isinstance(message, protobuf.task_transaction_pb2.ProposeAddTaskOwner)
     assert message.proposal_id == proposal_id
-    assert message.user_id == user_id
+    assert message.next_id == next_id
     assert message.task_id == task_id
     assert message.reason == reason
 
@@ -52,18 +52,18 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses():
     """Test making the message addresses"""
-    user_id = helper.user.id()
-    user_address = User().address(user_id)
+    next_id = helper.user.id()
+    user_address = User().address(next_id)
     task_id = helper.task.id()
     task_address = Task().address(task_id)
     proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
-    relationship_address = Task().owner.address(task_id, user_id)
-    proposal_address = Task().owner.propose.address(task_id, user_id)
+    relationship_address = Task().owner.address(task_id, next_id)
+    proposal_address = Task().owner.propose.address(task_id, next_id)
     signer_user_id = helper.user.id()
     message = Task().owner.propose.make(
         proposal_id=proposal_id,
-        user_id=user_id,
+        next_id=next_id,
         task_id=task_id,
         reason=reason,
         metadata=None,
@@ -92,7 +92,7 @@ def test_create():
 
     message = Task().owner.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
+        next_id=user.next_id,
         task_id=task.task_id,
         reason=reason,
         metadata=None,
@@ -100,21 +100,21 @@ def test_create():
 
     status = Task().owner.propose.new(
         signer_keypair=signer_keypair,
-        signer_user_id=user.user_id,
+        signer_user_id=user.next_id,
         message=message,
         object_id=task.task_id,
-        related_id=user.user_id,
+        related_id=user.next_id,
     )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    proposal = Task().owner.propose.get(object_id=task.task_id, related_id=user.user_id)
+    proposal = Task().owner.propose.get(object_id=task.task_id, related_id=user.next_id)
 
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert proposal.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_TASK_OWNER
     assert proposal.proposal_id == proposal_id
     assert proposal.object_id == task.task_id
-    assert proposal.related_id == user.user_id
-    assert proposal.opener == user.user_id
+    assert proposal.related_id == user.next_id
+    assert proposal.opener == user.next_id
     assert proposal.open_reason == reason

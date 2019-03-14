@@ -31,7 +31,6 @@ from rbac.common.protobuf.rbac_payload_pb2 import Signer
 from rbac.common.logs import get_default_logger
 
 LOGGER = get_default_logger(__name__)
-BATCHER_KEY_PAIR = Key()
 
 
 def get_message_type_name(message_type):
@@ -40,15 +39,13 @@ def get_message_type_name(message_type):
     return rbac_payload.get_message_type_name(message_type=message_type)
 
 
-def make_transaction_header(
-    payload, signer_keypair, batcher_public_key=BATCHER_KEY_PAIR.public_key
-):
+def make_transaction_header(payload, signer_keypair):
     """ Make the signed transaction header for a payload
     """
     header = transaction_pb2.TransactionHeader(
         inputs=payload.inputs,
         outputs=payload.outputs,
-        batcher_public_key=batcher_public_key,
+        batcher_public_key=signer_keypair.public_key,
         dependencies=[],
         family_name=addresser.family.name,
         family_version=addresser.family.version,
@@ -71,7 +68,7 @@ def make_payload(
         message_type=message_type,
         inputs=inputs,
         outputs=outputs,
-        signer=Signer(user_id=signer_user_id, public_key=signer_public_key),
+        signer=Signer(next_id=signer_user_id, public_key=signer_public_key),
     )
 
 
@@ -81,15 +78,11 @@ def unmake_payload(payload):
     return rbac_payload.unmake_payload(payload=payload)
 
 
-def make_transaction(
-    payload, signer_keypair, batcher_public_key=BATCHER_KEY_PAIR.public_key
-):
+def make_transaction(payload, signer_keypair):
     """ Make a transaction from a payload
     """
     header, signature = make_transaction_header(
-        payload=payload,
-        signer_keypair=signer_keypair,
-        batcher_public_key=batcher_public_key,
+        payload=payload, signer_keypair=signer_keypair
     )
 
     return transaction_pb2.Transaction(
@@ -99,17 +92,17 @@ def make_transaction(
     )
 
 
-def make_batch(transaction, batcher_keypair=BATCHER_KEY_PAIR):
+def make_batch(transaction, signer_keypair):
     """ Batch a transaction
     """
     batch_header = batch_pb2.BatchHeader(
-        signer_public_key=batcher_keypair.public_key,
+        signer_public_key=signer_keypair.public_key,
         transaction_ids=[transaction.header_signature],
     ).SerializeToString()
 
     return batch_pb2.Batch(
         header=batch_header,
-        header_signature=batcher_keypair.sign(batch_header),
+        header_signature=signer_keypair.sign(batch_header),
         transactions=[transaction],
     )
 
@@ -135,18 +128,20 @@ def get_batch_ids(batch_list):
     return list(batch.header_signature for batch in batch_list.batches)
 
 
-def make_batch_list(transaction):
+def make_batch_list(transaction, signer_keypair):
     """ Make a batch list from a transaction
     """
-    return batch_to_list(make_batch(transaction=transaction))
+    return batch_to_list(
+        make_batch(transaction=transaction, signer_keypair=signer_keypair)
+    )
 
 
-def make(payload, signer_keypair, batcher_keypair=BATCHER_KEY_PAIR):
+def make(payload, signer_keypair):
     """ From a payload return a transaction, batch, batch list and batch request
     """
     transaction = make_transaction(payload=payload, signer_keypair=signer_keypair)
 
-    batch = make_batch(transaction=transaction, batcher_keypair=batcher_keypair)
+    batch = make_batch(transaction=transaction, signer_keypair=signer_keypair)
 
     batch_list = batch_to_list(batch=batch)
     batch_request = make_batch_request(batch_list=batch_list)
@@ -154,9 +149,7 @@ def make(payload, signer_keypair, batcher_keypair=BATCHER_KEY_PAIR):
     return transaction, batch, batch_list, batch_request
 
 
-def unmake(
-    batch_object, signer_public_key=None, batcher_public_key=BATCHER_KEY_PAIR.public_key
-):
+def unmake(batch_object, signer_public_key=None):
     """ Will unmake a batch_request, batch_list, batch, transaction
         or payload, and return a list of the included messages.
         Validation of signatures will occur if public keys are provided.
@@ -169,11 +162,7 @@ def unmake(
         return list(
             itertools.chain(
                 *[
-                    unmake(
-                        batch_object=batch,
-                        signer_public_key=signer_public_key,
-                        batcher_public_key=batcher_public_key,
-                    )
+                    unmake(batch_object=batch, signer_public_key=signer_public_key)
                     for batch in batch_object.batches
                 ]
             )
@@ -181,10 +170,10 @@ def unmake(
     if isinstance(batch_object, batch_pb2.Batch):
         batch_header = batch_pb2.BatchHeader()
         batch_header.ParseFromString(batch_object.header)
-        if batcher_public_key:
+        if signer_public_key:
             # pylint: disable=no-member
-            assert batch_header.signer_public_key == batcher_public_key
-            batcher_keypair = Key(public_key=batcher_public_key)
+            assert batch_header.signer_public_key == signer_public_key
+            batcher_keypair = Key(public_key=signer_public_key)
             assert batcher_keypair.verify(
                 signature=batch_object.header_signature, message=batch_object.header
             )
@@ -227,24 +216,25 @@ def make_ping():
     """ Makes a ping transaction (a transaction that does nothing but make
         sure the validator and transaction processor is up and responding)
     """
+    test_key_pair = Key()
     payload = "ping".encode("utf-8")
     header = transaction_pb2.TransactionHeader(
         inputs=[],
         outputs=[],
-        batcher_public_key=BATCHER_KEY_PAIR.public_key,
+        batcher_public_key=test_key_pair.public_key,
         dependencies=[],
         family_name=addresser.family.name,
         family_version=addresser.family.version,
         nonce=uuid4().hex,
-        signer_public_key=BATCHER_KEY_PAIR.public_key,
+        signer_public_key=test_key_pair.public_key,
         payload_sha512=sha512(payload).hexdigest(),
     )
     transaction = transaction_pb2.Transaction(
         payload=payload,
         header=header.SerializeToString(),
-        header_signature=BATCHER_KEY_PAIR.sign(header.SerializeToString()),
+        header_signature=test_key_pair.sign(header.SerializeToString()),
     )
-    batch = make_batch(transaction=transaction, batcher_keypair=BATCHER_KEY_PAIR)
+    batch = make_batch(transaction=transaction, signer_keypair=test_key_pair)
 
     batch_list = batch_to_list(batch=batch)
     batch_request = make_batch_request(batch_list=batch_list)

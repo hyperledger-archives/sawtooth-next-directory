@@ -91,6 +91,6 @@ class CreateUserTestHelper(BaseApiHelper, UserTestData):
         response = requests.post(url=self.auth_url, headers=None, json=data)
         result = assert_api_success(response)
         assert result["data"]["message"] == "Authorization successful"
-        user["user_id"] = result["data"]["user_id"]
+        user["next_id"] = result["data"]["next_id"]
         user["token"] = result["token"]
         return user

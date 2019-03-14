@@ -95,7 +95,7 @@ def test_create():
 
     status = Role().task.confirm.new(
         signer_keypair=task_owner_key,
-        signer_user_id=task_owner.user_id,
+        signer_user_id=task_owner.next_id,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -114,7 +114,7 @@ def test_create():
     assert confirm.object_id == proposal.object_id
     assert confirm.related_id == proposal.related_id
     assert confirm.close_reason == reason
-    assert confirm.closer == task_owner.user_id
+    assert confirm.closer == task_owner.next_id
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
     assert Role().task.exists(
         object_id=proposal.object_id, related_id=proposal.related_id

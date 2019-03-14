@@ -28,20 +28,20 @@ LOGGER = get_default_logger(__name__)
 @pytest.mark.addressing
 @pytest.mark.user_address
 def test_addressing_user():
-    """Tests making a blockchain address for an user_id and that it:
+    """Tests making a blockchain address for an next_id and that it:
     1. is a 35-byte non-zero hexadecimal string
-    2. is unique - a different user_id yields a different address
-    3. is deterministic - same user_id yields same address, even if different case
-    4. the addresser recognizes the address as an user_id
+    2. is unique - a different next_id yields a different address
+    3. is deterministic - same next_id yields same address, even if different case
+    4. the addresser recognizes the address as an next_id
     5. the addresser can parse the address into its components
-    6. the identifier is a hash of the user_id"""
-    user_id = helper.user.id()
-    address = addresser.user.address(user_id)
+    6. the identifier is a hash of the next_id"""
+    next_id = helper.user.id()
+    address = addresser.user.address(next_id)
 
     assert assert_is_address(address)
     assert address != addresser.user.address(helper.user.id())
-    assert address == addresser.user.address(user_id)
-    assert address == addresser.user.address(user_id.upper())
+    assert address == addresser.user.address(next_id)
+    assert address == addresser.user.address(next_id.upper())
 
     assert addresser.get_address_type(address) == addresser.AddressSpace.USER
 
@@ -53,7 +53,7 @@ def test_addressing_user():
     assert assert_is_identifier(parsed.object_id)
     assert not parsed.related_id
 
-    assert parsed.object_id == addresser.user.hash(user_id)
+    assert parsed.object_id == addresser.user.hash(next_id)
 
 
 @pytest.mark.library
@@ -67,14 +67,14 @@ def test_addressing_user_email():
     4. the addresser recognizes the address as an user email
     5. the addresser can parse the address into its components
     6. the identifier is a hash of the user email"""
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     email = helper.user.email()
-    address = addresser.user.email.address(user_id, email)
+    address = addresser.user.email.address(next_id, email)
 
     assert assert_is_address(address)
-    assert address != addresser.user.email.address(user_id, helper.user.email())
-    assert address == addresser.user.email.address(user_id, email)
-    assert address == addresser.user.email.address(user_id, email.upper())
+    assert address != addresser.user.email.address(next_id, helper.user.email())
+    assert address == addresser.user.email.address(next_id, email)
+    assert address == addresser.user.email.address(next_id, email.upper())
 
     assert addresser.get_address_type(address) == addresser.AddressSpace.USER_EMAIL
 
@@ -86,5 +86,5 @@ def test_addressing_user_email():
     assert assert_is_identifier(parsed.object_id)
     assert assert_is_identifier(parsed.related_id)
 
-    assert parsed.object_id == addresser.user.hash(user_id)
+    assert parsed.object_id == addresser.user.hash(next_id)
     assert parsed.related_id == addresser.email.hash(email)

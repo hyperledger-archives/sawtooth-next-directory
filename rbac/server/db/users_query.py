@@ -25,41 +25,41 @@ from rbac.server.db.roles_query import fetch_expired_roles
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_user_resource(conn, user_id):
+async def fetch_user_resource(conn, next_id):
     """Database query to get data on an individual user."""
     resource = (
         await r.table("users")
-        .get_all(user_id, index="user_id")
+        .get_all(next_id, index="next_id")
         .merge(
             {
-                "id": r.row["user_id"],
+                "id": r.row["next_id"],
                 "name": r.row["name"],
                 "email": r.row["email"],
-                "subordinates": fetch_user_ids_by_manager(user_id),
+                "subordinates": fetch_user_ids_by_manager(next_id),
                 "ownerOf": {
                     "tasks": fetch_relationships_by_id(
-                        "task_owners", user_id, "task_id"
+                        "task_owners", next_id, "task_id"
                     ),
                     "roles": fetch_relationships_by_id(
-                        "role_owners", user_id, "role_id"
+                        "role_owners", next_id, "role_id"
                     ),
                     "packs": fetch_relationships_by_id(
-                        "pack_owners", user_id, "pack_id"
+                        "pack_owners", next_id, "pack_id"
                     ),
                 },
                 "administratorOf": {
                     "tasks": fetch_relationships_by_id(
-                        "task_admins", user_id, "task_id"
+                        "task_admins", next_id, "task_id"
                     ),
                     "roles": fetch_relationships_by_id(
-                        "role_admins", user_id, "role_id"
+                        "role_admins", next_id, "role_id"
                     ),
                 },
                 "memberOf": fetch_relationships_by_id(
-                    "role_members", user_id, "role_id"
+                    "role_members", next_id, "role_id"
                 ),
-                "expired": fetch_expired_roles(user_id),
-                "proposals": fetch_proposal_ids_by_opener(user_id),
+                "expired": fetch_expired_roles(next_id),
+                "proposals": fetch_proposal_ids_by_opener(next_id),
             }
         )
         .map(
@@ -70,26 +70,28 @@ async def fetch_user_resource(conn, user_id):
         .map(
             lambda user: (user["metadata"] == "").branch(user.without("metadata"), user)
         )
-        .without("user_id", "manager_id", "start_block_num", "end_block_num")
+        .without("next_id", "manager_id", "start_block_num", "end_block_num")
         .coerce_to("array")
         .run(conn)
     )
+    LOGGER.info("************** This is your payload V ******************")
+    LOGGER.info(resource)
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
+        raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
 
 
-# TODO: After NEXT UUID Implementation has completed, revert this function back to user_id
-async def fetch_user_resource_summary(conn, user_id):
+# TODO: After NEXT UUID Implementation has completed, revert this function back to next_id
+async def fetch_user_resource_summary(conn, next_id):
     """Database query to get summary data on an individual user."""
-    if "cn" in user_id.lower():
+    if "cn" in next_id.lower():
         user_attribute = "distinguished_name"
     else:
-        user_attribute = "user_id"
+        user_attribute = "next_id"
     resource = (
         await r.table("users")
-        .filter(lambda user: (user[user_attribute] == user_id))
+        .filter(lambda user: (user[user_attribute] == next_id))
         .merge(
             {
                 "id": r.row[user_attribute],
@@ -104,7 +106,7 @@ async def fetch_user_resource_summary(conn, user_id):
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
+        raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
 
 
 async def fetch_all_user_resources(conn, start, limit):
@@ -116,33 +118,33 @@ async def fetch_all_user_resources(conn, start, limit):
         .map(
             lambda user: user.merge(
                 {
-                    "id": user["user_id"],
+                    "id": user["next_id"],
                     "name": user["name"],
                     "email": user["email"],
-                    "subordinates": fetch_user_ids_by_manager(user["user_id"]),
+                    "subordinates": fetch_user_ids_by_manager(user["next_id"]),
                     "ownerOf": {
                         "tasks": fetch_relationships_by_id(
-                            "task_owners", user["user_id"], "task_id"
+                            "task_owners", user["next_id"], "task_id"
                         ),
                         "roles": fetch_relationships_by_id(
-                            "role_owners", user["user_id"], "role_id"
+                            "role_owners", user["next_id"], "role_id"
                         ),
                         "packs": fetch_relationships_by_id(
-                            "pack_owners", user["user_id"], "pack_id"
+                            "pack_owners", user["next_id"], "pack_id"
                         ),
                     },
                     "administratorOf": {
                         "tasks": fetch_relationships_by_id(
-                            "task_admins", user["user_id"], "task_id"
+                            "task_admins", user["next_id"], "task_id"
                         ),
                         "roles": fetch_relationships_by_id(
-                            "role_admins", user["user_id"], "role_id"
+                            "role_admins", user["next_id"], "role_id"
                         ),
                     },
                     "memberOf": fetch_relationships_by_id(
-                        "role_members", user["user_id"], "role_id"
+                        "role_members", user["next_id"], "role_id"
                     ),
-                    "proposals": fetch_proposal_ids_by_opener(user["user_id"]),
+                    "proposals": fetch_proposal_ids_by_opener(user["next_id"]),
                 }
             )
         )
@@ -154,7 +156,7 @@ async def fetch_all_user_resources(conn, start, limit):
         .map(
             lambda user: (user["metadata"] == "").branch(user.without("metadata"), user)
         )
-        .without("user_id", "manager_id", "start_block_num", "end_block_num")
+        .without("next_id", "manager_id", "start_block_num", "end_block_num")
         .coerce_to("array")
         .run(conn)
     )
@@ -165,17 +167,17 @@ def fetch_user_ids_by_manager(remote_id):
     return (
         r.table("users")
         .filter(lambda user: (remote_id == user["manager_id"]))
-        .get_field("user_id")
+        .get_field("next_id")
         .coerce_to("array")
     )
 
 
-async def fetch_peers(conn, user_id):
+async def fetch_peers(conn, next_id):
     """Fetch a user's peers."""
     user_object = await (
         r.db("rbac")
         .table("users")
-        .filter({"user_id": user_id})
+        .filter({"next_id": next_id})
         .coerce_to("array")
         .run(conn)
     )
@@ -191,20 +193,20 @@ async def fetch_peers(conn, user_id):
             )
             peer_list = []
             for peer in peers:
-                if peer["user_id"] != user_id:
-                    peer_list.append(peer["user_id"])
+                if peer["next_id"] != next_id:
+                    peer_list.append(peer["next_id"])
             return peer_list
     return []
 
 
-async def fetch_manager_chain(conn, user_id):
+async def fetch_manager_chain(conn, next_id):
     """Get a user's manager chain up to 5 manager's high."""
     manager_chain = []
     for _ in range(5):
         user_object = await (
             r.db("rbac")
             .table("users")
-            .filter({"user_id": user_id})
+            .filter({"next_id": next_id})
             .coerce_to("array")
             .run(conn)
         )
@@ -218,8 +220,8 @@ async def fetch_manager_chain(conn, user_id):
                     .coerce_to("array")
                     .run(conn)
                 )
-                manager_chain.append(manager_object[0]["user_id"])
-                user_id = manager_object[0]["user_id"]
+                manager_chain.append(manager_object[0]["next_id"])
+                next_id = manager_object[0]["next_id"]
             else:
                 break
         else:
@@ -227,19 +229,26 @@ async def fetch_manager_chain(conn, user_id):
     return manager_chain
 
 
-async def fetch_user_relationships(conn, user_id):
-    """Database Query to get an individual's surrounding org connections."""
+async def fetch_user_relationships(conn, next_id):
+    """Database Query to get an individual's org connections."""
+    remote_id = (
+        await r.table("users")
+        .get_all(next_id, index="next_id")
+        .pluck("remote_id")
+        .coerce_to("array")
+        .run(conn)
+    )
     resource = (
         await r.table("users")
-        .get_all(user_id, index="user_id")
+        .get_all(next_id, index="next_id")
         .merge(
             {
-                "id": r.row["user_id"],
-                "direct_reports": fetch_user_ids_by_manager(user_id),
+                "id": r.row["next_id"],
+                "direct_reports": fetch_user_ids_by_manager(remote_id[0]["remote_id"]),
             }
         )
         .without(
-            "user_id",
+            "next_id",
             "start_block_num",
             "end_block_num",
             "metadata",
@@ -253,15 +262,15 @@ async def fetch_user_relationships(conn, user_id):
         .coerce_to("array")
         .run(conn)
     )
-    peers = await fetch_peers(conn, user_id)
-    managers = await fetch_manager_chain(conn, user_id)
+    peers = await fetch_peers(conn, next_id)
+    managers = await fetch_manager_chain(conn, next_id)
 
     resource[0]["peers"] = peers
     resource[0]["managers"] = managers
     try:
         return resource[0]
     except IndexError:
-        raise ApiNotFound("Not Found: No user with the id {} exists".format(user_id))
+        raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
 
 
 async def search_users(conn, search_query, paging):
@@ -270,17 +279,17 @@ async def search_users(conn, search_query, paging):
         await users_search_name(search_query)
         .union(users_search_email(search_query))
         .distinct()
-        .pluck("name", "email", "user_id")
+        .pluck("name", "email", "next_id")
         .order_by("name")
         .map(
             lambda doc: doc.merge(
                 {
-                    "id": doc["user_id"],
+                    "id": doc["next_id"],
                     "memberOf": fetch_relationships_by_id(
-                        "role_members", doc["user_id"], "role_id"
+                        "role_members", doc["next_id"], "role_id"
                     ),
                 }
-            ).without("user_id")
+            ).without("next_id")
         )
         .slice(paging[0], paging[1])
         .coerce_to("array")
