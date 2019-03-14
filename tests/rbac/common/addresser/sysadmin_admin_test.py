@@ -71,7 +71,7 @@ class TestSysAdminAdminAddresser(TestAssertions):
     def test_addresser_parse(self):
         """Test addresser.parse returns a parsed address"""
         user_id = addresser.user.unique_id()
-        rel_address = addresser.sysadmin.admin.address(user_id)
+        rel_address = addresser.sysadmin.admin.address(next_id)
 
         parsed = addresser.parse(rel_address)
 
@@ -79,5 +79,5 @@ class TestSysAdminAdminAddresser(TestAssertions):
         self.assertEqual(parsed.related_type, addresser.ObjectType.USER)
         self.assertEqual(parsed.relationship_type, addresser.RelationshipType.ADMIN)
         self.assertEqual(parsed.address_type, addresser.AddressSpace.SYSADMIN_ADMINS)
-        self.assertEqual(parsed.object_id, user_id)
+        self.assertEqual(parsed.object_id, next_id)
         self.assertEqual(parsed.related_id, None)

@@ -49,8 +49,8 @@ class TestBatchClient(TestAssertions):
         if message_type == RBACPayload.CREATE_USER:
             signer = Key()
             message = user_transaction_pb2.CreateUser(name="foobar")
-            message.user_id = signer.public_key
-            inputs = [addresser.user.address(message.user_id)]
+            message.next_id = signer.public_key
+            inputs = [addresser.user.address(message.next_id)]
             outputs = inputs
             return message, message_type, inputs, outputs, signer
 
@@ -67,7 +67,7 @@ class TestBatchClient(TestAssertions):
                 message_type=message_type,
                 inputs=inputs,
                 outputs=outputs,
-                signer_user_id=message.user_id,
+                signer_user_id=message.next_id,
                 signer_public_key=signer.public_key,
             ),
             signer,
@@ -99,7 +99,7 @@ class TestBatchClient(TestAssertions):
             message_type=message_type,
             inputs=inputs,
             outputs=outputs,
-            signer_user_id=message.user_id,
+            signer_user_id=message.next_id,
             signer_public_key=signer.public_key,
         )
         self.assertIsInstance(payload, RBACPayload)
@@ -119,7 +119,7 @@ class TestBatchClient(TestAssertions):
             message_type=message_type,
             inputs=inputs,
             outputs=outputs,
-            signer_user_id=message.user_id,
+            signer_user_id=message.next_id,
             signer_public_key=signer.public_key,
         )
         messages = unmake(batch_object=payload, signer_public_key=signer.public_key)
@@ -140,7 +140,7 @@ class TestBatchClient(TestAssertions):
             message_type=message_type,
             inputs=inputs,
             outputs=outputs,
-            signer_user_id=message.user_id,
+            signer_user_id=message.next_id,
             signer_public_key=signer_keypair.public_key,
         )
         transaction, batch, batch_list, batch_request = make(

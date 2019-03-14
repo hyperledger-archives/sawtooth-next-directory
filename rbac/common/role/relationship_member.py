@@ -13,7 +13,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Implementation of the Role-Member relationship
-Usage: rbac.role.member.exists(role_id, user_id)
+Usage: rbac.role.member.exists(role_id, next_id)
 """
 
 from rbac.common import addresser
@@ -29,7 +29,7 @@ LOGGER = get_default_logger(__name__)
 
 class MemberRelationship(BaseRelationship):
     """Implementation of the Role-Member relationship
-    Usage: rbac.role.member.exists(role_id, user_id)
+    Usage: rbac.role.member.exists(role_id, next_id)
     """
 
     def __init__(self):

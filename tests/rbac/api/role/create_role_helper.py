@@ -62,8 +62,8 @@ class CreateRoleTestHelper(BaseApiHelper):
             user = helper.user.current
         data = {
             "name": self.name(),
-            "owners": [user["user_id"]],
-            "administrators": [user["user_id"]],
+            "owners": [user["next_id"]],
+            "administrators": [user["next_id"]],
         }
         response = requests.post(
             url=self.url, headers={"Authorization": user["token"]}, json=data

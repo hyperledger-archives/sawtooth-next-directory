@@ -41,5 +41,5 @@ def test_api_reject_add_role_member():
     assert rejected["type"] == "ADD_ROLE_MEMBER"
     assert rejected["object"] == proposal["object"]
     assert rejected["target"] == proposal["target"]
-    assert rejected["closer"] == owner["user_id"]
+    assert rejected["closer"] == owner["next_id"]
     assert rejected["close_reason"] == reason

@@ -90,7 +90,7 @@ def test_create():
 
     status = Role().task.reject.new(
         signer_keypair=task_owner_key,
-        signer_user_id=task_owner.user_id,
+        signer_user_id=task_owner.next_id,
         message=message,
     )
 
@@ -107,5 +107,5 @@ def test_create():
     assert reject.object_id == proposal.object_id
     assert reject.related_id == proposal.related_id
     assert reject.close_reason == reason
-    assert reject.closer == task_owner.user_id
+    assert reject.closer == task_owner.next_id
     assert reject.status == protobuf.proposal_state_pb2.Proposal.REJECTED

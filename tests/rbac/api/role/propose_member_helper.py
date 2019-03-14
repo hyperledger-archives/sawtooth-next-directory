@@ -68,7 +68,7 @@ class ProposeRoleMemberTestHelper(BaseApiHelper):
         role = helper.role.new(user=owner)
         user = helper.user.current2
         url = self.url(role_id=role["id"])
-        data = {"id": user["user_id"]}
+        data = {"id": user["next_id"]}
         api_wait()  # temporary, see config
         response = requests.post(
             url=url, headers={"Authorization": user["token"]}, json=data

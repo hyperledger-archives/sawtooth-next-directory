@@ -60,7 +60,7 @@ class BatchAssertions(AddressAssertions):
         self.assertEqual(message_payload1.outputs, message_payload2.outputs)
         self.assertEqualMessage(message1, message2)
         self.assertEqual(
-            message_payload1.signer.user_id, message_payload2.signer.user_id
+            message_payload1.signer.next_id, message_payload2.signer.next_id
         )
         self.assertEqual(
             message_payload1.signer.public_key, message_payload2.signer.public_key

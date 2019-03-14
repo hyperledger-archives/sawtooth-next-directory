@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x11\x65mail_state.proto\"(\n\x0e\x45mailContainer\x12\x16\n\x06\x65mails\x18\x02 \x03(\x0b\x32\x06.Email\"\'\n\x05\x45mail\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x11\x65mail_state.proto\"(\n\x0e\x45mailContainer\x12\x16\n\x06\x65mails\x18\x02 \x03(\x0b\x32\x06.Email\"\'\n\x05\x45mail\x12\x0f\n\x07next_id\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\tb\x06proto3')
 )
 
 
@@ -64,7 +64,7 @@ _EMAIL = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='user_id', full_name='Email.user_id', index=0,
+      name='next_id', full_name='Email.next_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,

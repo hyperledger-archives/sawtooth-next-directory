@@ -37,8 +37,8 @@ def test_api_create_role():
     user = helper.api.user.current
     data = {
         "name": helper.api.role.name(),
-        "owners": [user["user_id"]],
-        "administrators": [user["user_id"]],
+        "owners": [user["next_id"]],
+        "administrators": [user["next_id"]],
         "description": helper.api.role.description(),
     }
     assert assert_api_post_requires_auth(url=url, json=data)

@@ -31,20 +31,20 @@ LOGGER = get_default_logger(__name__)
 @pytest.mark.library
 def test_make():
     """Test making the message"""
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     role_id = helper.role.id()
     proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     message = Role().member.propose.make(
         proposal_id=proposal_id,
-        user_id=user_id,
+        next_id=next_id,
         role_id=role_id,
         reason=reason,
         metadata=None,
     )
     assert isinstance(message, protobuf.role_transaction_pb2.ProposeAddRoleMember)
     assert message.proposal_id == proposal_id
-    assert message.user_id == user_id
+    assert message.next_id == next_id
     assert message.role_id == role_id
     assert message.reason == reason
 
@@ -53,18 +53,18 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses():
     """Test making the message addresses"""
-    user_id = helper.user.id()
-    user_address = User().address(user_id)
+    next_id = helper.user.id()
+    user_address = User().address(next_id)
     role_id = helper.role.id()
     role_address = Role().address(role_id)
     proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
-    relationship_address = Role().member.address(role_id, user_id)
-    proposal_address = Role().member.propose.address(role_id, user_id)
+    relationship_address = Role().member.address(role_id, next_id)
+    proposal_address = Role().member.propose.address(role_id, next_id)
     signer_user_id = helper.user.id()
     message = Role().member.propose.make(
         proposal_id=proposal_id,
-        user_id=user_id,
+        next_id=next_id,
         role_id=role_id,
         reason=reason,
         metadata=None,
@@ -93,22 +93,22 @@ def test_create():
 
     message = Role().member.propose.make(
         proposal_id=proposal_id,
-        user_id=user.user_id,
+        next_id=user.next_id,
         role_id=role.role_id,
         reason=reason,
         metadata=None,
-        signer_user_id=user.user_id,
+        signer_user_id=user.next_id,
     )
 
     status = Role().member.propose.new(
-        signer_keypair=signer_keypair, signer_user_id=user.user_id, message=message
+        signer_keypair=signer_keypair, signer_user_id=user.next_id, message=message
     )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
     proposal = Role().member.propose.get(
-        object_id=role.role_id, related_id=user.user_id
+        object_id=role.role_id, related_id=user.next_id
     )
 
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -117,6 +117,6 @@ def test_create():
     )
     assert proposal.proposal_id == proposal_id
     assert proposal.object_id == role.role_id
-    assert proposal.related_id == user.user_id
-    assert proposal.opener == user.user_id
+    assert proposal.related_id == user.next_id
+    assert proposal.opener == user.next_id
     assert proposal.open_reason == reason

@@ -99,11 +99,11 @@ class ConfirmAddRoleOwner(ProposalConfirm):
     #            inputs=inputs,
     #            input_state=input_state,
     #            object_id=message.object_id,
-    #            related_id=payload.signer.user_id,
+    #            related_id=payload.signer.next_id,
     #        ):
     #            raise ValueError(
     #                "Signer {} must be an admin of the role {}\n{}".format(
-    #                    payload.signer.user_id, message.object_id, input_state
+    #                    payload.signer.next_id, message.object_id, input_state
     #                )
     #            )
 

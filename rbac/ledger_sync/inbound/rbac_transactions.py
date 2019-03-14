@@ -56,12 +56,13 @@ def add_transaction(inbound_entry):
             object_id = User().hash(next_id)
             address = User().address(object_id=object_id)
 
+            inbound_entry["next_id"] = next_id
             inbound_entry["address"] = bytes_from_hex(address)
             inbound_entry["object_id"] = bytes_from_hex(object_id)
             inbound_entry["object_type"] = addresser.ObjectType.USER.value
 
             message = User().imports.make(
-                signer_keypair=SIGNER_KEYPAIR, user_id=next_id, **data
+                signer_keypair=SIGNER_KEYPAIR, next_id=next_id, **data
             )
             batch = User().imports.batch(
                 signer_keypair=SIGNER_KEYPAIR,

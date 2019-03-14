@@ -101,7 +101,7 @@ async def add_task_admin(request, task_id):
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         task_id=task_id,
-        user_id=request.json.get("id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
@@ -125,7 +125,7 @@ async def add_task_owner(request, task_id):
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         task_id=task_id,
-        user_id=request.json.get("id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )

@@ -27,6 +27,6 @@ message Key {
 
     string key_id = 1;
 
-    string user_id = 2;
+    string next_id = 2;
 
 }

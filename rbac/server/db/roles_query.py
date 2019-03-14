@@ -90,23 +90,23 @@ async def fetch_role_resource(conn, role_id):
         raise ApiNotFound("Role {} doesn't exist.".format(role_id))
 
 
-async def expire_role_member(conn, role_id, user_id):
+async def expire_role_member(conn, role_id, next_id):
     """Expire role membership of given user"""
     return (
         await r.table("role_members")
         .get_all(role_id, index="role_id")
-        .filter(lambda doc: doc["identifiers"].contains(user_id))
+        .filter(lambda doc: doc["identifiers"].contains(next_id))
         .update({"expiration_date": r.now()})
         .run(conn)
     )
 
 
-def fetch_expired_roles(user_id):
+def fetch_expired_roles(next_id):
     """Fetch expired role memberships of given user"""
     return (
         r.table("role_members")
         .filter(
-            lambda doc: (doc["identifiers"].contains(user_id))
+            lambda doc: (doc["identifiers"].contains(next_id))
             & (doc["expiration_date"] <= r.now())
         )
         .get_field("role_id")

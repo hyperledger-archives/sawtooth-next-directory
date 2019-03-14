@@ -79,9 +79,9 @@ class RejectUpdateUserManager(ProposalReject):
         # TODO: change to verify proposal assignment and hierarchy
 
 
-#        if message.related_id != payload.signer.user_id:
+#        if message.related_id != payload.signer.next_id:
 #            raise ValueError(
 #                "Proposed manager {} is not the transaction signer {}".format(
-#                    message.related_id, payload.signer.user_id
+#                    message.related_id, payload.signer.next_id
 #                )
 #            )

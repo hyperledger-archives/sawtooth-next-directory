@@ -37,7 +37,7 @@ CHATBOT_BP = Blueprint("chatbot")
 async def chatbot(request, web_socket):
     """Chatbot websocket listener."""
     while True:
-        required_fields = ["text", "user_id"]
+        required_fields = ["text", "next_id"]
         recv = json.loads(await web_socket.recv())
 
         utils.validate_fields(required_fields, recv)
@@ -48,9 +48,9 @@ async def chatbot(request, web_socket):
 async def create_response(request, recv):
     """Create a response to received message."""
     if recv.get("resource_id"):
-        LOGGER.info("[Chatbot] %s: Updating tracker", recv.get("user_id"))
+        LOGGER.info("[Chatbot] %s: Updating tracker", recv.get("next_id"))
         await update_tracker(request, recv)
-    LOGGER.info("[Chatbot] %s: Sending generated reply", recv.get("user_id"))
+    LOGGER.info("[Chatbot] %s: Sending generated reply", recv.get("next_id"))
     response = await generate_chatbot_reply(request, recv)
     for message in response:
         message["resource_id"] = recv.get("resource_id")
@@ -78,7 +78,7 @@ async def update_tracker(request, recv):
 async def create_event(request, recv, name, value):
     """Append an event to the chatbot engine tracker"""
     url = CHATBOT_REST_ENDPOINT + "/conversations/{}/tracker/events".format(
-        recv.get("user_id")
+        recv.get("next_id")
     )
     data = {"event": "slot", "name": name, "value": value}
     async with request.app.config.HTTP_SESSION.post(url=url, json=data) as response:
@@ -88,6 +88,6 @@ async def create_event(request, recv, name, value):
 async def generate_chatbot_reply(request, recv):
     """Get a reply from the chatbot engine"""
     url = CHATBOT_REST_ENDPOINT + "/webhooks/rest/webhook"
-    data = {"sender": recv.get("user_id"), "message": recv.get("text")}
+    data = {"sender": recv.get("next_id"), "message": recv.get("text")}
     async with request.app.config.HTTP_SESSION.post(url=url, json=data) as response:
         return await response.json()

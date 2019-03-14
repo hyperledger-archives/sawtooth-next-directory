@@ -66,7 +66,7 @@ class ProposeRoleTaskTestHelper:
 
         status = Role().task.propose.new(
             signer_keypair=role_owner_key,
-            signer_user_id=role_owner.user_id,
+            signer_user_id=role_owner.next_id,
             message=message,
         )
 
@@ -84,7 +84,7 @@ class ProposeRoleTaskTestHelper:
         assert proposal.proposal_id == proposal_id
         assert proposal.object_id == role.role_id
         assert proposal.related_id == task.task_id
-        assert proposal.opener == role_owner.user_id
+        assert proposal.opener == role_owner.next_id
         assert proposal.open_reason == reason
         return (
             proposal,

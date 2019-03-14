@@ -85,7 +85,7 @@ class TestTaskAdminAddresser(TestAssertions):
         """Test addresser.parse returns a parsed address"""
         task_id = addresser.task.unique_id()
         user_id = addresser.user.unique_id()
-        rel_address = addresser.task.admin.address(task_id, user_id)
+        rel_address = addresser.task.admin.address(task_id, next_id)
 
         parsed = addresser.parse(rel_address)
 
@@ -94,4 +94,4 @@ class TestTaskAdminAddresser(TestAssertions):
         self.assertEqual(parsed.relationship_type, addresser.RelationshipType.ADMIN)
         self.assertEqual(parsed.address_type, addresser.AddressSpace.TASKS_ADMINS)
         self.assertEqual(parsed.object_id, task_id)
-        self.assertEqual(parsed.related_id, user_id)
+        self.assertEqual(parsed.related_id, next_id)

@@ -104,10 +104,10 @@ class ProposeAddRoleTask(ProposalPropose):
             inputs=payload.inputs,
             input_state=input_state,
             object_id=message.role_id,
-            related_id=payload.signer.user_id,
+            related_id=payload.signer.next_id,
         ):
             raise ValueError(
                 "Signer {} must be an owner of the role {}".format(
-                    payload.signer.user_id, message.role_id
+                    payload.signer.next_id, message.role_id
                 )
             )
