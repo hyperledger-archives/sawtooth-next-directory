@@ -53,15 +53,6 @@ async def fetch_info_by_username(request):
         .run(conn)
     )
     if result:
-        if request.json.get("auth_source") == "ldap":
-            dn_lookup = (
-                await r.table("metadata")
-                .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
-                .limit(1)
-                .coerce_to("array")
-                .run(conn)
-            )
-            return dn_lookup[0]
         return result[0]
     # Auth record not found, check if the username exists
     result = (
