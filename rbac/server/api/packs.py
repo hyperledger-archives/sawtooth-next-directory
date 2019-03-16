@@ -13,8 +13,6 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Packs APIs."""
-
-
 from uuid import uuid4
 
 from sanic import Blueprint
@@ -24,8 +22,9 @@ from rbac.server.api.auth import authorized
 from rbac.server.api import roles, utils
 
 from rbac.server.db import packs_query
-
+from rbac.server.api.errors import ApiBadRequest
 from rbac.server.db import db_utils
+
 
 PACKS_BP = Blueprint("packs")
 
@@ -58,26 +57,28 @@ async def create_new_pack(request):
     """Create a new pack"""
     required_fields = ["owners", "name", "roles"]
     utils.validate_fields(required_fields, request.json)
-
+    search_query = {"query": {"search_input": request.json.get("name")}}
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
         request.app.config.DB_NAME,
     )
-
-    pack_id = str(uuid4())
-    await packs_query.create_pack_resource(
-        conn,
-        pack_id,
-        request.json.get("owners"),
-        request.json.get("name"),
-        request.json.get("description"),
+    response = await packs_query.packs_search_duplicate(conn, search_query["query"])
+    if not response:
+        pack_id = str(uuid4())
+        await packs_query.create_pack_resource(
+            conn,
+            pack_id,
+            request.json.get("owners"),
+            request.json.get("name"),
+            request.json.get("description"),
+        )
+        await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
+        conn.close()
+        return create_pack_response(request, pack_id)
+    raise ApiBadRequest(
+        "Error: could not create this pack because pack name has been taken or already exists"
     )
-    await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
-
-    conn.close()
-
-    return create_pack_response(request, pack_id)
 
 
 @PACKS_BP.get("api/packs/<pack_id>")

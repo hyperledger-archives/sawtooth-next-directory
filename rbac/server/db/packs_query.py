@@ -140,7 +140,7 @@ async def search_packs_count(conn, search_query):
 
 
 def packs_search_name(search_query):
-    """Search for packs based a string int the name field."""
+    """Search for packs based a string in the name field."""
     resource = (
         r.table("packs")
         .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
@@ -162,6 +162,23 @@ def packs_search_description(search_query):
         )
         .order_by("name")
         .coerce_to("array")
+    )
+
+    return resource
+
+
+async def packs_search_duplicate(conn, search_query):
+    """Search for packs based a string in the name field."""
+    resource = (
+        await r.table("packs")
+        .filter(
+            lambda doc: (
+                doc["name"].match("(?i)^" + search_query["search_input"] + "$")
+            )
+        )
+        .order_by("name")
+        .coerce_to("array")
+        .run(conn)
     )
 
     return resource
