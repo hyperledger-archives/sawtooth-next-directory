@@ -160,11 +160,7 @@ def roles_search_name(search_query):
     """Search for roles based a string int the name field."""
     resource = (
         r.table("roles")
-        .filter(
-            lambda doc: (
-                doc["name"].match("(?i)^" + search_query["search_input"] + "$")
-            )
-        )
+        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
         .order_by("name")
         .coerce_to("array")
     )
