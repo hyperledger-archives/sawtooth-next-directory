@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Authentication API Endpoint Test"""
 import requests
 
 
@@ -24,21 +23,30 @@ def create_test_user(session):
         "password": "123456",
         "email": "susan@biz.co",
     }
-    session.post("http://rbac-server:8000/api/users", json=create_user_input)
+    response = session.post("http://rbac-server:8000/api/users", json=create_user_input)
+    return response
 
 
-def test_search_api():
-    """Tests the search api endpoint functions and returns a valid payload."""
+def create_fake_role(session, user_id):
+    """Create a new fake role resource"""
+    role_resource = {"name": "Manager", "owners": user_id, "administrators": user_id}
+    session.post("http://rbac-server:8000/api/roles", json=role_resource)
 
+
+def test_create_duplicate_role():
+    """Create a new fake role resource"""
     with requests.Session() as session:
-        create_test_user(session)
-        search_query = {
-            "query": {
-                "search_input": "search input",
-                "search_object_types": ["role", "pack", "user"],
-                "page_size": "20",
-                "page": "2",
-            }
+        user_response = create_test_user(session)
+        user_id = user_response.json()["data"]["user"]["id"]
+        create_fake_role(session, user_id)
+        role_resource = {
+            "name": "Manager",
+            "owners": user_id,
+            "administrators": user_id,
         }
-        response = session.post("http://rbac-server:8000/api/search", json=search_query)
-        assert response.json()["data"] == {"roles": [], "packs": [], "users": []}
+        response = session.post("http://rbac-server:8000/api/roles", json=role_resource)
+        assert (
+            response.json()["message"]
+            == "Error: could not create this role because role name has been taken or already exists"
+        )
+        assert response.json()["code"] == 400
