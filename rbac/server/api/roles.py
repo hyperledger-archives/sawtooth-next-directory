@@ -13,13 +13,13 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Roles APIs."""
-
 from uuid import uuid4
 
 from sanic import Blueprint
 from sanic.response import json
 
 from rbac.common.role import Role
+from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.db import roles_query
@@ -54,22 +54,33 @@ async def create_new_role(request):
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
-    role_id = str(uuid4())
-    batch_list = Role().batch_list(
-        signer_keypair=txn_key,
-        signer_user_id=txn_user_id,
-        name=request.json.get("name"),
-        role_id=role_id,
-        metadata=request.json.get("metadata"),
-        admins=request.json.get("administrators"),
-        owners=request.json.get("owners"),
-        description=request.json.get("description"),
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    search_query = {"query": {"search_input": request.json.get("name")}}
+    response = await roles_query.roles_search_duplicate(conn, search_query["query"])
+    if not response:
+        txn_key, txn_user_id = await utils.get_transactor_key(request)
+        role_id = str(uuid4())
+        batch_list = Role().batch_list(
+            signer_keypair=txn_key,
+            signer_user_id=txn_user_id,
+            name=request.json.get("name"),
+            role_id=role_id,
+            metadata=request.json.get("metadata"),
+            admins=request.json.get("administrators"),
+            owners=request.json.get("owners"),
+            description=request.json.get("description"),
+        )
+        await utils.send(
+            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+        )
+        return create_role_response(request, role_id)
+    raise ApiBadRequest(
+        "Error: could not create this role because role name has been taken or already exists"
     )
-    return create_role_response(request, role_id)
 
 
 @ROLES_BP.get("api/roles/<role_id>")

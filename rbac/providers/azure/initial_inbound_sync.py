@@ -31,10 +31,6 @@ from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 
 LOGGER = get_default_logger(__name__)
-
-DB_HOST = os.getenv("DB_HOST", "rethink")
-DB_PORT = os.getenv("DB_PORT", "28015")
-DB_NAME = os.getenv("DB_NAME", "rbac")
 GRAPH_URL = "https://graph.microsoft.com/beta/"
 
 TENANT_ID = os.getenv("TENANT_ID")

@@ -13,66 +13,24 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Authentication API Endpoint Test"""
-
-import time
-import os
 import requests
-
-import rethinkdb as r
-from rbac.common.logs import get_default_logger
-
-LOGGER = get_default_logger(__name__)
-
-DB_HOST = os.getenv("DB_HOST", "rethink")
-DB_PORT = os.getenv("DB_PORT", "28015")
-DB_NAME = os.getenv("DB_NAME", "rbac")
-DB_CONNECT_TIMEOUT = int(float(os.getenv("DB_CONNECT_TIMEOUT", "1")))
-
-DB_CONNECT_MAX_ATTEMPTS = 5
-
-
-def connect_to_db():
-    """Polls the database until it comes up and opens a connection."""
-    connected_to_db = False
-    conn = None
-    while not connected_to_db:
-        try:
-            conn = r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME)
-            connected_to_db = True
-        except r.ReqlDriverError:
-            LOGGER.debug(
-                "Could not connect to RethinkDB. Retrying in %s seconds...",
-                DB_CONNECT_TIMEOUT,
-            )
-            time.sleep(DB_CONNECT_TIMEOUT)
-    return conn
-
-
-def create_test_user(session):
-    """Create a user and authenticate to use api endpoints during testing."""
-    create_user_input = {
-        "name": "Susan Susanson",
-        "username": "susan20",
-        "password": "123456",
-        "email": "susan@biz.co",
-    }
-    session.post("http://rbac-server:8000/api/users", json=create_user_input)
-
-
-def delete_test_user(username):
-    """ Running the new Delete User Query against Rethink DB. """
-    conn = connect_to_db()
-    (r.table("users").filter({"username": username}).delete().run(conn))
-    conn.close()
+from tests.utilities import create_test_user, delete_user_by_username
 
 
 def test_search_api():
     """Tests the search api endpoint functions and returns a valid payload."""
+    delete_user_by_username("susan20")
     with requests.Session() as session:
-        create_test_user(session)
+        create_user_input = {
+            "name": "Susan Susanson",
+            "username": "susan23",
+            "password": "123456",
+            "email": "susan@biz.co",
+        }
+        create_test_user(session, create_user_input)
         search_query = {
             "query": {
-                "search_input": "search input",
+                "search_input": "super long search input",
                 "search_object_types": ["role", "pack", "user"],
                 "page_size": "20",
                 "page": "2",
@@ -80,4 +38,4 @@ def test_search_api():
         }
         response = session.post("http://rbac-server:8000/api/search", json=search_query)
         assert response.json()["data"] == {"roles": [], "packs": [], "users": []}
-        delete_test_user("susan20")
+        delete_user_by_username("susan23")
