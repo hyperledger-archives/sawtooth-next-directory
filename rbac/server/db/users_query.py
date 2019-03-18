@@ -314,3 +314,16 @@ def users_search_email(search_query):
     )
 
     return resource
+
+
+def fetch_username_match_count(conn, username):
+    """Database query to fetch the count of usernames that match the given username."""
+    LOGGER.info("users_query.py: Starting inside the fetch_user_usernames()")
+    resource = (
+        r.table("users")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
+        .count()
+        .run(conn)
+    )
+    return resource
+
