@@ -16,7 +16,7 @@
 # pylint: disable=no-member
 import pytest
 
-from rbac.common import rbac
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
@@ -32,7 +32,7 @@ def test_make():
     related_id = helper.user.id()
     reason = helper.user.manager.propose.reason()
     proposal_id = helper.user.manager.propose.id()
-    message = rbac.user.manager.confirm.make(
+    message = User().manager.confirm.make(
         proposal_id=proposal_id,
         object_id=object_id,
         related_id=related_id,
@@ -50,21 +50,21 @@ def test_make():
 def test_make_addresses():
     """Test making the message addresses"""
     object_id = helper.user.id()
-    user_address = rbac.user.address(object_id=object_id)
+    user_address = User().address(object_id=object_id)
     related_id = helper.user.id()
     reason = helper.user.manager.propose.reason()
     proposal_id = helper.proposal.id()
-    proposal_address = rbac.user.manager.confirm.address(
+    proposal_address = User().manager.confirm.address(
         object_id=object_id, related_id=related_id
     )
-    message = rbac.user.manager.confirm.make(
+    message = User().manager.confirm.make(
         proposal_id=proposal_id,
         object_id=object_id,
         related_id=related_id,
         reason=reason,
     )
 
-    inputs, outputs = rbac.user.manager.confirm.make_addresses(
+    inputs, outputs = User().manager.confirm.make_addresses(
         message=message, signer_user_id=object_id
     )
 
@@ -82,7 +82,7 @@ def test_create():
     proposal, _, _, manager, manager_key = helper.user.manager.propose.create()
     reason = helper.user.manager.propose.reason()
 
-    status = rbac.user.manager.confirm.new(
+    status = User().manager.confirm.new(
         signer_user_id=manager.user_id,
         signer_keypair=manager_key,
         proposal_id=proposal.proposal_id,
@@ -94,7 +94,7 @@ def test_create():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    confirm = rbac.user.manager.confirm.get(
+    confirm = User().manager.confirm.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 
@@ -109,6 +109,6 @@ def test_create():
     assert confirm.close_reason == reason
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
 
-    user = rbac.user.get(object_id=proposal.object_id)
+    user = User().get(object_id=proposal.object_id)
     assert isinstance(user, protobuf.user_state_pb2.User)
     assert user.manager_id == proposal.related_id

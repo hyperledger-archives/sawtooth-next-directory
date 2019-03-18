@@ -17,17 +17,16 @@
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common import rbac
+from rbac.common.user import User
+from rbac.common.role import Role
+from rbac.common.task import Task
 from rbac.common.logs import get_default_logger
-
 from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
-
 from rbac.server.db import proposals_query
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.users_query import fetch_user_resource
-
 from rbac.server.db import db_utils
 
 LOGGER = get_default_logger(__name__)
@@ -54,32 +53,32 @@ TABLES = {
 
 PROPOSAL_TRANSACTION = {
     "ADD_ROLE_TASK": {
-        "REJECTED": rbac.role.task.reject.batch_list,
-        "APPROVED": rbac.role.task.confirm.batch_list,
+        "REJECTED": Role().task.reject.batch_list,
+        "APPROVED": Role().task.confirm.batch_list,
     },
     "ADD_ROLE_MEMBER": {
-        "REJECTED": rbac.role.member.reject.batch_list,
-        "APPROVED": rbac.role.member.confirm.batch_list,
+        "REJECTED": Role().member.reject.batch_list,
+        "APPROVED": Role().member.confirm.batch_list,
     },
     "ADD_ROLE_OWNER": {
-        "REJECTED": rbac.role.owner.reject.batch_list,
-        "APPROVED": rbac.role.owner.confirm.batch_list,
+        "REJECTED": Role().owner.reject.batch_list,
+        "APPROVED": Role().owner.confirm.batch_list,
     },
     "ADD_ROLE_ADMIN": {
-        "REJECTED": rbac.role.admin.reject.batch_list,
-        "APPROVED": rbac.role.admin.confirm.batch_list,
+        "REJECTED": Role().admin.reject.batch_list,
+        "APPROVED": Role().admin.confirm.batch_list,
     },
     "ADD_TASK_OWNER": {
-        "REJECTED": rbac.task.owner.reject.batch_list,
-        "APPROVED": rbac.task.owner.confirm.batch_list,
+        "REJECTED": Task().owner.reject.batch_list,
+        "APPROVED": Task().owner.confirm.batch_list,
     },
     "ADD_TASK_ADMIN": {
-        "REJECTED": rbac.task.admin.reject.batch_list,
-        "APPROVED": rbac.task.admin.confirm.batch_list,
+        "REJECTED": Task().admin.reject.batch_list,
+        "APPROVED": Task().admin.confirm.batch_list,
     },
     "UPDATE_USER_MANAGER": {
-        "REJECTED": rbac.user.manager.reject.batch_list,
-        "APPROVED": rbac.user.manager.confirm.batch_list,
+        "REJECTED": User().manager.reject.batch_list,
+        "APPROVED": User().manager.confirm.batch_list,
     },
 }
 
@@ -147,7 +146,6 @@ async def update_proposal(request, proposal_id):
             "Bad Request: status must be either 'REJECTED' or 'APPROVED'"
         )
     txn_key, txn_user_id = await utils.get_transactor_key(request=request)
-    block = await utils.get_request_block(request)
 
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,

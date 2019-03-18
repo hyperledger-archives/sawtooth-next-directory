@@ -16,7 +16,7 @@
 
 import rethinkdb as r
 
-from rbac.common import rbac
+from rbac.common.key import KEY
 from rbac.common.logs import get_default_logger
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
@@ -74,7 +74,7 @@ async def fetch_info_by_username(request):
     user_id = result.get("user_id")
     user_key = Key()
 
-    batch_list = rbac.key.batch_list(
+    batch_list = KEY.batch_list(
         signer_keypair=user_key,
         signer_user_id=user_id,
         user_id=user_id,

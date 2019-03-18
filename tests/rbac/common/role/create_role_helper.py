@@ -15,7 +15,7 @@
 """Create Role test helper"""
 # pylint: disable=no-member,too-few-public-methods
 
-from rbac.common import rbac
+from rbac.common.role import Role
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
@@ -43,7 +43,7 @@ class CreateRoleTestHelper(RoleTestData):
         role_id = self.id()
         name = self.name()
         user_id = helper.user.id()
-        message = rbac.role.make(
+        message = Role().make(
             role_id=role_id, name=name, owners=[user_id], admins=[user_id]
         )
         assert isinstance(message, protobuf.role_transaction_pb2.CreateRole)
@@ -56,21 +56,21 @@ class CreateRoleTestHelper(RoleTestData):
         role_id = self.id()
         name = self.name()
         user, keypair = helper.user.create()
-        message = rbac.role.make(
+        message = Role().make(
             role_id=role_id, name=name, owners=[user.user_id], admins=[user.user_id]
         )
 
-        status = rbac.role.new(
+        status = Role().new(
             signer_keypair=keypair, signer_user_id=user.user_id, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        role = rbac.role.get(object_id=message.role_id)
+        role = Role().get(object_id=message.role_id)
 
         assert role.role_id == message.role_id
         assert role.name == message.name
-        assert rbac.role.owner.exists(object_id=role.role_id, related_id=user.user_id)
-        assert rbac.role.admin.exists(object_id=role.role_id, related_id=user.user_id)
+        assert Role().owner.exists(object_id=role.role_id, related_id=user.user_id)
+        assert Role().admin.exists(object_id=role.role_id, related_id=user.user_id)
         return role, user, keypair

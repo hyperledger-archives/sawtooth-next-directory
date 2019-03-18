@@ -16,8 +16,9 @@
 # pylint: disable=no-member,invalid-name
 import pytest
 
-from rbac.common import rbac
+from rbac.common.user import User
 from rbac.common import protobuf
+from rbac.common import addresser
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
@@ -30,9 +31,9 @@ def test_make():
     """Test making the message"""
     user_id = helper.user.id()
     manager_id = helper.user.id()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         new_manager_id=manager_id,
@@ -51,15 +52,15 @@ def test_make():
 def test_make_addresses_user():
     """Test making the message addresses with user as signer"""
     user_id = helper.user.id()
-    user_address = rbac.user.address(object_id=user_id)
+    user_address = User().address(object_id=user_id)
     manager_id = helper.user.id()
-    manager_address = rbac.user.address(object_id=manager_id)
-    proposal_address = rbac.user.manager.propose.address(
+    manager_address = User().address(object_id=manager_id)
+    proposal_address = User().manager.propose.address(
         object_id=user_id, related_id=manager_id
     )
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         new_manager_id=manager_id,
@@ -67,7 +68,7 @@ def test_make_addresses_user():
         metadata=None,
     )
 
-    inputs, outputs = rbac.user.manager.propose.make_addresses(
+    inputs, outputs = User().manager.propose.make_addresses(
         message=message, signer_user_id=user_id
     )
 
@@ -83,15 +84,15 @@ def test_make_addresses_user():
 def test_make_addresses_manager():
     """Test making the message addresses with manager as signer"""
     user_id = helper.user.id()
-    user_address = rbac.user.address(object_id=user_id)
+    user_address = User().address(object_id=user_id)
     manager_id = helper.user.id()
-    manager_address = rbac.user.address(object_id=manager_id)
-    proposal_address = rbac.user.manager.propose.address(
+    manager_address = User().address(object_id=manager_id)
+    proposal_address = User().manager.propose.address(
         object_id=user_id, related_id=manager_id
     )
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         new_manager_id=manager_id,
@@ -99,7 +100,7 @@ def test_make_addresses_manager():
         metadata=None,
     )
 
-    inputs, outputs = rbac.user.manager.propose.make_addresses(
+    inputs, outputs = User().manager.propose.make_addresses(
         message=message, signer_user_id=user_id
     )
 
@@ -115,15 +116,15 @@ def test_make_addresses_manager():
 def test_make_addresses_other():
     """Test making the message addresses with other signer"""
     user_id = helper.user.id()
-    user_address = rbac.user.address(object_id=user_id)
+    user_address = User().address(object_id=user_id)
     manager_id = helper.user.id()
-    manager_address = rbac.user.address(object_id=manager_id)
-    proposal_address = rbac.user.manager.propose.address(
+    manager_address = User().address(object_id=manager_id)
+    proposal_address = User().manager.propose.address(
         object_id=user_id, related_id=manager_id
     )
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         new_manager_id=manager_id,
@@ -131,7 +132,7 @@ def test_make_addresses_other():
         metadata=None,
     )
 
-    inputs, outputs = rbac.user.manager.propose.make_addresses(
+    inputs, outputs = User().manager.propose.make_addresses(
         message=message, signer_user_id=user_id
     )
 
@@ -148,10 +149,10 @@ def test_user_propose_manager_has_no_manager():
     """Test proposing a manager for a user without a manager, signed by user"""
     user, user_key = helper.user.create()
     manager, _ = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=user.user_id,
         signer_keypair=user_key,
         proposal_id=proposal_id,
@@ -164,7 +165,7 @@ def test_user_propose_manager_has_no_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    proposal = rbac.user.manager.propose.get(
+    proposal = User().manager.propose.get(
         object_id=user.user_id, related_id=manager.user_id
     )
 
@@ -187,10 +188,10 @@ def test_manager_propose_manager_has_no_manager():
     """Test proposing a manager for a user without a manager, signed by new manager"""
     user, _ = helper.user.create()
     manager, manager_key = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=manager.user_id,
         signer_keypair=manager_key,
         proposal_id=proposal_id,
@@ -203,7 +204,7 @@ def test_manager_propose_manager_has_no_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    proposal = rbac.user.manager.propose.get(
+    proposal = User().manager.propose.get(
         object_id=user.user_id, related_id=manager.user_id
     )
 
@@ -226,10 +227,10 @@ def test_changing_propose_manager():
     """Test changing a manager proposal to a new manager"""
     proposal, user, user_key, _, _ = helper.user.manager.propose.create()
     new_manager, _ = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=user.user_id,
         signer_keypair=user_key,
         proposal_id=proposal_id,
@@ -242,7 +243,7 @@ def test_changing_propose_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    new_proposal = rbac.user.manager.propose.get(
+    new_proposal = User().manager.propose.get(
         object_id=user.user_id, related_id=new_manager.user_id
     )
 

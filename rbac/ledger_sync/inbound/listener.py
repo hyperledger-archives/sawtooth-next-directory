@@ -21,7 +21,7 @@ from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.sawtooth.batcher import batch_to_list
 from rbac.ledger_sync.database import Database
-from rbac.providers.common.rbac_transactions import add_transaction
+from rbac.ledger_sync.inbound.rbac_transactions import add_transaction
 
 LOGGER = get_default_logger(__name__)
 

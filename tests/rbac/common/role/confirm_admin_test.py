@@ -16,7 +16,8 @@
 # pylint: disable=no-member,too-many-locals
 import pytest
 
-from rbac.common import rbac
+from rbac.common.role import Role
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
@@ -34,7 +35,7 @@ def test_make():
     proposal_id = helper.proposal.id()
     reason = helper.proposal.reason()
     signer_user_id = helper.user.id()
-    message = rbac.role.admin.confirm.make(
+    message = Role().admin.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,
         object_id=object_id,
@@ -55,14 +56,14 @@ def test_make_addresses():
     related_id = helper.user.id()
     object_id = helper.role.id()
     proposal_id = helper.proposal.id()
-    proposal_address = rbac.role.admin.propose.address(object_id, related_id)
+    proposal_address = Role().admin.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
-    relationship_address = rbac.role.admin.address(object_id, related_id)
+    relationship_address = Role().admin.address(object_id, related_id)
     signer_user_id = helper.user.id()
 
-    user_address = rbac.user.address(related_id)
-    signer_admin_address = rbac.role.admin.address(object_id, signer_user_id)
-    message = rbac.role.admin.confirm.make(
+    user_address = User().address(related_id)
+    signer_admin_address = Role().admin.address(object_id, signer_user_id)
+    message = Role().admin.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,
         object_id=object_id,
@@ -70,7 +71,7 @@ def test_make_addresses():
         signer_user_id=signer_user_id,
     )
 
-    inputs, outputs = rbac.role.admin.confirm.make_addresses(
+    inputs, outputs = Role().admin.confirm.make_addresses(
         message=message, signer_user_id=signer_user_id
     )
 
@@ -91,7 +92,7 @@ def test_create():
 
     reason = helper.role.admin.propose.reason()
 
-    status = rbac.role.admin.confirm.new(
+    status = Role().admin.confirm.new(
         signer_keypair=role_admin_key,
         signer_user_id=role_admin.user_id,
         proposal_id=proposal.proposal_id,
@@ -103,7 +104,7 @@ def test_create():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    confirm = rbac.role.admin.confirm.get(
+    confirm = Role().admin.confirm.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 
@@ -115,6 +116,6 @@ def test_create():
     assert confirm.close_reason == reason
     assert confirm.closer == role_admin.user_id
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
-    assert rbac.role.admin.exists(
+    assert Role().admin.exists(
         object_id=proposal.object_id, related_id=proposal.related_id
     )

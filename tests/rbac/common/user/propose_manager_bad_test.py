@@ -16,7 +16,8 @@
 # pylint: disable=no-member,invalid-name
 import pytest
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.user import User
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
@@ -30,16 +31,16 @@ def test_manager_not_in_state():
     """Propose a manager who is not in state"""
     user, user_key = helper.user.create()
     manager, _ = helper.user.message()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=manager.user_id,
         reason=reason,
         metadata=None,
     )
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=user.user_id, signer_keypair=user_key, message=message
     )
     assert len(status) == 1
@@ -52,9 +53,9 @@ def test_user_not_in_state():
     """Propose for a user who is not in state"""
     user, user_key = helper.user.message()
     manager, _ = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=manager.user_id,
@@ -62,7 +63,7 @@ def test_user_not_in_state():
         metadata=None,
     )
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=user.user_id, signer_keypair=user_key, message=message
     )
 
@@ -75,9 +76,9 @@ def test_user_not_in_state():
 def test_user_proposes_manager_change():
     """User propose a change in their manager"""
     user, user_key, manager, _ = helper.user.create_with_manager()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=manager.user_id,
@@ -85,7 +86,7 @@ def test_user_proposes_manager_change():
         metadata=None,
     )
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=user.user_id, signer_keypair=user_key, message=message
     )
 
@@ -99,9 +100,9 @@ def test_another_proposes_manager_change():
     """A proposed change in manager comes from another"""
     user, _, manager, _ = helper.user.create_with_manager()
     other, other_key = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=manager.user_id,
@@ -109,7 +110,7 @@ def test_another_proposes_manager_change():
         metadata=None,
     )
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=other.user_id, signer_keypair=other_key, message=message
     )
 
@@ -124,9 +125,9 @@ def test_other_propose_manager_has_no_manager():
     user, _ = helper.user.create()
     manager, _ = helper.user.create()
     other, other_key = helper.user.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=manager.user_id,
@@ -134,7 +135,7 @@ def test_other_propose_manager_has_no_manager():
         metadata=None,
     )
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=other.user_id, signer_keypair=other_key, message=message
     )
 
@@ -148,9 +149,9 @@ def test_other_propose_manager_has_no_manager():
 def test_manager_already_is_manager():
     """Propose the already existing manager"""
     user, _, manager, manager_key = helper.user.create_with_manager()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=manager.user_id,
@@ -158,7 +159,7 @@ def test_manager_already_is_manager():
         metadata=None,
     )
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=manager.user_id, signer_keypair=manager_key, message=message
     )
 
@@ -172,9 +173,9 @@ def test_manager_already_is_manager():
 def test_proposed_manager_is_self():
     """Propose self as manager"""
     user, _, _, manager_key = helper.user.create_with_manager()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         new_manager_id=user.user_id,
@@ -182,7 +183,7 @@ def test_proposed_manager_is_self():
         metadata=None,
     )
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=user.user_id, signer_keypair=manager_key, message=message
     )
 
@@ -195,9 +196,9 @@ def test_proposed_manager_is_self():
 def test_proposed_manager_is_already_proposed():
     """Propose with an open proposal for the same manager"""
     proposal, _, _, manager, manager_key = helper.user.manager.propose.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.user.reason()
-    message = rbac.user.manager.propose.make(
+    message = User().manager.propose.make(
         proposal_id=proposal_id,
         user_id=proposal.object_id,
         new_manager_id=manager.user_id,
@@ -205,7 +206,7 @@ def test_proposed_manager_is_already_proposed():
         metadata=None,
     )
 
-    status = rbac.user.manager.propose.new(
+    status = User().manager.propose.new(
         signer_user_id=manager.user_id, signer_keypair=manager_key, message=message
     )
 

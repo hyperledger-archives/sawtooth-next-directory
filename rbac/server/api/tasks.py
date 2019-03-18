@@ -19,13 +19,10 @@ from uuid import uuid4
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common import rbac
-
+from rbac.common.task import Task
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
-
 from rbac.server.db import tasks_query
-
 from rbac.server.db import db_utils
 
 TASKS_BP = Blueprint("tasks")
@@ -59,7 +56,7 @@ async def create_new_task(request):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     task_id = str(uuid4())
-    batch_list = rbac.task.batch_list(
+    batch_list = Task().batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         task_id=task_id,
@@ -99,7 +96,7 @@ async def add_task_admin(request, task_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.task.admin.propose.batch_list(
+    batch_list = Task().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
@@ -123,7 +120,7 @@ async def add_task_owner(request, task_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.task.owner.propose.batch_list(
+    batch_list = Task().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,

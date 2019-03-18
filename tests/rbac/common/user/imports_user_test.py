@@ -16,7 +16,7 @@
 # pylint: disable=no-member,invalid-name
 import pytest
 
-from rbac.common import rbac
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.sawtooth import batcher
 from rbac.common.logs import get_default_logger
@@ -32,7 +32,7 @@ def test_make():
     """Test making a create user message"""
     user_id = helper.user.id()
     name = helper.user.name()
-    message = rbac.user.imports.make(user_id=user_id, name=name)
+    message = User().imports.make(user_id=user_id, name=name)
     assert isinstance(message, protobuf.user_transaction_pb2.ImportsUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
@@ -47,11 +47,11 @@ def test_make_addresses():
     """Test making addresses"""
     user_id = helper.user.id()
     name = helper.user.name()
-    message = rbac.user.imports.make(user_id=user_id, name=name)
-    inputs, outputs = rbac.user.imports.make_addresses(
+    message = User().imports.make(user_id=user_id, name=name)
+    inputs, outputs = User().imports.make_addresses(
         message=message, signer_user_id=user_id
     )
-    user_address = rbac.user.address(object_id=message.user_id)
+    user_address = User().address(object_id=message.user_id)
     assert isinstance(inputs, set)
     assert isinstance(outputs, set)
 
@@ -68,7 +68,7 @@ def test_batch():
     name = helper.user.name()
     signer_keypair = helper.user.key()
 
-    batch = rbac.user.imports.batch(
+    batch = User().imports.batch(
         signer_user_id=user_id,
         signer_keypair=signer_keypair,
         user_id=user_id,
@@ -89,7 +89,7 @@ def test_imports_user():
     name = helper.user.name()
     signer_keypair = helper.user.key()
 
-    status = rbac.user.imports.new(
+    status = User().imports.new(
         signer_user_id=user_id,
         signer_keypair=signer_keypair,
         user_id=user_id,
@@ -99,7 +99,7 @@ def test_imports_user():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
 
     assert user.user_id == user_id
     assert user.name == name
@@ -115,7 +115,7 @@ def test_create_with_manager():
     manager_id = helper.user.id()
     manager_name = helper.user.name()
 
-    status = rbac.user.imports.new(
+    status = User().imports.new(
         signer_user_id=user_id,
         signer_keypair=signer_keypair,
         user_id=manager_id,
@@ -125,12 +125,12 @@ def test_create_with_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    manager = rbac.user.get(object_id=manager_id)
+    manager = User().get(object_id=manager_id)
 
     assert manager.user_id == manager_id
     assert manager.name == manager_name
 
-    status = rbac.user.imports.new(
+    status = User().imports.new(
         signer_user_id=user_id,
         signer_keypair=signer_keypair,
         user_id=user_id,
@@ -141,7 +141,7 @@ def test_create_with_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
 
     assert user.user_id == user_id
     assert user.name == name
@@ -157,7 +157,7 @@ def test_create_with_manager_not_in_state():
     name = helper.user.name()
     manager_id = helper.user.id()
 
-    status = rbac.user.imports.new(
+    status = User().imports.new(
         signer_user_id=user_id,
         signer_keypair=signer_keypair,
         user_id=user_id,
@@ -168,7 +168,7 @@ def test_create_with_manager_not_in_state():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
 
     assert user.user_id == user_id
     assert user.name == name
@@ -183,7 +183,7 @@ def test_reimport_user():
     name = helper.user.name()
     signer_keypair = helper.user.key()
 
-    status = rbac.user.imports.new(
+    status = User().imports.new(
         signer_user_id=user_id,
         signer_keypair=signer_keypair,
         user_id=user_id,
@@ -193,17 +193,17 @@ def test_reimport_user():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
     assert user.user_id == user_id
     assert user.name == name
 
-    status = rbac.user.imports.new(
+    status = User().imports.new(
         signer_user_id=user_id,
         signer_keypair=signer_keypair,
         user_id=user_id,
         name=name,
     )
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
     assert user.user_id == user_id
     assert user.name == name

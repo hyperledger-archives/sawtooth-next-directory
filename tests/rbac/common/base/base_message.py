@@ -17,7 +17,7 @@
 
 import pytest
 
-from rbac.common import rbac
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.sawtooth.batcher import unmake
 from rbac.common.logs import get_default_logger
@@ -32,7 +32,7 @@ def test_make_message():
     """Test making a message"""
     name = helper.user.name()
     keypair = helper.user.key()
-    message = rbac.user.make(user_id=keypair.public_key, name=name)
+    message = User().make(user_id=keypair.public_key, name=name)
     assert isinstance(message, protobuf.user_transaction_pb2.CreateUser)
     assert isinstance(message.user_id, str)
     assert isinstance(message.name, str)
@@ -47,10 +47,10 @@ def test_make_payload():
     name = helper.user.name()
     user_key = helper.user.key()
     user_id = user_key.public_key
-    user_address = rbac.user.address(object_id=user_id)
-    message = rbac.user.make(user_id=user_id, name=name)
+    user_address = User().address(object_id=user_id)
+    message = User().make(user_id=user_id, name=name)
 
-    payload = rbac.user.make_payload(
+    payload = User().make_payload(
         message=message, signer_user_id=user_id, signer_keypair=user_key
     )
     inputs = list(payload.inputs)
@@ -68,9 +68,9 @@ def test_batch_with_message():
     name = helper.user.name()
     user_key = helper.user.key()
     user_id = user_key.public_key
-    message = rbac.user.make(user_id=user_id, name=name)
+    message = User().make(user_id=user_id, name=name)
 
-    batch = rbac.user.batch(
+    batch = User().batch(
         signer_user_id=user_id, signer_keypair=user_key, message=message
     )
 
@@ -88,7 +88,7 @@ def test_batch_with_kargs():
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    batch = rbac.user.batch(
+    batch = User().batch(
         signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
     )
 
@@ -105,18 +105,18 @@ def test_batch_add_with_message():
     name1 = helper.user.name()
     user_key1 = helper.user.key()
     user_id1 = user_key1.public_key
-    message1 = rbac.user.make(user_id=user_id1, name=name1)
+    message1 = User().make(user_id=user_id1, name=name1)
 
     name2 = helper.user.name()
     user_key2 = helper.user.key()
     user_id2 = user_key2.public_key
-    message2 = rbac.user.make(user_id=user_id2, name=name2)
+    message2 = User().make(user_id=user_id2, name=name2)
 
-    batch = rbac.user.batch(
+    batch = User().batch(
         signer_user_id=user_id1, signer_keypair=user_key1, message=message1
     )
 
-    batch = rbac.user.batch(
+    batch = User().batch(
         signer_user_id=user_id2, signer_keypair=user_key2, message=message2, batch=batch
     )
 
@@ -140,11 +140,11 @@ def test_batch_add_with_kargs():
     user_key2 = helper.user.key()
     user_id2 = user_key2.public_key
 
-    batch = rbac.user.batch(
+    batch = User().batch(
         signer_user_id=user_id1, signer_keypair=user_key1, user_id=user_id1, name=name1
     )
 
-    batch = rbac.user.batch(
+    batch = User().batch(
         signer_user_id=user_id2,
         signer_keypair=user_key2,
         user_id=user_id2,
@@ -167,9 +167,9 @@ def test_batch_list_with_message():
     name = helper.user.name()
     user_key = helper.user.key()
     user_id = user_key.public_key
-    message = rbac.user.make(user_id=user_id, name=name)
+    message = User().make(user_id=user_id, name=name)
 
-    batch_list = rbac.user.batch_list(
+    batch_list = User().batch_list(
         signer_user_id=user_id, signer_keypair=user_key, message=message
     )
 
@@ -187,7 +187,7 @@ def test_batch_list_with_kargs():
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    batch_list = rbac.user.batch_list(
+    batch_list = User().batch_list(
         signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
     )
 
@@ -204,18 +204,18 @@ def test_batch_list_add_with_message():
     name1 = helper.user.name()
     user_key1 = helper.user.key()
     user_id1 = user_key1.public_key
-    message1 = rbac.user.make(user_id=user_id1, name=name1)
+    message1 = User().make(user_id=user_id1, name=name1)
 
     name2 = helper.user.name()
     user_key2 = helper.user.key()
     user_id2 = user_key2.public_key
-    message2 = rbac.user.make(user_id=user_id2, name=name2)
+    message2 = User().make(user_id=user_id2, name=name2)
 
-    batch_list = rbac.user.batch_list(
+    batch_list = User().batch_list(
         signer_user_id=user_id2, signer_keypair=user_key1, message=message1
     )
 
-    batch_list = rbac.user.batch_list(
+    batch_list = User().batch_list(
         signer_user_id=user_id2,
         signer_keypair=user_key2,
         message=message2,
@@ -242,11 +242,11 @@ def test_batch_list_add_with_kargs():
     user_key2 = helper.user.key()
     user_id2 = user_key2.public_key
 
-    batch_list = rbac.user.batch_list(
+    batch_list = User().batch_list(
         signer_user_id=user_id1, signer_keypair=user_key1, user_id=user_id1, name=name1
     )
 
-    batch_list = rbac.user.batch_list(
+    batch_list = User().batch_list(
         signer_user_id=user_id2,
         signer_keypair=user_key2,
         user_id=user_id2,
@@ -269,13 +269,13 @@ def test_create_with_kargs():
     user_key = helper.user.key()
     user_id = user_key.public_key
 
-    status = rbac.user.new(
+    status = User().new(
         signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
     assert user.user_id == user_id
     assert user.name == name
 
@@ -286,15 +286,15 @@ def test_create_with_message():
     name = helper.user.name()
     user_key = helper.user.key()
     user_id = user_key.public_key
-    message = rbac.user.make(user_id=user_id, name=name)
+    message = User().make(user_id=user_id, name=name)
 
-    status = rbac.user.new(
+    status = User().new(
         signer_user_id=user_id, signer_keypair=user_key, message=message
     )
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
     assert user.user_id == user_id
     assert user.name == name
 
@@ -309,6 +309,6 @@ def test_make_payload_with_wrong_message_type():
         user_id=user_id, name=helper.user.name(), metadata=None
     )
     with pytest.raises(TypeError):
-        rbac.user.make_payload(
+        User().make_payload(
             message=message, signer_user_id=user_id, signer_keypair=signer_keypair
         )

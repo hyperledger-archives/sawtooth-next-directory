@@ -17,7 +17,8 @@
 
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.task import Task
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
@@ -43,7 +44,7 @@ class ProposeTaskAdminTestHelper:
 
     def id(self):
         """Get a unique identifier"""
-        return rbac.addresser.proposal.unique_id()
+        return addresser.proposal.unique_id()
 
     def reason(self):
         """Get a random reason"""
@@ -56,7 +57,7 @@ class ProposeTaskAdminTestHelper:
         user, user_key = helper.user.create()
         proposal_id = self.id()
         reason = self.reason()
-        message = rbac.task.admin.propose.make(
+        message = Task().admin.propose.make(
             proposal_id=proposal_id,
             task_id=task.task_id,
             user_id=user.user_id,
@@ -64,7 +65,7 @@ class ProposeTaskAdminTestHelper:
             metadata=None,
         )
 
-        status = rbac.task.admin.propose.new(
+        status = Task().admin.propose.new(
             signer_keypair=user_key,
             signer_user_id=user.user_id,
             message=message,
@@ -75,7 +76,7 @@ class ProposeTaskAdminTestHelper:
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        proposal = rbac.task.admin.propose.get(
+        proposal = Task().admin.propose.get(
             object_id=task.task_id, related_id=user.user_id
         )
 
