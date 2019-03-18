@@ -67,24 +67,20 @@ async def fetch_all_users(request):
 @USERS_BP.post("api/users")
 async def create_new_user(request):
     """ This API is invoked when a new User Account is Created"""
-    LOGGER.info("users.py: POST /api/users - A new user is trying to sign-up.")
     required_fields = ["name", "username", "password", "email"]
     utils.validate_fields(required_fields, request.json)
     username_created = request.json.get("username")
-    conn1 = await db_utils.create_connection(
+    conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
         request.app.config.DB_NAME,
     )
-    if await users_query.fetch_username_match_count(conn1, username_created) > 0:
-        LOGGER.info(
-            "users.py: POST /api/users - Given Username is same as the Username in rethinkDB & LDAP. So, throw 400 - API Bad Request Error."
-        )
+    if await users_query.fetch_username_match_count(conn, username_created) > 0:
         # Throw Error response to Next_UI
         raise ApiBadRequest(
             "Username already exists. Please give a different Username."
         )
-    conn1.close()
+    conn.close()
     # Generate keys
     txn_key = Key()
     txn_user_id = rbac.user.unique_id()

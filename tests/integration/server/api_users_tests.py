@@ -18,6 +18,7 @@ import requests
 
 
 def create_test_user(session):
+    """ Invoking the new Create User Account API. """
     create_user_input = {
         "name": "Sri Nuthal",
         "username": "nuthalapati",
@@ -27,8 +28,8 @@ def create_test_user(session):
     session.post("http://rbac-server:8000/api/users", json=create_user_input)
 
 
-def test_valid_username():
-    """ Testing the already existing Username scenario. """
+def test_valid_unique_username():
+    """ Testing the creation of two users with different usernames. """
     rethink_data1 = {
         "name": "abcdf234",
         "username": "nuthalapati2",
@@ -43,8 +44,8 @@ def test_valid_username():
         assert response.json()["data"]["message"] == expected["message"]
 
 
-def test_repeat_username():
-    """ Testing the already existing Username scenario. """
+def test_invalid_duplicate_username():
+    """ Testing the creation of two users with same usernames." """
     rethink_data2 = {
         "name": "abcdf234",
         "username": "nuthalapati",
