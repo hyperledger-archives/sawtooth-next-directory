@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test helper ensuring the Docker containers are available for testing."""
 import time
 from uuid import uuid4
 from urllib.request import urlopen
@@ -31,13 +31,16 @@ class IntegrationTestHelper:
     are up and available to be tested against."""
 
     class Impl:
+        """Implementation of container checks."""
 
         __available = False
 
         def wait_for_containers(self):
+            """wait for containers to be available."""
             self.__check_containers()
 
         def __check_containers(self):
+            """See if containers are available, wait if not."""
             if not self.__available:
                 LOGGER.info("Waiting for containers to start")
                 __wait_for_rest_apis__(["rest-api:8008"])
@@ -49,10 +52,12 @@ class IntegrationTestHelper:
 
     @staticmethod
     def get_batcher_key():
+        """Returns BATCHER_KEY."""
         return BATCHER_KEY
 
     @staticmethod
     def make_key_and_name():
+        """Makes a key and name."""
         return Key(), uuid4().hex
 
     def __init__(self):

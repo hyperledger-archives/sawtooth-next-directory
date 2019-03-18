@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Proposals APIs."""
 
 from sanic import Blueprint
 from sanic.response import json
@@ -86,7 +87,7 @@ PROPOSAL_TRANSACTION = {
 @PROPOSALS_BP.get("api/proposals")
 @authorized()
 async def get_all_proposals(request):
-
+    """Get all proposals"""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -109,7 +110,7 @@ async def get_all_proposals(request):
 @PROPOSALS_BP.get("api/proposals/<proposal_id>")
 @authorized()
 async def get_proposal(request, proposal_id):
-
+    """Get specific proposal by proposal_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -137,6 +138,7 @@ async def batch_update_proposals(request):
 @PROPOSALS_BP.patch("api/proposals/<proposal_id>")
 @authorized()
 async def update_proposal(request, proposal_id):
+    """Update proposal."""
     LOGGER.debug("update proposal %s\n%s", proposal_id, request.json)
     required_fields = ["reason", "status"]
     utils.validate_fields(required_fields, request.json)
@@ -175,6 +177,7 @@ async def update_proposal(request, proposal_id):
 
 
 async def compile_proposal_resource(conn, proposal_resource):
+    """Prepare proposal resource to be returned."""
     conn.reconnect(noreply_wait=False)
     table = TABLES[proposal_resource["type"]]
     if "role" in table:

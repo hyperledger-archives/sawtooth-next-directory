@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Test Suite for Search API."""
 import pytest
 
 from rbac.server.api.search import (

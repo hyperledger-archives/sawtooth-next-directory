@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Validates objects from outbound_queue"""
 
 from rbac.providers.common.provider_transforms import (
     GROUP_CREATION_TRANSFORM,

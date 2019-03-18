@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Starts the sawtooth transaction processor with args."""
 
 import argparse
 import sys
@@ -30,6 +31,7 @@ VALIDATOR_PORT = os.getenv("VALIDATOR_PORT", "4004")
 
 
 def parse_args(args):
+    """Parse args into options for transaction processor."""
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument("-v", "--verbosity", action="count", help="The logging level.")
@@ -45,6 +47,7 @@ def parse_args(args):
 
 
 def main(args=None):
+    """Starts sawtooth transaction processor with options set per args."""
     if args is None:
         args = sys.argv[1:]
     opts = parse_args(args)

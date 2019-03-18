@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Performs initial inbound sync from Azure AD."""
 
 import os
 import time

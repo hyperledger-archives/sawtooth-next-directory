@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test Suite for Azure provider"""
 
 import datetime as dt
 import unittest
@@ -81,6 +82,8 @@ def test_time_left_false():
 
 
 class AzureResponseTestCase(unittest.TestCase):
+    """Azure response test case."""
+
     @mock.patch("requests.post", side_effect=mock_requests_post)
     def test_get_token_secret_auth_type(self, mock_post):
         """Test secret type authorization."""

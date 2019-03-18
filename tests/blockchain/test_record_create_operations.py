@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test suite for user operations"""
 
 import unittest
 import pytest
@@ -28,6 +29,8 @@ BATCHER_KEY = Key()
 
 @pytest.mark.blockchain
 class TestUserOperations(unittest.TestCase):
+    """User operations."""
+
     @classmethod
     def setUpClass(cls):
         cls.test_helper = IntegrationTestHelper()
@@ -38,6 +41,7 @@ class TestUserOperations(unittest.TestCase):
         cls.role_key, cls.role_name = cls.test_helper.make_key_and_name()
 
     def test_create_user(self):
+        """Create user."""
         self.assertEqual(
             self.client.create_user(
                 key=self.user_key,
@@ -49,6 +53,7 @@ class TestUserOperations(unittest.TestCase):
         )
 
     def test_create_role_no_admin(self):
+        """Create role without admin."""
         with self.assertRaises(ValueError) as err:
             self.client.create_role(
                 key=self.role_key,

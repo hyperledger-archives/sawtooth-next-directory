@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Queries for working with auth table."""
 
 import rethinkdb as r
 
@@ -28,10 +29,12 @@ LOGGER = get_default_logger(__name__)
 
 
 async def create_auth_entry(conn, auth_entry):
+    """Add auth_entry to the auth table."""
     return await r.table("auth").insert(auth_entry).run(conn)
 
 
 async def fetch_info_by_user_id(conn, user_id):
+    """Get user info from auth table for specific user_id."""
     auth_info = await r.table("auth").get(user_id).run(conn)
     if not auth_info:
         raise ApiNotFound("No user with id '{}' exists.".format(user_id))
@@ -39,6 +42,7 @@ async def fetch_info_by_user_id(conn, user_id):
 
 
 async def fetch_info_by_username(request):
+    """Get user info from auth table by username."""
     username = request.json.get("id")
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,

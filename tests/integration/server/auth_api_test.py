@@ -72,6 +72,7 @@ INVALID_LDAP_INPUTS = [
 
 
 def create_test_user(session):
+    """Create a test user."""
     create_user_input = {
         "name": "Susan Susanson",
         "username": "susan20",

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test Org Hierarchy."""
 
 import unittest
 from uuid import uuid4
@@ -25,6 +26,8 @@ LOGGER = get_default_logger(__name__)
 
 @pytest.mark.blockchain
 class TestOrgHierarchy(unittest.TestCase):
+    """TestOrgHierarchy class."""
+
     @classmethod
     def setUpClass(cls):
         cls.test_helper = IntegrationTestHelper()

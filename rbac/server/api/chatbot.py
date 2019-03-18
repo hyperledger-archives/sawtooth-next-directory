@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Chatbot APIs."""
 
 import json
 
@@ -34,6 +35,7 @@ CHATBOT_BP = Blueprint("chatbot")
 @CHATBOT_BP.websocket("api/chatbot")
 @authorized()
 async def chatbot(request, web_socket):
+    """Chatbot websocket listener."""
     while True:
         required_fields = ["text", "user_id"]
         recv = json.loads(await web_socket.recv())
@@ -44,6 +46,7 @@ async def chatbot(request, web_socket):
 
 
 async def create_response(request, recv):
+    """Create a response to received message."""
     if recv.get("resource_id"):
         LOGGER.info("[Chatbot] %s: Updating tracker", recv.get("user_id"))
         await update_tracker(request, recv)
@@ -55,6 +58,7 @@ async def create_response(request, recv):
 
 
 async def update_tracker(request, recv):
+    """Update the chatbot tracker."""
     if recv.get("approver_id"):
 
         conn = await db_utils.create_connection(

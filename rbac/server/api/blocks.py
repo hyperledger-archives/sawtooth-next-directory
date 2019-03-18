@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Blocks APIs."""
 
 from sanic import Blueprint
 from sanic.response import json
@@ -31,7 +32,7 @@ BLOCKS_BP = Blueprint("blocks")
 @BLOCKS_BP.get("api/blocks")
 @authorized()
 async def get_all_blocks(request):
-
+    """Get all blocks."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -54,6 +55,7 @@ async def get_all_blocks(request):
 @BLOCKS_BP.get("api/blocks/latest")
 @authorized()
 async def get_latest_block(request):
+    """Get the newest block on blockchain."""
     if "?head=" in request.url:
         raise ApiBadRequest("Bad Request: 'head' parameter should not be specified")
 
@@ -74,6 +76,7 @@ async def get_latest_block(request):
 @BLOCKS_BP.get("api/blocks/<block_id>")
 @authorized()
 async def get_block(request, block_id):
+    """Get a specific block, by block_id"""
     if "?head=" in request.url:
         raise ApiBadRequest("Bad Request: 'head' parameter should not be specified")
 

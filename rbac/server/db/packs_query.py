@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Functions for working with resources in the packs table."""
 
 import rethinkdb as r
 

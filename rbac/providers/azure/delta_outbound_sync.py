@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""
+A module that pulls entries from the outbound queue to be used by the
+Outbound AAD Delta Sync.
+"""
 
 import time
 import os
@@ -103,6 +107,7 @@ def fetch_user_aad(user_id):
 
 
 def fetch_group_aad(group_id):
+    """This is an outbound request to get a single group from Azure AD."""
     headers = AUTH.check_token("GET")
     if headers:
         url = ("%s/%s/groups/%s", GRAPH_URL, GRAPH_VERSION, group_id)

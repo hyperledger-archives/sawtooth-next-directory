@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Provides the API swagger."""
 
 from sanic import Blueprint
 from sanic import response
@@ -25,6 +26,7 @@ SWAGGER_BP = Blueprint("swagger")
 
 @SWAGGER_BP.get("api/swagger")
 async def get_swagger(request):
+    """Returns pretty swagger file for our API."""
     if not request:
         LOGGER.debug(str(request))
     return await response.file(

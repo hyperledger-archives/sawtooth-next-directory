@@ -12,17 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Response mocks for azure provider tests."""
 
 
 def mock_requests_post(**kwargs):
     """Mock a post request."""
 
     class MockResponse:
+        """Mock response"""
+
         def __init__(self, json_data, status_code):
             self.json_data = json_data
             self.status_code = status_code
 
         def json(self):
+            """Returns mock response json data"""
             return self.json_data
 
     if kwargs["url"] == "https://login.microsoftonline.com/tenant_id/oauth2/v2.0/token":

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Adds some sample data via API."""
 
 import time
 import re
@@ -49,6 +50,7 @@ SEEDED_DATA = {}
 
 
 def get_base_api_url(txn):
+    """Get teh base API url for this environment."""
     protocol = txn.get("protocol", "http:")
     host = txn.get("host", "localhost")
     port = txn.get("port", "8000")
@@ -56,6 +58,7 @@ def get_base_api_url(txn):
 
 
 def api_request(method, base_url, path, body=None, auth=None):
+    """Prepare API request."""
     url = base_url + path
 
     auth = auth or SEEDED_DATA.get("auth", None)
@@ -69,10 +72,12 @@ def api_request(method, base_url, path, body=None, auth=None):
 
 
 def api_submit(base_url, path, resource, auth=None):
+    """POST a request."""
     return api_request("POST", base_url, path, body=resource, auth=auth)
 
 
 def patch_body(txn, update):
+    """Patch txn request body."""
     old_body = json.loads(txn["request"]["body"])
 
     new_body = {}
@@ -85,6 +90,7 @@ def patch_body(txn, update):
 
 
 def sub_nested_strings(dct, pattern, replacement):
+    """Substitute nested strings."""
     for key in dct.keys():
         if isinstance(dct[key], dict):
             sub_nested_strings(dct[key], pattern, replacement)
@@ -94,6 +100,7 @@ def sub_nested_strings(dct, pattern, replacement):
 
 @hooks.before_all
 def initialize_sample_resources(txns):
+    """Initialize sample resources."""
     base_url = get_base_api_url(txns[0])
 
     def submit(proposal, role, admin=None):
@@ -144,6 +151,7 @@ def initialize_sample_resources(txns):
 @hooks.before("/api/users > POST > 200 > application/json")
 @hooks.before("/api/roles > POST > 200 > application/json")
 def lengthen_user_name(txn):
+    """Expands length of sample username if not long enough."""
     current_name = json.loads(txn["request"]["body"])["name"]
     if len(current_name) < MIN_NAME_LENGTH:
         patch_body(txn, {"name": current_name * MIN_NAME_LENGTH})
@@ -151,12 +159,14 @@ def lengthen_user_name(txn):
 
 @hooks.before("/api/authorization > POST > 200 > application/json")
 def add_credentials(txn):
+    """Add credentials for sample user."""
     patch_body(txn, {"id": SEEDED_DATA["user"]["id"], "password": USER["password"]})
 
 
 @hooks.before("/api/roles > POST > 200 > application/json")
 @hooks.before("/api/tasks > POST > 200 > application/json")
 def add_owners_and_admins(txn):
+    """Add owners and admins to txn."""
     patch_body(
         txn,
         {
@@ -169,11 +179,13 @@ def add_owners_and_admins(txn):
 @hooks.before("/api/roles/{id}/tasks > POST > 200 > application/json")
 @hooks.before("/api/roles/{id}/tasks > DELETE > 200 > application/json")
 def add_task_id(txn):
+    """Add a task id to txn."""
     patch_body(txn, {"id": SEEDED_DATA["task"]["id"]})
 
 
 @hooks.before("/api/users > POST > 200 > application/json")
 def add_manager(txn):
+    """Add a manager to txn."""
     patch_body(txn, {"manager": SEEDED_DATA["manager"]["id"]})
 
 
@@ -188,6 +200,7 @@ def add_manager(txn):
 @hooks.before("/api/users/{id}/manager > PUT > 200 > application/json")
 @hooks.before("/api/users/{id}/manager > DELETE > 200 > application/json")
 def add_manager_id(txn):
+    """Add manager id to item txns."""
     txn["request"]["headers"]["Authorization"] = SEEDED_DATA["manager_auth"]
     patch_body(txn, {"id": SEEDED_DATA["manager"]["id"]})
 
@@ -195,4 +208,5 @@ def add_manager_id(txn):
 @hooks.before("/api/tasks/{id}/admins > DELETE > 200 > application/json")
 @hooks.before("/api/tasks/{id}/owners > DELETE > 200 > application/json")
 def add_user_id(txn):
+    """Add a user id to txn."""
     patch_body(txn, {"id": SEEDED_DATA["user"]["id"]})
