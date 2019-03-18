@@ -14,11 +14,11 @@
 # -----------------------------------------------------------------------------
 """Implements the PROPOSE_UPDATE_USER_MANAGER message
 usage: rbac.user.manager.propose.create()"""
-import logging
 from rbac.common import addresser
 from rbac.common.proposal.proposal_propose import ProposalPropose
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ProposeUpdateUserManager(ProposalPropose):

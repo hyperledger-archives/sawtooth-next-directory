@@ -19,14 +19,14 @@ From the object_type name, it is able to infer information about how
 the object is stored on the blockchain: the state and container protubufs,
 and the unique identifier name"""
 # pylint: disable=too-many-public-methods
-import logging
 
 from rbac.common import protobuf
 from rbac.common.crypto.hash import unique_id, hash_id
-from rbac.common.sawtooth import batcher
+from rbac.common.sawtooth.batcher import message_to_message
 from rbac.common.sawtooth import state_client
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StateBase:
@@ -412,7 +412,7 @@ class StateBase:
             container, store = self._get_new_state()
             output_state[address] = container
 
-        batcher.message_to_message(
+        message_to_message(
             message_to=store, message_from=message, message_name=self._name_camel
         )
         output_state["changed"].add(address)
@@ -565,7 +565,7 @@ class StateBase:
         output_state[address] = container
         output_state["changed"].add(address)
 
-    def remove_relationship(self, object_id, related_id, outputs, output_state, now):
+    def remove_relationship(self, object_id, related_id, outputs, output_state):
         """ Removes a relationship record
         """
         address = self.address(object_id=object_id, related_id=related_id)

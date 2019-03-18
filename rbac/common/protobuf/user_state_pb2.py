@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10user_state.proto\"%\n\rUserContainer\x12\x14\n\x05users\x18\x02 \x03(\x0b\x32\x05.User\"\x95\x01\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x10\n\x08metadata\x18\x04 \x01(\t\x12\r\n\x05\x65mail\x18\x05 \x01(\t\x12\x11\n\tremote_id\x18\x06 \x01(\t\x12\x10\n\x08username\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x62\x06proto3')
+  serialized_pb=_b('\n\x10user_state.proto\"%\n\rUserContainer\x12\x14\n\x05users\x18\x02 \x03(\x0b\x32\x05.User\"\xb1\x01\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x10\n\x08metadata\x18\x04 \x01(\t\x12\r\n\x05\x65mail\x18\x05 \x01(\t\x12\x11\n\tremote_id\x18\x06 \x01(\t\x12\x10\n\x08username\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\t \x01(\tb\x06proto3')
 )
 
 
@@ -119,6 +119,13 @@ _USER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='distinguished_name', full_name='User.distinguished_name', index=8,
+      number=9, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -132,7 +139,7 @@ _USER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=60,
-  serialized_end=209,
+  serialized_end=237,
 )
 
 _USERCONTAINER.fields_by_name['users'].message_type = _USER

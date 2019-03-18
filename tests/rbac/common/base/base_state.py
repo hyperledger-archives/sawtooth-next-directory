@@ -15,15 +15,15 @@
 """Test the base state class"""
 # pylint: disable=abstract-method,protected-access,invalid-name,no-member
 
-import logging
 import enum
 import pytest
 
 from rbac.common import protobuf
 from rbac.common.base.base_state import StateBase
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions import TestAssertions
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ObjectType(enum.Enum):

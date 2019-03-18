@@ -13,12 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """A base for all proposal confirmation message types"""
-import logging
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.proposal.proposal_action import ProposalAction
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ProposalConfirm(ProposalAction):

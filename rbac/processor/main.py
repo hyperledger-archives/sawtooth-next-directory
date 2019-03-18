@@ -14,7 +14,6 @@
 # -----------------------------------------------------------------------------
 
 import argparse
-import logging
 import sys
 import os
 
@@ -22,12 +21,9 @@ from sawtooth_sdk.processor.core import TransactionProcessor
 from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac.processor.event_handler import RBACTransactionHandler
+from rbac.common.logs import get_default_logger
 
-logging.basicConfig(level=logging.DEBUG)
-logging.getLogger("sawtooth_sdk.processor.core").setLevel(logging.WARNING)
-
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = get_default_logger(__name__)
 
 VALIDATOR_HOST = os.getenv("VALIDATOR_HOST", "validator")
 VALIDATOR_PORT = os.getenv("VALIDATOR_PORT", "4004")

@@ -103,7 +103,7 @@ function * sagas () {
     // Requester
     takeLatest(RequesterTypes.ALL_PACKS_REQUEST, getAllPacks, api),
     takeLatest(RequesterTypes.ALL_ROLES_REQUEST, getAllRoles, api),
-    takeLatest(RequesterTypes.BASE_REQUEST, getBase, api),
+    takeLatest(RequesterTypes.BASE_REQUEST, getBase, FixtureAPI),
     takeLatest(RequesterTypes.PACK_REQUEST, getPack, api),
     takeLatest(RequesterTypes.PACKS_REQUEST, getPacks, api),
     takeLatest(RequesterTypes.ROLE_REQUEST, getRole, api),

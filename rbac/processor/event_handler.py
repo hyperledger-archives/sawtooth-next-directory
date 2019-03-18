@@ -13,15 +13,14 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import logging
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.base.base_processor import BaseTransactionProcessor
+from rbac.common.logs import get_default_logger
 
-
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class RBACTransactionHandler(object):

@@ -15,12 +15,12 @@
 """Proposal test helper"""
 # pylint: disable=no-member,too-few-public-methods,invalid-name
 
-import logging
 import random
 
 from rbac.common import rbac
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ProposalTestHelper:

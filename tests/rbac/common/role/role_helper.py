@@ -14,9 +14,7 @@
 # -----------------------------------------------------------------------------
 """Role Test Helper"""
 # pylint: disable=no-member,too-few-public-methods,invalid-name
-
-import logging
-
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.role.create_role_helper import CreateRoleTestHelper
 from tests.rbac.common.role.propose_admin_helper import ProposeRoleAdminTestHelper
 from tests.rbac.common.role.propose_owner_helper import ProposeRoleOwnerTestHelper
@@ -24,7 +22,7 @@ from tests.rbac.common.role.propose_member_helper import ProposeRoleMemberTestHe
 from tests.rbac.common.role.propose_task_helper import ProposeRoleTaskTestHelper
 from tests.rbac.testdata.role import RoleTestData
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class RoleAdminTestHelper:

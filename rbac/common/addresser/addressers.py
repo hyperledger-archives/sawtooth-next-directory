@@ -13,9 +13,9 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """A registry of addressers; to facilitate root level addresser functions"""
-import logging
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 ADDRESSERS = {}
 
 

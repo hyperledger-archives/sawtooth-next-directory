@@ -16,7 +16,6 @@
 
 # pylint: disable=too-few-public-methods
 
-import logging
 from rbac.common.role.create_role import CreateRole
 from rbac.common.role.relationship_member import MemberRelationship
 
@@ -25,8 +24,9 @@ from rbac.common.role.relationship_admin import AdminRelationship
 from rbac.common.role.relationship_task import TaskRelationship
 from rbac.common.role.imports_role import ImportsRole
 from rbac.common.role.update_role import UpdateRole
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class Role(CreateRole):

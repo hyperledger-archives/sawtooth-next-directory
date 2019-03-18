@@ -13,15 +13,16 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Test addressing a key and its relationships"""
-import logging
 import pytest
 
 from rbac.common import addresser
+from rbac.common.logs import get_default_logger
 from tests.rbac import helper
 from tests.rbac.test.assertions import assert_is_address
 from tests.rbac.test.assertions import assert_is_identifier
 
-LOGGER = logging.getLogger(__name__)
+
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.library

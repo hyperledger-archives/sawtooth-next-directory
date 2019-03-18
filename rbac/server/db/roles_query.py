@@ -25,7 +25,7 @@ from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_all_role_resources(conn, head_block_num, start, limit):
+async def fetch_all_role_resources(conn, start, limit):
     resources = (
         await r.table("roles")
         .order_by(index="role_id")
@@ -35,22 +35,20 @@ async def fetch_all_role_resources(conn, head_block_num, start, limit):
                 {
                     "id": role["role_id"],
                     "owners": fetch_relationships(
-                        "role_owners", "role_id", role["role_id"], head_block_num
+                        "role_owners", "role_id", role["role_id"]
                     ),
                     "administrators": fetch_relationships(
-                        "role_admins", "role_id", role["role_id"], head_block_num
+                        "role_admins", "role_id", role["role_id"]
                     ),
                     "members": fetch_relationships(
-                        "role_members", "role_id", role["role_id"], head_block_num
+                        "role_members", "role_id", role["role_id"]
                     ),
                     "tasks": fetch_relationships(
-                        "role_tasks", "role_id", role["role_id"], head_block_num
+                        "role_tasks", "role_id", role["role_id"]
                     ),
-                    "proposals": fetch_proposal_ids_by_opener(
-                        role["role_id"], head_block_num
-                    ),
+                    "proposals": fetch_proposal_ids_by_opener(role["role_id"]),
                     "packs": fetch_relationships(
-                        "role_packs", "role_id", role["role_id"], head_block_num
+                        "role_packs", "role_id", role["role_id"]
                     ),
                 }
             )
@@ -62,29 +60,21 @@ async def fetch_all_role_resources(conn, head_block_num, start, limit):
     return resources
 
 
-async def fetch_role_resource(conn, role_id, head_block_num):
+async def fetch_role_resource(conn, role_id):
     resource = (
         await r.table("roles")
         .get_all(role_id, index="role_id")
         .merge(
             {
                 "id": r.row["role_id"],
-                "owners": fetch_relationships(
-                    "role_owners", "role_id", role_id, head_block_num
-                ),
+                "owners": fetch_relationships("role_owners", "role_id", role_id),
                 "administrators": fetch_relationships(
-                    "role_admins", "role_id", role_id, head_block_num
+                    "role_admins", "role_id", role_id
                 ),
-                "members": fetch_relationships(
-                    "role_members", "role_id", role_id, head_block_num
-                ),
-                "tasks": fetch_relationships(
-                    "role_tasks", "role_id", role_id, head_block_num
-                ),
-                "proposals": fetch_proposal_ids_by_opener(role_id, head_block_num),
-                "packs": fetch_relationships(
-                    "role_packs", "role_id", role_id, head_block_num
-                ),
+                "members": fetch_relationships("role_members", "role_id", role_id),
+                "tasks": fetch_relationships("role_tasks", "role_id", role_id),
+                "proposals": fetch_proposal_ids_by_opener(role_id),
+                "packs": fetch_relationships("role_packs", "role_id", role_id),
             }
         )
         .without("role_id")
@@ -97,7 +87,7 @@ async def fetch_role_resource(conn, role_id, head_block_num):
         raise ApiNotFound("Role {} doesn't exist.".format(role_id))
 
 
-async def expire_role_member(conn, role_id, user_id, head_block_num):
+async def expire_role_member(conn, role_id, user_id):
     """Expire role membership of given user"""
     return (
         await r.table("role_members")
@@ -134,10 +124,10 @@ async def search_roles(conn, search_query, paging):
                 {
                     "id": doc["role_id"],
                     "members": fetch_relationships(
-                        "role_members", "role_id", doc["role_id"], None
+                        "role_members", "role_id", doc["role_id"]
                     ),
                     "owners": fetch_relationships(
-                        "role_owners", "role_id", doc["role_id"], None
+                        "role_owners", "role_id", doc["role_id"]
                     ),
                 }
             ).without("role_id")

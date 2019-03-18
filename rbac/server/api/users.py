@@ -22,7 +22,6 @@ from sanic.response import json
 from rbac.common import rbac
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
-
 from rbac.server.api.errors import ApiNotImplemented, ApiNotFound, ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
@@ -55,9 +54,7 @@ async def fetch_all_users(request):
     head_block = await utils.get_request_block(request)
     LOGGER.info(head_block)
     start, limit = utils.get_request_paging_info(request)
-    user_resources = await users_query.fetch_all_user_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    user_resources = await users_query.fetch_all_user_resources(conn, start, limit)
 
     conn.close()
 
@@ -148,9 +145,7 @@ async def get_user(request, user_id):
 
     head_block = await utils.get_request_block(request)
     # this takes 4 seconds
-    user_resource = await users_query.fetch_user_resource(
-        conn, user_id, head_block.get("num")
-    )
+    user_resource = await users_query.fetch_user_resource(conn, user_id)
 
     conn.close()
 
@@ -169,9 +164,7 @@ async def get_user_summary(request, user_id):
         request.app.config.DB_NAME,
     )
 
-    user_resource = await users_query.fetch_user_resource_summary(
-        conn, user_id, head_block.get("num")
-    )
+    user_resource = await users_query.fetch_user_resource_summary(conn, user_id)
 
     conn.close()
 
@@ -190,9 +183,7 @@ async def get_users_summary(request, user_id):
         request.app.config.DB_NAME,
     )
 
-    user_resource = await users_query.fetch_user_resource_summary(
-        conn, user_id, head_block.get("num")
-    )
+    user_resource = await users_query.fetch_user_resource_summary(conn, user_id)
 
     conn.close()
 
@@ -210,17 +201,9 @@ async def get_user_relationships(request, user_id):
     )
 
     head_block = await utils.get_request_block(request)
-    user_resource = await users_query.fetch_user_relationships(
-        conn, user_id, head_block.get("num")
-    )
+    user_resource = await users_query.fetch_user_relationships(conn, user_id)
     conn.close()
     return await utils.create_response(conn, request.url, user_resource, head_block)
-
-
-@USERS_BP.patch("api/users/<user_id>")
-@authorized()
-async def update_user(request, user_id):
-    raise ApiNotImplemented()
 
 
 @USERS_BP.put("api/users/<user_id>/manager")
@@ -266,14 +249,10 @@ async def fetch_open_proposals(request, user_id):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            conn, proposal, head_block.get("num")
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
 
     open_proposals = []
@@ -303,14 +282,10 @@ async def fetch_confirmed_proposals(request, user_id):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            conn, proposal, head_block.get("num")
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
 
     confirmed_proposals = []
@@ -340,14 +315,10 @@ async def fetch_rejected_proposals(request, user_id):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            conn, proposal, head_block.get("num")
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
 
     rejected_proposals = []
@@ -379,36 +350,11 @@ async def update_expired_roles(request, user_id):
         request.app.config.DB_NAME,
     )
 
-    await roles_query.expire_role_member(
-        conn, request.json.get("id"), user_id, head_block.get("num")
-    )
+    await roles_query.expire_role_member(conn, request.json.get("id"), user_id)
 
     conn.close()
 
     return json({"role_id": request.json.get("id")})
-
-
-@USERS_BP.get("api/users/<user_id>/roles/recommended")
-@authorized()
-async def fetch_recommended_roles(request, user_id):
-
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
-    recommended_resources = await roles_query.fetch_all_role_resources(
-        conn, head_block.get("num"), 0, 10
-    )
-
-    conn.close()
-
-    return await utils.create_response(
-        conn, request.url, recommended_resources, head_block, start=start, limit=limit
-    )
 
 
 def create_user_response(request, user_id):

@@ -15,14 +15,14 @@
 """Base Relationship acts as a common base class for all
 relationship classes. It is able to access state relationship
 information."""
-import logging
 
 from rbac.common import protobuf
 from rbac.common.protobuf import relationship_state_pb2
 from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.base.base_address import AddressBase
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class BaseRelationship(AddressBase):

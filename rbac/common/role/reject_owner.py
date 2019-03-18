@@ -14,11 +14,12 @@
 # -----------------------------------------------------------------------------
 """Implements the REJECT_ADD_ROLE_OWNER message
 usage: rbac.role.owner.reject.create()"""
-import logging
+
 from rbac.common import addresser
 from rbac.common.proposal.proposal_reject import ProposalReject
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class RejectAddRoleOwner(ProposalReject):

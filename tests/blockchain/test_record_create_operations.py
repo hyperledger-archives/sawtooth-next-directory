@@ -13,18 +13,17 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 
-import logging
 import unittest
 import pytest
 
 from tests.blockchain.rbac_client import RbacClient
 from tests.blockchain.integration_test_helper import IntegrationTestHelper
 from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
 
 BATCHER_KEY = Key()
-
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.blockchain

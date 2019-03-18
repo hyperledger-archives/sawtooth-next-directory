@@ -16,20 +16,19 @@
 # ------------------------------------------------------------------------------
 
 import os
-import logging
 import sys
+import logging
 
 TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, TOP_DIR)
 
 from rbac.providers.next.inbound_sync import inbound_sync_listener
 
+
 # TODO: import required functions from the next provider module.
 # from rbac.providers.next import <my_function>
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 def main():
     """Worker daemon that pull entries from the inbound queue and puts the required

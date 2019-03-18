@@ -13,8 +13,6 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-import logging
-
 from sawtooth_sdk.messaging.stream import Stream
 from sawtooth_sdk.protobuf import client_event_pb2
 from sawtooth_sdk.protobuf import events_pb2
@@ -22,9 +20,9 @@ from sawtooth_sdk.protobuf import transaction_receipt_pb2
 from sawtooth_sdk.protobuf.validator_pb2 import Message
 
 from rbac.common import addresser
+from rbac.common.logs import get_default_logger
 
-
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class Subscriber(object):

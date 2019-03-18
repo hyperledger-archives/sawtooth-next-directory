@@ -14,8 +14,6 @@
 # ------------------------------------------------------------------------------
 
 import json
-import logging
-import sys
 
 from sanic import Blueprint
 
@@ -26,10 +24,9 @@ from rbac.server.db import users_query
 from rbac.app.config import CHATBOT_REST_ENDPOINT
 
 from rbac.server.db import db_utils
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = get_default_logger(__name__)
 
 CHATBOT_BP = Blueprint("chatbot")
 
@@ -68,7 +65,7 @@ async def update_tracker(request, recv):
 
         head_block = await utils.get_request_block(request)
         owner_resource = await users_query.fetch_user_resource_summary(
-            conn, recv.get("approver_id"), head_block.get("num")
+            conn, recv.get("approver_id")
         )
         await create_event(request, recv, "approver_name", owner_resource.get("name"))
     await create_event(request, recv, "token", utils.extract_request_token(request))

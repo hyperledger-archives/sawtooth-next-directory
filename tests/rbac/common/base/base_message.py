@@ -15,15 +15,15 @@
 """Base Message Test (via Create User)"""
 # pylint: disable=no-member,invalid-name
 
-import logging
 import pytest
 
 from rbac.common import rbac
 from rbac.common import protobuf
-from rbac.common.sawtooth import batcher
+from rbac.common.sawtooth.batcher import unmake
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.library
@@ -74,7 +74,7 @@ def test_batch_with_message():
         signer_user_id=user_id, signer_keypair=user_key, message=message
     )
 
-    messages = batcher.unmake(batch)
+    messages = unmake(batch)
     assert len(messages) == 1
     assert messages[0].user_id == user_id
     assert messages[0].name == name
@@ -92,7 +92,7 @@ def test_batch_with_kargs():
         signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
     )
 
-    messages = batcher.unmake(batch)
+    messages = unmake(batch)
     assert len(messages) == 1
     assert messages[0].user_id == user_id
     assert messages[0].name == name
@@ -120,7 +120,7 @@ def test_batch_add_with_message():
         signer_user_id=user_id2, signer_keypair=user_key2, message=message2, batch=batch
     )
 
-    messages = batcher.unmake(batch)
+    messages = unmake(batch)
     assert len(messages) == 2
     assert messages[0].user_id == user_id1
     assert messages[0].name == name1
@@ -152,7 +152,7 @@ def test_batch_add_with_kargs():
         batch=batch,
     )
 
-    messages = batcher.unmake(batch)
+    messages = unmake(batch)
     assert len(messages) == 2
     assert messages[0].user_id == user_id1
     assert messages[0].name == name1
@@ -173,7 +173,7 @@ def test_batch_list_with_message():
         signer_user_id=user_id, signer_keypair=user_key, message=message
     )
 
-    messages = batcher.unmake(batch_list)
+    messages = unmake(batch_list)
     assert len(messages) == 1
     assert messages[0].user_id == user_id
     assert messages[0].name == name
@@ -191,7 +191,7 @@ def test_batch_list_with_kargs():
         signer_user_id=user_id, signer_keypair=user_key, user_id=user_id, name=name
     )
 
-    messages = batcher.unmake(batch_list)
+    messages = unmake(batch_list)
     assert len(messages) == 1
     assert messages[0].user_id == user_id
     assert messages[0].name == name
@@ -222,7 +222,7 @@ def test_batch_list_add_with_message():
         batch_list=batch_list,
     )
 
-    messages = batcher.unmake(batch_list)
+    messages = unmake(batch_list)
     assert len(messages) == 2
     assert messages[0].user_id == user_id1
     assert messages[0].name == name1
@@ -254,7 +254,7 @@ def test_batch_list_add_with_kargs():
         batch_list=batch_list,
     )
 
-    messages = batcher.unmake(batch_list)
+    messages = unmake(batch_list)
     assert len(messages) == 2
     assert messages[0].user_id == user_id1
     assert messages[0].name == name1

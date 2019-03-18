@@ -36,11 +36,19 @@ EOM
 
 }
 
+# initialize .env file if it's missing.
 if ! [ -e .env ] 
 then
     echo ".env file not found. Creating one from .env.example ..."
     cp ./.env.example ./.env
 fi
+
+# update version number
+
+version_number=$(cat ./VERSION) && \
+printf '%s\n' '$d' w q | ed .env &> /dev/null && \
+echo "VERSION_NUMBER=$version_number" >> .env
+
 
 if [[ "$1" =~ ^((-{1,2})([Hh]$|[Hh][Ee][Ll][Pp])|)$ ]]; then
     usage; exit 1

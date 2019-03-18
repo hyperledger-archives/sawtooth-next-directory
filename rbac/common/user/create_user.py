@@ -15,12 +15,12 @@
 """ Implements the CREATE_USER message
     usage: rbac.user.new()
 """
-import logging
 
 from rbac.common import addresser
 from rbac.common.base.base_message import BaseMessage
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class CreateUser(BaseMessage):

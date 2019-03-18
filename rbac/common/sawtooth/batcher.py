@@ -15,8 +15,6 @@
 """ Helper functions for creating the Sawtooth protobufs used
     to pass messages to and from the Sawtooth validator
 """
-
-import logging
 import itertools
 from hashlib import sha512
 from uuid import uuid4
@@ -30,8 +28,9 @@ from rbac.common.crypto.keys import Key
 from rbac.common.sawtooth import rbac_payload
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf.rbac_payload_pb2 import Signer
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 BATCHER_KEY_PAIR = Key()
 
 

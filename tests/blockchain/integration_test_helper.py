@@ -14,15 +14,14 @@
 # -----------------------------------------------------------------------------
 
 import time
-import logging
 from uuid import uuid4
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from urllib.error import URLError
 from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_default_logger
 
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 BATCHER_KEY = Key()
 

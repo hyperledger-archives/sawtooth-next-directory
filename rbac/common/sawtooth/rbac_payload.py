@@ -18,12 +18,12 @@ sent to the RBAC Sawtooth validator / transaction processor
 
 # pylint: disable=no-member
 import time
-import logging
 from rbac.common import protobuf
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf.rbac_payload_pb2 import Signer
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 MESSAGE_NAMES = RBACPayload.MessageType.DESCRIPTOR.values_by_name.items()
 
 
