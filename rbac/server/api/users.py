@@ -78,9 +78,12 @@ async def create_new_user(request):
     )
     if await users_query.fetch_username_match_count(conn1, username_created) > 0:
         LOGGER.info(
-            "users.py: POST /api/users - Given Username is same as the Username in rethinkDB & LDAP. So, throw 400 - API Bad Request Error.")
+            "users.py: POST /api/users - Given Username is same as the Username in rethinkDB & LDAP. So, throw 400 - API Bad Request Error."
+        )
         # Throw Error response to Next_UI
-        raise ApiBadRequest("Username already exists. Please give a different Username.")
+        raise ApiBadRequest(
+            "Username already exists. Please give a different Username."
+        )
     conn1.close()
     # Generate keys
     txn_key = Key()

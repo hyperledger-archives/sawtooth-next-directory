@@ -326,4 +326,3 @@ def fetch_username_match_count(conn, username):
         .run(conn)
     )
     return resource
-

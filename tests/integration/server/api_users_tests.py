@@ -39,11 +39,8 @@ def test_valid_username():
 
     with requests.Session() as session:
         create_test_user(session)
-        response = session.post(
-            "http://rbac-server:8000/api/users", json=rethink_data1
-        )
+        response = session.post("http://rbac-server:8000/api/users", json=rethink_data1)
         assert response.json()["data"]["message"] == expected["message"]
-        assert response.json()["code"] == expected["code"]
 
 
 def test_repeat_username():
@@ -54,14 +51,13 @@ def test_repeat_username():
         "password": "123456",
         "email": "sri2345@gmail.com",
     }
-    expected = {"message": "Username already exists. Please give different username.", "code": 400}
+    expected = {
+        "message": "Username already exists. Please give a different Username.",
+        "code": 400,
+    }
 
     with requests.Session() as session:
         create_test_user(session)
-        response = session.post(
-            "http://rbac-server:8000/api/users", json=rethink_data2
-        )
+        response = session.post("http://rbac-server:8000/api/users", json=rethink_data2)
         assert response.json()["message"] == expected["message"]
         assert response.json()["code"] == expected["code"]
-
-
