@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Queries for getting task resources."""
 
 import rethinkdb as r
 
@@ -27,6 +28,7 @@ LOGGER = get_default_logger(__name__)
 
 
 async def fetch_all_task_resources(conn, start, limit):
+    """Gets all task resources."""
     resources = (
         await r.table("tasks")
         .order_by(index="task_id")
@@ -56,6 +58,7 @@ async def fetch_all_task_resources(conn, start, limit):
 
 
 async def fetch_task_resource(conn, task_id):
+    """Gets task by task_id."""
     resource = (
         await r.table("tasks")
         .get_all(task_id, index="task_id")

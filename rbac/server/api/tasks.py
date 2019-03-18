@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Tasks APIs."""
 
 from uuid import uuid4
 
@@ -33,7 +34,7 @@ TASKS_BP = Blueprint("tasks")
 @TASKS_BP.get("api/tasks")
 @authorized()
 async def get_all_tasks(request):
-
+    """Get all tasks."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -52,6 +53,7 @@ async def get_all_tasks(request):
 @TASKS_BP.post("api/tasks")
 @authorized()
 async def create_new_task(request):
+    """Create a new task."""
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
@@ -75,7 +77,7 @@ async def create_new_task(request):
 @TASKS_BP.get("api/tasks/<task_id>")
 @authorized()
 async def get_task(request, task_id):
-
+    """Get a specific task by task_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -91,6 +93,7 @@ async def get_task(request, task_id):
 @TASKS_BP.post("api/tasks/<task_id>/admins")
 @authorized()
 async def add_task_admin(request, task_id):
+    """Propose add a task admin."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
@@ -114,6 +117,7 @@ async def add_task_admin(request, task_id):
 @TASKS_BP.post("api/tasks/<task_id>/owners")
 @authorized()
 async def add_task_owner(request, task_id):
+    """Propose add a task owner."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
@@ -135,6 +139,7 @@ async def add_task_owner(request, task_id):
 
 
 def create_task_response(request, task_id):
+    """Prepare the json response for create new task."""
     task_resource = {
         "id": task_id,
         "name": request.json.get("name"),

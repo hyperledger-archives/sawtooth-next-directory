@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Roles APIs."""
 
 from uuid import uuid4
 
@@ -33,7 +34,7 @@ ROLES_BP = Blueprint("roles")
 @ROLES_BP.get("api/roles")
 @authorized()
 async def get_all_roles(request):
-
+    """Get all roles."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -52,6 +53,7 @@ async def get_all_roles(request):
 @ROLES_BP.post("api/roles")
 @authorized()
 async def create_new_role(request):
+    """Create a new role."""
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
@@ -76,7 +78,7 @@ async def create_new_role(request):
 @ROLES_BP.get("api/roles/<role_id>")
 @authorized()
 async def get_role(request, role_id):
-
+    """Get a specific role by role_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -92,6 +94,7 @@ async def get_role(request, role_id):
 @ROLES_BP.patch("api/roles/<role_id>")
 @authorized()
 async def update_role(request, role_id):
+    """Update a role."""
     required_fields = ["description"]
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
@@ -111,6 +114,7 @@ async def update_role(request, role_id):
 @ROLES_BP.post("api/roles/<role_id>/admins")
 @authorized()
 async def add_role_admin(request, role_id):
+    """Add an admin to role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
@@ -134,6 +138,7 @@ async def add_role_admin(request, role_id):
 @ROLES_BP.post("api/roles/<role_id>/members")
 @authorized()
 async def add_role_member(request, role_id):
+    """Add a member to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
@@ -161,6 +166,7 @@ async def add_role_member(request, role_id):
 @ROLES_BP.post("api/roles/<role_id>/owners")
 @authorized()
 async def add_role_owner(request, role_id):
+    """Add an owner to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
@@ -184,6 +190,7 @@ async def add_role_owner(request, role_id):
 @ROLES_BP.post("api/roles/<role_id>/tasks")
 @authorized()
 async def add_role_task(request, role_id):
+    """Add a task to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
@@ -205,6 +212,7 @@ async def add_role_task(request, role_id):
 
 
 def create_role_response(request, role_id):
+    """Compose the create new role response and return it as json."""
     role_resource = {
         "id": role_id,
         "name": request.json.get("name"),

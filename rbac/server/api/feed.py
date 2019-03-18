@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Socket feed enabling real-time notifications of proposals."""
 
 import json
 

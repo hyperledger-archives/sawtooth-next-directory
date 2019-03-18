@@ -123,4 +123,5 @@ class BaseRelationship(AddressBase):
         return bool(store.object_id == object_id and store.related_id == related_id)
 
     def not_exists(self, object_id, related_id):
+        """Check the nihility of a relationship record."""
         return not self.exists(object_id=object_id, related_id=related_id)

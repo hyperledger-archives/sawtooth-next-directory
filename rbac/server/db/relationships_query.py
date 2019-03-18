@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Queries for relationships."""
 
 import rethinkdb as r
 
@@ -22,6 +23,7 @@ LOGGER = get_default_logger(__name__)
 
 
 def fetch_relationships(table, index, identifier):
+    """"Query for relationships."""
     return (
         r.table(table)
         .get_all(identifier, index=index)
@@ -32,6 +34,7 @@ def fetch_relationships(table, index, identifier):
 
 
 def fetch_relationships_by_id(table, identifier, key):
+    """Query for relationships by identifier."""
     return (
         r.table(table)
         .filter(lambda doc: doc["identifiers"].contains(identifier), default=True)

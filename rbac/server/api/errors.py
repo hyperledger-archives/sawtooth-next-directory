@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
+"""Define exceptions for HTTP error codes."""
 from sanic.response import json
 from sanic import Blueprint
 from sanic.exceptions import SanicException
@@ -46,6 +46,8 @@ def add_status_code(code):
 
 
 class ApiException(SanicException):
+    """API exception with HTTP status code."""
+
     def __init__(self, message=None, status_code=None):
         super().__init__(message)
         if status_code is not None:
@@ -58,36 +60,49 @@ class ApiException(SanicException):
 
 @add_status_code(400)
 class ApiBadRequest(ApiException):
+    """Define ApiBadRequest exception."""
+
     pass
 
 
 @add_status_code(401)
 class ApiUnauthorized(ApiException):
+    """Define ApiUnauthorized exception."""
+
     pass
 
 
 @add_status_code(403)
 class ApiForbidden(ApiException):
+    """Define ApiForbidden exception."""
+
     pass
 
 
 @add_status_code(404)
 class ApiNotFound(ApiException):
+    """Define ApiNotFound exception."""
+
     pass
 
 
 @add_status_code(501)
 class ApiNotImplemented(ApiException):
+    """Define ApiNotImplemented exception."""
+
     pass
 
 
 @add_status_code(503)
 class ApiInternalError(ApiException):
+    """Define ApiInternalError exception."""
+
     pass
 
 
 @ERRORS_BP.exception(NotFound)
 async def handle_not_found(request, exception):
+    """Return NotFound exception as json."""
     if not request:
         LOGGER.debug(request)
     return json(
@@ -98,6 +113,7 @@ async def handle_not_found(request, exception):
 
 @ERRORS_BP.exception(ApiException)
 def api_json_error(request, exception):
+    """Return ApiException as json."""
     if not request:
         LOGGER.debug(request)
     return json(
@@ -108,6 +124,7 @@ def api_json_error(request, exception):
 
 @ERRORS_BP.exception(SanicException)
 async def handle_errors(request, exception):
+    """Return SanicException as json."""
     if not request:
         LOGGER.debug(request)
     return json(
@@ -118,6 +135,7 @@ async def handle_errors(request, exception):
 
 @ERRORS_BP.exception(Exception)
 def json_error(request, exception):
+    """Return request exception as json."""
     if not request:
         LOGGER.debug(request)
     try:

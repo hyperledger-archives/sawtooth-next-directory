@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Creates transaction handler class for sawtooth transaction processor."""
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
@@ -24,27 +25,34 @@ LOGGER = get_default_logger(__name__)
 
 
 class RBACTransactionHandler(object):
+    """RBAC-specific handler for sawtooth transaction processor."""
+
     def __init__(self):
         object.__init__(self)
         self._processor = BaseTransactionProcessor(addresser.family)
 
     @property
     def family_name(self):
+        """The name of this transaction family"""
         return addresser.family.name
 
     @property
     def family_versions(self):
+        """The current version of the transaction processor"""
         return addresser.family.versions
 
     @property
     def encodings(self):
+        """The current encodings of the transaction processor"""
         return addresser.family.encodings
 
     @property
     def namespaces(self):
+        """The 3 byte (6 character) transaction family address prefix"""
         return addresser.family.namespaces
 
     def apply(self, transaction, state):
+        """Applies the transaction"""
         try:
             if transaction.payload == "ping".encode("utf-8"):
                 LOGGER.info("Got a ping!")

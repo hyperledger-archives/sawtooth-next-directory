@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test rbac.app.config"""
 import pytest
 
 from tests.rbac.common.assertions import TestAssertions
@@ -44,11 +44,15 @@ from rbac.app.config import CHATBOT_REST_ENDPOINT
 @pytest.mark.library
 @pytest.mark.config
 class TestAppConfig(TestAssertions):
+    """Test the app configuration."""
+
     def assert_is_int_string(self, value):
+        """Assert value is integer string."""
         self.assertIsInstance(value, str)
         self.assertEqual(str(int(value)), value)
 
     def test_default_config(self):
+        """Test the default configuration values."""
         self.assertIsString(DEFAULT_CONFIG["SERVER_HOST"])
         self.assertIsIntegerString(DEFAULT_CONFIG["SERVER_PORT"])
         self.assertIsString(DEFAULT_CONFIG["VALIDATOR_HOST"])
@@ -70,6 +74,7 @@ class TestAppConfig(TestAssertions):
         )
 
     def test_config(self):
+        """Test the configuration values."""
         self.assertIsString(SERVER_HOST)
         self.assertIsIntegerString(SERVER_PORT)
         self.assertIsString(VALIDATOR_HOST)
@@ -114,6 +119,7 @@ class TestAppConfig(TestAssertions):
         "Allow default configuration for test, unmark this to enforce non-default .env configuration"
     )
     def test_non_default_config(self):
+        """Test if AES_KEY is configured in .env."""
         self.assertNotEqual(
             AES_KEY,
             DEFAULT_CONFIG["AES_KEY"],

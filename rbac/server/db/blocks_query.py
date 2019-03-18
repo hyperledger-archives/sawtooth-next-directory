@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Functions for querying the blocks table."""
 
 import time
 
@@ -26,6 +27,7 @@ LOGGER = get_default_logger(__name__)
 
 
 async def fetch_all_blocks(conn, head_block_num, start, limit):
+    """Get all blocks, from start to limit."""
     return (
         await r.table("blocks")
         .between(r.minval, head_block_num, right_bound="closed")
@@ -39,6 +41,7 @@ async def fetch_all_blocks(conn, head_block_num, start, limit):
 
 
 async def fetch_latest_block(conn):
+    """Get newest block by highest block_num"""
     try:
         return (
             await r.table("blocks")
@@ -52,6 +55,7 @@ async def fetch_latest_block(conn):
 
 
 async def fetch_latest_block_with_retry(conn, tries=5):
+    """Get newest block, with retries on exception."""
     attempts = tries
     while attempts > 0:
         try:
@@ -69,6 +73,7 @@ async def fetch_latest_block_with_retry(conn, tries=5):
 
 
 async def fetch_block_by_id(conn, block_id):
+    """Get specific block by block_id."""
     resource = (
         await r.table("blocks")
         .get_all(block_id, index="block_id")
@@ -86,6 +91,7 @@ async def fetch_block_by_id(conn, block_id):
 
 
 async def fetch_block_by_num(conn, block_num):
+    """Get specific block by block_num"""
     try:
         return (
             await r.table("blocks")

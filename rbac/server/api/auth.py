@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
+"""API to authenticate and login to the NEXT platform."""
 import os
 from functools import wraps
 import hashlib
@@ -52,6 +52,8 @@ LDAP_ERR_MESSAGES = {
 
 
 def authorized():
+    """Decorator to authorize user for decorated API."""
+
     def decorator(func):
         @wraps(func)
         async def decorated_function(request, *args, **kwargs):

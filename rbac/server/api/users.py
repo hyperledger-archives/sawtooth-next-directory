@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Users APIs."""
 
 from uuid import uuid4
 import hashlib
@@ -44,7 +45,7 @@ USERS_BP = Blueprint("users")
 @USERS_BP.get("api/users")
 @authorized()
 async def fetch_all_users(request):
-
+    """Returns all users."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -65,6 +66,7 @@ async def fetch_all_users(request):
 
 @USERS_BP.post("api/users")
 async def create_new_user(request):
+    """Create a new user."""
     required_fields = ["name", "username", "password", "email"]
     utils.validate_fields(required_fields, request.json)
 
@@ -123,7 +125,7 @@ async def create_new_user(request):
 @USERS_BP.get("api/users/<user_id>")
 @authorized()
 async def get_user(request, user_id):
-
+    """Get a specific user by user_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -161,7 +163,7 @@ async def get_user_summary(request, user_id):
 @USERS_BP.get("api/users/<user_id>/summary")
 @authorized()
 async def get_users_summary(request, user_id):
-    """This endpoint is for returning summary data for a user, just it's user_id,name, email."""
+    """This endpoint is for returning summary data for a user, just their user_id, name, email."""
     head_block = await utils.get_request_block(request)
 
     conn = await db_utils.create_connection(
@@ -180,7 +182,7 @@ async def get_users_summary(request, user_id):
 @USERS_BP.get("api/users/<user_id>/relationships")
 @authorized()
 async def get_user_relationships(request, user_id):
-
+    """Get relationships for a specific user, by user_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -196,6 +198,7 @@ async def get_user_relationships(request, user_id):
 @USERS_BP.put("api/users/<user_id>/manager")
 @authorized()
 async def update_manager(request, user_id):
+    """Update a user's manager."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
@@ -227,7 +230,7 @@ async def update_manager(request, user_id):
 @USERS_BP.get("api/users/<user_id>/proposals/open")
 @authorized()
 async def fetch_open_proposals(request, user_id):
-
+    """Get open proposals for a user, by their user_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -260,7 +263,7 @@ async def fetch_open_proposals(request, user_id):
 @USERS_BP.get("api/users/<user_id>/proposals/confirmed")
 @authorized()
 async def fetch_confirmed_proposals(request, user_id):
-
+    """Get confirmed proposals for a user, by their user_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -293,7 +296,7 @@ async def fetch_confirmed_proposals(request, user_id):
 @USERS_BP.get("api/users/<user_id>/proposals/rejected")
 @authorized()
 async def fetch_rejected_proposals(request, user_id):
-
+    """Get confirmed proposals for a user, by their user_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -345,6 +348,7 @@ async def update_expired_roles(request, user_id):
 
 
 def create_user_response(request, user_id):
+    """Compose the json response for a create new user request."""
     token = generate_api_key(request.app.config.SECRET_KEY, user_id)
     user_resource = {
         "id": user_id,

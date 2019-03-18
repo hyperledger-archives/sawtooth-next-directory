@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Subscriber class that can subscribe to state delta events using the
+    Sawtooth SDK's Stream class."""
 
 from sawtooth_sdk.messaging.stream import Stream
 from sawtooth_sdk.protobuf import client_event_pb2
@@ -139,6 +141,8 @@ class Subscriber(object):
 
 
 class StateDeltaEvent:
+    """Creates an object similar to the previous state delta event for compatibility."""
+
     def __init__(self, event_list):
         """
         Convert an event list into an object that is similar to the previous

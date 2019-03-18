@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Queries for getting & working with role resources."""
 
 import rethinkdb as r
 
@@ -26,6 +27,7 @@ LOGGER = get_default_logger(__name__)
 
 
 async def fetch_all_role_resources(conn, start, limit):
+    """Get all role resources."""
     resources = (
         await r.table("roles")
         .order_by(index="role_id")
@@ -61,6 +63,7 @@ async def fetch_all_role_resources(conn, start, limit):
 
 
 async def fetch_role_resource(conn, role_id):
+    """Get a role resource by role_id."""
     resource = (
         await r.table("roles")
         .get_all(role_id, index="role_id")
