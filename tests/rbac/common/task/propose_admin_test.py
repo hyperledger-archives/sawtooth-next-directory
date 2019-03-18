@@ -17,7 +17,9 @@
 
 import pytest
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.user import User
+from rbac.common.task import Task
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
@@ -31,9 +33,9 @@ def test_make():
     """Test making the message"""
     user_id = helper.user.id()
     task_id = helper.task.id()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
-    message = rbac.task.admin.propose.make(
+    message = Task().admin.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         task_id=task_id,
@@ -51,15 +53,15 @@ def test_make():
 def test_make_addresses():
     """Test making the message addresses"""
     user_id = helper.user.id()
-    user_address = rbac.user.address(user_id)
+    user_address = User().address(user_id)
     task_id = helper.task.id()
-    task_address = rbac.task.address(task_id)
-    proposal_id = rbac.addresser.proposal.unique_id()
+    task_address = Task().address(task_id)
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
-    relationship_address = rbac.task.admin.address(task_id, user_id)
-    proposal_address = rbac.task.admin.propose.address(task_id, user_id)
+    relationship_address = Task().admin.address(task_id, user_id)
+    proposal_address = Task().admin.propose.address(task_id, user_id)
     signer_user_id = helper.user.id()
-    message = rbac.task.admin.propose.make(
+    message = Task().admin.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         task_id=task_id,
@@ -67,7 +69,7 @@ def test_make_addresses():
         metadata=None,
     )
 
-    inputs, outputs = rbac.task.admin.propose.make_addresses(
+    inputs, outputs = Task().admin.propose.make_addresses(
         message=message, signer_user_id=signer_user_id
     )
 
@@ -84,10 +86,10 @@ def test_make_addresses():
 def test_create():
     """Test executing the message on the blockchain"""
     task, _, _ = helper.task.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     user, signer_keypair = helper.user.create()
-    message = rbac.task.admin.propose.make(
+    message = Task().admin.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         task_id=task.task_id,
@@ -95,16 +97,14 @@ def test_create():
         metadata=None,
     )
 
-    status = rbac.task.admin.propose.new(
+    status = Task().admin.propose.new(
         signer_keypair=signer_keypair, signer_user_id=user.user_id, message=message
     )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    proposal = rbac.task.admin.propose.get(
-        object_id=task.task_id, related_id=user.user_id
-    )
+    proposal = Task().admin.propose.get(object_id=task.task_id, related_id=user.user_id)
 
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert proposal.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_TASK_ADMIN

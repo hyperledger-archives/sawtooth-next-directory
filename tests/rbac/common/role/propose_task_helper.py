@@ -16,7 +16,8 @@
 # pylint: disable=no-member,too-few-public-methods
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.role import Role
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common.task.create_task_helper import CreateTaskTestHelper
@@ -42,7 +43,7 @@ class ProposeRoleTaskTestHelper:
 
     def id(self):
         """Get a unique identifier"""
-        return rbac.addresser.proposal.unique_id()
+        return addresser.proposal.unique_id()
 
     def reason(self):
         """Get a random reason"""
@@ -55,7 +56,7 @@ class ProposeRoleTaskTestHelper:
         task, task_owner, task_owner_key = helper.task.create()
         proposal_id = self.id()
         reason = self.reason()
-        message = rbac.role.task.propose.make(
+        message = Role().task.propose.make(
             proposal_id=proposal_id,
             role_id=role.role_id,
             task_id=task.task_id,
@@ -63,7 +64,7 @@ class ProposeRoleTaskTestHelper:
             metadata=None,
         )
 
-        status = rbac.role.task.propose.new(
+        status = Role().task.propose.new(
             signer_keypair=role_owner_key,
             signer_user_id=role_owner.user_id,
             message=message,
@@ -72,7 +73,7 @@ class ProposeRoleTaskTestHelper:
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        proposal = rbac.role.task.propose.get(
+        proposal = Role().task.propose.get(
             object_id=role.role_id, related_id=task.task_id
         )
 

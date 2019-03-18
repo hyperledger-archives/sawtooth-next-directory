@@ -18,7 +18,8 @@
 
 import pytest
 
-from rbac.common import rbac
+from rbac.common.user import User
+from rbac.common.key import Key
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
@@ -33,7 +34,7 @@ def test_make():
     """
     user_id = helper.user.id()
     keypair = helper.user.key()
-    message = rbac.key.make(user_id=user_id, key_id=keypair.public_key)
+    message = Key().make(user_id=user_id, key_id=keypair.public_key)
     assert isinstance(message, protobuf.key_transaction_pb2.AddKey)
     assert message.user_id == user_id
     assert message.key_id == keypair.public_key
@@ -46,12 +47,12 @@ def test_make_addresses():
     """
     user_id = helper.user.id()
     keypair = helper.user.key()
-    message = rbac.key.make(user_id=user_id, key_id=keypair.public_key)
-    inputs, outputs = rbac.key.make_addresses(message=message, signer_user_id=user_id)
+    message = Key().make(user_id=user_id, key_id=keypair.public_key)
+    inputs, outputs = Key().make_addresses(message=message, signer_user_id=user_id)
 
-    user_address = rbac.user.address(object_id=user_id)
-    key_address = rbac.key.address(object_id=keypair.public_key)
-    user_key_address = rbac.user.key.address(
+    user_address = User().address(object_id=user_id)
+    key_address = Key().address(object_id=keypair.public_key)
+    user_key_address = User().key.address(
         object_id=user_id, related_id=keypair.public_key
     )
 
@@ -72,7 +73,7 @@ def test_add_key():
     user = helper.user.imports()
     new_key = helper.user.key()
 
-    status = rbac.key.new(
+    status = Key().new(
         signer_keypair=new_key,
         signer_user_id=user.user_id,
         user_id=user.user_id,
@@ -82,4 +83,4 @@ def test_add_key():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    assert rbac.user.key.exists(object_id=user.user_id, related_id=new_key.public_key)
+    assert User().key.exists(object_id=user.user_id, related_id=new_key.public_key)

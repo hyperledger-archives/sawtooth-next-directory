@@ -20,7 +20,7 @@ import hashlib
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common import rbac
+from rbac.common.user import User
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
 
@@ -72,13 +72,13 @@ async def create_new_user(request):
 
     # Generate keys
     txn_key = Key()
-    txn_user_id = rbac.user.unique_id()
+    txn_user_id = User().unique_id()
     encrypted_private_key = encrypt_private_key(
         request.app.config.AES_KEY, txn_key.public_key, txn_key.private_key_bytes
     )
 
     # Build create user transaction
-    batch_list = rbac.user.batch_list(
+    batch_list = User().batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         user_id=txn_user_id,
@@ -204,7 +204,7 @@ async def update_manager(request, user_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.user.manager.propose.batch_list(
+    batch_list = User().manager.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
@@ -330,7 +330,6 @@ async def fetch_rejected_proposals(request, user_id):
 @authorized()
 async def update_expired_roles(request, user_id):
     """Manually expire user role membership"""
-    head_block = await utils.get_request_block(request)
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 

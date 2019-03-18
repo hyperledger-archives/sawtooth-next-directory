@@ -16,7 +16,8 @@
 # pylint: disable=no-member,too-few-public-methods
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
@@ -40,7 +41,7 @@ class ProposeManagerTestHelper:
 
     def id(self):
         """Get a unique identifier"""
-        return rbac.addresser.proposal.unique_id()
+        return addresser.proposal.unique_id()
 
     def reason(self):
         """Get a random reason"""
@@ -52,7 +53,7 @@ class ProposeManagerTestHelper:
         manager, manager_key = helper.user.create()
         proposal_id = self.id()
         reason = helper.user.reason()
-        message = rbac.user.manager.propose.make(
+        message = User().manager.propose.make(
             proposal_id=proposal_id,
             user_id=user.user_id,
             new_manager_id=manager.user_id,
@@ -60,14 +61,14 @@ class ProposeManagerTestHelper:
             metadata=None,
         )
 
-        status = rbac.user.manager.propose.new(
+        status = User().manager.propose.new(
             signer_user_id=user.user_id, signer_keypair=user_key, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        proposal = rbac.user.manager.propose.get(
+        proposal = User().manager.propose.get(
             object_id=user.user_id, related_id=manager.user_id
         )
 

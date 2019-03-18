@@ -17,7 +17,9 @@
 from uuid import uuid4
 
 from rbac.common.logs import get_default_logger
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.user import User
+from rbac.common.role import Role
 from rbac.common.crypto.keys import Key
 from rbac.common.util import bytes_from_hex
 
@@ -54,17 +56,17 @@ def add_transaction(inbound_entry):
 
             user_id = data["relationship_id"]
             next_id = str(uuid4())
-            object_id = rbac.user.hash(next_id)
-            address = rbac.user.address(object_id=object_id)
+            object_id = User().hash(next_id)
+            address = User().address(object_id=object_id)
 
             inbound_entry["address"] = bytes_from_hex(address)
             inbound_entry["object_id"] = bytes_from_hex(object_id)
-            inbound_entry["object_type"] = rbac.addresser.ObjectType.USER.value
+            inbound_entry["object_type"] = addresser.ObjectType.USER.value
 
-            message = rbac.user.imports.make(
+            message = User().imports.make(
                 signer_keypair=SIGNER_KEYPAIR, user_id=next_id, **data
             )
-            batch = rbac.user.imports.batch(
+            batch = User().imports.batch(
                 signer_keypair=SIGNER_KEYPAIR,
                 signer_user_id=SIGNER_USER_ID,
                 message=message,
@@ -76,17 +78,17 @@ def add_transaction(inbound_entry):
 
             role_id = data["relationship_id"]
             next_id = str(uuid4())
-            object_id = rbac.role.hash(next_id)
-            address = rbac.role.address(object_id=object_id)
+            object_id = Role().hash(next_id)
+            address = Role().address(object_id=object_id)
 
             inbound_entry["address"] = bytes_from_hex(address)
             inbound_entry["object_id"] = bytes_from_hex(object_id)
-            inbound_entry["object_type"] = rbac.addresser.ObjectType.ROLE.value
+            inbound_entry["object_type"] = addresser.ObjectType.ROLE.value
 
-            message = rbac.role.imports.make(
+            message = Role().imports.make(
                 signer_keypair=SIGNER_KEYPAIR, role_id=next_id, **data
             )
-            batch = rbac.role.imports.batch(
+            batch = Role().imports.batch(
                 signer_keypair=SIGNER_KEYPAIR,
                 signer_user_id=SIGNER_USER_ID,
                 message=message,

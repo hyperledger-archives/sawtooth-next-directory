@@ -17,7 +17,7 @@
 
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
 from rbac.common.logs import get_default_logger
 
 LOGGER = get_default_logger(__name__)
@@ -58,14 +58,14 @@ class RoleTestData:
 
     def id(self):
         """Get a test role_id (not created)"""
-        self.last_id = rbac.addresser.role.unique_id()
+        self.last_id = addresser.role.unique_id()
         return self.last_id
 
     def hash(self, value):
         """Returns a 12-byte hash of a given string, unless it is already a
         12-byte hexadecimal string (e.g. as returned by the unique_id function).
         Returns zero bytes if the value is None or falsey"""
-        self.last_hash = rbac.addresser.role.hash(value)
+        self.last_hash = addresser.role.hash(value)
         return self.last_hash
 
     def name(self):

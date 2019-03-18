@@ -19,13 +19,10 @@ from uuid import uuid4
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common import rbac
-
+from rbac.common.role import Role
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
-
 from rbac.server.db import roles_query
-
 from rbac.server.db import db_utils
 
 ROLES_BP = Blueprint("roles")
@@ -59,7 +56,7 @@ async def create_new_role(request):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     role_id = str(uuid4())
-    batch_list = rbac.role.batch_list(
+    batch_list = Role().batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         name=request.json.get("name"),
@@ -99,7 +96,7 @@ async def update_role(request, role_id):
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     role_description = request.json.get("description")
-    batch_list = rbac.role.update.batch_list(
+    batch_list = Role().update.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         role_id=role_id,
@@ -120,7 +117,7 @@ async def add_role_admin(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.admin.propose.batch_list(
+    batch_list = Role().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
@@ -143,7 +140,7 @@ async def add_role_member(request, role_id):
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.member.propose.batch_list(
+    batch_list = Role().member.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
@@ -172,7 +169,7 @@ async def add_role_owner(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.owner.propose.batch_list(
+    batch_list = Role().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
@@ -196,7 +193,7 @@ async def add_role_task(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.task.propose.batch_list(
+    batch_list = Role().task.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,

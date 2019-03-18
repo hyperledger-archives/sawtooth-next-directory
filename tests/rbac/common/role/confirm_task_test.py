@@ -18,7 +18,8 @@
 
 import pytest
 
-from rbac.common import rbac
+from rbac.common.role import Role
+from rbac.common.task import Task
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
@@ -34,7 +35,7 @@ def test_make():
     object_id = helper.role.id()
     proposal_id = helper.proposal.id()
     reason = helper.proposal.reason()
-    message = rbac.role.task.confirm.make(
+    message = Role().task.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,
         object_id=object_id,
@@ -54,19 +55,19 @@ def test_make_addresses():
     related_id = helper.task.id()
     object_id = helper.role.id()
     proposal_id = helper.proposal.id()
-    proposal_address = rbac.role.task.propose.address(object_id, related_id)
+    proposal_address = Role().task.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
-    relationship_address = rbac.role.task.address(object_id, related_id)
+    relationship_address = Role().task.address(object_id, related_id)
     signer_user_id = helper.user.id()
-    task_owner_address = rbac.task.owner.address(related_id, signer_user_id)
-    message = rbac.role.task.confirm.make(
+    task_owner_address = Task().owner.address(related_id, signer_user_id)
+    message = Role().task.confirm.make(
         proposal_id=proposal_id,
         related_id=related_id,
         object_id=object_id,
         reason=reason,
     )
 
-    inputs, outputs = rbac.role.task.confirm.make_addresses(
+    inputs, outputs = Role().task.confirm.make_addresses(
         message=message, signer_user_id=signer_user_id
     )
 
@@ -85,14 +86,14 @@ def test_create():
     proposal, _, _, _, _, task_owner, task_owner_key = helper.role.task.propose.create()
 
     reason = helper.role.task.propose.reason()
-    message = rbac.role.task.confirm.make(
+    message = Role().task.confirm.make(
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
         reason=reason,
     )
 
-    status = rbac.role.task.confirm.new(
+    status = Role().task.confirm.new(
         signer_keypair=task_owner_key,
         signer_user_id=task_owner.user_id,
         message=message,
@@ -103,7 +104,7 @@ def test_create():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    confirm = rbac.role.task.confirm.get(
+    confirm = Role().task.confirm.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 
@@ -115,6 +116,6 @@ def test_create():
     assert confirm.close_reason == reason
     assert confirm.closer == task_owner.user_id
     assert confirm.status == protobuf.proposal_state_pb2.Proposal.CONFIRMED
-    assert rbac.role.task.exists(
+    assert Role().task.exists(
         object_id=proposal.object_id, related_id=proposal.related_id
     )

@@ -16,7 +16,9 @@
 # pylint: disable=no-member
 import pytest
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.role import Role
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
@@ -30,9 +32,9 @@ def test_make():
     """Test making the message"""
     user_id = helper.user.id()
     role_id = helper.role.id()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
-    message = rbac.role.owner.propose.make(
+    message = Role().owner.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         role_id=role_id,
@@ -51,15 +53,15 @@ def test_make():
 def test_make_addresses():
     """Test making the message addresses"""
     user_id = helper.user.id()
-    user_address = rbac.user.address(user_id)
+    user_address = User().address(user_id)
     role_id = helper.role.id()
-    role_address = rbac.role.address(role_id)
-    proposal_id = rbac.addresser.proposal.unique_id()
+    role_address = Role().address(role_id)
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
-    relationship_address = rbac.role.owner.address(role_id, user_id)
-    proposal_address = rbac.role.owner.propose.address(role_id, user_id)
+    relationship_address = Role().owner.address(role_id, user_id)
+    proposal_address = Role().owner.propose.address(role_id, user_id)
     signer_user_id = helper.user.id()
-    message = rbac.role.owner.propose.make(
+    message = Role().owner.propose.make(
         proposal_id=proposal_id,
         user_id=user_id,
         role_id=role_id,
@@ -67,7 +69,7 @@ def test_make_addresses():
         metadata=None,
     )
 
-    inputs, outputs = rbac.role.owner.propose.make_addresses(
+    inputs, outputs = Role().owner.propose.make_addresses(
         message=message, signer_user_id=signer_user_id
     )
 
@@ -84,11 +86,11 @@ def test_make_addresses():
 def test_create():
     """Test executing the message on the blockchain"""
     role, _, _ = helper.role.create()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     user, signer_keypair = helper.user.create()
 
-    message = rbac.role.owner.propose.make(
+    message = Role().owner.propose.make(
         proposal_id=proposal_id,
         user_id=user.user_id,
         role_id=role.role_id,
@@ -96,16 +98,14 @@ def test_create():
         metadata=None,
     )
 
-    status = rbac.role.owner.propose.new(
+    status = Role().owner.propose.new(
         signer_keypair=signer_keypair, signer_user_id=user.user_id, message=message
     )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    proposal = rbac.role.owner.propose.get(
-        object_id=role.role_id, related_id=user.user_id
-    )
+    proposal = Role().owner.propose.get(object_id=role.role_id, related_id=user.user_id)
 
     assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
     assert proposal.proposal_type == protobuf.proposal_state_pb2.Proposal.ADD_ROLE_OWNER

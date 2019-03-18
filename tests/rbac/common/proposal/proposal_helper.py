@@ -17,7 +17,7 @@
 
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
 from rbac.common.logs import get_default_logger
 
 LOGGER = get_default_logger(__name__)
@@ -28,7 +28,7 @@ class ProposalTestHelper:
 
     def id(self):
         """Get a test proposal_id (not created)"""
-        return rbac.addresser.proposal.unique_id()
+        return addresser.proposal.unique_id()
 
     def reason(self):
         """Get a random reason"""

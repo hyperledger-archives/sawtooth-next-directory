@@ -16,7 +16,9 @@
 # pylint: disable=no-member,invalid-name
 import pytest
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.key import Key
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
@@ -30,8 +32,8 @@ LOGGER = get_default_logger(__name__)
 def test_address():
     """Test the address method and that it is in sync with the addresser"""
     user_id = helper.user.id()
-    address1 = rbac.user.address(object_id=user_id)
-    address2 = rbac.addresser.user.address(user_id)
+    address1 = User().address(object_id=user_id)
+    address2 = addresser.user.address(user_id)
     assert address1 == address2
 
 
@@ -44,7 +46,7 @@ def test_make():
     username = helper.user.username()
     email = helper.user.email()
     keypair = helper.user.key()
-    message = rbac.user.make(
+    message = User().make(
         user_id=user_id,
         name=name,
         username=username,
@@ -70,7 +72,7 @@ def test_make_with_metadata():
     email = helper.user.email()
     keypair = helper.user.key()
     metadata = {"employeeId": "12345", "mobile": "555-1212"}
-    message = rbac.user.make(
+    message = User().make(
         user_id=user_id,
         name=name,
         email=email,
@@ -95,14 +97,14 @@ def test_make_addresses():
     email = helper.user.email()
     user_key = helper.user.key()
     user_id = helper.user.id()
-    message = rbac.user.make(
+    message = User().make(
         user_id=user_id, name=name, email=email, key=user_key.public_key
     )
-    inputs, outputs = rbac.user.make_addresses(message=message, signer_user_id=user_id)
+    inputs, outputs = User().make_addresses(message=message, signer_user_id=user_id)
 
-    user_address = rbac.user.address(object_id=message.user_id)
-    key_address = rbac.key.address(object_id=user_key.public_key)
-    user_key_address = rbac.user.key.address(
+    user_address = User().address(object_id=message.user_id)
+    key_address = Key().address(object_id=user_key.public_key)
+    user_key_address = User().key.address(
         object_id=message.user_id, related_id=user_key.public_key
     )
 
@@ -126,14 +128,14 @@ def test_make_addresses_with_manager():
     email = helper.user.email()
     helper.user.key()
     user_id = helper.user.id()
-    user_address = rbac.user.address(object_id=user_id)
+    user_address = User().address(object_id=user_id)
     manager_id = helper.user.id()
-    manager_address = rbac.user.address(object_id=manager_id)
+    manager_address = User().address(object_id=manager_id)
 
-    message = rbac.user.make(
+    message = User().make(
         user_id=user_id, name=name, email=email, manager_id=manager_id
     )
-    inputs, outputs = rbac.user.make_addresses(message=message, signer_user_id=user_id)
+    inputs, outputs = User().make_addresses(message=message, signer_user_id=user_id)
 
     assert isinstance(inputs, set)
     assert isinstance(outputs, set)
@@ -154,7 +156,7 @@ def test_create_user():
     user_key = helper.user.key()
     user_id = helper.user.id()
 
-    status = rbac.user.new(
+    status = User().new(
         signer_user_id=user_id,
         signer_keypair=user_key,
         user_id=user_id,
@@ -167,14 +169,14 @@ def test_create_user():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
 
     assert user.user_id == user_id
     assert user.name == name
     assert user.username == username
     assert user.email == email
 
-    assert rbac.user.key.exists(object_id=user.user_id, related_id=user_key.public_key)
+    assert User().key.exists(object_id=user.user_id, related_id=user_key.public_key)
 
 
 @pytest.mark.user
@@ -192,7 +194,7 @@ def test_create_with_manager():
     manager_name = helper.user.name()
     manager_email = helper.user.email()
 
-    status = rbac.user.new(
+    status = User().new(
         signer_user_id=manager_id,
         signer_keypair=manager_key,
         user_id=manager_id,
@@ -205,14 +207,14 @@ def test_create_with_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    manager = rbac.user.get(object_id=manager_id)
+    manager = User().get(object_id=manager_id)
 
     assert manager.user_id == manager_id
     assert manager.username == manager_username
     assert manager.name == manager_name
     assert manager.email == manager_email
 
-    status = rbac.user.new(
+    status = User().new(
         signer_user_id=user_id,
         signer_keypair=user_key,
         user_id=user_id,
@@ -226,7 +228,7 @@ def test_create_with_manager():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    user = rbac.user.get(object_id=user_id)
+    user = User().get(object_id=user_id)
 
     assert user.user_id == user_id
     assert user.username == username
@@ -234,7 +236,7 @@ def test_create_with_manager():
     assert user.email == email
     assert user.manager_id == manager_id
 
-    assert rbac.user.key.exists(object_id=user.user_id, related_id=user_key.public_key)
-    # assert rbac.user.manager.exists(object_id=user.user_id, related_id=user.manager_id)
-    # assert rbac.user.direct_report.exists(object_id=user.manager_id, related_id=user.user_id)
-    # assert rbac.user.email.exists(object_id=user.user_id, related_id=user.email)
+    assert User().key.exists(object_id=user.user_id, related_id=user_key.public_key)
+    # assert User().manager.exists(object_id=user.user_id, related_id=user.manager_id)
+    # assert User().direct_report.exists(object_id=user.manager_id, related_id=user.user_id)
+    # assert User().email.exists(object_id=user.user_id, related_id=user.email)
