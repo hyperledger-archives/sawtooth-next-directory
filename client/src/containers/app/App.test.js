@@ -36,7 +36,7 @@ const props = {
   me: {
     proposals: [{
       id: 'proposalID',
-      metadata: '',
+      pack_id: '',
     }],
     memberOf: [''],
   },
@@ -54,7 +54,7 @@ const newProps = {
   me: {
     proposals: [{
       id: 'proposalID',
-      metadata: '',
+      pack_id: '',
     }],
     memberOf: [''],
   },
