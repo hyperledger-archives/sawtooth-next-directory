@@ -21,6 +21,7 @@ from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.sawtooth.batcher import batch_to_list
 from rbac.ledger_sync.database import Database
+from rbac.providers.common.rbac_transactions import add_transaction
 
 LOGGER = get_default_logger(__name__)
 
@@ -29,6 +30,7 @@ def process(rec, database):
     """ Process inbound queue records
     """
     try:
+        add_transaction(rec)
         if "batch" not in rec or not rec["batch"]:
             database.run_query(
                 database.get_table("inbound_queue").get(rec["id"]).delete()

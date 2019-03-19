@@ -30,7 +30,6 @@ from rbac.providers.common.inbound_filters import (
     inbound_user_filter,
     inbound_group_filter,
 )
-from rbac.providers.common.rbac_transactions import add_transaction
 from rbac.providers.ldap.delta_inbound_sync import inbound_delta_sync
 
 LOGGER = get_default_logger(__name__)
@@ -117,7 +116,6 @@ def insert_to_db(entry, data_type):
         "timestamp": r.now(),
         "provider_id": LDAP_DC,
     }
-    add_transaction(inbound_entry)
     conn = connect_to_db()
     r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()

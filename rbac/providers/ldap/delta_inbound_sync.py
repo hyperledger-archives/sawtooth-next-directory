@@ -28,7 +28,6 @@ from rbac.providers.common.inbound_filters import (
     inbound_group_filter,
 )
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
-from rbac.providers.common.rbac_transactions import add_transaction
 
 LDAP_DC = os.getenv("LDAP_DC")
 LDAP_SERVER = os.getenv("LDAP_SERVER")
@@ -143,7 +142,6 @@ def insert_to_db(data_dict, when_changed, data_type):
                 "timestamp": entry_modified_timestamp,
                 "provider_id": LDAP_DC,
             }
-            add_transaction(inbound_entry)
             r.table("inbound_queue").insert(inbound_entry).run(conn)
 
             sync_source = "ldap-" + data_type
