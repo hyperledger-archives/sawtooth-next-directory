@@ -28,6 +28,7 @@ import TrackHeader from 'components/layouts/TrackHeader';
 import PackApproval from './PackApproval';
 import PackApprovalList from './PackApprovalList';
 import RolesList from './RolesList';
+import MemberList from '../role/MemberList';
 
 
 import './Pack.css';
@@ -77,6 +78,12 @@ export class Pack extends Component {
     resetErrors();
     packId && !packFromId(packId) && getPack(packId);
   }
+
+
+  isOwner = () => {
+    const { me } = this.props;
+    return me && !!this.pack.owners.find(owner => owner === me.id);
+  };
 
 
   /**
@@ -152,6 +159,15 @@ export class Pack extends Component {
                 </h5>
                 {this.pack.description || 'No description available.'}
               </div>
+            </Container>
+            <Container id='next-requester-packs-owner-list-container'>
+              <h5>
+                OWNERS
+                {this.pack.owners.length === 0 && ' (0)'}
+              </h5>
+              <MemberList {...this.props}
+                isOwner
+                members={this.pack.owners}/>
             </Container>
             <Container id='next-requester-packs-roles-list-container'>
               <h5>

@@ -18,7 +18,10 @@ import rethinkdb as r
 from rbac.common.logs import get_default_logger
 from rbac.server.api.errors import ApiNotFound
 
-from rbac.server.db.relationships_query import fetch_relationships_by_id
+from rbac.server.db.relationships_query import (
+    fetch_relationships_by_id,
+    fetch_relationships,
+)
 
 LOGGER = get_default_logger(__name__)
 
@@ -35,6 +38,9 @@ async def fetch_all_pack_resources(conn, start, limit):
                     "id": pack["pack_id"],
                     "roles": fetch_relationships_by_id(
                         "role_packs", pack["pack_id"], "role_id"
+                    ),
+                    "owners": fetch_relationships(
+                        "pack_owners", "pack_id", pack["pack_id"]
                     ),
                 }
             )
@@ -80,6 +86,7 @@ async def fetch_pack_resource(conn, pack_id):
             {
                 "id": r.row["pack_id"],
                 "roles": fetch_relationships_by_id("role_packs", pack_id, "role_id"),
+                "owners": fetch_relationships("pack_owners", "pack_id", pack_id),
             }
         )
         .without("pack_id")
