@@ -29,7 +29,6 @@ from rbac.providers.common.inbound_filters import (
 )
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
-from rbac.providers.common.rbac_transactions import add_transaction
 
 LOGGER = get_default_logger(__name__)
 
@@ -173,7 +172,6 @@ def insert_group_to_db(groups_dict):
             "provider_id": TENANT_ID,
             "raw": group,
         }
-        add_transaction(inbound_entry)
         r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()
 
@@ -196,7 +194,6 @@ def insert_user_to_db(users_dict):
             "provider_id": TENANT_ID,
             "raw": user,
         }
-        add_transaction(inbound_entry)
         r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()
 
