@@ -164,12 +164,7 @@ class App extends Component {
 
     // Populate pack ID array
     let packIds = user && user.proposals.map(
-      item => {
-        const metadata = item.metadata &&
-          item.metadata.length &&
-          JSON.parse(item.metadata);
-        return metadata.pack_id;
-      }
+      item => item.pack_id
     ).filter(item => item);
 
     // Find packs and roles not loaded in

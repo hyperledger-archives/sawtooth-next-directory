@@ -163,11 +163,10 @@ export const RequesterSelectors = {
         delete role.metadata;
         const merged = { ...request, ...role };
 
-        if (merged.metadata && merged.metadata.length) {
-          const metadata = JSON.parse(merged.metadata);
+        if (merged.pack_id) {
           const pack = state.requester.packs &&
             state.requester.packs.find(
-              pack => pack.id === metadata.pack_id
+              pack => pack.id === merged.pack_id
             );
           pack && requests.push(pack);
         } else {
@@ -191,19 +190,14 @@ export const RequesterSelectors = {
         item => item.object_id === roleId
       );
 
-      if (request) {
-        const metadata = request.metadata &&
-          request.metadata.length &&
-          JSON.parse(request.metadata);
-        if (metadata) {
-          if (state.requester.packs) {
-            const pack = state.requester.packs.find(
-              pack => pack.id === metadata.pack_id
-            );
-            pack && memberOf.push(pack);
-          }
-          continue;
+      if (request && request.pack_id) {
+        if (state.requester.packs) {
+          const pack = state.requester.packs.find(
+            pack => pack.id === request.pack_id
+          );
+          pack && memberOf.push(pack);
         }
+        continue;
       }
       if (state.requester.roles) {
         const role = state.requester.roles.find(
@@ -259,11 +253,6 @@ export const RequesterSelectors = {
   packProposalIds: (state, id) =>
     state.requester.requests &&
     state.requester.requests.filter(
-      item => {
-        const metadata = item.metadata &&
-          item.metadata.length &&
-          JSON.parse(item.metadata);
-        return metadata && metadata.pack_id === id;
-      }
+      item => item.pack_id === id
     ).map(item => item.id),
 };
