@@ -15,6 +15,7 @@
 
 FROM python:3.5-slim-jessie
 RUN pip install \
+        pyyaml==4.2b1 \
         pyasn1==0.4.4 \
         pytz==2018.6 \
         itsdangerous==1.1.0 \

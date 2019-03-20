@@ -18,10 +18,10 @@ import logging
 import os
 import sys
 
-from rbac.common.config import get_config
-
 # NOTE: Some imported libraries have been polluting INFO level logs
 # Set logging level for imported libraries
+LOGGING_LEVEL = os.getenv("LOGGING_LEVEL")
+
 LIB_LEVELS = {
     "asyncio": logging.WARNING,
     "urllib3": logging.WARNING,
@@ -52,7 +52,7 @@ def get_default_logger(name):
     """
     logger = logging.getLogger(name)
 
-    logger_level = LOGGER_LEVEL_MAP[get_config("LOGGING_LEVEL")]
+    logger_level = LOGGER_LEVEL_MAP[LOGGING_LEVEL]
 
     logger.setLevel(logger_level)
 
