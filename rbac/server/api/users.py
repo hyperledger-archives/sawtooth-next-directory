@@ -23,6 +23,7 @@ from sanic.response import json
 from rbac.common.user import User
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
+from rbac.server.api.errors import ApiBadRequest
 
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
@@ -69,6 +70,18 @@ async def create_new_user(request):
     """Create a new user."""
     required_fields = ["name", "username", "password", "email"]
     utils.validate_fields(required_fields, request.json)
+    username_created = request.json.get("username")
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+    if await users_query.fetch_username_match_count(conn, username_created) > 0:
+        # Throw Error response to Next_UI
+        raise ApiBadRequest(
+            "Username already exists. Please give a different Username."
+        )
+    conn.close()
 
     # Generate keys
     txn_key = Key()

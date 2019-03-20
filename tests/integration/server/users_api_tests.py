@@ -1,4 +1,4 @@
-# Copyright 2018 Contributors to Hyperledger Sawtooth
+# Copyright 2019 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# -----------------------------------------------------------------------------
-"""Authentication API Endpoint Test"""
+# ------------------------------------------------------------------------------
+"""Validating User Account Creation API Endpoint Test"""
 
 import time
 import os
 import requests
-
 import rethinkdb as r
+
 from rbac.common.logs import get_default_logger
 
 LOGGER = get_default_logger(__name__)
@@ -49,12 +49,12 @@ def connect_to_db():
 
 
 def create_test_user(session):
-    """Create a user and authenticate to use api endpoints during testing."""
+    """ Invoking the new Create User Account API. """
     create_user_input = {
-        "name": "Susan Susanson",
-        "username": "susan20",
+        "name": "Sri Nuthal",
+        "username": "nuthalapati",
         "password": "123456",
-        "email": "susan@biz.co",
+        "email": "sri@gmail.com",
     }
     session.post("http://rbac-server:8000/api/users", json=create_user_input)
 
@@ -66,18 +66,39 @@ def delete_test_user(username):
     conn.close()
 
 
-def test_search_api():
-    """Tests the search api endpoint functions and returns a valid payload."""
+def test_valid_unique_username():
+    """ Testing the creation of two users with different usernames. """
+    rethink_data1 = {
+        "name": "abcdf234",
+        "username": "nuthalapati2",
+        "password": "123456",
+        "email": "sri2345@gmail.com",
+    }
+    expected = {"message": "Authorization successful", "code": 200}
+
     with requests.Session() as session:
         create_test_user(session)
-        search_query = {
-            "query": {
-                "search_input": "search input",
-                "search_object_types": ["role", "pack", "user"],
-                "page_size": "20",
-                "page": "2",
-            }
-        }
-        response = session.post("http://rbac-server:8000/api/search", json=search_query)
-        assert response.json()["data"] == {"roles": [], "packs": [], "users": []}
-        delete_test_user("susan20")
+        response = session.post("http://rbac-server:8000/api/users", json=rethink_data1)
+        assert response.json()["data"]["message"] == expected["message"]
+        delete_test_user(rethink_data1["username"])
+
+
+def test_invalid_duplicate_username():
+    """ Testing the creation of two users with same usernames." """
+    rethink_data2 = {
+        "name": "abcdf234",
+        "username": "nuthalapati",
+        "password": "123456",
+        "email": "sri2345@gmail.com",
+    }
+    expected = {
+        "message": "Username already exists. Please give a different Username.",
+        "code": 400,
+    }
+
+    with requests.Session() as session:
+        create_test_user(session)
+        response = session.post("http://rbac-server:8000/api/users", json=rethink_data2)
+        assert response.json()["message"] == expected["message"]
+        assert response.json()["code"] == expected["code"]
+        delete_test_user(rethink_data2["username"])
