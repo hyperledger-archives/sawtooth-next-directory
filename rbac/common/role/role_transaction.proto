@@ -29,6 +29,8 @@ message ProposeAddRoleMember {
 
     string metadata = 5;
 
+    string pack_id = 6;
+
 }
 
 
