@@ -14,7 +14,6 @@
 # ------------------------------------------------------------------------------
 """Packs APIs."""
 
-import json as json_encode
 
 from uuid import uuid4
 
@@ -118,7 +117,8 @@ async def add_pack_member(request, pack_id):
 
     conn.close()
 
-    request.json["metadata"] = json_encode.dumps({"pack_id": pack_id})
+    request.json["metadata"] = ""
+    request.json["pack_id"] = pack_id
     for role_id in pack_resource.get("roles"):
         await roles.add_role_member(request, role_id)
     return json({"pack_id": pack_id})

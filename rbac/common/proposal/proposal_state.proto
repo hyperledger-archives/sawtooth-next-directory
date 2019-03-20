@@ -95,6 +95,8 @@ message Proposal {
 
     int64 closed_date = 14;
 
+    string pack_id = 15;
+
 }
 
 message Approval {
