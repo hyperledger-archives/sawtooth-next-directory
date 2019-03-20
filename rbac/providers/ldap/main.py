@@ -14,9 +14,9 @@
 # ------------------------------------------------------------------------------
 """ Start the LDAP provider with initial sync and listener outbound delta.
 """
+import os
 import time
 from rbac.common.logs import get_default_logger
-from rbac.common.config import get_config
 from rbac.providers.common.threading import DeltaSyncThread
 from rbac.providers.ldap.delta_outbound_sync import ldap_outbound_listener
 from rbac.providers.ldap.initial_inbound_sync import initialize_ldap_sync
@@ -27,7 +27,7 @@ LOGGER = get_default_logger(__name__)
 def main():
 
     """Start the initial sync and outbound delta thread."""
-    ldap_server = get_config("LDAP_SERVER")
+    ldap_server = os.getenv("LDAP_SERVER")
     if not ldap_server:
         LOGGER.warning("No LDAP provider configured, exiting...")
         return
