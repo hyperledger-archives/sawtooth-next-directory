@@ -15,7 +15,6 @@
 """Queries for getting user data."""
 
 import rethinkdb as r
-
 from rbac.server.api.errors import ApiNotFound
 
 from rbac.common.logs import get_default_logger
@@ -325,4 +324,15 @@ def users_search_email(search_query):
         .coerce_to("array")
     )
 
+    return resource
+
+
+def fetch_username_match_count(conn, username):
+    """Database query to fetch the count of usernames that match the given username."""
+    resource = (
+        r.table("users")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
+        .count()
+        .run(conn)
+    )
     return resource
