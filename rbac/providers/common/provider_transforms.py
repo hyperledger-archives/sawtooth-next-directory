@@ -47,7 +47,6 @@ USER_TRANSFORM = {
     "usage_location": {"azure": "usageLocation", "ldap": None},
     "user_principal_name": {"azure": "userPrincipalName", "ldap": "userPrincipalName"},
     "user_type": {"azure": "userType", "ldap": None},
-    "relationship_id": {"azure": "id", "ldap": "distinguishedName"},
 }
 
 GROUP_TRANSFORM = {
@@ -65,7 +64,6 @@ GROUP_TRANSFORM = {
     "security_enabled": {"azure": "securityEnabled", "ldap": None},
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
-    "relationship_id": {"azure": "id", "ldap": "distinguishedName"},
 }
 
 USER_CREATION_TRANSFORM = {

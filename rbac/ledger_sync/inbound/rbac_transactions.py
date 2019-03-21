@@ -49,12 +49,9 @@ def add_transaction(inbound_entry):
     """
     try:
         data = inbound_entry["data"]
-        if not data or "relationship_id" not in data:
-            raise KeyError("relationship_id not found")
 
         if inbound_entry["data_type"] == "user":
 
-            user_id = data["relationship_id"]
             next_id = str(uuid4())
             object_id = User().hash(next_id)
             address = User().address(object_id=object_id)
@@ -76,7 +73,6 @@ def add_transaction(inbound_entry):
 
         elif inbound_entry["data_type"] == "group":
 
-            role_id = data["relationship_id"]
             next_id = str(uuid4())
             object_id = Role().hash(next_id)
             address = Role().address(object_id=object_id)
@@ -113,7 +109,6 @@ def add_metadata(inbound_entry, message):
     metadata = dict(inbound_entry["data"])
     for key in message_keys:
         metadata.pop(key, None)
-    metadata.pop("relationship_id", None)
     keys = META_DATA_PROHIBITED & set(metadata.keys())
     if "id" in metadata:
         metadata["remote_idx"] = metadata.pop("id", None)
