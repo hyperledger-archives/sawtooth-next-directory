@@ -50,7 +50,7 @@ USER_TRANSFORM = {
 }
 
 GROUP_TRANSFORM = {
-    "remote_id": {"azure": "id", "ldap": "objectGUID"},
+    "remote_id": {"azure": "id", "ldap": "distinguishedName"},
     "created_date": {"azure": "createdDateTime", "ldap": "whenCreated"},
     "deleted_date": {"azure": "deletedDateTime", "ldap": None},
     "distinguished_name": {"azure": None, "ldap": "distinguishedName"},
