@@ -85,28 +85,14 @@ message Proposal {
     // Client supplied metadata that is not indexed or parsed by the TP.
     string metadata = 10;
 
-    //approvals received
-    repeated Approval approvals = 11;
+    // The next_id of the orginal approver.
+    string assigned_approver = 11;
 
-    //rejections received
-    repeated Rejection rejections = 12;
+    int64 created_date = 12;
 
-    int64 created_date = 13;
+    int64 closed_date = 13;
 
-    int64 closed_date = 14;
-
-    string pack_id = 15;
+    string pack_id = 14;
 
 }
 
-message Approval {
-    string approver = 1;
-
-    string on_behalf = 2;
-}
-
-message Rejection {
-    string rejector = 1;
-
-    string on_behalf = 2;
-}
