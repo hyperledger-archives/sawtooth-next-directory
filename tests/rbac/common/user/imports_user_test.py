@@ -201,7 +201,6 @@ def test_reimport_user():
         signer_user_id=next_id,
         signer_keypair=signer_keypair,
         next_id=next_id,
-        name=name,
     )
 
     user = User().get(object_id=next_id)

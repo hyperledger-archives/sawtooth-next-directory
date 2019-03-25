@@ -35,7 +35,7 @@ def test_manager_not_in_state():
     reason = helper.user.reason()
     message = User().manager.propose.make(
         proposal_id=proposal_id,
-        next_id=user.next_id,
+        next_id=user.next_id,\
         new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,

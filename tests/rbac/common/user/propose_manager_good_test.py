@@ -156,7 +156,6 @@ def test_user_propose_manager_has_no_manager():
         signer_user_id=user.next_id,
         signer_keypair=user_key,
         proposal_id=proposal_id,
-        next_id=user.next_id,
         new_manager_id=manager.next_id,
         reason=reason,
         metadata=None,
