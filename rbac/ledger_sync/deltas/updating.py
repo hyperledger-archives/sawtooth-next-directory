@@ -15,8 +15,7 @@
 """ Syncs the blockchain state to RethinkDB
 """
 import sys
-from rethinkdb import r
-
+import rethinkdb as r
 from rbac.common import addresser
 from rbac.common.util import bytes_from_hex
 from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
@@ -25,14 +24,14 @@ from rbac.common.logs import get_default_logger
 LOGGER = get_default_logger(__name__)
 
 
-def get_updater(database, block_num):
+def get_updater(conn, block_num):
     """ Returns an updater function, which can be used to update the database
         appropriately for a particular address/data combo.
     """
-    return lambda adr, rsc: _update(database, block_num, adr, rsc)
+    return lambda adr, rsc: _update(conn, block_num, adr, rsc)
 
 
-def _update_state(database, block_num, address, resource):
+def _update_state(conn, block_num, address, resource):
     """ Update the state, state_history and metadata tables
     """
     try:
@@ -45,9 +44,6 @@ def _update_state(database, block_num, address, resource):
         related_id = bytes_from_hex(address_parts.related_id)
         related_type = address_parts.related_type.value
         relationship_type = address_parts.relationship_type.value
-
-        state = database.get_table("state")
-        state_history = database.get_table("state_history")
 
         data = {
             "address": address_binary,
@@ -62,22 +58,29 @@ def _update_state(database, block_num, address, resource):
             **resource,
         }
         delta = {"block_num": int(block_num), "updated_at": now, **resource}
-        query = state.get(address_binary).replace(
-            lambda doc: r.branch(
-                # pylint: disable=singleton-comparison
-                (doc == None),  # noqa
-                r.expr(data),
-                doc.merge(delta),
-            ),
-            return_changes=True,
+
+        query = (
+            r.table("state")
+            .get(address_binary)
+            .replace(
+                lambda doc: r.branch(
+                    # pylint: disable=singleton-comparison
+                    (doc == None),  # noqa
+                    r.expr(data),
+                    doc.merge(delta),
+                ),
+                return_changes=True,
+            )
         )
-        result = database.run_query(query)
+
+        result = query.run(conn)
+
         if result["errors"] > 0:
             LOGGER.warning("error updating state table:\n%s\n%s", result, query)
         if result["replaced"] and "changes" in result and result["changes"]:
-            query = state_history.insert(result["changes"][0]["old_val"])
+            query = r.table("state_history").insert(result["changes"][0]["old_val"])
+            result = query.run(conn)
             # data["address"] = [address_binary, int(block_num)]
-            result = database.run_query(query)
             if result["errors"] > 0:
                 LOGGER.warning(
                     "error updating state_history table:\n%s\n%s", result, query
@@ -89,7 +92,7 @@ def _update_state(database, block_num, address, resource):
             del data["relationship_type"]
             del data["related_id"]
             query = (
-                database.get_table("metadata")
+                r.table("metadata")
                 .get(address_binary)
                 .replace(
                     lambda doc: r.branch(
@@ -100,7 +103,7 @@ def _update_state(database, block_num, address, resource):
                     )
                 )
             )
-            result = database.run_query(query)
+            result = query.run(conn)
             if result["errors"] > 0:
                 LOGGER.warning("error updating metadata record:\n%s\n%s", result, query)
 
@@ -109,7 +112,7 @@ def _update_state(database, block_num, address, resource):
         LOGGER.warning(err)
 
 
-def _update_legacy(database, block_num, address, resource, data_type):
+def _update_legacy(conn, block_num, address, resource, data_type):
     """ Update the legacy sync tables (expansion by object type name)
     """
     try:
@@ -120,16 +123,19 @@ def _update_legacy(database, block_num, address, resource, data_type):
             **resource,
         }
 
-        table_query = database.get_table(TABLE_NAMES[data_type])
-        query = table_query.get(address).replace(
-            lambda doc: r.branch(
-                # pylint: disable=singleton-comparison
-                (doc == None),  # noqa
-                r.expr(data),
-                doc.merge(resource),
+        query = (
+            r.table(TABLE_NAMES[data_type])
+            .get(address)
+            .replace(
+                lambda doc: r.branch(
+                    # pylint: disable=singleton-comparison
+                    (doc == None),  # noqa
+                    r.expr(data),
+                    doc.merge(resource),
+                )
             )
         )
-        result = database.run_query(query)
+        result = query.run(conn)
         if result["errors"] > 0:
             LOGGER.warning("error updating legacy state table:\n%s\n%s", result, query)
 
@@ -138,16 +144,16 @@ def _update_legacy(database, block_num, address, resource, data_type):
         LOGGER.warning(err)
 
 
-def _update(database, block_num, address, resource):
+def _update(conn, block_num, address, resource):
     """ Handle the update of a given address + resource update
     """
     data_type = addresser.get_address_type(address)
     pre_filter(resource)
 
-    _update_state(database, block_num, address, resource)
+    _update_state(conn, block_num, address, resource)
 
     if data_type in TABLE_NAMES:
-        _update_legacy(database, block_num, address, resource, data_type)
+        _update_legacy(conn, block_num, address, resource, data_type)
 
 
 def pre_filter(resource):
