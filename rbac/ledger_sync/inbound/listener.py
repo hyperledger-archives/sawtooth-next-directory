@@ -15,28 +15,26 @@
 """ Sawtooth Inbound Transaction Queue Listener
 """
 
-from rethinkdb import r
+import rethinkdb as r
 from sawtooth_sdk.protobuf import batch_pb2
 from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.sawtooth.batcher import batch_to_list
-from rbac.ledger_sync.database import Database
 from rbac.ledger_sync.inbound.rbac_transactions import add_transaction
+from rbac.providers.common.db_queries import connect_to_db
 
 LOGGER = get_default_logger(__name__)
 
 
-def process(rec, database):
+def process(rec, conn):
     """ Process inbound queue records
     """
     try:
         add_transaction(rec)
         if "batch" not in rec or not rec["batch"]:
-            database.run_query(
-                database.get_table("inbound_queue").get(rec["id"]).delete()
-            )
+            r.table("inbound_queue").get(rec["id"]).delete().run(conn)
             rec["sync_direction"] = "inbound"
-            database.run_query(database.get_table("sync_errors").insert(rec))
+            r.table("sync_errors").insert(rec).run(conn)
             return
 
         batch = batch_pb2.Batch()
@@ -54,8 +52,9 @@ def process(rec, database):
                     "updated_at": r.now(),
                     **rec["metadata"],
                 }
+
                 query = (
-                    database.get_table("metadata")
+                    r.table("metadata")
                     .get(rec["address"])
                     .replace(
                         lambda doc: r.branch(
@@ -68,7 +67,7 @@ def process(rec, database):
                         )
                     )
                 )
-                result = database.run_query(query)
+                result = query.run(conn)
                 if (not result["inserted"] and not result["replaced"]) or result[
                     "errors"
                 ] > 0:
@@ -76,17 +75,14 @@ def process(rec, database):
                         "error updating metadata record:\n%s\n%s", result, query
                     )
             rec["sync_direction"] = "inbound"
-            database.run_query(database.get_table("changelog").insert(rec))
-            database.run_query(
-                database.get_table("inbound_queue").get(rec["id"]).delete()
-            )
+            r.table("changelog").insert(rec).run(conn)
+            r.table("inbound_queue").get(rec["id"]).delete().run(conn)
         else:
             rec["error"] = get_status_error(status)
             rec["sync_direction"] = "inbound"
-            database.run_query(database.get_table("sync_errors").insert(rec))
-            database.run_query(
-                database.get_table("inbound_queue").get(rec["id"]).delete()
-            )
+            r.table("sync_errors").insert(rec).run(conn)
+            r.table("inbound_queue").get(rec["id"]).delete().run(conn)
+
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
             "%s exception processing inbound record:\n%s", type(err).__name__, rec
@@ -108,24 +104,23 @@ def listener():
     """ Listener for Sawtooth State changes
     """
     try:
-        database = Database()
-        database.connect()
+        conn = connect_to_db()
 
         LOGGER.info("Reading queued Sawtooth transactions")
         while True:
-            feed = database.run_query(database.get_table("inbound_queue"))
+            feed = r.table("inbound_queue").run(conn)
             count = 0
             for rec in feed:
-                process(rec, database)
+                process(rec, conn)
                 count = count + 1
             if count == 0:
                 break
             LOGGER.info("Processed %s records in the inbound queue", count)
         LOGGER.info("Listening for incoming Sawtooth transactions")
-        feed = database.run_query(database.get_table("inbound_queue").changes())
+        feed = r.table("inbound_queue").changes().run(conn)
         for rec in feed:
             if rec["new_val"] and not rec["old_val"]:  # only insertions
-                process(rec["new_val"], database)
+                process(rec["new_val"], conn)
 
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception("Inbound listener %s exception", type(err).__name__)
@@ -133,6 +128,6 @@ def listener():
 
     finally:
         try:
-            database.disconnect()
+            conn.close()
         except UnboundLocalError:
             pass
