@@ -13,24 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Authentication API Endpoint Test"""
-
-import time
 import os
 import pytest
 import requests
 
-import rethinkdb as r
-from rbac.common.logs import get_default_logger
-
-LOGGER = get_default_logger(__name__)
-
-DB_HOST = os.getenv("DB_HOST", "rethink")
-DB_PORT = os.getenv("DB_PORT", "28015")
-DB_NAME = os.getenv("DB_NAME", "rbac")
-DB_CONNECT_TIMEOUT = int(float(os.getenv("DB_CONNECT_TIMEOUT", "1")))
-
-DB_CONNECT_MAX_ATTEMPTS = 5
-
+from tests.utilities import create_test_user
 
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 
@@ -84,40 +71,12 @@ INVALID_LDAP_INPUTS = [
     )
 ]
 
-
-def connect_to_db():
-    """Polls the database until it comes up and opens a connection."""
-    connected_to_db = False
-    conn = None
-    while not connected_to_db:
-        try:
-            conn = r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME)
-            connected_to_db = True
-        except r.ReqlDriverError:
-            LOGGER.debug(
-                "Could not connect to RethinkDB. Retrying in %s seconds...",
-                DB_CONNECT_TIMEOUT,
-            )
-            time.sleep(DB_CONNECT_TIMEOUT)
-    return conn
-
-
-def create_test_user(session):
-    """Create a test user."""
-    create_user_input = {
-        "name": "Susan Susanson",
-        "username": "susan20",
-        "password": "123456",
-        "email": "susan@biz.co",
-    }
-    session.post("http://rbac-server:8000/api/users", json=create_user_input)
-
-
-def delete_test_user(username):
-    """ Running the new Delete User Query against Rethink DB. """
-    conn = connect_to_db()
-    (r.table("users").filter({"username": username}).delete().run(conn))
-    conn.close()
+USER_INPUT = {
+    "name": "Susan Susanson",
+    "username": "susan20",
+    "password": "123456",
+    "email": "susan@biz.co",
+}
 
 
 @pytest.mark.parametrize(
@@ -126,13 +85,12 @@ def delete_test_user(username):
 def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with valid inputs """
     with requests.Session() as session:
-        create_test_user(session)
+        create_test_user(session, USER_INPUT)
         response = session.post(
             "http://rbac-server:8000/api/authorization/", json=login_inputs
         )
         assert response.json()["data"]["message"] == expected_result
         assert response.status_code == expected_status_code
-        delete_test_user("susan20")
 
 
 @pytest.mark.parametrize(
@@ -140,6 +98,7 @@ def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
 )
 def test_invalid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with invalid inputs """
+    create_test_user(requests.Session(), USER_INPUT)
     with requests.Session() as session:
         response = session.post(
             "http://rbac-server:8000/api/authorization/", json=login_inputs
