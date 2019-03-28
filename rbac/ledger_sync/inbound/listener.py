@@ -108,7 +108,7 @@ def listener():
 
         LOGGER.info("Reading queued Sawtooth transactions")
         while True:
-            feed = r.table("inbound_queue").run(conn)
+            feed = r.table("inbound_queue").order_by(index=r.asc("timestamp")).run(conn)
             count = 0
             for rec in feed:
                 process(rec, conn)
