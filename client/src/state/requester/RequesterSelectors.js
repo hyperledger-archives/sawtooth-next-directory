@@ -190,20 +190,13 @@ export const RequesterSelectors = {
         item => item.object_id === roleId
       );
 
-      if (request && request.pack_id) {
-        if (state.requester.packs) {
-          const pack = state.requester.packs.find(
-            pack => pack.id === request.pack_id
+      if (request){
+        if (state.requester.roles) {
+          const role = state.requester.roles.find(
+            role => role.id === roleId
           );
-          pack && memberOf.push(pack);
+          role && memberOf.push(role);
         }
-        continue;
-      }
-      if (state.requester.roles) {
-        const role = state.requester.roles.find(
-          role => role.id === roleId
-        );
-        role && memberOf.push(role);
       }
     }
 
@@ -222,6 +215,41 @@ export const RequesterSelectors = {
     return [...new Set(memberOf)];
   },
 
+  memberOfPacks: (state) => {
+    if (!state.user.me) return null;
+    let memberOfPacks = [];
+
+    for (const roleId of state.user.me.memberOf) {
+      const request = state.user.me.proposals.find(
+        item => item.object_id === roleId
+      );
+
+      if (request && request.pack_id) {
+        if (state.requester.packs){
+          const pack = state.requester.packs.find(
+            pack => pack.id === request.pack_id
+          );
+          pack && memberOfPacks.push(pack);
+        }
+        continue;
+      }
+    }
+
+    memberOfPacks = memberOfPacks.filter(item => {
+      if (item.roles) {
+        if (!state.requester.requests) return false;
+        const isOpen = state.requester.requests.find(
+          request => item.roles.includes(request.object) &&
+            request.status !== 'CONFIRMED'
+        );
+        return !isOpen;
+      }
+      return true;
+    });
+
+    return [...new Set(memberOfPacks)];
+
+  },
 
   ownerOf: (state) =>
     [...new Set([
