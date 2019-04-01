@@ -30,6 +30,7 @@ def process(rec, conn):
     """ Process inbound queue records
     """
     try:
+        # Changes members from distinguished name to next_id for roles
         if "members" in rec["data"]:
             rec = update_members_field(rec)
 

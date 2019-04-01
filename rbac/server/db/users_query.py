@@ -74,8 +74,6 @@ async def fetch_user_resource(conn, next_id):
         .coerce_to("array")
         .run(conn)
     )
-    LOGGER.info("************** This is your payload V ******************")
-    LOGGER.info(resource)
     try:
         return resource[0]
     except IndexError:
