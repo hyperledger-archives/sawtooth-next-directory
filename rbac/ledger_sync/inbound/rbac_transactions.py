@@ -16,6 +16,7 @@
 """
 import os
 from uuid import uuid4
+import rethinkdb as r
 
 from rbac.common.logs import get_default_logger
 from rbac.common import addresser
@@ -24,6 +25,7 @@ from rbac.common.role import Role
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key
 from rbac.common.util import bytes_from_hex
+from rbac.providers.common.db_queries import connect_to_db
 
 LOGGER = get_default_logger(__name__)
 
@@ -58,9 +60,15 @@ def add_transaction(inbound_entry):
         inbound_entry["private_key"] = encrypted_private_key
 
         if inbound_entry["data_type"] == "user":
-
+            next_user = get_next_id(
+                "user_mapping", data["remote_id"], inbound_entry["provider_id"]
+            )
             # Generate Ids
-            next_id = str(uuid4())
+            if next_user:
+                next_id = next_user[0]["next_id"]
+            else:
+                next_id = str(uuid4())
+
             object_id = User().hash(next_id)
             address = User().address(object_id=object_id)
 
@@ -80,7 +88,6 @@ def add_transaction(inbound_entry):
             add_metadata(inbound_entry, message)
 
         elif inbound_entry["data_type"] == "group":
-
             next_id = str(uuid4())
             object_id = Role().hash(next_id)
             address = Role().address(object_id=object_id)
@@ -123,3 +130,14 @@ def add_metadata(inbound_entry, message):
     for key in keys:
         metadata["remote_" + key] = metadata.pop(key, None)
     inbound_entry["metadata"] = metadata
+
+
+def get_next_id(table, remote_id, provider_id):
+    """Check if object already exists in NEXT and return id."""
+    query_filter = {"remote_id": remote_id}
+    if table == "user_mapping":
+        query_filter["provider_id"] = provider_id
+    conn = connect_to_db()
+    result = r.table(table).filter(query_filter).coerce_to("array").run(conn)
+    conn.close()
+    return result
