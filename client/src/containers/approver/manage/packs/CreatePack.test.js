@@ -33,8 +33,11 @@ describe('CreatePack component', () => {
     submit: (username, password) => { },
     userId: '',
     createPack: () => {},
+    resetPackExists: () => {},
   };
-  const wrapper = shallow(<CreatePack {...props}/>);
+  const wrapper = shallow(
+    <CreatePack.WrappedComponent {...props} store={store}/>
+  );
 
   it('renders without crashing', () => {
     const div = document.createElement('div');

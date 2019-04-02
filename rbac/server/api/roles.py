@@ -59,8 +59,7 @@ async def create_new_role(request):
         request.app.config.DB_PORT,
         request.app.config.DB_NAME,
     )
-    search_query = {"query": {"search_input": request.json.get("name")}}
-    response = await roles_query.roles_search_duplicate(conn, search_query["query"])
+    response = await roles_query.roles_search_duplicate(conn, request.json.get("name"))
     if not response:
         txn_key, txn_user_id = await utils.get_transactor_key(request)
         role_id = str(uuid4())
@@ -97,6 +96,20 @@ async def get_role(request, role_id):
     role_resource = await roles_query.fetch_role_resource(conn, role_id)
     conn.close()
     return await utils.create_response(conn, request.url, role_resource, head_block)
+
+
+@ROLES_BP.get("api/roles/check")
+@authorized()
+async def check_role_name(request):
+    """Check if a role exists with provided name."""
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+    response = await roles_query.roles_search_duplicate(conn, request.args.get("name"))
+    conn.close()
+    return json({"exists": bool(response)})
 
 
 @ROLES_BP.patch("api/roles/<role_id>")

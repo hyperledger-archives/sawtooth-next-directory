@@ -167,15 +167,11 @@ def packs_search_description(search_query):
     return resource
 
 
-async def packs_search_duplicate(conn, search_query):
+async def packs_search_duplicate(conn, name):
     """Search for packs based a string in the name field."""
     resource = (
         await r.table("packs")
-        .filter(
-            lambda doc: (
-                doc["name"].match("(?i)^" + search_query["search_input"] + "$")
-            )
-        )
+        .filter(lambda doc: (doc["name"].match("(?i)^" + name + "$")))
         .order_by("name")
         .coerce_to("array")
         .run(conn)

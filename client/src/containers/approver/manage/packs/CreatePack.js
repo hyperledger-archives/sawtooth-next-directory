@@ -15,14 +15,17 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button, Form, Grid } from 'semantic-ui-react';
+import { Button, Form, Grid, Icon, Label } from 'semantic-ui-react';
 
 
 import './CreatePack.css';
+import { ApproverActions, ApproverSelectors } from 'state';
 import TrackHeader from 'components/layouts/TrackHeader';
 import RoleSelectGrid from './RoleSelectGrid';
 import * as theme from 'services/Theme';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -50,7 +53,9 @@ class CreatePack extends Component {
    * component.
    */
   componentDidMount () {
+    const { resetPackExists } = this.props;
     theme.apply(this.themes);
+    resetPackExists();
   }
 
 
@@ -88,6 +93,13 @@ class CreatePack extends Component {
   handleChange = (event, { name, value }) => {
     this.setState({ [name]: value });
     this.validate(name, value);
+  }
+
+
+  handleBlur = () => {
+    const { checkPackExists } = this.props;
+    const { name } = this.state;
+    !utils.isWhitespace(name) && checkPackExists(name);
   }
 
 
@@ -140,6 +152,7 @@ class CreatePack extends Component {
       name,
       selectedRoles,
       validName } = this.state;
+    const { packExists } = this.props;
 
     return (
       <Grid id='next-approver-grid'>
@@ -175,7 +188,16 @@ class CreatePack extends Component {
                     name='name'
                     value={name}
                     placeholder='My Awesome Pack'
+                    onBlur={this.handleBlur}
                     onChange={this.handleChange}/>
+                  { packExists &&
+                    <Label
+                      basic
+                      id='next-approver-manage-create-pack-error-label'>
+                      <Icon name='exclamation circle'/>
+                      This pack name already exists.
+                    </Label>
+                  }
                   <h3>
                     Description
                   </h3>
@@ -206,7 +228,7 @@ class CreatePack extends Component {
                   primary
                   size='large'
                   id='next-approver-manage-create-pack-done-button'
-                  disabled={!validName}
+                  disabled={!validName || packExists}
                   content='Next'
                   onClick={() => this.setFlow(1)}/>
               }
@@ -223,7 +245,7 @@ class CreatePack extends Component {
                     as={Link}
                     to={'/approval/manage/packs'}
                     id='next-approver-manage-create-pack-done-button'
-                    disabled={!validName}
+                    disabled={!validName || packExists}
                     content='Done'
                     onClick={this.createPack}/>
                 </div>
@@ -238,4 +260,19 @@ class CreatePack extends Component {
 }
 
 
-export default CreatePack;
+const mapStateToProps = (state) => {
+  return {
+    packExists: ApproverSelectors.packExists(state),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    checkPackExists: (name) =>
+      dispatch(ApproverActions.packExistsRequest(name)),
+    resetPackExists: (name) => dispatch(ApproverActions.resetPackExists()),
+  };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreatePack);

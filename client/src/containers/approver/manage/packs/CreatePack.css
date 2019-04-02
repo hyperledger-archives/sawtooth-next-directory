@@ -58,3 +58,10 @@ limitations under the License.
   color: var(--magenta);
   margin-bottom: 5px;
 }
+
+#next-approver-manage-create-pack-error-label {
+  border: 0;
+  color: var(--magenta);
+  position: absolute;
+  top: 138px;
+}
