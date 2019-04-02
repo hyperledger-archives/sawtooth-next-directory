@@ -31,6 +31,14 @@ export const resetAll = () =>
   INITIAL_STATE;
 
 
+export const resetRoleExists = (state) =>
+  state.merge({ roleExists: null });
+
+
+export const resetPackExists = (state) =>
+  state.merge({ packExists: null });
+
+
 export const feedReceive = (state, { payload }) =>
   payload.open_proposal ?
     state.merge({
@@ -122,6 +130,14 @@ export const success = {
 
   onBehalfOf: (state, { id }) =>
     state.merge({ onBehalfOf: id }),
+
+
+  roleExists: (state, { exists }) =>
+    state.merge({ roleExists: exists }),
+
+
+  packExists: (state, { exists }) =>
+    state.merge({ packExists: exists }),
 };
 
 
@@ -158,6 +174,14 @@ export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.CREATE_PACK_REQUEST]:          request,
   [Types.CREATE_PACK_SUCCESS]:          success.createPack,
   [Types.CREATE_PACK_FAILURE]:          failure,
+  [Types.ROLE_EXISTS_REQUEST]:          request,
+  [Types.ROLE_EXISTS_SUCCESS]:          success.roleExists,
+  [Types.ROLE_EXISTS_FAILURE]:          failure,
+  [Types.RESET_ROLE_EXISTS]:            resetRoleExists,
+  [Types.PACK_EXISTS_REQUEST]:          request,
+  [Types.PACK_EXISTS_SUCCESS]:          success.packExists,
+  [Types.PACK_EXISTS_FAILURE]:          failure,
+  [Types.RESET_PACK_EXISTS]:            resetPackExists,
 
   // People
   [Types.ORGANIZATION_REQUEST]:         request,

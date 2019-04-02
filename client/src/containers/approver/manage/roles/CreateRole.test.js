@@ -32,9 +32,12 @@ describe('CreateRole component', () => {
   const props = {
     submit: (username, password) => { },
     createRole: () => {},
+    resetRoleExists: () => {},
     id: 'abc',
   };
-  const wrapper = shallow(<CreateRole {...props}/>);
+  const wrapper = shallow(
+    <CreateRole.WrappedComponent {...props} store={store}/>
+  );
 
   it('renders without crashing', () => {
     const div = document.createElement('div');

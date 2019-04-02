@@ -52,6 +52,16 @@ const { Types, Creators } = createActions({
   organizationSuccess:        ['organization', 'isMe'],
   organizationFailure:        ['error'],
 
+  roleExistsRequest:          ['name'],
+  roleExistsSuccess:          ['exists'],
+  roleExistsFailure:          null,
+  resetRoleExists:            null,
+
+  packExistsRequest:          ['name'],
+  packExistsSuccess:          ['exists'],
+  packExistsFailure:          null,
+  resetPackExists:            null,
+
   resetAll:                   null,
   onBehalfOfSet:              ['id'],
   feedReceive:                ['payload'],
@@ -73,5 +83,7 @@ export const INITIAL_STATE = Immutable({
   openProposals:              null,
   organization:               null,
   onBehalfOf:                 null,
+  packExists:                 null,
   rejectedProposals:          null,
+  roleExists:                 null,
 });

@@ -190,3 +190,41 @@ export function * getRelationships (api, action) {
     console.error(err);
   }
 }
+
+
+/**
+ * Check if a role with given name exists
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * checkRoleExists (api, action) {
+  try {
+    const { name } = action;
+    const res = yield call(api.roleExists, name);
+    res.ok ?
+      yield put(ApproverActions.roleExistsSuccess(res.data.exists)) :
+      yield put(ApproverActions.roleExistsFailure(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Check if a pack with given name exists
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * checkPackExists (api, action) {
+  try {
+    const { name } = action;
+    const res = yield call(api.packExists, name);
+    res.ok ?
+      yield put(ApproverActions.packExistsSuccess(res.data.exists)) :
+      yield put(ApproverActions.packExistsFailure(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}

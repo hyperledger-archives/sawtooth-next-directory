@@ -188,15 +188,11 @@ def roles_search_description(search_query):
     return resource
 
 
-async def roles_search_duplicate(conn, search_query):
+async def roles_search_duplicate(conn, name):
     """Search for roles based a string int the name field."""
     resource = (
         await r.table("roles")
-        .filter(
-            lambda doc: (
-                doc["name"].match("(?i)^" + search_query["search_input"] + "$")
-            )
-        )
+        .filter(lambda doc: (doc["name"].match("(?i)^" + name + "$")))
         .order_by("name")
         .coerce_to("array")
         .run(conn)

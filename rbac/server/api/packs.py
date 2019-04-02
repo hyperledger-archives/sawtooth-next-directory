@@ -57,13 +57,12 @@ async def create_new_pack(request):
     """Create a new pack"""
     required_fields = ["owners", "name", "roles"]
     utils.validate_fields(required_fields, request.json)
-    search_query = {"query": {"search_input": request.json.get("name")}}
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
         request.app.config.DB_NAME,
     )
-    response = await packs_query.packs_search_duplicate(conn, search_query["query"])
+    response = await packs_query.packs_search_duplicate(conn, request.json.get("name"))
     if not response:
         pack_id = str(uuid4())
         await packs_query.create_pack_resource(
@@ -98,6 +97,20 @@ async def get_pack(request, pack_id):
     conn.close()
 
     return await utils.create_response(conn, request.url, pack_resource, head_block)
+
+
+@PACKS_BP.get("api/packs/check")
+@authorized()
+async def check_pack_name(request):
+    """Check if a pack exists with provided name"""
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+    response = await packs_query.packs_search_duplicate(conn, request.args.get("name"))
+    conn.close()
+    return json({"exists": bool(response)})
 
 
 @PACKS_BP.post("api/packs/<pack_id>/members")

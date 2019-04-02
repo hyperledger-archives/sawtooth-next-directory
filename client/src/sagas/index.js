@@ -37,7 +37,9 @@ import {
   getRejectedProposals,
   getRelationships,
   createPack,
-  createRole } from './ApproverSaga';
+  createRole,
+  checkRoleExists,
+  checkPackExists } from './ApproverSaga';
 import {
   packAccess,
   roleAccess,
@@ -82,6 +84,8 @@ function * sagas () {
     takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
     takeLatest(ApproverTypes.APPROVE_PROPOSALS_REQUEST, approveProposals, api),
     takeLatest(ApproverTypes.REJECT_PROPOSALS_REQUEST, rejectProposals, api),
+    takeLatest(ApproverTypes.ROLE_EXISTS_REQUEST, checkRoleExists, api),
+    takeLatest(ApproverTypes.PACK_EXISTS_REQUEST, checkPackExists, api),
     takeLatest(
       ApproverTypes.CONFIRMED_PROPOSALS_REQUEST, getConfirmedProposals, api
     ),

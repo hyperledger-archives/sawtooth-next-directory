@@ -113,8 +113,10 @@ const create = (baseURL =
   const getUser = (id) => api.get(`users/${id}`);
   const getUsers = (start, limit) => api.get('users', { start, limit });
   const getUserSummary = (id) => api.get(`user/${id}/summary`);
+  const packExists = (name) => api.get('packs/check', { name });
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
+  const roleExists = (name) => api.get('roles/check', { name });
   const updateProposals = (payload) => api.patch('proposals', payload);
   const search = (query) => api.post('search', query);
   const signup = (creds) => api.post('users', creds);
@@ -152,8 +154,10 @@ const create = (baseURL =
     getUsers,
     getUserSummary,
     me,
+    packExists,
     requestPackAccess,
     requestRoleAccess,
+    roleExists,
     updateProposals,
     search,
     signup,
