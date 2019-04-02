@@ -178,43 +178,29 @@ export const RequesterSelectors = {
   },
 
 
-  // Retrieve a unique set of packs and roles a user
+  // Retrieve a unique set of roles a user
   // is member of grouped like the following:
-  // [{ pack }, { role }, { pack } ...]
+  // [{ role }, { role }, ...]
   memberOf: (state) => {
     if (!state.user.me) return null;
-    let memberOf = [];
+    const memberOf = [];
 
     for (const roleId of state.user.me.memberOf) {
-      const request = state.user.me.proposals.find(
-        item => item.object_id === roleId
-      );
-
-      if (request){
-        if (state.requester.roles) {
-          const role = state.requester.roles.find(
-            role => role.id === roleId
-          );
-          role && memberOf.push(role);
-        }
+      if (state.requester.roles) {
+        const role = state.requester.roles.find(
+          role => role.id === roleId
+        );
+        role && memberOf.push(role);
       }
     }
-
-    memberOf = memberOf.filter(item => {
-      if (item.roles) {
-        if (!state.requester.requests) return false;
-        const isOpen = state.requester.requests.find(
-          request => item.roles.includes(request.object) &&
-            request.status !== 'CONFIRMED'
-        );
-        return !isOpen;
-      }
-      return true;
-    });
 
     return [...new Set(memberOf)];
   },
 
+
+  // Retrieve a unique set of packs a user
+  // is member of grouped like the following:
+  // [{ pack }, { pack }, ...]
   memberOfPacks: (state) => {
     if (!state.user.me) return null;
     let memberOfPacks = [];
@@ -248,7 +234,6 @@ export const RequesterSelectors = {
     });
 
     return [...new Set(memberOfPacks)];
-
   },
 
   ownerOf: (state) =>
