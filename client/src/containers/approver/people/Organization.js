@@ -71,7 +71,7 @@ class Organization extends Component {
       users } = this.props;
     if (prevProps.organization !== organization) {
       const diff = [
-        ...organization.direct_reports.slice(0, 5),
+        ...organization.direct_reports,
         ...organization.managers.slice(0, 5),
         ...organization.peers.slice(0, 5),
       ]
