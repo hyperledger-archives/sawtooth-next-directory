@@ -28,9 +28,12 @@ import './Approved.css';
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import ApprovedNav from 'components/nav/ApprovedNav';
-import * as theme from 'services/Theme';
 import glyph from 'images/glyph-individual-inverted.png';
 import Avatar from 'components/layouts/Avatar';
+
+
+import * as theme from 'services/Theme';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -246,7 +249,7 @@ class Approved extends Component {
                 <Icon name='info circle' color='grey'/>
               </Table.Cell>
               <Table.Cell>
-                Unavailable
+                {utils.formatDate(proposal.closed_date)}
               </Table.Cell>
             </Table.Row>
           ))}
