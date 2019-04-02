@@ -271,6 +271,12 @@ async def fetch_user_relationships(conn, next_id):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
 
 
+async def create_user_map_entry(conn, data):
+    """Insert a created user into the user_mapping table."""
+    resource = await r.table("user_mapping").insert(data).run(conn)
+    return resource
+
+
 async def search_users(conn, search_query, paging):
     """Compiling all search fields for users into one query."""
     resource = (

@@ -121,14 +121,23 @@ async def create_new_user(request):
         "email": request.json.get("email"),
     }
 
+    mapping_data = {
+        "next_id": next_id,
+        "provider_id": None,
+        "remote_id": None,
+        "public_key": key_pair.public_key,
+        "encrypted_key": encrypted_private_key,
+        "active": True,
+    }
+
+    # Insert to user_mapping and close
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
         request.app.config.DB_NAME,
     )
-
     await auth_query.create_auth_entry(conn, auth_entry)
-
+    await users_query.create_user_map_entry(conn, mapping_data)
     conn.close()
 
     # Send back success response
