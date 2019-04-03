@@ -601,7 +601,7 @@ def test_create_fake_group(ldap_connection, group):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     result = is_group_in_db(group["common_name"])
     assert result is True
 
@@ -646,7 +646,7 @@ def test_add_group_member(ldap_connection, group, user):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     result = is_user_a_role_member(group["common_name"], user["common_name"])
     assert result is True
 
@@ -684,6 +684,7 @@ def test_remove_group_member(ldap_connection, group, user):
     group_distinct_name = [
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % group["common_name"]
     ]
+
     removeMembersFromGroups.ad_remove_members_from_groups(
         ldap_connection, user_distinct_name, group_distinct_name, fix=True
     )
@@ -691,7 +692,7 @@ def test_remove_group_member(ldap_connection, group, user):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     result = is_user_a_role_member(group["common_name"], user["common_name"])
     assert result is False
 
@@ -731,7 +732,7 @@ def test_add_replace_group_owner(ldap_connection, group, user):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
 
     result = is_user_the_role_owner(group["common_name"], user["common_name"])
     assert result is True
@@ -760,7 +761,7 @@ def test_remove_group_owner(ldap_connection, group):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     role_id = get_role_id_from_cn(group["common_name"])
     role_owners = get_role_owners(role_id)
     assert len(role_owners) is 0

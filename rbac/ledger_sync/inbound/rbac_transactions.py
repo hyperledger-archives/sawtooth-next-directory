@@ -60,7 +60,7 @@ def add_transaction(inbound_entry):
         inbound_entry["private_key"] = encrypted_private_key
 
         if inbound_entry["data_type"] == "user":
-            next_user = get_next_id(
+            next_user = get_next_object(
                 "user_mapping", data["remote_id"], inbound_entry["provider_id"]
             )
             # Generate Ids
@@ -88,7 +88,14 @@ def add_transaction(inbound_entry):
             add_metadata(inbound_entry, message)
 
         elif inbound_entry["data_type"] == "group":
-            next_id = str(uuid4())
+            next_role = get_next_object(
+                "roles", data["remote_id"], inbound_entry["provider_id"]
+            )
+            # Generate Ids
+            if next_role:
+                next_id = next_role[0]["role_id"]
+            else:
+                next_id = str(uuid4())
             object_id = Role().hash(next_id)
             address = Role().address(object_id=object_id)
 
@@ -132,8 +139,8 @@ def add_metadata(inbound_entry, message):
     inbound_entry["metadata"] = metadata
 
 
-def get_next_id(table, remote_id, provider_id):
-    """Check if object already exists in NEXT and return id."""
+def get_next_object(table, remote_id, provider_id):
+    """Check if object already exists in NEXT and return it."""
     query_filter = {"remote_id": remote_id}
     if table == "user_mapping":
         query_filter["provider_id"] = provider_id
