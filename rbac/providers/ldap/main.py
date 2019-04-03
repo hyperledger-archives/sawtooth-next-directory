@@ -25,8 +25,11 @@ LOGGER = get_default_logger(__name__)
 
 
 def main():
-
     """Start the initial sync and outbound delta thread."""
+    ldap_enabled = os.getenv("ENABLE_LDAP_SYNC", "False")
+    if ldap_enabled in ("f", "F", "false", "False", 0, ""):
+        LOGGER.warning("LDAP sync not enabled. Exiting...")
+        return
     ldap_server = os.getenv("LDAP_SERVER")
     if not ldap_server:
         LOGGER.warning("No LDAP provider configured, exiting...")
