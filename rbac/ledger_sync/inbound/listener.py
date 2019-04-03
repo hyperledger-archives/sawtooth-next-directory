@@ -32,7 +32,9 @@ def process(rec, conn):
     try:
         # Changes members from distinguished name to next_id for roles
         if "members" in rec["data"]:
-            rec = update_members_field(rec)
+            rec = translate_field_to_next(rec, "members")
+        if "owners" in rec["data"]:
+            rec = translate_field_to_next(rec, "owners")
 
         add_transaction(rec)
         if "batch" not in rec or not rec["batch"]:
@@ -140,24 +142,25 @@ def insert_to_user_mapping(user_record):
     conn.close()
 
 
-def update_members_field(resource):
-    """ Takes in a resource dict that contains a list of role members and switches
+def translate_field_to_next(resource, field):
+    """ Takes in a resource dict that contains a list  at a specified field and switches
         their remote_ids with the next_id of the same user.
     """
-    members_list = resource["data"]["members"]
-    new_members_list = []
+    resource_list = resource["data"][field]
+    new_list = []
     conn = connect_to_db()
-    for user in members_list:
+    if not isinstance(resource_list, list):
+        resource_list = [resource_list]
+    for user in resource_list:
         user_in_db = (
             r.table("users").filter({"remote_id": user}).coerce_to("array").run(conn)
         )
         if user_in_db:
             user_next_id = user_in_db[0].get("next_id")
-            new_members_list.append(user_next_id)
+            new_list.append(user_next_id)
         else:
-            new_members_list.append(user)
-
-    resource["data"]["members"] = new_members_list
+            new_list.append(user)
+    resource["data"][field] = new_list
     conn.close()
     return resource
 

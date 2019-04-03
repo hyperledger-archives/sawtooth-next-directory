@@ -467,10 +467,11 @@ def is_user_the_role_owner(role_common_name, user_common_name):
     user_distinct_name = (
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user_common_name
     )
+    next_id = get_user_next_id(user_distinct_name)
     role_owners = get_role_owners(role_id)
     user_is_role_owner = False
     if len(role_owners) is 1:
-        if role_owners[0]["related_id"] == user_distinct_name:
+        if role_owners[0]["related_id"] == next_id:
             user_is_role_owner = True
     return user_is_role_owner
 
