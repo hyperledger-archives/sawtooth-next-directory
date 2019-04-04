@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
+"""Test helper ensuring the Docker containers are available for testing."""
 import time
-import logging
 from uuid import uuid4
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from urllib.error import URLError
 from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_default_logger
 
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 BATCHER_KEY = Key()
 
@@ -32,13 +31,16 @@ class IntegrationTestHelper:
     are up and available to be tested against."""
 
     class Impl:
+        """Implementation of container checks."""
 
         __available = False
 
         def wait_for_containers(self):
+            """wait for containers to be available."""
             self.__check_containers()
 
         def __check_containers(self):
+            """See if containers are available, wait if not."""
             if not self.__available:
                 LOGGER.info("Waiting for containers to start")
                 __wait_for_rest_apis__(["rest-api:8008"])
@@ -50,10 +52,12 @@ class IntegrationTestHelper:
 
     @staticmethod
     def get_batcher_key():
+        """Returns BATCHER_KEY."""
         return BATCHER_KEY
 
     @staticmethod
     def make_key_and_name():
+        """Makes a key and name."""
         return Key(), uuid4().hex
 
     def __init__(self):

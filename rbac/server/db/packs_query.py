@@ -12,18 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Functions for working with resources in the packs table."""
 
 import rethinkdb as r
 
 from rbac.common.logs import get_default_logger
 from rbac.server.api.errors import ApiNotFound
 
-from rbac.server.db.relationships_query import fetch_relationships_by_id
+from rbac.server.db.relationships_query import (
+    fetch_relationships_by_id,
+    fetch_relationships,
+)
 
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_all_pack_resources(conn, head_block_num, start, limit):
+async def fetch_all_pack_resources(conn, start, limit):
     """Get all pack resources"""
     resources = (
         await r.table("packs")
@@ -34,7 +38,10 @@ async def fetch_all_pack_resources(conn, head_block_num, start, limit):
                 {
                     "id": pack["pack_id"],
                     "roles": fetch_relationships_by_id(
-                        "role_packs", pack["pack_id"], "role_id", head_block_num
+                        "role_packs", pack["pack_id"], "role_id"
+                    ),
+                    "owners": fetch_relationships(
+                        "pack_owners", "pack_id", pack["pack_id"]
                     ),
                 }
             )
@@ -71,7 +78,7 @@ async def add_roles(conn, pack_id, roles):
     return resource
 
 
-async def fetch_pack_resource(conn, pack_id, head_block_num):
+async def fetch_pack_resource(conn, pack_id):
     """Get a pack resource"""
     resource = (
         await r.table("packs")
@@ -79,9 +86,8 @@ async def fetch_pack_resource(conn, pack_id, head_block_num):
         .merge(
             {
                 "id": r.row["pack_id"],
-                "roles": fetch_relationships_by_id(
-                    "role_packs", pack_id, "role_id", head_block_num
-                ),
+                "roles": fetch_relationships_by_id("role_packs", pack_id, "role_id"),
+                "owners": fetch_relationships("pack_owners", "pack_id", pack_id),
             }
         )
         .without("pack_id")
@@ -107,7 +113,7 @@ async def search_packs(conn, search_query, paging):
                 {
                     "id": doc["pack_id"],
                     "roles": fetch_relationships_by_id(
-                        "role_packs", doc["pack_id"], "role_id", None
+                        "role_packs", doc["pack_id"], "role_id"
                     ),
                 }
             ).without("pack_id")
@@ -134,7 +140,7 @@ async def search_packs_count(conn, search_query):
 
 
 def packs_search_name(search_query):
-    """Search for packs based a string int the name field."""
+    """Search for packs based a string in the name field."""
     resource = (
         r.table("packs")
         .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
@@ -156,6 +162,19 @@ def packs_search_description(search_query):
         )
         .order_by("name")
         .coerce_to("array")
+    )
+
+    return resource
+
+
+async def packs_search_duplicate(conn, name):
+    """Search for packs based a string in the name field."""
+    resource = (
+        await r.table("packs")
+        .filter(lambda doc: (doc["name"].match("(?i)^" + name + "$")))
+        .order_by("name")
+        .coerce_to("array")
+        .run(conn)
     )
 
     return resource

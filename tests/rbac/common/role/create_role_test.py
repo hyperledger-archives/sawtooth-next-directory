@@ -16,14 +16,17 @@
 
 # pylint: disable=no-member
 
-import logging
 import pytest
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.role import Role
+from rbac.common.user import User
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.role
@@ -32,8 +35,8 @@ LOGGER = logging.getLogger(__name__)
 def test_address():
     """Test the address method and that it is in sync with the addresser"""
     role_id = helper.role.id()
-    address1 = rbac.role.address(object_id=role_id)
-    address2 = rbac.addresser.role.address(role_id)
+    address1 = Role().address(object_id=role_id)
+    address2 = addresser.role.address(role_id)
     assert address1 == address2
 
 
@@ -44,12 +47,12 @@ def test_make():
     name = helper.role.name()
     description = helper.role.description()
     role_id = helper.role.id()
-    user_id = helper.user.id()
-    message = rbac.role.make(
+    next_id = helper.user.id()
+    message = Role().make(
         role_id=role_id,
         name=name,
-        owners=[user_id],
-        admins=[user_id],
+        owners=[next_id],
+        admins=[next_id],
         description=description,
     )
     assert isinstance(message, protobuf.role_transaction_pb2.CreateRole)
@@ -57,8 +60,8 @@ def test_make():
     assert isinstance(message.name, str)
     assert message.role_id == role_id
     assert message.name == name
-    assert message.owners == [user_id]
-    assert message.admins == [user_id]
+    assert message.owners == [next_id]
+    assert message.admins == [next_id]
     assert message.description == description
 
 
@@ -68,17 +71,17 @@ def test_make_addresses():
     """Test the make addresses method for the message"""
     name = helper.role.name()
     role_id = helper.role.id()
-    role_address = rbac.role.address(role_id)
-    user_id = helper.user.id()
-    user_address = rbac.user.address(user_id)
+    role_address = Role().address(role_id)
+    next_id = helper.user.id()
+    user_address = User().address(next_id)
     signer_user_id = helper.user.id()
-    owner_address = rbac.role.owner.address(role_id, user_id)
-    admin_address = rbac.role.admin.address(role_id, user_id)
-    message = rbac.role.make(
-        role_id=role_id, name=name, owners=[user_id], admins=[user_id]
+    owner_address = Role().owner.address(role_id, next_id)
+    admin_address = Role().admin.address(role_id, next_id)
+    message = Role().make(
+        role_id=role_id, name=name, owners=[next_id], admins=[next_id]
     )
 
-    inputs, outputs = rbac.role.make_addresses(
+    inputs, outputs = Role().make_addresses(
         message=message, signer_user_id=signer_user_id
     )
 
@@ -101,25 +104,25 @@ def test_create():
     name = helper.role.name()
     description = helper.role.description()
     role_id = helper.role.id()
-    message = rbac.role.make(
+    message = Role().make(
         role_id=role_id,
         name=name,
-        owners=[user.user_id],
-        admins=[user.user_id],
+        owners=[user.next_id],
+        admins=[user.next_id],
         description=description,
     )
 
-    status = rbac.role.new(
-        signer_keypair=keypair, signer_user_id=user.user_id, message=message
+    status = Role().new(
+        signer_keypair=keypair, signer_user_id=user.next_id, message=message
     )
 
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    role = rbac.role.get(object_id=role_id)
+    role = Role().get(object_id=role_id)
 
     assert role.role_id == message.role_id
     assert role.name == message.name
     assert role.description == message.description
-    assert rbac.role.owner.exists(object_id=role.role_id, related_id=user.user_id)
-    assert rbac.role.admin.exists(object_id=role.role_id, related_id=user.user_id)
+    assert Role().owner.exists(object_id=role.role_id, related_id=user.next_id)
+    assert Role().admin.exists(object_id=role.role_id, related_id=user.next_id)

@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""
+A module that pulls entries from the outbound queue to be used by the
+Outbound AAD Delta Sync.
+"""
 
 import time
 import os
@@ -61,11 +65,11 @@ def is_user_in_aad(queue_entry):
     in azure AD. Returns True if the user exists, False if the user doesn't exist.
     """
     user = queue_entry["data"]
-    if "user_id" in user:
-        user_id = user["user_id"]
+    if "next_id" in user:
+        next_id = user["next_id"]
     else:
-        user_id = user["user_principal_name"]
-    response = fetch_user_aad(user_id)
+        next_id = user["user_principal_name"]
+    response = fetch_user_aad(next_id)
     if response.status_code >= 200 and response.status_code < 300:
         return True
     if response.status_code == 404:
@@ -92,17 +96,18 @@ def is_group_in_aad(queue_entry):
     )
 
 
-def fetch_user_aad(user_id):
+def fetch_user_aad(next_id):
     """This is an outbound request to get a single user from Azure AD."""
     headers = AUTH.check_token("GET")
     if headers:
-        url = ("%s/%s/users/%s", GRAPH_URL, GRAPH_VERSION, user_id)
+        url = ("%s/%s/users/%s", GRAPH_URL, GRAPH_VERSION, next_id)
         response = requests.get(url=url, headers=headers)
         return response
     return None
 
 
 def fetch_group_aad(group_id):
+    """This is an outbound request to get a single group from Azure AD."""
     headers = AUTH.check_token("GET")
     if headers:
         url = ("%s/%s/groups/%s", GRAPH_URL, GRAPH_VERSION, group_id)
@@ -126,11 +131,11 @@ def update_user_aad(user):
     """Updates a user in aad."""
     headers = AUTH.check_token("PATCH")
     if headers:
-        if "user_id" in user:
-            user_id = user["user_id"]
+        if "next_id" in user:
+            next_id = user["next_id"]
         else:
-            user_id = user["user_principal_name"]
-        url = ("%s/%s/users/%s", GRAPH_URL, GRAPH_VERSION, user_id)
+            next_id = user["user_principal_name"]
+        url = ("%s/%s/users/%s", GRAPH_URL, GRAPH_VERSION, next_id)
         aad_user = outbound_user_filter(user, "azure")
         aad_user.pop("mail", None)
         requests.patch(url=url, headers=headers, json=aad_user)

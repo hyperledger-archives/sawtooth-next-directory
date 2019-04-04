@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Creates AadAuth class for Azure Active Directory Authentication."""
 
 import os
 import datetime as dt
@@ -40,6 +41,7 @@ class AadAuth:
         """Initialize the class."""
 
     def get_token(self):
+        """Get token from Azure using data from environment variables."""
         if AUTH_TYPE.upper() == "SECRET":
             data = {
                 "client_id": CLIENT_ID,

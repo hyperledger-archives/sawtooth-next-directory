@@ -25,7 +25,7 @@ message UserContainer {
 
 message User {
 
-    string user_id = 1;
+    string next_id = 1;
 
     string name = 2;
 
@@ -40,4 +40,7 @@ message User {
     string username = 7;
 
     int64 created_date = 8;
+
+    string distinguished_name = 9;
+
 }

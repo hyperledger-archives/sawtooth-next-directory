@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test Suite for outbound filters for providers."""
 
 import pytest
 
@@ -76,7 +77,7 @@ def test_outbound_user_provider():
 def test_outbound_group_filter():
     """ Test outbound group filter with valid user """
     result = outbound_group_filter({"remote_id": 1234}, "ldap")
-    assert result["objectGUID"] == 1234
+    assert result["distinguishedName"] == 1234
     assert "id" not in result
 
 

@@ -15,14 +15,13 @@
 """Create Role test helper"""
 # pylint: disable=no-member,too-few-public-methods
 
-import logging
-
-from rbac.common import rbac
+from rbac.common.role import Role
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.testdata.role import RoleTestData
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StubTestHelper:
@@ -43,9 +42,9 @@ class CreateRoleTestHelper(RoleTestData):
         """Get a test data CreateRole message"""
         role_id = self.id()
         name = self.name()
-        user_id = helper.user.id()
-        message = rbac.role.make(
-            role_id=role_id, name=name, owners=[user_id], admins=[user_id]
+        next_id = helper.user.id()
+        message = Role().make(
+            role_id=role_id, name=name, owners=[next_id], admins=[next_id]
         )
         assert isinstance(message, protobuf.role_transaction_pb2.CreateRole)
         assert message.role_id == role_id
@@ -56,22 +55,22 @@ class CreateRoleTestHelper(RoleTestData):
         """Create a test role"""
         role_id = self.id()
         name = self.name()
-        user, keypair = helper.user.create()
-        message = rbac.role.make(
-            role_id=role_id, name=name, owners=[user.user_id], admins=[user.user_id]
+        user, key_pair = helper.user.create()
+        message = Role().make(
+            role_id=role_id, name=name, owners=[user.next_id], admins=[user.next_id]
         )
 
-        status = rbac.role.new(
-            signer_keypair=keypair, signer_user_id=user.user_id, message=message
+        status = Role().new(
+            signer_keypair=key_pair, signer_user_id=user.next_id, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        role = rbac.role.get(object_id=message.role_id)
+        role = Role().get(object_id=message.role_id)
 
         assert role.role_id == message.role_id
         assert role.name == message.name
-        assert rbac.role.owner.exists(object_id=role.role_id, related_id=user.user_id)
-        assert rbac.role.admin.exists(object_id=role.role_id, related_id=user.user_id)
-        return role, user, keypair
+        assert Role().owner.exists(object_id=role.role_id, related_id=user.next_id)
+        assert Role().admin.exists(object_id=role.role_id, related_id=user.next_id)
+        return role, user, key_pair

@@ -17,20 +17,27 @@
 common functionality and facilitating differences via
 property and method overrides"""
 import time
-import logging
+
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.keys import PUBLIC_KEY_PATTERN
-from rbac.common.sawtooth import batcher
+from rbac.common.sawtooth.batcher import (
+    get_message_type_name,
+    make_message,
+    make_payload,
+    make,
+    message_to_message,
+)
 from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.sawtooth import state_client
 from rbac.common.base import base_processor as processor
 from rbac.common.base.base_address import AddressBase
 from rbac.common.protobuf.rbac_payload_pb2 import Signer
 from rbac.common.sawtooth.rbac_payload import MessagePayload
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class BaseMessage(AddressBase):
@@ -40,7 +47,7 @@ class BaseMessage(AddressBase):
 
     def __init__(self):
         super().__init__()
-        self._message_type_name = batcher.get_message_type_name(self.message_type)
+        self._message_type_name = get_message_type_name(self.message_type)
 
     def _register(self):
         """Registers the class as the authoritative message handler for this message type"""
@@ -101,10 +108,14 @@ class BaseMessage(AddressBase):
     @property
     def _name_id(self):
         """The attribute name for the object type
-        Example: ObjectType.USER -> 'user_id'
+        Example: ObjectType.ROLE -> 'role_id'
         Override where behavior deviates from this norm"""
         if self.message_object_type == self.object_type:
+            if self._name_lower == "user":
+                return "next_id"
             return self._name_lower + "_id"
+        if self.message_object_type.name.lower() == "user":
+            return "next_id"
         return self.message_object_type.name.lower() + "_id"
 
     @property
@@ -117,6 +128,8 @@ class BaseMessage(AddressBase):
             return "related_id"
         if self.message_related_type == self.message_object_type:
             return self.message_relationship_type.name.lower() + "_id"
+        if self.message_related_type.name.lower() == "user":
+            return "next_id"
         return self.message_related_type.name.lower() + "_id"
 
     @property
@@ -253,7 +266,7 @@ class BaseMessage(AddressBase):
         """Makes the message (protobuf) from the named arguments passed to make"""
         # pylint: disable=not-callable
         message = self.message_proto()
-        batcher.make_message(message, self.message_type, **kwargs)
+        make_message(message, self.message_type, **kwargs)
         if hasattr(message, self._name_id) and getattr(message, self._name_id) == "":
             # sets the unique identifier field of the message to a unique_id if no identifier is provided
             setattr(message, self._name_id, self.unique_id())
@@ -285,7 +298,7 @@ class BaseMessage(AddressBase):
         """Common state validation for all messages"""
         if payload.signer.public_key is None:
             raise ValueError("Signer public key is required")
-        if payload.signer.user_id is None:
+        if payload.signer.next_id is None:
             raise ValueError("Signer user id is required")
         if message is None:
             raise ValueError("Message is required")
@@ -326,7 +339,7 @@ class BaseMessage(AddressBase):
             )
         self.validate(
             message=message,
-            signer=Signer(user_id=signer_user_id, public_key=signer_keypair.public_key),
+            signer=Signer(next_id=signer_user_id, public_key=signer_keypair.public_key),
         )
 
         message_type = self.message_type
@@ -352,7 +365,7 @@ class BaseMessage(AddressBase):
                 )
             )
 
-        return batcher.make_payload(
+        return make_payload(
             message=message,
             message_type=message_type,
             inputs=inputs,
@@ -372,7 +385,7 @@ class BaseMessage(AddressBase):
             signer_keypair=signer_keypair,
             signer_user_id=signer_user_id,
         )
-        transaction, new_batch, _, _ = batcher.make(
+        transaction, new_batch, _, _ = make(
             payload=payload, signer_keypair=signer_keypair
         )
         if batch:
@@ -391,7 +404,7 @@ class BaseMessage(AddressBase):
             signer_user_id=signer_user_id,
             signer_keypair=signer_keypair,
         )
-        _, new_batch, new_batch_list, _ = batcher.make(
+        _, new_batch, new_batch_list, _ = make(
             payload=payload, signer_keypair=signer_keypair
         )
         if batch_list:
@@ -435,9 +448,7 @@ class BaseMessage(AddressBase):
         if not isinstance(payload, protobuf.rbac_payload_pb2.RBACPayload):
             raise TypeError("Expected payload to be an RBACPayload")
 
-        _, _, batch_list, _ = batcher.make(
-            payload=payload, signer_keypair=signer_keypair
-        )
+        _, _, batch_list, _ = make(payload=payload, signer_keypair=signer_keypair)
         status = ClientSync().send_batches_get_status(batch_list=batch_list)
         return status
 
@@ -477,7 +488,7 @@ class BaseMessage(AddressBase):
 
     def message_to_storage(self, message):
         """Transforms the message into the state (storage) object"""
-        return batcher.message_to_message(
+        return message_to_message(
             # pylint: disable=not-callable
             message_to=self._state_object(),
             message_from=message,
@@ -539,7 +550,7 @@ class BaseMessage(AddressBase):
         listed in message_fields_not_in_state property. This provides
         a simple default behavior for cases where this is appropriate;
         commonly override this method in message classes"""
-        batcher.message_to_message(
+        message_to_message(
             message_to=store,
             message_from=message,
             message_name=self._name_camel,
@@ -583,7 +594,7 @@ class BaseMessage(AddressBase):
     def authenticate_state(self, message, payload, input_state):
         """Check to see if the signer of the transaction is
         eligible to perform the action"""
-        # signer_address = addresser.user.address(object_id=payload.signer.user_id)
+        # signer_address = addresser.user.address(object_id=payload.signer.next_id)
         # key_address = addresser.key.address(object_id=payload.signer.public_key)
         # if key_address not in payload.inputs:
         #    raise ValueError(

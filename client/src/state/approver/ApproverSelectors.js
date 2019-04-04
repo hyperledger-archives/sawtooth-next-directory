@@ -21,7 +21,9 @@ export const ApproverSelectors = {
   confirmedProposals:    (state) => state.approver.confirmedProposals,
   delegations:           (state) => state.approver.delegations || [],
   directReports:         (state) => state.approver.directReports,
+  packExists:            (state) => state.approver.packExists,
   rejectedProposals:     (state) => state.approver.rejectedProposals,
+  roleExists:            (state) => state.approver.roleExists,
   openProposals:         (state) => state.approver.openProposals,
   openProposalsByUser:   (state) =>
     utils.groupBy(state.approver.openProposals, 'opener'),

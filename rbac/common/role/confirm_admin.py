@@ -14,11 +14,11 @@
 # -----------------------------------------------------------------------------
 """Implements the CONFIRM_ADD_ROLE_ADMIN message
 usage: rbac.role.admin.confirm.create()"""
-import logging
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ConfirmAddRoleAdmin(ProposalConfirm):
@@ -91,11 +91,11 @@ class ConfirmAddRoleAdmin(ProposalConfirm):
     #            inputs=inputs,
     #            input_state=input_state,
     #            object_id=message.object_id,
-    #            related_id=paylaod.signer.user_id,
+    #            related_id=paylaod.signer.next_id,
     #        ):
     #            raise ValueError(
     #                "Signer {} must be an admin of the role {}".format(
-    #                    payload.signer.user_id, message.object_id
+    #                    payload.signer.next_id, message.object_id
     #                )
     #            )
 

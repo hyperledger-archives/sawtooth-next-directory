@@ -15,12 +15,13 @@
 """Address assertion helpers"""
 # pylint: disable=invalid-name
 
-import logging
 import re as regex
 from rbac.common import addresser
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions.key import KeyAssertions
 
-LOGGER = logging.getLogger(__name__)
+
+LOGGER = get_default_logger(__name__)
 
 PATTERN_ADDRESS = regex.compile(r"^[0-9a-f]{70}$")
 PATTERN_IDENTIFIER = regex.compile(r"^[0-9a-f]{24}$")

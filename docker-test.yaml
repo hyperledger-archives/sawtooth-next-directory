@@ -31,6 +31,7 @@ services:
       - rethink
       - validator
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
       - SECRET_KEY=${SECRET_KEY}
@@ -54,6 +55,7 @@ services:
     volumes:
       - ".:/project/hyperledger-rbac"
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - HOST=${HOST:-localhost}
     command: ./bin/rbac-tp tcp://validator:4004
 
@@ -69,7 +71,9 @@ services:
       - rethink
       - validator
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - HOST=${HOST:-localhost}
+      - AES_KEY=${AES_KEY}
     command: |
       bash -c "
         ./bin/setup_db --host rethink &&
@@ -119,6 +123,7 @@ services:
       - ".:/project/hyperledger-rbac"
     command: pytest
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - PYTHONPATH=/project/hyperledger-rbac/
       - HOST=${HOST:-localhost}
       - LDAP_SERVER=${LDAP_SERVER}

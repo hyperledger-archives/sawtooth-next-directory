@@ -14,11 +14,12 @@
 # -----------------------------------------------------------------------------
 """Implements the PROPOSE_ADD_ROLE_TASK message
 usage: rbac.role.task.propose.create()"""
-import logging
+
 from rbac.common import addresser
 from rbac.common.proposal.proposal_propose import ProposalPropose
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ProposeAddRoleTask(ProposalPropose):
@@ -103,10 +104,10 @@ class ProposeAddRoleTask(ProposalPropose):
             inputs=payload.inputs,
             input_state=input_state,
             object_id=message.role_id,
-            related_id=payload.signer.user_id,
+            related_id=payload.signer.next_id,
         ):
             raise ValueError(
                 "Signer {} must be an owner of the role {}".format(
-                    payload.signer.user_id, message.role_id
+                    payload.signer.next_id, message.role_id
                 )
             )

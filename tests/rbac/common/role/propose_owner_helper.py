@@ -14,16 +14,16 @@
 # -----------------------------------------------------------------------------
 """Propose Role Owner Test Helper"""
 # pylint: disable=no-member,too-few-public-methods
-
-import logging
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.role import Role
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.common.role.create_role_helper import CreateRoleTestHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StubTestHelper:
@@ -43,7 +43,7 @@ class ProposeRoleOwnerTestHelper:
 
     def id(self):
         """Get a unique identifier"""
-        return rbac.addresser.proposal.unique_id()
+        return addresser.proposal.unique_id()
 
     def reason(self):
         """Get a random reason"""
@@ -56,23 +56,23 @@ class ProposeRoleOwnerTestHelper:
         user, user_key = helper.user.create()
         proposal_id = self.id()
         reason = helper.user.reason()
-        message = rbac.role.owner.propose.make(
+        message = Role().owner.propose.make(
             proposal_id=proposal_id,
             role_id=role.role_id,
-            user_id=user.user_id,
+            next_id=user.next_id,
             reason=reason,
             metadata=None,
         )
 
-        status = rbac.role.owner.propose.new(
-            signer_keypair=user_key, signer_user_id=user.user_id, message=message
+        status = Role().owner.propose.new(
+            signer_keypair=user_key, signer_user_id=user.next_id, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        proposal = rbac.role.owner.propose.get(
-            object_id=role.role_id, related_id=user.user_id
+        proposal = Role().owner.propose.get(
+            object_id=role.role_id, related_id=user.next_id
         )
 
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -82,7 +82,7 @@ class ProposeRoleOwnerTestHelper:
         )
         assert proposal.proposal_id == proposal_id
         assert proposal.object_id == role.role_id
-        assert proposal.related_id == user.user_id
-        assert proposal.opener == user.user_id
+        assert proposal.related_id == user.next_id
+        assert proposal.opener == user.next_id
         assert proposal.open_reason == reason
         return proposal, role, role_owner, role_owner_key, user, user_key

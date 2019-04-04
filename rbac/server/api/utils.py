@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Utility functions to support APIs."""
 
 import binascii
 import rethinkdb as r
@@ -35,6 +36,7 @@ PAYLOAD_KEY = "RBAC_AUTH_HEADER_PAYLOAD"
 
 
 def validate_fields(required_fields, body):
+    """Checks that all required_fields are in body, raises exception if not."""
     try:
         for field in required_fields:
             if body.get(field) is None:
@@ -77,6 +79,7 @@ def extract_request_token(request):
 
 
 async def create_response(conn, request_url, data, head_block, start=None, limit=None):
+    """Creates json response."""
     conn.reconnect(noreply_wait=False)
 
     base_url = request_url.split("?")[0]
@@ -101,6 +104,7 @@ def create_tracker_response(slot_name, value):
 
 
 async def get_response_paging_info(conn, table, url, start, limit, head_block_num):
+    """Get paging info for paged responses."""
     conn.reconnect(noreply_wait=False)
 
     total = await get_table_count(conn, table, head_block_num)
@@ -127,6 +131,7 @@ async def get_response_paging_info(conn, table, url, start, limit, head_block_nu
 
 
 async def get_table_count(conn, table, head_block_num):
+    """Get count of items in table."""
     conn.reconnect(noreply_wait=False)
 
     if table == "blocks":
@@ -144,6 +149,7 @@ async def get_table_count(conn, table, head_block_num):
 
 
 def get_request_paging_info(request):
+    """Get paging start/limit out of request."""
     try:
         start = int(request.args["start"][0])
     except KeyError:
@@ -158,6 +164,7 @@ def get_request_paging_info(request):
 
 
 async def get_request_block(request):
+    """Get headblock from request or newest."""
     try:
         head_block_id = request.args["head"][0]
         head_block = await blocks_query.fetch_block_by_id(
@@ -171,23 +178,25 @@ async def get_request_block(request):
 
 
 async def get_transactor_key(request):
+    """Get transactor key out of request."""
     id_dict = deserialize_api_key(
         request.app.config.SECRET_KEY, extract_request_token(request)
     )
-    user_id = id_dict.get("id")
+    next_id = id_dict.get("id")
 
     auth_data = await auth_query.fetch_info_by_user_id(
-        request.app.config.DB_CONN, user_id
+        request.app.config.DB_CONN, next_id
     )
     encrypted_private_key = auth_data.get("encrypted_private_key")
     private_key = decrypt_private_key(
-        request.app.config.AES_KEY, user_id, encrypted_private_key
+        request.app.config.AES_KEY, next_id, encrypted_private_key
     )
     hex_private_key = binascii.hexlify(private_key)
-    return Key(hex_private_key), user_id
+    return Key(hex_private_key), next_id
 
 
 async def send(conn, batch_list, timeout, webhook=False):
+    """Send batch_list to sawtooth."""
     batch_request = client_batch_submit_pb2.ClientBatchSubmitRequest()
     batch_request.batches.extend(list(batch_list.batches))
     validator_response = await conn.send(

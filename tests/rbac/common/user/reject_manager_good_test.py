@@ -14,15 +14,14 @@
 # -----------------------------------------------------------------------------
 """Reject Manager Test"""
 # pylint: disable=no-member
-
-import logging
 import pytest
 
-from rbac.common import rbac
+from rbac.common.user import User
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.user
@@ -34,7 +33,7 @@ def test_make():
     reason = helper.user.manager.propose.reason()
     proposal_id = helper.user.manager.propose.id()
     signer_user_id = helper.user.id()
-    message = rbac.user.manager.reject.make(
+    message = User().manager.reject.make(
         proposal_id=proposal_id,
         object_id=object_id,
         related_id=related_id,
@@ -56,10 +55,10 @@ def test_make_addresses():
     related_id = helper.user.id()
     reason = helper.user.manager.propose.reason()
     proposal_id = helper.user.manager.propose.id()
-    proposal_address = rbac.user.manager.reject.address(
+    proposal_address = User().manager.reject.address(
         object_id=object_id, related_id=related_id
     )
-    message = rbac.user.manager.reject.make(
+    message = User().manager.reject.make(
         proposal_id=proposal_id,
         object_id=object_id,
         related_id=related_id,
@@ -67,7 +66,7 @@ def test_make_addresses():
         signer_user_id=object_id,
     )
 
-    inputs, outputs = rbac.user.manager.reject.make_addresses(
+    inputs, outputs = User().manager.reject.make_addresses(
         message=message, signer_user_id=object_id
     )
 
@@ -82,8 +81,8 @@ def test_create():
     proposal, _, _, manager, manager_key = helper.user.manager.propose.create()
     reason = helper.user.manager.propose.reason()
 
-    status = rbac.user.manager.reject.new(
-        signer_user_id=manager.user_id,
+    status = User().manager.reject.new(
+        signer_user_id=manager.next_id,
         signer_keypair=manager_key,
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,
@@ -94,7 +93,7 @@ def test_create():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    reject = rbac.user.manager.reject.get(
+    reject = User().manager.reject.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 

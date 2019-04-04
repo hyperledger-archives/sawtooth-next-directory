@@ -13,22 +13,22 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Implementation of the Task-Admin relationship
-Usage: rbac.task.admin.exists(task_id, user_id)
+Usage: rbac.task.admin.exists(task_id, next_id)
 """
-import logging
 
 from rbac.common import addresser
 from rbac.common.base.base_relationship import BaseRelationship
 from rbac.common.task.propose_admin import ProposeAddTaskAdmin
 from rbac.common.task.confirm_admin import ConfirmAddTaskAdmin
 from rbac.common.task.reject_admin import RejectAddTaskAdmin
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class AdminRelationship(BaseRelationship):
     """Implementation of the Task-Admin relationship
-    Usage: rbac.task.admin.exists(task_id, user_id)
+    Usage: rbac.task.admin.exists(task_id, next_id)
     """
 
     def __init__(self):

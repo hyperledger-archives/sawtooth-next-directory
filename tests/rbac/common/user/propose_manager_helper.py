@@ -14,15 +14,15 @@
 # -----------------------------------------------------------------------------
 """Propose Manager Helper"""
 # pylint: disable=no-member,too-few-public-methods
-
-import logging
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.user import User
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StubTestHelper:
@@ -41,7 +41,7 @@ class ProposeManagerTestHelper:
 
     def id(self):
         """Get a unique identifier"""
-        return rbac.addresser.proposal.unique_id()
+        return addresser.proposal.unique_id()
 
     def reason(self):
         """Get a random reason"""
@@ -53,23 +53,23 @@ class ProposeManagerTestHelper:
         manager, manager_key = helper.user.create()
         proposal_id = self.id()
         reason = helper.user.reason()
-        message = rbac.user.manager.propose.make(
+        message = User().manager.propose.make(
             proposal_id=proposal_id,
-            user_id=user.user_id,
-            new_manager_id=manager.user_id,
+            next_id=user.next_id,
+            new_manager_id=manager.next_id,
             reason=reason,
             metadata=None,
         )
 
-        status = rbac.user.manager.propose.new(
-            signer_user_id=user.user_id, signer_keypair=user_key, message=message
+        status = User().manager.propose.new(
+            signer_user_id=user.next_id, signer_keypair=user_key, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        proposal = rbac.user.manager.propose.get(
-            object_id=user.user_id, related_id=manager.user_id
+        proposal = User().manager.propose.get(
+            object_id=user.next_id, related_id=manager.next_id
         )
 
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -78,8 +78,8 @@ class ProposeManagerTestHelper:
             == protobuf.proposal_state_pb2.Proposal.UPDATE_USER_MANAGER
         )
         assert proposal.proposal_id == proposal_id
-        assert proposal.object_id == user.user_id
-        assert proposal.related_id == manager.user_id
-        assert proposal.opener == user.user_id
+        assert proposal.object_id == user.next_id
+        assert proposal.related_id == manager.next_id
+        assert proposal.opener == user.next_id
         assert proposal.open_reason == reason
         return proposal, user, user_key, manager, manager_key

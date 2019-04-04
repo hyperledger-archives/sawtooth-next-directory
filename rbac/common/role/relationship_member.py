@@ -13,9 +13,8 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Implementation of the Role-Member relationship
-Usage: rbac.role.member.exists(role_id, user_id)
+Usage: rbac.role.member.exists(role_id, next_id)
 """
-import logging
 
 from rbac.common import addresser
 from rbac.common.base.base_relationship import BaseRelationship
@@ -23,13 +22,14 @@ from rbac.common.role.propose_member import ProposeAddRoleMember
 from rbac.common.role.confirm_member import ConfirmAddRoleMember
 from rbac.common.role.reject_member import RejectAddRoleMember
 from rbac.common.role.remove_member import RemoveRoleMember
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class MemberRelationship(BaseRelationship):
     """Implementation of the Role-Member relationship
-    Usage: rbac.role.member.exists(role_id, user_id)
+    Usage: rbac.role.member.exists(role_id, next_id)
     """
 
     def __init__(self):

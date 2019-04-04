@@ -26,7 +26,6 @@ from rbac.common.logs import get_default_logger
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
 from rbac.providers.common.common import check_last_sync
-from rbac.providers.common.rbac_transactions import add_transaction
 
 LOGGER = get_default_logger(__name__)
 
@@ -159,7 +158,6 @@ def insert_change_to_db(data, record_timestamp):
         "timestamp": record_timestamp,
         "provider_id": TENANT_ID,
     }
-    add_transaction(inbound_entry)
     conn = connect_to_db()
     r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()

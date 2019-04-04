@@ -15,15 +15,15 @@
 """ Remove Role Member Test
 """
 # pylint: disable=no-member
-
-import logging
 import pytest
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.role import Role
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.remove_role_member
@@ -32,17 +32,17 @@ LOGGER = logging.getLogger(__name__)
 def test_make():
     """ Test making the message
     """
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     role_id = helper.role.id()
     reason = helper.proposal.reason()
-    proposal_id = rbac.addresser.proposal.unique_id()
-    message = rbac.role.member.remove.make(
-        proposal_id=proposal_id, object_id=role_id, related_id=user_id, reason=reason
+    proposal_id = addresser.proposal.unique_id()
+    message = Role().member.remove.make(
+        proposal_id=proposal_id, object_id=role_id, related_id=next_id, reason=reason
     )
     assert isinstance(message, protobuf.proposal_transaction_pb2.RemovalProposal)
     assert message.proposal_id == proposal_id
     assert message.object_id == role_id
-    assert message.related_id == user_id
+    assert message.related_id == next_id
     assert message.reason == reason
 
 
@@ -51,20 +51,20 @@ def test_make():
 @pytest.mark.library
 def test_make_addresses():
     """Test making the message addresses"""
-    user_id = helper.user.id()
+    next_id = helper.user.id()
     role_id = helper.role.id()
-    proposal_id = rbac.addresser.proposal.unique_id()
+    proposal_id = addresser.proposal.unique_id()
     reason = helper.proposal.reason()
     signer_user_id = helper.user.id()
-    relationship_address = rbac.role.member.address(role_id, user_id)
-    proposal_address = rbac.role.member.remove.address(role_id, user_id)
-    role_owner_address = rbac.role.owner.address(role_id, signer_user_id)
+    relationship_address = Role().member.address(role_id, next_id)
+    proposal_address = Role().member.remove.address(role_id, next_id)
+    role_owner_address = Role().owner.address(role_id, signer_user_id)
 
-    message = rbac.role.member.remove.make(
-        proposal_id=proposal_id, object_id=role_id, related_id=user_id, reason=reason
+    message = Role().member.remove.make(
+        proposal_id=proposal_id, object_id=role_id, related_id=next_id, reason=reason
     )
 
-    inputs, outputs = rbac.role.member.remove.make_addresses(
+    inputs, outputs = Role().member.remove.make_addresses(
         message=message, signer_user_id=signer_user_id
     )
 
@@ -84,9 +84,9 @@ def test_new():
 
     reason = helper.role.member.propose.reason()
 
-    status = rbac.role.member.confirm.new(
+    status = Role().member.confirm.new(
         signer_keypair=role_owner_key,
-        signer_user_id=role_owner.user_id,
+        signer_user_id=role_owner.next_id,
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -96,20 +96,20 @@ def test_new():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    assert rbac.role.member.exists(
+    assert Role().member.exists(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 
     proposal_id = helper.proposal.id()
     reason = helper.proposal.reason()
 
-    rbac.role.member.confirm.get(
+    Role().member.confirm.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 
-    status2 = rbac.role.member.remove.new(
+    status2 = Role().member.remove.new(
         signer_keypair=role_owner_key,
-        signer_user_id=role_owner.user_id,
+        signer_user_id=role_owner.next_id,
         proposal_id=proposal_id,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -119,7 +119,7 @@ def test_new():
     assert len(status2) == 1
     assert status2[0]["status"] == "COMMITTED"
 
-    removal = rbac.role.member.remove.get(
+    removal = Role().member.remove.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 
@@ -132,10 +132,10 @@ def test_new():
     assert removal.related_id == proposal.related_id
     assert removal.open_reason == reason
     assert removal.close_reason == ""
-    assert removal.opener == role_owner.user_id
-    assert removal.closer == role_owner.user_id
+    assert removal.opener == role_owner.next_id
+    assert removal.closer == role_owner.next_id
     assert removal.status == protobuf.proposal_state_pb2.Proposal.REMOVED
 
-    assert rbac.role.member.not_exists(
+    assert Role().member.not_exists(
         object_id=proposal.object_id, related_id=proposal.related_id
     )

@@ -28,6 +28,7 @@ services:
       - rest-api
     command: tail -f /dev/null
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - PYTHONPATH=/project/hyperledger-rbac/
       - SERVER_HOST=${SERVER_HOST:-rbac-server}
       - SERVER_PORT=${SERVER_PORT:-8000}
@@ -49,6 +50,7 @@ services:
     volumes:
       - ".:/project/hyperledger-rbac"
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_SECRET=${CLIENT_SECRET}
       - CLIENT_ASSERTION=${CLIENT_ASSERTION}
@@ -72,6 +74,7 @@ services:
     volumes:
       - ".:/project/hyperledger-rbac"
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - LDAP_DC=${LDAP_DC}
       - LDAP_SERVER=${LDAP_SERVER}
       - LDAP_USER=${LDAP_USER}
@@ -124,6 +127,7 @@ services:
     volumes:
       - ".:/project/hyperledger-rbac"
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - HOST=${HOST:-localhost}
       - SECRET_KEY=${SECRET_KEY}
       - AES_KEY=${AES_KEY}
@@ -141,6 +145,7 @@ services:
       - rethink
       - validator
     environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - HOST=${HOST:-localhost}
       - SECRET_KEY=${SECRET_KEY}
       - AES_KEY=${AES_KEY}
@@ -149,6 +154,7 @@ services:
         ./bin/setup_db --host rethink &&
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
+
   client:
     build:
       context: .
@@ -162,6 +168,7 @@ services:
       - REACT_APP_HTTP_PROTOCOL=${REACT_APP_HTTP_PROTOCOL}
       - REACT_APP_WS_PROTOCOL=${REACT_APP_WS_PROTOCOL}
       - REACT_APP_DEFAULT_LANDING=${REACT_APP_DEFAULT_LANDING}
+      - REACT_APP_VERSION_NUMBER=${VERSION_NUMBER}
     image: rbac-client:${ISOLATION_ID-latest}
     volumes:
       - ./client:/client
@@ -189,6 +196,8 @@ services:
 
   settings-tp:
     container_name: rbac-settings-tp
+    environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
     image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
       - validator
@@ -196,6 +205,8 @@ services:
 
   validator:
     container_name: rbac-validator-tp
+    environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
     image: hyperledger/sawtooth-validator:1.0
     entrypoint: |
       bash -c "

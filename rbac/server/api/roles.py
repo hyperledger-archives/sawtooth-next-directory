@@ -12,20 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
+"""Roles APIs."""
 from uuid import uuid4
 
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common import rbac
-
-from rbac.server.api.errors import ApiNotImplemented
+from rbac.common.role import Role
+from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
-
 from rbac.server.db import roles_query
-
 from rbac.server.db import db_utils
 
 ROLES_BP = Blueprint("roles")
@@ -34,7 +31,7 @@ ROLES_BP = Blueprint("roles")
 @ROLES_BP.get("api/roles")
 @authorized()
 async def get_all_roles(request):
-
+    """Get all roles."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -43,9 +40,7 @@ async def get_all_roles(request):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    role_resources = await roles_query.fetch_all_role_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    role_resources = await roles_query.fetch_all_role_resources(conn, start, limit)
     conn.close()
     return await utils.create_response(
         conn, request.url, role_resources, head_block, start=start, limit=limit
@@ -55,31 +50,42 @@ async def get_all_roles(request):
 @ROLES_BP.post("api/roles")
 @authorized()
 async def create_new_role(request):
+    """Create a new role."""
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
-    role_id = str(uuid4())
-    batch_list = rbac.role.batch_list(
-        signer_keypair=txn_key,
-        signer_user_id=txn_user_id,
-        name=request.json.get("name"),
-        role_id=role_id,
-        metadata=request.json.get("metadata"),
-        admins=request.json.get("administrators"),
-        owners=request.json.get("owners"),
-        description=request.json.get("description"),
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    response = await roles_query.roles_search_duplicate(conn, request.json.get("name"))
+    if not response:
+        txn_key, txn_user_id = await utils.get_transactor_key(request)
+        role_id = str(uuid4())
+        batch_list = Role().batch_list(
+            signer_keypair=txn_key,
+            signer_user_id=txn_user_id,
+            name=request.json.get("name"),
+            role_id=role_id,
+            metadata=request.json.get("metadata"),
+            admins=request.json.get("administrators"),
+            owners=request.json.get("owners"),
+            description=request.json.get("description"),
+        )
+        await utils.send(
+            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+        )
+        return create_role_response(request, role_id)
+    raise ApiBadRequest(
+        "Error: could not create this role because role name has been taken or already exists"
     )
-    return create_role_response(request, role_id)
 
 
 @ROLES_BP.get("api/roles/<role_id>")
 @authorized()
 async def get_role(request, role_id):
-
+    """Get a specific role by role_id."""
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
@@ -87,21 +93,34 @@ async def get_role(request, role_id):
     )
 
     head_block = await utils.get_request_block(request)
-    role_resource = await roles_query.fetch_role_resource(
-        conn, role_id, head_block.get("num")
-    )
+    role_resource = await roles_query.fetch_role_resource(conn, role_id)
     conn.close()
     return await utils.create_response(conn, request.url, role_resource, head_block)
+
+
+@ROLES_BP.get("api/roles/check")
+@authorized()
+async def check_role_name(request):
+    """Check if a role exists with provided name."""
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+    response = await roles_query.roles_search_duplicate(conn, request.args.get("name"))
+    conn.close()
+    return json({"exists": bool(response)})
 
 
 @ROLES_BP.patch("api/roles/<role_id>")
 @authorized()
 async def update_role(request, role_id):
+    """Update a role."""
     required_fields = ["description"]
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     role_description = request.json.get("description")
-    batch_list = rbac.role.update.batch_list(
+    batch_list = Role().update.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         role_id=role_id,
@@ -116,17 +135,18 @@ async def update_role(request, role_id):
 @ROLES_BP.post("api/roles/<role_id>/admins")
 @authorized()
 async def add_role_admin(request, role_id):
+    """Add an admin to role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.admin.propose.batch_list(
+    batch_list = Role().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get("id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
@@ -136,25 +156,21 @@ async def add_role_admin(request, role_id):
     return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete("api/roles/<role_id>/admins")
-@authorized()
-async def delete_role_admin(request, role_id):
-    raise ApiNotImplemented()
-
-
 @ROLES_BP.post("api/roles/<role_id>/members")
 @authorized()
 async def add_role_member(request, role_id):
+    """Add a member to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.member.propose.batch_list(
+    batch_list = Role().member.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get("id"),
+        pack_id=request.json.get("pack_id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
@@ -169,26 +185,21 @@ async def add_role_member(request, role_id):
     return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete("api/roles/<role_id>/members")
-@authorized()
-async def delete_role_member(request, role_id):
-    raise ApiNotImplemented()
-
-
 @ROLES_BP.post("api/roles/<role_id>/owners")
 @authorized()
 async def add_role_owner(request, role_id):
+    """Add an owner to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.owner.propose.batch_list(
+    batch_list = Role().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
         role_id=role_id,
-        user_id=request.json.get("id"),
+        next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
     )
@@ -198,21 +209,16 @@ async def add_role_owner(request, role_id):
     return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete("api/roles/<role_id>/owners")
-@authorized()
-async def delete_role_owner(request, role_id):
-    raise ApiNotImplemented()
-
-
 @ROLES_BP.post("api/roles/<role_id>/tasks")
 @authorized()
 async def add_role_task(request, role_id):
+    """Add a task to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = rbac.role.task.propose.batch_list(
+    batch_list = Role().task.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
@@ -227,13 +233,8 @@ async def add_role_task(request, role_id):
     return json({"proposal_id": proposal_id})
 
 
-@ROLES_BP.delete("api/roles/<role_id>/tasks")
-@authorized()
-async def delete_role_task(request, role_id):
-    raise ApiNotImplemented()
-
-
 def create_role_response(request, role_id):
+    """Compose the create new role response and return it as json."""
     role_resource = {
         "id": role_id,
         "name": request.json.get("name"),

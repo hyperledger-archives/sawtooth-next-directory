@@ -15,14 +15,15 @@
 """Create Task Test Helper"""
 # pylint: disable=no-member,too-few-public-methods
 
-import logging
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.task import Task
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StubTestHelper:
@@ -41,7 +42,7 @@ class CreateTaskTestHelper:
 
     def id(self):
         """Get a test task_id (not created)"""
-        return rbac.addresser.task.unique_id()
+        return addresser.task.unique_id()
 
     def name(self):
         """Get a random name"""
@@ -55,9 +56,9 @@ class CreateTaskTestHelper:
         """Get a test data CreateTask message"""
         task_id = self.id()
         name = self.name()
-        user_id = helper.user.id()
-        message = rbac.task.make(
-            task_id=task_id, name=name, owners=[user_id], admins=[user_id]
+        next_id = helper.user.id()
+        message = Task().make(
+            task_id=task_id, name=name, owners=[next_id], admins=[next_id]
         )
         assert isinstance(message, protobuf.task_transaction_pb2.CreateTask)
         assert message.task_id == task_id
@@ -69,21 +70,21 @@ class CreateTaskTestHelper:
         task_id = self.id()
         name = self.name()
         user, keypair = helper.user.create()
-        message = rbac.task.make(
-            task_id=task_id, name=name, owners=[user.user_id], admins=[user.user_id]
+        message = Task().make(
+            task_id=task_id, name=name, owners=[user.next_id], admins=[user.next_id]
         )
 
-        status = rbac.task.new(
-            signer_keypair=keypair, signer_user_id=user.user_id, message=message
+        status = Task().new(
+            signer_keypair=keypair, signer_user_id=user.next_id, message=message
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        task = rbac.task.get(object_id=message.task_id)
+        task = Task().get(object_id=message.task_id)
 
         assert task.task_id == message.task_id
         assert task.name == message.name
-        assert rbac.task.owner.exists(object_id=task.task_id, related_id=user.user_id)
-        assert rbac.task.admin.exists(object_id=task.task_id, related_id=user.user_id)
+        assert Task().owner.exists(object_id=task.task_id, related_id=user.next_id)
+        assert Task().admin.exists(object_id=task.task_id, related_id=user.next_id)
         return task, user, keypair

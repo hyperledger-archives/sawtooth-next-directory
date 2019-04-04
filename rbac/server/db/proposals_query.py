@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Functions for working with proposals."""
 
 import rethinkdb as r
 
@@ -21,7 +22,8 @@ from rbac.server.api.errors import ApiNotFound
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
+async def fetch_all_proposal_resources(conn, start, limit):
+    """Get all proposal resources."""
     return (
         await r.table("proposals")
         .order_by(index="proposal_id")
@@ -54,7 +56,8 @@ async def fetch_all_proposal_resources(conn, head_block_num, start, limit):
     )
 
 
-async def fetch_proposal_resource(conn, proposal_id, head_block_num):
+async def fetch_proposal_resource(conn, proposal_id):
+    """Get proposal resource by proposal_id."""
     resource = (
         await r.table("proposals")
         .get_all(proposal_id, index="proposal_id")
@@ -93,6 +96,7 @@ async def fetch_proposal_resource(conn, proposal_id, head_block_num):
 
 
 async def subscribe_to_proposals(conn):
+    """Returns a RethinkDB changefeed of changes to proposals."""
     return (
         await r.table("proposals")
         .map(
@@ -123,7 +127,8 @@ async def subscribe_to_proposals(conn):
     )
 
 
-def fetch_approver_ids(table, object_id, head_block_num):
+def fetch_approver_ids(table, object_id):
+    """Get approver ids for an object."""
     return (
         r.table(table)
         .get_all(object_id)
@@ -133,7 +138,8 @@ def fetch_approver_ids(table, object_id, head_block_num):
     )
 
 
-def fetch_proposal_ids_by_target(target, head_block_num):
+def fetch_proposal_ids_by_target(target):
+    """Get proposals for target object."""
     return (
         r.table("proposals")
         .get_all(target, index="related_id")
@@ -142,10 +148,11 @@ def fetch_proposal_ids_by_target(target, head_block_num):
     )
 
 
-def fetch_proposal_ids_by_opener(opener, head_block_num):
+def fetch_proposal_ids_by_opener(opener):
+    """Get all proposals for opener."""
     return (
         r.table("proposals")
         .get_all(opener, index="opener")
-        .pluck("proposal_id", "object_id", "metadata")
+        .pluck("proposal_id", "object_id", "pack_id")
         .coerce_to("array")
     )

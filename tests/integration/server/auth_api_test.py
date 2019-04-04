@@ -13,10 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Authentication API Endpoint Test"""
-
 import os
 import pytest
 import requests
+
+from tests.utilities import create_test_user
 
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 
@@ -70,15 +71,12 @@ INVALID_LDAP_INPUTS = [
     )
 ]
 
-
-def create_test_user(session):
-    create_user_input = {
-        "name": "Susan Susanson",
-        "username": "susan20",
-        "password": "123456",
-        "email": "susan@biz.co",
-    }
-    session.post("http://rbac-server:8000/api/users", json=create_user_input)
+USER_INPUT = {
+    "name": "Susan Susanson",
+    "username": "susan20",
+    "password": "123456",
+    "email": "susan@biz.co",
+}
 
 
 @pytest.mark.parametrize(
@@ -87,11 +85,12 @@ def create_test_user(session):
 def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with valid inputs """
     with requests.Session() as session:
-        create_test_user(session)
+        create_test_user(session, USER_INPUT)
         response = session.post(
             "http://rbac-server:8000/api/authorization/", json=login_inputs
         )
         assert response.json()["data"]["message"] == expected_result
+        assert response.status_code == expected_status_code
 
 
 @pytest.mark.parametrize(
@@ -99,6 +98,7 @@ def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
 )
 def test_invalid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with invalid inputs """
+    create_test_user(requests.Session(), USER_INPUT)
     with requests.Session() as session:
         response = session.post(
             "http://rbac-server:8000/api/authorization/", json=login_inputs

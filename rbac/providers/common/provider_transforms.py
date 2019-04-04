@@ -16,7 +16,7 @@
 """
 
 USER_TRANSFORM = {
-    "remote_id": {"azure": "id", "ldap": "objectGUID"},
+    "remote_id": {"azure": "id", "ldap": "distinguishedName"},
     "deleted_date": {"azure": "deletedDateTime", "ldap": None},
     "account_enabled": {"azure": "accountEnabled", "ldap": None},
     "business_phones": {"azure": "businessPhones", "ldap": "telephoneNumber"},
@@ -47,11 +47,10 @@ USER_TRANSFORM = {
     "usage_location": {"azure": "usageLocation", "ldap": None},
     "user_principal_name": {"azure": "userPrincipalName", "ldap": "userPrincipalName"},
     "user_type": {"azure": "userType", "ldap": None},
-    "relationship_id": {"azure": "id", "ldap": "distinguishedName"},
 }
 
 GROUP_TRANSFORM = {
-    "remote_id": {"azure": "id", "ldap": "objectGUID"},
+    "remote_id": {"azure": "id", "ldap": "distinguishedName"},
     "created_date": {"azure": "createdDateTime", "ldap": "whenCreated"},
     "deleted_date": {"azure": "deletedDateTime", "ldap": None},
     "distinguished_name": {"azure": None, "ldap": "distinguishedName"},
@@ -65,7 +64,6 @@ GROUP_TRANSFORM = {
     "security_enabled": {"azure": "securityEnabled", "ldap": None},
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
-    "relationship_id": {"azure": "id", "ldap": "distinguishedName"},
 }
 
 USER_CREATION_TRANSFORM = {

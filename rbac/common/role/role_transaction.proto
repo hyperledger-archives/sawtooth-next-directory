@@ -23,11 +23,13 @@ message ProposeAddRoleMember {
 
     string role_id = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string reason = 4;
 
     string metadata = 5;
+
+    string pack_id = 6;
 
 }
 
@@ -38,7 +40,7 @@ message ProposeAddRoleOwner {
 
     string role_id = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string reason = 4;
 
@@ -53,7 +55,7 @@ message ProposeAddRoleAdmin {
 
     string role_id = 2;
 
-    string user_id = 3;
+    string next_id = 3;
 
     string reason = 4;
 

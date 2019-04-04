@@ -15,7 +15,6 @@
 """Implements the User library: rbac.user.*"""
 # pylint: disable=too-few-public-methods
 
-import logging
 from rbac.common.user.create_user import CreateUser
 from rbac.common.user.propose_manager import ProposeUpdateUserManager
 from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
@@ -25,8 +24,9 @@ from rbac.common.user.user_address import UserManagerAddress
 from rbac.common.user.user_address import UserDirectReportAddress
 from rbac.common.user.user_address import UserEmailAddress
 from rbac.common.user.user_address import UserKeyAddress
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class Manager(UserManagerAddress):

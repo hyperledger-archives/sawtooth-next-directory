@@ -163,11 +163,10 @@ export const RequesterSelectors = {
         delete role.metadata;
         const merged = { ...request, ...role };
 
-        if (merged.metadata && merged.metadata.length) {
-          const metadata = JSON.parse(merged.metadata);
+        if (merged.pack_id) {
           const pack = state.requester.packs &&
             state.requester.packs.find(
-              pack => pack.id === metadata.pack_id
+              pack => pack.id === merged.pack_id
             );
           pack && requests.push(pack);
         } else {
@@ -179,32 +178,14 @@ export const RequesterSelectors = {
   },
 
 
-  // Retrieve a unique set of packs and roles a user
+  // Retrieve a unique set of roles a user
   // is member of grouped like the following:
-  // [{ pack }, { role }, { pack } ...]
+  // [{ role }, { role }, ...]
   memberOf: (state) => {
     if (!state.user.me) return null;
-    let memberOf = [];
+    const memberOf = [];
 
     for (const roleId of state.user.me.memberOf) {
-      const request = state.user.me.proposals.find(
-        item => item.object_id === roleId
-      );
-
-      if (request) {
-        const metadata = request.metadata &&
-          request.metadata.length &&
-          JSON.parse(request.metadata);
-        if (metadata) {
-          if (state.requester.packs) {
-            const pack = state.requester.packs.find(
-              pack => pack.id === metadata.pack_id
-            );
-            pack && memberOf.push(pack);
-          }
-          continue;
-        }
-      }
       if (state.requester.roles) {
         const role = state.requester.roles.find(
           role => role.id === roleId
@@ -213,7 +194,34 @@ export const RequesterSelectors = {
       }
     }
 
-    memberOf = memberOf.filter(item => {
+    return [...new Set(memberOf)];
+  },
+
+
+  // Retrieve a unique set of packs a user
+  // is member of grouped like the following:
+  // [{ pack }, { pack }, ...]
+  memberOfPacks: (state) => {
+    if (!state.user.me) return null;
+    let memberOfPacks = [];
+
+    for (const roleId of state.user.me.memberOf) {
+      const request = state.user.me.proposals.find(
+        item => item.object_id === roleId
+      );
+
+      if (request && request.pack_id) {
+        if (state.requester.packs){
+          const pack = state.requester.packs.find(
+            pack => pack.id === request.pack_id
+          );
+          pack && memberOfPacks.push(pack);
+        }
+        continue;
+      }
+    }
+
+    memberOfPacks = memberOfPacks.filter(item => {
       if (item.roles) {
         if (!state.requester.requests) return false;
         const isOpen = state.requester.requests.find(
@@ -225,9 +233,8 @@ export const RequesterSelectors = {
       return true;
     });
 
-    return [...new Set(memberOf)];
+    return [...new Set(memberOfPacks)];
   },
-
 
   ownerOf: (state) =>
     [...new Set([
@@ -259,11 +266,6 @@ export const RequesterSelectors = {
   packProposalIds: (state, id) =>
     state.requester.requests &&
     state.requester.requests.filter(
-      item => {
-        const metadata = item.metadata &&
-          item.metadata.length &&
-          JSON.parse(item.metadata);
-        return metadata && metadata.pack_id === id;
-      }
+      item => item.pack_id === id
     ).map(item => item.id),
 };

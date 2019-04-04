@@ -15,15 +15,16 @@
 """Propose Task Admin Test Helper"""
 # pylint: disable=no-member,too-few-public-methods
 
-import logging
 import random
 
-from rbac.common import rbac
+from rbac.common import addresser
+from rbac.common.task import Task
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.common.task.create_task_helper import CreateTaskTestHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class StubTestHelper:
@@ -43,7 +44,7 @@ class ProposeTaskAdminTestHelper:
 
     def id(self):
         """Get a unique identifier"""
-        return rbac.addresser.proposal.unique_id()
+        return addresser.proposal.unique_id()
 
     def reason(self):
         """Get a random reason"""
@@ -56,27 +57,27 @@ class ProposeTaskAdminTestHelper:
         user, user_key = helper.user.create()
         proposal_id = self.id()
         reason = self.reason()
-        message = rbac.task.admin.propose.make(
+        message = Task().admin.propose.make(
             proposal_id=proposal_id,
             task_id=task.task_id,
-            user_id=user.user_id,
+            next_id=user.next_id,
             reason=reason,
             metadata=None,
         )
 
-        status = rbac.task.admin.propose.new(
+        status = Task().admin.propose.new(
             signer_keypair=user_key,
-            signer_user_id=user.user_id,
+            signer_user_id=user.next_id,
             message=message,
             object_id=task.task_id,
-            related_id=user.user_id,
+            related_id=user.next_id,
         )
 
         assert len(status) == 1
         assert status[0]["status"] == "COMMITTED"
 
-        proposal = rbac.task.admin.propose.get(
-            object_id=task.task_id, related_id=user.user_id
+        proposal = Task().admin.propose.get(
+            object_id=task.task_id, related_id=user.next_id
         )
 
         assert isinstance(proposal, protobuf.proposal_state_pb2.Proposal)
@@ -86,7 +87,7 @@ class ProposeTaskAdminTestHelper:
         )
         assert proposal.proposal_id == proposal_id
         assert proposal.object_id == task.task_id
-        assert proposal.related_id == user.user_id
-        assert proposal.opener == user.user_id
+        assert proposal.related_id == user.next_id
+        assert proposal.opener == user.next_id
         assert proposal.open_reason == reason
         return proposal, task, task_owner, task_owner_key, user, user_key

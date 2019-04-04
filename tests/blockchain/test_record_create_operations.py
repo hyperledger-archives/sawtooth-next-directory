@@ -12,23 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test suite for user operations"""
 
-import logging
 import unittest
 import pytest
 
 from tests.blockchain.rbac_client import RbacClient
 from tests.blockchain.integration_test_helper import IntegrationTestHelper
 from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
 
 BATCHER_KEY = Key()
-
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.blockchain
 class TestUserOperations(unittest.TestCase):
+    """User operations."""
+
     @classmethod
     def setUpClass(cls):
         cls.test_helper = IntegrationTestHelper()
@@ -39,17 +41,19 @@ class TestUserOperations(unittest.TestCase):
         cls.role_key, cls.role_name = cls.test_helper.make_key_and_name()
 
     def test_create_user(self):
+        """Create user."""
         self.assertEqual(
             self.client.create_user(
                 key=self.user_key,
                 name=self.username,
                 username=self.username,
-                user_id=self.user_key.public_key,
+                next_id=self.user_key.public_key,
             )[0]["status"],
             "COMMITTED",
         )
 
     def test_create_role_no_admin(self):
+        """Create role without admin."""
         with self.assertRaises(ValueError) as err:
             self.client.create_role(
                 key=self.role_key,

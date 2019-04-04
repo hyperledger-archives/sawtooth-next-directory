@@ -14,15 +14,14 @@
 # -----------------------------------------------------------------------------
 """Test Propose Role Owner Helper"""
 # pylint: disable=no-member
-
-import logging
 import pytest
 
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.role
@@ -66,4 +65,4 @@ def test_create():
     assert isinstance(user_key, Key)
     assert isinstance(role_owner_key, Key)
     assert proposal.object_id == role.role_id
-    assert proposal.related_id == user.user_id
+    assert proposal.related_id == user.next_id

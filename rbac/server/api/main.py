@@ -48,6 +48,7 @@ LOGGER = get_default_logger(__name__)
 
 
 async def init(app, loop):
+    """Initialize API Server."""
     LOGGER.warning("Opening database connection")
     app.config.DB_CONN = await db_utils.create_connection(
         app.config.DB_HOST, app.config.DB_PORT, app.config.DB_NAME
@@ -65,6 +66,7 @@ async def init(app, loop):
 
 
 def finish(app):
+    """Close connections."""
     LOGGER.warning("Closing database connection")
     app.config.DB_CONN.close()
 

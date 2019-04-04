@@ -14,15 +14,14 @@
 # -----------------------------------------------------------------------------
 """Test Propose Manager Test Helper"""
 # pylint: disable=no-member
-
-import logging
 import pytest
 
 from rbac.common import protobuf
 from rbac.common.crypto.keys import Key
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.user
@@ -62,6 +61,6 @@ def test_create():
     assert isinstance(manager, protobuf.user_state_pb2.User)
     assert isinstance(user_key, Key)
     assert isinstance(manager_key, Key)
-    assert proposal.object_id == user.user_id
-    assert proposal.related_id == manager.user_id
+    assert proposal.object_id == user.next_id
+    assert proposal.related_id == manager.next_id
     assert user.manager_id == ""

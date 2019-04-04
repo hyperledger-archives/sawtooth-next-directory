@@ -19,13 +19,11 @@ import argparse
 import logging
 import sys
 import os
-
 import rethinkdb as r
+
 from rethinkdb.errors import ReqlRuntimeError
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.INFO
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('DB_PORT', '28015')
@@ -54,7 +52,7 @@ def setup_db(host, port, name):
         r.db_create(name).run(conn)
 
         LOGGER.info('Creating table: auth')
-        r.db(name).table_create("auth", primary_key="user_id").run(conn)
+        r.db(name).table_create("auth", primary_key="next_id").run(conn)
         r.db(name).table("auth").index_create("username").run(conn)
 
         LOGGER.info('Creating table: blocks')
@@ -76,16 +74,20 @@ def setup_db(host, port, name):
 
         LOGGER.info('Creating table: users')
         r.db(name).table_create('users').run(conn)
-        r.db(name).table('users').index_create('user_id').run(conn)
+        r.db(name).table('users').index_create('next_id').run(conn)
         r.db(name).table("users").index_create("username").run(conn)
         r.db(name).table("users").index_create("email").run(conn)
         r.db(name).table("users").index_create("name").run(conn)
+
+        LOGGER.info('Creating table: user_mapping')
+        r.db(name).table_create('user_mapping', primary_key= "next_id").run(conn)
 
         LOGGER.info('Creating table: sync_tracker')
         r.db(name).table_create('sync_tracker').run(conn)
 
         LOGGER.info('Creating table: inbound_queue')
         r.db(name).table_create('inbound_queue').run(conn)
+        r.db(name).table('inbound_queue').index_create('timestamp').run(conn)
 
         LOGGER.info('Creating table: sync_errors')
         r.db(name).table_create('sync_errors').run(conn)

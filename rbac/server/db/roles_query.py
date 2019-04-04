@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Queries for getting & working with role resources."""
 
 import rethinkdb as r
 
@@ -25,7 +26,8 @@ from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 LOGGER = get_default_logger(__name__)
 
 
-async def fetch_all_role_resources(conn, head_block_num, start, limit):
+async def fetch_all_role_resources(conn, start, limit):
+    """Get all role resources."""
     resources = (
         await r.table("roles")
         .order_by(index="role_id")
@@ -35,22 +37,20 @@ async def fetch_all_role_resources(conn, head_block_num, start, limit):
                 {
                     "id": role["role_id"],
                     "owners": fetch_relationships(
-                        "role_owners", "role_id", role["role_id"], head_block_num
+                        "role_owners", "role_id", role["role_id"]
                     ),
                     "administrators": fetch_relationships(
-                        "role_admins", "role_id", role["role_id"], head_block_num
+                        "role_admins", "role_id", role["role_id"]
                     ),
                     "members": fetch_relationships(
-                        "role_members", "role_id", role["role_id"], head_block_num
+                        "role_members", "role_id", role["role_id"]
                     ),
                     "tasks": fetch_relationships(
-                        "role_tasks", "role_id", role["role_id"], head_block_num
+                        "role_tasks", "role_id", role["role_id"]
                     ),
-                    "proposals": fetch_proposal_ids_by_opener(
-                        role["role_id"], head_block_num
-                    ),
+                    "proposals": fetch_proposal_ids_by_opener(role["role_id"]),
                     "packs": fetch_relationships(
-                        "role_packs", "role_id", role["role_id"], head_block_num
+                        "role_packs", "role_id", role["role_id"]
                     ),
                 }
             )
@@ -62,29 +62,22 @@ async def fetch_all_role_resources(conn, head_block_num, start, limit):
     return resources
 
 
-async def fetch_role_resource(conn, role_id, head_block_num):
+async def fetch_role_resource(conn, role_id):
+    """Get a role resource by role_id."""
     resource = (
         await r.table("roles")
         .get_all(role_id, index="role_id")
         .merge(
             {
                 "id": r.row["role_id"],
-                "owners": fetch_relationships(
-                    "role_owners", "role_id", role_id, head_block_num
-                ),
+                "owners": fetch_relationships("role_owners", "role_id", role_id),
                 "administrators": fetch_relationships(
-                    "role_admins", "role_id", role_id, head_block_num
+                    "role_admins", "role_id", role_id
                 ),
-                "members": fetch_relationships(
-                    "role_members", "role_id", role_id, head_block_num
-                ),
-                "tasks": fetch_relationships(
-                    "role_tasks", "role_id", role_id, head_block_num
-                ),
-                "proposals": fetch_proposal_ids_by_opener(role_id, head_block_num),
-                "packs": fetch_relationships(
-                    "role_packs", "role_id", role_id, head_block_num
-                ),
+                "members": fetch_relationships("role_members", "role_id", role_id),
+                "tasks": fetch_relationships("role_tasks", "role_id", role_id),
+                "proposals": fetch_proposal_ids_by_opener(role_id),
+                "packs": fetch_relationships("role_packs", "role_id", role_id),
             }
         )
         .without("role_id")
@@ -97,23 +90,23 @@ async def fetch_role_resource(conn, role_id, head_block_num):
         raise ApiNotFound("Role {} doesn't exist.".format(role_id))
 
 
-async def expire_role_member(conn, role_id, user_id, head_block_num):
+async def expire_role_member(conn, role_id, next_id):
     """Expire role membership of given user"""
     return (
         await r.table("role_members")
         .get_all(role_id, index="role_id")
-        .filter(lambda doc: doc["identifiers"].contains(user_id))
+        .filter(lambda doc: doc["identifiers"].contains(next_id))
         .update({"expiration_date": r.now()})
         .run(conn)
     )
 
 
-def fetch_expired_roles(user_id):
+def fetch_expired_roles(next_id):
     """Fetch expired role memberships of given user"""
     return (
         r.table("role_members")
         .filter(
-            lambda doc: (doc["identifiers"].contains(user_id))
+            lambda doc: (doc["identifiers"].contains(next_id))
             & (doc["expiration_date"] <= r.now())
         )
         .get_field("role_id")
@@ -134,10 +127,10 @@ async def search_roles(conn, search_query, paging):
                 {
                     "id": doc["role_id"],
                     "members": fetch_relationships(
-                        "role_members", "role_id", doc["role_id"], None
+                        "role_members", "role_id", doc["role_id"]
                     ),
                     "owners": fetch_relationships(
-                        "role_owners", "role_id", doc["role_id"], None
+                        "role_owners", "role_id", doc["role_id"]
                     ),
                 }
             ).without("role_id")
@@ -188,4 +181,16 @@ def roles_search_description(search_query):
         .coerce_to("array")
     )
 
+    return resource
+
+
+async def roles_search_duplicate(conn, name):
+    """Search for roles based a string int the name field."""
+    resource = (
+        await r.table("roles")
+        .filter(lambda doc: (doc["name"].match("(?i)^" + name + "$")))
+        .order_by("name")
+        .coerce_to("array")
+        .run(conn)
+    )
     return resource

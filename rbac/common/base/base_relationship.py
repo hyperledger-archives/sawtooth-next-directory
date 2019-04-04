@@ -15,14 +15,14 @@
 """Base Relationship acts as a common base class for all
 relationship classes. It is able to access state relationship
 information."""
-import logging
 
 from rbac.common import protobuf
 from rbac.common.protobuf import relationship_state_pb2
 from rbac.common.sawtooth.client_sync import ClientSync
 from rbac.common.base.base_address import AddressBase
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class BaseRelationship(AddressBase):
@@ -123,4 +123,5 @@ class BaseRelationship(AddressBase):
         return bool(store.object_id == object_id and store.related_id == related_id)
 
     def not_exists(self, object_id, related_id):
+        """Check the nihility of a relationship record."""
         return not self.exists(object_id=object_id, related_id=related_id)

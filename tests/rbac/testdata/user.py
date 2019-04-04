@@ -18,7 +18,7 @@
 import random
 import string
 
-from rbac.common import rbac
+from rbac.common import addresser
 from rbac.common.crypto.keys import Key
 
 
@@ -37,8 +37,8 @@ class UserTestData:
         self.last_password = None
 
     def id(self):
-        """Get a test user_id (not created)"""
-        self.last_id = rbac.addresser.user.unique_id()
+        """Get a test next_id (not created)"""
+        self.last_id = addresser.user.unique_id()
         return self.last_id
 
     def key(self):
@@ -50,7 +50,7 @@ class UserTestData:
         """Returns a 12-byte hash of a given string, unless it is already a
         12-byte hexadecimal string (e.g. as returned by the unique_id function).
         Returns zero bytes if the value is None or falsey"""
-        self.last_hash = rbac.addresser.role.hash(value)
+        self.last_hash = addresser.role.hash(value)
         return self.last_hash
 
     def name(self):

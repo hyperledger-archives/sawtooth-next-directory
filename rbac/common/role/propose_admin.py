@@ -14,11 +14,12 @@
 # -----------------------------------------------------------------------------
 """Implements the PROPOSE_ADD_ROLE_ADMIN message
 usage: rbac.role.admin.propose.create()"""
-import logging
+
 from rbac.common import addresser
 from rbac.common.proposal.proposal_propose import ProposalPropose
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ProposeAddRoleAdmin(ProposalPropose):
@@ -54,18 +55,18 @@ class ProposeAddRoleAdmin(ProposalPropose):
         inputs, outputs = super().make_addresses(message, signer_user_id)
 
         relationship_address = addresser.role.admin.address(
-            message.role_id, message.user_id
+            message.role_id, message.next_id
         )
         inputs.add(relationship_address)
 
-        user_address = addresser.user.address(message.user_id)
+        user_address = addresser.user.address(message.next_id)
         inputs.add(user_address)
 
         role_address = addresser.role.address(message.role_id)
         inputs.add(role_address)
 
         proposal_address = self.address(
-            object_id=message.role_id, related_id=message.user_id
+            object_id=message.role_id, related_id=message.next_id
         )
         inputs.add(proposal_address)
         outputs.add(proposal_address)
@@ -86,10 +87,10 @@ class ProposeAddRoleAdmin(ProposalPropose):
             inputs=payload.inputs,
             input_state=input_state,
             object_id=message.role_id,
-            related_id=message.user_id,
+            related_id=message.next_id,
         ):
             raise ValueError(
                 "User {} is already an admin of role {}".format(
-                    message.user_id, message.role_id
+                    message.next_id, message.role_id
                 )
             )

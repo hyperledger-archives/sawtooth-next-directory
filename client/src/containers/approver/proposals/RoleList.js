@@ -213,7 +213,7 @@ class RoleList extends Component {
           padded
           onClick={() => this.handleSegmentClick(roleId)}>
           <Checkbox
-            defaultIndeterminate={this.isIndeterminate(roleId)}
+            indeterminate={this.isIndeterminate(roleId)}
             checked={this.isRoleChecked(roleId)}
             role={roleId}
             label={this.roleName(roleId)}

@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Utility functions for RethinkDB."""
 
 import rethinkdb as r
 
 
 async def create_connection(host, port, name):
+    """Create a new connection to RethinkDB."""
     r.set_loop_type("asyncio")
     connection = await r.connect(host=host, port=port, db=name)
     return connection

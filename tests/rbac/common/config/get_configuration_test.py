@@ -16,13 +16,13 @@
 # pylint: disable=invalid-name
 
 import os
-import logging
 import pytest
 
 from rbac.common.config.config import get_environment
 from rbac.common.config.config import get_config
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.config

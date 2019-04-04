@@ -30,6 +30,7 @@ import PropTypes from 'prop-types';
 import './Header.css';
 import Avatar from './Avatar';
 import Notifications from './Notifications';
+import About from './About';
 import logo from 'images/next-logo-primary.png';
 import * as utils from 'services/Utils';
 import * as storage from 'services/Storage';
@@ -80,7 +81,7 @@ class Header extends Component {
       'mousedown', this.handleClickOutside
     );
     if (isSocketOpen('feed'))
-      sendSocket('feed', { user_id: id });
+      sendSocket('feed', { next_id: id });
   }
 
 
@@ -112,7 +113,7 @@ class Header extends Component {
     }
     if (prevProps.isSocketOpen('feed') !== isSocketOpen('feed') &&
       isSocketOpen('feed'))
-      sendSocket('feed', { user_id: id });
+      sendSocket('feed', { next_id: id });
   }
 
 
@@ -170,6 +171,18 @@ class Header extends Component {
     this.setState({
       globalMenuVisible: !globalMenuVisible,
       notificationMenuVisible: false });
+  }
+
+
+  /**
+   * Toggle about modal
+   */
+  toggleAboutModal = () => {
+    const { aboutModalVisible } = this.state;
+    this.setState({
+      aboutModalVisible: !aboutModalVisible,
+      globalMenuVisible: false,
+    });
   }
 
 
@@ -233,7 +246,6 @@ class Header extends Component {
    * @returns {JSX}
    */
   renderApprover = () => {
-
     const { approverViewEnabled } = this.state;
     return (
       <Menu.Item id='next-header-global-menu-view-toggle'>
@@ -292,6 +304,15 @@ class Header extends Component {
             </MenuHeader>
           </Menu.Item>
           <Menu.Item
+            onClick={this.toggleAboutModal}>
+            <MenuHeader as='h5'>
+              <Icon name='info circle' color='grey'/>
+              <MenuHeader.Content>
+                About
+              </MenuHeader.Content>
+            </MenuHeader>
+          </Menu.Item>
+          <Menu.Item
             id='next-signout-button'
             onClick={this.logout}>
             <MenuHeader as='h5'>
@@ -319,12 +340,16 @@ class Header extends Component {
       recommendedRoles,
       startAnimation } = this.props;
     const {
+      aboutModalVisible,
       approverViewEnabled,
       globalMenuVisible,
       notificationMenuVisible } = this.state;
     return (
       <header className='next-header' ref={this.setRef}>
         <LoadingBar className='next-global-loading-bar'/>
+        <About
+          showModal={aboutModalVisible}
+          handleClose={this.toggleAboutModal}/>
         <div id='next-header-logo'>
           <Image
             as={Link}

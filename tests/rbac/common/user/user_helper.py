@@ -14,14 +14,12 @@
 # -----------------------------------------------------------------------------
 """User Test Helper"""
 # pylint: disable=no-member,too-few-public-methods,invalid-name
-
-import logging
-
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.user.create_user_helper import CreateUserTestHelper
 from tests.rbac.common.user.propose_manager_helper import ProposeManagerTestHelper
 from tests.rbac.testdata.user import UserTestData
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class UserManangerTestHelper:

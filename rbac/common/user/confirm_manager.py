@@ -14,11 +14,11 @@
 # -----------------------------------------------------------------------------
 """Implements the CONFIRM_UPDATE_USER_MANAGER message
 usage: rbac.user.manager.confirm.create()"""
-import logging
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ConfirmUpdateUserManager(ProposalConfirm):
@@ -87,7 +87,7 @@ class ConfirmUpdateUserManager(ProposalConfirm):
         )
         # TODO: change to verify proposal assignment and hierarchy
 
-    #        if message.related_id != payload.signer.user_id:
+    #        if message.related_id != payload.signer.next_id:
     #            raise ValueError(
     #                "Proposed manager {} is not the transaction signer".format(
     #                    message.related_id

@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
-import json as json_encode
-
+"""Packs APIs."""
 from uuid import uuid4
 
 from sanic import Blueprint
@@ -24,8 +22,9 @@ from rbac.server.api.auth import authorized
 from rbac.server.api import roles, utils
 
 from rbac.server.db import packs_query
-
+from rbac.server.api.errors import ApiBadRequest
 from rbac.server.db import db_utils
+
 
 PACKS_BP = Blueprint("packs")
 
@@ -43,9 +42,7 @@ async def get_all_packs(request):
         request.app.config.DB_NAME,
     )
 
-    pack_resources = await packs_query.fetch_all_pack_resources(
-        conn, head_block.get("num"), start, limit
-    )
+    pack_resources = await packs_query.fetch_all_pack_resources(conn, start, limit)
 
     conn.close()
 
@@ -60,26 +57,27 @@ async def create_new_pack(request):
     """Create a new pack"""
     required_fields = ["owners", "name", "roles"]
     utils.validate_fields(required_fields, request.json)
-
     conn = await db_utils.create_connection(
         request.app.config.DB_HOST,
         request.app.config.DB_PORT,
         request.app.config.DB_NAME,
     )
-
-    pack_id = str(uuid4())
-    await packs_query.create_pack_resource(
-        conn,
-        pack_id,
-        request.json.get("owners"),
-        request.json.get("name"),
-        request.json.get("description"),
+    response = await packs_query.packs_search_duplicate(conn, request.json.get("name"))
+    if not response:
+        pack_id = str(uuid4())
+        await packs_query.create_pack_resource(
+            conn,
+            pack_id,
+            request.json.get("owners"),
+            request.json.get("name"),
+            request.json.get("description"),
+        )
+        await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
+        conn.close()
+        return create_pack_response(request, pack_id)
+    raise ApiBadRequest(
+        "Error: could not create this pack because pack name has been taken or already exists"
     )
-    await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
-
-    conn.close()
-
-    return create_pack_response(request, pack_id)
 
 
 @PACKS_BP.get("api/packs/<pack_id>")
@@ -94,13 +92,25 @@ async def get_pack(request, pack_id):
     )
 
     head_block = await utils.get_request_block(request)
-    pack_resource = await packs_query.fetch_pack_resource(
-        conn, pack_id, head_block.get("num")
-    )
+    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
 
     conn.close()
 
     return await utils.create_response(conn, request.url, pack_resource, head_block)
+
+
+@PACKS_BP.get("api/packs/check")
+@authorized()
+async def check_pack_name(request):
+    """Check if a pack exists with provided name"""
+    conn = await db_utils.create_connection(
+        request.app.config.DB_HOST,
+        request.app.config.DB_PORT,
+        request.app.config.DB_NAME,
+    )
+    response = await packs_query.packs_search_duplicate(conn, request.args.get("name"))
+    conn.close()
+    return json({"exists": bool(response)})
 
 
 @PACKS_BP.post("api/packs/<pack_id>/members")
@@ -117,13 +127,12 @@ async def add_pack_member(request, pack_id):
     )
 
     head_block = await utils.get_request_block(request)
-    pack_resource = await packs_query.fetch_pack_resource(
-        conn, pack_id, head_block.get("num")
-    )
+    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
 
     conn.close()
 
-    request.json["metadata"] = json_encode.dumps({"pack_id": pack_id})
+    request.json["metadata"] = ""
+    request.json["pack_id"] = pack_id
     for role_id in pack_resource.get("roles"):
         await roles.add_role_member(request, role_id)
     return json({"pack_id": pack_id})

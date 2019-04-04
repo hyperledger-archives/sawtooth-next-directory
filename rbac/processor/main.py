@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Starts the sawtooth transaction processor with args."""
 
 import argparse
-import logging
 import sys
 import os
 
@@ -22,18 +22,16 @@ from sawtooth_sdk.processor.core import TransactionProcessor
 from sawtooth_sdk.processor.log import init_console_logging
 
 from rbac.processor.event_handler import RBACTransactionHandler
+from rbac.common.logs import get_default_logger
 
-logging.basicConfig(level=logging.DEBUG)
-logging.getLogger("sawtooth_sdk.processor.core").setLevel(logging.WARNING)
-
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+LOGGER = get_default_logger(__name__)
 
 VALIDATOR_HOST = os.getenv("VALIDATOR_HOST", "validator")
 VALIDATOR_PORT = os.getenv("VALIDATOR_PORT", "4004")
 
 
 def parse_args(args):
+    """Parse args into options for transaction processor."""
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument("-v", "--verbosity", action="count", help="The logging level.")
@@ -49,6 +47,7 @@ def parse_args(args):
 
 
 def main(args=None):
+    """Starts sawtooth transaction processor with options set per args."""
     if args is None:
         args = sys.argv[1:]
     opts = parse_args(args)

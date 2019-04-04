@@ -85,7 +85,7 @@ class People extends Component {
    * @param {object} activeUser User ID
    */
   handleUserSelect = (activeUser) => {
-    this.setState({ activeUser });
+    activeUser && this.setState({ activeUser });
   };
 
 

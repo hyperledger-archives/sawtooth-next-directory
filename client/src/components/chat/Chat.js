@@ -83,7 +83,7 @@ class Chat extends Component {
       sendMessage } = this.props;
     const payload = {
       text: message,
-      user_id: id,
+      next_id: id,
       resource_id: (activeRole && activeRole.id) ||
         (activePack && activePack.id),
     };
@@ -135,7 +135,7 @@ class Chat extends Component {
   manualErrorTest = () => {
     const { sendMessage } = this.props;
     sendMessage({
-      fail: 'yes', do: 'CREATE', message: { text: '/recommend' }, user_id: '?',
+      fail: 'yes', do: 'CREATE', message: { text: '/recommend' }, next_id: '?',
     });
   }
 

@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
-import logging
+"""Webhooks for chatbot."""
 
 from sanic import Blueprint
 
 from rbac.server.api.auth import authorized
 from rbac.server.api import packs, roles
 from rbac.server.api import utils
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 WEBHOOKS_BP = Blueprint("webhooks")
 
 

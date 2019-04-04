@@ -14,15 +14,14 @@
 # -----------------------------------------------------------------------------
 """Reject Role Add Member Test"""
 # pylint: disable=no-member
-
-import logging
 import pytest
 
-from rbac.common import rbac
+from rbac.common.role import Role
 from rbac.common import protobuf
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.role
@@ -33,7 +32,7 @@ def test_make():
     object_id = helper.role.id()
     proposal_id = helper.proposal.id()
     reason = helper.proposal.reason()
-    message = rbac.role.member.reject.make(
+    message = Role().member.reject.make(
         proposal_id=proposal_id,
         related_id=related_id,
         object_id=object_id,
@@ -53,19 +52,19 @@ def test_make_addresses():
     related_id = helper.user.id()
     object_id = helper.role.id()
     proposal_id = helper.proposal.id()
-    proposal_address = rbac.role.member.propose.address(object_id, related_id)
+    proposal_address = Role().member.propose.address(object_id, related_id)
     reason = helper.proposal.reason()
     signer_user_id = helper.user.id()
-    signer_admin_address = rbac.role.admin.address(object_id, signer_user_id)
-    signer_owner_address = rbac.role.owner.address(object_id, signer_user_id)
-    message = rbac.role.member.reject.make(
+    signer_admin_address = Role().admin.address(object_id, signer_user_id)
+    signer_owner_address = Role().owner.address(object_id, signer_user_id)
+    message = Role().member.reject.make(
         proposal_id=proposal_id,
         related_id=related_id,
         object_id=object_id,
         reason=reason,
     )
 
-    inputs, outputs = rbac.role.member.reject.make_addresses(
+    inputs, outputs = Role().member.reject.make_addresses(
         message=message, signer_user_id=signer_user_id
     )
 
@@ -83,16 +82,16 @@ def test_create():
     proposal, _, role_owner, role_owner_key, _, _ = helper.role.member.propose.create()
 
     reason = helper.role.member.propose.reason()
-    message = rbac.role.member.reject.make(
+    message = Role().member.reject.make(
         proposal_id=proposal.proposal_id,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
         reason=reason,
     )
 
-    status = rbac.role.member.reject.new(
+    status = Role().member.reject.new(
         signer_keypair=role_owner_key,
-        signer_user_id=role_owner.user_id,
+        signer_user_id=role_owner.next_id,
         message=message,
         object_id=proposal.object_id,
         related_id=proposal.related_id,
@@ -101,7 +100,7 @@ def test_create():
     assert len(status) == 1
     assert status[0]["status"] == "COMMITTED"
 
-    reject = rbac.role.member.propose.get(
+    reject = Role().member.propose.get(
         object_id=proposal.object_id, related_id=proposal.related_id
     )
 
@@ -111,5 +110,5 @@ def test_create():
     assert reject.object_id == proposal.object_id
     assert reject.related_id == proposal.related_id
     assert reject.close_reason == reason
-    assert reject.closer == role_owner.user_id
+    assert reject.closer == role_owner.next_id
     assert reject.status == protobuf.proposal_state_pb2.Proposal.REJECTED

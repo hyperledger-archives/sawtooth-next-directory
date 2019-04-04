@@ -15,8 +15,6 @@
 """Test the Sawtooth REST client"""
 
 # pylint: disable=too-many-branches
-
-import logging
 from base64 import b64decode
 import pytest
 
@@ -26,9 +24,10 @@ from rbac.common.protobuf import proposal_state_pb2
 from rbac.common.protobuf import role_state_pb2
 from rbac.common.protobuf import task_state_pb2
 from rbac.common.protobuf import user_state_pb2
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions import TestAssertions
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.integration

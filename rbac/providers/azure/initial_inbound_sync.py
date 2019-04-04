@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
+"""Performs initial inbound sync from Azure AD."""
 
 import os
 import time
@@ -28,13 +29,8 @@ from rbac.providers.common.inbound_filters import (
 )
 from rbac.providers.common.common import check_last_sync
 from rbac.providers.common.db_queries import connect_to_db, save_sync_time
-from rbac.providers.common.rbac_transactions import add_transaction
 
 LOGGER = get_default_logger(__name__)
-
-DB_HOST = os.getenv("DB_HOST", "rethink")
-DB_PORT = os.getenv("DB_PORT", "28015")
-DB_NAME = os.getenv("DB_NAME", "rbac")
 GRAPH_URL = "https://graph.microsoft.com/beta/"
 
 TENANT_ID = os.getenv("TENANT_ID")
@@ -97,19 +93,19 @@ def fetch_users():
     return None
 
 
-def fetch_user_manager(user_id):
+def fetch_user_manager(next_id):
     """Call to get JSON payload for a user's manager in Azure Active Directory."""
     headers = AUTH.check_token("GET")
     if headers:
         manager_payload = requests.get(
-            url=GRAPH_URL + "users/" + user_id + "/manager", headers=headers
+            url=GRAPH_URL + "users/" + next_id + "/manager", headers=headers
         )
         if manager_payload.status_code == 200:
             return manager_payload.json()
         if manager_payload.status_code == 404:
             return None
         if manager_payload.status_code == 429:
-            return fetch_retry(manager_payload.headers, fetch_user_manager, user_id)
+            return fetch_retry(manager_payload.headers, fetch_user_manager, next_id)
         LOGGER.error(
             "A %s error has occurred when getting the user's manger: %s",
             manager_payload.status_code,
@@ -172,7 +168,6 @@ def insert_group_to_db(groups_dict):
             "provider_id": TENANT_ID,
             "raw": group,
         }
-        add_transaction(inbound_entry)
         r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()
 
@@ -195,7 +190,6 @@ def insert_user_to_db(users_dict):
             "provider_id": TENANT_ID,
             "raw": user,
         }
-        add_transaction(inbound_entry)
         r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()
 
@@ -213,12 +207,10 @@ def initialize_aad_sync():
         users = fetch_users()
         if users:
             insert_user_to_db(users)
-            while "@odata.nextLink" in users:
+            while "@odata.nextLink" in users and users:
                 users = fetch_next_payload(users["@odata.nextLink"])
                 if users:
                     insert_user_to_db(users)
-                else:
-                    break
             save_sync_time(provider_id, "azure-user", "initial")
             LOGGER.info("Initial user upload complete :)")
         else:
@@ -235,12 +227,10 @@ def initialize_aad_sync():
         groups = fetch_groups_with_members()
         if groups:
             insert_group_to_db(groups)
-            while "@odata.nextLink" in groups:
+            while "@odata.nextLink" in groups and groups:
                 groups = fetch_next_payload(groups["@odata.nextLink"])
                 if groups:
                     insert_group_to_db(groups)
-                else:
-                    break
             save_sync_time(provider_id, "azure-group", "initial")
             LOGGER.info("Initial group upload complete :)")
         else:

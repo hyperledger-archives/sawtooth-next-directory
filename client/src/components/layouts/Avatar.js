@@ -47,7 +47,7 @@ class Avatar extends Component {
    */
   generatePlaceholder = () => {
     const { peopleSearchData, userId, users } = this.props;
-    const user = [...users, ...(peopleSearchData || [])]
+    const user = [...(users || []), ...(peopleSearchData || [])]
       .find(user => user.id === userId);
 
     if (!user) return '?';

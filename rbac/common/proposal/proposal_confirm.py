@@ -13,12 +13,12 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """A base for all proposal confirmation message types"""
-import logging
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.proposal.proposal_action import ProposalAction
+from rbac.common.logs import get_default_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class ProposalConfirm(ProposalAction):
@@ -36,5 +36,5 @@ class ProposalConfirm(ProposalAction):
         # pylint: disable=no-member
         store.status = protobuf.proposal_state_pb2.Proposal.CONFIRMED
         store.close_reason = message.reason
-        store.closer = payload.signer.user_id
+        store.closer = payload.signer.next_id
         store.closed_date = payload.now

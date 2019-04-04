@@ -14,26 +14,23 @@
 # -----------------------------------------------------------------------------
 """Authentication API Endpoint Test"""
 import requests
-
-
-def create_test_user(session):
-    """Create a user and authenticate to use api endpoints during testing."""
-    create_user_input = {
-        "name": "Susan Susanson",
-        "username": "susan20",
-        "password": "123456",
-        "email": "susan@biz.co",
-    }
-    session.post("http://rbac-server:8000/api/users", json=create_user_input)
+from tests.utilities import create_test_user, delete_user_by_username
 
 
 def test_search_api():
     """Tests the search api endpoint functions and returns a valid payload."""
+    delete_user_by_username("susan20")
     with requests.Session() as session:
-        create_test_user(session)
+        create_user_input = {
+            "name": "Susan Susanson",
+            "username": "susan23",
+            "password": "123456",
+            "email": "susan@biz.co",
+        }
+        create_test_user(session, create_user_input)
         search_query = {
             "query": {
-                "search_input": "search input",
+                "search_input": "super long search input",
                 "search_object_types": ["role", "pack", "user"],
                 "page_size": "20",
                 "page": "2",
@@ -41,3 +38,4 @@ def test_search_api():
         }
         response = session.post("http://rbac-server:8000/api/search", json=search_query)
         assert response.json()["data"] == {"roles": [], "packs": [], "users": []}
+        delete_user_by_username("susan23")

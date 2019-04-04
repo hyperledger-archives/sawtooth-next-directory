@@ -14,16 +14,15 @@
 # -----------------------------------------------------------------------------
 """Create User Bad Test"""
 # pylint: disable=no-member,invalid-name
-
-import logging
 import pytest
 
-from rbac.common import rbac
+from rbac.common.user import User
 from rbac.common import protobuf
 from rbac.common.sawtooth import batcher
+from rbac.common.logs import get_default_logger
 from tests.rbac.common import helper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.user
@@ -31,17 +30,17 @@ LOGGER = logging.getLogger(__name__)
 def test_make_with_self_manager():
     """Test creating a user with self as manager"""
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
     name = helper.user.name()
 
     with pytest.raises(ValueError):
-        rbac.user.new(
-            signer_user_id=user_id,
+        User().new(
+            signer_user_id=next_id,
             signer_keypair=user_key,
-            user_id=user_id,
+            next_id=next_id,
             name=name,
             metadata=None,
-            manager_id=user_id,
+            manager_id=next_id,
         )
 
 
@@ -50,23 +49,23 @@ def test_make_with_self_manager():
 def test_with_self_manager():
     """Test creating a user with self as manager"""
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
     name = helper.user.name()
 
     message = protobuf.user_transaction_pb2.CreateUser(
-        user_id=user_id, name=name, metadata=None, manager_id=user_id
+        next_id=next_id, name=name, metadata=None, manager_id=next_id
     )
-    inputs, outputs = rbac.user.make_addresses(message=message, signer_user_id=user_id)
+    inputs, outputs = User().make_addresses(message=message, signer_user_id=next_id)
     payload = batcher.make_payload(
         message=message,
-        message_type=rbac.user.message_type,
+        message_type=User().message_type,
         inputs=inputs,
         outputs=outputs,
-        signer_user_id=user_id,
+        signer_user_id=next_id,
         signer_public_key=user_key.public_key,
     )
 
-    status = rbac.user.send(signer_keypair=user_key, payload=payload)
+    status = User().send(signer_keypair=user_key, payload=payload)
 
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
@@ -77,25 +76,25 @@ def test_with_self_manager():
 def test_with_manager_not_in_state():
     """Test creating a user with manager not in state"""
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
     manager_key = helper.user.key()
     manager_id = manager_key.public_key
     name = helper.user.name()
 
     message = protobuf.user_transaction_pb2.CreateUser(
-        user_id=user_id, name=name, metadata=None, manager_id=manager_id
+        next_id=next_id, name=name, metadata=None, manager_id=manager_id
     )
-    inputs, outputs = rbac.user.make_addresses(message=message, signer_user_id=user_id)
+    inputs, outputs = User().make_addresses(message=message, signer_user_id=next_id)
     payload = batcher.make_payload(
         message=message,
-        message_type=rbac.user.message_type,
+        message_type=User().message_type,
         inputs=inputs,
         outputs=outputs,
-        signer_user_id=user_id,
+        signer_user_id=next_id,
         signer_public_key=user_key.public_key,
     )
 
-    status = rbac.user.send(signer_keypair=user_key, payload=payload)
+    status = User().send(signer_keypair=user_key, payload=payload)
 
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"
@@ -107,19 +106,19 @@ def test_with_manager_not_in_state():
 def test_make_payload_with_other_signer():
     """Test with signer is neither user nor manager"""
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
     manager_key = helper.user.key()
     manager_id = manager_key.public_key
     name = helper.user.name()
 
     message = protobuf.user_transaction_pb2.CreateUser(
-        user_id=user_id, name=name, metadata=None, manager_id=manager_id
+        next_id=next_id, name=name, metadata=None, manager_id=manager_id
     )
 
-    rbac.user.make_payload(
-        message=message, signer_user_id=user_id, signer_keypair=user_key
+    User().make_payload(
+        message=message, signer_user_id=next_id, signer_keypair=user_key
     )
-    rbac.user.make_payload(
+    User().make_payload(
         message=message, signer_user_id=manager_id, signer_keypair=manager_key
     )
 
@@ -129,7 +128,7 @@ def test_make_payload_with_other_signer():
 def test_with_other_signer():
     """Test with signer is neither user nor manager"""
     user_key = helper.user.key()
-    user_id = user_key.public_key
+    next_id = user_key.public_key
     manager_key = helper.user.key()
     manager_id = manager_key.public_key
     other_id = helper.user.id()
@@ -137,19 +136,19 @@ def test_with_other_signer():
     name = helper.user.name()
 
     message = protobuf.user_transaction_pb2.CreateUser(
-        user_id=user_id, name=name, metadata=None, manager_id=manager_id
+        next_id=next_id, name=name, metadata=None, manager_id=manager_id
     )
-    inputs, outputs = rbac.user.make_addresses(message=message, signer_user_id=other_id)
+    inputs, outputs = User().make_addresses(message=message, signer_user_id=other_id)
     payload = batcher.make_payload(
         message=message,
-        message_type=rbac.user.message_type,
+        message_type=User().message_type,
         inputs=inputs,
         outputs=outputs,
         signer_user_id=other_id,
         signer_public_key=other_key.public_key,
     )
 
-    status = rbac.user.send(signer_keypair=other_key, payload=payload)
+    status = User().send(signer_keypair=other_key, payload=payload)
 
     assert len(status) == 1
     assert status[0]["status"] == "INVALID"

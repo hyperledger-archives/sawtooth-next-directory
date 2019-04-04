@@ -15,13 +15,16 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button, Form, Grid } from 'semantic-ui-react';
+import { Button, Form, Grid, Icon, Label } from 'semantic-ui-react';
 
 
 import './CreateRole.css';
+import { ApproverActions, ApproverSelectors } from 'state';
 import TrackHeader from 'components/layouts/TrackHeader';
 import * as theme from 'services/Theme';
+import * as utils from 'services/Utils';
 
 
 /**
@@ -47,7 +50,9 @@ class CreateRole extends Component {
    * component.
    */
   componentDidMount () {
+    const { resetRoleExists } = this.props;
     theme.apply(this.themes);
+    resetRoleExists();
   }
 
 
@@ -87,6 +92,13 @@ class CreateRole extends Component {
   }
 
 
+  handleBlur = () => {
+    const { checkRoleExists } = this.props;
+    const { name } = this.state;
+    !utils.isWhitespace(name) && checkRoleExists(name);
+  }
+
+
   /**
    * Validate create role form
    * @param {string} name  Name of form element derived from
@@ -104,6 +116,7 @@ class CreateRole extends Component {
    * @returns {JSX}
    */
   render () {
+    const { roleExists } = this.props;
     const { validName } = this.state;
     return (
       <Grid id='next-approver-grid'>
@@ -136,7 +149,16 @@ class CreateRole extends Component {
                 error={validName === false}
                 name='name'
                 placeholder='My Awesome Role'
+                onBlur={this.handleBlur}
                 onChange={this.handleChange}/>
+              { roleExists &&
+              <Label
+                basic
+                id='next-approver-manage-create-role-error-label'>
+                <Icon name='exclamation circle'/>
+                    This role name already exists.
+              </Label>
+              }
               <h3>
                 Description
               </h3>
@@ -155,7 +177,7 @@ class CreateRole extends Component {
                 size='large'
                 to='/approval/manage/roles'
                 id='next-approver-manage-create-role-done-button'
-                disabled={!validName}
+                disabled={!validName || roleExists}
                 onClick={this.createRole}>
                   Done
               </Button>
@@ -169,4 +191,19 @@ class CreateRole extends Component {
 }
 
 
-export default CreateRole;
+const mapStateToProps = (state) => {
+  return {
+    roleExists: ApproverSelectors.roleExists(state),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    checkRoleExists: (name) =>
+      dispatch(ApproverActions.roleExistsRequest(name)),
+    resetRoleExists: (name) => dispatch(ApproverActions.resetRoleExists()),
+  };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateRole);

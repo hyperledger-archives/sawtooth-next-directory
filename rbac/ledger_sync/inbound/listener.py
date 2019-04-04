@@ -14,34 +14,42 @@
 # ------------------------------------------------------------------------------
 """ Sawtooth Inbound Transaction Queue Listener
 """
+import rethinkdb as r
 
-from rethinkdb import r
 from sawtooth_sdk.protobuf import batch_pb2
 from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth.client_sync import ClientSync
-from rbac.common.sawtooth import batcher
-from rbac.ledger_sync.database import Database
+from rbac.common.sawtooth.batcher import batch_to_list
+from rbac.ledger_sync.inbound.rbac_transactions import add_transaction
+from rbac.providers.common.db_queries import connect_to_db
 
 LOGGER = get_default_logger(__name__)
 
 
-def process(rec, database):
+def process(rec, conn):
     """ Process inbound queue records
     """
     try:
+        # Changes members from distinguished name to next_id for roles
+        if "members" in rec["data"]:
+            rec = translate_field_to_next(rec, "members")
+        if "owners" in rec["data"]:
+            rec = translate_field_to_next(rec, "owners")
+
+        add_transaction(rec)
         if "batch" not in rec or not rec["batch"]:
-            database.run_query(
-                database.get_table("inbound_queue").get(rec["id"]).delete()
-            )
+            r.table("inbound_queue").get(rec["id"]).delete().run(conn)
             rec["sync_direction"] = "inbound"
-            database.run_query(database.get_table("sync_errors").insert(rec))
+            r.table("sync_errors").insert(rec).run(conn)
             return
 
         batch = batch_pb2.Batch()
         batch.ParseFromString(rec["batch"])
-        batch_list = batcher.batch_to_list(batch=batch)
+        batch_list = batch_to_list(batch=batch)
         status = ClientSync().send_batches_get_status(batch_list=batch_list)
         if status[0]["status"] == "COMMITTED":
+            if rec["data_type"] == "user":
+                insert_to_user_mapping(rec)
             if "metadata" in rec and rec["metadata"]:
                 data = {
                     "address": rec["address"],
@@ -52,8 +60,9 @@ def process(rec, database):
                     "updated_at": r.now(),
                     **rec["metadata"],
                 }
+
                 query = (
-                    database.get_table("metadata")
+                    r.table("metadata")
                     .get(rec["address"])
                     .replace(
                         lambda doc: r.branch(
@@ -66,7 +75,7 @@ def process(rec, database):
                         )
                     )
                 )
-                result = database.run_query(query)
+                result = query.run(conn)
                 if (not result["inserted"] and not result["replaced"]) or result[
                     "errors"
                 ] > 0:
@@ -74,17 +83,14 @@ def process(rec, database):
                         "error updating metadata record:\n%s\n%s", result, query
                     )
             rec["sync_direction"] = "inbound"
-            database.run_query(database.get_table("changelog").insert(rec))
-            database.run_query(
-                database.get_table("inbound_queue").get(rec["id"]).delete()
-            )
+            r.table("changelog").insert(rec).run(conn)
+            r.table("inbound_queue").get(rec["id"]).delete().run(conn)
         else:
             rec["error"] = get_status_error(status)
             rec["sync_direction"] = "inbound"
-            database.run_query(database.get_table("sync_errors").insert(rec))
-            database.run_query(
-                database.get_table("inbound_queue").get(rec["id"]).delete()
-            )
+            r.table("sync_errors").insert(rec).run(conn)
+            r.table("inbound_queue").get(rec["id"]).delete().run(conn)
+
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
             "%s exception processing inbound record:\n%s", type(err).__name__, rec
@@ -102,28 +108,84 @@ def get_status_error(status):
         return "Unhandled error {}".format(status)
 
 
+def insert_to_user_mapping(user_record):
+    """Inset a user to the user_mapping table if it hasn't inserted before.
+    user_record: dict - user object
+    """
+    conn = connect_to_db()
+    # Find user if object already exists in user mapping table
+    existing_rec = (
+        r.table("user_mapping")
+        .filter(
+            {
+                "provider_id": user_record["provider_id"],
+                "remote_id": user_record["data"]["remote_id"],
+            }
+        )
+        .coerce_to("array")
+        .run(conn)
+    )
+
+    # If the user does not exist insert to user_mapping table
+    if not existing_rec:
+        data = {
+            "next_id": user_record["next_id"],
+            "provider_id": user_record["provider_id"],
+            "remote_id": user_record["data"]["remote_id"],
+            "public_key": user_record["public_key"],
+            "encrypted_key": user_record["private_key"],
+            "active": True,
+        }
+
+        # Insert to user_mapping and close
+        r.table("user_mapping").insert(data).run(conn)
+    conn.close()
+
+
+def translate_field_to_next(resource, field):
+    """ Takes in a resource dict that contains a list  at a specified field and switches
+        their remote_ids with the next_id of the same user.
+    """
+    resource_list = resource["data"][field]
+    new_list = []
+    conn = connect_to_db()
+    if not isinstance(resource_list, list):
+        resource_list = [resource_list]
+    for user in resource_list:
+        user_in_db = (
+            r.table("users").filter({"remote_id": user}).coerce_to("array").run(conn)
+        )
+        if user_in_db:
+            user_next_id = user_in_db[0].get("next_id")
+            new_list.append(user_next_id)
+        else:
+            new_list.append(user)
+    resource["data"][field] = new_list
+    conn.close()
+    return resource
+
+
 def listener():
     """ Listener for Sawtooth State changes
     """
     try:
-        database = Database()
-        database.connect()
+        conn = connect_to_db()
 
         LOGGER.info("Reading queued Sawtooth transactions")
         while True:
-            feed = database.run_query(database.get_table("inbound_queue"))
+            feed = r.table("inbound_queue").order_by(index=r.asc("timestamp")).run(conn)
             count = 0
             for rec in feed:
-                process(rec, database)
+                process(rec, conn)
                 count = count + 1
             if count == 0:
                 break
             LOGGER.info("Processed %s records in the inbound queue", count)
         LOGGER.info("Listening for incoming Sawtooth transactions")
-        feed = database.run_query(database.get_table("inbound_queue").changes())
+        feed = r.table("inbound_queue").changes().run(conn)
         for rec in feed:
             if rec["new_val"] and not rec["old_val"]:  # only insertions
-                process(rec["new_val"], database)
+                process(rec["new_val"], conn)
 
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception("Inbound listener %s exception", type(err).__name__)
@@ -131,6 +193,6 @@ def listener():
 
     finally:
         try:
-            database.disconnect()
+            conn.close()
         except UnboundLocalError:
             pass

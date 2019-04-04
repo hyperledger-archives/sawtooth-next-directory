@@ -15,7 +15,6 @@
 """Batch assertion helpers"""
 # pylint: disable=no-member,invalid-name
 
-import logging
 import json
 from hashlib import sha512
 from google.protobuf import json_format
@@ -29,9 +28,10 @@ from rbac.common import addresser
 from rbac.common.protobuf.rbac_payload_pb2 import RBACPayload
 from rbac.common.protobuf import user_transaction_pb2
 from rbac.common.sawtooth.rbac_payload import unmake_payload
+from rbac.common.logs import get_default_logger
 from tests.rbac.common.assertions.address import AddressAssertions
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_default_logger(__name__)
 
 
 class BatchAssertions(AddressAssertions):
@@ -60,7 +60,7 @@ class BatchAssertions(AddressAssertions):
         self.assertEqual(message_payload1.outputs, message_payload2.outputs)
         self.assertEqualMessage(message1, message2)
         self.assertEqual(
-            message_payload1.signer.user_id, message_payload2.signer.user_id
+            message_payload1.signer.next_id, message_payload2.signer.next_id
         )
         self.assertEqual(
             message_payload1.signer.public_key, message_payload2.signer.public_key

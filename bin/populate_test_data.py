@@ -18,13 +18,11 @@
 # http://docs.python-requests.org/en/master/
 
 import json
-import requests
 import logging
+import requests
 import sys
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.level = logging.DEBUG
-LOGGER.addHandler(logging.StreamHandler(sys.stdout))
 
 HEADERS = {"Content-Type": "application/json"}
 

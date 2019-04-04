@@ -36,10 +36,29 @@ EOM
 
 }
 
+# initialize .env file if it's missing.
 if ! [ -e .env ] 
 then
     echo ".env file not found. Creating one from .env.example ..."
     cp ./.env.example ./.env
+fi
+
+# update version number
+timestamp=$(date +%d-%m-%Y" "%H:%M:%S)
+    version_number=$(cat ./VERSION)
+if grep -qn VERSION_NUMBER ./.env; then
+    echo "Updating version number and build date..."
+    version_line_num=$(grep -n VERSION_NUMBER ./.env | cut -d : -f 1)
+    sed -ie "$version_line_num s#.*#VERSION_NUMBER=$version_number $timestamp#" ./.env
+    # remove the backup file that sed creates
+    rm ./.enve
+else
+    echo "No VERSION_NUMBER found in .env, you might have a deprecated .env format. Creating VERSION_NUMBER entry..."
+    echo "
+<!--============================================================================
+= version number                                                               =
+=============================================================================-->
+VERSION_NUMBER=$version_number $timestamp" >> ./.env
 fi
 
 if [[ "$1" =~ ^((-{1,2})([Hh]$|[Hh][Ee][Ll][Pp])|)$ ]]; then

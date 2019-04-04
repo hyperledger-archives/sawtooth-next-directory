@@ -12,36 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""The RBAC Common Library
-from rbac.common import rbac
-
-Exports a singleton class instance"""
-# pylint: disable=too-few-public-methods
-
-import logging
-
-from rbac.common import addresser
-from rbac.common.user import USER as user
-from rbac.common.role import ROLE as role
-from rbac.common.task import TASK as task
-from rbac.common.key import KEY as key
-
-LOGGER = logging.getLogger(__name__)
-
-
-class RbacLibrary:
-    """The RBAC Common Library"""
-
-    def __init__(self):
-        self.addresser = addresser
-        self.user = user
-        self.role = role
-        self.task = task
-        self.key = key
-
-
-# pylint: disable=invalid-name
-rbac = RbacLibrary()
-
-
-__all__ = ["rbac"]
