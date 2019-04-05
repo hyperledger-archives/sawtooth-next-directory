@@ -94,25 +94,9 @@ async def authorize(request):
     if auth_source == "next":
         hashed_pwd = hashlib.sha256(password.encode("utf-8")).hexdigest()
         auth_info = await auth_query.fetch_info_by_username(request)
-        email = auth_info.get("email")
         if auth_info.get("hashed_password") is None:
-            if request.app.config.DEMO_MODE:
-                token = generate_api_key(
-                    request.app.config.SECRET_KEY, auth_info.get("next_id")
-                )
-                return utils.create_authorization_response(
-                    token,
-                    {
-                        "message": "Authorization (demo mode) successful",
-                        "next_id": auth_info.get("next_id"),
-                    },
-                )
-            if not email:
-                raise ApiUnauthorized("No password or email is set on this account.")
-            # TODO: send email confirmation with password set link
             raise ApiUnauthorized("No password is set on this account.")
         if auth_info.get("hashed_password") != hashed_pwd:
-            # TODO: rate limit password attempts
             raise ApiUnauthorized("The password you entered is incorrect.")
 
         token = generate_api_key(

@@ -96,7 +96,6 @@ def load_config(app):
     app.config.PORT = get_config("SERVER_PORT")
     app.config.TIMEOUT = int(get_config("TIMEOUT"))
     app.config.VALIDATOR = get_config("VALIDATOR")
-    app.config.DEMO_MODE = bool(get_config("DEMO_MODE"))
 
 
 def main():
