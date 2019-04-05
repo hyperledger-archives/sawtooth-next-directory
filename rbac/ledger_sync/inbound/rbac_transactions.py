@@ -114,6 +114,16 @@ def add_transaction(inbound_entry):
             inbound_entry["batch"] = batch.SerializeToString()
             add_metadata(inbound_entry, message)
 
+        elif inbound_entry["data_type"] == "user_deleted":
+            LOGGER.info(
+                "User deletion detected in inbound_queue: %s", data["remote_id"]
+            )
+
+        elif inbound_entry["data_type"] == "group_deleted":
+            LOGGER.info(
+                "Group deletion detected in inbound_queue: %s", data["remote_id"]
+            )
+
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
             "Unable to create transaction for inbound data:\n%s", inbound_entry

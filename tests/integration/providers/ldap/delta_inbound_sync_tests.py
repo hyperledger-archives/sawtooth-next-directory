@@ -31,7 +31,7 @@ from ldap3 import (
 )
 from ldap3.extend.microsoft import addMembersToGroups, removeMembersFromGroups
 
-from rbac.providers.ldap.delta_inbound_sync import insert_to_db
+from rbac.providers.ldap.delta_inbound_sync import insert_updated_entries
 from rbac.providers.common.db_queries import connect_to_db
 
 
@@ -248,7 +248,7 @@ def put_in_inbound_queue(fake_data, data_type):
             str: type of object "user"/"group"
     """
     when_changed = (datetime.utcnow() - timedelta(days=1)).replace(tzinfo=timezone.utc)
-    insert_to_db(fake_data, when_changed, data_type)
+    insert_updated_entries(fake_data, when_changed, data_type)
 
 
 def is_user_in_db(email):
