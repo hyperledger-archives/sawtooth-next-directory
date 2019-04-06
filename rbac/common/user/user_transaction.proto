@@ -93,3 +93,9 @@ message UpdateUser {
     string email = 6;
 
 }
+
+message DeleteUser {
+
+    string next_id = 1;
+
+}
