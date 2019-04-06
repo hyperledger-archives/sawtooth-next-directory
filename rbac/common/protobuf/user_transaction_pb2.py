@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16user_transaction.proto\"z\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07next_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"\xb1\x01\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x0b\n\x03key\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\t \x01(\t\"\xc5\x01\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x11\n\tremote_id\x18\x07 \x01(\t\x12\x0b\n\x03key\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\n \x01(\t\"r\n\nUpdateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16user_transaction.proto\"z\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07next_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"\xb1\x01\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x0b\n\x03key\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\t \x01(\t\"\xc5\x01\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x11\n\tremote_id\x18\x07 \x01(\t\x12\x0b\n\x03key\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\n \x01(\t\"r\n\nUpdateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\"\x1d\n\nDeleteUser\x12\x0f\n\x07next_id\x18\x01 \x01(\tb\x06proto3')
 )
 
 
@@ -330,10 +330,42 @@ _UPDATEUSER = _descriptor.Descriptor(
   serialized_end=644,
 )
 
+
+_DELETEUSER = _descriptor.Descriptor(
+  name='DeleteUser',
+  full_name='DeleteUser',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='next_id', full_name='DeleteUser.next_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=646,
+  serialized_end=675,
+)
+
 DESCRIPTOR.message_types_by_name['ProposeUpdateUserManager'] = _PROPOSEUPDATEUSERMANAGER
 DESCRIPTOR.message_types_by_name['CreateUser'] = _CREATEUSER
 DESCRIPTOR.message_types_by_name['ImportsUser'] = _IMPORTSUSER
 DESCRIPTOR.message_types_by_name['UpdateUser'] = _UPDATEUSER
+DESCRIPTOR.message_types_by_name['DeleteUser'] = _DELETEUSER
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ProposeUpdateUserManager = _reflection.GeneratedProtocolMessageType('ProposeUpdateUserManager', (_message.Message,), dict(
@@ -363,6 +395,13 @@ UpdateUser = _reflection.GeneratedProtocolMessageType('UpdateUser', (_message.Me
   # @@protoc_insertion_point(class_scope:UpdateUser)
   ))
 _sym_db.RegisterMessage(UpdateUser)
+
+DeleteUser = _reflection.GeneratedProtocolMessageType('DeleteUser', (_message.Message,), dict(
+  DESCRIPTOR = _DELETEUSER,
+  __module__ = 'user_transaction_pb2'
+  # @@protoc_insertion_point(class_scope:DeleteUser)
+  ))
+_sym_db.RegisterMessage(DeleteUser)
 
 
 # @@protoc_insertion_point(module_scope)

@@ -578,3 +578,29 @@ class StateBase:
                 )
             )
         output_state["removed"].add(address)
+
+    def remove_state_object(self, object_id, related_id, outputs, output_state):
+        """ Adds object_id to output_state["removed"] field to have
+        the object_id's addresss removed from Sawtooth blockchain.
+
+        Args:
+            object_id: A 12-byte hexadecimal hash of the next_id or role_id
+            outputs: A list containing blockchain addresses that the
+                blockchain has permission to write to / modify.
+            output_state: A dictionary with two fields, changed and
+                removed. The fields contains addresses that will be
+                changed on the blockchain or will be removed from
+                the blockchain.
+
+        Raises:
+            ValueError: If the computed address of object_id does not
+                exist in the outputs list of addresses.
+        """
+        address = self.address(object_id=object_id, related_id=related_id)
+        if address not in outputs:
+            raise ValueError(
+                "address {} for was not included in outputs".format(
+                    self.parse(address=address)
+                )
+            )
+        output_state["removed"].add(address)

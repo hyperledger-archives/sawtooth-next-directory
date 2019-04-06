@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------------------
 """Authentication API Endpoint Test"""
 import os
+import time
 import pytest
 import requests
 
@@ -30,12 +31,12 @@ INVALID_INPUTS = [
     ({"id": "susan20"}, "Bad Request: password field is required", 400),
     ({}, "Bad Request: id field is required", 400),
     (
-        {"id": "susan20", "password": "", "auth_source": "next"},
+        {"id": "susan20", "password": ""},
         "Incorrect username or password.",
         400,
     ),
     (
-        {"id": "_test1", "password": "", "auth_source": "next"},
+        {"id": "_test1", "password": ""},
         "Incorrect username or password.",
         400,
     ),
@@ -60,6 +61,7 @@ def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with valid inputs """
     with requests.Session() as session:
         create_test_user(session, USER_INPUT)
+        time.sleep(5)
         response = session.post(
             "http://rbac-server:8000/api/authorization/", json=login_inputs
         )

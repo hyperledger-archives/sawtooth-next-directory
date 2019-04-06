@@ -84,6 +84,9 @@ message RBACPayload {
 
         ADD_KEY = 54;
         
+        DELETE_USER = 55;
+        DELETE_ROLE = 56;
+
     }
 
 
