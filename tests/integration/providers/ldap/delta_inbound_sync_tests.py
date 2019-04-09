@@ -502,7 +502,7 @@ def setup_module():
                 )
                 successful_insert = True
             except r.errors.ReqlOpFailedError:
-                time.sleep(1)
+                time.sleep(3)
         # extra time to allow for db initialization
         time.sleep(10)
         return result
@@ -578,7 +578,7 @@ def test_create_fake_user(ldap_connection, user):
     fake_user = get_fake_user(ldap_connection, user["common_name"])
     put_in_inbound_queue(fake_user, "user")
     # wait for the fake user to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     email = "%s@clouddev.corporate.t-mobile.com" % user["common_name"]
     result = is_user_in_db(email)
     syncflag_fetched = is_user_inbound(user["common_name"])
