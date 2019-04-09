@@ -17,26 +17,22 @@ import os
 from uuid import uuid4
 import hashlib
 
+from environs import Env
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common.user import User
 from rbac.common.crypto.keys import Key
-from rbac.common.crypto.secrets import encrypt_private_key
-from rbac.server.api.errors import ApiBadRequest
-
-from rbac.server.api.auth import authorized
+from rbac.common.crypto.secrets import encrypt_private_key, generate_api_key
+from rbac.common.user import User
 from rbac.server.api import utils
+from rbac.server.api.auth import authorized
+from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.proposals import compile_proposal_resource
-
 from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
-
-from rbac.common.crypto.secrets import generate_api_key
-
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 
 AES_KEY = os.getenv("AES_KEY")
 USERS_BP = Blueprint("users")
@@ -46,14 +42,8 @@ USERS_BP = Blueprint("users")
 @authorized()
 async def fetch_all_users(request):
     """Returns all users."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     head_block = await utils.get_request_block(request)
-
     start, limit = utils.get_request_paging_info(request)
     user_resources = await users_query.fetch_all_user_resources(conn, start, limit)
 
@@ -67,14 +57,13 @@ async def fetch_all_users(request):
 @USERS_BP.post("api/users")
 async def create_new_user(request):
     """Create a new user."""
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiBadRequest("Not a valid action. Source not enabled")
     required_fields = ["name", "username", "password", "email"]
     utils.validate_fields(required_fields, request.json)
     username_created = request.json.get("username")
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
     # Check if username already exists
     if await users_query.fetch_username_match_count(conn, username_created) > 0:
         # Throw Error response to Next_UI
@@ -131,12 +120,8 @@ async def create_new_user(request):
     }
 
     # Insert to user_mapping and close
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-    await auth_query.create_auth_entry(conn, auth_entry)
+    conn = await create_connection()
+    await auth_query.create_auth_entry(auth_entry)
     await users_query.create_user_map_entry(conn, mapping_data)
     conn.close()
 
@@ -148,16 +133,10 @@ async def create_new_user(request):
 @authorized()
 async def get_user(request, next_id):
     """Get a specific user by next_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     head_block = await utils.get_request_block(request)
     # this takes 4 seconds
     user_resource = await users_query.fetch_user_resource(conn, next_id)
-
     conn.close()
 
     return await utils.create_response(conn, request.url, user_resource, head_block)
@@ -167,16 +146,9 @@ async def get_user(request, next_id):
 @authorized()
 async def get_user_summary(request, next_id):
     """This endpoint is for returning summary data for a user, just it's next_id,name, email."""
+    conn = await create_connection()
     head_block = await utils.get_request_block(request)
-
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
     user_resource = await users_query.fetch_user_resource_summary(conn, next_id)
-
     conn.close()
 
     return await utils.create_response(conn, request.url, user_resource, head_block)
@@ -186,16 +158,9 @@ async def get_user_summary(request, next_id):
 @authorized()
 async def get_users_summary(request, next_id):
     """This endpoint is for returning summary data for a user, just their next_id, name, email."""
+    conn = await create_connection()
     head_block = await utils.get_request_block(request)
-
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
     user_resource = await users_query.fetch_user_resource_summary(conn, next_id)
-
     conn.close()
 
     return await utils.create_response(conn, request.url, user_resource, head_block)
@@ -205,12 +170,7 @@ async def get_users_summary(request, next_id):
 @authorized()
 async def get_user_relationships(request, next_id):
     """Get relationships for a specific user, by next_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     head_block = await utils.get_request_block(request)
     user_resource = await users_query.fetch_user_relationships(conn, next_id)
     conn.close()
@@ -236,14 +196,8 @@ async def update_manager(request, next_id):
         metadata=request.json.get("metadata"),
     )
 
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     await utils.send(conn, batch_list, request.app.config.TIMEOUT)
-
     conn.close()
 
     return json({"proposal_id": proposal_id})
@@ -253,11 +207,7 @@ async def update_manager(request, next_id):
 @authorized()
 async def fetch_open_proposals(request, next_id):
     """Get open proposals for a user, by their next_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
@@ -286,12 +236,7 @@ async def fetch_open_proposals(request, next_id):
 @authorized()
 async def fetch_confirmed_proposals(request, next_id):
     """Get confirmed proposals for a user, by their next_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
@@ -319,11 +264,7 @@ async def fetch_confirmed_proposals(request, next_id):
 @authorized()
 async def fetch_rejected_proposals(request, next_id):
     """Get confirmed proposals for a user, by their next_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
@@ -355,16 +296,9 @@ async def update_expired_roles(request, next_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     await roles_query.expire_role_member(conn, request.json.get("id"), next_id)
-
     conn.close()
-
     return json({"role_id": request.json.get("id")})
 
 
