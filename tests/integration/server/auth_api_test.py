@@ -22,53 +22,27 @@ from tests.utilities import create_test_user
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 
 VALID_INPUTS = [
-    (
-        {"id": "susan20", "password": "123456", "auth_source": "next"},
-        "Authorization successful",
-        200,
-    )
+    ({"id": "susan20", "password": "123456"}, "Authorization successful", 200)
 ]
 
 INVALID_INPUTS = [
-    (
-        {"password": "123456", "auth_source": "next"},
-        "Bad Request: id field is required",
-        400,
-    ),
-    (
-        {"id": "susan20", "auth_source": "next"},
-        "Bad Request: password field is required",
-        400,
-    ),
-    (
-        {"id": "susan20", "password": "123456"},
-        "Bad Request: auth_source field is required",
-        400,
-    ),
+    ({"password": "123456"}, "Bad Request: id field is required", 400),
+    ({"id": "susan20"}, "Bad Request: password field is required", 400),
     ({}, "Bad Request: id field is required", 400),
     (
-        {"id": "susan20", "password": "123456", "auth_source": "my-id-provider"},
-        "Invalid authentication source.",
-        400,
-    ),
-    (
         {"id": "susan20", "password": "", "auth_source": "next"},
-        "The password you entered is incorrect.",
-        401,
+        "Incorrect username or password.",
+        400,
     ),
     (
         {"id": "_test1", "password": "", "auth_source": "next"},
-        "The username you entered is incorrect.",
-        404,
+        "Incorrect username or password.",
+        400,
     ),
 ]
 
 INVALID_LDAP_INPUTS = [
-    (
-        {"id": "", "password": "", "auth_source": "ldap"},
-        "Incorrect username or password.",
-        400,
-    )
+    ({"id": "", "password": ""}, "Incorrect username or password.", 400)
 ]
 
 USER_INPUT = {
@@ -107,28 +81,13 @@ def test_invalid_auth_inputs(login_inputs, expected_result, expected_status_code
         assert response.json()["code"] == expected_status_code
 
 
-@pytest.mark.skipif(LDAP_SERVER != "", reason="Skipping test, LDAP server is provided")
-def test_missing_ldap_server():
-    """ Test authorization API endpoint when user is attempting to login to
-        LDAP when the LDAP server is not set in the environment variables.
-        Test is skipped if LDAP server is set.
-    """
-    login_inputs = {"id": "susan20", "password": "123456", "auth_source": "ldap"}
-    expected = {"message": "Missing LDAP_SERVER env variable.", "code": 400}
-    test_invalid_auth_inputs(
-        login_inputs=login_inputs,
-        expected_result=expected["message"],
-        expected_status_code=expected["code"],
-    )
-
-
 @pytest.mark.skipif(LDAP_SERVER == "", reason="Skipping test, no LDAP server provided")
 def test_missing_ldap_login_():
     """ Test authorization API endpoint when user is attempting to login to
         LDAP with no username and password. Test is skipped if LDAP server is
         not set in environment variables.
     """
-    login_inputs = {"id": "", "password": "", "auth_source": "ldap"}
+    login_inputs = {"id": "", "password": ""}
     expected = {"message": "Incorrect username or password.", "code": 400}
 
     test_invalid_auth_inputs(

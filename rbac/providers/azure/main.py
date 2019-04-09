@@ -14,6 +14,7 @@
 # ------------------------------------------------------------------------------
 """Start the Azure provider with initial sync and two listeners for inbound and outbound deltas."""
 import os
+from environs import Env
 
 from rbac.common.logs import get_default_logger
 from rbac.providers.azure.delta_outbound_sync import outbound_sync_listener
@@ -26,8 +27,9 @@ LOGGER = get_default_logger(__name__)
 
 def main():
     """Start the initial sync and two delta threads."""
-    azure_sync = os.getenv("ENABLE_AZURE_SYNC", "False")
-    if azure_sync in ("f", "F", "false", "False", 0, ""):
+    env = Env()
+    azure_sync = env.int("ENABLE_AZURE_SYNC", 0)
+    if not azure_sync:
         LOGGER.warning("Azure sync not enabled. Exiting...")
         return
     tenant_id = os.getenv("TENANT_ID")

@@ -23,7 +23,7 @@ from rbac.common.task import Task
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.db import tasks_query
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 
 TASKS_BP = Blueprint("tasks")
 
@@ -32,11 +32,7 @@ TASKS_BP = Blueprint("tasks")
 @authorized()
 async def get_all_tasks(request):
     """Get all tasks."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
@@ -75,11 +71,7 @@ async def create_new_task(request):
 @authorized()
 async def get_task(request, task_id):
     """Get a specific task by task_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     task_resource = await tasks_query.fetch_task_resource(conn, task_id)

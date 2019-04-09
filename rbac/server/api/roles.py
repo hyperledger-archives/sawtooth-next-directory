@@ -23,7 +23,7 @@ from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.db import roles_query
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 
 ROLES_BP = Blueprint("roles")
 
@@ -32,11 +32,7 @@ ROLES_BP = Blueprint("roles")
 @authorized()
 async def get_all_roles(request):
     """Get all roles."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
@@ -54,11 +50,7 @@ async def create_new_role(request):
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
 
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
     response = await roles_query.roles_search_duplicate(conn, request.json.get("name"))
     if not response:
         txn_key, txn_user_id = await utils.get_transactor_key(request)
@@ -86,11 +78,7 @@ async def create_new_role(request):
 @authorized()
 async def get_role(request, role_id):
     """Get a specific role by role_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     role_resource = await roles_query.fetch_role_resource(conn, role_id)
@@ -102,11 +90,7 @@ async def get_role(request, role_id):
 @authorized()
 async def check_role_name(request):
     """Check if a role exists with provided name."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
     response = await roles_query.roles_search_duplicate(conn, request.args.get("name"))
     conn.close()
     return json({"exists": bool(response)})

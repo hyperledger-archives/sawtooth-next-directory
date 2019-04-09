@@ -40,7 +40,7 @@ from rbac.server.api.swagger import SWAGGER_BP
 from rbac.server.api.tasks import TASKS_BP
 from rbac.server.api.users import USERS_BP
 from rbac.server.api.webhooks import WEBHOOKS_BP
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 
 APP_BP = Blueprint("utils")
 
@@ -50,9 +50,7 @@ LOGGER = get_default_logger(__name__)
 async def init(app, loop):
     """Initialize API Server."""
     LOGGER.warning("Opening database connection")
-    app.config.DB_CONN = await db_utils.create_connection(
-        app.config.DB_HOST, app.config.DB_PORT, app.config.DB_NAME
-    )
+    app.config.DB_CONN = await create_connection()
     app.config.VAL_CONN = Connection(app.config.VALIDATOR)
 
     LOGGER.warning("Opening validator connection")

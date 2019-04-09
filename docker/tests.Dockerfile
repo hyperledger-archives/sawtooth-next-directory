@@ -29,6 +29,7 @@ RUN pip install \
         rethinkdb==2.3.0.post6 \
         cryptography==2.4.2 \
         requests==2.20.0 \
+        environs==4.1.0 \
         sawtooth-sdk==1.0.1
 RUN pip install \
         ldap3==2.5.2 \

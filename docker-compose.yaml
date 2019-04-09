@@ -104,14 +104,19 @@ services:
       - AES_KEY=${AES_KEY}
       - CLIENT_HOST=${CLIENT_HOST}
       - CLIENT_PORT=${CLIENT_PORT}
-      - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-False}
-      - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-False}
-      - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-True}
+      - DB_HOST=${DB_HOST:-rethink}
+      - DB_PORT=${DB_PORT:-28015}
+      - DB_NAME=${DB_NAME:-rbac}
+      - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-0}
+      - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-0}
+      - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
+      - LDAP_DC=${LDAP_DC}
       - LDAP_SERVER=${LDAP_SERVER}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
       - SECRET_KEY=${SECRET_KEY}
+      - TENANT_ID=${TENANT_ID}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:

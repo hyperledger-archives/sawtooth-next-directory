@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-""" Start the LDAP provider with initial sync and listener outbound delta.
-"""
+""" Start the LDAP provider with initial sync and listener outbound delta."""
 import os
 import time
+from environs import Env
+
 from rbac.common.logs import get_default_logger
 from rbac.providers.common.threading import DeltaSyncThread
 from rbac.providers.ldap.delta_outbound_sync import ldap_outbound_listener
@@ -26,13 +27,14 @@ LOGGER = get_default_logger(__name__)
 
 def main():
     """Start the initial sync and outbound delta thread."""
-    ldap_enabled = os.getenv("ENABLE_LDAP_SYNC", "False")
-    if ldap_enabled in ("f", "F", "false", "False", 0, ""):
+    env = Env()
+    ldap_enabled = env.int("ENABLE_LDAP_SYNC", 0)
+    if not ldap_enabled:
         LOGGER.warning("LDAP sync not enabled. Exiting...")
         return
     ldap_server = os.getenv("LDAP_SERVER")
     if not ldap_server:
-        LOGGER.warning("No LDAP provider configured, exiting...")
+        LOGGER.warning("No LDAP provider configured. Exiting...")
         return
 
     # wait 5 seconds before starting, to provide time for dependent services to start up

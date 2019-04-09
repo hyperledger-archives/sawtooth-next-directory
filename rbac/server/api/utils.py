@@ -184,9 +184,7 @@ async def get_transactor_key(request):
     )
     next_id = id_dict.get("id")
 
-    auth_data = await auth_query.fetch_info_by_user_id(
-        request.app.config.DB_CONN, next_id
-    )
+    auth_data = await auth_query.get_auth_by_next_id(next_id)
     encrypted_private_key = auth_data.get("encrypted_private_key")
     private_key = decrypt_private_key(
         request.app.config.AES_KEY, next_id, encrypted_private_key
