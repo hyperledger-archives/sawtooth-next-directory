@@ -173,6 +173,7 @@ services:
       - REACT_APP_SERVER_PORT=${REACT_APP_SERVER_PORT}
       - REACT_APP_WS_PROTOCOL=${REACT_APP_WS_PROTOCOL}
       - REACT_APP_VERSION_NUMBER=${VERSION_NUMBER}
+      - REACT_APP_ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE}
     image: rbac-client:${ISOLATION_ID-latest}
     volumes:
       - ./client:/client

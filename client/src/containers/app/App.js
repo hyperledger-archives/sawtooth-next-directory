@@ -226,7 +226,9 @@ class App extends Component {
           <Header {...this.props}/>
           <Switch>
             <Route exact path='/login' component={Login}/>
-            <Route exact path='/signup' component={Signup}/>
+            { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
+              <Route exact path='/signup' component={Signup}/>
+            }
             { !isAuthenticated && <Redirect to='/login'/> }
             <Route
               exact
