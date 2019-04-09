@@ -144,11 +144,13 @@ class Login extends Component {
               {...this.props}/>
           </Grid.Column>
         </Grid>
-        <div id='next-login-new-account-container'>
-          <Link to='/signup'>
-            Create an account
-          </Link>
-        </div>
+        { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
+          <div id='next-login-new-account-container'>
+            <Link to='/signup'>
+              Create an account
+            </Link>
+          </div>
+        }
       </div>
     );
   }
