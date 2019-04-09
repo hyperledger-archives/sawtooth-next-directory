@@ -21,7 +21,6 @@ import {
   Form,
   Label,
   Input,
-  Menu,
   Message,
   Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
@@ -36,10 +35,8 @@ import PropTypes from 'prop-types';
 class LoginForm extends Component {
 
   static propTypes = {
-    authSource:     PropTypes.string,
     error:          PropTypes.object,
     resetErrors:    PropTypes.func,
-    setAuthSource:  PropTypes.func,
     submit:         PropTypes.func.isRequired,
   };
 
@@ -116,41 +113,11 @@ class LoginForm extends Component {
 
 
   /**
-   * Render auth source menu
-   * @returns {JSX}
-   */
-  renderMenu () {
-    const { authSource, setAuthSource } = this.props;
-    return (
-      <div>
-        <Menu
-          compact
-          inverted
-          id='next-login-auth-source-menu'>
-          <Menu.Item
-            name='next'
-            active={authSource === 'next'}
-            onClick={() => setAuthSource('next')}>
-            NEXT
-          </Menu.Item>
-          <Menu.Item
-            name='ldap'
-            active={authSource === 'ldap'}
-            onClick={() => setAuthSource('ldap')}>
-            AD
-          </Menu.Item>
-        </Menu>
-      </div>
-    );
-  }
-
-
-  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
-    const { error, submit, authSource } = this.props;
+    const { error, submit } = this.props;
     const {
       activeIndex,
       username,
@@ -170,7 +137,6 @@ class LoginForm extends Component {
           animation='fade up'
           duration={{ hide, show }}>
           <div id='next-login-form-1'>
-            {this.renderMenu()}
             { error &&
               <div id='next-login-form-error'>
                 <Message
@@ -184,7 +150,7 @@ class LoginForm extends Component {
               </div>
             }
             <Form id='next-login-form'
-              onSubmit={() => submit(username, password, authSource)}>
+              onSubmit={() => submit(username, password)}>
               <Form.Field>
                 <Input
                   id='next-username-input'
