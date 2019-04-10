@@ -117,6 +117,10 @@ services:
       - SERVER_PORT=${SERVER_PORT:-8000}
       - SECRET_KEY=${SECRET_KEY}
       - TENANT_ID=${TENANT_ID}
+      - NEXT_ADMIN_NAME=${NEXT_ADMIN_NAME}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER}
+      - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS}
+      - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:

@@ -15,6 +15,7 @@
 """RBAC API Server"""
 
 import asyncio
+from os import getenv
 from signal import signal, SIGINT
 
 import aiohttp
@@ -61,6 +62,55 @@ async def init(app, loop):
         limit=app.config.AIOHTTP_CONN_LIMIT, ttl_dns_cache=app.config.AIOHTTP_DNS_TTL
     )
     app.config.HTTP_SESSION = aiohttp.ClientSession(connector=conn, loop=loop)
+
+    await asyncio.sleep(30)
+
+    LOGGER.warning("Creating default admin user and role.")
+    async with aiohttp.ClientSession(connector=conn, loop=loop) as session:
+        LOGGER.info("Creating Next Admin user...")
+        admin_user = {
+            "name": getenv("NEXT_ADMIN_NAME"),
+            "username": getenv("NEXT_ADMIN_USER"),
+            "password": getenv("NEXT_ADMIN_PASS"),
+            "email": getenv("NEXT_ADMIN_EMAIL"),
+        }
+        user_response = await session.post(
+            "http://rbac-server:8000/api/users", json=admin_user
+        )
+        assert (
+            user_response.status == 200
+        ), "Non 200 status code returned while attempting to create Next Admin user."
+        user_response_json = await user_response.json()
+        user_next_id = user_response_json["data"]["user"]["id"]
+        LOGGER.info("Creating NextAdmin role...")
+        admin_role = {
+            "name": "NextAdmins",
+            "owners": user_next_id,
+            "administrators": user_next_id,
+        }
+        role_response = await session.post(
+            "http://rbac-server:8000/api/roles", json=admin_role
+        )
+        assert (
+            role_response.status == 200
+        ), "Non 200 status code returned while attempting to create NextAdmins role."
+        role_response_json = await role_response.json()
+        role_next_id = role_response_json["data"]["id"]
+        LOGGER.info("Adding Next Admin to NextAdmins role...")
+        add_user = {
+            "pack_id": None,
+            "id": user_next_id,
+            "reason": None,
+            "metadata": None,
+        }
+        add_role_member_response = await session.post(
+            ("http://rbac-server:8000/api/roles/{}/members".format(role_next_id)),
+            json=add_user,
+        )
+        assert (
+            add_role_member_response.status == 200
+        ), "Non 200 status code returned while attempting add Next Admin user as member of NextAdmins role."
+        LOGGER.info("Next Admin account and role creation complete!")
 
 
 def finish(app):
