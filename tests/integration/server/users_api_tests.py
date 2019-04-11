@@ -50,3 +50,33 @@ def test_invalid_duplicate_username():
         assert response.json()["message"] == expected["message"]
         assert response.json()["code"] == expected["code"]
         delete_user_by_username(user_input["username"])
+
+
+def test_create_new_user_api():
+    """Test wether assigned manager id is present in the data of user"""
+    with requests.Session() as session:
+        create_manager_payload = {
+            "name": "manager_name",
+            "username": "manager_id",
+            "password": "manager_password",
+            "email": "manager@email_id",
+        }
+        manager_creation_response = session.post(
+            "http://rbac-server:8000/api/users", json=create_manager_payload
+        )
+        manager_id = manager_creation_response.json()["data"]["user"]["id"]
+        user_create_payload = {
+            "name": "user_name",
+            "username": "user_id",
+            "password": "user_password",
+            "email": "user@email_id",
+            "manager": manager_id,
+        }
+        user_creation_response = session.post(
+            "http://rbac-server:8000/api/users", json=user_create_payload
+        )
+        user_id = user_creation_response.json()["data"]["user"]["id"]
+        user_details_response = session.get(
+            "http://rbac-server:8000/api/users/" + user_id
+        )
+        assert user_details_response.json()["data"]["manager"] == manager_id
