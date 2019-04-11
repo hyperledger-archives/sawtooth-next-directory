@@ -99,7 +99,7 @@ async def create_new_user(request):
         username=request.json.get("username"),
         email=request.json.get("email"),
         metadata=request.json.get("metadata"),
-        manager=request.json.get("manager"),
+        manager_id=request.json.get("manager"),
         key=key_pair.public_key,
     )
 
