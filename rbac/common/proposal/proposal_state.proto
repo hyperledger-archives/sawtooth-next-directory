@@ -86,7 +86,7 @@ message Proposal {
     map<string, string> metadata = 10;
 
     // The next_id of the orginal approver.
-    string assigned_approver = 11;
+    repeated string assigned_approver = 11;
 
     int64 created_date = 12;
 

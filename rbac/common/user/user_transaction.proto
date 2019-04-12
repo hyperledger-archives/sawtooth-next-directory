@@ -29,6 +29,8 @@ message ProposeUpdateUserManager {
 
     map<string, string> metadata = 5;
 
+    repeated string assigned_approver = 6;
+
 }
 
 

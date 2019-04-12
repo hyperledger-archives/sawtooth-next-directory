@@ -31,6 +31,8 @@ message ProposeAddRoleMember {
 
     string pack_id = 6;
 
+    repeated string assigned_approver = 7;
+
 }
 
 
@@ -45,6 +47,8 @@ message ProposeAddRoleOwner {
     string reason = 4;
 
     map<string, string> metadata = 5;
+
+    repeated string assigned_approver = 6;
 
 }
 
@@ -61,6 +65,8 @@ message ProposeAddRoleAdmin {
 
     map<string, string> metadata = 5;
 
+    repeated string assigned_approver = 6;
+
 }
 
 
@@ -75,6 +81,8 @@ message ProposeAddRoleTask {
     string reason = 4;
 
     map<string, string> metadata = 5;
+
+    repeated string assigned_approver = 6;
 
 }
 
@@ -125,6 +133,8 @@ message UpdateRole {
     string role_id = 1;
 
     string description = 2;
+
+    repeated string assigned_approver = 3;
 
 }
 

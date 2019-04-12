@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16task_transaction.proto\"\xc3\x01\n\x13ProposeAddTaskOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddTaskOwner.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xc3\x01\n\x13ProposeAddTaskAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddTaskAdmin.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa9\x01\n\nCreateTask\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0e\n\x06owners\x18\x04 \x03(\t\x12+\n\x08metadata\x18\x05 \x03(\x0b\x32\x19.CreateTask.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x16task_transaction.proto\"\xde\x01\n\x13ProposeAddTaskOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddTaskOwner.MetadataEntry\x12\x19\n\x11\x61ssigned_approver\x18\x06 \x03(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xde\x01\n\x13ProposeAddTaskAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddTaskAdmin.MetadataEntry\x12\x19\n\x11\x61ssigned_approver\x18\x06 \x03(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa9\x01\n\nCreateTask\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0e\n\x06owners\x18\x04 \x03(\t\x12+\n\x08metadata\x18\x05 \x03(\x0b\x32\x19.CreateTask.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x62\x06proto3')
 )
 
 
@@ -58,8 +58,8 @@ _PROPOSEADDTASKOWNER_METADATAENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=175,
-  serialized_end=222,
+  serialized_start=202,
+  serialized_end=249,
 )
 
 _PROPOSEADDTASKOWNER = _descriptor.Descriptor(
@@ -104,6 +104,13 @@ _PROPOSEADDTASKOWNER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='assigned_approver', full_name='ProposeAddTaskOwner.assigned_approver', index=5,
+      number=6, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -117,7 +124,7 @@ _PROPOSEADDTASKOWNER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=27,
-  serialized_end=222,
+  serialized_end=249,
 )
 
 
@@ -154,8 +161,8 @@ _PROPOSEADDTASKADMIN_METADATAENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=175,
-  serialized_end=222,
+  serialized_start=202,
+  serialized_end=249,
 )
 
 _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
@@ -200,6 +207,13 @@ _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='assigned_approver', full_name='ProposeAddTaskAdmin.assigned_approver', index=5,
+      number=6, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -212,8 +226,8 @@ _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=225,
-  serialized_end=420,
+  serialized_start=252,
+  serialized_end=474,
 )
 
 
@@ -250,8 +264,8 @@ _CREATETASK_METADATAENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=175,
-  serialized_end=222,
+  serialized_start=202,
+  serialized_end=249,
 )
 
 _CREATETASK = _descriptor.Descriptor(
@@ -308,8 +322,8 @@ _CREATETASK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=423,
-  serialized_end=592,
+  serialized_start=477,
+  serialized_end=646,
 )
 
 _PROPOSEADDTASKOWNER_METADATAENTRY.containing_type = _PROPOSEADDTASKOWNER
