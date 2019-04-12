@@ -87,5 +87,6 @@ class ProposalPropose(ProposalMessage):
         store.created_date = payload.now
         for key in message.metadata:
             store.metadata[key] = message.metadata[key]
+        store.assigned_approver.extend(message.assigned_approver)
         if self.proposal_type == 1:
             store.pack_id = message.pack_id

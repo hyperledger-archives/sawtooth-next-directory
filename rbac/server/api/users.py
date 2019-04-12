@@ -34,7 +34,9 @@ from rbac.server.db import roles_query
 from rbac.server.db import users_query
 from rbac.server.db import packs_query
 from rbac.server.db.db_utils import create_connection
+from rbac.common.logs import get_default_logger
 
+LOGGER = get_default_logger(__name__)
 AES_KEY = os.getenv("AES_KEY")
 USERS_BP = Blueprint("users")
 
@@ -210,7 +212,6 @@ async def update_manager(request, next_id):
     """Update a user's manager."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
-
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = User().manager.propose.batch_list(
@@ -221,12 +222,11 @@ async def update_manager(request, next_id):
         new_manager_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=[request.json.get("id")],
     )
-
-    conn = await create_connection()
-    await utils.send(conn, batch_list, request.app.config.TIMEOUT)
-    conn.close()
-
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
     return json({"proposal_id": proposal_id})
 
 

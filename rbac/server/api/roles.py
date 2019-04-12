@@ -24,6 +24,11 @@ from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.db import roles_query
 from rbac.server.db.db_utils import create_connection
+from rbac.server.db.relationships_query import fetch_relationships
+
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
 
 ROLES_BP = Blueprint("roles")
 
@@ -130,6 +135,9 @@ async def add_role_admin(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("role_admins", "role_id", role_id).run(conn)
+    conn.close()
     batch_list = Role().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -138,6 +146,7 @@ async def add_role_admin(request, role_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -153,6 +162,9 @@ async def add_role_member(request, role_id):
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("role_owners", "role_id", role_id).run(conn)
+    conn.close()
     batch_list = Role().member.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -162,6 +174,7 @@ async def add_role_member(request, role_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     batch_status = await utils.send(
         request.app.config.VAL_CONN,
@@ -183,6 +196,9 @@ async def add_role_owner(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("role_admins", "role_id", role_id).run(conn)
+    conn.close()
     batch_list = Role().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -191,6 +207,7 @@ async def add_role_owner(request, role_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -204,9 +221,13 @@ async def add_role_task(request, role_id):
     """Add a task to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
-
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships(
+        "task_owners", "task_id", request.json.get("id")
+    ).run(conn)
+    conn.close()
     batch_list = Role().task.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -215,6 +236,7 @@ async def add_role_task(request, role_id):
         task_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT

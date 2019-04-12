@@ -18,11 +18,16 @@ import requests
 import rethinkdb as r
 from rbac.providers.common.db_queries import connect_to_db
 from tests.utilities import (
+    create_test_role,
+    create_test_task,
     create_test_user,
     delete_user_by_username,
     delete_role_by_name,
+    delete_task_by_name,
     insert_role,
+    get_proposal_with_retry,
 )
+from tests.rbac.api.assertions import assert_api_success
 
 
 def test_create_unique_role():
@@ -94,3 +99,207 @@ def test_syncdirectionflag_rolename():
     conn.close()
     delete_user_by_username(new_username)
     delete_role_by_name(new_rolename)
+
+
+def test_add_role_admin():
+    """Test adding an admin to a role.
+
+    Creates two test users and a role with user1 as owner/admin,
+    then adds the second user as role admin."""
+    user1_payload = {
+        "name": "Test User 1",
+        "username": "testuser1",
+        "password": "123456",
+        "email": "testuser1@biz.co",
+    }
+    user2_payload = {
+        "name": "Test User 2",
+        "username": "testuser2",
+        "password": "123456",
+        "email": "testuser2@biz.co",
+    }
+    with requests.Session() as session:
+        user_response1 = create_test_user(session, user1_payload)
+        user1_result = assert_api_success(user_response1)
+        user1_id = user1_result["data"]["user"]["id"]
+        user2_response = create_test_user(session, user2_payload)
+        user2_result = assert_api_success(user2_response)
+        user2_id = user2_result["data"]["user"]["id"]
+        role_payload = {
+            "name": "TestRole1",
+            "owners": user1_id,
+            "administrators": user1_id,
+            "description": "Test Role 1",
+        }
+        role_response = create_test_role(session, role_payload)
+        role_result = assert_api_success(role_response)
+        role_id = role_result["data"]["id"]
+        role_update_payload = {
+            "id": user2_id,
+            "reason": "Integration test of adding role admin.",
+            "metadata": "",
+        }
+        response = session.post(
+            "http://rbac-server:8000/api/roles/{}/admins".format(role_id),
+            json=role_update_payload,
+        )
+        result = assert_api_success(response)
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        proposal = assert_api_success(proposal_response)
+        assert proposal["data"]["assigned_approver"][0] == user1_id
+        delete_role_by_name("TestRole1")
+        delete_user_by_username("testuser1")
+        delete_user_by_username("testuser2")
+
+
+def test_add_role_owner():
+    """Test adding an owner to a role.
+
+    Creates two test users and a role with user1 as owner/admin,
+    then adds the second user as role owner."""
+    user1_payload = {
+        "name": "Test User 3",
+        "username": "testuser3",
+        "password": "123456",
+        "email": "testuser3@biz.co",
+    }
+    user2_payload = {
+        "name": "Test User 4",
+        "username": "testuser4",
+        "password": "123456",
+        "email": "testuser4@biz.co",
+    }
+    with requests.Session() as session:
+        user_response1 = create_test_user(session, user1_payload)
+        user1_result = assert_api_success(user_response1)
+        user1_id = user1_result["data"]["user"]["id"]
+        user2_response = create_test_user(session, user2_payload)
+        user2_result = assert_api_success(user2_response)
+        user2_id = user2_result["data"]["user"]["id"]
+        role_payload = {
+            "name": "TestRole2",
+            "owners": user1_id,
+            "administrators": user1_id,
+            "description": "Test Role 2",
+        }
+        role_response = create_test_role(session, role_payload)
+        role_result = assert_api_success(role_response)
+        role_id = role_result["data"]["id"]
+        role_update_payload = {
+            "id": user2_id,
+            "reason": "Integration test of adding role owner.",
+            "metadata": "",
+        }
+        response = session.post(
+            "http://rbac-server:8000/api/roles/{}/owners".format(role_id),
+            json=role_update_payload,
+        )
+        result = assert_api_success(response)
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        proposal = assert_api_success(proposal_response)
+        assert proposal["data"]["assigned_approver"][0] == user1_id
+        delete_role_by_name("TestRole2")
+        delete_user_by_username("testuser3")
+        delete_user_by_username("testuser4")
+
+
+def test_add_role_member():
+    """Test adding a new member to a role.
+
+    Creates two test users and a role using the first user,
+    then adds the second user as member to role."""
+    user1_payload = {
+        "name": "Test Owner 1",
+        "username": "testowner",
+        "password": "123456",
+        "email": "testowner@biz.co",
+    }
+    user2_payload = {
+        "name": "Test Member",
+        "username": "testmemeber",
+        "password": "123456",
+        "email": "testmember@biz.co",
+    }
+    with requests.Session() as session:
+        user1_response = create_test_user(session, user1_payload)
+        user1_result = assert_api_success(user1_response)
+        user1_id = user1_result["data"]["user"]["id"]
+        user2_response = create_test_user(session, user2_payload)
+        user2_result = assert_api_success(user2_response)
+        user2_id = user2_result["data"]["user"]["id"]
+        role_payload = {
+            "name": "TestRole3",
+            "owners": user1_id,
+            "administrators": user1_id,
+            "description": "Test Role 3",
+        }
+        role_response = create_test_role(session, role_payload)
+        role_result = assert_api_success(role_response)
+        role_id = role_result["data"]["id"]
+        role_update_payload = {
+            "id": user2_id,
+            "reason": "Integration test of adding a member.",
+            "metadata": "",
+        }
+        response = session.post(
+            "http://rbac-server:8000/api/roles/{}/members".format(role_id),
+            json=role_update_payload,
+        )
+        result = assert_api_success(response)
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        proposal = assert_api_success(proposal_response)
+        assert proposal["data"]["assigned_approver"][0] == user1_id
+        delete_role_by_name("TestRole3")
+        delete_user_by_username("testowner")
+        delete_user_by_username("testmemeber")
+
+
+def test_add_role_task():
+    """Test adding a new task to a role.
+
+    Creates a test user and a role, then creates
+    a task, to add to the role."""
+    user1_payload = {
+        "name": "Test Owner 2",
+        "username": "testowner2",
+        "password": "123456",
+        "email": "testowner@biz.co",
+    }
+    with requests.Session() as session:
+        user1_response = create_test_user(session, user1_payload)
+        user1_result = assert_api_success(user1_response)
+        user1_id = user1_result["data"]["user"]["id"]
+        task1_payload = {
+            "name": "TestTask1",
+            "administrators": user1_id,
+            "owners": user1_id,
+            "metadata": "",
+        }
+        task_response = create_test_task(session, task1_payload)
+        task_result = assert_api_success(task_response)
+        task_id = task_result["data"]["id"]
+        role_payload = {
+            "name": "TestRole4",
+            "owners": user1_id,
+            "administrators": user1_id,
+            "description": "Test Role 4",
+        }
+        role_response = create_test_role(session, role_payload)
+        role_result = assert_api_success(role_response)
+        role_id = role_result["data"]["id"]
+        role_update_payload = {
+            "id": task_id,
+            "reason": "Integration test of adding a task.",
+            "metadata": "",
+        }
+        response = session.post(
+            "http://rbac-server:8000/api/roles/{}/tasks".format(role_id),
+            json=role_update_payload,
+        )
+        result = assert_api_success(response)
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        proposal = assert_api_success(proposal_response)
+        assert proposal["data"]["assigned_approver"][0] == user1_id
+        delete_role_by_name("TestRole4")
+        delete_user_by_username("testowner2")
+        delete_task_by_name("TestTask1")

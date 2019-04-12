@@ -24,6 +24,7 @@ from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.db import tasks_query
 from rbac.server.db.db_utils import create_connection
+from rbac.server.db.relationships_query import fetch_relationships
 
 TASKS_BP = Blueprint("tasks")
 
@@ -88,6 +89,9 @@ async def add_task_admin(request, task_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("task_admins", "task_id", task_id).run(conn)
+    conn.close()
     batch_list = Task().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -96,6 +100,7 @@ async def add_task_admin(request, task_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -112,6 +117,9 @@ async def add_task_owner(request, task_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("task_admins", "task_id", task_id).run(conn)
+    conn.close()
     batch_list = Task().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -120,6 +128,7 @@ async def add_task_owner(request, task_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
