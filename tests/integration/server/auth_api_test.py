@@ -30,16 +30,8 @@ INVALID_INPUTS = [
     ({"password": "123456"}, "Bad Request: id field is required", 400),
     ({"id": "susan20"}, "Bad Request: password field is required", 400),
     ({}, "Bad Request: id field is required", 400),
-    (
-        {"id": "susan20", "password": ""},
-        "Incorrect username or password.",
-        400,
-    ),
-    (
-        {"id": "_test1", "password": ""},
-        "Incorrect username or password.",
-        400,
-    ),
+    ({"id": "susan20", "password": ""}, "Incorrect username or password.", 400),
+    ({"id": "_test1", "password": ""}, "Incorrect username or password.", 400),
 ]
 
 INVALID_LDAP_INPUTS = [
