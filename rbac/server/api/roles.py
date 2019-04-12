@@ -25,6 +25,7 @@ from rbac.server.api import utils
 from rbac.server.db import roles_query
 from rbac.server.db.db_utils import create_connection
 from rbac.server.db.relationships_query import fetch_relationships
+from rbac.server.api import proposals
 
 from rbac.common.logs import get_default_logger
 
@@ -183,6 +184,21 @@ async def add_role_member(request, role_id):
         request.app.config.TIMEOUT,
         request.json.get("tracker") and True,
     )
+    conn = await create_connection()
+    role_resource = await roles_query.fetch_role_resource(conn, role_id)
+    owners = role_resource.get("owners")
+    conn.close()
+    requester_id = request.json.get("id")
+    if requester_id in owners:
+        request.json["status"] = "APPROVED"
+        request.json["reason"] = "I am the owner of this role"
+        await proposals.update_proposal(request, proposal_id)
+        return json(
+            {
+                "message": "Owner is the requester. Proposal is autoapproved",
+                "proposal_id": proposal_id,
+            }
+        )
     if request.json.get("tracker"):
         return utils.create_tracker_response("batch_status", batch_status)
     return json({"proposal_id": proposal_id})
