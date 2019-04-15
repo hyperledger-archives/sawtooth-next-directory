@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-FROM rasa/rasa_core:0.13.7
+FROM rasa/rasa_core:0.12.3
 
 RUN apt-get update \
  && apt-get install -y --allow-unauthenticated -q \
@@ -22,7 +22,7 @@ RUN apt-get update \
 
 RUN pip3 install \
         msgpack==0.5.6 \
-        rasa_nlu[spacy]==0.14.4
+        rasa_nlu[spacy]==0.13.8
 
 RUN python -m spacy download en_core_web_md \
  && python -m spacy link en_core_web_md en
