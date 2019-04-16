@@ -19,11 +19,48 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16role_transaction.proto\"\x80\x01\n\x14ProposeAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\x0f\n\x07pack_id\x18\x06 \x01(\t\"n\n\x13ProposeAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"m\n\x12ProposeAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"\x99\x01\n\nCreateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12\x10\n\x08metadata\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\"\xad\x01\n\x0bImportsRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12\x10\n\x08metadata\x18\x07 \x01(\t\x12\x11\n\tremote_id\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\"2\n\nUpdateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"N\n\nDeleteRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0e\n\x06owners\x18\x02 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0f\n\x07members\x18\x04 \x03(\tb\x06proto3')
+  serialized_pb=_b('\n\x16role_transaction.proto\"\xd6\x01\n\x14ProposeAddRoleMember\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x35\n\x08metadata\x18\x05 \x03(\x0b\x32#.ProposeAddRoleMember.MetadataEntry\x12\x0f\n\x07pack_id\x18\x06 \x01(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xc3\x01\n\x13ProposeAddRoleOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddRoleOwner.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xc3\x01\n\x13ProposeAddRoleAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddRoleAdmin.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xc1\x01\n\x12ProposeAddRoleTask\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07role_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x33\n\x08metadata\x18\x05 \x03(\x0b\x32!.ProposeAddRoleTask.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xe5\x01\n\nCreateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12+\n\x08metadata\x18\x07 \x03(\x0b\x32\x19.CreateRole.MetadataEntry\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xfa\x01\n\x0bImportsRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06owners\x18\x03 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x04 \x03(\t\x12\x0f\n\x07members\x18\x05 \x03(\t\x12\x13\n\x0b\x64\x65scription\x18\x06 \x01(\t\x12,\n\x08metadata\x18\x07 \x03(\x0b\x32\x1a.ImportsRole.MetadataEntry\x12\x11\n\tremote_id\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"2\n\nUpdateRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"N\n\nDeleteRole\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0e\n\x06owners\x18\x02 \x03(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0f\n\x07members\x18\x04 \x03(\tb\x06proto3')
 )
 
 
 
+
+_PROPOSEADDROLEMEMBER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ProposeAddRoleMember.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ProposeAddRoleMember.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ProposeAddRoleMember.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=194,
+  serialized_end=241,
+)
 
 _PROPOSEADDROLEMEMBER = _descriptor.Descriptor(
   name='ProposeAddRoleMember',
@@ -62,8 +99,8 @@ _PROPOSEADDROLEMEMBER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ProposeAddRoleMember.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -77,7 +114,7 @@ _PROPOSEADDROLEMEMBER = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_PROPOSEADDROLEMEMBER_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -87,9 +124,46 @@ _PROPOSEADDROLEMEMBER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=27,
-  serialized_end=155,
+  serialized_end=241,
 )
 
+
+_PROPOSEADDROLEOWNER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ProposeAddRoleOwner.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ProposeAddRoleOwner.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ProposeAddRoleOwner.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=194,
+  serialized_end=241,
+)
 
 _PROPOSEADDROLEOWNER = _descriptor.Descriptor(
   name='ProposeAddRoleOwner',
@@ -128,7 +202,45 @@ _PROPOSEADDROLEOWNER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ProposeAddRoleOwner.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_PROPOSEADDROLEOWNER_METADATAENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=244,
+  serialized_end=439,
+)
+
+
+_PROPOSEADDROLEADMIN_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ProposeAddRoleAdmin.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ProposeAddRoleAdmin.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ProposeAddRoleAdmin.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -139,16 +251,15 @@ _PROPOSEADDROLEOWNER = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=None,
+  serialized_options=_b('8\001'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=157,
-  serialized_end=267,
+  serialized_start=194,
+  serialized_end=241,
 )
-
 
 _PROPOSEADDROLEADMIN = _descriptor.Descriptor(
   name='ProposeAddRoleAdmin',
@@ -187,7 +298,45 @@ _PROPOSEADDROLEADMIN = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ProposeAddRoleAdmin.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_PROPOSEADDROLEADMIN_METADATAENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=442,
+  serialized_end=637,
+)
+
+
+_PROPOSEADDROLETASK_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ProposeAddRoleTask.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ProposeAddRoleTask.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ProposeAddRoleTask.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -198,16 +347,15 @@ _PROPOSEADDROLEADMIN = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=None,
+  serialized_options=_b('8\001'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=269,
-  serialized_end=379,
+  serialized_start=194,
+  serialized_end=241,
 )
-
 
 _PROPOSEADDROLETASK = _descriptor.Descriptor(
   name='ProposeAddRoleTask',
@@ -246,7 +394,45 @@ _PROPOSEADDROLETASK = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ProposeAddRoleTask.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_PROPOSEADDROLETASK_METADATAENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=640,
+  serialized_end=833,
+)
+
+
+_CREATEROLE_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='CreateRole.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='CreateRole.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='CreateRole.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -257,16 +443,15 @@ _PROPOSEADDROLETASK = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=None,
+  serialized_options=_b('8\001'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=381,
-  serialized_end=490,
+  serialized_start=194,
+  serialized_end=241,
 )
-
 
 _CREATEROLE = _descriptor.Descriptor(
   name='CreateRole',
@@ -319,8 +504,8 @@ _CREATEROLE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='CreateRole.metadata', index=6,
-      number=7, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=7, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -334,7 +519,7 @@ _CREATEROLE = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_CREATEROLE_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -343,10 +528,47 @@ _CREATEROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=493,
-  serialized_end=646,
+  serialized_start=836,
+  serialized_end=1065,
 )
 
+
+_IMPORTSROLE_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ImportsRole.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ImportsRole.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ImportsRole.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=194,
+  serialized_end=241,
+)
 
 _IMPORTSROLE = _descriptor.Descriptor(
   name='ImportsRole',
@@ -399,8 +621,8 @@ _IMPORTSROLE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ImportsRole.metadata', index=6,
-      number=7, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=7, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -421,7 +643,7 @@ _IMPORTSROLE = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_IMPORTSROLE_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -430,8 +652,8 @@ _IMPORTSROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=649,
-  serialized_end=822,
+  serialized_start=1068,
+  serialized_end=1318,
 )
 
 
@@ -468,8 +690,8 @@ _UPDATEROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=824,
-  serialized_end=874,
+  serialized_start=1320,
+  serialized_end=1370,
 )
 
 
@@ -520,10 +742,22 @@ _DELETEROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=876,
-  serialized_end=954,
+  serialized_start=1372,
+  serialized_end=1450,
 )
 
+_PROPOSEADDROLEMEMBER_METADATAENTRY.containing_type = _PROPOSEADDROLEMEMBER
+_PROPOSEADDROLEMEMBER.fields_by_name['metadata'].message_type = _PROPOSEADDROLEMEMBER_METADATAENTRY
+_PROPOSEADDROLEOWNER_METADATAENTRY.containing_type = _PROPOSEADDROLEOWNER
+_PROPOSEADDROLEOWNER.fields_by_name['metadata'].message_type = _PROPOSEADDROLEOWNER_METADATAENTRY
+_PROPOSEADDROLEADMIN_METADATAENTRY.containing_type = _PROPOSEADDROLEADMIN
+_PROPOSEADDROLEADMIN.fields_by_name['metadata'].message_type = _PROPOSEADDROLEADMIN_METADATAENTRY
+_PROPOSEADDROLETASK_METADATAENTRY.containing_type = _PROPOSEADDROLETASK
+_PROPOSEADDROLETASK.fields_by_name['metadata'].message_type = _PROPOSEADDROLETASK_METADATAENTRY
+_CREATEROLE_METADATAENTRY.containing_type = _CREATEROLE
+_CREATEROLE.fields_by_name['metadata'].message_type = _CREATEROLE_METADATAENTRY
+_IMPORTSROLE_METADATAENTRY.containing_type = _IMPORTSROLE
+_IMPORTSROLE.fields_by_name['metadata'].message_type = _IMPORTSROLE_METADATAENTRY
 DESCRIPTOR.message_types_by_name['ProposeAddRoleMember'] = _PROPOSEADDROLEMEMBER
 DESCRIPTOR.message_types_by_name['ProposeAddRoleOwner'] = _PROPOSEADDROLEOWNER
 DESCRIPTOR.message_types_by_name['ProposeAddRoleAdmin'] = _PROPOSEADDROLEADMIN
@@ -535,46 +769,94 @@ DESCRIPTOR.message_types_by_name['DeleteRole'] = _DELETEROLE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ProposeAddRoleMember = _reflection.GeneratedProtocolMessageType('ProposeAddRoleMember', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSEADDROLEMEMBER_METADATAENTRY,
+    __module__ = 'role_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ProposeAddRoleMember.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSEADDROLEMEMBER,
   __module__ = 'role_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeAddRoleMember)
   ))
 _sym_db.RegisterMessage(ProposeAddRoleMember)
+_sym_db.RegisterMessage(ProposeAddRoleMember.MetadataEntry)
 
 ProposeAddRoleOwner = _reflection.GeneratedProtocolMessageType('ProposeAddRoleOwner', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSEADDROLEOWNER_METADATAENTRY,
+    __module__ = 'role_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ProposeAddRoleOwner.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSEADDROLEOWNER,
   __module__ = 'role_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeAddRoleOwner)
   ))
 _sym_db.RegisterMessage(ProposeAddRoleOwner)
+_sym_db.RegisterMessage(ProposeAddRoleOwner.MetadataEntry)
 
 ProposeAddRoleAdmin = _reflection.GeneratedProtocolMessageType('ProposeAddRoleAdmin', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSEADDROLEADMIN_METADATAENTRY,
+    __module__ = 'role_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ProposeAddRoleAdmin.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSEADDROLEADMIN,
   __module__ = 'role_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeAddRoleAdmin)
   ))
 _sym_db.RegisterMessage(ProposeAddRoleAdmin)
+_sym_db.RegisterMessage(ProposeAddRoleAdmin.MetadataEntry)
 
 ProposeAddRoleTask = _reflection.GeneratedProtocolMessageType('ProposeAddRoleTask', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSEADDROLETASK_METADATAENTRY,
+    __module__ = 'role_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ProposeAddRoleTask.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSEADDROLETASK,
   __module__ = 'role_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeAddRoleTask)
   ))
 _sym_db.RegisterMessage(ProposeAddRoleTask)
+_sym_db.RegisterMessage(ProposeAddRoleTask.MetadataEntry)
 
 CreateRole = _reflection.GeneratedProtocolMessageType('CreateRole', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _CREATEROLE_METADATAENTRY,
+    __module__ = 'role_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:CreateRole.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _CREATEROLE,
   __module__ = 'role_transaction_pb2'
   # @@protoc_insertion_point(class_scope:CreateRole)
   ))
 _sym_db.RegisterMessage(CreateRole)
+_sym_db.RegisterMessage(CreateRole.MetadataEntry)
 
 ImportsRole = _reflection.GeneratedProtocolMessageType('ImportsRole', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _IMPORTSROLE_METADATAENTRY,
+    __module__ = 'role_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ImportsRole.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _IMPORTSROLE,
   __module__ = 'role_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ImportsRole)
   ))
 _sym_db.RegisterMessage(ImportsRole)
+_sym_db.RegisterMessage(ImportsRole.MetadataEntry)
 
 UpdateRole = _reflection.GeneratedProtocolMessageType('UpdateRole', (_message.Message,), dict(
   DESCRIPTOR = _UPDATEROLE,
@@ -591,4 +873,10 @@ DeleteRole = _reflection.GeneratedProtocolMessageType('DeleteRole', (_message.Me
 _sym_db.RegisterMessage(DeleteRole)
 
 
+_PROPOSEADDROLEMEMBER_METADATAENTRY._options = None
+_PROPOSEADDROLEOWNER_METADATAENTRY._options = None
+_PROPOSEADDROLEADMIN_METADATAENTRY._options = None
+_PROPOSEADDROLETASK_METADATAENTRY._options = None
+_CREATEROLE_METADATAENTRY._options = None
+_IMPORTSROLE_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)

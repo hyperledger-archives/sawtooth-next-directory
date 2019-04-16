@@ -27,7 +27,7 @@ message ProposeAddTaskOwner {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
 }
 
@@ -42,7 +42,7 @@ message ProposeAddTaskAdmin {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
 }
 
@@ -57,6 +57,6 @@ message CreateTask {
 
     repeated string owners = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
 }

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10role_state.proto\"C\n\x17RoleAttributesContainer\x12(\n\x0frole_attributes\x18\x01 \x03(\x0b\x32\x0f.RoleAttributes\"\x7f\n\x0eRoleAttributes\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08metadata\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x11\n\tremote_id\x18\x06 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x07 \x01(\x03\"E\n\x19RoleRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.RoleRelationship\"\x8e\x01\n\x10RoleRelationship\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\t\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x05 \x01(\x03\x12\x17\n\x0f\x65xpiration_date\x18\x06 \x01(\x03\x62\x06proto3')
+  serialized_pb=_b('\n\x10role_state.proto\"C\n\x17RoleAttributesContainer\x12(\n\x0frole_attributes\x18\x01 \x03(\x0b\x32\x0f.RoleAttributes\"\xcf\x01\n\x0eRoleAttributes\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12/\n\x08metadata\x18\x03 \x03(\x0b\x32\x1d.RoleAttributes.MetadataEntry\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x11\n\tremote_id\x18\x06 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x07 \x01(\x03\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"E\n\x19RoleRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.RoleRelationship\"\x8e\x01\n\x10RoleRelationship\x12\x0f\n\x07role_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\t\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x05 \x01(\x03\x12\x17\n\x0f\x65xpiration_date\x18\x06 \x01(\x03\x62\x06proto3')
 )
 
 
@@ -56,6 +56,43 @@ _ROLEATTRIBUTESCONTAINER = _descriptor.Descriptor(
 )
 
 
+_ROLEATTRIBUTES_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='RoleAttributes.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='RoleAttributes.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='RoleAttributes.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=250,
+  serialized_end=297,
+)
+
 _ROLEATTRIBUTES = _descriptor.Descriptor(
   name='RoleAttributes',
   full_name='RoleAttributes',
@@ -79,8 +116,8 @@ _ROLEATTRIBUTES = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='RoleAttributes.metadata', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -108,7 +145,7 @@ _ROLEATTRIBUTES = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_ROLEATTRIBUTES_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -117,8 +154,8 @@ _ROLEATTRIBUTES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=89,
-  serialized_end=216,
+  serialized_start=90,
+  serialized_end=297,
 )
 
 
@@ -148,8 +185,8 @@ _ROLERELATIONSHIPCONTAINER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=218,
-  serialized_end=287,
+  serialized_start=299,
+  serialized_end=368,
 )
 
 
@@ -214,11 +251,13 @@ _ROLERELATIONSHIP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=290,
-  serialized_end=432,
+  serialized_start=371,
+  serialized_end=513,
 )
 
 _ROLEATTRIBUTESCONTAINER.fields_by_name['role_attributes'].message_type = _ROLEATTRIBUTES
+_ROLEATTRIBUTES_METADATAENTRY.containing_type = _ROLEATTRIBUTES
+_ROLEATTRIBUTES.fields_by_name['metadata'].message_type = _ROLEATTRIBUTES_METADATAENTRY
 _ROLERELATIONSHIPCONTAINER.fields_by_name['relationships'].message_type = _ROLERELATIONSHIP
 DESCRIPTOR.message_types_by_name['RoleAttributesContainer'] = _ROLEATTRIBUTESCONTAINER
 DESCRIPTOR.message_types_by_name['RoleAttributes'] = _ROLEATTRIBUTES
@@ -234,11 +273,19 @@ RoleAttributesContainer = _reflection.GeneratedProtocolMessageType('RoleAttribut
 _sym_db.RegisterMessage(RoleAttributesContainer)
 
 RoleAttributes = _reflection.GeneratedProtocolMessageType('RoleAttributes', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _ROLEATTRIBUTES_METADATAENTRY,
+    __module__ = 'role_state_pb2'
+    # @@protoc_insertion_point(class_scope:RoleAttributes.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _ROLEATTRIBUTES,
   __module__ = 'role_state_pb2'
   # @@protoc_insertion_point(class_scope:RoleAttributes)
   ))
 _sym_db.RegisterMessage(RoleAttributes)
+_sym_db.RegisterMessage(RoleAttributes.MetadataEntry)
 
 RoleRelationshipContainer = _reflection.GeneratedProtocolMessageType('RoleRelationshipContainer', (_message.Message,), dict(
   DESCRIPTOR = _ROLERELATIONSHIPCONTAINER,
@@ -255,4 +302,5 @@ RoleRelationship = _reflection.GeneratedProtocolMessageType('RoleRelationship', 
 _sym_db.RegisterMessage(RoleRelationship)
 
 
+_ROLEATTRIBUTES_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)

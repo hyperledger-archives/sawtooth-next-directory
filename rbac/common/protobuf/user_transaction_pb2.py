@@ -19,11 +19,48 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16user_transaction.proto\"z\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07next_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"\xb1\x01\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x0b\n\x03key\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\t \x01(\t\"\xc5\x01\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x11\n\tremote_id\x18\x07 \x01(\t\x12\x0b\n\x03key\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\n \x01(\t\"r\n\nUpdateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\x12\r\n\x05\x65mail\x18\x06 \x01(\t\"\x1d\n\nDeleteUser\x12\x0f\n\x07next_id\x18\x01 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16user_transaction.proto\"\xd4\x01\n\x18ProposeUpdateUserManager\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07next_id\x18\x02 \x01(\t\x12\x16\n\x0enew_manager_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x39\n\x08metadata\x18\x05 \x03(\x0b\x32\'.ProposeUpdateUserManager.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xfd\x01\n\nCreateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12+\n\x08metadata\x18\x05 \x03(\x0b\x32\x19.CreateUser.MetadataEntry\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x0b\n\x03key\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\t \x01(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x92\x02\n\x0bImportsUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12,\n\x08metadata\x18\x05 \x03(\x0b\x32\x1a.ImportsUser.MetadataEntry\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x12\x11\n\tremote_id\x18\x07 \x01(\t\x12\x0b\n\x03key\x18\x08 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\t \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\n \x01(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xbe\x01\n\nUpdateUser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x12\n\nmanager_id\x18\x04 \x01(\t\x12+\n\x08metadata\x18\x05 \x03(\x0b\x32\x19.UpdateUser.MetadataEntry\x12\r\n\x05\x65mail\x18\x06 \x01(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x1d\n\nDeleteUser\x12\x0f\n\x07next_id\x18\x01 \x01(\tb\x06proto3')
 )
 
 
 
+
+_PROPOSEUPDATEUSERMANAGER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ProposeUpdateUserManager.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ProposeUpdateUserManager.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ProposeUpdateUserManager.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=192,
+  serialized_end=239,
+)
 
 _PROPOSEUPDATEUSERMANAGER = _descriptor.Descriptor(
   name='ProposeUpdateUserManager',
@@ -62,7 +99,45 @@ _PROPOSEUPDATEUSERMANAGER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ProposeUpdateUserManager.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_PROPOSEUPDATEUSERMANAGER_METADATAENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=27,
+  serialized_end=239,
+)
+
+
+_CREATEUSER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='CreateUser.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='CreateUser.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='CreateUser.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -73,16 +148,15 @@ _PROPOSEUPDATEUSERMANAGER = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=None,
+  serialized_options=_b('8\001'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26,
-  serialized_end=148,
+  serialized_start=192,
+  serialized_end=239,
 )
-
 
 _CREATEUSER = _descriptor.Descriptor(
   name='CreateUser',
@@ -121,8 +195,8 @@ _CREATEUSER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='CreateUser.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -157,7 +231,7 @@ _CREATEUSER = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_CREATEUSER_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -166,10 +240,47 @@ _CREATEUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=151,
-  serialized_end=328,
+  serialized_start=242,
+  serialized_end=495,
 )
 
+
+_IMPORTSUSER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ImportsUser.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ImportsUser.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ImportsUser.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=192,
+  serialized_end=239,
+)
 
 _IMPORTSUSER = _descriptor.Descriptor(
   name='ImportsUser',
@@ -208,8 +319,8 @@ _IMPORTSUSER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ImportsUser.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -251,7 +362,7 @@ _IMPORTSUSER = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_IMPORTSUSER_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -260,10 +371,47 @@ _IMPORTSUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=331,
-  serialized_end=528,
+  serialized_start=498,
+  serialized_end=772,
 )
 
+
+_UPDATEUSER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='UpdateUser.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='UpdateUser.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='UpdateUser.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=192,
+  serialized_end=239,
+)
 
 _UPDATEUSER = _descriptor.Descriptor(
   name='UpdateUser',
@@ -302,8 +450,8 @@ _UPDATEUSER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='UpdateUser.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -317,7 +465,7 @@ _UPDATEUSER = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_UPDATEUSER_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -326,8 +474,8 @@ _UPDATEUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=530,
-  serialized_end=644,
+  serialized_start=775,
+  serialized_end=965,
 )
 
 
@@ -357,10 +505,18 @@ _DELETEUSER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=646,
-  serialized_end=675,
+  serialized_start=967,
+  serialized_end=996,
 )
 
+_PROPOSEUPDATEUSERMANAGER_METADATAENTRY.containing_type = _PROPOSEUPDATEUSERMANAGER
+_PROPOSEUPDATEUSERMANAGER.fields_by_name['metadata'].message_type = _PROPOSEUPDATEUSERMANAGER_METADATAENTRY
+_CREATEUSER_METADATAENTRY.containing_type = _CREATEUSER
+_CREATEUSER.fields_by_name['metadata'].message_type = _CREATEUSER_METADATAENTRY
+_IMPORTSUSER_METADATAENTRY.containing_type = _IMPORTSUSER
+_IMPORTSUSER.fields_by_name['metadata'].message_type = _IMPORTSUSER_METADATAENTRY
+_UPDATEUSER_METADATAENTRY.containing_type = _UPDATEUSER
+_UPDATEUSER.fields_by_name['metadata'].message_type = _UPDATEUSER_METADATAENTRY
 DESCRIPTOR.message_types_by_name['ProposeUpdateUserManager'] = _PROPOSEUPDATEUSERMANAGER
 DESCRIPTOR.message_types_by_name['CreateUser'] = _CREATEUSER
 DESCRIPTOR.message_types_by_name['ImportsUser'] = _IMPORTSUSER
@@ -369,32 +525,64 @@ DESCRIPTOR.message_types_by_name['DeleteUser'] = _DELETEUSER
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ProposeUpdateUserManager = _reflection.GeneratedProtocolMessageType('ProposeUpdateUserManager', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSEUPDATEUSERMANAGER_METADATAENTRY,
+    __module__ = 'user_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ProposeUpdateUserManager.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSEUPDATEUSERMANAGER,
   __module__ = 'user_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeUpdateUserManager)
   ))
 _sym_db.RegisterMessage(ProposeUpdateUserManager)
+_sym_db.RegisterMessage(ProposeUpdateUserManager.MetadataEntry)
 
 CreateUser = _reflection.GeneratedProtocolMessageType('CreateUser', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _CREATEUSER_METADATAENTRY,
+    __module__ = 'user_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:CreateUser.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _CREATEUSER,
   __module__ = 'user_transaction_pb2'
   # @@protoc_insertion_point(class_scope:CreateUser)
   ))
 _sym_db.RegisterMessage(CreateUser)
+_sym_db.RegisterMessage(CreateUser.MetadataEntry)
 
 ImportsUser = _reflection.GeneratedProtocolMessageType('ImportsUser', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _IMPORTSUSER_METADATAENTRY,
+    __module__ = 'user_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ImportsUser.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _IMPORTSUSER,
   __module__ = 'user_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ImportsUser)
   ))
 _sym_db.RegisterMessage(ImportsUser)
+_sym_db.RegisterMessage(ImportsUser.MetadataEntry)
 
 UpdateUser = _reflection.GeneratedProtocolMessageType('UpdateUser', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _UPDATEUSER_METADATAENTRY,
+    __module__ = 'user_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:UpdateUser.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _UPDATEUSER,
   __module__ = 'user_transaction_pb2'
   # @@protoc_insertion_point(class_scope:UpdateUser)
   ))
 _sym_db.RegisterMessage(UpdateUser)
+_sym_db.RegisterMessage(UpdateUser.MetadataEntry)
 
 DeleteUser = _reflection.GeneratedProtocolMessageType('DeleteUser', (_message.Message,), dict(
   DESCRIPTOR = _DELETEUSER,
@@ -404,4 +592,8 @@ DeleteUser = _reflection.GeneratedProtocolMessageType('DeleteUser', (_message.Me
 _sym_db.RegisterMessage(DeleteUser)
 
 
+_PROPOSEUPDATEUSERMANAGER_METADATAENTRY._options = None
+_CREATEUSER_METADATAENTRY._options = None
+_IMPORTSUSER_METADATAENTRY._options = None
+_UPDATEUSER_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)

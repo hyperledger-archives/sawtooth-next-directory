@@ -78,6 +78,11 @@ async def create_new_user(request):
     encrypted_private_key = encrypt_private_key(
         AES_KEY, key_pair.public_key, key_pair.private_key_bytes
     )
+    if request.json.get("metadata") is None or request.json.get("metadata") == {}:
+        set_metadata = {}
+    else:
+        set_metadata = request.json.get("metadata")
+    set_metadata["sync_direction"] = "OUTBOUND"
 
     # Build create user transaction
     batch_list = User().batch_list(
@@ -87,7 +92,7 @@ async def create_new_user(request):
         name=request.json.get("name"),
         username=request.json.get("username"),
         email=request.json.get("email"),
-        metadata=request.json.get("metadata"),
+        metadata=set_metadata,
         manager_id=request.json.get("manager"),
         key=key_pair.public_key,
     )

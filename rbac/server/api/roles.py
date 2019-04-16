@@ -52,6 +52,11 @@ async def create_new_role(request):
 
     conn = await create_connection()
     response = await roles_query.roles_search_duplicate(conn, request.json.get("name"))
+    if request.json.get("metadata") is None or request.json.get("metadata") == {}:
+        set_metadata = {}
+    else:
+        set_metadata = request.json.get("metadata")
+    set_metadata["sync_direction"] = "OUTBOUND"
     if not response:
         txn_key, txn_user_id = await utils.get_transactor_key(request)
         role_id = str(uuid4())
@@ -60,7 +65,7 @@ async def create_new_role(request):
             signer_user_id=txn_user_id,
             name=request.json.get("name"),
             role_id=role_id,
-            metadata=request.json.get("metadata"),
+            metadata=set_metadata,
             admins=request.json.get("administrators"),
             owners=request.json.get("owners"),
             description=request.json.get("description"),

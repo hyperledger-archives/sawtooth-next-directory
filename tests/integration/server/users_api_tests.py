@@ -13,15 +13,20 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Validating User Account Creation API Endpoint Test"""
+import time
 import requests
+import rethinkdb as r
 from tests.utilities import delete_user_by_username, insert_user
+from rbac.providers.common.db_queries import connect_to_db
 
 
 def test_valid_unique_username():
-    """ Testing the creation of two users with different usernames. """
+    """ Testing the creation of an user
+        with create user API.
+    """
     user_input = {
         "name": "Sri Nuthal",
-        "username": "nuthalapati",
+        "username": "nuthalapatinew",
         "password": "123456",
         "email": "sri@gmail.com",
     }
@@ -29,7 +34,6 @@ def test_valid_unique_username():
     with requests.Session() as session:
         response = session.post("http://rbac-server:8000/api/users", json=user_input)
         assert response.json()["data"]["message"] == expected["message"]
-        delete_user_by_username(user_input["username"])
 
 
 def test_invalid_duplicate_username():
@@ -52,8 +56,32 @@ def test_invalid_duplicate_username():
         delete_user_by_username(user_input["username"])
 
 
+def test_syncdirectionflag_username():
+    """ Testing the presence and the value of syncdirection flag
+        is set to OUTBOUND of a user in users table.
+    """
+    expected_metadata = {"metadata": {"sync_direction": "OUTBOUND"}}
+    new_username = "nuthalapatinew"
+    time.sleep(1)
+    conn = connect_to_db()
+    metadata_object = (
+        r.db("rbac")
+        .table("users")
+        .filter({"username": new_username})
+        .pluck("metadata")
+        .coerce_to("array")
+        .run(conn)
+    )
+    actual_metadata = metadata_object[0]
+    assert actual_metadata == expected_metadata
+    conn.close()
+    delete_user_by_username(new_username)
+
+
 def test_create_new_user_api():
-    """Test wether assigned manager id is present in the data of user"""
+    """ Test wether assigned manager id is present
+        in the data of user
+    """
     with requests.Session() as session:
         create_manager_payload = {
             "name": "manager_name",

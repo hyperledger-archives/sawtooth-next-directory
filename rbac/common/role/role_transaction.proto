@@ -27,7 +27,7 @@ message ProposeAddRoleMember {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
     string pack_id = 6;
 
@@ -44,7 +44,7 @@ message ProposeAddRoleOwner {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
 }
 
@@ -59,7 +59,7 @@ message ProposeAddRoleAdmin {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
 }
 
@@ -74,7 +74,7 @@ message ProposeAddRoleTask {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
 }
 
@@ -93,7 +93,7 @@ message CreateRole {
 
     string description = 6;
 
-    string metadata = 7;
+    map<string, string> metadata = 7;
 
     int64 created_date = 8;
 
@@ -113,7 +113,7 @@ message ImportsRole {
 
     string description = 6;
     
-    string metadata = 7;
+    map<string, string> metadata = 7;
 
     string remote_id = 8;
 
