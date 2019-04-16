@@ -83,7 +83,7 @@ message Proposal {
     string close_reason = 9;
 
     // Client supplied metadata that is not indexed or parsed by the TP.
-    string metadata = 10;
+    map<string, string> metadata = 10;
 
     // The next_id of the orginal approver.
     string assigned_approver = 11;

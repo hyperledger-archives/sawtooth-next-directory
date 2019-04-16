@@ -54,6 +54,7 @@ def add_transaction(inbound_entry):
     """ Adds transactional entries onto inbound_entry
     """
     try:
+        set_metadata_flag = {}
         data = inbound_entry["data"]
         key_pair = Key()
         encrypted_private_key = encrypt_private_key(
@@ -61,6 +62,8 @@ def add_transaction(inbound_entry):
         )
         inbound_entry["public_key"] = key_pair.public_key
         inbound_entry["private_key"] = encrypted_private_key
+        set_metadata_flag["sync_direction"] = "INBOUND"
+        data["metadata"] = set_metadata_flag
 
         if inbound_entry["data_type"] == "user":
             next_user = get_next_object(

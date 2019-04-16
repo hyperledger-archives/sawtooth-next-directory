@@ -32,14 +32,12 @@ from ldap3 import (
 )
 from ldap3.extend.microsoft import addMembersToGroups, removeMembersFromGroups
 
-from rbac.common.logs import get_default_logger
 from rbac.providers.common.db_queries import connect_to_db
 from rbac.providers.ldap.delta_inbound_sync import (
     insert_updated_entries,
     insert_deleted_entries,
 )
 
-LOGGER = get_default_logger(__name__)
 
 # ------------------------------------------------------------------------------
 # <==== BEGIN TEST PARAMETERS =================================================>
@@ -583,7 +581,29 @@ def test_create_fake_user(ldap_connection, user):
     time.sleep(1)
     email = "%s@clouddev.corporate.t-mobile.com" % user["common_name"]
     result = is_user_in_db(email)
+    syncflag_fetched = is_user_inbound(user["common_name"])
     assert result is True
+    assert syncflag_fetched is True
+
+
+def is_user_inbound(username_provided):
+    """ Function returns TRUE,
+        If the sync_direction flag in metadata field
+        is set to INBOUND for the inbound sync users.
+    """
+    with connect_to_db() as db_connection:
+        count_result = (
+            r.table("users")
+            .filter(
+                {
+                    "username": username_provided,
+                    "metadata": {"sync_direction": "INBOUND"},
+                }
+            )
+            .count()
+            .run(db_connection)
+        )
+        return count_result > 0
 
 
 @pytest.mark.parametrize("group", TEST_GROUPS)

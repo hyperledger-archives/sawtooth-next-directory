@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10user_state.proto\"%\n\rUserContainer\x12\x14\n\x05users\x18\x02 \x03(\x0b\x32\x05.User\"\xb1\x01\n\x04User\x12\x0f\n\x07next_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12\x10\n\x08metadata\x18\x04 \x01(\t\x12\r\n\x05\x65mail\x18\x05 \x01(\t\x12\x11\n\tremote_id\x18\x06 \x01(\t\x12\x10\n\x08username\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\t \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x10user_state.proto\"%\n\rUserContainer\x12\x14\n\x05users\x18\x02 \x03(\x0b\x32\x05.User\"\xf7\x01\n\x04User\x12\x0f\n\x07next_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nmanager_id\x18\x03 \x01(\t\x12%\n\x08metadata\x18\x04 \x03(\x0b\x32\x13.User.MetadataEntry\x12\r\n\x05\x65mail\x18\x05 \x01(\t\x12\x11\n\tremote_id\x18\x06 \x01(\t\x12\x10\n\x08username\x18\x07 \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x08 \x01(\x03\x12\x1a\n\x12\x64istinguished_name\x18\t \x01(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x62\x06proto3')
 )
 
 
@@ -56,6 +56,43 @@ _USERCONTAINER = _descriptor.Descriptor(
 )
 
 
+_USER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='User.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='User.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='User.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=260,
+  serialized_end=307,
+)
+
 _USER = _descriptor.Descriptor(
   name='User',
   full_name='User',
@@ -86,8 +123,8 @@ _USER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='User.metadata', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -129,7 +166,7 @@ _USER = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_USER_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -139,10 +176,12 @@ _USER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=60,
-  serialized_end=237,
+  serialized_end=307,
 )
 
 _USERCONTAINER.fields_by_name['users'].message_type = _USER
+_USER_METADATAENTRY.containing_type = _USER
+_USER.fields_by_name['metadata'].message_type = _USER_METADATAENTRY
 DESCRIPTOR.message_types_by_name['UserContainer'] = _USERCONTAINER
 DESCRIPTOR.message_types_by_name['User'] = _USER
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -155,11 +194,20 @@ UserContainer = _reflection.GeneratedProtocolMessageType('UserContainer', (_mess
 _sym_db.RegisterMessage(UserContainer)
 
 User = _reflection.GeneratedProtocolMessageType('User', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _USER_METADATAENTRY,
+    __module__ = 'user_state_pb2'
+    # @@protoc_insertion_point(class_scope:User.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _USER,
   __module__ = 'user_state_pb2'
   # @@protoc_insertion_point(class_scope:User)
   ))
 _sym_db.RegisterMessage(User)
+_sym_db.RegisterMessage(User.MetadataEntry)
 
 
+_USER_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)

@@ -16,9 +16,6 @@
 from rbac.common import addresser
 from rbac.common import protobuf
 from rbac.common.proposal.proposal_message import ProposalMessage
-from rbac.common.logs import get_default_logger
-
-LOGGER = get_default_logger(__name__)
 
 
 class ProposalPropose(ProposalMessage):
@@ -88,6 +85,7 @@ class ProposalPropose(ProposalMessage):
         store.open_reason = message.reason
         store.opener = payload.signer.next_id
         store.created_date = payload.now
-        store.metadata = message.metadata
+        for key in message.metadata:
+            store.metadata[key] = message.metadata[key]
         if self.proposal_type == 1:
             store.pack_id = message.pack_id

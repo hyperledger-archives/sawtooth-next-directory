@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x14proposal_state.proto\"2\n\x12ProposalsContainer\x12\x1c\n\tproposals\x18\x01 \x03(\x0b\x32\t.Proposal\"\xc2\x05\n\x08Proposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12-\n\rproposal_type\x18\x02 \x01(\x0e\x32\x16.Proposal.ProposalType\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\t\x12\x0e\n\x06opener\x18\x05 \x01(\t\x12\x0e\n\x06\x63loser\x18\x06 \x01(\t\x12 \n\x06status\x18\x07 \x01(\x0e\x32\x10.Proposal.Status\x12\x13\n\x0bopen_reason\x18\x08 \x01(\t\x12\x14\n\x0c\x63lose_reason\x18\t \x01(\t\x12\x10\n\x08metadata\x18\n \x01(\t\x12\x19\n\x11\x61ssigned_approver\x18\x0b \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x0c \x01(\x03\x12\x13\n\x0b\x63losed_date\x18\r \x01(\x03\x12\x0f\n\x07pack_id\x18\x0e \x01(\t\"\xa9\x02\n\x0cProposalType\x12\x11\n\rADD_ROLE_TASK\x10\x00\x12\x13\n\x0f\x41\x44\x44_ROLE_MEMBER\x10\x01\x12\x12\n\x0e\x41\x44\x44_ROLE_OWNER\x10\x02\x12\x12\n\x0e\x41\x44\x44_ROLE_ADMIN\x10\x03\x12\x14\n\x10REMOVE_ROLE_TASK\x10\x04\x12\x16\n\x12REMOVE_ROLE_MEMBER\x10\x05\x12\x15\n\x11REMOVE_ROLE_OWNER\x10\x06\x12\x15\n\x11REMOVE_ROLE_ADMIN\x10\x07\x12\x12\n\x0e\x41\x44\x44_TASK_OWNER\x10\x08\x12\x12\n\x0e\x41\x44\x44_TASK_ADMIN\x10\t\x12\x15\n\x11REMOVE_TASK_OWNER\x10\n\x12\x15\n\x11REMOVE_TASK_ADMIN\x10\x0b\x12\x17\n\x13UPDATE_USER_MANAGER\x10\x0c\"I\n\x06Status\x12\x08\n\x04OPEN\x10\x00\x12\x0c\n\x08REJECTED\x10\x01\x12\r\n\tCONFIRMED\x10\x02\x12\x0b\n\x07\x45XPIRED\x10\x03\x12\x0b\n\x07REMOVED\x10\x04\x62\x06proto3')
+  serialized_pb=_b('\n\x14proposal_state.proto\"2\n\x12ProposalsContainer\x12\x1c\n\tproposals\x18\x01 \x03(\x0b\x32\t.Proposal\"\x8c\x06\n\x08Proposal\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12-\n\rproposal_type\x18\x02 \x01(\x0e\x32\x16.Proposal.ProposalType\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\t\x12\x0e\n\x06opener\x18\x05 \x01(\t\x12\x0e\n\x06\x63loser\x18\x06 \x01(\t\x12 \n\x06status\x18\x07 \x01(\x0e\x32\x10.Proposal.Status\x12\x13\n\x0bopen_reason\x18\x08 \x01(\t\x12\x14\n\x0c\x63lose_reason\x18\t \x01(\t\x12)\n\x08metadata\x18\n \x03(\x0b\x32\x17.Proposal.MetadataEntry\x12\x19\n\x11\x61ssigned_approver\x18\x0b \x01(\t\x12\x14\n\x0c\x63reated_date\x18\x0c \x01(\x03\x12\x13\n\x0b\x63losed_date\x18\r \x01(\x03\x12\x0f\n\x07pack_id\x18\x0e \x01(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa9\x02\n\x0cProposalType\x12\x11\n\rADD_ROLE_TASK\x10\x00\x12\x13\n\x0f\x41\x44\x44_ROLE_MEMBER\x10\x01\x12\x12\n\x0e\x41\x44\x44_ROLE_OWNER\x10\x02\x12\x12\n\x0e\x41\x44\x44_ROLE_ADMIN\x10\x03\x12\x14\n\x10REMOVE_ROLE_TASK\x10\x04\x12\x16\n\x12REMOVE_ROLE_MEMBER\x10\x05\x12\x15\n\x11REMOVE_ROLE_OWNER\x10\x06\x12\x15\n\x11REMOVE_ROLE_ADMIN\x10\x07\x12\x12\n\x0e\x41\x44\x44_TASK_OWNER\x10\x08\x12\x12\n\x0e\x41\x44\x44_TASK_ADMIN\x10\t\x12\x15\n\x11REMOVE_TASK_OWNER\x10\n\x12\x15\n\x11REMOVE_TASK_ADMIN\x10\x0b\x12\x17\n\x13UPDATE_USER_MANAGER\x10\x0c\"I\n\x06Status\x12\x08\n\x04OPEN\x10\x00\x12\x0c\n\x08REJECTED\x10\x01\x12\r\n\tCONFIRMED\x10\x02\x12\x0b\n\x07\x45XPIRED\x10\x03\x12\x0b\n\x07REMOVED\x10\x04\x62\x06proto3')
 )
 
 
@@ -85,8 +85,8 @@ _PROPOSAL_PROPOSALTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=411,
-  serialized_end=708,
+  serialized_start=485,
+  serialized_end=782,
 )
 _sym_db.RegisterEnumDescriptor(_PROPOSAL_PROPOSALTYPE)
 
@@ -119,8 +119,8 @@ _PROPOSAL_STATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=710,
-  serialized_end=783,
+  serialized_start=784,
+  serialized_end=857,
 )
 _sym_db.RegisterEnumDescriptor(_PROPOSAL_STATUS)
 
@@ -155,6 +155,43 @@ _PROPOSALSCONTAINER = _descriptor.Descriptor(
   serialized_end=74,
 )
 
+
+_PROPOSAL_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='Proposal.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='Proposal.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='Proposal.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=435,
+  serialized_end=482,
+)
 
 _PROPOSAL = _descriptor.Descriptor(
   name='Proposal',
@@ -228,8 +265,8 @@ _PROPOSAL = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='Proposal.metadata', index=9,
-      number=10, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=10, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -264,7 +301,7 @@ _PROPOSAL = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_PROPOSAL_METADATAENTRY, ],
   enum_types=[
     _PROPOSAL_PROPOSALTYPE,
     _PROPOSAL_STATUS,
@@ -276,12 +313,14 @@ _PROPOSAL = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=77,
-  serialized_end=783,
+  serialized_end=857,
 )
 
 _PROPOSALSCONTAINER.fields_by_name['proposals'].message_type = _PROPOSAL
+_PROPOSAL_METADATAENTRY.containing_type = _PROPOSAL
 _PROPOSAL.fields_by_name['proposal_type'].enum_type = _PROPOSAL_PROPOSALTYPE
 _PROPOSAL.fields_by_name['status'].enum_type = _PROPOSAL_STATUS
+_PROPOSAL.fields_by_name['metadata'].message_type = _PROPOSAL_METADATAENTRY
 _PROPOSAL_PROPOSALTYPE.containing_type = _PROPOSAL
 _PROPOSAL_STATUS.containing_type = _PROPOSAL
 DESCRIPTOR.message_types_by_name['ProposalsContainer'] = _PROPOSALSCONTAINER
@@ -296,11 +335,20 @@ ProposalsContainer = _reflection.GeneratedProtocolMessageType('ProposalsContaine
 _sym_db.RegisterMessage(ProposalsContainer)
 
 Proposal = _reflection.GeneratedProtocolMessageType('Proposal', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSAL_METADATAENTRY,
+    __module__ = 'proposal_state_pb2'
+    # @@protoc_insertion_point(class_scope:Proposal.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSAL,
   __module__ = 'proposal_state_pb2'
   # @@protoc_insertion_point(class_scope:Proposal)
   ))
 _sym_db.RegisterMessage(Proposal)
+_sym_db.RegisterMessage(Proposal.MetadataEntry)
 
 
+_PROPOSAL_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)
