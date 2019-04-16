@@ -23,7 +23,7 @@ from rbac.server.api import roles, utils
 
 from rbac.server.db import packs_query
 from rbac.server.api.errors import ApiBadRequest
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 
 
 PACKS_BP = Blueprint("packs")
@@ -36,14 +36,8 @@ async def get_all_packs(request):
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
 
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     pack_resources = await packs_query.fetch_all_pack_resources(conn, start, limit)
-
     conn.close()
 
     return await utils.create_response(
@@ -57,11 +51,7 @@ async def create_new_pack(request):
     """Create a new pack"""
     required_fields = ["owners", "name", "roles"]
     utils.validate_fields(required_fields, request.json)
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
     response = await packs_query.packs_search_duplicate(conn, request.json.get("name"))
     if not response:
         pack_id = str(uuid4())
@@ -84,16 +74,9 @@ async def create_new_pack(request):
 @authorized()
 async def get_pack(request, pack_id):
     """Get a single pack"""
-
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     head_block = await utils.get_request_block(request)
     pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
-
     conn.close()
 
     return await utils.create_response(conn, request.url, pack_resource, head_block)
@@ -103,11 +86,7 @@ async def get_pack(request, pack_id):
 @authorized()
 async def check_pack_name(request):
     """Check if a pack exists with provided name"""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
     response = await packs_query.packs_search_duplicate(conn, request.args.get("name"))
     conn.close()
     return json({"exists": bool(response)})
@@ -120,15 +99,8 @@ async def add_pack_member(request, pack_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
-    head_block = await utils.get_request_block(request)
+    conn = await create_connection()
     pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
-
     conn.close()
 
     request.json["metadata"] = ""
@@ -143,12 +115,7 @@ async def add_pack_member(request, pack_id):
 async def add_pack_role(request, pack_id):
     """Add roles to a pack"""
 
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     required_fields = ["roles"]
     utils.validate_fields(required_fields, request.json)
     await packs_query.add_roles(conn, pack_id, request.json.get("roles"))

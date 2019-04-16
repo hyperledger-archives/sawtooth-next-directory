@@ -13,11 +13,12 @@ The NEXT Identity platform interacts with Active Directory Provider through thre
 
 **Delta Inbound Sync**
     The delta inbound sync pulls all user or group records from Active Directory that have been modified since the last 
-    inbound sync occurred. The records will be queued and users and groups will be updated accordingly on the NEXT platform. 
+    inbound sync occurred. The records will be queued and users and groups will be updated/deleted accordingly on the NEXT platform. 
     To check for users or groups that have been modified since the last sync occurred, we utilized the whenChanged field on each 
     Active Directory record. A search query will look for all records that has a whenChanged timestamp at a later date than the 
     last sync time. By default, delta inbound sync will occur by default every hour, but can be configured in the environment 
-    variables (refer to the Setting up Environment Variables below for more details).
+    variables (refer to the Setting up Environment Variables below for more details). Deletions are detected by comparing the
+    users/groups that currently exist in AD against imported AD users/groups on NEXT.
 
 ..
 
@@ -34,14 +35,18 @@ Setting up Environment Variables
 To connect your organization's Active Directory provider to the NEXT platform, you must configure the following environment variables 
 in the .env file located in the root directory.
 
+* **ENABLE_LDAP_SYNC**: A boolean that turns on or off LDAP sync
 * **LDAP_DC**: The unique domain controller for your Active Directory instance 
 * **LDAP_SERVER**: The IP address of the Active Directory instance containing the prefix "ldap://"
 * **LDAP_USER**: The username of a user that has access to search and udpate users and groups in the Active Directory domain controller
 * **LDAP_PASS**: The password used to authenticate as the LDAP_USER
 * **DELTA_SYNC_INTERVAL_SECONDS**: The interval (in seconds) of when the outbound delta sync would be performed 
-
+* **GROUP_BASE_DN**: The OU containing the groups you would like to import into NEXT
+* **USER_BASE_DN**: The OU containing the users you would like to import into NEXT
 
 Example list of environment variables in .env:
+    ENABLE_LDAP_SYNC=True
+
     LDAP_DC=DC=test,DC=example,DC=com
 
     LDAP_SERVER=ldap://10.123.123.123
@@ -52,8 +57,12 @@ Example list of environment variables in .env:
 
     DELTA_SYNC_INTERVAL_SECONDS=3600
 
+    GROUP_BASE_DN=OU=Roles,DC=test,DC=example,DC=com
+
+    USER_BASE_DN=OU=Users,DC=test,DC=example,DC=com
+
 Active Directory Data Field Mapping
-----------------------------------------
+-----------------------------------
 When data is imported into the NEXT platform from Active Directory, the data field names for Active Directory users and groups will be 
 mapped to new field names to allow our platform to interact with the incoming data. Active Directory data fields are currently being 
 mapped according to the tables below.
@@ -63,7 +72,11 @@ User Fields
 +---------------------+----------------------+
 |      AD Field       |     NEXT Field       |
 +=====================+======================+
+<<<<<<< HEAD
 | objectGUID          | next_id              |
+=======
+| distinguishedName   | remote_id            |
+>>>>>>> e5151322876599aceffb0e61c1400c1ebda9c1af
 +---------------------+----------------------+
 | telephoneNumber     | business_phones      |
 +---------------------+----------------------+
@@ -110,9 +123,9 @@ Group Fields
 +---------------------+----------------------+
 |      AD Field       |     NEXT Field       |
 +=====================+======================+
-| objectGUID          | role_id              |
+| distinguishedName   | remote_id            |
 +---------------------+----------------------+
-| whenChanged         | created_date         |
+| whenCreated         | created_date         |
 +---------------------+----------------------+
 | description         | description          |
 +---------------------+----------------------+

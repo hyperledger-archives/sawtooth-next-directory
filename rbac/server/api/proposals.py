@@ -27,7 +27,7 @@ from rbac.server.api import utils
 from rbac.server.db import proposals_query
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.users_query import fetch_user_resource
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 
 LOGGER = get_default_logger(__name__)
 
@@ -87,11 +87,7 @@ PROPOSAL_TRANSACTION = {
 @authorized()
 async def get_all_proposals(request):
     """Get all proposals"""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
@@ -110,11 +106,7 @@ async def get_all_proposals(request):
 @authorized()
 async def get_proposal(request, proposal_id):
     """Get specific proposal by proposal_id."""
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
 
     head_block = await utils.get_request_block(request)
     proposal = await proposals_query.fetch_proposal_resource(conn, proposal_id)
@@ -147,12 +139,7 @@ async def update_proposal(request, proposal_id):
         )
     txn_key, txn_user_id = await utils.get_transactor_key(request=request)
 
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
-
+    conn = await create_connection()
     proposal_resource = await proposals_query.fetch_proposal_resource(
         conn, proposal_id=proposal_id
     )

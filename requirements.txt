@@ -1,5 +1,6 @@
 PyYAML==4.2b1
 black==18.9b0
+environs==4.1.0
 itsdangerous==0.24
 dredd_hooks==0.2.0
 rethinkdb==2.3.0.post6

@@ -50,9 +50,6 @@ class Login extends Component {
   };
 
 
-  state = { authSource: null };
-
-
   themes = ['flux'];
 
 
@@ -62,27 +59,16 @@ class Login extends Component {
    */
   componentDidMount () {
     theme.apply(this.themes);
-    this.setState({ authSource: storage.getAuthSource() || 'next' });
     this.init();
   }
 
 
   /**
    * Called whenever Redux state changes.
-   * @param {object} prevProps Props before update
-   * @param {object} prevState State before update
    * @returns {undefined}
    */
-  componentDidUpdate (prevProps, prevState) {
-    const { authSource } = this.state;
+  componentDidUpdate () {
     this.init();
-
-    if (prevState.authSource !== authSource) {
-      if (authSource === 'ldap')
-        storage.setAuthSource('ldap');
-      else
-        storage.setAuthSource('next');
-    }
   }
 
 
@@ -114,21 +100,11 @@ class Login extends Component {
 
 
   /**
-   * Set authentication source
-   * @param {string} authSource Authentication source
-   */
-  setAuthSource = (authSource) => {
-    this.setState({ authSource });
-  }
-
-
-  /**
    * Render entrypoint
    * @returns {JSX}
    */
   render () {
     const { login } = this.props;
-    const { authSource } = this.state;
 
     return (
       <div id='next-login-container'>
@@ -138,17 +114,17 @@ class Login extends Component {
               <Image centered src={logo} id='next-login-logo'/>
             </Header>
             <LoginForm
-              authSource={authSource}
-              setAuthSource={this.setAuthSource}
               submit={login}
               {...this.props}/>
           </Grid.Column>
         </Grid>
-        <div id='next-login-new-account-container'>
-          <Link to='/signup'>
-            Create an account
-          </Link>
-        </div>
+        { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
+          <div id='next-login-new-account-container'>
+            <Link to='/signup'>
+              Create an account
+            </Link>
+          </div>
+        }
       </div>
     );
   }
@@ -165,8 +141,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    login: (username, password, authSource) =>
-      dispatch(AuthActions.loginRequest(username, password, authSource)),
+    login: (username, password) =>
+      dispatch(AuthActions.loginRequest(username, password)),
     resetErrors: () => dispatch(AuthActions.resetErrors()),
   };
 };
