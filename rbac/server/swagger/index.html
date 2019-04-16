@@ -1999,7 +1999,74 @@ var r=n(325),i=n(326),o=n(167);function u(){return a.TYPED_ARRAY_SUPPORT?2147483
       							}
       						}
       					}
-      				}
+      				},
+							"delete": {
+								"security": [
+									{
+										"Bearer": []
+									}
+								],
+								"description": "Delete a particular user",
+								"parameters": [
+									{
+										"$ref": "#/parameters/head"
+									}
+								],
+								"responses": {
+      						"200": {
+      							"description": "Response when delete a particular user",
+      							"schema": {
+      								"properties": {
+      									"link": {
+      										"$ref": "#/definitions/deleteUserLink"
+      									},
+      									"head": {
+      										"$ref": "#/definitions/head"
+      									},
+      									"data": {
+      										"$ref": "#/definitions/user"
+      									}
+      								}
+      							}
+      						},
+      						"400": {
+      							"description": "Response for a bad request",
+      							"schema": {
+      								"$ref": "#/definitions/400Error"
+      							}
+      						},
+      						"401": {
+      							"description": "Response for an unauthorized request",
+      							"schema": {
+      								"$ref": "#/definitions/401Error"
+      							}
+      						},
+      						"403": {
+      							"description": "Response for a forbidden request",
+      							"schema": {
+      								"$ref": "#/definitions/403Error"
+      							}
+      						},
+      						"404": {
+      							"description": "Response for object not found",
+      							"schema": {
+      								"$ref": "#/definitions/404Error"
+      							}
+      						},
+      						"503": {
+      							"description": "Response for an internal unknown error",
+      							"schema": {
+      								"$ref": "#/definitions/503Error"
+      							}
+      						},
+      						"default": {
+      							"description": "Response for an unexpected error",
+      							"schema": {
+      								"$ref": "#/definitions/error"
+      							}
+      						}
+      					}
+							}
       			},
       			"/users/{id}/manager": {
       				"parameters": [
@@ -2390,7 +2457,11 @@ var r=n(325),i=n(326),o=n(167);function u(){return a.TYPED_ARRAY_SUPPORT?2147483
       			"getUserLink": {
       				"type": "string",
       				"example": "https://api.hyper-directory.t-mobile.com/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=None&limit=None"
-      			},
+						},
+						"deleteUserLink": {
+              "type": "string",
+      				"example": "https://api.hyper-directory.t-mobile.com/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a?head=2f1888cd14faa35bf6d23ffae3a5f0bd116b716c7898ad3e41846072da5c96a138b11eb7c4b9065f66e3d38ea69eda27713695169373b2bc20d57c4e09e0c3ed&start=None&limit=None"
+						},
       			"getOpenProposalsLink": {
       				"type": "string",
       				"example": "http://localhost:8000/api/users/02178c1bcdb25407394348f1ff5273adae287d8ea328184546837957e71c7de57a/proposals/open?head=682a5bc90804e4e3e94f798b5d57956ce9f996a981665140cd07be151b66959d47975a25761f948a3495e425a303390e2b1e2f2cb3f3a88e794248df96ef84d1&start=0&limit=100"

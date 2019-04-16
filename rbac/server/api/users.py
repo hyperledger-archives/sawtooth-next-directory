@@ -32,6 +32,7 @@ from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
+from rbac.server.db import packs_query
 from rbac.server.db.db_utils import create_connection
 
 AES_KEY = os.getenv("AES_KEY")
@@ -142,6 +143,27 @@ async def get_user(request, next_id):
     head_block = await utils.get_request_block(request)
     # this takes 4 seconds
     user_resource = await users_query.fetch_user_resource(conn, next_id)
+    conn.close()
+
+    return await utils.create_response(conn, request.url, user_resource, head_block)
+
+
+@USERS_BP.delete("api/users/<next_id>")
+@authorized()
+async def delete_user(request, next_id):
+    """Delete a specific user by next_id."""
+    conn = await create_connection()
+
+    head_block = await utils.get_request_block(request)
+    await auth_query.delete_auth_entry_by_next_id(conn, next_id)
+    await users_query.delete_user_mapping_by_next_id(conn, next_id)
+    await roles_query.delete_role_admin_by_next_id(conn, next_id)
+    await roles_query.delete_role_member_by_next_id(conn, next_id)
+    await roles_query.delete_role_owner_by_next_id(conn, next_id)
+    await packs_query.delete_pack_owner_by_next_id(conn, next_id)
+    # TODO: We have to remove next_id reference entry from task table.
+    user_resource = await users_query.delete_user_resource(conn, next_id)
+
     conn.close()
 
     return await utils.create_response(conn, request.url, user_resource, head_block)

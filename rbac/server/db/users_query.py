@@ -80,6 +80,20 @@ async def fetch_user_resource(conn, next_id):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
 
 
+async def delete_user_resource(conn, next_id):
+    """Database query to delete an individual user."""
+    resource = (
+        await r.table("users")
+        .filter({"next_id": next_id})
+        .delete(return_changes=True)
+        .run(conn)
+    )
+    try:
+        return resource
+    except IndexError:
+        raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
+
+
 async def fetch_user_resource_summary(conn, next_id):
     """Database query to get summary data on an individual user."""
     resource = (
@@ -264,6 +278,11 @@ async def create_user_map_entry(conn, data):
     """Insert a created user into the user_mapping table."""
     resource = await r.table("user_mapping").insert(data).run(conn)
     return resource
+
+
+async def delete_user_mapping_by_next_id(conn, next_id):
+    """Delete user_mapping from user_mapping table."""
+    return await r.table("user_mapping").filter({"next_id": next_id}).delete().run(conn)
 
 
 async def search_users(conn, search_query, paging):
