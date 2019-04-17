@@ -12,42 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-""" Database (RethinkDB) helper functions
-"""
-import time
-import os
+""" Database (RethinkDB) helper functions"""
 from datetime import timezone
 from datetime import datetime as dt
 import rethinkdb as r
 
 from rbac.common.logs import get_default_logger
 from rbac.providers.common.expected_errors import ExpectedError
+from rbac.utils import connect_to_db
 
 LOGGER = get_default_logger(__name__)
-
-DB_HOST = os.getenv("DB_HOST", "rethink")
-DB_PORT = os.getenv("DB_PORT", "28015")
-DB_NAME = os.getenv("DB_NAME", "rbac")
-DB_CONNECT_TIMEOUT = int(float(os.getenv("DB_CONNECT_TIMEOUT", "1")))
-
-DB_CONNECT_MAX_ATTEMPTS = 5
-
-
-def connect_to_db():
-    """Polls the database until it comes up and opens a connection."""
-    connected_to_db = False
-    conn = None
-    while not connected_to_db:
-        try:
-            conn = r.connect(host=DB_HOST, port=DB_PORT, db=DB_NAME)
-            connected_to_db = True
-        except r.ReqlDriverError:
-            LOGGER.debug(
-                "Could not connect to RethinkDB. Retrying in %s seconds...",
-                DB_CONNECT_TIMEOUT,
-            )
-            time.sleep(DB_CONNECT_TIMEOUT)
-    return conn
 
 
 def get_last_sync(source, sync_type):
@@ -130,7 +104,7 @@ def put_entry_changelog(queue_entry, direction):
 
 def delete_entry_queue(object_id, table_name):
     """Delete a document from the outbound queue table."""
-    conn = connect_to_db
+    conn = connect_to_db()
     result = r.table(table_name).get(object_id).delete(return_changes=True).run(conn)
     conn.close()
     LOGGER.debug(result)

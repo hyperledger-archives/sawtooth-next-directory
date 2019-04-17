@@ -20,7 +20,8 @@ RUN pip install \
         pytz==2018.6 \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
-        requests==2.20.0
+        requests==2.20.0 \
+        environs==4.1.0
 RUN pip install azure-eventhub==1.2.0
 WORKDIR /project/hyperledger-rbac
 CMD [ "./bin/rbac-providers-azure" ]
