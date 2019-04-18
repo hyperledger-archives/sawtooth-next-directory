@@ -133,12 +133,22 @@ def fetch_ldap_deletions():
         if data_type == "user":
             search_filter = "(objectClass=person)"
             search_base = USER_BASE_DN
-            existing_records = list(r.table("users").get_field("remote_id").run(conn))
+            existing_records = list(
+                r.table("user_mapping")
+                .filter({"provider_id": LDAP_DC})
+                .get_field("remote_id")
+                .run(conn)
+            )
         else:
             search_filter = "(objectClass=group)"
             search_base = GROUP_BASE_DN
-            existing_records = list(r.table("roles").get_field("remote_id").run(conn))
-
+            existing_records = list(
+                r.table("metadata")
+                .has_fields("role_id")
+                .filter({"provider_id": LDAP_DC})
+                .get_field("remote_id")
+                .run(conn)
+            )
         ldap_connection = ldap_connector.await_connection(
             LDAP_SERVER, LDAP_USER, LDAP_PASS
         )
