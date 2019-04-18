@@ -15,16 +15,17 @@
 """Implements the User library: rbac.user.*"""
 # pylint: disable=too-few-public-methods
 
-from rbac.common.user.create_user import CreateUser
-from rbac.common.user.propose_manager import ProposeUpdateUserManager
+from rbac.common.logs import get_default_logger
 from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
-from rbac.common.user.reject_manager import RejectUpdateUserManager
+from rbac.common.user.create_user import CreateUser
+from rbac.common.user.delete_user import DeleteUser
 from rbac.common.user.imports_user import ImportsUser
-from rbac.common.user.user_address import UserManagerAddress
+from rbac.common.user.propose_manager import ProposeUpdateUserManager
+from rbac.common.user.reject_manager import RejectUpdateUserManager
 from rbac.common.user.user_address import UserDirectReportAddress
 from rbac.common.user.user_address import UserEmailAddress
 from rbac.common.user.user_address import UserKeyAddress
-from rbac.common.logs import get_default_logger
+from rbac.common.user.user_address import UserManagerAddress
 
 LOGGER = get_default_logger(__name__)
 
@@ -49,6 +50,11 @@ class User(CreateUser):
         self.email = UserEmailAddress()
         self.key = UserKeyAddress()
         self.direct_report = UserDirectReportAddress()
+        # TODO: Find out where transaction types are being registered to the
+        #   transaction processor. I added this here as I couldn't figure out
+        #   where the registration happens. Finding this out will also help us
+        #   clear this file of this singleton.
+        self.delete = DeleteUser()
 
 
 USER = User()

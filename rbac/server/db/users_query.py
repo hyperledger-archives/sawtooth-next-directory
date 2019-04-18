@@ -80,24 +80,13 @@ async def fetch_user_resource(conn, next_id):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
 
 
-# TODO: After NEXT UUID Implementation has completed, revert this function back to next_id
 async def fetch_user_resource_summary(conn, next_id):
     """Database query to get summary data on an individual user."""
-    if "cn" in next_id.lower():
-        user_attribute = "distinguished_name"
-    else:
-        user_attribute = "next_id"
     resource = (
         await r.table("users")
-        .filter(lambda user: (user[user_attribute] == next_id))
-        .merge(
-            {
-                "id": r.row[user_attribute],
-                "name": r.row["name"],
-                "email": r.row["email"],
-            }
-        )
-        .without(user_attribute, "manager_id", "start_block_num", "end_block_num")
+        .filter(lambda user: (user["next_id"] == next_id))
+        .merge({"id": r.row["next_id"], "name": r.row["name"], "email": r.row["email"]})
+        .without("next_id", "manager_id", "start_block_num", "end_block_num")
         .coerce_to("array")
         .run(conn)
     )

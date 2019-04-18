@@ -20,7 +20,6 @@ from sanic.exceptions import NotFound
 
 from rbac.common.logs import get_default_logger
 
-
 ERRORS_BP = Blueprint("errors")
 LOGGER = get_default_logger(__name__)
 DEFAULT_MSGS = {

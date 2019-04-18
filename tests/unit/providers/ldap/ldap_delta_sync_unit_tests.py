@@ -12,25 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
+"""Test Suite for LDAP Delta Inbound Sync."""
 
-FROM python:3.5-slim-jessie
-RUN apt-get update -y && \
-        apt-get install -y apt-file && \
-        apt-file update && \
-        apt-get install -y gcc
-RUN pip install \
-        grpcio-tools==1.16.1 \
-        itsdangerous==1.1.0 \
-        rethinkdb==2.3.0.post6 \
-        sanic==0.8.3 \
-        sawtooth-sdk==1.0.1 \
-        sanic-cors==0.9.7 \
-        websockets==5.0.1 \
-        requests==2.21.0 \
-        cryptography==2.4.2 \
-        aiohttp==3.5.4 \
-        ldap3==2.5.2 \
-        environs==4.1.0
-EXPOSE 8000/tcp
-WORKDIR /project/hyperledger-rbac
-CMD ["./bin/rbac-server"]
+import pytest
+
+from rbac.providers.ldap.delta_inbound_sync import insert_deleted_entries
+
+
+def test_invalid_data_type():
+    """ Tests when an invalid data_type is passed into insert_deleted_entries()
+    function that it will raise a ValueError.
+    """
+    deleted_entries = {
+        "CN=james,OU=users,DC=example,DC=com",
+        "CN=susan,OU=users,DC=example,DC=com",
+    }
+    data_type = "not_deleted"
+    with pytest.raises(ValueError):
+        insert_deleted_entries(deleted_entries, data_type)

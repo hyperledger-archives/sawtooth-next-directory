@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-"""Utility functions for RethinkDB."""
-
+"""Utility functions for Rethink and Sanic."""
+from environs import Env
 import rethinkdb as r
 
 
-async def create_connection(host, port, name):
-    """Create a new connection to RethinkDB."""
+async def create_connection():
+    """Create a new connection to RethinkDB for async interactions."""
+    env = Env()
     r.set_loop_type("asyncio")
-    connection = await r.connect(host=host, port=port, db=name)
+    connection = await r.connect(
+        host=env("DB_HOST"), port=env("DB_PORT"), db=env("DB_NAME")
+    )
     return connection

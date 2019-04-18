@@ -20,7 +20,8 @@ RUN pip install \
         pytz==2018.6 \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
-        requests==2.20.0
+        requests==2.20.0 \
+        environs==4.1.0
 RUN pip install ldap3==2.5.1 
 WORKDIR /project/hyperledger-rbac
 CMD [ "./bin/rbac-providers-ldap" ]

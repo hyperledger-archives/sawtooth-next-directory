@@ -19,6 +19,7 @@
 
 import time
 from datetime import datetime, timedelta, timezone
+
 import rethinkdb as r
 import pytest
 from ldap3 import (
@@ -31,9 +32,14 @@ from ldap3 import (
 )
 from ldap3.extend.microsoft import addMembersToGroups, removeMembersFromGroups
 
-from rbac.providers.ldap.delta_inbound_sync import insert_to_db
+from rbac.common.logs import get_default_logger
 from rbac.providers.common.db_queries import connect_to_db
+from rbac.providers.ldap.delta_inbound_sync import (
+    insert_updated_entries,
+    insert_deleted_entries,
+)
 
+LOGGER = get_default_logger(__name__)
 
 # ------------------------------------------------------------------------------
 # <==== BEGIN TEST PARAMETERS =================================================>
@@ -248,7 +254,7 @@ def put_in_inbound_queue(fake_data, data_type):
             str: type of object "user"/"group"
     """
     when_changed = (datetime.utcnow() - timedelta(days=1)).replace(tzinfo=timezone.utc)
-    insert_to_db(fake_data, when_changed, data_type)
+    insert_updated_entries(fake_data, when_changed, data_type)
 
 
 def is_user_in_db(email):
@@ -601,7 +607,7 @@ def test_create_fake_group(ldap_connection, group):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     result = is_group_in_db(group["common_name"])
     assert result is True
 
@@ -646,7 +652,7 @@ def test_add_group_member(ldap_connection, group, user):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     result = is_user_a_role_member(group["common_name"], user["common_name"])
     assert result is True
 
@@ -684,6 +690,7 @@ def test_remove_group_member(ldap_connection, group, user):
     group_distinct_name = [
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % group["common_name"]
     ]
+
     removeMembersFromGroups.ad_remove_members_from_groups(
         ldap_connection, user_distinct_name, group_distinct_name, fix=True
     )
@@ -691,7 +698,7 @@ def test_remove_group_member(ldap_connection, group, user):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     result = is_user_a_role_member(group["common_name"], user["common_name"])
     assert result is False
 
@@ -731,7 +738,7 @@ def test_add_replace_group_owner(ldap_connection, group, user):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
 
     result = is_user_the_role_owner(group["common_name"], user["common_name"])
     assert result is True
@@ -760,7 +767,43 @@ def test_remove_group_owner(ldap_connection, group):
     fake_group = get_fake_group(ldap_connection, group["common_name"])
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(3)
     role_id = get_role_id_from_cn(group["common_name"])
     role_owners = get_role_owners(role_id)
     assert len(role_owners) is 0
+
+
+def test_delete_user(ldap_connection):
+    """Deletes a AD user in NEXT
+
+    Args:
+        ldap_connection:
+            obj: A bound mock mock_ldap_connection
+    """
+    create_fake_user(ldap_connection, "jchan20", "Jackie Chan", "Jackie")
+    fake_user = get_fake_user(ldap_connection, "jchan20")
+    put_in_inbound_queue(fake_user, "user")
+    insert_deleted_entries(
+        ["CN=jchan20,OU=Users,OU=Accounts,DC=AD2012,DC=LAB"], "user_deleted"
+    )
+    email = "jchan20@clouddev.corporate.t-mobile.com"
+    result = is_user_in_db(email)
+    assert result is False
+
+
+def test_delete_role(ldap_connection):
+    """Deletes a AD role in NEXT
+
+    Args:
+        ldap_connection:
+            obj: A bound mock mock_ldap_connection
+    """
+    create_fake_group(ldap_connection, "sysadmins", "sysadmins")
+    fake_group = get_fake_group(ldap_connection, "sysadmins")
+    put_in_inbound_queue(fake_group, "group")
+    insert_deleted_entries(
+        ["CN=sysadmins,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB"],
+        "group_deleted",
+    )
+    result = is_group_in_db("sysadmins")
+    assert result is False
