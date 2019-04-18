@@ -70,12 +70,25 @@ def _remove_legacy(conn, address, data_type):
     """ Remove from the legacy sync tables (expansion by object type name)
     """
     try:
+        next_object = (
+            r.table(TABLE_NAMES[data_type])
+            .filter({"id": address})
+            .coerce_to("array")
+            .run(conn)
+        )
         query = r.table(TABLE_NAMES[data_type]).get(address).delete()
         result = query.run(conn)
         if result["errors"] > 0:
             LOGGER.warning(
                 "error removing from legacy state table:\n%s\n%s", result, query
             )
+        if TABLE_NAMES[data_type] == "users":
+            r.table("user_mapping").filter(
+                {
+                    "remote_id": next_object[0]["remote_id"],
+                    "next_id": next_object[0]["next_id"],
+                }
+            ).delete().run(conn)
 
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.warning("_remove_legacy %s error:", type(err))

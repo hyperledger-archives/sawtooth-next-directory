@@ -64,6 +64,7 @@ def add_transaction(inbound_entry):
         inbound_entry["private_key"] = encrypted_private_key
         set_metadata_flag["sync_direction"] = "INBOUND"
         data["metadata"] = set_metadata_flag
+        data["provider_id"] = inbound_entry["provider_id"]
 
         if inbound_entry["data_type"] == "user":
             next_user = get_next_object(
