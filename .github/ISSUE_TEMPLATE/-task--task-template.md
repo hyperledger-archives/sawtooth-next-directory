@@ -11,5 +11,6 @@ Task Title |
 User Story | link associated User Story for this task
 Description | A short description
 Business Need (the why): | how does this task tie into the user story
-Applications or Systems impacted |
+Requirements | needs of task
 Dependencies | if certain tasks must be done in a certain order, note here
+Acceptance Criteria | definition of done
