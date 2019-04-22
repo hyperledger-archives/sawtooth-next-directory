@@ -216,6 +216,7 @@ class OrganizationList extends Component {
         }
         { !showSearchData &&
           people &&
+          me &&
           people.filter(person => me.id !== person.id).map((person, index) => {
             return (
               <div className='next-approver-people-list-item' key={index}>

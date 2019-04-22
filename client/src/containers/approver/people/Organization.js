@@ -264,9 +264,23 @@ class Organization extends Component {
    */
   render () {
     const { compact, id, organization } = this.props;
-    if (organization &&
-        organization.managers.length === 0)
-      return null;
+
+    if (organization) {
+      if (organization.managers.length === 0 ||
+          organization.direct_reports === 0 ||
+          organization.peers === 0) {
+        if (!compact) {
+          return (
+            <div className='next-organization-error-message'>
+              <h3>
+                You are not a member of an organization
+              </h3>
+            </div>
+          );
+        }
+        return null;
+      }
+    }
 
     if (!compact && organization && organization.id !== id)
       return null;
