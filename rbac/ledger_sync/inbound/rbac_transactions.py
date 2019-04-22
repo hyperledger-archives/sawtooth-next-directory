@@ -25,9 +25,11 @@ from rbac.common.crypto.secrets import encrypt_private_key
 from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.common.role.delete_role import DeleteRole
+from rbac.common.role.delete_role_owner import DeleteRoleOwner
 from rbac.common.user import User
 from rbac.common.user.delete_user import DeleteUser
 from rbac.common.util import bytes_from_hex
+from rbac.common.sawtooth import batcher
 from rbac.providers.common.db_queries import connect_to_db
 
 LOGGER = get_default_logger(__name__)
@@ -119,6 +121,8 @@ def add_transaction(inbound_entry):
             LOGGER.info(
                 "User deletion detected in inbound_queue: %s", data["remote_id"]
             )
+
+            # Find user to be deleted
             deleted_user = data["remote_id"]
             conn = connect_to_db()
             user_in_db = (
@@ -128,22 +132,10 @@ def add_transaction(inbound_entry):
                 .run(conn)
             )
             conn.close()
-            if user_in_db:
-                user_delete = DeleteUser()
-                next_id = user_in_db[0]["next_id"]
-                inbound_entry = add_sawtooth_prereqs(
-                    entry_id=next_id, inbound_entry=inbound_entry, data_type="user"
-                )
 
-                message = user_delete.make(
-                    signer_keypair=key_pair, next_id=next_id, **data
-                )
-                batch = user_delete.batch(
-                    signer_keypair=key_pair,
-                    signer_user_id=key_pair.public_key,
-                    message=message,
-                )
-                inbound_entry["batch"] = batch.SerializeToString()
+            # Process if the user exists
+            if user_in_db:
+                delete_user_transaction(inbound_entry, user_in_db, key_pair, data)
 
         elif inbound_entry["data_type"] == "group_deleted":
             LOGGER.info(
@@ -278,3 +270,57 @@ def fetch_role_relationships(role_id, conn):
         )
         result[relationship] = relationship_list
     return result
+
+
+def delete_user_transaction(inbound_entry, user_in_db, key_pair, data):
+    """Composes transactions for deleting a user.  This includes deleting role_owner,
+    role_admin, and role_member relationships and user object.
+    """
+    user_delete = DeleteUser()
+    next_id = user_in_db[0]["next_id"]
+    inbound_entry = add_sawtooth_prereqs(
+        entry_id=next_id, inbound_entry=inbound_entry, data_type="user"
+    )
+    txn_list = create_owner_deletion_message(key_pair, next_id)
+    message = user_delete.make(signer_keypair=key_pair, next_id=next_id, **data)
+
+    payload = user_delete.make_payload(
+        message=message, signer_keypair=key_pair, signer_user_id=key_pair.public_key
+    )
+
+    transaction = batcher.make_transaction(payload=payload, signer_keypair=key_pair)
+    txn_list.extend([transaction])
+    if txn_list:
+        batch = batcher.make_batch_from_txns(
+            transactions=txn_list, signer_keypair=key_pair
+        )
+        inbound_entry["batch"] = batch.SerializeToString()
+
+
+def create_owner_deletion_message(key_pair, next_id):
+    """Create the delete transactions for an owner if ownership of a role(s) exists."""
+    conn = connect_to_db()
+    roles = (
+        r.table("role_owners")
+        .filter({"related_id": next_id})
+        .coerce_to("array")
+        .run(conn)
+    )
+    conn.close()
+    txn_list = []
+    if roles:
+        owner_delete = DeleteRoleOwner()
+        for role in roles:
+            owner_message = owner_delete.make(
+                signer_keypair=key_pair, related_id=next_id, role_id=role["role_id"]
+            )
+            payload = owner_delete.make_payload(
+                message=owner_message,
+                signer_keypair=key_pair,
+                signer_user_id=key_pair.public_key,
+            )
+            transaction = batcher.make_transaction(
+                payload=payload, signer_keypair=key_pair
+            )
+            txn_list.extend([transaction])
+    return txn_list

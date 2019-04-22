@@ -107,6 +107,22 @@ def make_batch(transaction, signer_keypair):
     )
 
 
+def make_batch_from_txns(transactions, signer_keypair):
+    """ Given a list of transactions, create a batch to be applied
+    on the Sawtooth blockchain.
+    """
+    batch_header = batch_pb2.BatchHeader(
+        signer_public_key=signer_keypair.public_key,
+        transaction_ids=[txn.header_signature for txn in transactions],
+    ).SerializeToString()
+
+    return batch_pb2.Batch(
+        header=batch_header,
+        header_signature=signer_keypair.sign(batch_header),
+        transactions=transactions,
+    )
+
+
 def batch_to_list(batch):
     """ Make a batch list from a batch
     """
