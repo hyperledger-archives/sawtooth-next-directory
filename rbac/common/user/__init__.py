@@ -16,6 +16,7 @@
 # pylint: disable=too-few-public-methods
 
 from rbac.common.logs import get_default_logger
+from rbac.common.role.delete_role_owner import DeleteRoleOwner
 from rbac.common.user.confirm_manager import ConfirmUpdateUserManager
 from rbac.common.user.create_user import CreateUser
 from rbac.common.user.delete_user import DeleteUser
@@ -55,6 +56,7 @@ class User(CreateUser):
         #   where the registration happens. Finding this out will also help us
         #   clear this file of this singleton.
         self.delete = DeleteUser()
+        self.delete_owner = DeleteRoleOwner()
 
 
 USER = User()
