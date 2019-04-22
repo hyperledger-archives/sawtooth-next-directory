@@ -225,3 +225,8 @@ limitations under the License.
   z-index: -1;
 }
 
+.next-organization-error-message {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
