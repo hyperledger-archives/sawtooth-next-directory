@@ -40,7 +40,7 @@ Contributions by the community help grow and optimize the capabilities of
 Hyperledger Sawtooth, and are the most effective method of having a positive
 impact on the project.
 
-#### Different ways you can contribute:
+#### Different ways you can contribute
 
 * Bugs or Issues (issues or defects found when working with Sawtooth Hyper Directory)
 * Core Features & Enhancements (expanded capabilities or optimization)
@@ -64,6 +64,18 @@ produce no output if there are no lint errors. The linter requires all Python
 dependencies be installed locally (if not it'll throw import-errors). Install
 dependencies locally by running `pip3 install -r requirements.txt` from the
 root project directory.
+
+### Coding style & Standards (Python)
+
+Please ensure that any contributions comply with the following:
+
+* Our linter is set to comply with PEP 8, any Python contributions should follow
+  the authoritative definitions [here](https://www.python.org/dev/peps/pep-0008/)
+  * A friendlier version (though not authoritative) is available [here](https://realpython.com/python-pep8/).  
+* Docstrings should loosely follow Google's python styleguide which extends
+  PEP 257.
+  * Details on Google's styleguide [here](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
+  * Documentation of [PEP 257](https://www.python.org/dev/peps/pep-0257).
 
 #### Pull Request Guidelines
 
