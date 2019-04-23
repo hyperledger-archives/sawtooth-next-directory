@@ -188,3 +188,27 @@ def test_update_manager():
         assert proposal["data"]["assigned_approver"][0] == user2_id
         delete_user_by_username("testuser6")
         delete_user_by_username("testuser7")
+
+
+def test_user_relationship_api():
+    """ Test to check that user relationship API is not throwing
+        an index out of range error if user dont have any manager.
+
+        Creates a test user without manager and calls the user
+        relationship api for testing whether it is causing any
+        index out of range error or not."""
+    user1_payload = {
+        "name": "kiran kumar",
+        "username": "kkumar36",
+        "password": "12345689",
+        "email": "kiran36@gmail.com",
+    }
+    with requests.Session() as session:
+        user1_response = create_test_user(session, user1_payload)
+        user1_result = assert_api_success(user1_response)
+        user1_id = user1_result["data"]["user"]["id"]
+        response = session.get(
+            "http://rbac-server:8000/api/users/" + user1_id + "/relationships"
+        )
+        assert response.json()["data"]["managers"] == []
+        delete_user_by_username("kkumar36")
