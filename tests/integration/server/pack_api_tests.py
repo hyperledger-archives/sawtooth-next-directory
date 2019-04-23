@@ -53,7 +53,37 @@ def test_create_duplicate_pack():
         response = session.post("http://rbac-server:8000/api/packs", json=pack_resource)
         assert (
             response.json()["message"]
-            == "Error: could not create this pack because pack name has been taken or already exists"
+            == "Error: Could not create this pack because the pack name already exists."
+        )
+        assert response.json()["code"] == 400
+        delete_user_by_username("susan21")
+        delete_role_by_name("Manager")
+        delete_pack_by_name("My Pack")
+
+
+def test_duplicate_pack_with_spaces():
+    """Create a new fake role resource with varying spaces in between the name"""
+    with requests.Session() as session:
+        user_payload = {
+            "name": "Susan Susanson",
+            "username": "susan21",
+            "password": "123456",
+            "email": "susan@biz.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        user_id = user_response.json()["data"]["user"]["id"]
+        role_response = create_fake_role(session, user_id)
+        role_id = role_response.json()["data"]["id"]
+        create_fake_pack(session, user_id, role_id)
+        pack_resource = {
+            "name": "   My   Pack    ",
+            "owners": user_id,
+            "roles": role_id,
+        }
+        response = session.post("http://rbac-server:8000/api/packs", json=pack_resource)
+        assert (
+            response.json()["message"]
+            == "Error: Could not create this pack because the pack name already exists."
         )
         assert response.json()["code"] == 400
         delete_user_by_username("susan21")

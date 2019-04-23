@@ -70,7 +70,37 @@ def test_create_duplicate_role():
         response = session.post("http://rbac-server:8000/api/roles", json=role_resource)
         assert (
             response.json()["message"]
-            == "Error: could not create this role because role name has been taken or already exists"
+            == "Error: Could not create this role because the role name already exists."
+        )
+        assert response.json()["code"] == 400
+        delete_user_by_username("susan22")
+        delete_role_by_name("Manager1")
+
+
+def test_duplicate_role_with_spaces():
+    """Create a new fake role resource with varying spaces in between the name"""
+    insert_role(
+        {"name": "    Manager1    ", "owners": "12345", "administrators": "12345"}
+    )
+    with requests.Session() as session:
+        user_payload = {
+            "name": "Susan Susanson",
+            "username": "susan22",
+            "password": "123456",
+            "email": "susan@biz.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        user_id = user_response.json()["data"]["user"]["id"]
+        role_resource = {
+            "name": "Manager1",
+            "owners": user_id,
+            "administrators": user_id,
+        }
+        insert_role(role_resource)
+        response = session.post("http://rbac-server:8000/api/roles", json=role_resource)
+        assert (
+            response.json()["message"]
+            == "Error: Could not create this role because the role name already exists."
         )
         assert response.json()["code"] == 400
         delete_user_by_username("susan22")
@@ -84,7 +114,7 @@ def test_syncdirectionflag_rolename():
     new_rolename = "ManagerRandom20"
     new_username = "susansonrandom20"
     expected_metadata = {"metadata": {"sync_direction": "OUTBOUND"}}
-    time.sleep(1)
+    time.sleep(3)
     conn = connect_to_db()
     metadata_object = (
         r.db("rbac")

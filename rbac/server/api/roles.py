@@ -56,7 +56,8 @@ async def create_new_role(request):
     utils.validate_fields(required_fields, request.json)
 
     conn = await create_connection()
-    response = await roles_query.roles_search_duplicate(conn, request.json.get("name"))
+    role_title = " ".join(request.json.get("name").split())
+    response = await roles_query.roles_search_duplicate(conn, role_title)
     if request.json.get("metadata") is None or request.json.get("metadata") == {}:
         set_metadata = {}
     else:
@@ -68,7 +69,7 @@ async def create_new_role(request):
         batch_list = Role().batch_list(
             signer_keypair=txn_key,
             signer_user_id=txn_user_id,
-            name=request.json.get("name"),
+            name=role_title,
             role_id=role_id,
             metadata=set_metadata,
             admins=request.json.get("administrators"),
@@ -80,7 +81,7 @@ async def create_new_role(request):
         )
         return create_role_response(request, role_id)
     raise ApiBadRequest(
-        "Error: could not create this role because role name has been taken or already exists"
+        "Error: Could not create this role because the role name already exists."
     )
 
 
