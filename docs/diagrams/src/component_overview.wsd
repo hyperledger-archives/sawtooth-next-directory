@@ -1,0 +1,58 @@
+@startuml architecture overview
+    skinparam roundcorner 20
+    hide stereotype
+    scale 2
+
+    skinparam database {
+        BackgroundColor<<NEXT>> lightblue
+        BorderColor<<NEXT>> darkblue
+        BackgroundColor<<HYPERLEDGER>> lightgrey
+        BorderColor<<HYPERLEDGER>> darkgrey
+    }
+    skinparam entity {
+        BackgroundColor<<NEXT>> lightblue
+        BorderColor<<NEXT>> darkblue
+        BackgroundColor<<HYPERLEDGER>> Lightgrey
+        BorderColor<<HYPERLEDGER>> darkgrey
+    }
+    skinparam boundary {
+        BackgroundColor<<NEXT>> lightblue
+        BorderColor<<NEXT>> darkblue
+        BackgroundColor<<HYPERLEDGER>> Lightgrey
+        BorderColor<<HYPERLEDGER>> darkgrey
+    }
+
+    package "External" {
+        actor "Basic User"
+        actor "Admin User"
+        actor "Role Owner"
+        boundary "Azure AD"
+        boundary "LDAP"
+    }
+
+    package "NEXT Application" {
+        database "RethinkDB" <<NEXT>>
+        entity "RBAC \nREST API \nServer" <<NEXT>>
+        boundary "RBAC provider \n<Azure>" <<NEXT>>
+        boundary "RBAC Provider \n<LDAP>" <<NEXT>>
+        package "Testing\n&\nDev" {
+            entity "Shell" <<NEXT>>
+        }
+        package "Sawtooth" {
+            boundary "Validator" <<HYPERLEDGER>>
+            entity "RBAC \nTransaction \nProcessor" <<NEXT>>
+            database "Blockchain" <<HYPERLEDGER>>
+            entity "Sawtooth \nREST API" <<HYPERLEDGER>>
+            entity "Sawtooth \nSettings TP" <<HYPERLEDGER>>
+        }
+        package "Next Client"{
+            boundary "RBAC Client" <<NEXT>>
+            entity "Chatbot" <<NEXT>>
+        }
+        package "Ledger Sync" {
+            entity "LS Inbound" <<NEXT>>
+            entity "LS Outbound" <<NEXT>>
+        }
+    }
+
+@enduml

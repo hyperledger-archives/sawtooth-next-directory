@@ -54,16 +54,18 @@ contributions via GitHub pull requests. When contributing code please do the
 following:
 
 * Fork the repository and make your changes in a feature branch.
+* Please include new or update existing PlantUML sequence/architecture diagrams
+  that relate to your PR. See `./docs/diagrams/src/README.md` for details on how
+  we maintain our diagrams)
 * Please include unit and integration tests for any new features and updates to
-existing tests.
+  existing tests.
 * Please ensure the unit and integration tests run successfully. Refer to the
-Testing section in the [README.md](README.md) on how to run these
-tests.
-* Please ensure that lint passes by running `./bin/run_lint`. The command should
-produce no output if there are no lint errors. The linter requires all Python
-dependencies be installed locally (if not it'll throw import-errors). Install
-dependencies locally by running `pip3 install -r requirements.txt` from the
-root project directory.
+  Testing section in `/README.md` on how to run these tests.
+* Please ensure that lint passes by running `./bin/run_lint`. The linter requires
+  all Python dependencies be installed locally in a virtual environment, as detailed
+  in the [developer setup](https://sawtooth-next-directory.readthedocs.io/en/latest/developer-setup.html)
+  (if not it'll throw import-errors). Install dependencies locally by running
+  `pip3 install -r requirements.txt` from the root project directory.
 
 ### Coding style & Standards (Python)
 
@@ -85,16 +87,16 @@ important part is that **a single commit maps to a single fix or enhancement**.
 Here are a few scenarios:
 
 * If a pull request adds a feature but also fixes two bugs, then the pull
-request should have three commits, one commit each for the feature and two bug
-fixes.
+  request should have three commits, one commit each for the feature and two bug
+  fixes.
 * If a PR is opened with 5 commits that was work involved to fix a single issue,
-it should be rebased to a single commit.
+  it should be rebased to a single commit.
 * If a PR is opened with 5 commits, with the first three to fix one issue and
-the second two to fix a separate issue, then it should be rebased to two
-commits, one for each issue.
+  the second two to fix a separate issue, then it should be rebased to two
+  commits, one for each issue.
 * Your pull request should be rebased against the current master branch. Please
-do not merge the current master branch in with your topic branch, nor use the
-Update Branch button provided by GitHub on the pull request page.
+  do not merge the current master branch in with your topic branch, nor use the
+  Update Branch button provided by GitHub on the pull request page.
 
 #### Commit Messages
 
@@ -121,7 +123,7 @@ Origin (DCO).
 
 #### Version Tracking
 
-Each PR **must** include a correctly updated semantic version number in `/VERSION`.
+Each release to master includes a semantic version number in `/VERSION`.
 As of Jan/9/2019 we use Semantic Versioning 2.0.0 as described [here](https://semver.org/).
 
 A basic summary of Semantic Versioning is:
@@ -145,4 +147,4 @@ status checks.
 These checks are:
 
 * The PR must be approved by at least two reviewers and there cannot be
-outstanding changes requested.
+  outstanding changes requested.
