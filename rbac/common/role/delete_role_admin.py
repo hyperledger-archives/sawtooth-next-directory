@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-"""Implements the DELETE_ROLE_OWNER message"""
+"""Implements the DELETE_ROLE_ADMIN message"""
 
 from rbac.common import addresser
 from rbac.common.base.base_message import BaseMessage
@@ -22,8 +22,8 @@ from rbac.common.protobuf import role_transaction_pb2  # pylint: disable=unused-
 LOGGER = get_default_logger(__name__)
 
 
-class DeleteRoleOwner(BaseMessage):
-    """Implements the DELETE_ROLE_OWNER message"""
+class DeleteRoleAdmin(BaseMessage):
+    """Implements the DELETE_ROLE_ADMIN message"""
 
     def __init__(self):
         super().__init__()
@@ -52,7 +52,7 @@ class DeleteRoleOwner(BaseMessage):
     @property
     def relationship_type(self):
         """The relationship type from AddressSpace implemented by this class"""
-        return addresser.RelationshipType.OWNER
+        return addresser.RelationshipType.ADMIN
 
     @property
     def _state_container_list_name(self):
@@ -62,13 +62,15 @@ class DeleteRoleOwner(BaseMessage):
     def make_addresses(self, message, signer_user_id):
         """Makes the appropriate inputs & output addresses for the message type"""
         inputs = set({})
+
         role_address = addresser.role.address(object_id=message.role_id)
         inputs.add(role_address)
 
-        membership_address = addresser.role.owner.address(
+        membership_address = addresser.role.admin.address(
             message.role_id, message.related_id
         )
         inputs.add(membership_address)
+
         outputs = inputs
         return inputs, outputs
 
@@ -97,14 +99,14 @@ class DeleteRoleOwner(BaseMessage):
                 )
             )
 
-        if not addresser.role.owner.exists_in_state_inputs(
+        if not addresser.role.admin.exists_in_state_inputs(
             inputs=payload.inputs,
             input_state=input_state,
             object_id=message.role_id,
             related_id=message.related_id,
         ):
             raise ValueError(
-                "User {} is not an owner of role {}".format(
+                "User {} is not an admin of role {}".format(
                     message.related_id, message.role_id
                 )
             )
@@ -123,7 +125,7 @@ class DeleteRoleOwner(BaseMessage):
                 changed on the blockchain or will be removed from
                 the blockchain.
         """
-        addresser.role.owner.remove_relationship(
+        addresser.role.admin.remove_relationship(
             object_id=object_id,
             related_id=message.related_id,
             outputs=payload.outputs,
