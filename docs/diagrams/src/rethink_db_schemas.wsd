@@ -64,10 +64,20 @@
             }
             package "Queues"  {
                 class inbound_queue << (T,lightblue) >>{
-
+                    #data
+                    #data_type
+                    #id
+                    #provider_id
+                    #sync_type
+                    #timestamp
                 }
                 class outbound_queue << (T,lightblue) >>{
-                    
+                    #data
+                    #data_type
+                    #id
+                    #provider_id
+                    #sync_type
+                    #timestamp
                 }
             }
         }

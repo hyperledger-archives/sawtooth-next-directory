@@ -13,21 +13,26 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Roles APIs."""
+import os
 from uuid import uuid4
 
+import rethinkdb as r
 from sanic import Blueprint
 from sanic.response import json
 
+from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
+from rbac.server.api import proposals
+
 from rbac.server.db import roles_query
 from rbac.server.db.db_utils import create_connection
 from rbac.server.db.relationships_query import fetch_relationships
-from rbac.server.api import proposals
 
-from rbac.common.logs import get_default_logger
+LDAP_DC = os.getenv("LDAP_DC")
+GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
 
 LOGGER = get_default_logger(__name__)
 
@@ -55,7 +60,6 @@ async def create_new_role(request):
     """Create a new role."""
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
-
     conn = await create_connection()
     role_title = " ".join(request.json.get("name").split())
     response = await roles_query.roles_search_duplicate(conn, role_title)
@@ -80,6 +84,33 @@ async def create_new_role(request):
         await utils.send(
             request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
         )
+        conn.close()
+        if role_title != "NextAdmins":
+            distinguished_name_formatted = "CN=" + role_title + "," + GROUP_BASE_DN
+            data_formatted = {
+                "created_date": r.now(),
+                "distinguished_name": distinguished_name_formatted,
+                "group_nickname": role_title,
+                "group_types": -2147483646,
+                "name": role_title,
+                "remote_id": distinguished_name_formatted,
+            }
+            outbound_entry = {
+                "data": data_formatted,
+                "data_type": "group",
+                "timestamp": r.now(),
+                "provider_id": LDAP_DC,
+            }
+            # Insert to outbound_queue and close
+            conn = await create_connection()
+            role_outbound_resource = await roles_query.insert_to_outboundqueue(
+                conn, outbound_entry
+            )
+            conn.close()
+        else:
+            LOGGER.info(
+                "The role being created is NextAdmins, which is local to NEXT and will not be inserted into the outbound_queue."
+            )
         return create_role_response(request, role_id)
     raise ApiBadRequest(
         "Error: Could not create this role because the role name already exists."
@@ -276,5 +307,4 @@ def create_role_response(request, role_id):
 
     if request.json.get("metadata"):
         role_resource["metadata"] = request.json.get("metadata")
-
     return json({"data": role_resource})
