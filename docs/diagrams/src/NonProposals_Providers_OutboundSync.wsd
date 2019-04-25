@@ -1,0 +1,56 @@
+@startuml architecture overview
+autonumber
+    hide stereotype
+    scale 2
+
+    skinparam database {
+        BackgroundColor<< NEXT >> lightblue
+        BorderColor<< NEXT >> darkblue
+        BackgroundColor<< HYPERLEDGER >> lightgrey
+        BorderColor<< HYPERLEDGER >> darkgrey
+    }
+    skinparam entity {
+        BackgroundColor<< NEXT >> lightblue
+        BorderColor<< NEXT >> darkblue
+        BackgroundColor<< HYPERLEDGER >> Lightgrey
+        BorderColor<< HYPERLEDGER >> darkgrey
+    }
+    skinparam boundary {
+        BackgroundColor<<NEXT>> lightblue
+        BorderColor<<NEXT>> darkblue
+        BackgroundColor<<HYPERLEDGER>> Lightgrey
+        BorderColor<<HYPERLEDGER>> darkgrey
+    }
+
+    boundary "Azure AD" as azure
+    boundary "LDAP" as ldap
+    actor "Basic User" as user
+    boundary "RBAC Client" as client <<NEXT>>
+    entity "RBAC \nREST API \nServer" as API <<NEXT>>
+    boundary "Validator" as validator <<HYPERLEDGER>>
+    database "RethinkDB" as rethink <<NEXT>>
+    entity "RBAC \nTransaction \nProcessor" as tp <<NEXT>>
+    entity "LS Inbound" as ls_in <<NEXT>>
+    entity "LS Outbound" as ls_out <<NEXT>>
+    entity "???" #orange
+
+title RBAC Non-Proposals OutboundSync Sequence
+== inbound ==
+user -> client: Create RBAC transaction
+client -> API: Hit REST endpoint
+API -> tp: Initialize sawtooth transaction
+API -> validator: Create sawtooth transaction
+API -> client: Return result of transaction creation
+== outbound ==
+validator -> ls_out: Get complete transaction from changefeed
+ls_out -> rethink: Update relevant tables
+API -> rethink: Insert to outbound_queue table
+rethink -> ldap: Insert into LDAP server from outbound_queue
+== TODO ==
+"???" --[#grey]> azure: **TODO**: Azure outbound sync
+note over "???" #lightyellow
+    Need to prevent infinite
+    loops from RBAC providers.
+end note
+ls_out --[#grey]> "???": **TODO**: Remote outbound sync
+@enduml

@@ -49,6 +49,7 @@ services:
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
       - TENANT_ID=${TENANT_ID}
+      - GROUP_BASE_DN=${GROUP_BASE_DN}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
   rethink:
