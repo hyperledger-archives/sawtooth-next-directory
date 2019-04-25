@@ -77,7 +77,6 @@ services:
     environment:
       - DELTA_SYNC_INTERVAL_SECONDS=${DELTA_SYNC_INTERVAL_SECONDS}
       - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-False}
-      - GROUP_BASE_DN=${GROUP_BASE_DN}
       - LDAP_DC=${LDAP_DC}
       - LDAP_SERVER=${LDAP_SERVER}
       - LDAP_USER=${LDAP_USER}
@@ -88,6 +87,7 @@ services:
       - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS}
       - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL}
       - USER_BASE_DN=${USER_BASE_DN}
+      - GROUP_BASE_DN=${GROUP_BASE_DN}
     depends_on:
       - ledger-sync
     command: ./bin/rbac-providers-ldap
@@ -116,6 +116,7 @@ services:
       - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
       - LDAP_DC=${LDAP_DC}
       - LDAP_SERVER=${LDAP_SERVER}
+      - GROUP_BASE_DN=${GROUP_BASE_DN}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}

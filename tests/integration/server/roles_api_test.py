@@ -42,7 +42,7 @@ def setup_module():
         user_response = create_test_user(session, user_payload)
         user_id = user_response.json()["data"]["user"]["id"]
         role_resource = {
-            "name": "ManagerRandom20",
+            "name": "ManagerRandom0501201902",
             "owners": user_id,
             "administrators": user_id,
         }
@@ -85,36 +85,8 @@ def test_proposals():
 
 def test_create_duplicate_role():
     """Create a new fake role resource"""
-    insert_role({"name": "Manager1", "owners": "12345", "administrators": "12345"})
-    with requests.Session() as session:
-        user_payload = {
-            "name": "Susan Susanson",
-            "username": "susan22",
-            "password": "123456",
-            "email": "susan@biz.co",
-        }
-        user_response = create_test_user(session, user_payload)
-        user_id = user_response.json()["data"]["user"]["id"]
-        role_resource = {
-            "name": "Manager1",
-            "owners": user_id,
-            "administrators": user_id,
-        }
-        insert_role(role_resource)
-        response = session.post("http://rbac-server:8000/api/roles", json=role_resource)
-        assert (
-            response.json()["message"]
-            == "Error: Could not create this role because the role name already exists."
-        )
-        assert response.json()["code"] == 400
-        delete_user_by_username("susan22")
-        delete_role_by_name("Manager1")
-
-
-def test_duplicate_role_with_spaces():
-    """Create a new fake role resource with varying spaces in between the name"""
     insert_role(
-        {"name": "    Manager1    ", "owners": "12345", "administrators": "12345"}
+        {"name": "Manager0501201901", "owners": "12345", "administrators": "12345"}
     )
     with requests.Session() as session:
         user_payload = {
@@ -126,7 +98,7 @@ def test_duplicate_role_with_spaces():
         user_response = create_test_user(session, user_payload)
         user_id = user_response.json()["data"]["user"]["id"]
         role_resource = {
-            "name": "Manager1",
+            "name": "Manager0501201901",
             "owners": user_id,
             "administrators": user_id,
         }
@@ -138,14 +110,48 @@ def test_duplicate_role_with_spaces():
         )
         assert response.json()["code"] == 400
         delete_user_by_username("susan22")
-        delete_role_by_name("Manager1")
+        delete_role_by_name("Manager0501201901")
+
+
+def test_duplicate_role_with_spaces():
+    """Create a new fake role resource with varying spaces in between the name"""
+    insert_role(
+        {
+            "name": "    Manager0501201901    ",
+            "owners": "12345",
+            "administrators": "12345",
+        }
+    )
+    with requests.Session() as session:
+        user_payload = {
+            "name": "Susan Susanson",
+            "username": "susan22",
+            "password": "123456",
+            "email": "susan@biz.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        user_id = user_response.json()["data"]["user"]["id"]
+        role_resource = {
+            "name": "Manager0501201901",
+            "owners": user_id,
+            "administrators": user_id,
+        }
+        insert_role(role_resource)
+        response = session.post("http://rbac-server:8000/api/roles", json=role_resource)
+        assert (
+            response.json()["message"]
+            == "Error: Could not create this role because the role name already exists."
+        )
+        assert response.json()["code"] == 400
+        delete_user_by_username("susan22")
+        delete_role_by_name("Manager0501201901")
 
 
 def test_syncdirectionflag_rolename():
     """ Testing the presence and the value of syncdirection flag
         is set to OUTBOUND of a role in roles table.
     """
-    new_rolename = "ManagerRandom20"
+    new_rolename = "ManagerRandom0501201902"
     new_username = "susansonrandom20"
     expected_metadata = {"metadata": {"sync_direction": "OUTBOUND"}}
     time.sleep(3)
@@ -190,7 +196,7 @@ def test_add_role_admin():
         user2_result = assert_api_success(user2_response)
         user2_id = user2_result["data"]["user"]["id"]
         role_payload = {
-            "name": "TestRole1",
+            "name": "TestRole0501201901",
             "owners": user1_id,
             "administrators": user1_id,
             "description": "Test Role 1",
@@ -211,7 +217,7 @@ def test_add_role_admin():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
-        delete_role_by_name("TestRole1")
+        delete_role_by_name("TestRole0501201901")
         delete_user_by_username("testuser1")
         delete_user_by_username("testuser2")
 
@@ -241,7 +247,7 @@ def test_add_role_owner():
         user2_result = assert_api_success(user2_response)
         user2_id = user2_result["data"]["user"]["id"]
         role_payload = {
-            "name": "TestRole2",
+            "name": "TestRole0501201902",
             "owners": user1_id,
             "administrators": user1_id,
             "description": "Test Role 2",
@@ -262,7 +268,7 @@ def test_add_role_owner():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
-        delete_role_by_name("TestRole2")
+        delete_role_by_name("TestRole0501201902")
         delete_user_by_username("testuser3")
         delete_user_by_username("testuser4")
 
@@ -292,7 +298,7 @@ def test_add_role_member():
         user2_result = assert_api_success(user2_response)
         user2_id = user2_result["data"]["user"]["id"]
         role_payload = {
-            "name": "TestRole3",
+            "name": "TestRole0501201903",
             "owners": user1_id,
             "administrators": user1_id,
             "description": "Test Role 3",
@@ -313,7 +319,7 @@ def test_add_role_member():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
-        delete_role_by_name("TestRole3")
+        delete_role_by_name("TestRole0501201903")
         delete_user_by_username("testowner")
         delete_user_by_username("testmemeber")
 
@@ -343,7 +349,7 @@ def test_add_role_task():
         task_result = assert_api_success(task_response)
         task_id = task_result["data"]["id"]
         role_payload = {
-            "name": "TestRole4",
+            "name": "TestRole0501201904",
             "owners": user1_id,
             "administrators": user1_id,
             "description": "Test Role 4",
@@ -364,6 +370,6 @@ def test_add_role_task():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
-        delete_role_by_name("TestRole4")
+        delete_role_by_name("TestRole0501201904")
         delete_user_by_username("testowner2")
         delete_task_by_name("TestTask1")

@@ -62,6 +62,16 @@ async def fetch_all_role_resources(conn, start, limit):
     return resources
 
 
+async def insert_to_outboundqueue(conn, outbound_entry):
+    """Insert a group entry into outbound_queue."""
+    outbound_result = (
+        await r.table("outbound_queue")
+        .insert(outbound_entry, return_changes=True)
+        .run(conn)
+    )
+    return outbound_result
+
+
 async def fetch_role_resource(conn, role_id):
     """Get a role resource by role_id."""
     resource = (
