@@ -157,3 +157,11 @@ message DeleteRoleOwner {
     string related_id = 2;
 
 }
+
+message DeleteRoleAdmin {
+
+    string role_id = 1;
+
+    string related_id = 2;
+
+}

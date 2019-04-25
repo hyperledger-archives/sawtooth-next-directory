@@ -26,6 +26,7 @@ from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.common.role.delete_role import DeleteRole
 from rbac.common.role.delete_role_owner import DeleteRoleOwner
+from rbac.common.role.delete_role_admin import DeleteRoleAdmin
 from rbac.common.user import User
 from rbac.common.user.delete_user import DeleteUser
 from rbac.common.util import bytes_from_hex
@@ -281,15 +282,20 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair, data):
     inbound_entry = add_sawtooth_prereqs(
         entry_id=next_id, inbound_entry=inbound_entry, data_type="user"
     )
-    txn_list = create_owner_deletion_message(key_pair, next_id)
-    message = user_delete.make(signer_keypair=key_pair, next_id=next_id, **data)
 
+    txn_list = []
+    # Compile role relationship transactions for removal from blockchain
+    txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
+
+    # Compile user delete transaction for removal from blockchain
+    message = user_delete.make(signer_keypair=key_pair, next_id=next_id, **data)
     payload = user_delete.make_payload(
         message=message, signer_keypair=key_pair, signer_user_id=key_pair.public_key
     )
-
     transaction = batcher.make_transaction(payload=payload, signer_keypair=key_pair)
     txn_list.extend([transaction])
+
     if txn_list:
         batch = batcher.make_batch_from_txns(
             transactions=txn_list, signer_keypair=key_pair
@@ -297,7 +303,7 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair, data):
         inbound_entry["batch"] = batch.SerializeToString()
 
 
-def create_owner_deletion_message(key_pair, next_id):
+def create_delete_role_owner_txns(key_pair, next_id, txn_list):
     """Create the delete transactions for an owner if ownership of a role(s) exists."""
     conn = connect_to_db()
     roles = (
@@ -307,15 +313,42 @@ def create_owner_deletion_message(key_pair, next_id):
         .run(conn)
     )
     conn.close()
-    txn_list = []
     if roles:
         owner_delete = DeleteRoleOwner()
         for role in roles:
-            owner_message = owner_delete.make(
+            owner_delete_message = owner_delete.make(
                 signer_keypair=key_pair, related_id=next_id, role_id=role["role_id"]
             )
             payload = owner_delete.make_payload(
-                message=owner_message,
+                message=owner_delete_message,
+                signer_keypair=key_pair,
+                signer_user_id=key_pair.public_key,
+            )
+            transaction = batcher.make_transaction(
+                payload=payload, signer_keypair=key_pair
+            )
+            txn_list.extend([transaction])
+    return txn_list
+
+
+def create_delete_role_admin_txns(key_pair, next_id, txn_list):
+    """Create the delete transactions for an admin if user is an admin of any roles."""
+    conn = connect_to_db()
+    roles = (
+        r.table("role_admins")
+        .filter({"related_id": next_id})
+        .coerce_to("array")
+        .run(conn)
+    )
+    conn.close()
+    if roles:
+        admin_delete = DeleteRoleAdmin()
+        for role in roles:
+            admin_delete_message = admin_delete.make(
+                signer_keypair=key_pair, related_id=next_id, role_id=role["role_id"]
+            )
+            payload = admin_delete.make_payload(
+                message=admin_delete_message,
                 signer_keypair=key_pair,
                 signer_user_id=key_pair.public_key,
             )

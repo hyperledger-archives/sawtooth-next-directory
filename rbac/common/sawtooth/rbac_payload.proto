@@ -88,7 +88,7 @@ message RBACPayload {
         DELETE_ROLE = 56;
 
         DELETE_ROLE_OWNER = 57;
-
+        DELETE_ROLE_ADMIN = 58;
     }
 
 
