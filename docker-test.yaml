@@ -41,6 +41,10 @@ services:
       - LDAP_DC=DC=AD2012,DC=LAB
       - LDAP_SERVER=my_fake_server
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_NAME=${NEXT_ADMIN_NAME:-Admin}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER:-Admin}
+      - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS:-p@ssw0rd123}
+      - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL:-admin@test.com}
       - SECRET_KEY=${SECRET_KEY}
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
