@@ -155,13 +155,12 @@ export const appDispatch = (dispatch) => ({
   getProposals:     (ids) => dispatch(Requester.proposalsRequest(ids)),
   getAllPacks: (start, limit) =>
     dispatch(Requester.allPacksRequest(start, limit)),
-  getAllRoles: (start, limit, includePacks) =>
-    dispatch(Requester.allRolesRequest(start, limit, includePacks)),
+  getAllRoles: (start, limit) =>
+    dispatch(Requester.allRolesRequest(start, limit)),
   requestRoleAccess: (id, userId, reason) =>
     dispatch(Requester.roleAccessRequest(id, userId, reason)),
   requestPackAccess: (id, userId, reason) =>
     dispatch(Requester.packAccessRequest(id, userId, reason)),
-  resetRolesAndPacks: () => dispatch(Requester.resetRolesAndPacks()),
 
   // Search
   clearSearchData:    () => dispatch(Search.clearSearchData()),

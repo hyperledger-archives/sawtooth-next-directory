@@ -78,9 +78,7 @@ def extract_request_token(request):
     raise ApiUnauthorized("Unauthorized: No authentication token provided")
 
 
-async def create_response(
-    conn, request_url, data, head_block, start=None, limit=None, union=None
-):
+async def create_response(conn, request_url, data, head_block, start=None, limit=None):
     """Creates json response."""
     conn.reconnect(noreply_wait=False)
 
@@ -94,7 +92,7 @@ async def create_response(
     }
     if start is not None and limit is not None:
         response["paging"] = await get_response_paging_info(
-            conn, table, url, start, limit, head_block.get("num"), union=union
+            conn, table, url, start, limit, head_block.get("num")
         )
     conn.close()
     return json(response)
@@ -105,15 +103,11 @@ def create_tracker_response(slot_name, value):
     return json({"events": [{"event": "slot", "name": slot_name, "value": value}]})
 
 
-async def get_response_paging_info(
-    conn, table, url, start, limit, head_block_num, union=None
-):
+async def get_response_paging_info(conn, table, url, start, limit, head_block_num):
     """Get paging info for paged responses."""
     conn.reconnect(noreply_wait=False)
 
     total = await get_table_count(conn, table, head_block_num)
-    if union is not None:
-        total = total + await get_table_count(conn, union, head_block_num)
 
     prev_start = start - limit
     if prev_start < 0:
