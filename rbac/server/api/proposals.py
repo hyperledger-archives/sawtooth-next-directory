@@ -25,6 +25,7 @@ from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.db import proposals_query
+from rbac.server.db import users_query
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.users_query import fetch_user_resource
 from rbac.server.db.db_utils import create_connection
@@ -162,13 +163,14 @@ async def update_proposal(request, proposal_id):
 
 
 async def compile_proposal_resource(conn, proposal_resource):
-    """Prepare proposal resource to be returned."""
+    """ Prepare proposal resource to be returned."""
     conn.reconnect(noreply_wait=False)
     table = TABLES[proposal_resource["type"]]
     if "role" in table:
         proposal_resource["approvers"] = await fetch_relationships(
             table, "role_id", proposal_resource.get("object")
         ).run(conn)
+
     elif "task" in table:
         proposal_resource["approvers"] = await fetch_relationships(
             table, "task_id", proposal_resource.get("object")
@@ -179,5 +181,25 @@ async def compile_proposal_resource(conn, proposal_resource):
     else:
         user_resource = await fetch_user_resource(conn, proposal_resource.get("object"))
         proposal_resource["approvers"] = [user_resource.get("manager")]
+    i = 0
+    approvers_count = len(proposal_resource["approvers"])
+    final_list_of_manager_ids = []
+    while i < approvers_count:
+        list_of_manager_ids = await users_query.fetch_manager_chain(
+            conn, proposal_resource["approvers"][i]
+        )
+        final_list_of_manager_ids = final_list_of_manager_ids + list_of_manager_ids
+        i += 1
+    proposal_resource["approvers"] = (
+        final_list_of_manager_ids + proposal_resource["approvers"]
+    )
+    i = 0
+    duplicate_approvers_count = len(proposal_resource["approvers"])
+    unique_approver_ids = []
+    while i < duplicate_approvers_count:
+        if proposal_resource["approvers"][i] not in unique_approver_ids:
+            unique_approver_ids.append(proposal_resource["approvers"][i])
+        i += 1
+    proposal_resource["approvers"] = unique_approver_ids
     conn.close()
     return proposal_resource
