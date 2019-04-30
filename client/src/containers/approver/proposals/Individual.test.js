@@ -32,6 +32,7 @@ const props = {
   getOpenProposals: () => { },
   userFromId: () => { },
   openProposals: [''],
+  me: [{ id: 'role'}],
 };
 
 const newprops = {
@@ -40,6 +41,7 @@ const newprops = {
   getOpenProposals: () => { },
   userFromId: () => { },
   openProposals: [],
+  me: [{ id: 'role'}],
 };
 const wrapper = shallow(<Individual {...props} store={store}/>);
 

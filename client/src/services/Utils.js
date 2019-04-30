@@ -73,6 +73,15 @@ export const groupBy = (array, key) => {
   }, Object.create(null));
 };
 
+export const filterBy = (array, key, me) => {
+  return array && array.filter(
+    proposal =>  proposal.opener !== me.id ).reduce((prev, curr) => {
+    prev[curr[key]] = prev[curr[key]] || [];
+    prev[curr[key]].push(curr);
+    return prev;
+  }, Object.create(null));
+};
+
 
 /**
  * Uniquely merge arrays
