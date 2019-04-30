@@ -61,8 +61,15 @@ async def fetch_all_users(request):
 async def create_new_user(request):
     """Create a new user."""
     env = Env()
-    if not env.int("ENABLE_NEXT_BASE_USE"):
-        raise ApiBadRequest("Not a valid action. Source not enabled")
+    admin_role = {
+        "name": env("NEXT_ADMIN_NAME"),
+        "username": env("NEXT_ADMIN_USER"),
+        "email": env("NEXT_ADMIN_EMAIL"),
+        "password": env("NEXT_ADMIN_PASS"),
+    }
+    if request.json != admin_role:
+        if not env.int("ENABLE_NEXT_BASE_USE"):
+            raise ApiBadRequest("Not a valid action. Source not enabled")
     required_fields = ["name", "username", "password", "email"]
     utils.validate_fields(required_fields, request.json)
     username_created = request.json.get("username")
