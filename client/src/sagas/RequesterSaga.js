@@ -114,8 +114,8 @@ export function * getPacks (api, action) {
  */
 export function * getAllRoles (api, action) {
   try {
-    const { start, limit } = action;
-    const res = yield call(api.getRoles, start, limit);
+    const { start, limit, includePacks } = action;
+    const res = yield call(api.getRoles, start, limit, includePacks);
     if (res.ok) {
       yield put(RequesterActions.allRolesSuccess(
         res.data.data,

@@ -105,7 +105,8 @@ const create = (baseURL =
   const me = () => api.get(`users/${storage.get('next_id')}`);
   const getProposal = (id) => api.get(`proposals/${id}`);
   const getRole = (id) => api.get(`roles/${id}`);
-  const getRoles = (start, limit) => api.get('roles', { start, limit });
+  const getRoles = (start, limit, includePacks) =>
+    api.get('roles', { start, limit, packs: includePacks });
   const getPack = (id) => api.get(`packs/${id}`);
   const getPacks = (start, limit) => api.get('packs', { start, limit });
   const getRelationships = (id) => api.get(`users/${id}/relationships`);

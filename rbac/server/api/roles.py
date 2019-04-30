@@ -41,10 +41,20 @@ async def get_all_roles(request):
 
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    role_resources = await roles_query.fetch_all_role_resources(conn, start, limit)
+    if request.args.get("packs"):
+        role_resources = await roles_query.fetch_all_resources(conn, start, limit)
+    else:
+        role_resources = await roles_query.fetch_all_role_resources(conn, start, limit)
     conn.close()
+    union = "packs" if request.args.get("packs") else None
     return await utils.create_response(
-        conn, request.url, role_resources, head_block, start=start, limit=limit
+        conn,
+        request.url,
+        role_resources,
+        head_block,
+        start=start,
+        limit=limit,
+        union=union,
     )
 
 
