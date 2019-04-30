@@ -65,6 +65,8 @@ class Browse extends Component {
    * component. On load, get roles
    */
   componentDidMount () {
+    const { resetRolesAndPacks } = this.props;
+    resetRolesAndPacks();
     theme.apply(this.themes);
     this.loadNext(0);
     this.init();
@@ -135,13 +137,12 @@ class Browse extends Component {
    * @param {number} start Loading start index
    */
   loadNext = (start) => {
-    const { getAllPacks, getAllRoles } = this.props;
+    const { getAllRoles } = this.props;
     const { limit } = this.state;
     if (start === undefined || start === null)
       start = this.state.start;
 
-    getAllPacks(start, limit);
-    getAllRoles(start, limit);
+    getAllRoles(start, limit, true);
     this.setState({ start: start + limit });
   }
 

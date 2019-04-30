@@ -18,7 +18,10 @@ import rethinkdb as r
 
 from rbac.common.logs import get_default_logger
 from rbac.server.api.errors import ApiNotFound
-from rbac.server.db.relationships_query import fetch_relationships
+from rbac.server.db.relationships_query import (
+    fetch_relationships_by_id,
+    fetch_relationships,
+)
 from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 
 # from rbac.server.db.users_query import users_search_name, users_search_email
@@ -26,11 +29,62 @@ from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 LOGGER = get_default_logger(__name__)
 
 
+async def fetch_all_resources(conn, start, limit):
+    """Get all role and pack resources."""
+    resources = (
+        await r.table("roles")
+        .map(
+            lambda role: role.merge(
+                {
+                    "id": role["role_id"],
+                    "owners": fetch_relationships(
+                        "role_owners", "role_id", role["role_id"]
+                    ),
+                    "administrators": fetch_relationships(
+                        "role_admins", "role_id", role["role_id"]
+                    ),
+                    "members": fetch_relationships(
+                        "role_members", "role_id", role["role_id"]
+                    ),
+                    "tasks": fetch_relationships(
+                        "role_tasks", "role_id", role["role_id"]
+                    ),
+                    "proposals": fetch_proposal_ids_by_opener(role["role_id"]),
+                    "packs": fetch_relationships(
+                        "role_packs", "role_id", role["role_id"]
+                    ),
+                }
+            )
+        )
+        .union(
+            r.table("packs").map(
+                lambda pack: pack.merge(
+                    {
+                        "id": pack["pack_id"],
+                        "roles": fetch_relationships_by_id(
+                            "role_packs", pack["pack_id"], "role_id"
+                        ),
+                        "owners": fetch_relationships(
+                            "pack_owners", "pack_id", pack["pack_id"]
+                        ),
+                    }
+                )
+            )
+        )
+        .order_by("name")
+        .slice(start, start + limit)
+        .without("pack_id", "role_id")
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resources
+
+
 async def fetch_all_role_resources(conn, start, limit):
     """Get all role resources."""
     resources = (
         await r.table("roles")
-        .order_by(index="role_id")
+        .order_by("name")
         .slice(start, start + limit)
         .map(
             lambda role: role.merge(
