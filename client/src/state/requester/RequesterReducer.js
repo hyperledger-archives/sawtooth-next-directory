@@ -38,10 +38,6 @@ export const resetAll = () =>
   INITIAL_STATE;
 
 
-export const resetRolesAndPacks = (state) =>
-  state.merge({ packs: null, roles: null });
-
-
 export const feedReceive = (state, { payload }) =>
   payload.user_proposal ?
     state.merge({
@@ -76,14 +72,7 @@ export const success = {
     state.merge({
       fetchingAllRoles: false,
       rolesTotalCount,
-      packs: utils.sort(
-        utils.merge(state.packs || [], roles.filter(role => role.roles) || []),
-        'name'
-      ),
-      roles: utils.sort(
-        utils.merge(state.roles || [], roles.filter(role => role.packs) || []),
-        'name'
-      ),
+      roles: utils.merge(state.roles || [], roles || []),
     }),
 
 
@@ -119,7 +108,6 @@ export const success = {
 
 export const RequesterReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]:              resetAll,
-  [Types.RESET_ROLES_AND_PACKS]:  resetRolesAndPacks,
   [Types.RESET_ERRORS]:           resetErrors,
   [Types.FEED_RECEIVE]:           feedReceive,
   [Types.MANUAL_EXPIRE]:          request.temp,

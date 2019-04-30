@@ -22,7 +22,7 @@ const { Types, Creators } = createActions({
   allPacksRequest:      ['start', 'limit'],
   allPacksSuccess:      ['packs', 'packsTotalCount'],
   allPacksFailure:      ['error'],
-  allRolesRequest:      ['start', 'limit', 'includePacks'],
+  allRolesRequest:      ['start', 'limit'],
   allRolesSuccess:      ['roles', 'rolesTotalCount'],
   allRolesFailure:      ['error'],
 
@@ -52,7 +52,6 @@ const { Types, Creators } = createActions({
   roleAccessFailure:    null,
 
   resetAll:             null,
-  resetRolesAndPacks:   null,
   resetErrors:          null,
   feedReceive:          ['payload'],
   manualExpire:         ['id'],
