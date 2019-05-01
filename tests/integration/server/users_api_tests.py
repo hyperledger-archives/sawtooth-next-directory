@@ -116,40 +116,6 @@ def test_create_new_user_api():
         assert user_details_response.json()["data"]["manager"] == manager_id
 
 
-def test_delete_user_by_next_id():
-    """Test that a user can be deleted by next_id."""
-    user_input = {
-        "name": "Sri Nuthal",
-        "username": "nuthalapati1",
-        "password": "123456",
-        "email": "sri@gmail.com",
-    }
-    expected = {"deleted": 1}
-    with requests.Session() as session:
-        response = session.post("http://rbac-server:8000/api/users", json=user_input)
-        next_id = response.json()["data"]["user"]["id"]
-        # Wait 3 seconds till blockchain process add user.
-        time.sleep(3)
-        del_res = session.delete("http://rbac-server:8000/api/users/" + next_id)
-        assert del_res.json()["data"]["deleted"] == expected["deleted"]
-
-
-def test_invalid_user_del():
-    """Test that a user can't be deleted by invalid next_id."""
-    user_input = {
-        "name": "Sri Nuthal",
-        "username": "nuthalapati1",
-        "password": "123456",
-        "email": "sri@gmail.com",
-    }
-    expected = {"deleted": 0}
-    with requests.Session() as session:
-        response = session.post("http://rbac-server:8000/api/users", json=user_input)
-        next_id = "e0096e79-2f3d-4e9a-b932-39992d628e76"
-        del_res = session.delete("http://rbac-server:8000/api/users/" + next_id)
-        assert del_res.json()["data"]["deleted"] == expected["deleted"]
-
-
 def test_update_manager():
     """ Creates a user and then updates their manager
 
