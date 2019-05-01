@@ -193,8 +193,11 @@ class Individual extends Component {
               setFlow={this.setFlow}/>
             <div id='next-approver-individual-pending'>
               <h5>
-                {openProposals && openProposals.filter
-                (proposal =>  proposal.opener !== me.id).length + ' PENDING'}
+                { openProposals &&
+                  openProposals.filter(
+                    proposal => proposal.opener !== me.id
+                  ).length + ' PENDING'
+                }
               </h5>
             </div>
             { openProposals && openProposals.length !== 0 &&
