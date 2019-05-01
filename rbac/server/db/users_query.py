@@ -120,7 +120,6 @@ async def fetch_all_user_resources(conn, start, limit):
                     "id": user["next_id"],
                     "name": user["name"],
                     "email": user["email"],
-                    "subordinates": fetch_user_ids_by_manager(user["next_id"]),
                     "ownerOf": {
                         "tasks": fetch_relationships_by_id(
                             "task_owners", user["next_id"], "task_id"
@@ -130,14 +129,6 @@ async def fetch_all_user_resources(conn, start, limit):
                         ),
                         "packs": fetch_relationships_by_id(
                             "pack_owners", user["next_id"], "pack_id"
-                        ),
-                    },
-                    "administratorOf": {
-                        "tasks": fetch_relationships_by_id(
-                            "task_admins", user["next_id"], "task_id"
-                        ),
-                        "roles": fetch_relationships_by_id(
-                            "role_admins", user["next_id"], "role_id"
                         ),
                     },
                     "memberOf": fetch_relationships_by_id(
