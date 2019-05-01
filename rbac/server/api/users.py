@@ -32,8 +32,11 @@ from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
+from rbac.server.db import packs_query
 from rbac.server.db.db_utils import create_connection
+from rbac.common.logs import get_default_logger
 
+LOGGER = get_default_logger(__name__)
 AES_KEY = os.getenv("AES_KEY")
 USERS_BP = Blueprint("users")
 
@@ -58,8 +61,15 @@ async def fetch_all_users(request):
 async def create_new_user(request):
     """Create a new user."""
     env = Env()
-    if not env.int("ENABLE_NEXT_BASE_USE"):
-        raise ApiBadRequest("Not a valid action. Source not enabled")
+    admin_role = {
+        "name": env("NEXT_ADMIN_NAME"),
+        "username": env("NEXT_ADMIN_USER"),
+        "email": env("NEXT_ADMIN_EMAIL"),
+        "password": env("NEXT_ADMIN_PASS"),
+    }
+    if request.json != admin_role:
+        if not env.int("ENABLE_NEXT_BASE_USE"):
+            raise ApiBadRequest("Not a valid action. Source not enabled")
     required_fields = ["name", "username", "password", "email"]
     utils.validate_fields(required_fields, request.json)
     username_created = request.json.get("username")
@@ -78,6 +88,11 @@ async def create_new_user(request):
     encrypted_private_key = encrypt_private_key(
         AES_KEY, key_pair.public_key, key_pair.private_key_bytes
     )
+    if request.json.get("metadata") is None or request.json.get("metadata") == {}:
+        set_metadata = {}
+    else:
+        set_metadata = request.json.get("metadata")
+    set_metadata["sync_direction"] = "OUTBOUND"
 
     # Build create user transaction
     batch_list = User().batch_list(
@@ -87,7 +102,7 @@ async def create_new_user(request):
         name=request.json.get("name"),
         username=request.json.get("username"),
         email=request.json.get("email"),
-        metadata=request.json.get("metadata"),
+        metadata=set_metadata,
         manager_id=request.json.get("manager"),
         key=key_pair.public_key,
     )
@@ -142,6 +157,27 @@ async def get_user(request, next_id):
     return await utils.create_response(conn, request.url, user_resource, head_block)
 
 
+@USERS_BP.delete("api/users/<next_id>")
+@authorized()
+async def delete_user(request, next_id):
+    """Delete a specific user by next_id."""
+    conn = await create_connection()
+
+    head_block = await utils.get_request_block(request)
+    await auth_query.delete_auth_entry_by_next_id(conn, next_id)
+    await users_query.delete_user_mapping_by_next_id(conn, next_id)
+    await roles_query.delete_role_admin_by_next_id(conn, next_id)
+    await roles_query.delete_role_member_by_next_id(conn, next_id)
+    await roles_query.delete_role_owner_by_next_id(conn, next_id)
+    await packs_query.delete_pack_owner_by_next_id(conn, next_id)
+    # TODO: We have to remove next_id reference entry from task table.
+    user_resource = await users_query.delete_user_resource(conn, next_id)
+
+    conn.close()
+
+    return await utils.create_response(conn, request.url, user_resource, head_block)
+
+
 @USERS_BP.get("api/user/<next_id>/summary")
 @authorized()
 async def get_user_summary(request, next_id):
@@ -183,7 +219,6 @@ async def update_manager(request, next_id):
     """Update a user's manager."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
-
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
     batch_list = User().manager.propose.batch_list(
@@ -194,12 +229,11 @@ async def update_manager(request, next_id):
         new_manager_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=[request.json.get("id")],
     )
-
-    conn = await create_connection()
-    await utils.send(conn, batch_list, request.app.config.TIMEOUT)
-    conn.close()
-
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
     return json({"proposal_id": proposal_id})
 
 

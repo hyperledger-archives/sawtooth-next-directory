@@ -29,7 +29,7 @@ message RoleAttributes {
 
     string name = 2;
 
-    string metadata = 3;
+    map<string, string> metadata = 3;
 
     string description = 4;
 

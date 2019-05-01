@@ -52,21 +52,22 @@ async def create_new_pack(request):
     required_fields = ["owners", "name", "roles"]
     utils.validate_fields(required_fields, request.json)
     conn = await create_connection()
-    response = await packs_query.packs_search_duplicate(conn, request.json.get("name"))
+    pack_title = " ".join(request.json.get("name").split())
+    response = await packs_query.packs_search_duplicate(conn, pack_title)
     if not response:
         pack_id = str(uuid4())
         await packs_query.create_pack_resource(
             conn,
             pack_id,
             request.json.get("owners"),
-            request.json.get("name"),
+            pack_title,
             request.json.get("description"),
         )
         await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
         conn.close()
         return create_pack_response(request, pack_id)
     raise ApiBadRequest(
-        "Error: could not create this pack because pack name has been taken or already exists"
+        "Error: Could not create this pack because the pack name already exists."
     )
 
 

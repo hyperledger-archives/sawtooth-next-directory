@@ -164,7 +164,7 @@ class Individual extends Component {
    * @returns {JSX}
    */
   render () {
-    const { openProposals, userFromId } = this.props;
+    const { openProposals, userFromId, me } = this.props;
     const {
       activeIndex,
       allSelected,
@@ -193,7 +193,8 @@ class Individual extends Component {
               setFlow={this.setFlow}/>
             <div id='next-approver-individual-pending'>
               <h5>
-                {openProposals && openProposals.length + ' PENDING'}
+                {openProposals && openProposals.filter
+                (proposal =>  proposal.opener !== me.id).length + ' PENDING'}
               </h5>
             </div>
             { openProposals && openProposals.length !== 0 &&

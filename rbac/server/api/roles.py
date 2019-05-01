@@ -24,6 +24,11 @@ from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.db import roles_query
 from rbac.server.db.db_utils import create_connection
+from rbac.server.db.relationships_query import fetch_relationships
+
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
 
 ROLES_BP = Blueprint("roles")
 
@@ -51,16 +56,22 @@ async def create_new_role(request):
     utils.validate_fields(required_fields, request.json)
 
     conn = await create_connection()
-    response = await roles_query.roles_search_duplicate(conn, request.json.get("name"))
+    role_title = " ".join(request.json.get("name").split())
+    response = await roles_query.roles_search_duplicate(conn, role_title)
+    if request.json.get("metadata") is None or request.json.get("metadata") == {}:
+        set_metadata = {}
+    else:
+        set_metadata = request.json.get("metadata")
+    set_metadata["sync_direction"] = "OUTBOUND"
     if not response:
         txn_key, txn_user_id = await utils.get_transactor_key(request)
         role_id = str(uuid4())
         batch_list = Role().batch_list(
             signer_keypair=txn_key,
             signer_user_id=txn_user_id,
-            name=request.json.get("name"),
+            name=role_title,
             role_id=role_id,
-            metadata=request.json.get("metadata"),
+            metadata=set_metadata,
             admins=request.json.get("administrators"),
             owners=request.json.get("owners"),
             description=request.json.get("description"),
@@ -70,7 +81,7 @@ async def create_new_role(request):
         )
         return create_role_response(request, role_id)
     raise ApiBadRequest(
-        "Error: could not create this role because role name has been taken or already exists"
+        "Error: Could not create this role because the role name already exists."
     )
 
 
@@ -125,6 +136,9 @@ async def add_role_admin(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("role_admins", "role_id", role_id).run(conn)
+    conn.close()
     batch_list = Role().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -133,6 +147,7 @@ async def add_role_admin(request, role_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -148,6 +163,9 @@ async def add_role_member(request, role_id):
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("role_owners", "role_id", role_id).run(conn)
+    conn.close()
     batch_list = Role().member.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -157,6 +175,7 @@ async def add_role_member(request, role_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     batch_status = await utils.send(
         request.app.config.VAL_CONN,
@@ -178,6 +197,9 @@ async def add_role_owner(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships("role_admins", "role_id", role_id).run(conn)
+    conn.close()
     batch_list = Role().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -186,6 +208,7 @@ async def add_role_owner(request, role_id):
         next_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
@@ -199,9 +222,13 @@ async def add_role_task(request, role_id):
     """Add a task to a role."""
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
-
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
+    conn = await create_connection()
+    approver = await fetch_relationships(
+        "task_owners", "task_id", request.json.get("id")
+    ).run(conn)
+    conn.close()
     batch_list = Role().task.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -210,6 +237,7 @@ async def add_role_task(request, role_id):
         task_id=request.json.get("id"),
         reason=request.json.get("reason"),
         metadata=request.json.get("metadata"),
+        assigned_approver=approver,
     )
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT

@@ -38,8 +38,13 @@ services:
       - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-1}
       - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-1}
       - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
-      - LDAP_DC=${LDAP_DC}
+      - LDAP_DC=DC=AD2012,DC=LAB
+      - LDAP_SERVER=my_fake_server
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_NAME=${NEXT_ADMIN_NAME:-Admin}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER:-Admin}
+      - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS:-p@ssw0rd123}
+      - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL:-admin@test.com}
       - SECRET_KEY=${SECRET_KEY}
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
@@ -90,7 +95,7 @@ services:
 
   rest-api:
     container_name: sawtooth-rest-api
-    image: hyperledger/sawtooth-rest-api:1.0
+    image: hyperledger/sawtooth-rest-api:1.1
     ports:
       - "8008:8008"
     depends_on:
@@ -99,14 +104,25 @@ services:
 
   settings-tp:
     container_name: rbac-settings-tp
-    image: hyperledger/sawtooth-settings-tp:1.0
+    environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+    image: hyperledger/sawtooth-settings-tp:1.1
     depends_on:
       - validator
     command: settings-tp --connect tcp://validator:4004
 
+  devmode-engine:
+    image: hyperledger/sawtooth-devmode-engine-rust:1.1
+    container_name: sawtooth-devmode-engine-rust-default
+    depends_on:
+      - validator
+    entrypoint: devmode-engine-rust -C tcp://validator:5050
+
   validator:
     container_name: rbac-validator-tp
-    image: hyperledger/sawtooth-validator:1.0
+    environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+    image: hyperledger/sawtooth-validator:1.1
     entrypoint: |
       bash -c "
         if [ ! -f /etc/sawtooth/keys/validator.priv ]; then
@@ -118,7 +134,8 @@ services:
         sawtooth-validator \
           --endpoint tcp://validator:8800 \
           --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800
+          --bind network:tcp://eth0:8800 \
+          --bind consensus:tcp://eth0:5050 \
           --scheduler parallel
       \"\""
 
@@ -135,3 +152,4 @@ services:
       - PYTHONPATH=/project/hyperledger-rbac/
       - HOST=${HOST:-localhost}
       - LDAP_SERVER=${LDAP_SERVER}
+

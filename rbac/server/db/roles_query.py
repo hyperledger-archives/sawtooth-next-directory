@@ -194,3 +194,33 @@ async def roles_search_duplicate(conn, name):
         .run(conn)
     )
     return resource
+
+
+async def delete_role_admin_by_next_id(conn, next_id):
+    """Delete role admin using next_id"""
+    return (
+        await r.table("role_admins")
+        .filter(lambda doc: doc["identifiers"].contains(next_id))
+        .delete()
+        .run(conn)
+    )
+
+
+async def delete_role_member_by_next_id(conn, next_id):
+    """Delete role member using next_id"""
+    return (
+        await r.table("role_members")
+        .filter(lambda doc: doc["identifiers"].contains(next_id))
+        .delete()
+        .run(conn)
+    )
+
+
+async def delete_role_owner_by_next_id(conn, next_id):
+    """Delete role owner using next_id"""
+    return (
+        await r.table("role_owners")
+        .filter(lambda doc: doc["identifiers"].contains(next_id))
+        .delete()
+        .run(conn)
+    )

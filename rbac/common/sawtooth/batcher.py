@@ -107,6 +107,22 @@ def make_batch(transaction, signer_keypair):
     )
 
 
+def make_batch_from_txns(transactions, signer_keypair):
+    """ Given a list of transactions, create a batch to be applied
+    on the Sawtooth blockchain.
+    """
+    batch_header = batch_pb2.BatchHeader(
+        signer_public_key=signer_keypair.public_key,
+        transaction_ids=[txn.header_signature for txn in transactions],
+    ).SerializeToString()
+
+    return batch_pb2.Batch(
+        header=batch_header,
+        header_signature=signer_keypair.sign(batch_header),
+        transactions=transactions,
+    )
+
+
 def batch_to_list(batch):
     """ Make a batch list from a batch
     """
@@ -264,6 +280,8 @@ def dict_to_protobuf(dictionary, message, message_name=None, exclude_fields=None
                 if field.label == FieldDescriptor.LABEL_REPEATED:
                     if isinstance(value, (list, set)):
                         attribute.extend(list(value))
+                    elif isinstance(value, dict):
+                        attribute.update(value)
                     else:
                         attribute.extend([value])
                 else:
@@ -277,6 +295,16 @@ def dict_to_protobuf(dictionary, message, message_name=None, exclude_fields=None
                     value,
                 )
     return message
+
+
+def map_field_assign(message_to, message_from):
+    """ Takes a message and assign the map field values to
+        another message's map field. For example: metadata field
+        Shallow copy; supports primitive data types and lists (arrays)
+        Add depth and/or additional datatypes when needed
+    """
+    for inner_key in message_from.metadata:
+        message_to.metadata[inner_key] = message_from.metadata[inner_key]
 
 
 def protobuf_to_protobuf(
@@ -303,6 +331,8 @@ def protobuf_to_protobuf(
                 if field.label == FieldDescriptor.LABEL_REPEATED:
                     if isinstance(value, (list, set)):
                         attribute.extend(list(value))
+                    elif key == "metadata":
+                        map_field_assign(message_to, message_from)
                     else:
                         attribute.extend([value])
                 else:

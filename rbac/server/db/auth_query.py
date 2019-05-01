@@ -71,3 +71,8 @@ async def get_user_map_by_next_id(next_id):
     )
     conn.close()
     return user_map
+
+
+async def delete_auth_entry_by_next_id(conn, next_id):
+    """Delete auth_entry from auth table."""
+    return await r.table("auth").filter({"next_id": next_id}).delete().run(conn)

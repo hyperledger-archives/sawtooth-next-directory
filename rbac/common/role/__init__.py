@@ -19,6 +19,8 @@
 from rbac.common.logs import get_default_logger
 from rbac.common.role.create_role import CreateRole
 from rbac.common.role.delete_role import DeleteRole
+from rbac.common.role.delete_role_admin import DeleteRoleAdmin
+from rbac.common.role.delete_role_owner import DeleteRoleOwner
 from rbac.common.role.imports_role import ImportsRole
 from rbac.common.role.relationship_member import MemberRelationship
 from rbac.common.role.relationship_owner import OwnerRelationship
@@ -45,6 +47,8 @@ class Role(CreateRole):
         #   where the registration happens. Finding this out will also help us
         #   clear this file of this singleton.
         self.delete = DeleteRole()
+        self.delete_owner = DeleteRoleOwner()
+        self.delete_admin = DeleteRoleAdmin()
 
 
 ROLE = Role()

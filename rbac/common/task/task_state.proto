@@ -31,7 +31,7 @@ message TaskAttributes {
 
     string name = 2;
 
-    string metadata = 3;
+    map<string, string> metadata = 3;
 
 }
 

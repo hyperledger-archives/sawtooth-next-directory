@@ -19,9 +19,8 @@
 
 import time
 from datetime import datetime, timedelta, timezone
+import requests
 
-import rethinkdb as r
-import pytest
 from ldap3 import (
     Server,
     Connection,
@@ -31,15 +30,19 @@ from ldap3 import (
     MODIFY_REPLACE,
 )
 from ldap3.extend.microsoft import addMembersToGroups, removeMembersFromGroups
+import pytest
+import rethinkdb as r
+from environs import Env
 
-from rbac.common.logs import get_default_logger
 from rbac.providers.common.db_queries import connect_to_db
+from rbac.common.crypto.secrets import generate_api_key
 from rbac.providers.ldap.delta_inbound_sync import (
     insert_updated_entries,
     insert_deleted_entries,
 )
+from tests import utilities
 
-LOGGER = get_default_logger(__name__)
+SERVER = Server("my_fake_server", get_info=OFFLINE_AD_2012_R2)
 
 # ------------------------------------------------------------------------------
 # <==== BEGIN TEST PARAMETERS =================================================>
@@ -69,9 +72,8 @@ TEST_GROUPS = [{"common_name": "test_group", "name": "test_group"}]
 def ldap_connection():
     """Binds and yields a mock ldap connection for integration testing.
     """
-    server = Server("my_fake_server", get_info=OFFLINE_AD_2012_R2)
     connection = Connection(
-        server,
+        SERVER,
         user="cn=my_user,ou=test,o=lab",
         password="my_password",
         client_strategy=MOCK_SYNC,
@@ -125,7 +127,7 @@ def _get_user_attributes(common_name, name, given_name):
     return attributes
 
 
-def _get_group_attributes(common_name, name):
+def _get_group_attributes(common_name, name, owner=""):
     """Generates valid AD group attributes for creating a fake group in a mock AD.
 
     Args:
@@ -148,6 +150,7 @@ def _get_group_attributes(common_name, name):
         "objectClass": ["top", "group"],
         "whenChanged": datetime.utcnow().replace(tzinfo=timezone.utc),
         "whenCreated": datetime.utcnow().replace(tzinfo=timezone.utc),
+        "managedBy": owner,
     }
     return group
 
@@ -175,7 +178,7 @@ def create_fake_user(ldap_connection, common_name, name, given_name):
     )
 
 
-def create_fake_group(ldap_connection, common_name, name):
+def create_fake_group(ldap_connection, common_name, name, owner=""):
     """Puts a given user object in the mock AD server.
 
     Args:
@@ -185,12 +188,88 @@ def create_fake_group(ldap_connection, common_name, name):
             str: A string containing the common name of a fake AD role.
         name:
             str: A string containing the name of a fake group.
+        owner:
     """
-    attributes = _get_group_attributes(common_name, name)
+    attributes = _get_group_attributes(common_name, name, owner)
     ldap_connection.strategy.add_entry(
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % common_name,
         attributes=attributes,
     )
+
+
+def create_next_role_ldap(user, role_name):
+    """" Create a NEXT role as an imported LDAP user
+
+    Args:
+        user:
+            dict: User table entry for imported LDAP user
+        role_name:
+            str: Name of role
+
+    Returns:
+        role_id:
+            str: UUID of newly created NEXT role
+
+    Raises:
+        ValueError: When user was not auth successfully.
+    """
+    token = ldap_auth_login(user)
+
+    if token:
+        user_next_id = user["next_id"]
+
+        role_data = {
+            "name": role_name,
+            "owners": [user_next_id],
+            "administrators": [user_next_id],
+        }
+        with requests.Session() as session:
+            session.headers.update({"Authorization": token})
+            response = utilities.create_test_role(session, role_data)
+            return response.json()["data"]["id"]
+    raise ValueError("Unsuccessful authentication.")
+
+
+def ldap_auth_login(user):
+    """" Authenticate as a test LDAP user and create a new entry in
+    auth RethinkDB table.
+
+    Args:
+        user:
+            dict: User table entry for imported LDAP user
+
+    Returns:
+        token:
+            str: Bearer token upon user's successful authentication
+    """
+    env = Env()
+    ldap_conn = Connection(
+        SERVER,
+        user=user["remote_id"],
+        password="P@ssw0rd123",
+        client_strategy=MOCK_SYNC,
+    )
+
+    # On successful bind, create auth table entry
+    if ldap_conn.bind():
+        conn = connect_to_db()
+        user_map = (
+            r.table("user_mapping")
+            .filter({"next_id": user["next_id"]})
+            .coerce_to("array")
+            .run(conn)
+        )
+        auth_entry = {
+            "next_id": user["next_id"],
+            "username": user["username"],
+            "email": user["email"],
+            "encrypted_private_key": user_map[0]["encrypted_key"],
+            "public_key": user_map[0]["public_key"],
+        }
+        r.table("auth").insert(auth_entry).run(conn)
+        conn.close()
+        return generate_api_key(env("SECRET_KEY"), user["next_id"])
+    return None
 
 
 def get_fake_user(ldap_connection, user_common_name):
@@ -269,6 +348,23 @@ def is_user_in_db(email):
         return result > 0
 
 
+def get_user_in_db_by_email(email):
+    """Returns the user in rethinkdb with the given email.
+
+    Args:
+        email:
+            str: an email address.
+    """
+    with connect_to_db() as db_connection:
+        result = (
+            r.table("users")
+            .filter({"email": email})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+        return result
+
+
 def get_user_next_id(distinguished_name):
     """Returns the next_id for a given user's distinguished name.
 
@@ -325,6 +421,23 @@ def get_role_id_from_cn(role_common_name):
         )[0]
         role_id = results["role_id"]
     return role_id
+
+
+def get_role(name):
+    """Returns a role in rethinkDB via name.
+
+    Args:
+        name:
+            str: a name of a role in rethinkDB.
+    """
+    with connect_to_db() as db_connection:
+        role = (
+            r.table("roles")
+            .filter({"name": name})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+    return role
 
 
 def get_role_members(role_id):
@@ -420,7 +533,7 @@ def set_role_owner(ldap_connection, user_common_name, role_common_name):
 
 
 def get_role_owners(role_id):
-    """Returns a list of owner user_ids from a role in rethnkDB.
+    """Returns a list of owner next_ids from a role in rethnkDB.
 
     Args:
         role_id:
@@ -435,6 +548,24 @@ def get_role_owners(role_id):
             .run(db_connection)
         )
     return role_owners
+
+
+def get_role_admins(role_id):
+    """Returns a list of admin next_ids from a role in rethnkDB.
+
+    Args:
+        role_id:
+            str: a NEXT role_id from rethinkDB.
+    """
+    with connect_to_db() as db_connection:
+        role_admins = (
+            r.table("role_admins")
+            .filter({"role_id": role_id})
+            .pluck("related_id")
+            .coerce_to("array")
+            .run(db_connection)
+        )
+    return role_admins
 
 
 def clear_role_owners(ldap_connection, role_common_name):
@@ -580,10 +711,32 @@ def test_create_fake_user(ldap_connection, user):
     fake_user = get_fake_user(ldap_connection, user["common_name"])
     put_in_inbound_queue(fake_user, "user")
     # wait for the fake user to be ingested by rbac_ledger_sync
-    time.sleep(1)
+    time.sleep(2)
     email = "%s@clouddev.corporate.t-mobile.com" % user["common_name"]
     result = is_user_in_db(email)
+    syncflag_fetched = is_user_inbound(user["common_name"])
     assert result is True
+    assert syncflag_fetched is True
+
+
+def is_user_inbound(username_provided):
+    """ Function returns TRUE,
+        If the sync_direction flag in metadata field
+        is set to INBOUND for the inbound sync users.
+    """
+    with connect_to_db() as db_connection:
+        count_result = (
+            r.table("users")
+            .filter(
+                {
+                    "username": username_provided,
+                    "metadata": {"sync_direction": "INBOUND"},
+                }
+            )
+            .count()
+            .run(db_connection)
+        )
+        return count_result > 0
 
 
 @pytest.mark.parametrize("group", TEST_GROUPS)
@@ -780,15 +933,42 @@ def test_delete_user(ldap_connection):
         ldap_connection:
             obj: A bound mock mock_ldap_connection
     """
+    # Create fake user and attach as owner to a role
     create_fake_user(ldap_connection, "jchan20", "Jackie Chan", "Jackie")
+    user_remote_id = "CN=jchan20,OU=Users,OU=Accounts,DC=AD2012,DC=LAB"
+    create_fake_group(ldap_connection, "jchan_role", "jchan_role", user_remote_id)
     fake_user = get_fake_user(ldap_connection, "jchan20")
     put_in_inbound_queue(fake_user, "user")
-    insert_deleted_entries(
-        ["CN=jchan20,OU=Users,OU=Accounts,DC=AD2012,DC=LAB"], "user_deleted"
-    )
+    fake_group = get_fake_group(ldap_connection, "jchan_role")
+    put_in_inbound_queue(fake_group, "group")
+    time.sleep(3)
+
+    # See if owner and role are in the system
     email = "jchan20@clouddev.corporate.t-mobile.com"
-    result = is_user_in_db(email)
-    assert result is False
+    assert is_user_in_db(email) is True
+    assert is_group_in_db("jchan_role") is True
+
+    # See that the owner is assigned to correct role
+    user = get_user_in_db_by_email(email)
+    role = get_role("jchan_role")
+    owners = get_role_owners(role[0]["role_id"])
+    assert owners[0]["related_id"] == user[0]["next_id"]
+
+    # Create a NEXT role with LDAP user as an admin
+    next_role_id = create_next_role_ldap(user=user[0], role_name="managers")
+    admins = get_role_admins(next_role_id)
+    assert admins[0]["related_id"] == user[0]["next_id"]
+
+    # Delete user and verify role exists and role_ownership is removed
+    insert_deleted_entries([user_remote_id], "user_deleted")
+    time.sleep(3)
+
+    assert is_user_in_db(email) is False
+    assert is_group_in_db("jchan_role") is True
+    assert get_role_owners(role[0]["role_id"]) == []
+    assert get_role_admins(next_role_id) == []
+
+    utilities.delete_role_by_name("managers")
 
 
 def test_delete_role(ldap_connection):

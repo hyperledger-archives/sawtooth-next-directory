@@ -26,16 +26,19 @@ export const ApproverSelectors = {
   roleExists:            (state) => state.approver.roleExists,
   openProposals:         (state) => state.approver.openProposals,
   openProposalsByUser:   (state) =>
-    utils.groupBy(state.approver.openProposals, 'opener'),
+    state.user.me &&
+    utils.filterBy(state.approver.openProposals, 'opener', state.user.me),
   openProposalsByRole:   (state) =>
-    utils.groupBy(state.approver.openProposals, 'object'),
+    state.user.me &&
+    state.approver.openProposals &&
+    utils.groupBy(state.approver.openProposals.filter(
+      proposal =>  proposal.opener !== state.user.me.id ), 'object'),
   openProposalsCount:    (state) => {
     return (
       state.user.me &&
       state.approver.openProposals &&
       state.approver.openProposals
-        .filter(proposal => proposal.approvers.includes(state.user.me.id))
-        .length
+        .filter(proposal =>  proposal.opener !== state.user.me.id ).length
     ) || null;
   },
   openProposalsByRoleCount: (state) =>
