@@ -30,7 +30,7 @@ RUN pip install \
         cryptography==2.4.2 \
         requests==2.20.0 \
         environs==4.1.0 \
-        sawtooth-sdk==1.1.4post1
+        sawtooth-sdk==1.0.1
 RUN pip install \
         ldap3==2.5.2 \
         azure-eventhub==1.2.0 \
