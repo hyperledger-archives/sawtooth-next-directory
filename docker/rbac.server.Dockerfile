@@ -23,7 +23,7 @@ RUN pip install \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
         sanic==0.8.3 \
-        sawtooth-sdk==1.1.4post1 \
+        sawtooth-sdk==1.0.1 \
         sanic-cors==0.9.7 \
         websockets==5.0.1 \
         requests==2.21.0 \

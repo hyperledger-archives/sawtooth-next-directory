@@ -64,33 +64,25 @@ services:
       "
 
   settings-tp:
-    image: hyperledger/sawtooth-settings-tp:1.1
+    image: hyperledger/sawtooth-settings-tp:1.0
     depends_on:
       - validator
     command: settings-tp -vv --connect tcp://validator:4004
 
-
   validator:
-    container_name: rbac-validator-tp
-    environment:
-      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
-    image: hyperledger/sawtooth-validator:1.1
-    entrypoint: |
+    image: hyperledger/sawtooth-validator:1.0
+    command: |
       bash -c "
-        if [ ! -f /etc/sawtooth/keys/validator.priv ]; then
-          sawadm keygen &&
-          sawtooth keygen my_key &&
-          sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
-          sawadm genesis config-genesis.batch
-        fi;
-        sawtooth-validator \
+        sawadm keygen --force &&
+        sawtooth keygen my_key --force &&
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+        sawadm genesis config-genesis.batch &&
+        sawtooth-validator -vv \
           --endpoint tcp://validator:8800 \
-          --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800 \
-          --bind consensus:tcp://eth0:5050 \
+          --bind component:tcp://*:4004 \
+          --bind network:tcp://*:8800 \
           --scheduler parallel
-      \"\""
-    
+      "
 
   test-runner:
     build:
