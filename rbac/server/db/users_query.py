@@ -285,6 +285,11 @@ async def delete_user_mapping_by_next_id(conn, next_id):
     return await r.table("user_mapping").filter({"next_id": next_id}).delete().run(conn)
 
 
+async def delete_metadata_by_next_id(conn, next_id):
+    """Delete pack owner using next_id"""
+    return await r.table("metadata").filter({"next_id": next_id}).delete().run(conn)
+
+
 async def search_users(conn, search_query, paging):
     """Compiling all search fields for users into one query."""
     resource = (

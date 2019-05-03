@@ -162,15 +162,6 @@ async def get_user(request, next_id):
 @authorized()
 async def delete_user(request, next_id):
     """Delete a specific user by next_id."""
-    conn = await create_connection()
-
-    await auth_query.delete_auth_entry_by_next_id(conn, next_id)
-    await roles_query.delete_role_admin_by_next_id(conn, next_id)
-    await roles_query.delete_role_member_by_next_id(conn, next_id)
-    await roles_query.delete_role_owner_by_next_id(conn, next_id)
-    await packs_query.delete_pack_owner_by_next_id(conn, next_id)
-    # TODO: We have to remove next_id reference entry from task table.
-    conn.close()
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     batch_list = DeleteUser().batch_list(
@@ -179,6 +170,16 @@ async def delete_user(request, next_id):
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
+
+    conn = await create_connection()
+    await auth_query.delete_auth_entry_by_next_id(conn, next_id)
+    await roles_query.delete_role_admin_by_next_id(conn, next_id)
+    await roles_query.delete_role_member_by_next_id(conn, next_id)
+    await roles_query.delete_role_owner_by_next_id(conn, next_id)
+    await packs_query.delete_pack_owner_by_next_id(conn, next_id)
+    await users_query.delete_metadata_by_next_id(conn, next_id)
+    # TODO: We have to remove next_id reference entry from task table.
+    conn.close()
 
     return json(
         {"message": "User {} successfully deleted".format(next_id), "deleted": 1}
