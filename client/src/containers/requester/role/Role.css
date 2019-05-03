@@ -54,6 +54,7 @@ limitations under the License.
   bottom: 0;
   margin: 25px 38px;
   position: fixed;
+  visibility: hidden;
 }
 
 #next-not-found-role-container {
