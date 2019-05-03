@@ -99,7 +99,7 @@ class Header extends Component {
       this.setState({approverViewEnabled: true}
       );
     }
-    if (history.location.pathname === '/'  &&
+    if (!(history.location.pathname.includes('/approval')) &&
     this.state.approverViewEnabled === true){
       this.setState({approverViewEnabled: false}
       );
