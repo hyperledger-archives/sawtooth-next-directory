@@ -178,3 +178,50 @@ def test_user_relationship_api():
         )
         assert response.json()["data"]["managers"] == []
         delete_user_by_username("kkumar36")
+
+
+def test_user_delete_api():
+    """Test that user has been removed from database when users delete api is hit"""
+    user = {
+        "name": "nadia one",
+        "username": "nadia1",
+        "password": "test11",
+        "email": "nadia1@test.com",
+    }
+    with requests.Session() as session:
+        response = create_test_user(session, user)
+        next_id = response.json()["data"]["user"]["id"]
+        conn = connect_to_db()
+        user_exists = (
+            r.db("rbac")
+            .table("users")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        assert user_exists
+
+        deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
+        time.sleep(3)
+        assert deletion.json() == {
+            "message": "User {} successfully deleted".format(next_id),
+            "deleted": 1,
+        }
+
+        user = (
+            r.db("rbac")
+            .table("users")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        metadata = (
+            r.db("rbac")
+            .table("metadata")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        conn.close()
+        assert user == []
+        assert metadata == []
