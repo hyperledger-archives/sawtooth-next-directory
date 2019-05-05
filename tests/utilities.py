@@ -128,3 +128,161 @@ def get_proposal_with_retry(session, proposal_id):
             LOGGER.info("retrying get proposal... %s", retry)
             sleep(5)
     return response
+
+
+def is_user_in_db(email):
+    """Returns the number of users in rethinkdb with the given email.
+
+    Args:
+        email:
+            str: an email address.
+    """
+    with connect_to_db() as db_connection:
+        result = r.table("users").filter({"email": email}).count().run(db_connection)
+        return result > 0
+
+
+def get_user_in_db_by_email(email):
+    """Returns the user in rethinkdb with the given email.
+
+    Args:
+        email:
+            str: an email address.
+    """
+    with connect_to_db() as db_connection:
+        result = (
+            r.table("users")
+            .filter({"email": email})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+        return result
+
+
+def get_user_next_id(remote_id):
+    """Returns the next_id for a given user's remote id.
+
+    Args:
+        remote_id:
+            str: A string containing the user's remote id.
+
+    Returns:
+        next_id:
+            str: A string containing the user's unique next_id.
+    """
+    with connect_to_db() as db_connection:
+        results = list(
+            r.table("users")
+            .filter({"remote_id": remote_id})
+            .pluck("next_id")
+            .run(db_connection)
+        )[0]
+        next_id = results["next_id"]
+    return next_id
+
+
+def get_role_owners(role_id):
+    """Returns a list of owner next_ids from a role in rethnkDB.
+
+    Args:
+        role_id:
+            str: a NEXT role_id from rethinkDB.
+    """
+    with connect_to_db() as db_connection:
+        role_owners = (
+            r.table("role_owners")
+            .filter({"role_id": role_id})
+            .pluck("related_id")
+            .coerce_to("array")
+            .run(db_connection)
+        )
+    return role_owners
+
+
+def get_role(name):
+    """Returns a role in rethinkDB via name.
+
+    Args:
+        name:
+            str: a name of a role in rethinkDB.
+    """
+    with connect_to_db() as db_connection:
+        role = (
+            r.table("roles")
+            .filter({"name": name})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+    return role
+
+
+def is_group_in_db(name):
+    """Returns the number of groups from the roles table in rethinkdb with
+    the given name.
+
+    Args:
+        name:
+            str: The name of a fake group.
+    """
+    with connect_to_db() as db_connection:
+        result = r.table("roles").filter({"name": name}).count().run(db_connection)
+        return result > 0
+
+
+def get_role_id_from_cn(role_name):
+    """Returns the NEXT role_id for a given role name.
+
+    Args:
+        role_common_name:
+            str: A string containing the name of a role.
+
+    Returns:
+        role_id:
+            str: A string containing the NEXT role id of the corresponding role.
+    """
+    with connect_to_db() as db_connection:
+        results = list(
+            r.table("roles")
+            .order_by(index=r.desc("start_block_num"))
+            .filter({"name": role_name})
+            .pluck("role_id")
+            .run(db_connection)
+        )[0]
+        role_id = results["role_id"]
+    return role_id
+
+
+def get_role_admins(role_id):
+    """Returns a list of admin next_ids from a role in rethnkDB.
+
+    Args:
+        role_id:
+            str: a NEXT role_id from rethinkDB.
+    """
+    with connect_to_db() as db_connection:
+        role_admins = (
+            r.table("role_admins")
+            .filter({"role_id": role_id})
+            .pluck("related_id")
+            .coerce_to("array")
+            .run(db_connection)
+        )
+    return role_admins
+
+
+def get_role_members(role_id):
+    """Returns a list of member user_ids from a role in rethnkDB.
+
+    Args:
+        role_id:
+            str: a NEXT role_id from rethinkDB.
+    """
+    with connect_to_db() as db_connection:
+        role_members = (
+            r.table("role_members")
+            .filter({"role_id": role_id})
+            .pluck("related_id")
+            .coerce_to("array")
+            .run(db_connection)
+        )
+    return role_members

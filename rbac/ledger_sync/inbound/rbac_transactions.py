@@ -25,8 +25,9 @@ from rbac.common.crypto.secrets import encrypt_private_key
 from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.common.role.delete_role import DeleteRole
-from rbac.common.role.delete_role_owner import DeleteRoleOwner
 from rbac.common.role.delete_role_admin import DeleteRoleAdmin
+from rbac.common.role.delete_role_member import DeleteRoleMember
+from rbac.common.role.delete_role_owner import DeleteRoleOwner
 from rbac.common.user import User
 from rbac.common.user.delete_user import DeleteUser
 from rbac.common.util import bytes_from_hex
@@ -136,7 +137,7 @@ def add_transaction(inbound_entry):
 
             # Process if the user exists
             if user_in_db:
-                delete_user_transaction(inbound_entry, user_in_db, key_pair, data)
+                delete_user_transaction(inbound_entry, user_in_db, key_pair)
 
         elif inbound_entry["data_type"] == "group_deleted":
             LOGGER.info(
@@ -273,7 +274,7 @@ def fetch_role_relationships(role_id, conn):
     return result
 
 
-def delete_user_transaction(inbound_entry, user_in_db, key_pair, data):
+def delete_user_transaction(inbound_entry, user_in_db, key_pair):
     """Composes transactions for deleting a user.  This includes deleting role_owner,
     role_admin, and role_member relationships and user object.
     """
@@ -287,9 +288,10 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair, data):
     # Compile role relationship transactions for removal from blockchain
     txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
 
     # Compile user delete transaction for removal from blockchain
-    message = user_delete.make(signer_keypair=key_pair, next_id=next_id, **data)
+    message = user_delete.make(signer_keypair=key_pair, next_id=next_id)
     payload = user_delete.make_payload(
         message=message, signer_keypair=key_pair, signer_user_id=key_pair.public_key
     )
@@ -348,6 +350,34 @@ def create_delete_role_admin_txns(key_pair, next_id, txn_list):
                 signer_keypair=key_pair, related_id=next_id, role_id=role["role_id"]
             )
             payload = admin_delete.make_payload(
+                message=admin_delete_message,
+                signer_keypair=key_pair,
+                signer_user_id=key_pair.public_key,
+            )
+            transaction = batcher.make_transaction(
+                payload=payload, signer_keypair=key_pair
+            )
+            txn_list.extend([transaction])
+    return txn_list
+
+
+def create_delete_role_member_txns(key_pair, next_id, txn_list):
+    """Create the delete transactions for a member if user is an member of any roles."""
+    conn = connect_to_db()
+    roles = (
+        r.table("role_members")
+        .filter({"related_id": next_id})
+        .coerce_to("array")
+        .run(conn)
+    )
+    conn.close()
+    if roles:
+        member_delete = DeleteRoleMember()
+        for role in roles:
+            admin_delete_message = member_delete.make(
+                signer_keypair=key_pair, related_id=next_id, role_id=role["role_id"]
+            )
+            payload = member_delete.make_payload(
                 message=admin_delete_message,
                 signer_keypair=key_pair,
                 signer_user_id=key_pair.public_key,
