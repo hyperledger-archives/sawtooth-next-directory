@@ -20,6 +20,7 @@ from rbac.common.logs import get_default_logger
 from rbac.common.role.create_role import CreateRole
 from rbac.common.role.delete_role import DeleteRole
 from rbac.common.role.delete_role_admin import DeleteRoleAdmin
+from rbac.common.role.delete_role_member import DeleteRoleMember
 from rbac.common.role.delete_role_owner import DeleteRoleOwner
 from rbac.common.role.imports_role import ImportsRole
 from rbac.common.role.relationship_member import MemberRelationship
@@ -49,6 +50,7 @@ class Role(CreateRole):
         self.delete = DeleteRole()
         self.delete_owner = DeleteRoleOwner()
         self.delete_admin = DeleteRoleAdmin()
+        self.delete_member = DeleteRoleMember()
 
 
 ROLE = Role()
