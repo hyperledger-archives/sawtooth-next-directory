@@ -336,128 +336,6 @@ def put_in_inbound_queue(fake_data, data_type):
     insert_updated_entries(fake_data, when_changed, data_type)
 
 
-def is_user_in_db(email):
-    """Returns the number of users in rethinkdb with the given email.
-
-    Args:
-        email:
-            str: an email address.
-    """
-    with connect_to_db() as db_connection:
-        result = r.table("users").filter({"email": email}).count().run(db_connection)
-        return result > 0
-
-
-def get_user_in_db_by_email(email):
-    """Returns the user in rethinkdb with the given email.
-
-    Args:
-        email:
-            str: an email address.
-    """
-    with connect_to_db() as db_connection:
-        result = (
-            r.table("users")
-            .filter({"email": email})
-            .coerce_to("array")
-            .run(db_connection)
-        )
-        return result
-
-
-def get_user_next_id(distinguished_name):
-    """Returns the next_id for a given user's distinguished name.
-
-    Args:
-        distinguished_name:
-            str: A string containing the user's AD distinguished name.
-
-    Returns:
-        next_id:
-            str: A string containing the user's unique next_id.
-    """
-    with connect_to_db() as db_connection:
-        results = list(
-            r.table("users")
-            .filter({"remote_id": distinguished_name})
-            .pluck("next_id")
-            .run(db_connection)
-        )[0]
-        next_id = results["next_id"]
-    return next_id
-
-
-def is_group_in_db(name):
-    """Returns the number of groups from the roles table in rethinkdb with
-    the given name.
-
-    Args:
-        name:
-            str: The name of a fake group.
-    """
-    with connect_to_db() as db_connection:
-        result = r.table("roles").filter({"name": name}).count().run(db_connection)
-        return result > 0
-
-
-def get_role_id_from_cn(role_common_name):
-    """Returns the NEXT role_id for a given role/group's common name.
-
-    Args:
-        role_common_name:
-            str: A string containing the common name of an AD group.
-
-    Returns:
-        role_id:
-            str: A string containing the NEXT role id of the corresponding role.
-    """
-    with connect_to_db() as db_connection:
-        results = list(
-            r.table("roles")
-            .order_by(index=r.desc("start_block_num"))
-            .filter({"name": role_common_name})
-            .pluck("role_id")
-            .run(db_connection)
-        )[0]
-        role_id = results["role_id"]
-    return role_id
-
-
-def get_role(name):
-    """Returns a role in rethinkDB via name.
-
-    Args:
-        name:
-            str: a name of a role in rethinkDB.
-    """
-    with connect_to_db() as db_connection:
-        role = (
-            r.table("roles")
-            .filter({"name": name})
-            .coerce_to("array")
-            .run(db_connection)
-        )
-    return role
-
-
-def get_role_members(role_id):
-    """Returns a list of member user_ids from a role in rethnkDB.
-
-    Args:
-        role_id:
-            str: a NEXT role_id from rethinkDB.
-    """
-    with connect_to_db() as db_connection:
-        role_members = (
-            r.table("role_members")
-            .filter({"role_id": role_id})
-            .pluck("related_id")
-            .coerce_to("array")
-            .run(db_connection)
-        )
-    return role_members
-
-
 def is_user_a_role_member(role_common_name, user_common_name):
     """Checks to see if a given user is a member of the given role/group in
     rethinkDB.
@@ -475,13 +353,13 @@ def is_user_a_role_member(role_common_name, user_common_name):
 
             False: if the user is not a member of the given group.
     """
-    role_id = get_role_id_from_cn(role_common_name)
+    role_id = utilities.get_role_id_from_cn(role_common_name)
     user_distinct_name = (
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user_common_name
     )
-    next_id = get_user_next_id(user_distinct_name)
+    next_id = utilities.get_user_next_id(remote_id=user_distinct_name)
     user_is_role_member = False
-    for member in get_role_members(role_id):
+    for member in utilities.get_role_members(role_id):
         if member["related_id"] == next_id:
             user_is_role_member = True
     return user_is_role_member
@@ -532,42 +410,6 @@ def set_role_owner(ldap_connection, user_common_name, role_common_name):
     )
 
 
-def get_role_owners(role_id):
-    """Returns a list of owner next_ids from a role in rethnkDB.
-
-    Args:
-        role_id:
-            str: a NEXT role_id from rethinkDB.
-    """
-    with connect_to_db() as db_connection:
-        role_owners = (
-            r.table("role_owners")
-            .filter({"role_id": role_id})
-            .pluck("related_id")
-            .coerce_to("array")
-            .run(db_connection)
-        )
-    return role_owners
-
-
-def get_role_admins(role_id):
-    """Returns a list of admin next_ids from a role in rethnkDB.
-
-    Args:
-        role_id:
-            str: a NEXT role_id from rethinkDB.
-    """
-    with connect_to_db() as db_connection:
-        role_admins = (
-            r.table("role_admins")
-            .filter({"role_id": role_id})
-            .pluck("related_id")
-            .coerce_to("array")
-            .run(db_connection)
-        )
-    return role_admins
-
-
 def clear_role_owners(ldap_connection, role_common_name):
     """removes any owners in the given role.
 
@@ -600,12 +442,12 @@ def is_user_the_role_owner(role_common_name, user_common_name):
 
             False: if the user is not an owner of the given group.
     """
-    role_id = get_role_id_from_cn(role_common_name)
+    role_id = utilities.get_role_id_from_cn(role_common_name)
     user_distinct_name = (
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user_common_name
     )
-    next_id = get_user_next_id(user_distinct_name)
-    role_owners = get_role_owners(role_id)
+    next_id = utilities.get_user_next_id(remote_id=user_distinct_name)
+    role_owners = utilities.get_role_owners(role_id)
     user_is_role_owner = False
     if len(role_owners) is 1:
         if role_owners[0]["related_id"] == next_id:
@@ -713,7 +555,7 @@ def test_create_fake_user(ldap_connection, user):
     # wait for the fake user to be ingested by rbac_ledger_sync
     time.sleep(2)
     email = "%s@clouddev.corporate.t-mobile.com" % user["common_name"]
-    result = is_user_in_db(email)
+    result = utilities.is_user_in_db(email)
     syncflag_fetched = is_user_inbound(user["common_name"])
     assert result is True
     assert syncflag_fetched is True
@@ -761,7 +603,7 @@ def test_create_fake_group(ldap_connection, group):
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
     time.sleep(3)
-    result = is_group_in_db(group["common_name"])
+    result = utilities.is_group_in_db(group["common_name"])
     assert result is True
 
 
@@ -921,8 +763,8 @@ def test_remove_group_owner(ldap_connection, group):
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
     time.sleep(3)
-    role_id = get_role_id_from_cn(group["common_name"])
-    role_owners = get_role_owners(role_id)
+    role_id = utilities.get_role_id_from_cn(group["common_name"])
+    role_owners = utilities.get_role_owners(role_id)
     assert len(role_owners) is 0
 
 
@@ -937,6 +779,12 @@ def test_delete_user(ldap_connection):
     create_fake_user(ldap_connection, "jchan20", "Jackie Chan", "Jackie")
     user_remote_id = "CN=jchan20,OU=Users,OU=Accounts,DC=AD2012,DC=LAB"
     create_fake_group(ldap_connection, "jchan_role", "jchan_role", user_remote_id)
+    group_distinct_name = (
+        "CN=jchan_role,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB"
+    )
+    addMembersToGroups.ad_add_members_to_groups(
+        ldap_connection, user_remote_id, group_distinct_name, fix=True
+    )
     fake_user = get_fake_user(ldap_connection, "jchan20")
     put_in_inbound_queue(fake_user, "user")
     fake_group = get_fake_group(ldap_connection, "jchan_role")
@@ -945,28 +793,31 @@ def test_delete_user(ldap_connection):
 
     # See if owner and role are in the system
     email = "jchan20@clouddev.corporate.t-mobile.com"
-    assert is_user_in_db(email) is True
-    assert is_group_in_db("jchan_role") is True
+    assert utilities.is_user_in_db(email) is True
+    assert utilities.is_group_in_db("jchan_role") is True
 
     # See that the owner is assigned to correct role
-    user = get_user_in_db_by_email(email)
-    role = get_role("jchan_role")
-    owners = get_role_owners(role[0]["role_id"])
+    user = utilities.get_user_in_db_by_email(email)
+    role = utilities.get_role("jchan_role")
+    owners = utilities.get_role_owners(role[0]["role_id"])
+    members = utilities.get_role_members(role[0]["role_id"])
     assert owners[0]["related_id"] == user[0]["next_id"]
+    assert members[0]["related_id"] == user[0]["next_id"]
 
     # Create a NEXT role with LDAP user as an admin
     next_role_id = create_next_role_ldap(user=user[0], role_name="managers")
-    admins = get_role_admins(next_role_id)
+    admins = utilities.get_role_admins(next_role_id)
     assert admins[0]["related_id"] == user[0]["next_id"]
 
     # Delete user and verify role exists and role_ownership is removed
     insert_deleted_entries([user_remote_id], "user_deleted")
     time.sleep(3)
 
-    assert is_user_in_db(email) is False
-    assert is_group_in_db("jchan_role") is True
-    assert get_role_owners(role[0]["role_id"]) == []
-    assert get_role_admins(next_role_id) == []
+    assert utilities.is_user_in_db(email) is False
+    assert utilities.is_group_in_db("jchan_role") is True
+    assert utilities.get_role_owners(role[0]["role_id"]) == []
+    assert utilities.get_role_admins(next_role_id) == []
+    assert utilities.get_role_members(role[0]["role_id"]) == []
 
     utilities.delete_role_by_name("managers")
 
@@ -985,5 +836,5 @@ def test_delete_role(ldap_connection):
         ["CN=sysadmins,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB"],
         "group_deleted",
     )
-    result = is_group_in_db("sysadmins")
+    result = utilities.is_group_in_db("sysadmins")
     assert result is False
