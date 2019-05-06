@@ -83,6 +83,10 @@ services:
       - LDAP_USER=${LDAP_USER}
       - LDAP_PASS=${LDAP_PASS}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_NAME=${NEXT_ADMIN_NAME}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER}
+      - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS}
+      - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL}
       - USER_BASE_DN=${USER_BASE_DN}
     depends_on:
       - ledger-sync
