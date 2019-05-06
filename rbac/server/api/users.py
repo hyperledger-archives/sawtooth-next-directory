@@ -32,7 +32,6 @@ from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
-from rbac.server.db import packs_query
 from rbac.server.db.db_utils import create_connection
 from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth import batcher
@@ -190,10 +189,7 @@ async def delete_user(request, next_id):
     await reject_users_proposals(next_id, request)
 
     conn = await create_connection()
-    await auth_query.delete_auth_entry_by_next_id(conn, next_id)
     await roles_query.delete_role_member_by_next_id(conn, next_id)
-    await packs_query.delete_pack_owner_by_next_id(conn, next_id)
-    await users_query.delete_metadata_by_next_id(conn, next_id)
     conn.close()
 
     return json(
