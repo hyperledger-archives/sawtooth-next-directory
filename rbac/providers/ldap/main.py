@@ -18,6 +18,7 @@ import time
 from environs import Env
 
 from rbac.common.logs import get_default_logger
+from rbac.providers.common.admin_setup import add_admin_accounts
 from rbac.providers.common.threading import DeltaSyncThread
 from rbac.providers.ldap.delta_outbound_sync import ldap_outbound_listener
 from rbac.providers.ldap.initial_inbound_sync import initialize_ldap_sync
@@ -30,13 +31,16 @@ def main():
     env = Env()
     ldap_enabled = env.int("ENABLE_LDAP_SYNC", 0)
     if not ldap_enabled:
+        add_admin_accounts()
         LOGGER.warning("LDAP sync not enabled. Exiting...")
+
         return
     ldap_server = os.getenv("LDAP_SERVER")
     if not ldap_server:
         LOGGER.warning("No LDAP provider configured. Exiting...")
         return
 
+    add_admin_accounts()
     # wait 5 seconds before starting, to provide time for dependent services to start up
     time.sleep(5)
     initialize_ldap_sync()
