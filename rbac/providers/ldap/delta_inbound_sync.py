@@ -41,7 +41,7 @@ LDAP_SEARCH_PAGE_SIZE = 500
 LOGGER = get_default_logger(__name__)
 
 
-def fetch_ldap_data():
+def fetch_ldap_changes():
     """
         Call to get entries for (Users & Groups) in Active Directory, saves the time of the sync,
         and inserts data into RethinkDB.
@@ -96,7 +96,7 @@ def fetch_ldap_data():
                 "%.3f" % (time.clock() - start_time),
             )
             entry_count = entry_count + len(ldap_connection.entries)
-            insert_to_db(
+            insert_updated_entries(
                 data_dict=ldap_connection.entries,
                 when_changed=parsed_last_sync_time,
                 data_type=data_type,
@@ -122,7 +122,114 @@ def to_date_ldap_query(rethink_timestamp):
     ).strftime("%Y%m%d%H%M%S.0Z")
 
 
-def insert_to_db(data_dict, when_changed, data_type):
+def fetch_ldap_deletions():
+    """ Searches LDAP provider for users & groups that were deleted from LDAP.
+        If any were deleted, inserts distinguished names of deleted into the
+        inbound_queue table.
+    """
+    LOGGER.info("Fetching LDAP deleted entries...")
+    conn = connect_to_db()
+    for data_type in ["user", "group"]:
+        if data_type == "user":
+            search_filter = "(objectClass=person)"
+            search_base = USER_BASE_DN
+            existing_records = list(
+                r.table("user_mapping")
+                .filter({"provider_id": LDAP_DC})
+                .get_field("remote_id")
+                .run(conn)
+            )
+        else:
+            search_filter = "(objectClass=group)"
+            search_base = GROUP_BASE_DN
+            existing_records = list(
+                r.table("metadata")
+                .has_fields("role_id")
+                .filter({"provider_id": LDAP_DC})
+                .get_field("remote_id")
+                .run(conn)
+            )
+        ldap_connection = ldap_connector.await_connection(
+            LDAP_SERVER, LDAP_USER, LDAP_PASS
+        )
+
+        search_parameters = {
+            "search_base": search_base,
+            "search_filter": search_filter,
+            "attributes": ["distinguishedName"],
+            "paged_size": LDAP_SEARCH_PAGE_SIZE,
+        }
+
+        while True:
+            ldap_connection.search(**search_parameters)
+
+            # For each user/group in AD, remove the user/group from existing_records.
+            # Remaining entries in existing_records were deleted from AD.
+
+            for entry in ldap_connection.entries:
+                if entry.distinguishedName.value in existing_records:
+                    existing_records.remove(entry.distinguishedName.value)
+
+            # 1.2.840.113556.1.4.319 is the OID/extended control for PagedResults
+
+            cookie = ldap_connection.result["controls"]["1.2.840.113556.1.4.319"][
+                "value"
+            ]["cookie"]
+            if cookie:
+                search_parameters["paged_cookie"] = cookie
+            else:
+                break
+
+        if existing_records:
+            LOGGER.info(
+                "Found %s deleted entries. Inserting deleted "
+                "AD %s(s) into inbound queue.",
+                str(len(existing_records)),
+                data_type,
+            )
+            LOGGER.debug(existing_records)
+            insert_deleted_entries(existing_records, data_type + "_deleted")
+    conn.close()
+    LOGGER.info("Fetching LDAP deleted entries completed...")
+
+
+def insert_deleted_entries(deleted_entries, data_type):
+    """ Inserts every entry in deleted_entries dict into inbound_queue table.
+
+    Args:
+        deleted_entries: An array containing the remote_ids/distinguished names
+            of the users/groups that were deleted.
+        data_type: A string with the value of either user_deleted or group_deleted.
+            This value will be used in the data_type field when we insert our data
+            into the inbound_queue.
+
+    Raises:
+        ValueError: If parameter data_type does not have the value of "user_deleted"
+            or "group_delete".
+    """
+
+    if data_type not in ["user_deleted", "group_deleted"]:
+        raise ValueError(
+            "For deletions, data_type field must be either "
+            "user_deleted or group_deleted. Found {}".format(data_type)
+        )
+
+    conn = connect_to_db()
+    for remote_id in deleted_entries:
+        data = {"remote_id": remote_id}
+        inbound_entry = {
+            "data": data,
+            "data_type": data_type,
+            "sync_type": "delta",
+            "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
+            "provider_id": LDAP_DC,
+        }
+
+        r.table("inbound_queue").insert(inbound_entry).run(conn)
+    conn.close()
+
+
+def insert_updated_entries(data_dict, when_changed, data_type):
     """Insert (Users | Groups) individually to RethinkDB from dict of data and begins delta sync timer."""
     insertion_counter = 0
     conn = connect_to_db()
@@ -167,7 +274,8 @@ def inbound_delta_sync():
         while True:
             time.sleep(DELTA_SYNC_INTERVAL_SECONDS)
             LOGGER.info("LDAP delta sync starting")
-            fetch_ldap_data()
+            fetch_ldap_changes()
+            fetch_ldap_deletions()
             LOGGER.info(
                 "LDAP delta sync completed, next delta sync will occur in %s seconds",
                 str(DELTA_SYNC_INTERVAL_SECONDS),

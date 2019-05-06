@@ -17,12 +17,10 @@
 import rethinkdb as r
 from rbac.server.api.errors import ApiNotFound
 
-from rbac.common.logs import get_default_logger
+
 from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
 from rbac.server.db.relationships_query import fetch_relationships_by_id
 from rbac.server.db.roles_query import fetch_expired_roles
-
-LOGGER = get_default_logger(__name__)
 
 
 async def fetch_user_resource(conn, next_id):
@@ -80,24 +78,27 @@ async def fetch_user_resource(conn, next_id):
         raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
 
 
-# TODO: After NEXT UUID Implementation has completed, revert this function back to next_id
-async def fetch_user_resource_summary(conn, next_id):
-    """Database query to get summary data on an individual user."""
-    if "cn" in next_id.lower():
-        user_attribute = "distinguished_name"
-    else:
-        user_attribute = "next_id"
+async def delete_user_resource(conn, next_id):
+    """Database query to delete an individual user."""
     resource = (
         await r.table("users")
-        .filter(lambda user: (user[user_attribute] == next_id))
-        .merge(
-            {
-                "id": r.row[user_attribute],
-                "name": r.row["name"],
-                "email": r.row["email"],
-            }
-        )
-        .without(user_attribute, "manager_id", "start_block_num", "end_block_num")
+        .filter({"next_id": next_id})
+        .delete(return_changes=True)
+        .run(conn)
+    )
+    try:
+        return resource
+    except IndexError:
+        raise ApiNotFound("Not Found: No user with the id {} exists".format(next_id))
+
+
+async def fetch_user_resource_summary(conn, next_id):
+    """Database query to get summary data on an individual user."""
+    resource = (
+        await r.table("users")
+        .filter(lambda user: (user["next_id"] == next_id))
+        .merge({"id": r.row["next_id"], "name": r.row["name"], "email": r.row["email"]})
+        .without("next_id", "manager_id", "start_block_num", "end_block_num")
         .coerce_to("array")
         .run(conn)
     )
@@ -160,14 +161,17 @@ async def fetch_all_user_resources(conn, start, limit):
     )
 
 
-def fetch_user_ids_by_manager(remote_id):
+def fetch_user_ids_by_manager(next_id):
     """Fetch all users that have the same manager."""
-    return (
-        r.table("users")
-        .filter(lambda user: (remote_id == user["manager_id"]))
-        .get_field("next_id")
-        .coerce_to("array")
-    )
+    direct_reports = []
+    if next_id != "":
+        direct_reports = (
+            r.table("users")
+            .filter(lambda user: (next_id == user["manager_id"]))
+            .get_field("next_id")
+            .coerce_to("array")
+        )
+    return direct_reports
 
 
 async def fetch_peers(conn, next_id):
@@ -179,21 +183,22 @@ async def fetch_peers(conn, next_id):
         .coerce_to("array")
         .run(conn)
     )
-    if "manager_id" in user_object[0]:
-        if user_object[0]["manager_id"]:
-            manager_id = user_object[0]["manager_id"]
-            peers = await (
-                r.db("rbac")
-                .table("users")
-                .filter({"manager_id": manager_id})
-                .coerce_to("array")
-                .run(conn)
-            )
-            peer_list = []
-            for peer in peers:
-                if peer["next_id"] != next_id:
-                    peer_list.append(peer["next_id"])
-            return peer_list
+    if user_object:
+        if "manager_id" in user_object[0]:
+            if user_object[0]["manager_id"]:
+                manager_id = user_object[0]["manager_id"]
+                peers = await (
+                    r.db("rbac")
+                    .table("users")
+                    .filter({"manager_id": manager_id})
+                    .coerce_to("array")
+                    .run(conn)
+                )
+                peer_list = []
+                for peer in peers:
+                    if peer["next_id"] != next_id:
+                        peer_list.append(peer["next_id"])
+                return peer_list
     return []
 
 
@@ -208,18 +213,25 @@ async def fetch_manager_chain(conn, next_id):
             .coerce_to("array")
             .run(conn)
         )
-        if "manager_id" in user_object[0]:
-            if user_object[0]["manager_id"]:
-                manager_id = user_object[0]["manager_id"]
+        if user_object:
+            manager_id = user_object[0]["manager_id"]
+            if manager_id != "":
                 manager_object = await (
                     r.db("rbac")
                     .table("users")
-                    .filter({"remote_id": manager_id})
+                    .filter(
+                        (r.row["remote_id"] == manager_id)
+                        | (r.row["next_id"] == manager_id)
+                    )
                     .coerce_to("array")
                     .run(conn)
                 )
-                manager_chain.append(manager_object[0]["next_id"])
-                next_id = manager_object[0]["next_id"]
+                if manager_object:
+                    if manager_object[0]:
+                        manager_chain.append(manager_object[0]["next_id"])
+                        next_id = manager_object[0]["next_id"]
+                else:
+                    break
             else:
                 break
         else:
@@ -262,9 +274,9 @@ async def fetch_user_relationships(conn, next_id):
     )
     peers = await fetch_peers(conn, next_id)
     managers = await fetch_manager_chain(conn, next_id)
-
     resource[0]["peers"] = peers
     resource[0]["managers"] = managers
+
     try:
         return resource[0]
     except IndexError:
@@ -275,6 +287,11 @@ async def create_user_map_entry(conn, data):
     """Insert a created user into the user_mapping table."""
     resource = await r.table("user_mapping").insert(data).run(conn)
     return resource
+
+
+async def delete_user_mapping_by_next_id(conn, next_id):
+    """Delete user_mapping from user_mapping table."""
+    return await r.table("user_mapping").filter({"next_id": next_id}).delete().run(conn)
 
 
 async def search_users(conn, search_query, paging):

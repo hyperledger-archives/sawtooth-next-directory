@@ -178,3 +178,13 @@ async def packs_search_duplicate(conn, name):
     )
 
     return resource
+
+
+async def delete_pack_owner_by_next_id(conn, next_id):
+    """Delete pack owner using next_id"""
+    return (
+        await r.table("pack_owners")
+        .filter(lambda doc: doc["identifiers"].contains(next_id))
+        .delete()
+        .run(conn)
+    )

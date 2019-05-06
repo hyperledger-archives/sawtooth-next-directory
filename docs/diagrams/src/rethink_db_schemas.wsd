@@ -1,0 +1,162 @@
+@startuml RethinkDB Schemas
+    allowmixing
+    hide stereotype
+    scale 2
+
+    package "RethinkDB" {
+        package "Off Chain Tables" {
+            class user_mapping << (T,lightblue) >>{
+                #active
+                #encrypted_key
+                #next_id
+                #provider_id
+                #public_key
+                #remote_id
+            }
+            class auth << (T,lightblue) >>{
+                #email
+                #encrypted_private_key
+                #next_id
+                #public_key
+                #username
+            }
+            class changelog << (T,lightblue) >>{
+                #address
+                #batch
+                #data
+                #data_type
+                #id
+                #next_id
+                #object_id
+                #object_type
+                #private_key
+                #provider_id
+                #public_key
+                #sync_direction
+                #sync_type
+                #timestamp
+            }
+            class user_mapping << (T,lightblue) >>{
+                #active
+                #encrypted_key
+                #next_id
+                #provider_id
+                #public_key
+                #remote_id
+            }
+            class sync_tracker << (T,lightblue) >>{
+                #id
+                #provider_id
+                #source
+                #sync_type
+                #timestamp
+            }
+            class sync_errors << (T,lightblue) >> {
+
+            }
+            ' deprecated
+            class state << (D,pink) Deprecated >> {
+
+            }
+            ' deprecated
+            class state_history << (D,pink) Deprecated >> {
+
+            }
+            package "Queues"  {
+                class inbound_queue << (T,lightblue) >>{
+
+                }
+                class outbound_queue << (T,lightblue) >>{
+                    
+                }
+            }
+        }
+        package "On Chain Tables" {
+            class users << (T,lightblue) >>{
+                #created_date
+                #distinguished_name
+                #email
+                #end_block_num
+                #id
+                #manager_id
+                #metadata:
+                #\tsync_direction
+                #name
+                #next_id
+                #remote_id
+                #start_block_num
+                #username
+
+            }
+            class roles << (T,lightblue) >>{
+                #created_date
+                #description
+                #end_block_num
+                #id
+                #metadata:
+                #\tsync_direction
+                #name
+                #remote_id
+                #role_id
+                #start_block_num
+            }
+            class role_members << (T,lightblue) >>{
+                #created_date
+                #end_block_num
+                #expiration_date
+                #id
+                #identifiers
+                #object_id
+                #related_id
+                #role_id
+                #start_block_num
+            }
+            class role_admins << (T,lightblue) >>{
+
+            }
+            class role_owners << (T,lightblue) >>{
+                #created_date
+                #end_block_num
+                #id
+                #identifiers
+                #object_id
+                #related_id
+                #role_id
+                #start_block_num
+            }
+            class proposals << (T,lightblue) >>{
+                #assigned_approver
+                #close_reason
+                #closer
+                #created_date
+                #end_block_num
+                #id
+                #metadata
+                #object_id
+                #open_reason
+                #opener
+                #pack_id
+                #proposal_id
+                #proposal_type
+                #related_id
+                #start_block_num
+                #status
+            }
+            class packs << (T,lightblue) >> {
+
+            }
+            class pack_owners << (T,lightblue) >> {
+
+            }
+            class tasks << (T,lightblue) >> {
+
+            }
+            class task_owners << (T,lightblue) >> {
+
+            }
+            class task_admins << (T,lightblue) >> {
+
+            }
+        }
+    }
+@enduml

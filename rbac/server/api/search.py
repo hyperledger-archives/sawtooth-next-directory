@@ -21,7 +21,7 @@ from sanic.response import json
 
 from rbac.common.logs import get_default_logger
 from rbac.server.api.auth import authorized
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 from rbac.server.db.packs_query import search_packs, search_packs_count
 from rbac.server.db.roles_query import search_roles, search_roles_count
 from rbac.server.db.users_query import search_users, search_users_count
@@ -53,11 +53,7 @@ async def search_all(request):
     object_counts = []
 
     # Run search queries
-    conn = await db_utils.create_connection(
-        request.app.config.DB_HOST,
-        request.app.config.DB_PORT,
-        request.app.config.DB_NAME,
-    )
+    conn = await create_connection()
     if "pack" in search_query["search_object_types"]:
         # Fetch packs with search input string
 

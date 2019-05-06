@@ -19,11 +19,48 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16task_transaction.proto\"n\n\x13ProposeAddTaskOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"n\n\x13ProposeAddTaskAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x10\n\x08metadata\x18\x05 \x01(\t\"]\n\nCreateTask\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0e\n\x06owners\x18\x04 \x03(\t\x12\x10\n\x08metadata\x18\x05 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x16task_transaction.proto\"\xde\x01\n\x13ProposeAddTaskOwner\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddTaskOwner.MetadataEntry\x12\x19\n\x11\x61ssigned_approver\x18\x06 \x03(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xde\x01\n\x13ProposeAddTaskAdmin\x12\x13\n\x0bproposal_id\x18\x01 \x01(\t\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07next_id\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t\x12\x34\n\x08metadata\x18\x05 \x03(\x0b\x32\".ProposeAddTaskAdmin.MetadataEntry\x12\x19\n\x11\x61ssigned_approver\x18\x06 \x03(\t\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa9\x01\n\nCreateTask\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x64mins\x18\x03 \x03(\t\x12\x0e\n\x06owners\x18\x04 \x03(\t\x12+\n\x08metadata\x18\x05 \x03(\x0b\x32\x19.CreateTask.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x62\x06proto3')
 )
 
 
 
+
+_PROPOSEADDTASKOWNER_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ProposeAddTaskOwner.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ProposeAddTaskOwner.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ProposeAddTaskOwner.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=202,
+  serialized_end=249,
+)
 
 _PROPOSEADDTASKOWNER = _descriptor.Descriptor(
   name='ProposeAddTaskOwner',
@@ -62,7 +99,52 @@ _PROPOSEADDTASKOWNER = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ProposeAddTaskOwner.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='assigned_approver', full_name='ProposeAddTaskOwner.assigned_approver', index=5,
+      number=6, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_PROPOSEADDTASKOWNER_METADATAENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=27,
+  serialized_end=249,
+)
+
+
+_PROPOSEADDTASKADMIN_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='ProposeAddTaskAdmin.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ProposeAddTaskAdmin.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ProposeAddTaskAdmin.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -73,16 +155,15 @@ _PROPOSEADDTASKOWNER = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=None,
+  serialized_options=_b('8\001'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26,
-  serialized_end=136,
+  serialized_start=202,
+  serialized_end=249,
 )
-
 
 _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
   name='ProposeAddTaskAdmin',
@@ -121,7 +202,52 @@ _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='ProposeAddTaskAdmin.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='assigned_approver', full_name='ProposeAddTaskAdmin.assigned_approver', index=5,
+      number=6, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_PROPOSEADDTASKADMIN_METADATAENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=252,
+  serialized_end=474,
+)
+
+
+_CREATETASK_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='CreateTask.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='CreateTask.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='CreateTask.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -132,16 +258,15 @@ _PROPOSEADDTASKADMIN = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=None,
+  serialized_options=_b('8\001'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=138,
-  serialized_end=248,
+  serialized_start=202,
+  serialized_end=249,
 )
-
 
 _CREATETASK = _descriptor.Descriptor(
   name='CreateTask',
@@ -180,15 +305,15 @@ _CREATETASK = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='CreateTask.metadata', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_CREATETASK_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -197,35 +322,68 @@ _CREATETASK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=250,
-  serialized_end=343,
+  serialized_start=477,
+  serialized_end=646,
 )
 
+_PROPOSEADDTASKOWNER_METADATAENTRY.containing_type = _PROPOSEADDTASKOWNER
+_PROPOSEADDTASKOWNER.fields_by_name['metadata'].message_type = _PROPOSEADDTASKOWNER_METADATAENTRY
+_PROPOSEADDTASKADMIN_METADATAENTRY.containing_type = _PROPOSEADDTASKADMIN
+_PROPOSEADDTASKADMIN.fields_by_name['metadata'].message_type = _PROPOSEADDTASKADMIN_METADATAENTRY
+_CREATETASK_METADATAENTRY.containing_type = _CREATETASK
+_CREATETASK.fields_by_name['metadata'].message_type = _CREATETASK_METADATAENTRY
 DESCRIPTOR.message_types_by_name['ProposeAddTaskOwner'] = _PROPOSEADDTASKOWNER
 DESCRIPTOR.message_types_by_name['ProposeAddTaskAdmin'] = _PROPOSEADDTASKADMIN
 DESCRIPTOR.message_types_by_name['CreateTask'] = _CREATETASK
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ProposeAddTaskOwner = _reflection.GeneratedProtocolMessageType('ProposeAddTaskOwner', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSEADDTASKOWNER_METADATAENTRY,
+    __module__ = 'task_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ProposeAddTaskOwner.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSEADDTASKOWNER,
   __module__ = 'task_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeAddTaskOwner)
   ))
 _sym_db.RegisterMessage(ProposeAddTaskOwner)
+_sym_db.RegisterMessage(ProposeAddTaskOwner.MetadataEntry)
 
 ProposeAddTaskAdmin = _reflection.GeneratedProtocolMessageType('ProposeAddTaskAdmin', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PROPOSEADDTASKADMIN_METADATAENTRY,
+    __module__ = 'task_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:ProposeAddTaskAdmin.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _PROPOSEADDTASKADMIN,
   __module__ = 'task_transaction_pb2'
   # @@protoc_insertion_point(class_scope:ProposeAddTaskAdmin)
   ))
 _sym_db.RegisterMessage(ProposeAddTaskAdmin)
+_sym_db.RegisterMessage(ProposeAddTaskAdmin.MetadataEntry)
 
 CreateTask = _reflection.GeneratedProtocolMessageType('CreateTask', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _CREATETASK_METADATAENTRY,
+    __module__ = 'task_transaction_pb2'
+    # @@protoc_insertion_point(class_scope:CreateTask.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _CREATETASK,
   __module__ = 'task_transaction_pb2'
   # @@protoc_insertion_point(class_scope:CreateTask)
   ))
 _sym_db.RegisterMessage(CreateTask)
+_sym_db.RegisterMessage(CreateTask.MetadataEntry)
 
 
+_PROPOSEADDTASKOWNER_METADATAENTRY._options = None
+_PROPOSEADDTASKADMIN_METADATAENTRY._options = None
+_CREATETASK_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)

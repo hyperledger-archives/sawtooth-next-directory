@@ -23,13 +23,14 @@ RUN pip install \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
         sanic==0.8.3 \
-        sawtooth-sdk==1.0.1 \
+        sawtooth-sdk==1.1.4post1 \
         sanic-cors==0.9.7 \
         websockets==5.0.1 \
         requests==2.21.0 \
         cryptography==2.4.2 \
         aiohttp==3.5.4 \
-        ldap3==2.5.2
+        ldap3==2.5.2 \
+        environs==4.1.0
 EXPOSE 8000/tcp
 WORKDIR /project/hyperledger-rbac
 CMD ["./bin/rbac-server"]

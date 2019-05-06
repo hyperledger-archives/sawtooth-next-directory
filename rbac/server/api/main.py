@@ -15,7 +15,9 @@
 """RBAC API Server"""
 
 import asyncio
+from os import getenv
 from signal import signal, SIGINT
+import rethinkdb as r
 
 import aiohttp
 from sanic import Blueprint
@@ -40,7 +42,7 @@ from rbac.server.api.swagger import SWAGGER_BP
 from rbac.server.api.tasks import TASKS_BP
 from rbac.server.api.users import USERS_BP
 from rbac.server.api.webhooks import WEBHOOKS_BP
-from rbac.server.db import db_utils
+from rbac.server.db.db_utils import create_connection
 
 APP_BP = Blueprint("utils")
 
@@ -50,9 +52,7 @@ LOGGER = get_default_logger(__name__)
 async def init(app, loop):
     """Initialize API Server."""
     LOGGER.warning("Opening database connection")
-    app.config.DB_CONN = await db_utils.create_connection(
-        app.config.DB_HOST, app.config.DB_PORT, app.config.DB_NAME
-    )
+    app.config.DB_CONN = await create_connection()
     app.config.VAL_CONN = Connection(app.config.VALIDATOR)
 
     LOGGER.warning("Opening validator connection")
@@ -62,7 +62,81 @@ async def init(app, loop):
     conn = aiohttp.TCPConnector(
         limit=app.config.AIOHTTP_CONN_LIMIT, ttl_dns_cache=app.config.AIOHTTP_DNS_TTL
     )
-    app.config.HTTP_SESSION = aiohttp.ClientSession(connector=conn, loop=loop)
+
+    session = aiohttp.ClientSession(connector=conn, loop=loop)
+    app.config.HTTP_SESSION = session
+
+    await asyncio.sleep(10)
+
+    LOGGER.warning("Creating default admin user and role.")
+    LOGGER.info("Creating Next Admin user...")
+    created = False
+    admin_user = {
+        "name": getenv("NEXT_ADMIN_NAME"),
+        "username": getenv("NEXT_ADMIN_USER"),
+        "password": getenv("NEXT_ADMIN_PASS"),
+        "email": getenv("NEXT_ADMIN_EMAIL"),
+    }
+    while not created:
+        try:
+            user_response = await session.post(
+                "http://rbac-server:8000/api/users", json=admin_user
+            )
+            assert (
+                user_response.status == 200
+            ), "Non 200 status code returned while attempting to create Next Admin user."
+            created = True
+        except (AssertionError, r.errors.ReqlOpFailedError):
+            created = False
+            await asyncio.sleep(3)
+    user_response_json = await user_response.json()
+    user_next_id = user_response_json["data"]["user"]["id"]
+
+    LOGGER.info("Creating NextAdmin role...")
+    created = False
+    admin_role = {
+        "name": "NextAdmins",
+        "owners": user_next_id,
+        "administrators": user_next_id,
+    }
+    while not created:
+        try:
+            role_response = await session.post(
+                "http://rbac-server:8000/api/roles", json=admin_role
+            )
+            assert (
+                role_response.status == 200
+            ), "Non 200 status code returned while attempting to create NextAdmins role."
+            created = True
+        except (AssertionError, r.errors.ReqlOpFailedError):
+            created = False
+            await asyncio.sleep(3)
+    role_response_json = await role_response.json()
+    role_next_id = role_response_json["data"]["id"]
+
+    LOGGER.info("Adding Next Admin to NextAdmins role...")
+    created = False
+    while not created:
+        try:
+            add_user = {
+                "pack_id": None,
+                "id": user_next_id,
+                "reason": None,
+                "metadata": None,
+            }
+            add_role_member_response = await session.post(
+                ("http://rbac-server:8000/api/roles/{}/members".format(role_next_id)),
+                json=add_user,
+            )
+            assert (
+                add_role_member_response.status == 200
+            ), "Non 200 status code returned while attempting add Next Admin user as member of NextAdmins role."
+            created = True
+        except AssertionError:
+            created = False
+            await asyncio.sleep(3)
+
+    LOGGER.info("Next Admin account and role creation complete!")
 
 
 def finish(app):
@@ -96,7 +170,6 @@ def load_config(app):
     app.config.PORT = get_config("SERVER_PORT")
     app.config.TIMEOUT = int(get_config("TIMEOUT"))
     app.config.VALIDATOR = get_config("VALIDATOR")
-    app.config.DEMO_MODE = bool(get_config("DEMO_MODE"))
 
 
 def main():
@@ -133,8 +206,8 @@ def main():
         host="0.0.0.0", port=app.config.PORT, debug=False, access_log=False
     )
     loop = asyncio.get_event_loop()
-    asyncio.ensure_future(server)
-    asyncio.ensure_future(init(app, loop))
+    asyncio.gather(server)
+    loop.run_until_complete(init(app, loop))
     signal(SIGINT, lambda s, f: loop.close())
     try:
         loop.run_forever()

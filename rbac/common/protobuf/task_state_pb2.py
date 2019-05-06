@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10task_state.proto\"C\n\x17TaskAttributesContainer\x12(\n\x0ftask_attributes\x18\x01 \x03(\x0b\x32\x0f.TaskAttributes\"A\n\x0eTaskAttributes\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08metadata\x18\x03 \x01(\t\"E\n\x19TaskRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.TaskRelationship\"_\n\x10TaskRelationship\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\t\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x10task_state.proto\"C\n\x17TaskAttributesContainer\x12(\n\x0ftask_attributes\x18\x01 \x03(\x0b\x32\x0f.TaskAttributes\"\x91\x01\n\x0eTaskAttributes\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12/\n\x08metadata\x18\x03 \x03(\x0b\x32\x1d.TaskAttributes.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"E\n\x19TaskRelationshipContainer\x12(\n\rrelationships\x18\x01 \x03(\x0b\x32\x11.TaskRelationship\"_\n\x10TaskRelationship\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x13\n\x0bidentifiers\x18\x02 \x03(\t\x12\x11\n\tobject_id\x18\x03 \x01(\t\x12\x12\n\nrelated_id\x18\x04 \x01(\tb\x06proto3')
 )
 
 
@@ -56,6 +56,43 @@ _TASKATTRIBUTESCONTAINER = _descriptor.Descriptor(
 )
 
 
+_TASKATTRIBUTES_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='TaskAttributes.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='TaskAttributes.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='TaskAttributes.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=188,
+  serialized_end=235,
+)
+
 _TASKATTRIBUTES = _descriptor.Descriptor(
   name='TaskAttributes',
   full_name='TaskAttributes',
@@ -79,15 +116,15 @@ _TASKATTRIBUTES = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='metadata', full_name='TaskAttributes.metadata', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_TASKATTRIBUTES_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -96,8 +133,8 @@ _TASKATTRIBUTES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=89,
-  serialized_end=154,
+  serialized_start=90,
+  serialized_end=235,
 )
 
 
@@ -127,8 +164,8 @@ _TASKRELATIONSHIPCONTAINER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=156,
-  serialized_end=225,
+  serialized_start=237,
+  serialized_end=306,
 )
 
 
@@ -179,11 +216,13 @@ _TASKRELATIONSHIP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=227,
-  serialized_end=322,
+  serialized_start=308,
+  serialized_end=403,
 )
 
 _TASKATTRIBUTESCONTAINER.fields_by_name['task_attributes'].message_type = _TASKATTRIBUTES
+_TASKATTRIBUTES_METADATAENTRY.containing_type = _TASKATTRIBUTES
+_TASKATTRIBUTES.fields_by_name['metadata'].message_type = _TASKATTRIBUTES_METADATAENTRY
 _TASKRELATIONSHIPCONTAINER.fields_by_name['relationships'].message_type = _TASKRELATIONSHIP
 DESCRIPTOR.message_types_by_name['TaskAttributesContainer'] = _TASKATTRIBUTESCONTAINER
 DESCRIPTOR.message_types_by_name['TaskAttributes'] = _TASKATTRIBUTES
@@ -199,11 +238,19 @@ TaskAttributesContainer = _reflection.GeneratedProtocolMessageType('TaskAttribut
 _sym_db.RegisterMessage(TaskAttributesContainer)
 
 TaskAttributes = _reflection.GeneratedProtocolMessageType('TaskAttributes', (_message.Message,), dict(
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _TASKATTRIBUTES_METADATAENTRY,
+    __module__ = 'task_state_pb2'
+    # @@protoc_insertion_point(class_scope:TaskAttributes.MetadataEntry)
+    ))
+  ,
   DESCRIPTOR = _TASKATTRIBUTES,
   __module__ = 'task_state_pb2'
   # @@protoc_insertion_point(class_scope:TaskAttributes)
   ))
 _sym_db.RegisterMessage(TaskAttributes)
+_sym_db.RegisterMessage(TaskAttributes.MetadataEntry)
 
 TaskRelationshipContainer = _reflection.GeneratedProtocolMessageType('TaskRelationshipContainer', (_message.Message,), dict(
   DESCRIPTOR = _TASKRELATIONSHIPCONTAINER,
@@ -220,4 +267,5 @@ TaskRelationship = _reflection.GeneratedProtocolMessageType('TaskRelationship', 
 _sym_db.RegisterMessage(TaskRelationship)
 
 
+_TASKATTRIBUTES_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)

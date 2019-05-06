@@ -27,9 +27,11 @@ message ProposeAddRoleMember {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
 
     string pack_id = 6;
+
+    repeated string assigned_approver = 7;
 
 }
 
@@ -44,7 +46,9 @@ message ProposeAddRoleOwner {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
+
+    repeated string assigned_approver = 6;
 
 }
 
@@ -59,7 +63,9 @@ message ProposeAddRoleAdmin {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
+
+    repeated string assigned_approver = 6;
 
 }
 
@@ -74,7 +80,9 @@ message ProposeAddRoleTask {
 
     string reason = 4;
 
-    string metadata = 5;
+    map<string, string> metadata = 5;
+
+    repeated string assigned_approver = 6;
 
 }
 
@@ -93,7 +101,7 @@ message CreateRole {
 
     string description = 6;
 
-    string metadata = 7;
+    map<string, string> metadata = 7;
 
     int64 created_date = 8;
 
@@ -113,7 +121,7 @@ message ImportsRole {
 
     string description = 6;
     
-    string metadata = 7;
+    map<string, string> metadata = 7;
 
     string remote_id = 8;
 
@@ -125,5 +133,35 @@ message UpdateRole {
     string role_id = 1;
 
     string description = 2;
+
+    repeated string assigned_approver = 3;
+
+}
+
+message DeleteRole {
+
+    string role_id = 1;
+
+    repeated string owners = 2;
+
+    repeated string admins = 3;
+
+    repeated string members = 4;
+
+}
+
+message DeleteRoleOwner {
+
+    string role_id = 1;
+
+    string related_id = 2;
+
+}
+
+message DeleteRoleAdmin {
+
+    string role_id = 1;
+
+    string related_id = 2;
 
 }
