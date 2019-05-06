@@ -83,11 +83,16 @@ def _remove_legacy(conn, address, data_type):
                 "error removing from legacy state table:\n%s\n%s", result, query
             )
         if TABLE_NAMES[data_type] == "users":
-            r.table("user_mapping").filter(
-                {
-                    "remote_id": next_object[0]["remote_id"],
-                    "next_id": next_object[0]["next_id"],
-                }
+            # When a user has been deleted from the blockchain, also clear out
+            # the following off chain tables related to the user: auth,
+            # metadata, user_mapping, and pack_owners
+
+            user_filter = {"next_id": next_object[0]["next_id"]}
+            r.table("auth").filter(user_filter).delete().run(conn)
+            r.table("metadata").filter(user_filter).delete().run(conn)
+            r.table("user_mapping").filter(user_filter).delete().run(conn)
+            r.table("pack_owners").filter(
+                {"identifiers": [next_object[0]["next_id"]]}
             ).delete().run(conn)
 
     except Exception as err:  # pylint: disable=broad-except
