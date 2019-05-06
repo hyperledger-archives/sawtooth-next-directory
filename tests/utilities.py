@@ -62,6 +62,13 @@ def create_test_user(session, user_payload):
     return response
 
 
+def create_test_pack(session, pack_payload):
+    """Create a pack and authenticate to use api endpoints during testing."""
+    response = session.post("http://rbac-server:8000/api/packs", json=pack_payload)
+    sleep(3)
+    return response
+
+
 def delete_user_by_username(username):
     """Delete a user from db by the username."""
     conn = connect_to_db()
@@ -352,3 +359,127 @@ def update_proposal(session, proposal_id, proposal_payload):
     )
     sleep(3)
     return response
+
+
+def get_user_mapping_entry(next_id):
+    """Returns user_mapping entry for given user next_id.
+
+    Args:
+        next_id:
+            str: a user's unique id.
+    Returns:
+        user_mapping_entry:
+            dict: user_mapping entry of given user
+    """
+    with connect_to_db() as db_connection:
+        return (
+            r.table("user_mapping")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+
+
+def get_auth_entry(next_id):
+    """Returns auth entry for given user next_id.
+
+    Args:
+        next_id:
+            str: a user's unique id.
+    Returns:
+        auth_entry:
+            dict: auth entry of given user
+    """
+    with connect_to_db() as db_connection:
+        return (
+            r.table("auth")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+
+
+def get_user_metadata_entry(next_id):
+    """Returns metadta entry for given user next_id.
+
+    Args:
+        next_id:
+            str: a user's unique id.
+    Returns:
+        metadata_entry:
+            dict: metadata entry of given user
+    """
+    with connect_to_db() as db_connection:
+        return (
+            r.table("metadata")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+
+
+def check_user_is_pack_owner(pack_id, next_id):
+    """Returns a pack_owners entry for given user next_id.
+
+    Args:
+        pack_id:
+            str: a pack's unique id.
+        next_id:
+            str: a user's unique id.
+    Returns:
+        pack_owners_entry:
+            dict: pack_owners entry for given user and pack id
+    """
+    with connect_to_db() as db_connection:
+        return (
+            r.table("pack_owners")
+            .filter({"identifiers": [next_id], "pack_id": pack_id})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+
+
+def get_deleted_user_entries(next_id):
+    """Returns a list of entries from tables relating to a
+    user's deletion. Tables include: users, metadata, auth and
+    user_mapping. After a successful deletion, this function
+    should return an empty list.
+
+    Args:
+        next_id:
+            str: a user's unique id.
+    Returns:
+        related_entries:
+            dict: Contains entries from tables: users,
+                metadta, user_mapping, and auth for a
+                given user
+    """
+    with connect_to_db() as db_connection:
+        return (
+            r.table("users")
+            .union(r.table("metadata"))
+            .union(r.table("user_mapping"))
+            .union(r.table("auth"))
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+
+
+def get_pack_owners_by_user(next_id):
+    """Returns all pack_owners entries for given user next_id.
+
+    Args:
+        next_id:
+            str: a user's unique id.
+    Returns:
+        pack_owner_entries:
+            dict: pack_owner entries of given user
+    """
+    with connect_to_db() as db_connection:
+        return (
+            r.table("pack_owners")
+            .filter({"identifiers": [next_id]})
+            .coerce_to("array")
+            .run(db_connection)
+        )
