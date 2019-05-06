@@ -15,18 +15,28 @@
 """Validating User Account Creation API Endpoint Test"""
 import time
 import requests
+
 import rethinkdb as r
+
 from rbac.providers.common.db_queries import connect_to_db
+from tests.rbac.api.assertions import assert_api_success
 from tests.utilities import (
     add_role_member,
-    create_test_user,
+    check_user_is_pack_owner,
     create_test_role,
+    create_test_pack,
+    create_test_user,
     delete_role_by_name,
+    delete_pack_by_name,
     delete_user_by_username,
+    get_auth_entry,
+    get_deleted_user_entries,
+    get_pack_owners_by_user,
     get_proposal_with_retry,
+    get_user_mapping_entry,
+    get_user_metadata_entry,
     insert_user,
 )
-from tests.rbac.api.assertions import assert_api_success
 
 
 def test_valid_unique_username():
@@ -191,19 +201,31 @@ def test_user_delete_api():
         "password": "test11",
         "email": "nadia123@test.com",
     }
+    pack = {
+        "name": "michael pack one",
+        "roles": [],
+        "description": "Michael's test pack",
+    }
     with requests.Session() as session:
         response = create_test_user(session, user)
         next_id = response.json()["data"]["user"]["id"]
         role_payload = {
             "name": "test_role",
-            "owners": next_id,
-            "administrators": next_id,
+            "owners": [next_id],
+            "administrators": [next_id],
             "description": "This is a test Role",
         }
-        conn = connect_to_db()
-        role_payload["owners"] = [next_id]
         role_resp = create_test_role(session, role_payload)
 
+        pack = {
+            "name": "michael pack one",
+            "owners": [next_id],
+            "roles": [],
+            "description": "Michael's test pack",
+        }
+        pack_response = create_test_pack(session, pack)
+
+        conn = connect_to_db()
         user_exists = (
             r.db("rbac")
             .table("users")
@@ -223,6 +245,12 @@ def test_user_delete_api():
 
         assert role_owner_exists
         assert user_exists
+        assert get_user_mapping_entry(next_id)
+        assert get_auth_entry(next_id)
+        assert get_user_metadata_entry(next_id)
+        assert check_user_is_pack_owner(
+            pack_id=pack_response.json()["data"]["id"], next_id=next_id
+        )
 
         role_admin_is_user = (
             r.db("rbac")
@@ -241,20 +269,6 @@ def test_user_delete_api():
             "deleted": 1,
         }
 
-        user = (
-            r.db("rbac")
-            .table("users")
-            .filter({"next_id": next_id})
-            .coerce_to("array")
-            .run(conn)
-        )
-        metadata = (
-            r.db("rbac")
-            .table("metadata")
-            .filter({"next_id": next_id})
-            .coerce_to("array")
-            .run(conn)
-        )
         role_admin_user = (
             r.db("rbac")
             .table("role_admins")
@@ -272,10 +286,13 @@ def test_user_delete_api():
         )
         delete_role_by_name("test_role")
         conn.close()
-        assert user == []
-        assert metadata == []
+
         assert role_admin_user == []
         assert role_owners == []
+        assert get_deleted_user_entries(next_id) == []
+        assert get_pack_owners_by_user(next_id) == []
+
+        delete_pack_by_name("michael pack one")
 
 
 def test_reject_users_proposals():

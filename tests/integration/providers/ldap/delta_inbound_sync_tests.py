@@ -40,7 +40,27 @@ from rbac.providers.ldap.delta_inbound_sync import (
     insert_updated_entries,
     insert_deleted_entries,
 )
-from tests import utilities
+from tests.utilities import (
+    check_user_is_pack_owner,
+    create_test_role,
+    create_test_pack,
+    delete_role_by_name,
+    delete_pack_by_name,
+    get_auth_entry,
+    get_deleted_user_entries,
+    get_role_id_from_cn,
+    get_role,
+    get_role_admins,
+    get_role_members,
+    get_role_owners,
+    get_user_in_db_by_email,
+    get_user_mapping_entry,
+    get_user_metadata_entry,
+    get_user_next_id,
+    get_pack_owners_by_user,
+    is_user_in_db,
+    is_group_in_db,
+)
 
 SERVER = Server("my_fake_server", get_info=OFFLINE_AD_2012_R2)
 
@@ -225,7 +245,41 @@ def create_next_role_ldap(user, role_name):
         }
         with requests.Session() as session:
             session.headers.update({"Authorization": token})
-            response = utilities.create_test_role(session, role_data)
+            response = create_test_role(session, role_data)
+            return response.json()["data"]["id"]
+    raise ValueError("Unsuccessful authentication.")
+
+
+def create_pack_ldap(user, pack_name):
+    """" Create a NEXT pack as an imported LDAP user
+
+    Args:
+        user:
+            dict: User table entry for imported LDAP user
+        pack_name:
+            str: Name of pack
+
+    Returns:
+        pack_id:
+            str: UUID of newly created NEXT pack
+
+    Raises:
+        ValueError: When user was not auth successfully.
+    """
+    token = ldap_auth_login(user)
+
+    if token:
+        user_next_id = user["next_id"]
+
+        pack_data = {
+            "description": "LDAP test pack",
+            "name": pack_name,
+            "owners": [user_next_id],
+            "roles": [],
+        }
+        with requests.Session() as session:
+            session.headers.update({"Authorization": token})
+            response = create_test_pack(session, pack_data)
             return response.json()["data"]["id"]
     raise ValueError("Unsuccessful authentication.")
 
@@ -353,13 +407,13 @@ def is_user_a_role_member(role_common_name, user_common_name):
 
             False: if the user is not a member of the given group.
     """
-    role_id = utilities.get_role_id_from_cn(role_common_name)
+    role_id = get_role_id_from_cn(role_common_name)
     user_distinct_name = (
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user_common_name
     )
-    next_id = utilities.get_user_next_id(remote_id=user_distinct_name)
+    next_id = get_user_next_id(remote_id=user_distinct_name)
     user_is_role_member = False
-    for member in utilities.get_role_members(role_id):
+    for member in get_role_members(role_id):
         if member["related_id"] == next_id:
             user_is_role_member = True
     return user_is_role_member
@@ -442,12 +496,12 @@ def is_user_the_role_owner(role_common_name, user_common_name):
 
             False: if the user is not an owner of the given group.
     """
-    role_id = utilities.get_role_id_from_cn(role_common_name)
+    role_id = get_role_id_from_cn(role_common_name)
     user_distinct_name = (
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user_common_name
     )
-    next_id = utilities.get_user_next_id(remote_id=user_distinct_name)
-    role_owners = utilities.get_role_owners(role_id)
+    next_id = get_user_next_id(remote_id=user_distinct_name)
+    role_owners = get_role_owners(role_id)
     user_is_role_owner = False
     if len(role_owners) is 1:
         if role_owners[0]["related_id"] == next_id:
@@ -555,7 +609,7 @@ def test_create_fake_user(ldap_connection, user):
     # wait for the fake user to be ingested by rbac_ledger_sync
     time.sleep(2)
     email = "%s@clouddev.corporate.t-mobile.com" % user["common_name"]
-    result = utilities.is_user_in_db(email)
+    result = is_user_in_db(email)
     syncflag_fetched = is_user_inbound(user["common_name"])
     assert result is True
     assert syncflag_fetched is True
@@ -603,7 +657,7 @@ def test_create_fake_group(ldap_connection, group):
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
     time.sleep(3)
-    result = utilities.is_group_in_db(group["common_name"])
+    result = is_group_in_db(group["common_name"])
     assert result is True
 
 
@@ -763,8 +817,8 @@ def test_remove_group_owner(ldap_connection, group):
     put_in_inbound_queue(fake_group, "group")
     # wait for the fake group to be ingested by rbac_ledger_sync
     time.sleep(3)
-    role_id = utilities.get_role_id_from_cn(group["common_name"])
-    role_owners = utilities.get_role_owners(role_id)
+    role_id = get_role_id_from_cn(group["common_name"])
+    role_owners = get_role_owners(role_id)
     assert len(role_owners) is 0
 
 
@@ -793,33 +847,49 @@ def test_delete_user(ldap_connection):
 
     # See if owner and role are in the system
     email = "jchan20@clouddev.corporate.t-mobile.com"
-    assert utilities.is_user_in_db(email) is True
-    assert utilities.is_group_in_db("jchan_role") is True
+    assert is_user_in_db(email) is True
+    assert is_group_in_db("jchan_role") is True
+
+    # See if all LDAP user has entries in the following
+    # off chain tables: user_mapping and metadata
+    user = get_user_in_db_by_email(email)
+    next_id = user[0]["next_id"]
+    assert get_user_mapping_entry(next_id)
+    assert get_user_metadata_entry(next_id)
 
     # See that the owner is assigned to correct role
-    user = utilities.get_user_in_db_by_email(email)
-    role = utilities.get_role("jchan_role")
-    owners = utilities.get_role_owners(role[0]["role_id"])
-    members = utilities.get_role_members(role[0]["role_id"])
-    assert owners[0]["related_id"] == user[0]["next_id"]
-    assert members[0]["related_id"] == user[0]["next_id"]
+    role = get_role("jchan_role")
+    owners = get_role_owners(role[0]["role_id"])
+    members = get_role_members(role[0]["role_id"])
+    assert owners[0]["related_id"] == next_id
+    assert members[0]["related_id"] == next_id
 
-    # Create a NEXT role with LDAP user as an admin
+    # Create a NEXT role with LDAP user as an admin and
+    # check for LDAP user's entry in auth table
     next_role_id = create_next_role_ldap(user=user[0], role_name="managers")
-    admins = utilities.get_role_admins(next_role_id)
-    assert admins[0]["related_id"] == user[0]["next_id"]
+    admins = get_role_admins(next_role_id)
+    assert admins[0]["related_id"] == next_id
+    assert get_auth_entry(next_id)
 
-    # Delete user and verify role exists and role_ownership is removed
+    # Create a NEXT pack with LDAP user as an owner
+    next_pack_id = create_pack_ldap(user=user[0], pack_name="technology department")
+    assert check_user_is_pack_owner(next_pack_id, next_id)
+
+    # Delete user and verify LDAP user and related off chain
+    # table entries have been deleted, role still exists
+    # and role relationships have been deleted
     insert_deleted_entries([user_remote_id], "user_deleted")
     time.sleep(3)
 
-    assert utilities.is_user_in_db(email) is False
-    assert utilities.is_group_in_db("jchan_role") is True
-    assert utilities.get_role_owners(role[0]["role_id"]) == []
-    assert utilities.get_role_admins(next_role_id) == []
-    assert utilities.get_role_members(role[0]["role_id"]) == []
+    assert get_deleted_user_entries(next_id) == []
+    assert get_pack_owners_by_user(next_id) == []
+    assert is_group_in_db("jchan_role") is True
+    assert get_role_owners(role[0]["role_id"]) == []
+    assert get_role_admins(next_role_id) == []
+    assert get_role_members(role[0]["role_id"]) == []
 
-    utilities.delete_role_by_name("managers")
+    delete_role_by_name("managers")
+    delete_pack_by_name("technology department")
 
 
 def test_delete_role(ldap_connection):
@@ -836,5 +906,5 @@ def test_delete_role(ldap_connection):
         ["CN=sysadmins,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB"],
         "group_deleted",
     )
-    result = utilities.is_group_in_db("sysadmins")
+    result = is_group_in_db("sysadmins")
     assert result is False
