@@ -75,7 +75,7 @@ services:
     volumes:
       - ".:/project/hyperledger-rbac"
     environment:
-      - DELTA_SYNC_INTERVAL_SECONDS=${DELTA_SYNC_INTERVAL_SECONDS}
+      - DELTA_SYNC_INTERVAL_SECONDS=${DELTA_SYNC_INTERVAL_SECONDS:-3600}
       - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-False}
       - LDAP_DC=${LDAP_DC}
       - LDAP_SERVER=${LDAP_SERVER}
