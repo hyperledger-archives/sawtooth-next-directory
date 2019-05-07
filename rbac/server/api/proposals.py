@@ -53,33 +53,30 @@ TABLES = {
 
 
 PROPOSAL_TRANSACTION = {
-    "ADD_ROLE_TASK": {
-        "REJECTED": Role().task.reject.batch_list,
-        "APPROVED": Role().task.confirm.batch_list,
-    },
+    "ADD_ROLE_TASK": {"REJECTED": Role().task.reject, "APPROVED": Role().task.confirm},
     "ADD_ROLE_MEMBER": {
-        "REJECTED": Role().member.reject.batch_list,
-        "APPROVED": Role().member.confirm.batch_list,
+        "REJECTED": Role().member.reject,
+        "APPROVED": Role().member.confirm,
     },
     "ADD_ROLE_OWNER": {
-        "REJECTED": Role().owner.reject.batch_list,
-        "APPROVED": Role().owner.confirm.batch_list,
+        "REJECTED": Role().owner.reject,
+        "APPROVED": Role().owner.confirm,
     },
     "ADD_ROLE_ADMIN": {
-        "REJECTED": Role().admin.reject.batch_list,
-        "APPROVED": Role().admin.confirm.batch_list,
+        "REJECTED": Role().admin.reject,
+        "APPROVED": Role().admin.confirm,
     },
     "ADD_TASK_OWNER": {
-        "REJECTED": Task().owner.reject.batch_list,
-        "APPROVED": Task().owner.confirm.batch_list,
+        "REJECTED": Task().owner.reject,
+        "APPROVED": Task().owner.confirm,
     },
     "ADD_TASK_ADMIN": {
-        "REJECTED": Task().admin.reject.batch_list,
-        "APPROVED": Task().admin.confirm.batch_list,
+        "REJECTED": Task().admin.reject,
+        "APPROVED": Task().admin.confirm,
     },
     "UPDATE_USER_MANAGER": {
-        "REJECTED": User().manager.reject.batch_list,
-        "APPROVED": User().manager.confirm.batch_list,
+        "REJECTED": User().manager.reject,
+        "APPROVED": User().manager.confirm,
     },
 }
 
@@ -155,7 +152,7 @@ async def update_proposal(request, proposal_id):
 
     batch_list = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
         request.json["status"]
-    ](
+    ].batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
         proposal_id=proposal_id,
