@@ -23,14 +23,11 @@ LOGGER = get_default_logger(__name__)
 
 def add_role_member(session, role_id, payload):
     """Create a proposal for adding a role member
-
     Args:
         session:
             object: current session object
-
         role_id:
             str: id of role that is to be added to
-
         payload:
             dictionary: in the format of
                 {
