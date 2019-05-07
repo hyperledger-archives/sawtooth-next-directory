@@ -29,6 +29,7 @@ RUN pip install \
         watchdog==0.9.0 \
         apscheduler==3.5.3 \
         sawtooth-sdk==1.0.1 \
+        ldap3==2.5.2 \
         environs==4.1.0
 WORKDIR /project/hyperledger-rbac
 CMD ["./bin/rbac-ledger-sync"]

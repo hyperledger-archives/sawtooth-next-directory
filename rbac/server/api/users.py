@@ -27,7 +27,7 @@ from rbac.common.user import User
 from rbac.server.api import utils
 from rbac.server.api.auth import authorized
 from rbac.server.api.errors import ApiBadRequest
-from rbac.server.api.proposals import compile_proposal_resource
+from rbac.server.api.proposals import compile_proposal_resource, PROPOSAL_TRANSACTION
 from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
@@ -184,6 +184,8 @@ async def delete_user(request, next_id):
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
+
+    await reject_users_proposals(next_id, request)
 
     conn = await create_connection()
     await auth_query.delete_auth_entry_by_next_id(conn, next_id)
@@ -355,6 +357,42 @@ async def update_expired_roles(request, next_id):
     await roles_query.expire_role_member(conn, request.json.get("id"), next_id)
     conn.close()
     return json({"role_id": request.json.get("id")})
+
+
+async def reject_users_proposals(next_id, request):
+    """Reject a users open proposals via next_id if they are the opener or assigned_approver
+    Args:
+        next_id:
+            str: a users id
+        request:
+            obj: a request object
+    """
+    # Get all open proposals associated with the user
+    conn = await create_connection()
+    proposals = await proposals_query.fetch_open_proposals_by_user(conn, next_id)
+    conn.close()
+
+    # Update to rejected:
+    txn_key, txn_user_id = await utils.get_transactor_key(request=request)
+    for proposal in proposals:
+        if proposal["opener"] == next_id:
+            reason = "Opener was deleted"
+        else:
+            reason = "Assigned Appover was deleted."
+
+        batch_list = PROPOSAL_TRANSACTION[proposal["proposal_type"]][
+            "REJECTED"
+        ].batch_list(
+            signer_keypair=txn_key,
+            signer_user_id=txn_user_id,
+            proposal_id=proposal["proposal_id"],
+            object_id=proposal["object_id"],
+            related_id=proposal["related_id"],
+            reason=reason,
+        )
+        await utils.send(
+            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+        )
 
 
 def create_user_response(request, next_id):
