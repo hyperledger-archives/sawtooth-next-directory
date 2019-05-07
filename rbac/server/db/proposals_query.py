@@ -156,3 +156,51 @@ def fetch_proposal_ids_by_opener(opener):
         .pluck("proposal_id", "object_id", "pack_id")
         .coerce_to("array")
     )
+
+
+async def fetch_open_proposals_by_user(conn, next_id):
+    """Fetch all open proposals related to a user. (assigned_approver or opener)
+    Args:
+        conn:
+            obj: a connection to rethinkdb
+        next_id:
+            str: a user's next ID
+    """
+    resource = (
+        await fetch_open_proposals_by_opener(next_id)
+        .union(get_open_proposals_by_approver(next_id))
+        .distinct()
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resource
+
+
+def fetch_open_proposals_by_opener(next_id):
+    """Fetch all open proposals where user is opener.
+    Args:
+        next_id:
+            str: a user's next ID
+    """
+    resource = (
+        r.table("proposals")
+        .filter({"opener": next_id, "status": "OPEN"})
+        .coerce_to("array")
+    )
+
+    return resource
+
+
+def get_open_proposals_by_approver(next_id):
+    """Fetch all open proposals where user is assigned_approver.
+    Args:
+        next_id:
+            str: a user's next ID
+    """
+    resource = (
+        r.table("proposals")
+        .filter({"assigned_approver": [next_id], "status": "OPEN"})
+        .coerce_to("array")
+    )
+
+    return resource
