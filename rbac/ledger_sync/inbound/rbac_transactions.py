@@ -33,6 +33,11 @@ from rbac.common.user.delete_user import DeleteUser
 from rbac.common.util import bytes_from_hex
 from rbac.common.sawtooth import batcher
 from rbac.providers.common.db_queries import connect_to_db
+from rbac.server.api.proposals import PROPOSAL_TRANSACTION
+from rbac.server.db.proposals_query import (
+    fetch_open_proposals_by_opener,
+    get_open_proposals_by_approver,
+)
 
 LOGGER = get_default_logger(__name__)
 
@@ -286,6 +291,7 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair):
 
     txn_list = []
     # Compile role relationship transactions for removal from blockchain
+    txn_list = create_reject_proposals_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
@@ -379,6 +385,55 @@ def create_delete_role_member_txns(key_pair, next_id, txn_list):
             )
             payload = member_delete.make_payload(
                 message=admin_delete_message,
+                signer_keypair=key_pair,
+                signer_user_id=key_pair.public_key,
+            )
+            transaction = batcher.make_transaction(
+                payload=payload, signer_keypair=key_pair
+            )
+            txn_list.extend([transaction])
+    return txn_list
+
+
+def create_reject_proposals_txns(key_pair, next_id, txn_list):
+    """Create the reject open proposals transactions for user that has been deleted.
+       Args:
+           key_pair:
+               obj: public and private keys for user
+           next_id: next_
+               str: next_id for proposals to close search
+           txn_list:
+               list: transactions for batch submission
+
+    """
+    conn = connect_to_db()
+    proposals = (
+        fetch_open_proposals_by_opener(next_id)
+        .union(get_open_proposals_by_approver(next_id))
+        .distinct()
+        .coerce_to("array")
+        .run(conn)
+    )
+    conn.close()
+    if proposals:
+        for proposal in proposals:
+            if proposal["opener"] == next_id:
+                reason = "Opener was deleted"
+            else:
+                reason = "Assigned Appover was deleted."
+            reject_proposal = PROPOSAL_TRANSACTION[proposal["proposal_type"]][
+                "REJECTED"
+            ]
+            reject_proposal_msg = reject_proposal.make(
+                signer_keypair=key_pair,
+                signer_user_id=next_id,
+                proposal_id=proposal["proposal_id"],
+                object_id=proposal["object_id"],
+                related_id=proposal["related_id"],
+                reason=reason,
+            )
+            payload = reject_proposal.make_payload(
+                message=reject_proposal_msg,
                 signer_keypair=key_pair,
                 signer_user_id=key_pair.public_key,
             )

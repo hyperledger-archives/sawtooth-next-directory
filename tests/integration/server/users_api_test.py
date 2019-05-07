@@ -18,12 +18,13 @@ import requests
 import rethinkdb as r
 from rbac.providers.common.db_queries import connect_to_db
 from tests.utilities import (
+    add_role_member,
     create_test_user,
-    delete_user_by_username,
-    insert_user,
-    get_proposal_with_retry,
     create_test_role,
     delete_role_by_name,
+    delete_user_by_username,
+    get_proposal_with_retry,
+    insert_user,
 )
 from tests.rbac.api.assertions import assert_api_success
 
@@ -257,3 +258,72 @@ def test_user_delete_api():
         assert user == []
         assert metadata == []
         assert role_owners == []
+
+
+def test_reject_users_proposals():
+    """Test that a user's proposals are rejected when they are deleted."""
+    user_to_delete = {
+        "name": "nadia two",
+        "username": "nadia2",
+        "password": "test11",
+        "email": "nadia2@test.com",
+    }
+
+    user = {
+        "name": "nadia three",
+        "username": "nadia3",
+        "password": "test11",
+        "email": "nadia3@test.com",
+    }
+    with requests.Session() as session:
+        response1 = create_test_user(session, user_to_delete)
+        response2 = create_test_user(session, user)
+        role_payload_1 = {
+            "name": "NadiaRole1",
+            "owners": response1.json()["data"]["user"]["id"],
+            "administrators": response1.json()["data"]["user"]["id"],
+            "description": "Nadia Role 1",
+        }
+
+        role_response1 = create_test_role(session, role_payload_1)
+        proposal_1 = add_role_member(
+            session,
+            role_response1.json()["data"]["id"],
+            {"id": response2.json()["data"]["user"]["id"]},
+        )
+        next_id = response1.json()["data"]["user"]["id"]
+        conn = connect_to_db()
+        user_exists = (
+            r.db("rbac")
+            .table("users")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        assert user_exists
+
+        deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
+        time.sleep(5)
+        assert deletion.json() == {
+            "message": "User {} successfully deleted".format(next_id),
+            "deleted": 1,
+        }
+
+        user_exists = (
+            r.db("rbac")
+            .table("users")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        assert not user_exists
+
+        proposal_1_result = (
+            r.db("rbac")
+            .table("proposals")
+            .filter({"proposal_id": proposal_1.json()["proposal_id"]})
+            .coerce_to("array")
+            .run(conn)
+        )
+        conn.close()
+        assert proposal_1_result[0]["status"] == "REJECTED"
