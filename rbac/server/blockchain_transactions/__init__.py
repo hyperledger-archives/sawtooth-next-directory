@@ -12,23 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-
-FROM python:3.5-slim-jessie
-RUN apt-get update && \
-        apt-get install -y apt-file && \
-        apt-file update && \
-        apt-get install -y gcc
-RUN pip install \
-        setuptools \
-        grpcio-tools==1.16.1 \
-        itsdangerous==1.1.0 \
-        rethinkdb==2.3.0.post6 \
-        requests==2.21.0 \
-        cryptography==2.4.2 \
-        sanic==0.8.3 \
-        watchdog==0.9.0 \
-        apscheduler==3.5.3 \
-        sawtooth-sdk==1.0.1 \
-        environs==4.1.0
-WORKDIR /project/hyperledger-rbac
-CMD ["./bin/rbac-ledger-sync"]

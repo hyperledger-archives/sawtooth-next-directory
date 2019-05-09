@@ -22,6 +22,8 @@ from tests.utilities import (
     delete_user_by_username,
     insert_user,
     get_proposal_with_retry,
+    create_test_role,
+    delete_role_by_name,
 )
 from tests.rbac.api.assertions import assert_api_success
 
@@ -191,7 +193,16 @@ def test_user_delete_api():
     with requests.Session() as session:
         response = create_test_user(session, user)
         next_id = response.json()["data"]["user"]["id"]
+        role_payload = {
+            "name": "test_role",
+            "owners": next_id,
+            "administrators": next_id,
+            "description": "This is a test Role",
+        }
         conn = connect_to_db()
+        role_payload["owners"] = [next_id]
+        role_resp = create_test_role(session, role_payload)
+
         user_exists = (
             r.db("rbac")
             .table("users")
@@ -199,6 +210,17 @@ def test_user_delete_api():
             .coerce_to("array")
             .run(conn)
         )
+
+        role_owner_exists = (
+            r.table("role_owners")
+            .filter(
+                {"identifiers": [next_id], "role_id": role_resp.json()["data"]["id"]}
+            )
+            .coerce_to("array")
+            .run(conn)
+        )
+
+        assert role_owner_exists
         assert user_exists
 
         deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
@@ -222,6 +244,16 @@ def test_user_delete_api():
             .coerce_to("array")
             .run(conn)
         )
+
+        role_owners = (
+            r.db("rbac")
+            .table("role_owners")
+            .filter(lambda doc: doc["identifiers"].contains(next_id))
+            .coerce_to("array")
+            .run(conn)
+        )
+        delete_role_by_name("test_role")
         conn.close()
         assert user == []
         assert metadata == []
+        assert role_owners == []
