@@ -68,8 +68,9 @@ def fetch_ldap_changes():
         )
         last_sync_time = last_sync["timestamp"]
         last_sync_time_formatted = to_date_ldap_query(rethink_timestamp=last_sync_time)
-        search_filter = "(&(objectClass=%s)(whenChanged>=%s))" % (
+        search_filter = "(&(objectClass=%s)(whenChanged>=%s)(!(whenChanged=%s)))" % (
             object_class,
+            last_sync_time_formatted,
             last_sync_time_formatted,
         )
         ldap_connection = ldap_connector.await_connection(
