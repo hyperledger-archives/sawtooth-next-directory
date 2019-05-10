@@ -78,12 +78,12 @@ class RequesterChat extends Component {
       expired,
       id,
       isSocketOpen,
+      me,
       messagesCountById,
       memberOf,
       ownerOf,
       recommendedPacks,
       recommendedRoles,
-      requests,
       sendMessage } = this.props;
 
     const resource = activePack || activeRole;
@@ -124,8 +124,9 @@ class RequesterChat extends Component {
         payload.text = `/${update || 'owner'}${JSON.stringify(
           {...slots, owner_status: 'OWNER'})}`;
 
-      } else if (requests && requests.find(
-        request => request.object === resource.id || request.id === resource.id)
+      } else if (me && me.proposals.find(
+        proposal => proposal.object_id === resource.id &&
+          proposal.status === 'OPEN')
       ) {
 
         // Construct intent message given user has previously

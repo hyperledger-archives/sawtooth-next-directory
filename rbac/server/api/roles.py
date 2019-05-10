@@ -231,7 +231,10 @@ async def add_role_member(request, role_id):
             }
         )
     if request.json.get("tracker"):
-        return utils.create_tracker_response("batch_status", batch_status)
+        events = {"batch_status": batch_status}
+        if batch_status == 1:
+            events["member_status"] = "PENDING"
+        return utils.create_tracker_response(events)
     return json({"proposal_id": proposal_id})
 
 

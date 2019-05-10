@@ -98,9 +98,12 @@ async def create_response(conn, request_url, data, head_block, start=None, limit
     return json(response)
 
 
-def create_tracker_response(slot_name, value):
+def create_tracker_response(events):
     """Create JSON event payload used to modify the chatbot tracker"""
-    return json({"events": [{"event": "slot", "name": slot_name, "value": value}]})
+    response = {"events": []}
+    for name, value in events.items():
+        response["events"].append({"event": "slot", "name": name, "value": value})
+    return json(response)
 
 
 async def get_response_paging_info(conn, table, url, start, limit, head_block_num):
