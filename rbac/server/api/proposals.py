@@ -144,6 +144,13 @@ async def update_proposal(request, proposal_id):
     proposal_resource = await proposals_query.fetch_proposal_resource(
         conn, proposal_id=proposal_id
     )
+
+    approvers_list = await compile_proposal_resource(conn, proposal_resource)
+    if txn_user_id not in approvers_list["approvers"]:
+        raise ApiBadRequest(
+            "Bad Request: You don't have the authorization to APPROVE or REJECT the proposal"
+        )
+
     conn.close()
 
     batch_list = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
