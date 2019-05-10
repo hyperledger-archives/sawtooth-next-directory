@@ -21,6 +21,29 @@ from rbac.common.logs import get_default_logger
 LOGGER = get_default_logger(__name__)
 
 
+def add_role_member(session, role_id, payload):
+    """Create a proposal for adding a role member
+
+    Args:
+        session:
+            object: current session object
+
+        role_id:
+            str: id of role that is to be added to
+
+        payload:
+            dictionary: in the format of
+                {
+                    "id": "ID OF USER CURRENTLY BEING ADDED"
+                }
+    """
+    response = session.post(
+        "http://rbac-server:8000/api/roles/{}/members".format(role_id), json=payload
+    )
+    sleep(3)
+    return response
+
+
 def create_test_role(session, role_payload):
     """Create a role and authenticate to use api endpoints during testing."""
     response = session.post("http://rbac-server:8000/api/roles", json=role_payload)
@@ -182,7 +205,7 @@ def get_user_next_id(remote_id):
 
 
 def get_role_owners(role_id):
-    """Returns a list of owner next_ids from a role in rethnkDB.
+    """Returns a list of owner next_ids from a role in rethinkDB.
 
     Args:
         role_id:
@@ -253,7 +276,7 @@ def get_role_id_from_cn(role_name):
 
 
 def get_role_admins(role_id):
-    """Returns a list of admin next_ids from a role in rethnkDB.
+    """Returns a list of admin next_ids from a role in rethinkDB.
 
     Args:
         role_id:
@@ -271,7 +294,7 @@ def get_role_admins(role_id):
 
 
 def get_role_members(role_id):
-    """Returns a list of member user_ids from a role in rethnkDB.
+    """Returns a list of member user_ids from a role in rethinkDB.
 
     Args:
         role_id:
@@ -286,3 +309,49 @@ def get_role_members(role_id):
             .run(db_connection)
         )
     return role_members
+
+
+def log_in(session, credentials_payload):
+    """Log in as the user with the given credentials for the given session
+
+    Args:
+        session:
+            object: current session object
+
+        credentials_payload:
+            dictionary: in the format of
+                {
+                    "id": "USERNAME OF USER",
+                    "password": "PASSWORD OF ASSOCIATED USER"
+                }
+    """
+    response = session.post(
+        "http://rbac-server:8000/api/authorization/", json=credentials_payload
+    )
+    sleep(3)
+    return response
+
+
+def update_proposal(session, proposal_id, proposal_payload):
+    """Updates a created proposal
+
+    Args:
+        session:
+            object: current session object
+
+        proposal_id:
+            str: id of proposal to be updated.
+
+        proposal_payload:
+            dictionary: in the format of
+                {
+                    "status": ("APPROVED"/"REJECT"),
+                    "reason": "REASON OF STATUS",
+                }
+    """
+    response = session.patch(
+        "http://rbac-server:8000/api/proposals/{}".format(proposal_id),
+        json=proposal_payload,
+    )
+    sleep(3)
+    return response
