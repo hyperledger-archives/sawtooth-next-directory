@@ -117,6 +117,11 @@ def insert_to_db(entry, data_type):
         "provider_id": LDAP_DC,
     }
     conn = connect_to_db()
+    LOGGER.debug(
+        "Inserting LDAP %s into inbound queue: %s",
+        data_type,
+        standard_entry["remote_id"],
+    )
     r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()
 

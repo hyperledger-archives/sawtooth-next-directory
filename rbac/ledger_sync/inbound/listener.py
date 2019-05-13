@@ -180,6 +180,8 @@ def listener():
             feed = r.table("inbound_queue").order_by(index=r.asc("timestamp")).run(conn)
             count = 0
             for rec in feed:
+                LOGGER.debug("Processing inbound_queue record")
+                LOGGER.debug(rec)
                 process(rec, conn)
                 count = count + 1
             if count == 0:
@@ -189,6 +191,8 @@ def listener():
         feed = r.table("inbound_queue").changes().run(conn)
         for rec in feed:
             if rec["new_val"] and not rec["old_val"]:  # only insertions
+                LOGGER.debug("Processing inbound_queue record")
+                LOGGER.debug(rec["new_val"])
                 process(rec["new_val"], conn)
 
     except Exception as err:  # pylint: disable=broad-except

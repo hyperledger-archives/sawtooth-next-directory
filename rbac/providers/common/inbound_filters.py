@@ -27,7 +27,12 @@ def inbound_user_filter(user, provider):
     standardized_user = {}
     for key, value in USER_TRANSFORM.items():
         if value[provider] in user:
-            value = inbound_value_filter(user[value[provider]], value[provider])
+            if provider == "ldap":
+                value = inbound_value_filter(
+                    user[value[provider]].value, value[provider]
+                )
+            else:
+                value = inbound_value_filter(user[value[provider]], value[provider])
             standardized_user[key] = value
     if "email" not in standardized_user and "user_principal_name" in standardized_user:
         standardized_user["email"] = standardized_user["user_principal_name"]
@@ -44,7 +49,12 @@ def inbound_group_filter(group, provider):
     standardized_group = {}
     for key, value in GROUP_TRANSFORM.items():
         if value[provider] in group:
-            value = inbound_value_filter(group[value[provider]], value[provider])
+            if provider == "ldap":
+                value = inbound_value_filter(
+                    group[value[provider]].value, value[provider]
+                )
+            else:
+                value = inbound_value_filter(group[value[provider]], value[provider])
             standardized_group[key] = value
     return standardized_group
 

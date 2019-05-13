@@ -124,6 +124,7 @@ def test_create_new_user_api():
         user_creation_response = session.post(
             "http://rbac-server:8000/api/users", json=user_create_payload
         )
+        time.sleep(3)
         user_id = user_creation_response.json()["data"]["user"]["id"]
         user_details_response = session.get(
             "http://rbac-server:8000/api/users/" + user_id
