@@ -40,7 +40,7 @@ limitations under the License.
   padding-bottom: 0;
 }
 
-#next-chat-organization-view-all-button {
+.next-chat-organization-view-all-button {
   margin-top: 34px;
 }
 
@@ -51,7 +51,7 @@ limitations under the License.
 }
 
 #next-people-chat-pending-approvals-button {
-  margin-top: 45px;
+  margin: 35px;
 }
 
 .next-people-organization-panel {

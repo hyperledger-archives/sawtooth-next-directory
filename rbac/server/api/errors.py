@@ -17,6 +17,7 @@ from sanic.response import json
 from sanic import Blueprint
 from sanic.exceptions import SanicException
 from sanic.exceptions import NotFound
+from rethinkdb import ReqlDriverError
 
 from rbac.common.logs import get_default_logger
 
@@ -130,6 +131,13 @@ async def handle_errors(request, exception):
         {"code": exception.status_code, "message": exception.message},
         status=exception.status_code,
     )
+
+
+@ERRORS_BP.exception(ReqlDriverError)
+async def handle_reql_error(request, exception):
+    """Re-establish connection on driver error """
+    LOGGER.exception(exception)
+    request.app.config.DB_CONN.reconnect(noreply_wait=False)
 
 
 @ERRORS_BP.exception(Exception)

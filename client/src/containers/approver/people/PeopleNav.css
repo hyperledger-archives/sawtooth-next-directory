@@ -26,6 +26,10 @@ limitations under the License.
   z-index: 2;
 }
 
+#next-people-nav div:nth-child(1) {
+  width: 100%;
+}
+
 #next-people-nav div:nth-child(2) {
   flex: 1;
   margin: 0 5px 0 28px;
@@ -52,4 +56,12 @@ limitations under the License.
 .next-people-search .ui.large.fluid.icon.input input {
   background: #eceef1;
   border: 2px solid #eceef1;
+}
+
+.next-people-nav-back-button {
+  color: var(--magenta) !important;
+}
+
+.next-people-nav-less-padding {
+  padding: 12px var(--page-content-padding) 10px var(--page-content-padding) !important;
 }

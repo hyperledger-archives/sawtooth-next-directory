@@ -189,7 +189,6 @@ class Chat extends Component {
 const mapStateToProps = (state) => {
   return {
     fetching:             state.chat.fetching,
-    fetchingOrganization: state.approver.fetchingOrganization,
     socketError:          state.app.socketError,
   };
 };

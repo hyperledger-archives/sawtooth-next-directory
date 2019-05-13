@@ -25,8 +25,7 @@ import {
   Header,
   Icon,
   Image,
-  Label,
-  Loader } from 'semantic-ui-react';
+  Label } from 'semantic-ui-react';
 
 
 import './PeopleChat.css';
@@ -164,7 +163,8 @@ class PeopleChat extends Component {
       activeIndex,
       activeUser,
       fetchingOrganization,
-      organization } = this.props;
+      organization,
+      setFlow } = this.props;
     if (activeIndex === 1) return null;
 
     return {
@@ -181,16 +181,11 @@ class PeopleChat extends Component {
       content: {
         content: (
           <div className='next-people-organization-panel'>
-            { fetchingOrganization &&
-              <Loader
-                active={fetchingOrganization}
-                id='next-people-organization-loader'
-                size='large'>
-              </Loader>
-            }
             { organization &&
               !fetchingOrganization &&
               organization.managers.length === 0 &&
+              organization.direct_reports.length === 0 &&
+              organization.peers.length === 0 &&
               <div className='next-people-organization-no-items'>
                 <span>
                   No organization info
@@ -202,6 +197,24 @@ class PeopleChat extends Component {
               activeUser={activeUser}
               handleUserSelect={() => {}}
               {...this.props}/>
+            { !fetchingOrganization &&
+              <Container
+                className='next-chat-organization-view-all-button'
+                textAlign='center'>
+                <Button
+                  basic
+                  animated
+                  onClick={() => setFlow(1)}
+                  size='mini'>
+                  <Button.Content visible>
+                  VIEW FULL CHART
+                  </Button.Content>
+                  <Button.Content hidden>
+                    <Icon name='arrow right'/>
+                  </Button.Content>
+                </Button>
+              </Container>
+            }
           </div>
         ),
       },
@@ -247,7 +260,7 @@ class PeopleChat extends Component {
             { user.memberOf &&
               user.memberOf.length > currentRolesMaxCount &&
               <Container
-                id='next-chat-organization-view-all-button'
+                className='next-chat-organization-view-all-button'
                 textAlign='center'>
                 <Button
                   basic

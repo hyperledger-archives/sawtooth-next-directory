@@ -104,7 +104,7 @@ class People extends Component {
    * @returns {JSX}
    */
   render () {
-    const { fetchingSearchResults, id } = this.props;
+    const { fetchingSearchResults } = this.props;
     const {
       activeIndex,
       activeUser,
@@ -148,9 +148,8 @@ class People extends Component {
               }
               { activeIndex === 1 &&
                 <Organization
-                  activeUser={id}
+                  activeUser={activeUser}
                   showPeers
-                  showDirectReports
                   handleUserSelect={this.handleUserSelect}
                   {...this.props}/>
               }
@@ -166,6 +165,8 @@ class People extends Component {
             handleOnBehalfOf={this.handleOnBehalfOf}
             activeUser={activeUser}
             activeIndex={activeIndex}
+            handleUserSelect={this.handleUserSelect}
+            setFlow={this.setFlow}
             {...this.props}/>
         </Grid.Column>
       </Grid>
@@ -177,7 +178,8 @@ class People extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    fetchingPeople: state.user.fetchingPeople,
+    fetchingOrganization:  state.approver.fetchingOrganization,
+    fetchingPeople:        state.user.fetchingPeople,
     fetchingSearchResults: state.search.fetching,
   };
 };
