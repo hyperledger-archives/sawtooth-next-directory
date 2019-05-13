@@ -68,7 +68,10 @@ limitations under the License.
 }
 
 #next-chat-organization-heading {
-  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-top: 52px;
   text-align: center;
 }
 
@@ -91,7 +94,6 @@ limitations under the License.
   display: flex;
   flex: 1;
   flex-direction: column;
-  overflow-y: auto;
   padding: 5%;
 }
 

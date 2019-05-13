@@ -23,8 +23,6 @@ from rbac.server.api import roles, utils
 
 from rbac.server.db import packs_query
 from rbac.server.api.errors import ApiBadRequest
-from rbac.server.db.db_utils import create_connection
-
 
 PACKS_BP = Blueprint("packs")
 
@@ -36,12 +34,16 @@ async def get_all_packs(request):
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
 
-    conn = await create_connection()
-    pack_resources = await packs_query.fetch_all_pack_resources(conn, start, limit)
-    conn.close()
-
+    pack_resources = await packs_query.fetch_all_pack_resources(
+        request.app.config.DB_CONN, start, limit
+    )
     return await utils.create_response(
-        conn, request.url, pack_resources, head_block, start=start, limit=limit
+        request.app.config.DB_CONN,
+        request.url,
+        pack_resources,
+        head_block,
+        start=start,
+        limit=limit,
     )
 
 
@@ -51,20 +53,22 @@ async def create_new_pack(request):
     """Create a new pack"""
     required_fields = ["owners", "name", "roles"]
     utils.validate_fields(required_fields, request.json)
-    conn = await create_connection()
     pack_title = " ".join(request.json.get("name").split())
-    response = await packs_query.packs_search_duplicate(conn, pack_title)
+    response = await packs_query.packs_search_duplicate(
+        request.app.config.DB_CONN, pack_title
+    )
     if not response:
         pack_id = str(uuid4())
         await packs_query.create_pack_resource(
-            conn,
+            request.app.config.DB_CONN,
             pack_id,
             request.json.get("owners"),
             pack_title,
             request.json.get("description"),
         )
-        await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
-        conn.close()
+        await packs_query.add_roles(
+            request.app.config.DB_CONN, pack_id, request.json.get("roles")
+        )
         return create_pack_response(request, pack_id)
     raise ApiBadRequest(
         "Error: Could not create this pack because the pack name already exists."
@@ -75,21 +79,22 @@ async def create_new_pack(request):
 @authorized()
 async def get_pack(request, pack_id):
     """Get a single pack"""
-    conn = await create_connection()
     head_block = await utils.get_request_block(request)
-    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
-    conn.close()
-
-    return await utils.create_response(conn, request.url, pack_resource, head_block)
+    pack_resource = await packs_query.fetch_pack_resource(
+        request.app.config.DB_CONN, pack_id
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN, request.url, pack_resource, head_block
+    )
 
 
 @PACKS_BP.get("api/packs/check")
 @authorized()
 async def check_pack_name(request):
     """Check if a pack exists with provided name"""
-    conn = await create_connection()
-    response = await packs_query.packs_search_duplicate(conn, request.args.get("name"))
-    conn.close()
+    response = await packs_query.packs_search_duplicate(
+        request.app.config.DB_CONN, request.args.get("name")
+    )
     return json({"exists": bool(response)})
 
 
@@ -100,10 +105,9 @@ async def add_pack_member(request, pack_id):
     required_fields = ["id"]
     utils.validate_fields(required_fields, request.json)
 
-    conn = await create_connection()
-    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
-    conn.close()
-
+    pack_resource = await packs_query.fetch_pack_resource(
+        request.app.config.DB_CONN, pack_id
+    )
     request.json["metadata"] = ""
     request.json["pack_id"] = pack_id
     for role_id in pack_resource.get("roles"):
@@ -115,14 +119,11 @@ async def add_pack_member(request, pack_id):
 @authorized()
 async def add_pack_role(request, pack_id):
     """Add roles to a pack"""
-
-    conn = await create_connection()
     required_fields = ["roles"]
     utils.validate_fields(required_fields, request.json)
-    await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
-
-    conn.close()
-
+    await packs_query.add_roles(
+        request.app.config.DB_CONN, pack_id, request.json.get("roles")
+    )
     return json({"roles": request.json.get("roles")})
 
 
@@ -134,5 +135,4 @@ def create_pack_response(request, pack_id):
         "owners": request.json.get("owners"),
         "roles": request.json.get("roles"),
     }
-
     return json({"data": pack_resource})

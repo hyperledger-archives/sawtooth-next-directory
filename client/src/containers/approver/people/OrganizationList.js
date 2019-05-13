@@ -19,6 +19,7 @@ import {
   Button,
   Container,
   Header,
+  Label,
   Placeholder,
   Segment } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
@@ -127,9 +128,9 @@ class OrganizationList extends Component {
    * @returns {JSX}
    */
   renderPlaceholder = () => {
-    return Array(4).fill(0).map((item, index) => (
+    return Array(6).fill(0).map((item, index) => (
       <div key={index} className='next-member-list-placeholder'>
-        <Placeholder inverted fluid>
+        <Placeholder fluid>
           <Placeholder.Header image>
             <Placeholder.Line length='full'/>
             <Placeholder.Line length='long'/>
@@ -147,17 +148,27 @@ class OrganizationList extends Component {
    */
   renderPersonSegment (person) {
     const { handleUserSelect, id } = this.props;
+
+    if (!person.name)
+      return null;
+
     return (
       <Segment
         onClick={() => handleUserSelect(person.id)}
-        className='no-padding minimal'>
+        className='minimal'>
         <Header as='h3' className='next-member-list-person-info'>
           <div>
             <Avatar userId={person.id} size='medium' {...this.props}/>
           </div>
           <div>
-            {person.name}
-            {person.id === id && ' (You)'}
+            <strong>
+              {utils.toTitleCase(person.name)}
+            </strong>
+            { person.id === id &&
+              <Label size='small' basic>
+                You
+              </Label>
+            }
             {person.email &&
             <Header.Subheader>
               {person.email}
@@ -204,29 +215,35 @@ class OrganizationList extends Component {
       <div id='next-approver-people-list-container'>
         { !showSearchData &&
           me &&
-          this.renderPersonSegment(me)
+          <div id='next-approver-people-list-me'>
+            {this.renderPersonSegment(me)}
+          </div>
         }
         { showSearchData &&
           peopleSearchData &&
-          peopleSearchData.map((person, index) =>
-            <div className='next-approver-people-list-item' key={index}>
-              {this.renderPersonSegment(person)}
-            </div>
-          )
+          <div id='next-approval-people-list-search-container'>
+            { peopleSearchData.map((person, index) =>
+              <div className='next-approver-people-list-item' key={index}>
+                {this.renderPersonSegment(person)}
+              </div>
+            )}
+          </div>
         }
         { !showSearchData &&
           people &&
           me &&
-          people.filter(person => me.id !== person.id).map((person, index) => {
-            return (
-              <div className='next-approver-people-list-item' key={index}>
-                {this.renderPersonSegment(person)}
-              </div>
-            );
-          }
-          )
+          <div>
+            { people
+              .filter(person => me.id !== person.id)
+              .map((person, index) =>
+                <div className='next-approver-people-list-item' key={index}>
+                  {this.renderPersonSegment(person)}
+                </div>
+              )
+            }
+          </div>
         }
-        { (fetchingPeople || fetchingSearchResults) &&
+        { (!me || fetchingPeople || fetchingSearchResults) &&
           this.renderPlaceholder()
         }
         { !showSearchData &&

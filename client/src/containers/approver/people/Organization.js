@@ -70,15 +70,16 @@ class Organization extends Component {
       organization,
       users } = this.props;
     if (prevProps.organization !== organization) {
+      // TODO: Truncate only on compact
       const diff = [
-        ...organization.direct_reports,
+        ...organization.direct_reports.slice(0, 5),
         ...organization.managers.slice(0, 5),
-        ...organization.peers.slice(0, 5),
+        ...(organization.peers || []).slice(0, 5),
       ]
         .filter(userId =>
           !users.find(user => userId === user.id)
         );
-      getUsers(diff);
+      getUsers(diff, true);
     }
     if (prevProps.activeUser !== activeUser)
       getOrganization(activeUser);
@@ -263,7 +264,10 @@ class Organization extends Component {
    * @returns {JSX}
    */
   render () {
-    const { compact, id, organization } = this.props;
+    const { compact, fetchingOrganization, id, organization } = this.props;
+
+    if (fetchingOrganization)
+      return null;
 
     if (organization) {
       if (organization.managers.length === 0 ||

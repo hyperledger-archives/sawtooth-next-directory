@@ -17,7 +17,7 @@ limitations under the License.
 #next-organization-container {
   margin-bottom: 30px;
   min-width: 650px;
-  padding: 0 30px;
+  padding: 30px;
   /* transform: translateY(-33%); */
 }
 
@@ -53,8 +53,8 @@ limitations under the License.
 }
 
 .next-organization-user-info {
-  background: var(--dark-bg);
-  color: #ffffffb0;
+  background: white;
+  color: #515151;
   margin: 0 10px;
   padding: 0 10px;
   max-width: 246px;
@@ -63,7 +63,7 @@ limitations under the License.
 }
 
 .next-organization-user-info h4 {
-  color: white;
+  color: var(--text-dark);
   font-weight: bold;
 }
 
@@ -134,10 +134,11 @@ limitations under the License.
 }
 
 .compact #next-organization-current-person-user-info-container:before {
+  height: 1.4em;
   left: -1px;
   margin-left: -1.3em;
   position: relative;
-  top: -.3em;
+  top: -.6em;
   width: 1.5em;
 }
 
@@ -156,13 +157,13 @@ limitations under the License.
 }
 
 .compact#next-organization-container {
-  margin: 30px 0;
+  margin: 10px 0 40px 0;
   min-width: 0;
   padding: 0 5px;
 }
 
 #next-organization-managers:after {
-  border-left: 1px solid #516073;
+  border-left: 1px solid var(--organization-line-color);
   content: '';
   height: calc(100% + 3.6em);
   margin-left: 1.5em;
@@ -172,7 +173,7 @@ limitations under the License.
 }
 
 .next-organization-manager-item:first-child:before {
-  border-bottom: 1px solid #516073;
+  border-bottom: 1px solid var(--organization-line-color);
   content: '';
   margin-top: 1.5em;
   position: absolute;
@@ -181,7 +182,7 @@ limitations under the License.
 }
 
 #next-organization-direct-reports:after {
-  border-left: 1px solid #516073;
+  border-left: 1px solid var(--organization-line-color);
   bottom: 2em;
   content: '';
   height: 100%;
@@ -191,8 +192,8 @@ limitations under the License.
 }
 
 .next-organization-direct-report-item:before {
-  border-bottom: 1px solid #516073;
-  border-left: 1px solid #516073;
+  border-bottom: 1px solid var(--organization-line-color);
+  border-left: 1px solid var(--organization-line-color);
   content: '';
   height: .9em;
   margin-left: -4em;
@@ -203,8 +204,8 @@ limitations under the License.
 }
 
 #next-organization-current-person-user-info-container:before {
-  border-bottom: 1px solid #516073;
-  border-left: 1px solid #516073;
+  border-bottom: 1px solid var(--organization-line-color);
+  border-left: 1px solid var(--organization-line-color);
   content: '';
   height: .9em;
   left: 0;
@@ -217,7 +218,7 @@ limitations under the License.
 
 .next-organization-peer-item:before {
   content: '';
-  border-left: 1px solid #516073;
+  border-left: 1px solid var(--organization-line-color);
   position: absolute;
   height: 110px;
   margin-top: calc(-4em + -33px);

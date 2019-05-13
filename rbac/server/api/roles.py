@@ -28,7 +28,6 @@ from rbac.server.api import utils
 from rbac.server.api import proposals
 
 from rbac.server.db import roles_query
-from rbac.server.db.db_utils import create_connection
 from rbac.server.db.relationships_query import fetch_relationships
 
 LDAP_DC = os.getenv("LDAP_DC")
@@ -43,14 +42,18 @@ ROLES_BP = Blueprint("roles")
 @authorized()
 async def get_all_roles(request):
     """Get all roles."""
-    conn = await create_connection()
-
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
-    role_resources = await roles_query.fetch_all_role_resources(conn, start, limit)
-    conn.close()
+    role_resources = await roles_query.fetch_all_role_resources(
+        request.app.config.DB_CONN, start, limit
+    )
     return await utils.create_response(
-        conn, request.url, role_resources, head_block, start=start, limit=limit
+        request.app.config.DB_CONN,
+        request.url,
+        role_resources,
+        head_block,
+        start=start,
+        limit=limit,
     )
 
 
@@ -60,9 +63,10 @@ async def create_new_role(request):
     """Create a new role."""
     required_fields = ["name", "administrators", "owners"]
     utils.validate_fields(required_fields, request.json)
-    conn = await create_connection()
     role_title = " ".join(request.json.get("name").split())
-    response = await roles_query.roles_search_duplicate(conn, role_title)
+    response = await roles_query.roles_search_duplicate(
+        request.app.config.DB_CONN, role_title
+    )
     if request.json.get("metadata") is None or request.json.get("metadata") == {}:
         set_metadata = {}
     else:
@@ -84,7 +88,6 @@ async def create_new_role(request):
         await utils.send(
             request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
         )
-        conn.close()
         if role_title != "NextAdmins":
             distinguished_name_formatted = "CN=" + role_title + "," + GROUP_BASE_DN
             data_formatted = {
@@ -102,11 +105,9 @@ async def create_new_role(request):
                 "provider_id": LDAP_DC,
             }
             # Insert to outbound_queue and close
-            conn = await create_connection()
             role_outbound_resource = await roles_query.insert_to_outboundqueue(
-                conn, outbound_entry
+                request.app.config.DB_CONN, outbound_entry
             )
-            conn.close()
         else:
             LOGGER.info(
                 "The role being created is NextAdmins, which is local to NEXT and will not be inserted into the outbound_queue."
@@ -121,21 +122,22 @@ async def create_new_role(request):
 @authorized()
 async def get_role(request, role_id):
     """Get a specific role by role_id."""
-    conn = await create_connection()
-
     head_block = await utils.get_request_block(request)
-    role_resource = await roles_query.fetch_role_resource(conn, role_id)
-    conn.close()
-    return await utils.create_response(conn, request.url, role_resource, head_block)
+    role_resource = await roles_query.fetch_role_resource(
+        request.app.config.DB_CONN, role_id
+    )
+    return await utils.create_response(
+        request.app.config.DB_CONN, request.url, role_resource, head_block
+    )
 
 
 @ROLES_BP.get("api/roles/check")
 @authorized()
 async def check_role_name(request):
     """Check if a role exists with provided name."""
-    conn = await create_connection()
-    response = await roles_query.roles_search_duplicate(conn, request.args.get("name"))
-    conn.close()
+    response = await roles_query.roles_search_duplicate(
+        request.app.config.DB_CONN, request.args.get("name")
+    )
     return json({"exists": bool(response)})
 
 
@@ -168,9 +170,9 @@ async def add_role_admin(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    conn = await create_connection()
-    approver = await fetch_relationships("role_admins", "role_id", role_id).run(conn)
-    conn.close()
+    approver = await fetch_relationships("role_admins", "role_id", role_id).run(
+        request.app.config.DB_CONN
+    )
     batch_list = Role().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -195,9 +197,9 @@ async def add_role_member(request, role_id):
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    conn = await create_connection()
-    approver = await fetch_relationships("role_owners", "role_id", role_id).run(conn)
-    conn.close()
+    approver = await fetch_relationships("role_owners", "role_id", role_id).run(
+        request.app.config.DB_CONN
+    )
     batch_list = Role().member.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -215,10 +217,10 @@ async def add_role_member(request, role_id):
         request.app.config.TIMEOUT,
         request.json.get("tracker") and True,
     )
-    conn = await create_connection()
-    role_resource = await roles_query.fetch_role_resource(conn, role_id)
+    role_resource = await roles_query.fetch_role_resource(
+        request.app.config.DB_CONN, role_id
+    )
     owners = role_resource.get("owners")
-    conn.close()
     requester_id = request.json.get("id")
     if requester_id in owners:
         request.json["status"] = "APPROVED"
@@ -247,9 +249,9 @@ async def add_role_owner(request, role_id):
 
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    conn = await create_connection()
-    approver = await fetch_relationships("role_admins", "role_id", role_id).run(conn)
-    conn.close()
+    approver = await fetch_relationships("role_admins", "role_id", role_id).run(
+        request.app.config.DB_CONN
+    )
     batch_list = Role().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -274,11 +276,9 @@ async def add_role_task(request, role_id):
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    conn = await create_connection()
     approver = await fetch_relationships(
         "task_owners", "task_id", request.json.get("id")
-    ).run(conn)
-    conn.close()
+    ).run(request.app.config.DB_CONN)
     batch_list = Role().task.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,

@@ -20,7 +20,7 @@ limitations under the License.
   --avatar-count: white;
   --browse-bg-color: #273544;
   --browse-text-color: rgba(255, 255, 255, 0.5);
-  --chat-approver-bg-color: #ebeef2;
+  --chat-approver-bg-color: #abb6c73b;
   --chat-requester-bg-color: #abb6c73b;
   --component-nav-bg: white;
   --contrast-bg: #fbfcfd;
@@ -36,9 +36,11 @@ limitations under the License.
   --nav-heading-color: white;
   --nav-list-color: #778899;
   --nav-list-padding: 22px;
+  --organization-line-color: #cdd4de;
   --page-content-padding: 30px;
   --selection-list-active-color: #9195980f;
   --small-heading-color: #b1b3b3;
   --text-light: white;
+  --text-dark: black;
   --track-header-height: 113px;
 }

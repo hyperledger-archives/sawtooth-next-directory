@@ -24,7 +24,6 @@ from rbac.server.api import utils
 from rbac.server.db import users_query
 from rbac.app.config import CHATBOT_REST_ENDPOINT
 
-from rbac.server.db.db_utils import create_connection
 from rbac.common.logs import get_default_logger
 
 LOGGER = get_default_logger(__name__)
@@ -57,10 +56,8 @@ async def create_response(request, recv):
 async def update_tracker(request, recv):
     """Update the chatbot tracker."""
     if recv.get("approver_id"):
-        LOGGER.info("[Chatbot] %s: Updating tracker approver", recv.get("next_id"))
-        conn = await create_connection()
         owner_resource = await users_query.fetch_user_resource_summary(
-            conn, recv.get("approver_id")
+            request.app.config.DB_CONN, recv.get("approver_id")
         )
         await create_event(
             request, recv.get("next_id"), "approver_name", owner_resource.get("name")

@@ -18,7 +18,6 @@ import rethinkdb as r
 
 from rbac.common.logs import get_default_logger
 
-
 LOGGER = get_default_logger(__name__)
 
 
@@ -37,7 +36,7 @@ def fetch_relationships_by_id(table, identifier, key):
     """Query for relationships by identifier."""
     return (
         r.table(table)
-        .filter(lambda doc: doc["identifiers"].contains(identifier), default=True)
+        .get_all(identifier, index="identifiers")
         .get_field(key)
         .distinct()
         .coerce_to("array")

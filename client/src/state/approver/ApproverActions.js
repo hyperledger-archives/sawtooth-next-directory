@@ -80,6 +80,7 @@ export const INITIAL_STATE = Immutable({
   directReports:              null,
   error:                      null,
   fetching:                   null,
+  fetchingOrganization:       null,
   openProposals:              null,
   organization:               null,
   onBehalfOf:                 null,
