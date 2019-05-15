@@ -27,7 +27,7 @@ from rbac.common.user import User
 from rbac.server.api import utils
 from rbac.server.api.auth import authorized
 from rbac.server.api.errors import ApiBadRequest
-from rbac.server.api.proposals import compile_proposal_resource
+from rbac.server.api.proposals import compile_proposal_resource, PROPOSAL_TRANSACTION
 from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
@@ -35,6 +35,17 @@ from rbac.server.db import users_query
 from rbac.server.db import packs_query
 from rbac.server.db.db_utils import create_connection
 from rbac.common.logs import get_default_logger
+from rbac.common.sawtooth import batcher
+from rbac.server.blockchain_transactions.delete_user_transaction import (
+    create_delete_user_txns,
+)
+from rbac.server.blockchain_transactions.delete_role_owner_transaction import (
+    create_delete_role_owner_txns,
+)
+from rbac.server.blockchain_transactions.delete_role_admin_transaction import (
+    create_delete_role_admin_txns,
+)
+
 
 LOGGER = get_default_logger(__name__)
 AES_KEY = os.getenv("AES_KEY")
@@ -161,21 +172,30 @@ async def get_user(request, next_id):
 @authorized()
 async def delete_user(request, next_id):
     """Delete a specific user by next_id."""
+    txn_list = []
+    txn_key, _ = await utils.get_transactor_key(request)
+    txn_list = await create_delete_role_owner_txns(txn_key, next_id, txn_list)
+    txn_list = await create_delete_role_admin_txns(txn_key, next_id, txn_list)
+    txn_list = create_delete_user_txns(txn_key, next_id, txn_list)
+
+    if txn_list:
+        batch = batcher.make_batch_from_txns(
+            transactions=txn_list, signer_keypair=txn_key
+        )
+    batch_list = batcher.batch_to_list(batch=batch)
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+
+    await reject_users_proposals(next_id, request)
+
     conn = await create_connection()
-
-    head_block = await utils.get_request_block(request)
-    await auth_query.delete_auth_entry_by_next_id(conn, next_id)
-    await users_query.delete_user_mapping_by_next_id(conn, next_id)
-    await roles_query.delete_role_admin_by_next_id(conn, next_id)
     await roles_query.delete_role_member_by_next_id(conn, next_id)
-    await roles_query.delete_role_owner_by_next_id(conn, next_id)
-    await packs_query.delete_pack_owner_by_next_id(conn, next_id)
-    # TODO: We have to remove next_id reference entry from task table.
-    user_resource = await users_query.delete_user_resource(conn, next_id)
-
     conn.close()
 
-    return await utils.create_response(conn, request.url, user_resource, head_block)
+    return json(
+        {"message": "User {} successfully deleted".format(next_id), "deleted": 1}
+    )
 
 
 @USERS_BP.get("api/user/<next_id>/summary")
@@ -334,6 +354,42 @@ async def update_expired_roles(request, next_id):
     await roles_query.expire_role_member(conn, request.json.get("id"), next_id)
     conn.close()
     return json({"role_id": request.json.get("id")})
+
+
+async def reject_users_proposals(next_id, request):
+    """Reject a users open proposals via next_id if they are the opener or assigned_approver
+    Args:
+        next_id:
+            str: a users id
+        request:
+            obj: a request object
+    """
+    # Get all open proposals associated with the user
+    conn = await create_connection()
+    proposals = await proposals_query.fetch_open_proposals_by_user(conn, next_id)
+    conn.close()
+
+    # Update to rejected:
+    txn_key, txn_user_id = await utils.get_transactor_key(request=request)
+    for proposal in proposals:
+        if proposal["opener"] == next_id:
+            reason = "Opener was deleted"
+        else:
+            reason = "Assigned Appover was deleted."
+
+        batch_list = PROPOSAL_TRANSACTION[proposal["proposal_type"]][
+            "REJECTED"
+        ].batch_list(
+            signer_keypair=txn_key,
+            signer_user_id=txn_user_id,
+            proposal_id=proposal["proposal_id"],
+            object_id=proposal["object_id"],
+            related_id=proposal["related_id"],
+            reason=reason,
+        )
+        await utils.send(
+            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+        )
 
 
 def create_user_response(request, next_id):

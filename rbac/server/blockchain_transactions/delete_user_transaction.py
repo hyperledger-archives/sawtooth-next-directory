@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright 2019 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,28 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
-import os
-import sys
-import logging
-
-TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, TOP_DIR)
-
-from rbac.providers.next.inbound_sync import inbound_sync_listener
+""" Common Transaction Creation
+"""
+from rbac.common.user.delete_user import DeleteUser
+from rbac.common.sawtooth import batcher
 
 
-# TODO: import required functions from the next provider module.
-# from rbac.providers.next import <my_function>
-
-LOGGER = logging.getLogger(__name__)
-
-def main():
-    """Worker daemon that pull entries from the inbound queue and puts the required
-    changes in Sawtooth."""
-    inbound_sync_listener()
-    LOGGER.info("Starting NEXT sync listener.")
-
-
-if __name__ == '__main__':
-    main()
+def create_delete_user_txns(txn_key, next_id, txn_list):
+    """Create the delete transactions for user."""
+    user_delete = DeleteUser()
+    message = user_delete.make(signer_keypair=txn_key, next_id=next_id)
+    payload = user_delete.make_payload(
+        message=message, signer_keypair=txn_key, signer_user_id=next_id
+    )
+    transaction = batcher.make_transaction(payload=payload, signer_keypair=txn_key)
+    txn_list.extend([transaction])
+    return txn_list

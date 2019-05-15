@@ -19,6 +19,9 @@ from google.protobuf.json_format import MessageToDict
 
 from rbac.common import addresser
 from rbac.common.addresser import AddressSpace
+from rbac.common.logs import get_default_logger
+
+LOGGER = get_default_logger(__name__)
 
 TABLE_NAMES = {
     AddressSpace.USER: "users",

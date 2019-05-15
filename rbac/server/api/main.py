@@ -15,7 +15,6 @@
 """RBAC API Server"""
 
 import asyncio
-from os import getenv
 from signal import signal, SIGINT
 import rethinkdb as r
 
@@ -63,80 +62,7 @@ async def init(app, loop):
         limit=app.config.AIOHTTP_CONN_LIMIT, ttl_dns_cache=app.config.AIOHTTP_DNS_TTL
     )
 
-    session = aiohttp.ClientSession(connector=conn, loop=loop)
-    app.config.HTTP_SESSION = session
-
-    await asyncio.sleep(10)
-
-    LOGGER.warning("Creating default admin user and role.")
-    LOGGER.info("Creating Next Admin user...")
-    created = False
-    admin_user = {
-        "name": getenv("NEXT_ADMIN_NAME"),
-        "username": getenv("NEXT_ADMIN_USER"),
-        "password": getenv("NEXT_ADMIN_PASS"),
-        "email": getenv("NEXT_ADMIN_EMAIL"),
-    }
-    while not created:
-        try:
-            user_response = await session.post(
-                "http://rbac-server:8000/api/users", json=admin_user
-            )
-            assert (
-                user_response.status == 200
-            ), "Non 200 status code returned while attempting to create Next Admin user."
-            created = True
-        except (AssertionError, r.errors.ReqlOpFailedError):
-            created = False
-            await asyncio.sleep(3)
-    user_response_json = await user_response.json()
-    user_next_id = user_response_json["data"]["user"]["id"]
-
-    LOGGER.info("Creating NextAdmin role...")
-    created = False
-    admin_role = {
-        "name": "NextAdmins",
-        "owners": user_next_id,
-        "administrators": user_next_id,
-    }
-    while not created:
-        try:
-            role_response = await session.post(
-                "http://rbac-server:8000/api/roles", json=admin_role
-            )
-            assert (
-                role_response.status == 200
-            ), "Non 200 status code returned while attempting to create NextAdmins role."
-            created = True
-        except (AssertionError, r.errors.ReqlOpFailedError):
-            created = False
-            await asyncio.sleep(3)
-    role_response_json = await role_response.json()
-    role_next_id = role_response_json["data"]["id"]
-
-    LOGGER.info("Adding Next Admin to NextAdmins role...")
-    created = False
-    while not created:
-        try:
-            add_user = {
-                "pack_id": None,
-                "id": user_next_id,
-                "reason": None,
-                "metadata": None,
-            }
-            add_role_member_response = await session.post(
-                ("http://rbac-server:8000/api/roles/{}/members".format(role_next_id)),
-                json=add_user,
-            )
-            assert (
-                add_role_member_response.status == 200
-            ), "Non 200 status code returned while attempting add Next Admin user as member of NextAdmins role."
-            created = True
-        except AssertionError:
-            created = False
-            await asyncio.sleep(3)
-
-    LOGGER.info("Next Admin account and role creation complete!")
+    app.config.HTTP_SESSION = aiohttp.ClientSession(connector=conn, loop=loop)
 
 
 def finish(app):

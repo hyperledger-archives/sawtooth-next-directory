@@ -15,15 +15,28 @@
 """Validating User Account Creation API Endpoint Test"""
 import time
 import requests
+
 import rethinkdb as r
+
 from rbac.providers.common.db_queries import connect_to_db
-from tests.utilities import (
-    create_test_user,
-    delete_user_by_username,
-    insert_user,
-    get_proposal_with_retry,
-)
 from tests.rbac.api.assertions import assert_api_success
+from tests.utilities import (
+    add_role_member,
+    check_user_is_pack_owner,
+    create_test_role,
+    create_test_pack,
+    create_test_user,
+    delete_role_by_name,
+    delete_pack_by_name,
+    delete_user_by_username,
+    get_auth_entry,
+    get_deleted_user_entries,
+    get_pack_owners_by_user,
+    get_proposal_with_retry,
+    get_user_mapping_entry,
+    get_user_metadata_entry,
+    insert_user,
+)
 
 
 def test_valid_unique_username():
@@ -116,40 +129,6 @@ def test_create_new_user_api():
         assert user_details_response.json()["data"]["manager"] == manager_id
 
 
-def test_delete_user_by_next_id():
-    """Test that a user can be deleted by next_id."""
-    user_input = {
-        "name": "Sri Nuthal",
-        "username": "nuthalapati1",
-        "password": "123456",
-        "email": "sri@gmail.com",
-    }
-    expected = {"deleted": 1}
-    with requests.Session() as session:
-        response = session.post("http://rbac-server:8000/api/users", json=user_input)
-        next_id = response.json()["data"]["user"]["id"]
-        # Wait 3 seconds till blockchain process add user.
-        time.sleep(3)
-        del_res = session.delete("http://rbac-server:8000/api/users/" + next_id)
-        assert del_res.json()["data"]["deleted"] == expected["deleted"]
-
-
-def test_invalid_user_del():
-    """Test that a user can't be deleted by invalid next_id."""
-    user_input = {
-        "name": "Sri Nuthal",
-        "username": "nuthalapati1",
-        "password": "123456",
-        "email": "sri@gmail.com",
-    }
-    expected = {"deleted": 0}
-    with requests.Session() as session:
-        response = session.post("http://rbac-server:8000/api/users", json=user_input)
-        next_id = "e0096e79-2f3d-4e9a-b932-39992d628e76"
-        del_res = session.delete("http://rbac-server:8000/api/users/" + next_id)
-        assert del_res.json()["data"]["deleted"] == expected["deleted"]
-
-
 def test_update_manager():
     """ Creates a user and then updates their manager
 
@@ -212,3 +191,174 @@ def test_user_relationship_api():
         )
         assert response.json()["data"]["managers"] == []
         delete_user_by_username("kkumar36")
+
+
+def test_user_delete_api():
+    """Test that user has been removed from database when users delete api is hit"""
+    user = {
+        "name": "nadia one",
+        "username": "nadia1",
+        "password": "test11",
+        "email": "nadia123@test.com",
+    }
+    pack = {
+        "name": "michael pack one",
+        "roles": [],
+        "description": "Michael's test pack",
+    }
+    with requests.Session() as session:
+        response = create_test_user(session, user)
+        next_id = response.json()["data"]["user"]["id"]
+        role_payload = {
+            "name": "test_role",
+            "owners": [next_id],
+            "administrators": [next_id],
+            "description": "This is a test Role",
+        }
+        role_resp = create_test_role(session, role_payload)
+
+        pack = {
+            "name": "michael pack one",
+            "owners": [next_id],
+            "roles": [],
+            "description": "Michael's test pack",
+        }
+        pack_response = create_test_pack(session, pack)
+
+        conn = connect_to_db()
+        user_exists = (
+            r.db("rbac")
+            .table("users")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+
+        role_owner_exists = (
+            r.table("role_owners")
+            .filter(
+                {"identifiers": [next_id], "role_id": role_resp.json()["data"]["id"]}
+            )
+            .coerce_to("array")
+            .run(conn)
+        )
+
+        assert role_owner_exists
+        assert user_exists
+        assert get_user_mapping_entry(next_id)
+        assert get_auth_entry(next_id)
+        assert get_user_metadata_entry(next_id)
+        assert check_user_is_pack_owner(
+            pack_id=pack_response.json()["data"]["id"], next_id=next_id
+        )
+
+        role_admin_is_user = (
+            r.db("rbac")
+            .table("role_admins")
+            .filter({"related_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        role_admin = role_admin_is_user[0]["identifiers"][0]
+        assert role_admin == next_id
+
+        deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
+        time.sleep(3)
+        assert deletion.json() == {
+            "message": "User {} successfully deleted".format(next_id),
+            "deleted": 1,
+        }
+
+        role_admin_user = (
+            r.db("rbac")
+            .table("role_admins")
+            .filter({"related_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+
+        role_owners = (
+            r.db("rbac")
+            .table("role_owners")
+            .filter(lambda doc: doc["identifiers"].contains(next_id))
+            .coerce_to("array")
+            .run(conn)
+        )
+        delete_role_by_name("test_role")
+        conn.close()
+
+        assert role_admin_user == []
+        assert role_owners == []
+        assert get_deleted_user_entries(next_id) == []
+        assert get_pack_owners_by_user(next_id) == []
+
+        delete_pack_by_name("michael pack one")
+
+
+def test_reject_users_proposals():
+    """Test that a user's proposals are rejected when they are deleted."""
+    user_to_delete = {
+        "name": "nadia two",
+        "username": "nadia2",
+        "password": "test11",
+        "email": "nadia2@test.com",
+    }
+
+    user = {
+        "name": "nadia three",
+        "username": "nadia3",
+        "password": "test11",
+        "email": "nadia3@test.com",
+    }
+    with requests.Session() as session:
+        response1 = create_test_user(session, user_to_delete)
+        response2 = create_test_user(session, user)
+        role_payload_1 = {
+            "name": "NadiaRole1",
+            "owners": response1.json()["data"]["user"]["id"],
+            "administrators": response1.json()["data"]["user"]["id"],
+            "description": "Nadia Role 1",
+        }
+
+        role_response1 = create_test_role(session, role_payload_1)
+        proposal_1 = add_role_member(
+            session,
+            role_response1.json()["data"]["id"],
+            {"id": response2.json()["data"]["user"]["id"]},
+        )
+        next_id = response1.json()["data"]["user"]["id"]
+        conn = connect_to_db()
+        user_exists = (
+            r.db("rbac")
+            .table("users")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        assert user_exists
+
+        deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
+        time.sleep(5)
+        assert deletion.json() == {
+            "message": "User {} successfully deleted".format(next_id),
+            "deleted": 1,
+        }
+
+        user_exists = (
+            r.db("rbac")
+            .table("users")
+            .filter({"next_id": next_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+        assert not user_exists
+
+        proposal_1_result = (
+            r.db("rbac")
+            .table("proposals")
+            .filter({"proposal_id": proposal_1.json()["proposal_id"]})
+            .coerce_to("array")
+            .run(conn)
+        )
+        conn.close()
+        assert proposal_1_result[0]["status"] == "REJECTED"
