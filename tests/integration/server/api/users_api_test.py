@@ -426,3 +426,47 @@ async def test_check_admin_status():
 
         assert admin
         assert not non_admin
+
+
+def test_update_user_password():
+    """Test that an admin user can change a user's password."""
+    user = {
+        "name": "nadia five",
+        "username": "nadia5",
+        "password": "test11",
+        "email": "nadia5@test.com",
+    }
+    with requests.Session() as session:
+        created_user = create_test_user(session, user)
+        login_inputs = {"id": "admin_nadia", "password": "test11"}
+        session.post("http://rbac-server:8000/api/authorization/", json=login_inputs)
+
+        payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "password": "password1",
+        }
+        password_response = session.put(
+            "http://rbac-server:8000/api/users/password", json=payload
+        )
+        assert password_response.status_code == 200
+        assert password_response.json() == {"message": "Password successfully updated"}
+        session.close()
+
+    with requests.Session() as session2:
+        login_inputs = {"id": "nadia5", "password": "password1"}
+        response = session2.post(
+            "http://rbac-server:8000/api/authorization/", json=login_inputs
+        )
+        assert response.status_code == 200
+
+        payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "password": "test3",
+        }
+        password_response = session2.put(
+            "http://rbac-server:8000/api/users/password", json=payload
+        )
+        assert password_response.status_code == 400
+        assert (
+            password_response.json()["message"] == "You are not a NEXT Administrator."
+        )

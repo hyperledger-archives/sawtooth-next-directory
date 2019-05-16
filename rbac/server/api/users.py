@@ -32,6 +32,7 @@ from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
+from rbac.server.db.db_utils import create_connection
 
 from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth import batcher
@@ -260,6 +261,35 @@ async def update_manager(request, next_id):
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     return json({"proposal_id": proposal_id})
+
+
+@USERS_BP.put("api/users/password")
+@authorized()
+async def update_password(request):
+    """Update a user's password.  The request must come from an admin.
+    Args:
+        request:
+            obj: a request object
+    """
+    env = Env()
+    next_enabled = env.int("ENABLE_NEXT_BASE_USE", 0)
+    if not next_enabled:
+        raise ApiBadRequest("This capability is not enabled for this mode.")
+    required_fields = ["next_id", "password"]
+    utils.validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    is_admin = await utils.check_admin_status(txn_user_id)
+    if not is_admin:
+        raise ApiBadRequest("You are not a NEXT Administrator.")
+    hashed_pwd = hashlib.sha256(
+        request.json.get("password").encode("utf-8")
+    ).hexdigest()
+    conn = await create_connection()
+    await users_query.update_user_password(
+        conn, request.json.get("next_id"), hashed_pwd
+    )
+    conn.close()
+    return json({"message": "Password successfully updated"})
 
 
 @USERS_BP.get("api/users/<next_id>/proposals/open")

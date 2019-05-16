@@ -374,3 +374,23 @@ async def users_search_duplicate(conn, username):
         .run(conn)
     )
     return resource
+
+
+async def update_user_password(conn, next_id, password):
+    """Update a user's password by next_id
+    Args:
+        conn:
+            obj: database connection object.
+        next_id:
+            str: Id of a user to have password changed
+        password:
+            str: hashed string of password
+    """
+    resource = (
+        await r.table("auth")
+        .filter({"next_id": next_id})
+        .update({"hashed_password": password})
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resource
