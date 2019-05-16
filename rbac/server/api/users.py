@@ -35,14 +35,11 @@ from rbac.server.db import users_query
 
 from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth import batcher
-from rbac.server.blockchain_transactions.delete_user_transaction import (
-    create_delete_user_txns,
-)
-from rbac.server.blockchain_transactions.delete_role_owner_transaction import (
+from rbac.server.blockchain_transactions.user_transaction import create_delete_user_txns
+from rbac.server.blockchain_transactions.role_transaction import (
     create_delete_role_owner_txns,
-)
-from rbac.server.blockchain_transactions.delete_role_admin_transaction import (
     create_delete_role_admin_txns,
+    create_delete_role_member_txns,
 )
 
 
@@ -181,6 +178,7 @@ async def delete_user(request, next_id):
     txn_key, _ = await utils.get_transactor_key(request)
     txn_list = await create_delete_role_owner_txns(txn_key, next_id, txn_list)
     txn_list = await create_delete_role_admin_txns(txn_key, next_id, txn_list)
+    txn_list = await create_delete_role_member_txns(txn_key, next_id, txn_list)
     txn_list = create_delete_user_txns(txn_key, next_id, txn_list)
 
     if txn_list:
@@ -193,7 +191,6 @@ async def delete_user(request, next_id):
     )
 
     await reject_users_proposals(next_id, request)
-    await roles_query.delete_role_member_by_next_id(request.app.config.DB_CONN, next_id)
 
     return json(
         {"message": "User {} successfully deleted".format(next_id), "deleted": 1}

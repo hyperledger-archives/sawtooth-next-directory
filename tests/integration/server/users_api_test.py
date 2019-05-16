@@ -219,6 +219,7 @@ def test_user_delete_api():
             "description": "This is a test Role",
         }
         role_resp = create_test_role(session, role_payload)
+        role_id = role_resp.json()["data"]["id"]
 
         pack = {
             "name": "michael pack one",
@@ -227,6 +228,14 @@ def test_user_delete_api():
             "description": "Michael's test pack",
         }
         pack_response = create_test_pack(session, pack)
+
+        add_role_member_payload = {
+            "id": next_id,
+            "reason": "Integration test of adding a member.",
+            "metadata": "",
+        }
+
+        add_role_member(session, role_id, add_role_member_payload)
 
         conn = connect_to_db()
         user_exists = (
@@ -239,15 +248,21 @@ def test_user_delete_api():
 
         role_owner_exists = (
             r.table("role_owners")
-            .filter(
-                {"identifiers": [next_id], "role_id": role_resp.json()["data"]["id"]}
-            )
+            .filter({"identifiers": [next_id], "role_id": role_id})
             .coerce_to("array")
             .run(conn)
         )
 
-        assert role_owner_exists
+        role_member_exists = (
+            r.table("role_members")
+            .filter({"identifiers": [next_id], "role_id": role_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+
         assert user_exists
+        assert role_owner_exists
+        assert role_member_exists
         assert get_user_mapping_entry(next_id)
         assert get_auth_entry(next_id)
         assert get_user_metadata_entry(next_id)
@@ -287,10 +302,19 @@ def test_user_delete_api():
             .coerce_to("array")
             .run(conn)
         )
+
+        role_members = (
+            r.db("rbac")
+            .table("role_members")
+            .filter(lambda doc: doc["identifiers"].contains(next_id))
+            .coerce_to("array")
+            .run(conn)
+        )
         delete_role_by_name("test_role")
         conn.close()
 
         assert role_admin_user == []
+        assert role_members == []
         assert role_owners == []
         assert get_deleted_user_entries(next_id) == []
         assert get_pack_owners_by_user(next_id) == []
