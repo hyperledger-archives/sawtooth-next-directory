@@ -46,7 +46,11 @@ def process(rec, conn):
         batch = batch_pb2.Batch()
         batch.ParseFromString(rec["batch"])
         batch_list = batch_to_list(batch=batch)
-        status = ClientSync().send_batches_get_status(batch_list=batch_list)
+        client = ClientSync()
+        status = client.send_batches_get_status(batch_list=batch_list)
+        while status[0]["status"] == "PENDING":
+            LOGGER.info("Batch status is %s", status)
+            status = client.status_recheck(batch_list)
         if status[0]["status"] == "COMMITTED":
             if rec["data_type"] == "user":
                 insert_to_user_mapping(rec)
