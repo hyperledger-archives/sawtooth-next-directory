@@ -18,6 +18,7 @@ clang==6.0
 pycodestyle==2.4.0
 pipreqs==0.4.9
 pytest==3.8.2
+pytest-asyncio==0.10.0
 pytest-cov==2.6.0
 pytest-env==0.6.2
 grpcio-tools==1.15.0

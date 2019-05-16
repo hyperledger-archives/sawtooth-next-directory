@@ -15,10 +15,12 @@
 """Validating User Account Creation API Endpoint Test"""
 import time
 import requests
+import pytest
 
 import rethinkdb as r
 
 from rbac.providers.common.db_queries import connect_to_db
+from rbac.server.api.utils import check_admin_status
 from tests.rbac.api.assertions import assert_api_success
 from tests.utilities import (
     add_role_member,
@@ -362,3 +364,40 @@ def test_reject_users_proposals():
         )
         conn.close()
         assert proposal_1_result[0]["status"] == "REJECTED"
+
+
+@pytest.mark.asyncio
+async def test_check_admin_status():
+    """Test that checking a users admin status returns the correct boolean."""
+    admin_user = {
+        "name": "admin nadia",
+        "username": "admin_nadia",
+        "password": "test11",
+        "email": "admin_nadia@test.com",
+    }
+
+    user = {
+        "name": "nadia four",
+        "username": "nadia4",
+        "password": "test11",
+        "email": "nadia4@test.com",
+    }
+    with requests.Session() as session:
+        non_admin_response = create_test_user(session, user)
+        admin_response = create_test_user(session, admin_user)
+        admin_id = admin_response.json()["data"]["user"]["id"]
+        non_admin_id = non_admin_response.json()["data"]["user"]["id"]
+
+        next_admins = {
+            "name": "NextAdmins",
+            "owners": admin_id,
+            "administrators": admin_id,
+        }
+        role_response = create_test_role(session, next_admins)
+        add_role_member(session, role_response.json()["data"]["id"], {"id": admin_id})
+
+        admin = await check_admin_status(admin_id)
+        non_admin = await check_admin_status(non_admin_id)
+
+        assert admin
+        assert not non_admin

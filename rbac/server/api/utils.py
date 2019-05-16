@@ -16,18 +16,19 @@
 
 import binascii
 import rethinkdb as r
-from sanic.response import json
 
+from sanic.response import json
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import validator_pb2
 
+from rbac.common.crypto.keys import Key
+from rbac.common.crypto.secrets import decrypt_private_key, deserialize_api_key
 from rbac.common.logs import get_default_logger
-from rbac.common.crypto.secrets import decrypt_private_key
-from rbac.common.crypto.secrets import deserialize_api_key
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthorized
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
-from rbac.common.crypto.keys import Key
+from rbac.server.db.db_utils import create_connection
+from rbac.server.db.roles_query import get_role_by_name, get_role_membership
 
 LOGGER = get_default_logger(__name__)
 
@@ -253,3 +254,22 @@ async def send(conn, batch_list, timeout, webhook=False):
         elif status == client_batch_submit_pb2.ClientBatchStatus.UNKNOWN:
             raise ApiInternalError("Internal Error: Unspecified error.")
     return status
+
+
+async def check_admin_status(next_id):
+    """Verfiy that a user is a member of NEXT admins.  Return boolean.
+    Args:
+        next_id:
+            str: user's next_id
+    """
+    conn = await create_connection()
+    admin_role = await get_role_by_name(conn, "NextAdmins")
+    if not admin_role:
+        raise ApiBadRequest("NEXT administrator group has not been created.")
+    admin_membership = await get_role_membership(
+        conn, next_id, admin_role[0]["role_id"]
+    )
+    conn.close()
+    if admin_membership:
+        return True
+    return False

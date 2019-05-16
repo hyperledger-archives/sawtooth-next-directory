@@ -100,6 +100,35 @@ async def fetch_role_resource(conn, role_id):
         raise ApiNotFound("Role {} doesn't exist.".format(role_id))
 
 
+async def get_role_by_name(conn, name):
+    """Fetch a role by name
+    Args:
+        conn:
+            obj: database connection object
+        name:
+            str: name of role
+    """
+    return await r.table("roles").filter({"name": name}).coerce_to("array").run(conn)
+
+
+async def get_role_membership(conn, next_id, role_id):
+    """Get the role membership of a specific user for a specific role
+    Args:
+        conn:
+            obj: database connection object
+        next_id:
+            str: id of the user
+        role_id:
+            str: if of the role
+    """
+    return (
+        await r.table("role_members")
+        .filter({"role_id": role_id, "related_id": next_id})
+        .coerce_to("array")
+        .run(conn)
+    )
+
+
 async def expire_role_member(conn, role_id, next_id):
     """Expire role membership of given user"""
     return (
