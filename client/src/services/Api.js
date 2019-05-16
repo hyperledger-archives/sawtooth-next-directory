@@ -114,6 +114,7 @@ const create = (baseURL =
   const getUsers = (start, limit) => api.get('users', { start, limit });
   const getUserSummary = (id) => api.get(`user/${id}/summary`);
   const packExists = (name) => api.get('packs/check', { name });
+  const userExists = (name) => api.get('users/check', { name });
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const roleExists = (name) => api.get('roles/check', { name });
@@ -155,6 +156,7 @@ const create = (baseURL =
     getUserSummary,
     me,
     packExists,
+    userExists,
     requestPackAccess,
     requestRoleAccess,
     roleExists,

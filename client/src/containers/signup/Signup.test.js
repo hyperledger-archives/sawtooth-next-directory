@@ -48,12 +48,19 @@ describe('signup component', () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
+    const props = {
+      recommended: [{ name: 'abc' }],
+      isAuthenticated: true,
+      history: {
+        location: { pathname: '' },
+        push: () => {},
+      },
+    };
     ReactDOM.render(
-      <BrowserRouter>
-        <Signup {...props} store={store}/>
-      </BrowserRouter>, div
+      <Provider store={store}>
+        <Signup {...props}/>
+      </Provider>, div
     );
-
     ReactDOM.unmountComponentAtNode(div);
   });
 

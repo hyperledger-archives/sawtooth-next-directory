@@ -19,10 +19,13 @@ import {
   Container,
   Form,
   Label,
+  Icon,
   Input,
   Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
+import { AuthActions, AuthSelectors } from 'state';
+import * as utils from 'services/Utils';
 
 /**
  *
@@ -33,7 +36,10 @@ import PropTypes from 'prop-types';
 class SignupForm extends Component {
 
   static propTypes = {
-    submit: PropTypes.func.isRequired,
+    checkUserExists: PropTypes.func,
+    resetUserExists: PropTypes.func,
+    submit: PropTypes.func,
+    userExists: PropTypes.bool,
   };
 
 
@@ -47,8 +53,20 @@ class SignupForm extends Component {
     validEmail:     null,
     validUsername:  null,
     validPassword:  null,
+    errorDisplay: true,
   };
 
+
+  /**
+   * Called whenever Redux state changes. Set password field
+   * focus manually after transition.
+   * @param {object} prevProps Props before update
+   * @param {object} prevState State before update
+   */
+  componentDidMount () {
+    const { resetUserExists } = this.props;
+    resetUserExists();
+  }
 
   /**
    * Called whenever Redux state changes. Set password field
@@ -62,7 +80,6 @@ class SignupForm extends Component {
       setTimeout(() => this.passwordRef.focus(), 300);
   }
 
-
   /**
    * Handle form change event
    * @param {object} event Event passed by Semantic UI
@@ -75,6 +92,19 @@ class SignupForm extends Component {
     this.validate(name, value);
   }
 
+  /**
+   * Handle form change event
+   * @param {object} event Event passed by Semantic UI
+   * @param {string} name  Name of form element derived from
+   *                       HTML attribute 'name'
+   * @param {string} value Value of form field
+   */
+  usernameChange = (event, { name, value }) => {
+    this.setState({ [name]: value });
+    this.validate(name, value);
+    this.setState({ errorDisplay: false});
+  }
+
 
   /**
    * Set current view based on index
@@ -82,6 +112,15 @@ class SignupForm extends Component {
    */
   setFlow = (index) => {
     this.setState({ activeIndex: index });
+  }
+
+  handleBlur = () => {
+    const { checkUserExists } = this.props;
+    const { name } = this.state;
+    !utils.isWhitespace(name) && checkUserExists(name);
+    setTimeout(() => {
+      this.setState({ errorDisplay: true});
+    }, 100);
   }
 
 
@@ -108,7 +147,7 @@ class SignupForm extends Component {
    * @returns {JSX}
    */
   render () {
-    const { submit } = this.props;
+    const { submit, userExists} = this.props;
     const {
       activeIndex,
       name,
@@ -118,6 +157,7 @@ class SignupForm extends Component {
       validName,
       validEmail,
       validUsername,
+      errorDisplay,
       validPassword } = this.state;
 
     const hide = 0;
@@ -140,7 +180,15 @@ class SignupForm extends Component {
                   name='name'
                   type='text'
                   value={name}
-                  onChange={this.handleChange}/>
+                  onBlur={this.handleBlur}
+                  onChange={this.usernameChange}/>
+                { userExists && errorDisplay &&
+                  <Label
+                    id='next-signup-username-error'>
+                    <Icon name='exclamation circle'/>
+                      This username already exists.
+                  </Label>
+                }
 
                 {!validName &&
                 <Label className='next-name-signup-hint'>
@@ -177,7 +225,8 @@ class SignupForm extends Component {
               <Container textAlign='center'>
                 <Form.Button
                   content='Next'
-                  disabled={!validName || !validEmail || !validUsername}
+                  disabled={!validName || !validEmail || !validUsername
+                    || userExists}
                   icon='right arrow'
                   labelPosition='right'/>
               </Container>
@@ -229,4 +278,19 @@ class SignupForm extends Component {
 }
 
 
-export default SignupForm;
+const mapStateToProps = (state) => {
+  return {
+    userExists: AuthSelectors.userExists(state),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    checkUserExists: (name) =>
+      dispatch(AuthActions.userExistsRequest(name)),
+    resetUserExists: (name) => dispatch(AuthActions.resetUserExists()),
+  };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignupForm);

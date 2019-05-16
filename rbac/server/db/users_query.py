@@ -362,3 +362,15 @@ def fetch_username_match_count(conn, username):
         .run(conn)
     )
     return resource
+
+
+async def users_search_duplicate(conn, username):
+    """Check if a given username is taken based on a string in the name field."""
+    resource = (
+        await r.table("users")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
+        .order_by("username")
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resource

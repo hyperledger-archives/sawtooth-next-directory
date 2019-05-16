@@ -86,3 +86,22 @@ export function * logout (api, action) {
     console.error(err);
   }
 }
+
+
+/**
+ * Check if a role with given name exists
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * checkUserExists (api, action) {
+  try {
+    const { name } = action;
+    const res = yield call(api.userExists, name);
+    res.ok ?
+      yield put(AuthActions.userExistsSuccess(res.data.exists)) :
+      yield put(AuthActions.userExistsFailure(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}

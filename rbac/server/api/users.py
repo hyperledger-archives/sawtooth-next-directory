@@ -436,3 +436,12 @@ def create_user_response(request, next_id):
     return utils.create_authorization_response(
         token, {"message": "Authorization successful", "user": user_resource}
     )
+
+
+@USERS_BP.get("api/users/check")
+async def check_user_name(request):
+    """Check if a user exists with provided username."""
+    response = await users_query.users_search_duplicate(
+        request.app.config.DB_CONN, request.args.get("name")
+    )
+    return json({"exists": bool(response)})

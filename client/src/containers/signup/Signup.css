@@ -54,3 +54,11 @@ limitations under the License.
 .next-name-signup-hint {
   color: var(--text-light) !important;
 }
+
+#next-signup-username-error {
+  color: white;
+  border: none;
+  position: absolute;
+  display: inline-table;
+  top: 6px;
+}
