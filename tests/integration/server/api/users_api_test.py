@@ -281,7 +281,7 @@ def test_user_delete_api():
         assert role_admin == next_id
 
         deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
-        time.sleep(3)
+        time.sleep(5)
         assert deletion.json() == {
             "message": "User {} successfully deleted".format(next_id),
             "deleted": 1,
