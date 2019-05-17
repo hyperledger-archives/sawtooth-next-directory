@@ -41,6 +41,17 @@ def add_role_member(session, role_id, payload):
     return response
 
 
+def approve_proposal(session, proposal_id):
+    """Create a role and authenticate to use api endpoints during testing."""
+    proposal_payload = {"status": "APPROVED", "reason": "Approved by integration test"}
+    response = session.patch(
+        "http://rbac-server:8000/api/proposals/{}".format(proposal_id),
+        json=proposal_payload,
+    )
+    sleep(3)
+    return response
+
+
 def create_test_role(session, role_payload):
     """Create a role and authenticate to use api endpoints during testing."""
     response = session.post("http://rbac-server:8000/api/roles", json=role_payload)
@@ -136,6 +147,13 @@ def insert_user(user_data):
     conn = connect_to_db()
     r.table("users").insert(user_data).run(conn)
     conn.close()
+
+
+def get_outbound_queue_depth():
+    """Returns the number of items in the outbound queue."""
+    with connect_to_db() as db_connection:
+        result = r.table("outbound_queue").count().run(db_connection)
+        return result
 
 
 def get_proposal_with_retry(session, proposal_id):

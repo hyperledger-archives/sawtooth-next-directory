@@ -14,14 +14,74 @@
 # -----------------------------------------------------------------------------
 """ Syncs the blockchain state to RethinkDB
 """
+import os
 import sys
 import rethinkdb as r
 from rbac.common import addresser
 from rbac.common.util import bytes_from_hex
 from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
 from rbac.common.logs import get_default_logger
+from rbac.common.addresser import AddressSpace
+from rbac.server.db.relationships_query import fetch_relationships
+from rbac.server.db.relationships_query import fetch_relationships_by_id
 
+
+LDAP_DC = os.getenv("LDAP_DC")
+GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
 LOGGER = get_default_logger(__name__)
+
+
+def get_role(conn, role_id):
+    """Get a role resource by role_id."""
+    resource = (
+        r.table("roles")
+        .get_all(role_id, index="role_id")
+        .merge(
+            {
+                "id": r.row["role_id"],
+                "owners": fetch_relationships("role_owners", "role_id", role_id),
+                "administrators": fetch_relationships(
+                    "role_admins", "role_id", role_id
+                ),
+                "members": fetch_relationships("role_members", "role_id", role_id),
+                "metadata": r.row["metadata"],
+            }
+        )
+        .without("role_id")
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resource
+
+
+def get_user(conn, next_id):
+    """Database query to get data on an individual user."""
+    resource = (
+        r.table("users")
+        .get_all(next_id, index="next_id")
+        .merge(
+            {
+                "id": r.row["next_id"],
+                "remote_id": r.row["remote_id"],
+                "name": r.row["name"],
+                "email": r.row["email"],
+                "username": r.row["username"],
+                "metadata": r.row["metadata"],
+                "memberOf": fetch_relationships_by_id(
+                    "role_members", next_id, "role_id"
+                ),
+            }
+        )
+        .map(
+            lambda user: (user["manager_id"] != "").branch(
+                user.merge({"manager": user["manager_id"]}), user
+            )
+        )
+        .without("next_id", "start_block_num", "end_block_num")
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resource
 
 
 def get_updater(conn, block_num):
@@ -144,6 +204,58 @@ def _update_legacy(conn, block_num, address, resource, data_type):
         LOGGER.warning(err)
 
 
+def _update_provider(conn, address_type, resource):
+    """Places updated object on the provider outbound queue.
+
+    Gets the full details of the updated resource, adds it to the outbound
+    queue, where provider sync (ldap/azure) will pop the resource from the
+    queue & update the provider as needed.
+
+    Args:
+        conn: A rethinkDB connection
+        address_type: The type of the address
+        resource: The resource data
+    """
+    outbound_types = {
+        AddressSpace.USER: "user",
+        AddressSpace.ROLES_ATTRIBUTES: "role",
+        AddressSpace.ROLES_MEMBERS: "role",
+        AddressSpace.ROLES_OWNERS: "role",
+    }
+    if address_type in outbound_types:
+        # Get the object & format it.
+        if outbound_types[address_type] == "user":
+            user = get_user(conn, resource["next_id"])
+            if user:
+                formatted_resource = user[0]
+            else:
+                LOGGER.warning("User not found: %s", resource["next_id"])
+                return
+            data_type = "user"
+        if outbound_types[address_type] == "role":
+            role = get_role(conn, resource["role_id"])
+            if role:
+                formatted_resource = role[0]
+            else:
+                LOGGER.warning("Role not found: %s", resource["role_id"])
+                return
+            data_type = "group"
+        # Insert to outbound queue.
+        direction = formatted_resource["metadata"].get("sync_direction", "")
+        if direction == "OUTBOUND":
+            outbound_entry = {
+                "data": formatted_resource,
+                "data_type": data_type,
+                "sync_type": "delta",
+                "timestamp": r.now(),
+                "provider_id": LDAP_DC,
+            }
+            r.table("outbound_queue").insert(outbound_entry, return_changes=True).run(
+                conn
+            )
+            return
+
+
 def _update(conn, block_num, address, resource):
     """ Handle the update of a given address + resource update
     """
@@ -154,6 +266,7 @@ def _update(conn, block_num, address, resource):
 
     if data_type in TABLE_NAMES:
         _update_legacy(conn, block_num, address, resource, data_type)
+        _update_provider(conn, data_type, resource)
 
 
 def pre_filter(resource):

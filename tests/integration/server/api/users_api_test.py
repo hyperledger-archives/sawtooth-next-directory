@@ -21,9 +21,11 @@ import rethinkdb as r
 
 from rbac.providers.common.db_queries import connect_to_db
 from rbac.server.api.utils import check_admin_status
+from rbac.common.logs import get_default_logger
 from tests.rbac.api.assertions import assert_api_success
 from tests.utilities import (
     add_role_member,
+    approve_proposal,
     check_user_is_pack_owner,
     create_test_role,
     create_test_pack,
@@ -38,7 +40,10 @@ from tests.utilities import (
     get_user_mapping_entry,
     get_user_metadata_entry,
     insert_user,
+    log_in,
 )
+
+LOGGER = get_default_logger(__name__)
 
 
 def test_valid_unique_username():
@@ -168,6 +173,17 @@ def test_update_manager():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user2_id
+        # Logging in as role owner
+        credentials_payload = {
+            "id": user2_payload["username"],
+            "password": user2_payload["password"],
+        }
+        log_in(session, credentials_payload)
+        # Approve proposal as role owner
+        approve_proposal(session, result["proposal_id"])
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        proposal = assert_api_success(proposal_response)
+        assert proposal["data"]["status"] == "CONFIRMED"
         delete_user_by_username("testuser6")
         delete_user_by_username("testuser7")
 

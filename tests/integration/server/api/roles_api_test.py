@@ -17,7 +17,9 @@ import time
 import requests
 import rethinkdb as r
 from rbac.providers.common.db_queries import connect_to_db
+from rbac.common.logs import get_default_logger
 from tests.utilities import (
+    approve_proposal,
     create_test_role,
     create_test_task,
     create_test_user,
@@ -26,8 +28,11 @@ from tests.utilities import (
     delete_task_by_name,
     insert_role,
     get_proposal_with_retry,
+    log_in,
 )
 from tests.rbac.api.assertions import assert_api_success
+
+LOGGER = get_default_logger(__name__)
 
 
 def setup_module():
@@ -268,6 +273,17 @@ def test_add_role_owner():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
+        # Logging in as role owner
+        credentials_payload = {
+            "id": user1_payload["username"],
+            "password": user1_payload["password"],
+        }
+        log_in(session, credentials_payload)
+        # Approve proposal as role owner
+        approve_proposal(session, result["proposal_id"])
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        proposal = assert_api_success(proposal_response)
+        assert proposal["data"]["status"] == "CONFIRMED"
         delete_role_by_name("TestRole0501201902")
         delete_user_by_username("testuser3")
         delete_user_by_username("testuser4")
@@ -319,6 +335,17 @@ def test_add_role_member():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
+        # Logging in as role owner
+        credentials_payload = {
+            "id": user1_payload["username"],
+            "password": user1_payload["password"],
+        }
+        log_in(session, credentials_payload)
+        # Approve proposal as role owner
+        approve_proposal(session, result["proposal_id"])
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        proposal = assert_api_success(proposal_response)
+        assert proposal["data"]["status"] == "CONFIRMED"
         delete_role_by_name("TestRole0501201903")
         delete_user_by_username("testowner")
         delete_user_by_username("testmemeber")
