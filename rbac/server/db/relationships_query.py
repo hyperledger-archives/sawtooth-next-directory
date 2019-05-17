@@ -41,3 +41,34 @@ def fetch_relationships_by_id(table, identifier, key):
         .distinct()
         .coerce_to("array")
     )
+
+
+def fetch_relationship_query(relationship, role_id):
+    """ Returns the role's relationships (admins,members,
+    or owners) RethinkDB query
+    Args:
+        relationship:
+            str: String dictating the role relationship to fetch: admins,
+            owners, or members.
+        role_id:
+            str: UUID4 formatted id of the role.
+    Returns:
+        role_relationships:
+            str: RethinkDB query to fetch the role relationship
+    Raises:
+        ValueError:
+            Raised if relationship parameter does not equal admins,
+            members, or owners
+    """
+    if relationship not in ["admins", "members", "owners"]:
+        raise ValueError(
+            "Invalid relationship passed in. Expected "
+            "admins, members, or owners, but got {}".format(relationship)
+        )
+    relationship_table = "role_" + relationship
+    return (
+        r.table(relationship_table)
+        .filter({"role_id": role_id})
+        .get_field("related_id")
+        .coerce_to("array")
+    )

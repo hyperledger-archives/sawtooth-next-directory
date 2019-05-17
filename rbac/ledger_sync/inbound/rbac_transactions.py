@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-""" LDAP Sawtooth Transaction Creation
+""" Inbound Provider Sawtooth Transaction Creation
 """
 import os
 from uuid import uuid4
@@ -39,6 +39,7 @@ from rbac.server.db.proposals_query import (
     fetch_open_proposals_by_target,
     get_open_proposals_by_approver,
 )
+from rbac.server.db.relationships_query import fetch_relationship_query
 
 LOGGER = get_default_logger(__name__)
 
@@ -105,25 +106,25 @@ def add_transaction(inbound_entry):
                 "roles", data["remote_id"], inbound_entry["provider_id"]
             )
             # Generate Ids
+            role_exists = False
             if next_role:
-                next_id = next_role[0]["role_id"]
+                role_id = next_role[0]["role_id"]
+                role_exists = True
             else:
-                next_id = str(uuid4())
+                role_id = str(uuid4())
 
             inbound_entry = add_sawtooth_prereqs(
-                entry_id=next_id, inbound_entry=inbound_entry, data_type="group"
+                entry_id=role_id, inbound_entry=inbound_entry, data_type="group"
             )
 
-            message = Role().imports.make(
-                signer_keypair=key_pair, role_id=next_id, **data
+            # Create ImportsRole and related transactions
+            import_role_transaction(
+                data=data,
+                inbound_entry=inbound_entry,
+                key_pair=key_pair,
+                role_id=role_id,
+                role_exists=role_exists,
             )
-            batch = Role().imports.batch(
-                signer_keypair=key_pair,
-                signer_user_id=key_pair.public_key,
-                message=message,
-            )
-            inbound_entry["batch"] = batch.SerializeToString()
-            add_metadata(inbound_entry, message)
 
         elif inbound_entry["data_type"] == "user_deleted":
             LOGGER.info(
@@ -157,15 +158,17 @@ def add_transaction(inbound_entry):
                 .coerce_to("array")
                 .run(conn)
             )
+            conn.close()
             if group_in_db:
                 role_delete = DeleteRole()
                 role_id = group_in_db[0]["role_id"]
 
-                role_relationships = fetch_role_relationships(
-                    role_id=role_id, conn=conn
-                )
-                if role_relationships:
-                    data = {**data, **role_relationships}
+                conn = connect_to_db()
+                for relationship in ["admins", "members", "owners"]:
+                    data[relationship] = list(
+                        fetch_relationship_query(relationship, role_id).run(conn)
+                    )
+                conn.close()
 
                 inbound_entry = add_sawtooth_prereqs(
                     entry_id=role_id, inbound_entry=inbound_entry, data_type="group"
@@ -179,7 +182,6 @@ def add_transaction(inbound_entry):
                     message=message,
                 )
                 inbound_entry["batch"] = batch.SerializeToString()
-            conn.close()
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
             "Unable to create transaction for inbound data:\n%s", inbound_entry
@@ -253,31 +255,6 @@ def add_sawtooth_prereqs(entry_id, inbound_entry, data_type):
     inbound_entry["address"] = bytes_from_hex(address)
     inbound_entry["object_id"] = bytes_from_hex(object_id)
     return inbound_entry
-
-
-def fetch_role_relationships(role_id, conn):
-    """ Fetches all admins, members, owners of role_id from
-    RethinkDB tables.
-
-    Args:
-        role_id: UUID4 formatted ID of the role.
-        conn: A RethinkDB connection
-
-    Returns:
-        result: A dict containing a list of all role admins,
-            members, and owners if they do exist in RethinkDB.
-    """
-    result = dict()
-    for relationship in ["admins", "members", "owners"]:
-        table_name = "role_" + relationship
-        relationship_list = list(
-            r.table(table_name)
-            .filter({"role_id": role_id})
-            .get_field("related_id")
-            .run(conn)
-        )
-        result[relationship] = relationship_list
-    return result
 
 
 def delete_role_transaction(inbound_entry, role_in_db, key_pair):
@@ -542,3 +519,85 @@ def create_reject_ppsls_user_txns(key_pair, next_id, txn_list):
             )
             txn_list.extend([transaction])
     return txn_list
+
+
+def import_role_transaction(data, inbound_entry, key_pair, role_id, role_exists=False):
+    """ Creates ImportRole batch and append to inbound_entry
+    Args:
+        data:
+            dict: A dict containing the contents of the imported role
+            Fields that can be included:
+                members: A list of next_ids for the role members
+                owners: A list of next_ids for the role owners
+        inbound_entry:
+            dict: transaction entry from the inbound queue containing one
+            user/group data that was fetched from the integrated provider
+            along with additional information like:
+                provider_id, timestamp, and sync_type.
+        key_pair:
+            obj: public and private keys for Ledger Sync Inbound processor.
+        role_id:
+            str: UUID4 formatted id of the imported role
+        role_exists:
+            bool: Indicates if the imported provider role already
+            exists within RethinkDB - defaults to False.
+    """
+
+    if role_exists:
+        # Add any deleted members or owners to deleted_members or deleted_owners field
+        data["deleted_members"] = get_deleted_relationships(
+            data=data, relationship="members", role_id=role_id
+        )
+        data["deleted_owners"] = get_deleted_relationships(
+            data=data, relationship="owners", role_id=role_id
+        )
+    message = Role().imports.make(signer_keypair=key_pair, role_id=role_id, **data)
+
+    batch = Role().imports.batch(
+        signer_keypair=key_pair, signer_user_id=key_pair.public_key, message=message
+    )
+
+    inbound_entry["batch"] = batch.SerializeToString()
+    add_metadata(inbound_entry, message)
+
+
+def get_deleted_relationships(data, relationship, role_id):
+    """ Checks if any role (owners | members) have been deleted since last sync
+    and return the list of deleted (owners | members).
+        Args:
+            data:
+                dict: A dict containing the contents of the imported role
+                Fields that can be included:
+                    members: A list of next_ids for the role members
+                    owners: A list of next_ids for the role owners
+            relationship:
+                str: Must be value of "members" or "owners"
+            role_id:
+                str: UUID4 formatted id of the imported role
+        Returns:
+            deleted_relationships:
+                list: A list of next_ids for the members/owners that were
+                deleted
+        Raises:
+            ValueError:
+                Raised when relationship parameter does not equal members
+                or owners
+    """
+    if relationship not in ["members", "owners"]:
+        raise ValueError(
+            "Invalid relationship passed in. Expected "
+            "members or owners, but got {}".format(relationship)
+        )
+    imported_relationships = []
+    if relationship in data:
+        imported_relationships = data[relationship]
+
+    conn = connect_to_db()
+    db_relationships = list(fetch_relationship_query(relationship, role_id).run(conn))
+    conn.close()
+
+    deleted_relationships = []
+    for user in db_relationships:
+        if user not in imported_relationships:
+            deleted_relationships.append(user)
+    return deleted_relationships

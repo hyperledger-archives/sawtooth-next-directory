@@ -170,8 +170,9 @@ def _get_group_attributes(common_name, name, owner=""):
         "objectClass": ["top", "group"],
         "whenChanged": datetime.utcnow().replace(tzinfo=timezone.utc),
         "whenCreated": datetime.utcnow().replace(tzinfo=timezone.utc),
-        "managedBy": owner,
     }
+    if owner:
+        group["managedBy"] = owner
     return group
 
 
@@ -686,7 +687,7 @@ def test_add_group_member(ldap_connection, group, user):
                     str: A username of an AD user object.
 
                 given_name:
-                    str: A given name of an AD suer object.
+                    str: A given name of an AD user object.
     """
     user_distinct_name = [
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user["common_name"]
@@ -731,7 +732,7 @@ def test_remove_group_member(ldap_connection, group, user):
                     str: A username of an AD user object.
 
                 given_name:
-                    str: A given name of an AD suer object.
+                    str: A given name of an AD user object.
     """
     user_distinct_name = [
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user["common_name"]
@@ -777,7 +778,7 @@ def test_add_replace_group_owner(ldap_connection, group, user):
                     str: A username of an AD user object.
 
                 given_name:
-                    str: A given name of an AD suer object.
+                    str: A given name of an AD user object.
     """
     group_distinct_name = (
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % group["common_name"]

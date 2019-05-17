@@ -90,6 +90,14 @@ class ImportsRole(BaseMessage):
                 addresser.user.address(u)
                 for u in set(message.admins) | set(message.owners)
             }
+            | {
+                addresser.role.owner.address(message.role_id, o)
+                for o in message.deleted_owners
+            }
+            | {
+                addresser.role.member.address(message.role_id, o)
+                for o in message.deleted_members
+            }
         )
 
         outputs = inputs
@@ -150,4 +158,24 @@ class ImportsRole(BaseMessage):
                 output_state=output_state,
                 created_date=payload.now,
                 expiration_date=expiration_date,
+            )
+
+        # FIXME: Using DeleteRoleMember and DeleteRoleOwner transactions
+        # with ImportsUser does not work currently. As a workaround,
+        # deleted_members and deleted_owners were added to allow us to
+        # remove owner and member addresses from the Sawtooth blockchain
+        # during an LDAP delta sync.
+        for member in message.deleted_members:
+            addresser.role.member.remove_relationship(
+                object_id=object_id,
+                related_id=member,
+                outputs=payload.outputs,
+                output_state=output_state,
+            )
+        for owner in message.deleted_owners:
+            addresser.role.owner.remove_relationship(
+                object_id=object_id,
+                related_id=owner,
+                outputs=payload.outputs,
+                output_state=output_state,
             )
