@@ -188,3 +188,57 @@ async def delete_pack_owner_by_next_id(conn, next_id):
         .delete()
         .run(conn)
     )
+
+
+async def delete_pack_by_id(conn, pack_id):
+    """Delete pack from DB using pack_id
+    Args:
+        conn:
+            object: Connection to rethinkDB
+        pack_id:
+            str: ID of pack to be deleted
+    """
+    resource = (
+        await r.table("packs").filter({"pack_id": pack_id}).delete().run(conn),
+        await r.table("pack_owners").filter({"pack_id": pack_id}).delete().run(conn),
+        await r.table("role_packs")
+        .filter({"identifiers": [pack_id]})
+        .delete()
+        .run(conn),
+    )
+    return resource
+
+
+async def check_pack_by_pack_id(conn, pack_id):
+    """Queries for a pack by its id to see if it exists or not
+    Args:
+        conn:
+            object: Connection to rethinkDB
+        pack_id:
+            str: ID of pack to be queried
+    """
+    pack = (
+        await r.table("packs").filter({"pack_id": pack_id}).coerce_to("array").run(conn)
+    )
+    return pack
+
+
+async def get_pack_owners_by_id(conn, pack_id):
+    """ Queries for owners of a pack by its ID
+    Args:
+        conn:
+            object: Connection to rethinkDB
+        pack_id:
+            str: ID of pack to be queried
+    Returns:
+        owners:
+            array: list of owners/administrators of pack
+    """
+    owner = (
+        await r.table("pack_owners")
+        .filter({"pack_id": pack_id})
+        .get_field("identifiers")
+        .coerce_to("array")
+        .run(conn)
+    )
+    return owner

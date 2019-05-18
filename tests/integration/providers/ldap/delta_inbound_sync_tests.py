@@ -280,7 +280,7 @@ def create_pack_ldap(user, pack_name):
         with requests.Session() as session:
             session.headers.update({"Authorization": token})
             response = create_test_pack(session, pack_data)
-            return response.json()["data"]["id"]
+            return response.json()["data"]["pack_id"]
     raise ValueError("Unsuccessful authentication.")
 
 

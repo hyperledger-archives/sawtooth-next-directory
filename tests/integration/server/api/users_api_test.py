@@ -267,7 +267,7 @@ def test_user_delete_api():
         assert get_auth_entry(next_id)
         assert get_user_metadata_entry(next_id)
         assert check_user_is_pack_owner(
-            pack_id=pack_response.json()["data"]["id"], next_id=next_id
+            pack_id=pack_response.json()["data"]["pack_id"], next_id=next_id
         )
 
         role_admin_is_user = (

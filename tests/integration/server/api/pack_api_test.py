@@ -13,79 +13,220 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Integration tests for pack APIs"""
+
 import requests
-from tests.utilities import (
-    create_test_user,
-    delete_user_by_username,
-    delete_role_by_name,
-    delete_pack_by_name,
-)
+
+from tests.utilities import create_test_user, get_pack_by_pack_id
 
 
-def create_fake_pack(session, user_id, role_id):
-    """Create a new fake pack resource"""
-    pack_resource = {"name": "My Pack", "owners": user_id, "roles": role_id}
-    session.post("http://rbac-server:8000/api/packs", json=pack_resource)
+TEST_USERS = [
+    {
+        "name": "Susan Susanson",
+        "username": "susan21",
+        "password": "123456",
+        "email": "susan@biz.co",
+    },
+    {
+        "name": "Ash Ketcham",
+        "username": "ash123",
+        "password": "passw0rd1",
+        "email": "poke.mon@master.com",
+    },
+    {
+        "name": "Bowser Turtle",
+        "username": "bowser123",
+        "password": "peachismine123",
+        "email": "mario.is@slow.com",
+    },
+    {
+        "name": "Eddie Bravo",
+        "username": "eddieb123",
+        "password": "password12",
+        "email": "eddieb123@test.com",
+    },
+    {
+        "name": "Jon Snow",
+        "username": "jsnow12345",
+        "password": "password12",
+        "email": "jsnow123@test.com",
+    },
+    {
+        "name": "Mario LeMario",
+        "username": "lemario123",
+        "password": "password12",
+        "email": "mariolemario@test.com",
+    },
+]
 
 
-def create_fake_role(session, user_id):
-    """Create a new fake role resource"""
-    role_resource = {"name": "Manager", "owners": user_id, "administrators": user_id}
+TEST_PACKS = [
+    {
+        "name": "   My   Pack    ",
+        "owners": "",
+        "roles": "",
+        "description": "Avengers Pack",
+    },
+    {"name": "My Pack", "owners": "", "roles": "", "description": "Kanto Pack"},
+    {"name": "Gym Badges", "owners": "", "roles": "", "description": "Sinnoh Pack"},
+    {"name": "Castles", "owners": "", "roles": "", "description": "Hiding peach"},
+    {
+        "name": "    Pac    kage  ",
+        "owners": "",
+        "roles": "",
+        "description": "Test Pack 1",
+    },
+    {"name": "Pac kage", "owners": "", "roles": "", "description": "Test Pack 2"},
+    {"name": "Non Admin", "owners": "", "roles": "", "description": "Non admin pack"},
+]
+
+
+TEST_ROLES = [
+    {"name": "Manager", "owners": "", "administrators": ""},
+    {"name": "Pokemon Master", "owners": "", "administrators": ""},
+    {"name": "Turtle", "owners": "", "administrators": ""},
+    {"name": "Architect", "owners": "", "administators": ""},
+    {"name": "Principal", "owners": "", "administrators": ""},
+]
+
+
+def create_fake_pack(session, user_id, role_id, pack_resource):
+    """Create a new fake pack resource
+    Args:
+        session:
+            object: current session to make api calls
+        user_id:
+            str: ID of user to be inserted as owner of pack
+        role_id:
+            str: ID of role to be associated with pack
+        pack_resource:
+            dictionary: In the format of:
+                {
+                    "name": "<NAME OF PACK>",
+                    "owners": "<OWNER OF PACK>",
+                    "roles": "<ROLES ASSOCIATED WITH PACK>",
+                    "description": "<DESCRIPTION OF PACK>"
+                }
+    """
+    pack_resource["owners"] = user_id
+    pack_resource["roles"] = role_id
+    response = session.post("http://rbac-server:8000/api/packs", json=pack_resource)
+    return response
+
+
+def create_fake_role(session, user_id, role_resource):
+    """Create a new fake role resource
+    Args:
+        session:
+            object: current session to make api calls
+        user_id:
+            str: ID of user to be inserted as owner of role
+        role_resource:
+            dictionary: In the format of:
+                {
+                    "name": "<NAME OF ROLE>",
+                    "owners": "<OWNER OF ROLE>",
+                    "administrators": "<ADMINS OF ROLE>",
+                }
+    """
+    role_resource["owners"] = user_id
+    role_resource["administrators"] = user_id
     response = session.post("http://rbac-server:8000/api/roles", json=role_resource)
     return response
 
 
 def test_create_duplicate_pack():
-    """Create a new fake role resource"""
+    """Test duplicate pack creation"""
     with requests.Session() as session:
-        user_payload = {
-            "name": "Susan Susanson",
-            "username": "susan21",
-            "password": "123456",
-            "email": "susan@biz.co",
-        }
-        user_response = create_test_user(session, user_payload)
-        user_id = user_response.json()["data"]["user"]["id"]
-        role_response = create_fake_role(session, user_id)
-        role_id = role_response.json()["data"]["id"]
-        create_fake_pack(session, user_id, role_id)
-        pack_resource = {"name": "My Pack", "owners": user_id, "roles": role_id}
+        user_id = create_test_user(session, TEST_USERS[0]).json()["data"]["user"]["id"]
+        role_id = create_fake_role(session, user_id, TEST_ROLES[0]).json()["data"]["id"]
+
+        create_fake_pack(session, user_id, role_id, TEST_PACKS[0])
+        pack_resource = TEST_PACKS[1]
+        pack_resource["owners"] = user_id
+        pack_resource["roles"] = role_id
         response = session.post("http://rbac-server:8000/api/packs", json=pack_resource)
+
         assert (
             response.json()["message"]
             == "Error: Could not create this pack because the pack name already exists."
         )
         assert response.json()["code"] == 400
-        delete_user_by_username("susan21")
-        delete_role_by_name("Manager")
-        delete_pack_by_name("My Pack")
+
+
+def test_delete_pack():
+    """Testing delete pack API"""
+    with requests.Session() as session:
+        user_id = create_test_user(session, TEST_USERS[1]).json()["data"]["user"]["id"]
+        role_id = create_fake_role(session, user_id, TEST_ROLES[1]).json()["data"]["id"]
+        pack_id = create_fake_pack(session, user_id, role_id, TEST_PACKS[2]).json()[
+            "data"
+        ]["pack_id"]
+        response = session.delete(
+            "http://rbac-server:8000/api/packs/{}".format(pack_id)
+        )
+        assert response.json()["pack_id"] == pack_id
+        assert get_pack_by_pack_id(pack_id) == []
+
+
+def test_delete_nonexistent_pack():
+    """Testing delete pack API with nonexistent pack"""
+    with requests.Session() as session:
+        user_response = create_test_user(session, TEST_USERS[2])
+        pack_id = "123"
+        response = session.delete(
+            "http://rbac-server:8000/api/packs/{}".format(pack_id)
+        )
+
+        assert (
+            response.json()["message"]
+            == "Error: Pack does not currently exist or has already been deleted."
+        )
+        assert response.json()["code"] == 400
+
+
+def test_delete_pack_as_non_admin():
+    """Testing delete pack API with as non-admin"""
+    with requests.Session() as session:
+        user_id_1 = create_test_user(session, TEST_USERS[4]).json()["data"]["user"][
+            "id"
+        ]
+        role_id = create_fake_role(session, user_id_1, TEST_ROLES[4]).json()["data"][
+            "id"
+        ]
+        pack_id = create_fake_pack(session, user_id_1, role_id, TEST_PACKS[6]).json()[
+            "data"
+        ]["pack_id"]
+        user_id = create_test_user(session, TEST_USERS[5]).json()["data"]["user"]["id"]
+        user_payload = {
+            "id": TEST_USERS[5]["username"],
+            "password": TEST_USERS[5]["password"],
+        }
+        session.post("http://rbac-server:8000/api/authorization/", json=user_payload)
+        response = session.delete(
+            "http://rbac-server:8000/api/packs/{}".format(pack_id)
+        )
+
+        assert (
+            response.json()["message"]
+            == "Error: You do not have the authorization to delete this pack."
+        )
+        assert response.json()["code"] == 400
 
 
 def test_duplicate_pack_with_spaces():
-    """Create a new fake role resource with varying spaces in between the name"""
+    """Test creating two pack resources with varying spaces in between the name"""
     with requests.Session() as session:
-        user_payload = {
-            "name": "Susan Susanson",
-            "username": "susan21",
-            "password": "123456",
-            "email": "susan@biz.co",
-        }
-        user_response = create_test_user(session, user_payload)
-        user_id = user_response.json()["data"]["user"]["id"]
-        role_response = create_fake_role(session, user_id)
-        role_id = role_response.json()["data"]["id"]
-        create_fake_pack(session, user_id, role_id)
-        pack_resource = {
-            "name": "   My   Pack    ",
-            "owners": user_id,
-            "roles": role_id,
-        }
+        user_id = create_test_user(session, TEST_USERS[3]).json()["data"]["user"]["id"]
+        role_id = create_fake_role(session, user_id, TEST_ROLES[3]).json()["data"]["id"]
+        create_fake_pack(session, user_id, role_id, TEST_PACKS[4])
+
+        pack_resource = TEST_PACKS[5]
+        pack_resource["owners"] = user_id
+        pack_resource["roles"] = role_id
         response = session.post("http://rbac-server:8000/api/packs", json=pack_resource)
+
         assert (
             response.json()["message"]
             == "Error: Could not create this pack because the pack name already exists."
         )
         assert response.json()["code"] == 400
-        delete_user_by_username("susan21")
-        delete_role_by_name("Manager")
-        delete_pack_by_name("My Pack")

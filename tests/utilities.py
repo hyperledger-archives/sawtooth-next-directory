@@ -226,6 +226,23 @@ def get_role_owners(role_id):
     return role_owners
 
 
+def get_pack_by_pack_id(pack_id):
+    """Returns pack by pack_id
+
+    Args:
+        pack_id:
+            str: pack_id of pack to query
+    """
+    with connect_to_db() as db_connection:
+        pack = (
+            r.table("packs")
+            .filter({"pack_id": pack_id})
+            .coerce_to("array")
+            .run(db_connection)
+        )
+    return pack
+
+
 def get_role(name):
     """Returns a role in rethinkDB via name.
 
@@ -342,10 +359,8 @@ def update_proposal(session, proposal_id, proposal_payload):
     Args:
         session:
             object: current session object
-
         proposal_id:
             str: id of proposal to be updated.
-
         proposal_payload:
             dictionary: in the format of
                 {

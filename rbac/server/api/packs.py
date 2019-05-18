@@ -13,6 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Packs APIs."""
+
 from uuid import uuid4
 
 from sanic import Blueprint
@@ -127,10 +128,40 @@ async def add_pack_role(request, pack_id):
     return json({"roles": request.json.get("roles")})
 
 
+@PACKS_BP.delete("api/packs/<pack_id>")
+@authorized()
+async def delete_pack(request, pack_id):
+    """Delete pack from NEXT
+    Args:
+        request:
+            object: request object
+        pack_id:
+            str: ID of pack to delete
+    """
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
+
+    pack = await packs_query.check_pack_by_pack_id(request.app.config.DB_CONN, pack_id)
+    if not pack:
+        raise ApiBadRequest(
+            "Error: Pack does not currently exist or has already been deleted."
+        )
+    owners = await packs_query.get_pack_owners_by_id(
+        request.app.config.DB_CONN, pack_id
+    )
+    if txn_user_id not in owners or not utils.check_admin_status(txn_user_id):
+        raise ApiBadRequest(
+            "Error: You do not have the authorization to delete this pack."
+        )
+    pack_deletion = await packs_query.delete_pack_by_id(
+        request.app.config.DB_CONN, pack_id
+    )
+    return json({"pack_id": pack_id})
+
+
 def create_pack_response(request, pack_id):
     """Create pack response"""
     pack_resource = {
-        "id": pack_id,
+        "pack_id": pack_id,
         "name": request.json.get("name"),
         "owners": request.json.get("owners"),
         "roles": request.json.get("roles"),
