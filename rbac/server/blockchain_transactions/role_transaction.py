@@ -16,10 +16,34 @@
 """
 import rethinkdb as r
 from rbac.server.db.db_utils import create_connection
+from rbac.common.role.delete_role import DeleteRole
 from rbac.common.role.delete_role_admin import DeleteRoleAdmin
 from rbac.common.role.delete_role_owner import DeleteRoleOwner
 from rbac.common.role.delete_role_member import DeleteRoleMember
 from rbac.common.sawtooth import batcher
+
+
+async def create_delete_role_txns(key_pair, next_id, txn_list):
+    """Create the delete transactions for a role object.
+    Args:
+        key_pair:
+               obj: public and private keys for user
+        next_id: next_
+            str: next_id to search for the roles where user is the admin
+        txn_list:
+            list: transactions for batch submission
+    Returns:
+        txn_list:
+            list: extended list of transactions for batch submission
+    """
+    role_delete = DeleteRole()
+    message = role_delete.make(signer_keypair=key_pair, next_id=next_id)
+    payload = role_delete.make_payload(
+        message=message, signer_keypair=key_pair, signer_user_id=key_pair.public_key
+    )
+    transaction = batcher.make_transaction(payload=payload, signer_keypair=key_pair)
+    txn_list.extend([transaction])
+    return txn_list
 
 
 async def create_delete_role_member_txns(key_pair, next_id, txn_list):
@@ -31,7 +55,9 @@ async def create_delete_role_member_txns(key_pair, next_id, txn_list):
                str: next_id to search for the roles where user is the admin
            txn_list:
                list: transactions for batch submission
-
+    Returns:
+        txn_list:
+            list: extended list of transactions for batch submission
     """
     conn = await create_connection()
     roles = (
@@ -68,7 +94,9 @@ async def create_delete_role_owner_txns(key_pair, next_id, txn_list):
                str: next_id to search for the roles where user is the admin
            txn_list:
                list: transactions for batch submission
-
+    Returns:
+        txn_list:
+            list: extended list of transactions for batch submission
     """
     conn = await create_connection()
     roles = (
@@ -105,7 +133,9 @@ async def create_delete_role_admin_txns(key_pair, next_id, txn_list):
                str: next_id to search for the roles where user is the admin
            txn_list:
                list: transactions for batch submission
-
+    Returns:
+        txn_list:
+            list: extended list of transactions for batch submission
     """
     conn = await create_connection()
     roles = (

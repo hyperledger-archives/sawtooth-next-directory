@@ -36,6 +36,7 @@ from rbac.providers.common.db_queries import connect_to_db
 from rbac.server.api.proposals import PROPOSAL_TRANSACTION
 from rbac.server.db.proposals_query import (
     fetch_open_proposals_by_opener,
+    fetch_open_proposals_by_target,
     get_open_proposals_by_approver,
 )
 
@@ -279,6 +280,42 @@ def fetch_role_relationships(role_id, conn):
     return result
 
 
+def delete_role_transaction(inbound_entry, role_in_db, key_pair):
+    """Composes transactions for deleting a role. This includes rejecting any
+    pending proposals concerning the role, deleting role_owner, role_admin, and
+    role_member relationships, and the role object.
+    Args:
+        inbound_entry:
+            dict: transaction entry from the inbound queue containing one
+            user/group data that was fetched from the integrated provider
+            along with additional information like:
+                provider_id, timestamp, and sync_type.
+        role_in_db:
+            dict: an entry in the roles table in rethinkdb.
+                (see /docs/diagrams/out/rethink_db_schemas.svg for table schemas)
+        key_pair:
+            obj: public and private keys for user.
+    """
+    next_id = role_in_db[0]["next_id"]
+    inbound_entry = add_sawtooth_prereqs(
+        entry_id=next_id, inbound_entry=inbound_entry, data_type="role"
+    )
+
+    txn_list = []
+    # Compile role relationship transactions for removal from blockchain
+    txn_list = create_reject_ppsls_role_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_txns(key_pair, next_id, txn_list)
+
+    if txn_list:
+        batch = batcher.make_batch_from_txns(
+            transactions=txn_list, signer_keypair=key_pair
+        )
+        inbound_entry["batch"] = batch.SerializeToString()
+
+
 def delete_user_transaction(inbound_entry, user_in_db, key_pair):
     """Composes transactions for deleting a user.  This includes deleting role_owner,
     role_admin, and role_member relationships and user object.
@@ -291,7 +328,7 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair):
 
     txn_list = []
     # Compile role relationship transactions for removal from blockchain
-    txn_list = create_reject_proposals_txns(key_pair, next_id, txn_list)
+    txn_list = create_reject_ppsls_user_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
@@ -309,6 +346,29 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair):
             transactions=txn_list, signer_keypair=key_pair
         )
         inbound_entry["batch"] = batch.SerializeToString()
+
+
+def create_delete_role_txns(key_pair, next_id, txn_list):
+    """Create the delete transactions for a role object.
+    Args:
+        key_pair:
+               obj: public and private keys for user
+        next_id: next_
+            str: next_id to search for the roles where user is the admin
+        txn_list:
+            list: transactions for batch submission
+    Returns:
+        txn_list:
+            list: extended list of transactions for batch submission
+    """
+    role_delete = DeleteRole()
+    message = role_delete.make(signer_keypair=key_pair, next_id=next_id)
+    payload = role_delete.make_payload(
+        message=message, signer_keypair=key_pair, signer_user_id=key_pair.public_key
+    )
+    transaction = batcher.make_transaction(payload=payload, signer_keypair=key_pair)
+    txn_list.extend([transaction])
+    return txn_list
 
 
 def create_delete_role_owner_txns(key_pair, next_id, txn_list):
@@ -395,13 +455,53 @@ def create_delete_role_member_txns(key_pair, next_id, txn_list):
     return txn_list
 
 
-def create_reject_proposals_txns(key_pair, next_id, txn_list):
-    """Create the reject open proposals transactions for user that has been deleted.
+def create_reject_ppsls_role_txns(key_pair, next_id, txn_list):
+    """Create the reject open proposals transactions for a role that has been
+    deleted.
        Args:
            key_pair:
                obj: public and private keys for user
            next_id: next_
-               str: next_id for proposals to close search
+               str: next_id of the targeted role to close proposals for
+           txn_list:
+               list: transactions for batch submission
+    """
+    conn = connect_to_db()
+    proposals = fetch_open_proposals_by_target(next_id).coerce_to("array").run(conn)
+    conn.close()
+    if proposals:
+        for proposal in proposals:
+            reason = "Target Role was deleted."
+            reject_proposal = PROPOSAL_TRANSACTION[proposal["proposal_type"]][
+                "REJECTED"
+            ]
+            reject_proposal_msg = reject_proposal.make(
+                signer_keypair=key_pair,
+                signer_user_id=next_id,
+                proposal_id=proposal["proposal_id"],
+                object_id=proposal["object_id"],
+                related_id=proposal["related_id"],
+                reason=reason,
+            )
+            payload = reject_proposal.make_payload(
+                message=reject_proposal_msg,
+                signer_keypair=key_pair,
+                signer_user_id=key_pair.public_key,
+            )
+            transaction = batcher.make_transaction(
+                payload=payload, signer_keypair=key_pair
+            )
+            txn_list.extend([transaction])
+    return txn_list
+
+
+def create_reject_ppsls_user_txns(key_pair, next_id, txn_list):
+    """Create the reject open proposals transactions for user that has been deleted.
+       Args:
+           key_pair:
+               obj: public and private keys for user
+           next_id:
+               str: next_id for of the targeted user to close proposals for
            txn_list:
                list: transactions for batch submission
 
