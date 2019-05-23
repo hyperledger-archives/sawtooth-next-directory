@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-""" Implements the UPDATE_ROLE message
-    usage: rbac.role.new()
+""" Implements the UPDATE_USER message
+    usage: rbac.user.update()
 """
 
 from rbac.common import addresser
@@ -28,9 +28,9 @@ from rbac.common.logs import get_default_logger
 LOGGER = get_default_logger(__name__)
 
 
-class UpdateRole(BaseMessage):
-    """ Implements the UPDATE_ROLE message
-        usage: rbac.role.new()
+class UpdateUser(BaseMessage):
+    """ Implements the UPDATE_USER message
+        usage: rbac.user.update()
     """
 
     def __init__(self):
@@ -45,12 +45,12 @@ class UpdateRole(BaseMessage):
     @property
     def address_type(self):
         """The address type from AddressSpace implemented by this class"""
-        return AddressSpace.ROLES_ATTRIBUTES
+        return AddressSpace.USER_ATTRIBUTES
 
     @property
     def object_type(self):
         """The object type from AddressSpace implemented by this class"""
-        return ObjectType.ROLE
+        return ObjectType.USER
 
     @property
     def related_type(self):
@@ -59,33 +59,38 @@ class UpdateRole(BaseMessage):
 
     @property
     def relationship_type(self):
-        """The related type from AddressSpace implemented by this class"""
+        """The relationship type from AddressSpace implemented by this class"""
         return RelationshipType.ATTRIBUTES
-
-    @property
-    def _state_object_name(self):
-        """Role state object name ends with Attributes (RoleAttributes)"""
-        return self._name_camel + "Attributes"
-
-    @property
-    def _state_container_list_name(self):
-        """Role state container collection name contains _attributes (role_attributes)"""
-        return self._name_lower + "_attributes"
 
     def make_addresses(self, message, signer_user_id):
         """Makes the appropriate inputs & output addresses for the message type"""
         inputs, _ = super().make_addresses(message, signer_user_id)
 
-        inputs.update({addresser.role.address(message.role_id)})
+        user_address = self.address(object_id=message.next_id)
+        inputs.add(user_address)
+
+        if message.manager_id:
+            manager_address = self.address(object_id=message.manager_id)
+            inputs.add(manager_address)
 
         outputs = inputs
         return inputs, outputs
 
+    @property
+    def allow_signer_not_in_state(self):
+        """Whether the signer of the message is allowed to not be
+        in state. Used only for when the transaction also creates the
+        signer of the message (e.g. CREATE_USER)"""
+        return False
+
     def validate(self, message, signer=None):
         """Validates the message values"""
         super().validate(message=message, signer=signer)
-        if message.description is None:
-            raise ValueError("To update a role, a description must be provided.")
+        if len(message.name) < 5:
+            raise ValueError("Users must have names longer than 4 characters")
+        if message.manager_id is not None:
+            if message.next_id == message.manager_id:
+                raise ValueError("User cannot be their own manager")
 
     def validate_state(self, context, message, payload, input_state, store):
         """Validates the message against state"""
@@ -96,7 +101,13 @@ class UpdateRole(BaseMessage):
             input_state=input_state,
             store=store,
         )
-        if not addresser.role.exists_in_state_inputs(
-            inputs=payload.inputs, input_state=input_state, object_id=message.role_id
+        if not addresser.user.exists_in_state_inputs(
+            inputs=payload.inputs, input_state=input_state, object_id=message.next_id
         ):
-            raise ValueError("Role with id {} does not exist".format(message.role_id))
+            raise ValueError("User with id {} does not exist".format(message.next_id))
+        if message.manager_id and not addresser.user.exists_in_state_inputs(
+            inputs=payload.inputs, input_state=input_state, object_id=message.manager_id
+        ):
+            raise ValueError(
+                "Manager with id {} does not exist in state".format(message.manager_id)
+            )

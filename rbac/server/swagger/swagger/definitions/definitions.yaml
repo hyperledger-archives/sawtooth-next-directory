@@ -534,6 +534,41 @@
         items:
           type: string
           example: "Password successfully updated"
+  updateUser:
+    description: json blob with next_id, email, name, username
+    type: object
+    required:
+      - next_id
+      - email
+      - name
+      - username
+    properties:
+      next_id:
+        type: string
+        description: next_id of the user whose password is to be modified
+        example: "e14c1478-22c7-447e-acbf-8014e3f086ad"
+      email:
+        type: string
+        description: Email of the user
+        example: 'steve.rogers@test.com'
+      name:
+        type: string
+        description: Name of the user
+        example: 'Steve Rogers'
+      username:
+        type: string
+        description: username of the user.  Must be unique.
+        example: 's.rogers'
+    updateUserResponse:
+      description: Response after a user has been updated
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message response
+          items:
+            type: string
+            example: "User information was successfully updated."
   proposal:
     description: >-
       A request to change the state of a role, task, or user, which requires

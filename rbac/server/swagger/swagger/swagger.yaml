@@ -67,6 +67,8 @@ paths:
     $ref: './users/users.yaml'
   /users/password:
     $ref: './users/password.yaml'
+  /users/update:
+    $ref: './users/update_user.yaml'
   '/users/{id}':
     parameters:
       - $ref: '../parameters/parameters.yaml#/userId'

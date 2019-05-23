@@ -22,6 +22,7 @@ from rbac.common.user.delete_user import DeleteUser
 from rbac.common.user.imports_user import ImportsUser
 from rbac.common.user.propose_manager import ProposeUpdateUserManager
 from rbac.common.user.reject_manager import RejectUpdateUserManager
+from rbac.common.user.update_user import UpdateUser
 from rbac.common.user.user_address import UserDirectReportAddress
 from rbac.common.user.user_address import UserEmailAddress
 from rbac.common.user.user_address import UserKeyAddress
@@ -55,6 +56,7 @@ class User(CreateUser):
         #   where the registration happens. Finding this out will also help us
         #   clear this file of this singleton.
         self.delete = DeleteUser()
+        self.update = UpdateUser()
 
 
 USER = User()

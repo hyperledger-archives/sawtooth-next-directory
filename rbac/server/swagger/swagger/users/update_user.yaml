@@ -1,12 +1,12 @@
 put:
-  description: Update a user's password.
+  description: Update a user's details(email, name, username).
   parameters:
-    - name: updatePassword
+    - name: updateUser
       in: body
-      description: next_id for user and new password
+      description: next_id for user, name, email, and username
       required: true
       schema:
-        $ref: '../definitions/definitions.yaml#/updatePassword'
+        $ref: '../definitions/definitions.yaml#/updateUser'
   responses:
     '200':
       description: Success response with "message" field in object
@@ -15,7 +15,7 @@ put:
           data:
             properties:
               message:
-                $ref: '../definitions/definitions.yaml#/updatePasswordResponse'
+                $ref: '../definitions/definitions.yaml#/updateUserResponse'
     '400':
       description: Response for a bad request
       schema:

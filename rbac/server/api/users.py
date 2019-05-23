@@ -156,6 +156,69 @@ async def create_new_user(request):
     return create_user_response(request, next_id)
 
 
+@USERS_BP.put("api/users/update")
+async def update_user_details(request):
+    """Update the details associated with a user.  This is NEXT admin only capability.
+    Args:
+        request:
+            obj: request object from inbound request"""
+    # Checks for action viability
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE", 0):
+        raise ApiBadRequest("This action is not enabled in this mode.")
+    required_fields = ["next_id", "name", "username", "email"]
+    utils.validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    is_admin = await utils.check_admin_status(txn_user_id)
+    if not is_admin:
+        raise ApiBadRequest("You are not a NEXT Administrator.")
+    conn = await create_connection()
+    user = await users_query.users_search_duplicate(conn, request.json.get("username"))
+    if user and user[0]["next_id"] != request.json.get("next_id"):
+        conn.close()
+        raise ApiBadRequest(
+            "Username already exists. Please give a different Username."
+        )
+
+    # Get resources for update
+    user_info = await users_query.fetch_user_resource(conn, request.json.get("next_id"))
+    if "manager_id" in user_info:
+        manager = user_info["manager_id"]
+    else:
+        manager = ""
+    conn.close()
+    if request.json.get("metadata") is None or request.json.get("metadata") == {}:
+        set_metadata = {}
+    else:
+        set_metadata = request.json.get("metadata")
+    set_metadata["sync_direction"] = "OUTBOUND"
+
+    # Build and submit transaction
+    batch_list = User().update.batch_list(
+        signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
+        next_id=request.json.get("next_id"),
+        name=request.json.get("name"),
+        username=request.json.get("username"),
+        email=request.json.get("email"),
+        metadata=set_metadata,
+        manager_id=manager,
+    )
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+
+    # Update_auth_table
+    auth_updates = {
+        "username": request.json.get("username"),
+        "email": request.json.get("email"),
+    }
+    await auth_query.update_auth(request.json.get("next_id"), auth_updates)
+
+    # Send back success response
+    return json({"message": "User information was successfully updated."})
+
+
 @USERS_BP.get("api/users/<next_id>")
 @authorized()
 async def get_user(request, next_id):

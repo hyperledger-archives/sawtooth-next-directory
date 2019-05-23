@@ -486,3 +486,54 @@ def test_update_user_password():
         assert (
             password_response.json()["message"] == "You are not a NEXT Administrator."
         )
+
+
+def test_update_user():
+    """Test that an admin user can update an existing user's information"""
+    user = {
+        "name": "nadia six",
+        "username": "nadia6",
+        "password": "test11",
+        "email": "nadia6@test.com",
+    }
+    with requests.Session() as session:
+        created_user = create_test_user(session, user)
+        login_input = {"id": "admin_nadia", "password": "test11"}
+        session.post("http://rbac-server:8000/api/authorization/", json=login_input)
+
+        update_payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "name": "nadia changed",
+            "username": "nadia.changed",
+            "email": "nadiachanged@test.com",
+        }
+        update_response = session.put(
+            "http://rbac-server:8000/api/users/update", json=update_payload
+        )
+        assert update_response.status_code == 200
+        assert update_response.json() == {
+            "message": "User information was successfully updated."
+        }
+        session.close()
+
+    time.sleep(3)
+    with requests.Session() as session2:
+        login_inputs = {"id": "nadia.changed", "password": "test11"}
+        response = session2.post(
+            "http://rbac-server:8000/api/authorization/", json=login_inputs
+        )
+        assert response.status_code == 200
+
+        update_payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "name": "nadia6",
+            "username": "nadia6",
+            "email": "nadia6@test.com",
+        }
+        password_response = session2.put(
+            "http://rbac-server:8000/api/users/update", json=update_payload
+        )
+        assert password_response.status_code == 400
+        assert (
+            password_response.json()["message"] == "You are not a NEXT Administrator."
+        )
