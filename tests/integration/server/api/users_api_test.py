@@ -25,7 +25,6 @@ from rbac.common.logs import get_default_logger
 from tests.rbac.api.assertions import assert_api_success
 from tests.utilities import (
     add_role_member,
-    approve_proposal,
     check_user_is_pack_owner,
     create_test_role,
     create_test_pack,
@@ -40,7 +39,7 @@ from tests.utilities import (
     get_user_mapping_entry,
     get_user_metadata_entry,
     insert_user,
-    log_in,
+    update_manager,
 )
 
 LOGGER = get_default_logger(__name__)
@@ -138,20 +137,20 @@ def test_create_new_user_api():
 
 
 def test_update_manager():
-    """ Creates a user and then updates their manager
+    """ Creates a user and then updates their manager as nextAdmin
 
     Manager is the second user created here."""
     user1_payload = {
-        "name": "Test User 6",
-        "username": "testuser6",
+        "name": "Test User 9",
+        "username": "testuser9",
         "password": "123456",
-        "email": "testuser6@biz.co",
+        "email": "testuser9@biz.co",
     }
     user2_payload = {
-        "name": "Test User 7",
-        "username": "testuser7",
+        "name": "Test User 10",
+        "username": "testuser10",
         "password": "123456",
-        "email": "testuser7@biz.co",
+        "email": "testuser10@biz.co",
     }
     with requests.Session() as session:
         user1_response = create_test_user(session, user1_payload)
@@ -160,32 +159,33 @@ def test_update_manager():
         user2_response = create_test_user(session, user2_payload)
         user2_result = assert_api_success(user2_response)
         user2_id = user2_result["data"]["user"]["id"]
+
+        next_admins = {
+            "name": "NextAdmins",
+            "owners": [user2_id],
+            "administrators": [user2_id],
+        }
         manager_payload = {
-            "id": user2_id,
-            "reason": "Integration test of adding role owner.",
+            "id": user1_id,
+            "reason": "Integration test of updating manager.",
             "metadata": "",
         }
-        response = session.put(
-            "http://rbac-server:8000/api/users/{}/manager".format(user1_id),
-            json=manager_payload,
-        )
+        role_response = create_test_role(session, next_admins)
+        failed_response = update_manager(session, user2_id, manager_payload)
+        assert failed_response.json() == {
+            "code": 400,
+            "message": "Proposal opener is not an Next Admin.",
+        }
+
+        add_role_member(session, role_response.json()["data"]["id"], {"id": user2_id})
+
+        response = update_manager(session, user2_id, manager_payload)
         result = assert_api_success(response)
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
-        assert proposal["data"]["assigned_approver"][0] == user2_id
-        # Logging in as role owner
-        credentials_payload = {
-            "id": user2_payload["username"],
-            "password": user2_payload["password"],
-        }
-        log_in(session, credentials_payload)
-        # Approve proposal as role owner
-        approve_proposal(session, result["proposal_id"])
-        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
-        proposal = assert_api_success(proposal_response)
-        assert proposal["data"]["status"] == "CONFIRMED"
         delete_user_by_username("testuser6")
         delete_user_by_username("testuser7")
+        delete_role_by_name("NextAdmins")
 
 
 def test_user_relationship_api():

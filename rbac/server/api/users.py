@@ -247,19 +247,22 @@ async def update_manager(request, next_id):
     utils.validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await utils.get_transactor_key(request)
     proposal_id = str(uuid4())
-    batch_list = User().manager.propose.batch_list(
-        signer_keypair=txn_key,
-        signer_user_id=txn_user_id,
-        proposal_id=proposal_id,
-        next_id=next_id,
-        new_manager_id=request.json.get("id"),
-        reason=request.json.get("reason"),
-        metadata=request.json.get("metadata"),
-        assigned_approver=[request.json.get("id")],
-    )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    if await utils.check_admin_status(txn_user_id):
+        batch_list = User().manager.propose.batch_list(
+            signer_keypair=txn_key,
+            signer_user_id=txn_user_id,
+            proposal_id=proposal_id,
+            next_id=next_id,
+            new_manager_id=request.json.get("id"),
+            reason=request.json.get("reason"),
+            metadata=request.json.get("metadata"),
+            assigned_approver=[request.json.get("id")],
+        )
+        await utils.send(
+            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+        )
+    else:
+        raise ApiBadRequest("Proposal opener is not an Next Admin.")
     return json({"proposal_id": proposal_id})
 
 

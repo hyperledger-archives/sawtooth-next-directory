@@ -27,6 +27,7 @@ from tests.utilities import (
     get_outbound_queue_depth,
     get_proposal_with_retry,
     log_in,
+    add_role_member,
 )
 from tests.rbac.api.assertions import assert_api_success
 
@@ -92,6 +93,13 @@ def test_update_manager_outqueue():
         user2_result = assert_api_success(user2_response)
         user2_id = user2_result["data"]["user"]["id"]
         start_depth = get_outbound_queue_depth()
+        next_admins = {
+            "name": "NextAdmins",
+            "owners": [user2_id],
+            "administrators": [user2_id],
+        }
+        role_response = create_test_role(session, next_admins)
+        add_role_member(session, role_response.json()["data"]["id"], {"id": user2_id})
         manager_payload = {
             "id": user2_id,
             "reason": "Integration test of adding role owner.",
@@ -116,6 +124,7 @@ def test_update_manager_outqueue():
         assert end_depth > start_depth
         delete_user_by_username("test0521201901")
         delete_user_by_username("test0521201902")
+        delete_role_by_name("NextAdmins")
 
 
 def test_add_role_owner_outqueue():

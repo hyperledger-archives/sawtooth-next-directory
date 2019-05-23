@@ -516,3 +516,12 @@ def get_pack_owners_by_user(next_id):
             .coerce_to("array")
             .run(db_connection)
         )
+
+
+def update_manager(session, next_id, payload):
+    """Update manager and authenticate to use api endpoints during testing."""
+    response = session.put(
+        "http://rbac-server:8000/api/users/{}/manager".format(next_id), json=payload
+    )
+    sleep(3)
+    return response
