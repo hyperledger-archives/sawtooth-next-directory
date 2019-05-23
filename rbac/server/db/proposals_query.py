@@ -191,21 +191,6 @@ def fetch_open_proposals_by_opener(next_id):
     return resource
 
 
-def fetch_open_proposals_by_target(next_id):
-    """Fetch all open proposals where target is the given next_id.
-    Args:
-        next_id:
-            str: a user's next ID
-    """
-    resource = (
-        r.table("proposals")
-        .filter({"target_id": next_id, "status": "OPEN"})
-        .coerce_to("array")
-    )
-
-    return resource
-
-
 def fetch_open_proposals_by_role(conn, role_id):
     """Fetch all open proposals related to a role.
         Args:

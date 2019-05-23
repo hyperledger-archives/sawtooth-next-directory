@@ -38,9 +38,9 @@ from rbac.common.logs import get_default_logger
 from rbac.common.sawtooth import batcher
 from rbac.server.blockchain_transactions.user_transaction import create_delete_user_txns
 from rbac.server.blockchain_transactions.role_transaction import (
-    create_delete_role_owner_txns,
-    create_delete_role_admin_txns,
-    create_delete_role_member_txns,
+    create_del_ownr_by_user_txns,
+    create_del_admin_by_user_txns,
+    create_del_mmbr_by_user_txns,
 )
 
 
@@ -240,9 +240,9 @@ async def delete_user(request, next_id):
     """Delete a specific user by next_id."""
     txn_list = []
     txn_key, _ = await utils.get_transactor_key(request)
-    txn_list = await create_delete_role_owner_txns(txn_key, next_id, txn_list)
-    txn_list = await create_delete_role_admin_txns(txn_key, next_id, txn_list)
-    txn_list = await create_delete_role_member_txns(txn_key, next_id, txn_list)
+    txn_list = await create_del_ownr_by_user_txns(txn_key, next_id, txn_list)
+    txn_list = await create_del_admin_by_user_txns(txn_key, next_id, txn_list)
+    txn_list = await create_del_mmbr_by_user_txns(txn_key, next_id, txn_list)
     txn_list = create_delete_user_txns(txn_key, next_id, txn_list)
 
     if txn_list:

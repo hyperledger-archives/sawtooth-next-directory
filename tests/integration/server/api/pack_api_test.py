@@ -198,16 +198,33 @@ def test_delete_pack_as_non_admin():
         pack_id = create_fake_pack(session, user_id_1, role_id, TEST_PACKS[6]).json()[
             "data"
         ]["pack_id"]
-        user = create_test_user(session, TEST_USERS[5]).json()["data"]["user"]["id"]
+
+        user_response = create_test_user(session, TEST_USERS[5])
+        assert user_response.status_code == 200, "Error creating user: %s \n%s" % (
+            TEST_USERS[5]["username"],
+            user_response.json(),
+        )
+
+        # auth as a non-admin
         user_payload = {
             "id": TEST_USERS[5]["username"],
             "password": TEST_USERS[5]["password"],
         }
-        session.post("http://rbac-server:8000/api/authorization/", json=user_payload)
+        auth_response = session.post(
+            "http://rbac-server:8000/api/authorization/", json=user_payload
+        )
+        assert auth_response.status_code == 200, "Error authing as %s: \n%s" % (
+            TEST_USERS[5]["username"],
+            auth_response.json(),
+        )
+
+        # try to delete the pack as a non-admin
         response = session.delete(
             "http://rbac-server:8000/api/packs/{}".format(pack_id)
         )
-        assert response.json()["code"] == 400
+        assert response.status_code == 503, (
+            "Unexpected response when deleting pack: %s" % response.json()
+        )
 
 
 def test_duplicate_pack_with_spaces():

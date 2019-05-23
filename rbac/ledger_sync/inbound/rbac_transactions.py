@@ -36,7 +36,7 @@ from rbac.providers.common.db_queries import connect_to_db
 from rbac.server.api.proposals import PROPOSAL_TRANSACTION
 from rbac.server.db.proposals_query import (
     fetch_open_proposals_by_opener,
-    fetch_open_proposals_by_target,
+    fetch_open_proposals_by_role,
     get_open_proposals_by_approver,
 )
 from rbac.server.db.relationships_query import fetch_relationship_query
@@ -444,7 +444,7 @@ def create_reject_ppsls_role_txns(key_pair, next_id, txn_list):
                list: transactions for batch submission
     """
     conn = connect_to_db()
-    proposals = fetch_open_proposals_by_target(next_id).coerce_to("array").run(conn)
+    proposals = fetch_open_proposals_by_role(conn, next_id)
     conn.close()
     if proposals:
         for proposal in proposals:

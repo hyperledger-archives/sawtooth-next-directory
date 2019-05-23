@@ -28,7 +28,11 @@ from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthori
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
 from rbac.server.db.db_utils import create_connection
-from rbac.server.db.roles_query import get_role_by_name, get_role_membership
+from rbac.server.db.roles_query import (
+    get_role_by_name,
+    get_role_membership,
+    fetch_role_owners,
+)
 
 LOGGER = get_default_logger(__name__)
 
@@ -265,7 +269,7 @@ async def check_admin_status(next_id):
     conn = await create_connection()
     admin_role = await get_role_by_name(conn, "NextAdmins")
     if not admin_role:
-        raise ApiBadRequest("NEXT administrator group has not been created.")
+        raise ApiInternalError("NEXT administrator group has not been created.")
     admin_membership = await get_role_membership(
         conn, next_id, admin_role[0]["role_id"]
     )
@@ -273,3 +277,20 @@ async def check_admin_status(next_id):
     if admin_membership:
         return True
     return False
+
+
+async def check_role_owner_status(next_id, role_id):
+    """Verify that the given user is an owner of the given role.
+    Args:
+        next_id:
+            str: The next_id of a given user to check status of.
+        role_id:
+            str: The next_id of a given role to query against.
+    Returns:
+        owner_status:
+            bool: Returns True if the next_id is in the role's owner list.
+                Returns False if the next_id is NOT in the role's owner list.
+    """
+    with await create_connection() as conn:
+        role_owners = await fetch_role_owners(conn, role_id)
+        return bool(next_id in role_owners)

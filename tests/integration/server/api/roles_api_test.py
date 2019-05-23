@@ -14,26 +14,27 @@
 # -----------------------------------------------------------------------------
 """Integration tests for role APIs"""
 import time
+import pytest
 import requests
 import rethinkdb as r
 from rbac.providers.common.db_queries import connect_to_db
-from rbac.common.logs import get_default_logger
 from tests.utilities import (
     approve_proposal,
-    add_role_member,
     create_test_role,
     create_test_task,
     create_test_user,
     delete_user_by_username,
     delete_role_by_name,
     delete_task_by_name,
-    insert_role,
     get_proposal_with_retry,
     log_in,
+    insert_role,
+    wait_for_role_in_db,
+    wait_for_resource_in_db,
+    wait_for_resource_removal_in_db,
+    wait_for_prpsl_rjctn_in_db,
 )
 from tests.rbac.api.assertions import assert_api_success
-
-LOGGER = get_default_logger(__name__)
 
 
 def setup_module():
@@ -58,6 +59,7 @@ def setup_module():
 def test_proposals():
     """Create a new fake role and try to add yourself to role you created"""
     with requests.Session() as session:
+        # create test user
         user_payload = {
             "name": "Susan S",
             "username": "susans2224",
@@ -65,19 +67,32 @@ def test_proposals():
             "email": "susans@biz.co",
         }
         user_response = create_test_user(session, user_payload)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+
+        # create test role
         user_id = user_response.json()["data"]["user"]["id"]
         role_resource = {
             "name": "Office_Assistant",
             "owners": user_id,
             "administrators": user_id,
         }
-        insert_role(role_resource)
-        delete_role_by_name("Office_Assistant")
         role_response = session.post(
             "http://rbac-server:8000/api/roles", json=role_resource
         )
+        assert role_response.status_code == 200, (
+            "Error creating role: %s" % role_response.json()
+        )
+
+        # Wait for role in rethinkdb
         role_id = role_response.json()["data"]["id"]
-        insert_role(role_resource)
+        is_role_in_db = wait_for_role_in_db(role_id)
+        assert (
+            is_role_in_db is True
+        ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
+
+        # create a membership proposal to test autoapproval
         res = session.post(
             "http://rbac-server:8000/api/roles/" + role_id + "/members",
             json=user_response.json()["data"]["user"],
@@ -85,6 +100,8 @@ def test_proposals():
         assert (
             res.json()["message"] == "Owner is the requester. Proposal is autoapproved"
         )
+
+        # clean up
         delete_user_by_username("susans2224")
         delete_role_by_name("Office_Assistant")
 
@@ -403,57 +420,508 @@ def test_add_role_task():
         delete_task_by_name("TestTask1")
 
 
-def test_reject_role_proposals():
-    """Test that proposals to a deleted role are rejected when its deleted."""
-    role_owner = {
-        "name": "anara one",
-        "username": "anara_user1",
-        "password": "test1122",
-        "email": "anara1@test.com",
-    }
-    user = {
-        "name": "anara two",
-        "username": "anara_user2",
-        "password": "test112",
-        "email": "anara2@test.com",
-    }
+def test_delete_role():
+    """Test the delete roll api
 
+    Create a test user for auth
+    Create a test role
+    Deletes the test role
+    Only checks that the role was deleted
+    """
     with requests.Session() as session:
-        response1 = create_test_user(session, role_owner)
-        response2 = create_test_user(session, user)
-        user_id = response1.json()["data"]["user"]["id"]
-        role_to_delete = {
-            "name": "AnaraTestRole",
+        # Create test user
+        user_payload = {
+            "name": "Guybrush Threepwood",
+            "username": "guybrush3pw00d",
+            "password": "12345678",
+            "email": "guybrush@pirate.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+
+        # Create test role
+        user_id = user_response.json()["data"]["user"]["id"]
+        role_resource = {
+            "name": "Men of Low Moral Fiber",
             "owners": user_id,
             "administrators": user_id,
         }
         role_response = session.post(
-            "http://rbac-server:8000/api/roles", json=role_to_delete
+            "http://rbac-server:8000/api/roles", json=role_resource
         )
-        role_id = role_response.json()["data"]["id"]
-        proposal = add_role_member(
-            session, role_id, {"id": response2.json()["data"]["user"]["id"]}
+        assert role_response.status_code == 200, (
+            "Error creating role: %s" % role_response.json()
         )
-        conn = connect_to_db()
-        role_exists = (
-            r.db("rbac")
-            .table("roles")
-            .filter({"name": "AnaraTestRole"})
-            .coerce_to("array")
-            .run(conn)
-        )
-        assert role_exists
 
-        deletion = session.delete("http://rbac-server:8000/api/roles/" + role_id)
-        time.sleep(5)
-        proposal_result = (
-            r.db("rbac")
-            .table("proposals")
-            .filter({"proposal_id": proposal.json()["proposal_id"]})
-            .coerce_to("array")
-            .run(conn)
+        # Wait for role in db
+        role_id = role_response.json()["data"]["id"]
+        is_role_in_db = wait_for_role_in_db(role_id)
+        assert (
+            is_role_in_db is True
+        ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
+
+        # Delete test role
+        delete_role_response = session.delete(
+            "http://rbac-server:8000/api/roles/%s" % role_id
         )
-        conn.close()
-        assert proposal_result[0]["status"] == "REJECTED"
-        delete_user_by_username("anara_user1")
-        delete_user_by_username("anara_user2")
+        assert delete_role_response.status_code == 200, (
+            "Error deleting role: %s" % delete_role_response.json()
+        )
+    # clean up
+    delete_user_by_username("guybrush3pw00d")
+
+
+def test_delete_invalid_role():
+    """Test the delete roll api
+
+    Create a test user for auth
+    Create a test role
+    Deletes the test role
+    Only checks that the role was deleted
+    """
+    with requests.Session() as session:
+        # Create test user
+        user_payload = {
+            "name": "Rapp Scallion",
+            "username": "rapp1",
+            "password": "12345678",
+            "email": "rapp@pirate.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+
+        # Delete test role
+        delete_role_response = session.delete(
+            "http://rbac-server:8000/api/roles/invalid_role_id"
+        )
+        assert delete_role_response.status_code == 404, (
+            "Unexpected response: %s" % delete_role_response.json()
+        )
+    # clean up
+    delete_user_by_username("guybrush3pw00d")
+
+
+def test_delete_role_with_owners():
+    """Test the delete roll api
+
+    Create a test user for auth
+    Create a test role
+    Deletes the test role
+    checks that the role owner object was deleted
+    """
+    with requests.Session() as session:
+        # Create test user
+        user_payload = {
+            "name": "LeChuck",
+            "username": "LeChuck1",
+            "password": "12345678",
+            "email": "lechuck@pirate.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+
+        # Create test role
+        user_id = user_response.json()["data"]["user"]["id"]
+        role_resource = {
+            "name": "LeChuck's Crew",
+            "owners": user_id,
+            "administrators": user_id,
+        }
+        role_response = session.post(
+            "http://rbac-server:8000/api/roles", json=role_resource
+        )
+        assert role_response.status_code == 200, (
+            "Error creating role: %s" % role_response.json()
+        )
+
+        # Wait for role in db
+        role_id = role_response.json()["data"]["id"]
+        is_role_in_db = wait_for_role_in_db(role_id)
+        assert (
+            is_role_in_db is True
+        ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
+
+        # Delete test role
+        delete_role_response = session.delete(
+            "http://rbac-server:8000/api/roles/%s" % role_id
+        )
+        assert delete_role_response.status_code == 200, (
+            "Error deleting role: %s" % delete_role_response.json()
+        )
+
+        # Check for role owners
+        are_owners_removed = wait_for_resource_removal_in_db(
+            "role_owners", "role_id", role_id
+        )
+
+        assert are_owners_removed is True
+
+    # Clean up
+    delete_user_by_username("lechuck1")
+
+
+def test_delete_role_with_admins():
+    """Test the delete roll api
+
+    Create a test user for auth
+    Create a test role
+    Deletes the test role
+    Check that the role admin object was deleted
+    """
+    with requests.Session() as session:
+        # Create test user
+        user_payload = {
+            "name": "Elaine Marley",
+            "username": "elain1",
+            "password": "12345678",
+            "email": "elaine@pirate.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+
+        # Create test role
+        user_id = user_response.json()["data"]["user"]["id"]
+        role_resource = {
+            "name": "Tri-Island Area",
+            "owners": user_id,
+            "administrators": user_id,
+        }
+        role_response = session.post(
+            "http://rbac-server:8000/api/roles", json=role_resource
+        )
+        assert role_response.status_code == 200, (
+            "Error creating role: %s" % role_response.json()
+        )
+
+        # Wait for role in db
+        role_id = role_response.json()["data"]["id"]
+        is_role_in_db = wait_for_role_in_db(role_id)
+        assert (
+            is_role_in_db is True
+        ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
+
+        # Delete test role
+        delete_role_response = session.delete(
+            "http://rbac-server:8000/api/roles/%s" % role_id
+        )
+        assert delete_role_response.status_code == 200, (
+            "Error deleting role: %s" % delete_role_response.json()
+        )
+
+        # Check for role admins
+        are_admins_removed = wait_for_resource_removal_in_db(
+            "role_admins", "role_id", role_id
+        )
+
+        assert are_admins_removed is True
+
+    # clean up
+    delete_user_by_username("elaine1")
+
+
+def test_delete_role_with_members():
+    """
+    Test the delete roll api
+
+    Create a test user for auth
+    Create a test role
+    Add the first user as a member of the role
+    Deletes the test role
+    Check that the role member object was deleted
+    """
+    with requests.Session() as session:
+        # Create test user
+        user_payload = {
+            "name": "Walt the Dog",
+            "username": "walt1",
+            "password": "12345678",
+            "email": "keydoge@pirate.co",
+        }
+        user_response = create_test_user(session, user_payload)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+
+        # Create test role
+        user_id = user_response.json()["data"]["user"]["id"]
+        role_resource = {
+            "name": "Phatt Island Jail",
+            "owners": user_id,
+            "administrators": user_id,
+        }
+        role_response = session.post(
+            "http://rbac-server:8000/api/roles", json=role_resource
+        )
+        assert role_response.status_code == 200, (
+            "Error creating role: %s" % role_response.json()
+        )
+
+        # Wait for role in db
+        role_id = role_response.json()["data"]["id"]
+        is_role_in_db = wait_for_role_in_db(role_id)
+        assert (
+            is_role_in_db is True
+        ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
+
+        # Add role member
+        role_update_payload = {
+            "id": user_id,
+            "reason": "Integration test of member removal on role deletion.",
+            "metadata": "",
+        }
+        member_response = session.post(
+            "http://rbac-server:8000/api/roles/{}/members".format(role_id),
+            json=role_update_payload,
+        )
+        assert member_response.status_code == 200, (
+            "Error adding role member: %s" % member_response.json()
+        )
+
+        # Wait for member in rethinkdb
+        is_member_in_db = wait_for_resource_in_db("role_members", "related_id", user_id)
+        assert (
+            is_member_in_db is True,
+        ), "Couldn't find member in rethinkdb, maximum attempts exceeded."
+
+        # Delete test role
+        delete_role_response = session.delete(
+            "http://rbac-server:8000/api/roles/%s" % role_id
+        )
+        assert delete_role_response.status_code == 200, (
+            "Error deleting role: %s" % delete_role_response.json()
+        )
+
+        # Check for role members
+        are_members_removed = wait_for_resource_removal_in_db(
+            "role_members", "role_id", role_id
+        )
+
+        assert are_members_removed is True
+
+    # clean up
+    delete_user_by_username("walt1")
+
+
+def test_delete_role_with_proposals():
+    """
+    Test the delete roll api
+
+    Create a test user for auth
+    Create a test user for role membership
+    Create a test role
+    Propose adding the second user as a member
+    Deletes the test role
+    Check that the membership proposal was autorejected
+    """
+    with requests.Session() as session:
+        # Create test user
+        role_owner = {
+            "name": "Fin Pirate",
+            "username": "fin1",
+            "password": "12345678",
+            "email": "fin@pirate.co",
+        }
+        user_response = create_test_user(session, role_owner)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+        role_owner["next_id"] = user_response.json()["data"]["user"]["id"]
+
+        # Create test user
+        new_member = {
+            "name": "Frank Pirate",
+            "username": "frank1",
+            "password": "12345678",
+            "email": "frank@pirate.co",
+        }
+        user_response = create_test_user(session, new_member)
+        assert user_response.status_code == 200, (
+            "Error creating user: %s" % user_response.json()
+        )
+        new_member["next_id"] = user_response.json()["data"]["user"]["id"]
+
+        # Auth as role_owner
+        payload = {"id": role_owner["username"], "password": role_owner["password"]}
+        auth_response = session.post(
+            "http://rbac-server:8000/api/authorization/", json=payload
+        )
+        assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
+            role_owner["username"],
+            auth_response.json(),
+        )
+
+        # Create test role
+        role_resource = {
+            "name": "Men of Low Moral Fiber",
+            "owners": role_owner["next_id"],
+            "administrators": role_owner["next_id"],
+        }
+        role_response = session.post(
+            "http://rbac-server:8000/api/roles", json=role_resource
+        )
+        assert role_response.status_code == 200, (
+            "Error creating role: %s" % role_response.json()
+        )
+
+        # Wait for role in db
+        role_id = role_response.json()["data"]["id"]
+        is_role_in_db = wait_for_role_in_db(role_id)
+        assert (
+            is_role_in_db is True
+        ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
+
+        # Auth as new_member
+        payload = {"id": new_member["username"], "password": new_member["password"]}
+        auth_response = session.post(
+            "http://rbac-server:8000/api/authorization/", json=payload
+        )
+        assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
+            new_member["username"],
+            auth_response.json(),
+        )
+
+        # Add role member
+        role_update_payload = {
+            "id": new_member["next_id"],
+            "reason": "Integration test of membership proposal removal on role deletion.",
+            "metadata": "",
+        }
+        member_response = session.post(
+            "http://rbac-server:8000/api/roles/{}/members".format(role_id),
+            json=role_update_payload,
+        )
+        assert member_response.status_code == 200, (
+            "Error adding role member: %s" % member_response.json()
+        )
+
+        # Auth as role_owner
+        payload = {"id": role_owner["username"], "password": role_owner["password"]}
+        auth_response = session.post(
+            "http://rbac-server:8000/api/authorization/", json=payload
+        )
+        assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
+            role_owner["username"],
+            auth_response.json(),
+        )
+
+        # Delete test role
+        delete_role_response = session.delete(
+            "http://rbac-server:8000/api/roles/%s" % role_id
+        )
+        assert delete_role_response.status_code == 200, (
+            "Error deleting role: %s" % delete_role_response.json()
+        )
+
+        # Check for open role member proposals
+        are_proposals_rejected = wait_for_prpsl_rjctn_in_db(role_id)
+
+        assert are_proposals_rejected is True
+
+    # clean up
+    delete_user_by_username("fin1")
+    delete_user_by_username("frank1")
+
+
+@pytest.mark.xfail(
+    run=False,
+    reason="Returns an unexpected 503, admin account is not being bootstrapped on test execution.",
+)
+def test_delete_role_not_owner():
+    """
+    Test the delete role api
+
+    Create a test user for auth
+    Create a test user for role membership
+    Create a test role
+    Attempt to delete the test role as a non role owner/admin
+    Check that the deletion attempt was autorejected
+    """
+    with requests.Session() as session:
+        # Create test user
+        role_owner = {
+            "name": "Fred Pirate",
+            "username": "fred1",
+            "password": "12345678",
+            "email": "fred@pirate.co",
+        }
+        user_response = create_test_user(session, role_owner)
+        assert user_response.status_code == 200, "Error creating user: %s;\n %s" % (
+            role_owner["name"],
+            user_response.json(),
+        )
+        role_owner["next_id"] = user_response.json()["data"]["user"]["id"]
+
+        # Create test user
+        test_user = {
+            "name": "Meunster Monster",
+            "username": "meunster1",
+            "password": "12345678",
+            "email": "meunster@pirate.co",
+        }
+        user_response = create_test_user(session, test_user)
+        assert user_response.status_code == 200, "Error creating user: %s;\n %s" % (
+            test_user["name"],
+            user_response.json(),
+        )
+        test_user["next_id"] = user_response.json()["data"]["user"]["id"]
+
+        # Auth as new_member
+        payload = {"id": role_owner["username"], "password": role_owner["password"]}
+        auth_response = session.post(
+            "http://rbac-server:8000/api/authorization/", json=payload
+        )
+        assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
+            test_user["name"],
+            auth_response.json(),
+        )
+
+        # Create test role
+        role_resource = {
+            "name": "Men of Low Moral Fiber",
+            "owners": role_owner["next_id"],
+            "administrators": role_owner["next_id"],
+        }
+        role_response = session.post(
+            "http://rbac-server:8000/api/roles", json=role_resource
+        )
+        assert role_response.status_code == 200, (
+            "Error creating role: %s" % role_response.json()
+        )
+
+        # Wait for role in db
+        role_id = role_response.json()["data"]["id"]
+        is_role_in_db = wait_for_role_in_db(role_id)
+        assert (
+            is_role_in_db is True
+        ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
+
+        # Auth as test_user
+        payload = {"id": test_user["username"], "password": test_user["password"]}
+        auth_response = session.post(
+            "http://rbac-server:8000/api/authorization/", json=payload
+        )
+        assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
+            role_owner["name"],
+            auth_response.json(),
+        )
+
+        # Delete test role
+        delete_role_response = session.delete(
+            "http://rbac-server:8000/api/roles/%s" % role_id
+        )
+        assert delete_role_response.status_code == 403, (
+            "Unexpected response: %s" % delete_role_response.json()
+        )
+
+    # clean up
+    delete_user_by_username("fred1")
+    delete_user_by_username("maunster1")
+    delete_role_by_name("Men of Low Moral Fiber")

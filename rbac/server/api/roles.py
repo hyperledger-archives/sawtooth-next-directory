@@ -24,13 +24,31 @@ from sanic.response import json
 from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.server.api import utils, proposals
+from rbac.server.api.errors import (
+    ApiBadRequest,
+    ApiNotFound,
+    ApiForbidden,
+    ApiInternalError,
+    handle_not_found,
+    handle_errors,
+)
 from rbac.server.api.auth import authorized
-from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.proposals import PROPOSAL_TRANSACTION
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db.relationships_query import fetch_relationships
 
+from rbac.common.sawtooth import batcher
+from rbac.server.blockchain_transactions.role_transaction import (
+    create_del_role_txns,
+    create_del_ownr_by_role_txns,
+    create_del_admin_by_role_txns,
+    create_del_mmbr_by_role_txns,
+    create_rjct_ppsls_role_txns,
+)
+from rbac.server.api.utils import check_admin_status, check_role_owner_status
+
+LDAP_DC = os.getenv("LDAP_DC")
 GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
 LOGGER = get_default_logger(__name__)
 
@@ -137,14 +155,6 @@ async def get_role(request, role_id):
     )
 
 
-@ROLES_BP.delete("api/roles/<role_id>")
-@authorized()
-async def delete_role(request, role_id):
-    """Delete a specific role by role_id."""
-    await reject_roles_proposals(role_id, request)
-    return json({"Delete": "Delete role API was success"})
-
-
 @ROLES_BP.get("api/roles/check")
 @authorized()
 async def check_role_name(request):
@@ -173,6 +183,88 @@ async def update_role(request, role_id):
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     return json({"id": role_id, "description": role_description})
+
+
+@ROLES_BP.delete("api/roles/<role_id>")
+@authorized()
+async def delete_role(request, role_id):
+    """Delete a role by it's next_id.
+    Args:
+        role_id:
+            str: the role_id field of the targeted role
+    Returns:
+        json:
+            dict: {
+                message:
+                    str: the status of the role delete operation
+                deleted:
+                    int: count of the number of roles that were deleted
+            }
+    Raises:
+        ApiForbidden:
+            The user is not a system admin or owner of the targeted
+            role.
+        ApiNotFound:
+            The role does not exist in RethinkDB.
+        ApiInternalError:
+            There was an error compiling blockchain transactions.
+    """
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
+
+    # does the role exist?
+    if not await roles_query.does_role_exist(request.app.config.DB_CONN, role_id):
+        LOGGER.warning(
+            "Nonexistent Role – User %s is attempting to delete the nonexistent role %s",
+            txn_user_id,
+            role_id,
+        )
+        return await handle_not_found(
+            request, ApiNotFound("The targeted role does not exist.")
+        )
+
+    is_role_owner = await check_role_owner_status(txn_user_id, role_id)
+    if not is_role_owner:
+        is_admin = await check_admin_status(txn_user_id)
+        if not is_admin:
+            LOGGER.warning(
+                "Permission Denied – User %s does not have sufficient privilege to delete role %s.",
+                txn_user_id,
+                role_id,
+            )
+            return await handle_errors(
+                request, ApiForbidden("You do not have permission to delete this role.")
+            )
+
+    txn_list = []
+    txn_list = await create_rjct_ppsls_role_txns(
+        txn_key, role_id, txn_user_id, txn_list
+    )
+    txn_list = await create_del_admin_by_role_txns(txn_key, role_id, txn_list)
+    txn_list = await create_del_mmbr_by_role_txns(txn_key, role_id, txn_list)
+    txn_list = await create_del_ownr_by_role_txns(txn_key, role_id, txn_list)
+    txn_list = create_del_role_txns(txn_key, role_id, txn_list)
+
+    # validate transaction list
+    if not txn_list:
+        LOGGER.warning(
+            "txn_list is empty. There was an error processing the delete role transactions. Transaction list: %s",
+            txn_list,
+        )
+        return await handle_errors(
+            request,
+            ApiInternalError(
+                "An error occurred while creating the blockchain transactions to delete the role."
+            ),
+        )
+
+    batch = batcher.make_batch_from_txns(transactions=txn_list, signer_keypair=txn_key)
+    batch_list = batcher.batch_to_list(batch=batch)
+    await utils.send(
+        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+    )
+    return json(
+        {"message": "Role {} successfully deleted".format(role_id), "deleted": 1}
+    )
 
 
 @ROLES_BP.post("api/roles/<role_id>/admins")
