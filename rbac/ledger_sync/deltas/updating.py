@@ -262,10 +262,9 @@ def _update(conn, block_num, address, resource):
     data_type = addresser.get_address_type(address)
     pre_filter(resource)
 
-    _update_state(conn, block_num, address, resource)
-
     if data_type in TABLE_NAMES:
         _update_legacy(conn, block_num, address, resource, data_type)
+        _update_state(conn, block_num, address, resource)
         _update_provider(conn, data_type, resource)
 
 
