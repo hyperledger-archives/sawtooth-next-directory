@@ -36,6 +36,7 @@ from environs import Env
 
 from rbac.providers.common.db_queries import connect_to_db
 from rbac.common.crypto.secrets import generate_api_key
+from rbac.common.logs import get_default_logger
 from rbac.providers.ldap.delta_inbound_sync import (
     insert_updated_entries,
     insert_deleted_entries,
@@ -61,6 +62,8 @@ from tests.utilities import (
     is_user_in_db,
     is_group_in_db,
 )
+
+LOGGER = get_default_logger(__name__)
 
 SERVER = Server("my_fake_server", get_info=OFFLINE_AD_2012_R2)
 
@@ -353,7 +356,7 @@ def get_fake_user(ldap_connection, user_common_name):
 
 
 def get_fake_group(ldap_connection, group_common_name):
-    """Gets a fake user from the mock AD server.
+    """Gets a fake group from the mock AD server.
 
     Args:
         ldap_connection:
@@ -364,7 +367,7 @@ def get_fake_group(ldap_connection, group_common_name):
 
     Returns:
         fake_user:
-            arr<obj>: an array containing any users with a matching common name.
+            arr<obj>: an array containing any groups with a matching common name.
     """
     search_parameters = {
         "search_base": "OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB",
@@ -373,8 +376,7 @@ def get_fake_group(ldap_connection, group_common_name):
         "paged_size": len(TEST_GROUPS),
     }
     ldap_connection.search(**search_parameters)
-    fake_user = ldap_connection.entries
-    return fake_user
+    return ldap_connection.entries
 
 
 def put_in_inbound_queue(fake_data, data_type):
@@ -909,3 +911,15 @@ def test_delete_role(ldap_connection):
     )
     result = is_group_in_db("sysadmins")
     assert result is False
+
+
+def test_created_date_comparison(ldap_connection):
+    """ Tests that imported users/roles have the same created_date
+    value in RethinkDB as the created_date in their source.
+    """
+    create_fake_group(ldap_connection, "pokemons", "pokemons")
+    fake_group = get_fake_group(ldap_connection, "pokemons")
+    put_in_inbound_queue(fake_group, "group")
+    time.sleep(2)
+    ldap_role = get_role("pokemons")
+    assert fake_group[0].whenCreated.value == ldap_role[0]["created_date"]

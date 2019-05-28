@@ -280,15 +280,7 @@ class BaseMessage(AddressBase):
         if hasattr(message, self._name_id) and getattr(message, self._name_id) == "":
             # sets the unique identifier field of the message to a unique_id if no identifier is provided
             setattr(message, self._name_id, self.unique_id())
-
-        # TODO(Michael): Any objects being saved in the blockchain with the created_date field
-        # will have the timestamp of when the item was inserted into the blockchain. We wouldn't
-        # want this behavior for imported users/roles as we want the timestamp of when the
-        # user/role was created in the provider.
-        #
-        # This change is required to keep LDAP delta inbound sync working. Revert the line
-        # below back after ticket #391 has been merged and closed.
-        if hasattr(message, "created_date"):
+        if hasattr(message, "created_date") and not message.created_date > 0:
             message.created_date = int(time.time())
         return message
 
