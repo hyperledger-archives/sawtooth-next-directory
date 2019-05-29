@@ -25,12 +25,34 @@ from tests.utilities import (
     delete_role_by_name,
     delete_user_by_username,
     get_outbound_queue_depth,
+    get_outbound_queue_entry,
     get_proposal_with_retry,
+    get_role,
     log_in,
     add_role_member,
 )
 
 LOGGER = get_default_logger(__name__)
+
+
+def prepare_outbound_queue_data(entry, data_type):
+    """ Prepares an entry from users or roles table to be used
+    in a filter for outbound_queue table
+
+    Args:
+        entry: (dict) Entry from users/roles table containing keys
+            such as id, created_date, and role_id/next_id
+    Returns:
+        entry: (dict) Same entry from users/roles table, but without
+            created_date field and the next_id/role_id has replaced
+            the id field.
+    """
+    entry.pop("created_date")
+    if data_type == "role":
+        entry["id"] = entry.pop("role_id")
+    elif data_type == "user":
+        entry["id"] = entry.pop("next_id")
+    return entry
 
 
 def test_role_outq_insertion():
@@ -62,6 +84,13 @@ def test_role_outq_insertion():
         )
         successful_insert = bool(inserted_queue_item)
         assert expected_result == successful_insert
+
+        # Check status of new outbound_entry
+        role_entry = get_role("TestUniqueRole0501201903")
+        outbound_queue_data = prepare_outbound_queue_data(role_entry[0], "role")
+        outbound_entry = get_outbound_queue_entry(outbound_queue_data)
+        assert outbound_entry[0]["status"] == "UNCONFIRMED"
+
         delete_role_by_name("TestUniqueRole0501201903")
         delete_user_by_username("testuniqueuser0501201901")
 
@@ -70,6 +99,8 @@ def test_update_manager_outqueue():
     """ Creates a user and then updates their manager
 
     Manager is the second user created here."""
+    # TODO: Rewrite this test after data gets sent to outbound_queue
+    # after a user has their manager updated.
     user1_payload = {
         "name": "Test User 0521201901",
         "username": "test0521201901",
@@ -119,6 +150,8 @@ def test_update_manager_outqueue():
         approval_response = approve_proposal(session, result["proposal_id"])
         end_depth = get_outbound_queue_depth()
         assert end_depth > start_depth
+        # TODO: Add tests to check for UNCONFIRMED outbound_queue entry status
+        # when a user's manager gets updated.
         delete_user_by_username("test0521201901")
         delete_user_by_username("test0521201902")
         delete_role_by_name("NextAdmins")
@@ -180,6 +213,13 @@ def test_add_role_owner_outqueue():
         approval_response = approve_proposal(session, result["proposal_id"])
         end_depth = get_outbound_queue_depth()
         assert end_depth > start_depth
+
+        # Check status of new outbound_entry
+        role_entry = get_role("TestRole0521201901")
+        outbound_queue_data = prepare_outbound_queue_data(role_entry[0], "role")
+        outbound_entry = get_outbound_queue_entry(outbound_queue_data)
+        assert outbound_entry[0]["status"] == "UNCONFIRMED"
+
         delete_role_by_name("TestRole0521201901")
         delete_user_by_username("test0521201903")
         delete_user_by_username("test0521201904")
@@ -241,6 +281,13 @@ def test_add_role_member_outqueue():
         approval_response = approve_proposal(session, result["proposal_id"])
         end_depth = get_outbound_queue_depth()
         assert end_depth > start_depth
+
+        # Check status of new outbound_entry
+        role_entry = get_role("TestRole0521201902")
+        outbound_queue_data = prepare_outbound_queue_data(role_entry[0], "role")
+        outbound_entry = get_outbound_queue_entry(outbound_queue_data)
+        assert outbound_entry[0]["status"] == "UNCONFIRMED"
+
         delete_role_by_name("TestRole0521201902")
         delete_user_by_username("test0521201905")
         delete_user_by_username("test0521201906")

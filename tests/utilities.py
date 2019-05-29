@@ -699,3 +699,23 @@ def update_manager(session, next_id, payload):
     )
     sleep(3)
     return response
+
+
+def get_outbound_queue_entry(data):
+    """ Gets an entry from outbound_queue table that matches the passed in
+    data dictionary.
+
+    Args:
+        data: (dict) Entry from users/roles table without created_date field.
+    Returns:
+        outbound_queue_entry: (dict) The entry that has the data field
+            matching the data parameter. This entry would contain the
+            following fields: data, data_type, provider_id, sync_type,
+            timestamp.
+    """
+    conn = connect_to_db()
+    outbound_queue_entry = (
+        r.table("outbound_queue").filter({"data": data}).coerce_to("array").run(conn)
+    )
+    conn.close()
+    return outbound_queue_entry

@@ -22,11 +22,10 @@ from rbac.providers.common.db_queries import connect_to_db
 LOGGER = get_default_logger(__name__)
 
 
-def set_sync_direction(user_id, direction):
-    """Sets the sync_direction of user_id.
-
+def set_sync_direction(next_id, direction):
+    """Sets the sync_direction of next_id.
     Args:
-        user_id: The next_id of the user.
+        next_id: The next_id of the user.
         direction: str with value of "INBOUND" or "OUTBOUND"
 
     Returns:
@@ -38,7 +37,7 @@ def set_sync_direction(user_id, direction):
         try:
             response = (
                 r.table("users")
-                .get_all(user_id, index="next_id")
+                .get_all(next_id, index="next_id")
                 .update({"metadata": {"sync_direction": direction}})
                 .run(conn)
             )

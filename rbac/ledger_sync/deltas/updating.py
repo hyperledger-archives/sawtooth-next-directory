@@ -265,6 +265,7 @@ def _update_provider(conn, address_type, resource):
                 "sync_type": "delta",
                 "timestamp": r.now(),
                 "provider_id": provider,
+                "status": "UNCONFIRMED",
             }
             r.table("outbound_queue").insert(outbound_entry, return_changes=True).run(
                 conn

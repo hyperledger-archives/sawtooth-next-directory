@@ -140,6 +140,7 @@ async def create_new_role(request):
                 "data_type": "group",
                 "timestamp": r.now(),
                 "provider_id": provider,
+                "status": "UNCONFIRMED",
             }
             # Insert to outbound_queue and close
             await roles_query.insert_to_outboundqueue(
