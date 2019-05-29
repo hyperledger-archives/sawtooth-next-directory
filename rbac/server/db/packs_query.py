@@ -209,8 +209,8 @@ async def delete_pack_by_id(conn, pack_id):
     return resource
 
 
-async def check_pack_by_pack_id(conn, pack_id):
-    """Queries for a pack by its id to see if it exists or not
+async def get_pack_by_pack_id(conn, pack_id):
+    """Queries for a pack by its id.
     Args:
         conn:
             object: Connection to rethinkDB
@@ -236,9 +236,10 @@ async def get_pack_owners_by_id(conn, pack_id):
     """
     owner = (
         await r.table("pack_owners")
-        .filter({"pack_id": pack_id})
+        .get_all(pack_id, index="pack_id")
         .get_field("identifiers")
         .coerce_to("array")
+        .concat_map(lambda identifiers: identifiers)
         .run(conn)
     )
     return owner

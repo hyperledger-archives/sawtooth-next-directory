@@ -107,8 +107,8 @@ def create_fake_pack(session, user_id, role_id, pack_resource):
                     "description": "<DESCRIPTION OF PACK>"
                 }
     """
-    pack_resource["owners"] = user_id
-    pack_resource["roles"] = role_id
+    pack_resource["owners"] = [user_id]
+    pack_resource["roles"] = [role_id]
     response = session.post("http://rbac-server:8000/api/packs", json=pack_resource)
     return response
 
@@ -164,7 +164,10 @@ def test_delete_pack():
         response = session.delete(
             "http://rbac-server:8000/api/packs/{}".format(pack_id)
         )
-        assert response.json()["pack_id"] == pack_id
+        assert response.json() == {
+            "deleted": 1,
+            "message": "Pack {} successfully deleted".format(pack_id),
+        }
         assert get_pack_by_pack_id(pack_id) == []
 
 
@@ -176,7 +179,6 @@ def test_delete_nonexistent_pack():
         response = session.delete(
             "http://rbac-server:8000/api/packs/{}".format(pack_id)
         )
-
         assert (
             response.json()["message"]
             == "Error: Pack does not currently exist or has already been deleted."
@@ -196,7 +198,7 @@ def test_delete_pack_as_non_admin():
         pack_id = create_fake_pack(session, user_id_1, role_id, TEST_PACKS[6]).json()[
             "data"
         ]["pack_id"]
-        user_id = create_test_user(session, TEST_USERS[5]).json()["data"]["user"]["id"]
+        user = create_test_user(session, TEST_USERS[5]).json()["data"]["user"]["id"]
         user_payload = {
             "id": TEST_USERS[5]["username"],
             "password": TEST_USERS[5]["password"],
@@ -204,11 +206,6 @@ def test_delete_pack_as_non_admin():
         session.post("http://rbac-server:8000/api/authorization/", json=user_payload)
         response = session.delete(
             "http://rbac-server:8000/api/packs/{}".format(pack_id)
-        )
-
-        assert (
-            response.json()["message"]
-            == "Error: You do not have the authorization to delete this pack."
         )
         assert response.json()["code"] == 400
 

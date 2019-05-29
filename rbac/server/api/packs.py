@@ -13,19 +13,20 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Packs APIs."""
-
 from uuid import uuid4
 
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.server.api.auth import authorized
+from rbac.common.logs import get_default_logger
 from rbac.server.api import roles, utils
-
-from rbac.server.db import packs_query
+from rbac.server.api.auth import authorized
 from rbac.server.api.errors import ApiBadRequest
+from rbac.server.db import packs_query
+
 
 PACKS_BP = Blueprint("packs")
+LOGGER = get_default_logger(__name__)
 
 
 @PACKS_BP.get("api/packs")
@@ -140,7 +141,7 @@ async def delete_pack(request, pack_id):
     """
     txn_key, txn_user_id = await utils.get_transactor_key(request)
 
-    pack = await packs_query.check_pack_by_pack_id(request.app.config.DB_CONN, pack_id)
+    pack = await packs_query.get_pack_by_pack_id(request.app.config.DB_CONN, pack_id)
     if not pack:
         raise ApiBadRequest(
             "Error: Pack does not currently exist or has already been deleted."
@@ -148,14 +149,14 @@ async def delete_pack(request, pack_id):
     owners = await packs_query.get_pack_owners_by_id(
         request.app.config.DB_CONN, pack_id
     )
-    if txn_user_id not in owners or not utils.check_admin_status(txn_user_id):
+    if txn_user_id not in owners and not await utils.check_admin_status(txn_user_id):
         raise ApiBadRequest(
             "Error: You do not have the authorization to delete this pack."
         )
-    pack_deletion = await packs_query.delete_pack_by_id(
-        request.app.config.DB_CONN, pack_id
+    await packs_query.delete_pack_by_id(request.app.config.DB_CONN, pack_id)
+    return json(
+        {"message": "Pack {} successfully deleted".format(pack_id), "deleted": 1}
     )
-    return json({"pack_id": pack_id})
 
 
 def create_pack_response(request, pack_id):
