@@ -59,6 +59,6 @@ limitations under the License.
   color: white;
   border: none;
   position: absolute;
-  display: inline-table;
-  top: 6px;
+  width: 300px;
+  bottom: 64px;
 }

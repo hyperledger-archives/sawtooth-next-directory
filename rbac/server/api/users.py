@@ -535,6 +535,6 @@ def create_user_response(request, next_id):
 async def check_user_name(request):
     """Check if a user exists with provided username."""
     response = await users_query.users_search_duplicate(
-        request.app.config.DB_CONN, request.args.get("name")
+        request.app.config.DB_CONN, request.args.get("username")
     )
     return json({"exists": bool(response)})

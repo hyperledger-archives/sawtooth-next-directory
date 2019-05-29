@@ -116,8 +116,8 @@ class SignupForm extends Component {
 
   handleBlur = () => {
     const { checkUserExists } = this.props;
-    const { name } = this.state;
-    !utils.isWhitespace(name) && checkUserExists(name);
+    const { username } = this.state;
+    !utils.isWhitespace(username) && checkUserExists(username);
     setTimeout(() => {
       this.setState({ errorDisplay: true});
     }, 100);
@@ -179,17 +179,8 @@ class SignupForm extends Component {
                   error={validName === false}
                   name='name'
                   type='text'
-                  value={name}
-                  onBlur={this.handleBlur}
-                  onChange={this.usernameChange}/>
-                { userExists && errorDisplay &&
-                  <Label
-                    id='next-signup-username-error'>
-                    <Icon name='exclamation circle'/>
-                      This username already exists.
-                  </Label>
-                }
-
+                  onChange={this.handleChange}
+                  value={name}/>
                 {!validName &&
                 <Label className='next-name-signup-hint'>
                   Name must be at least 5 characters.
@@ -214,7 +205,15 @@ class SignupForm extends Component {
                   name='username'
                   type='text'
                   value={username}
-                  onChange={this.handleChange}/>
+                  onBlur={this.handleBlur}
+                  onChange={this.usernameChange}/>
+                { userExists && errorDisplay &&
+                  <Label
+                    id='next-signup-username-error'>
+                    <Icon name='exclamation circle'/>
+                      This username already exists.
+                  </Label>
+                }
 
                 {!validUsername &&
                 <Label className='next-username-signup-hint'>
@@ -286,9 +285,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    checkUserExists: (name) =>
-      dispatch(AuthActions.userExistsRequest(name)),
-    resetUserExists: (name) => dispatch(AuthActions.resetUserExists()),
+    checkUserExists: (username) =>
+      dispatch(AuthActions.userExistsRequest(username)),
+    resetUserExists: (username) => dispatch(AuthActions.resetUserExists()),
   };
 };
 

@@ -27,7 +27,7 @@ const { Types, Creators } = createActions({
   signupSuccess:    ['isAuthenticated', 'payload'],
   signupFailure:    ['error'],
 
-  userExistsRequest:          ['name'],
+  userExistsRequest:          ['username'],
   userExistsSuccess:          ['exists'],
   userExistsFailure:          null,
   resetUserExists:            null,

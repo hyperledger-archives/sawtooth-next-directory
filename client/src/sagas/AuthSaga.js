@@ -96,8 +96,8 @@ export function * logout (api, action) {
  */
 export function * checkUserExists (api, action) {
   try {
-    const { name } = action;
-    const res = yield call(api.userExists, name);
+    const { username } = action;
+    const res = yield call(api.userExists, username);
     res.ok ?
       yield put(AuthActions.userExistsSuccess(res.data.exists)) :
       yield put(AuthActions.userExistsFailure(res.data));
