@@ -69,7 +69,7 @@ def fetch_ldap_data(data_type):
     }
 
     entry_count = 0
-    LOGGER.info("Importing users..")
+    LOGGER.info("Importing %ss..", data_type)
 
     while True:
         start_time = time.clock()
