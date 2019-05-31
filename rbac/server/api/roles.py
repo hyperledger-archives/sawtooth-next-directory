@@ -26,7 +26,9 @@ from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 from rbac.server.api import proposals
+from rbac.server.api.proposals import PROPOSAL_TRANSACTION
 
+from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db.relationships_query import fetch_relationships
 
@@ -129,6 +131,14 @@ async def get_role(request, role_id):
     return await utils.create_response(
         request.app.config.DB_CONN, request.url, role_resource, head_block
     )
+
+
+@ROLES_BP.delete("api/roles/<role_id>")
+@authorized()
+async def delete_role(request, role_id):
+    """Delete a specific role by role_id."""
+    await reject_roles_proposals(role_id, request)
+    return json({"Delete": "Delete role API was success"})
 
 
 @ROLES_BP.get("api/roles/check")
@@ -293,6 +303,41 @@ async def add_role_task(request, role_id):
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     return json({"proposal_id": proposal_id})
+
+
+async def reject_roles_proposals(role_id, request):
+    """Reject a role's open proposals by role_id
+    Args:
+        role_id:
+            str: a role id
+        request:
+            obj: a request object
+    """
+    # Get all open proposals associated with the role
+    role_proposals = await proposals_query.fetch_open_proposals_by_role(
+        request.app.config.DB_CONN, role_id
+    )
+
+    # Update to rejected:
+    txn_key, txn_user_id = await utils.get_transactor_key(request=request)
+    for proposal in role_proposals:
+        if proposal["object_id"] == role_id:
+            reason = "Role was deleted"
+        else:
+            reason = "Role does not exist anymore"
+        batch_list = PROPOSAL_TRANSACTION[proposal["proposal_type"]][
+            "REJECTED"
+        ].batch_list(
+            signer_keypair=txn_key,
+            signer_user_id=txn_user_id,
+            proposal_id=proposal["proposal_id"],
+            object_id=proposal["object_id"],
+            related_id=proposal["related_id"],
+            reason=reason,
+        )
+        await utils.send(
+            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
+        )
 
 
 def create_role_response(request, role_id):

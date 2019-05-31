@@ -206,6 +206,22 @@ def fetch_open_proposals_by_target(next_id):
     return resource
 
 
+def fetch_open_proposals_by_role(conn, role_id):
+    """Fetch all open proposals related to a role.
+        Args:
+            role_id:
+                str: a role's id
+    """
+    resource = (
+        r.table("proposals")
+        .filter({"object_id": role_id, "status": "OPEN"})
+        .coerce_to("array")
+        .run(conn)
+    )
+
+    return resource
+
+
 def get_open_proposals_by_approver(next_id):
     """Fetch all open proposals where user is assigned_approver.
     Args:

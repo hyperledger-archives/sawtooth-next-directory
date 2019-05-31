@@ -20,6 +20,7 @@ from rbac.providers.common.db_queries import connect_to_db
 from rbac.common.logs import get_default_logger
 from tests.utilities import (
     approve_proposal,
+    add_role_member,
     create_test_role,
     create_test_task,
     create_test_user,
@@ -400,3 +401,59 @@ def test_add_role_task():
         delete_role_by_name("TestRole0501201904")
         delete_user_by_username("testowner2")
         delete_task_by_name("TestTask1")
+
+
+def test_reject_role_proposals():
+    """Test that proposals to a deleted role are rejected when its deleted."""
+    role_owner = {
+        "name": "anara one",
+        "username": "anara_user1",
+        "password": "test1122",
+        "email": "anara1@test.com",
+    }
+    user = {
+        "name": "anara two",
+        "username": "anara_user2",
+        "password": "test112",
+        "email": "anara2@test.com",
+    }
+
+    with requests.Session() as session:
+        response1 = create_test_user(session, role_owner)
+        response2 = create_test_user(session, user)
+        user_id = response1.json()["data"]["user"]["id"]
+        role_to_delete = {
+            "name": "AnaraTestRole",
+            "owners": user_id,
+            "administrators": user_id,
+        }
+        role_response = session.post(
+            "http://rbac-server:8000/api/roles", json=role_to_delete
+        )
+        role_id = role_response.json()["data"]["id"]
+        proposal = add_role_member(
+            session, role_id, {"id": response2.json()["data"]["user"]["id"]}
+        )
+        conn = connect_to_db()
+        role_exists = (
+            r.db("rbac")
+            .table("roles")
+            .filter({"name": "AnaraTestRole"})
+            .coerce_to("array")
+            .run(conn)
+        )
+        assert role_exists
+
+        deletion = session.delete("http://rbac-server:8000/api/roles/" + role_id)
+        time.sleep(5)
+        proposal_result = (
+            r.db("rbac")
+            .table("proposals")
+            .filter({"proposal_id": proposal.json()["proposal_id"]})
+            .coerce_to("array")
+            .run(conn)
+        )
+        conn.close()
+        assert proposal_result[0]["status"] == "REJECTED"
+        delete_user_by_username("anara_user1")
+        delete_user_by_username("anara_user2")
