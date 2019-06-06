@@ -12,21 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-""" Syncs the blockchain state to RethinkDB
-"""
+""" Syncs the blockchain state to RethinkDB"""
 import os
 import sys
+
+from environs import Env
 import rethinkdb as r
-from rbac.common import addresser
+
+from rbac.common.addresser import AddressSpace, parse, get_address_type
+from rbac.common.logs import get_default_logger
 from rbac.common.util import bytes_from_hex
 from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
-from rbac.common.logs import get_default_logger
-from rbac.common.addresser import AddressSpace
-from rbac.server.db.relationships_query import fetch_relationships
-from rbac.server.db.relationships_query import fetch_relationships_by_id
+from rbac.server.db.relationships_query import (
+    fetch_relationships,
+    fetch_relationships_by_id,
+)
 
 
-LDAP_DC = os.getenv("LDAP_DC")
 GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
 LOGGER = get_default_logger(__name__)
 
@@ -97,7 +99,7 @@ def _update_state(conn, block_num, address, resource):
     try:
         # update state table
         now = r.now()
-        address_parts = addresser.parse(address)
+        address_parts = parse(address)
         address_binary = bytes_from_hex(address)
         object_id = bytes_from_hex(address_parts.object_id)
         object_type = address_parts.object_type.value
@@ -243,12 +245,19 @@ def _update_provider(conn, address_type, resource):
         # Insert to outbound queue.
         direction = formatted_resource["metadata"].get("sync_direction", "")
         if direction == "OUTBOUND":
+            env = Env()
+            if env.int("ENABLE_LDAP_SYNC", 0):
+                provider = env("LDAP_DC")
+            elif env.int("ENABLE_AZURE_SYNC", 0):
+                provider = env("TENANT_ID")
+            else:
+                provider = "NEXT-created"
             outbound_entry = {
                 "data": formatted_resource,
                 "data_type": data_type,
                 "sync_type": "delta",
                 "timestamp": r.now(),
-                "provider_id": LDAP_DC,
+                "provider_id": provider,
             }
             r.table("outbound_queue").insert(outbound_entry, return_changes=True).run(
                 conn
@@ -259,7 +268,7 @@ def _update_provider(conn, address_type, resource):
 def _update(conn, block_num, address, resource):
     """ Handle the update of a given address + resource update
     """
-    data_type = addresser.get_address_type(address)
+    data_type = get_address_type(address)
     pre_filter(resource)
 
     _update_state(conn, block_num, address, resource)

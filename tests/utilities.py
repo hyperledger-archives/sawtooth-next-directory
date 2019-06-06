@@ -107,7 +107,7 @@ def delete_role_by_name(name):
             conn
         )
         conn.close()
-    except KeyError:
+    except (KeyError, IndexError):
         conn.close()
 
 

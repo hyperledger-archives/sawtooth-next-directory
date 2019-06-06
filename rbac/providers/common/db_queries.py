@@ -88,6 +88,14 @@ def peek_at_queue(table_name, provider_id=None):
         return None
 
 
+def peek_at_q_unfiltered(table_name):
+    """Returns a single entry from table_name with the oldest timestamp."""
+    conn = connect_to_db()
+    queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run(conn)
+    conn.close()
+    return queue_entry
+
+
 def put_entry_changelog(queue_entry, direction):
     """Puts the referenced document in the changelog table."""
     queue_entry["changelog_timestamp"] = dt.now().isoformat()

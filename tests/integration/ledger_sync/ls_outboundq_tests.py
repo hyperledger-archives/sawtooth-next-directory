@@ -13,11 +13,11 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Integration tests for role APIs"""
-import os
 import requests
 
 from rbac.common.logs import get_default_logger
-from rbac.providers.common.db_queries import peek_at_queue
+from rbac.providers.common.db_queries import peek_at_q_unfiltered
+from tests.rbac.api.assertions import assert_api_success
 from tests.utilities import (
     approve_proposal,
     create_test_role,
@@ -29,16 +29,13 @@ from tests.utilities import (
     log_in,
     add_role_member,
 )
-from tests.rbac.api.assertions import assert_api_success
 
 LOGGER = get_default_logger(__name__)
-LDAP_DC = os.getenv("LDAP_DC")
 
 
 def test_role_outq_insertion():
     """ Test the insertion of a new fake role resource which is unique
-        into the outbound_queue table.
-    """
+        into the outbound_queue table."""
     user1_payload = {
         "name": "Test Unique User",
         "username": "testuniqueuser0501201901",
@@ -57,9 +54,9 @@ def test_role_outq_insertion():
             "description": "Test Unique Role 1",
         }
         role_response = create_test_role(session, role_payload)
-        role_result = assert_api_success(role_response)
-        role_name = role_result["data"]["name"]
-        inserted_queue_item = peek_at_queue("outbound_queue", LDAP_DC)
+        assert_api_success(role_response)
+
+        inserted_queue_item = peek_at_q_unfiltered("outbound_queue")
         LOGGER.info(
             "Received queue entry %s from outbound queue...", inserted_queue_item["id"]
         )

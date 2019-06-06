@@ -17,13 +17,12 @@ from functools import wraps
 import hashlib
 import re
 
-from itsdangerous import BadSignature
 from environs import Env
+from itsdangerous import BadSignature
 from ldap3 import Server, Connection
 from sanic import Blueprint
 
-from rbac.common.crypto.secrets import generate_api_key
-from rbac.common.crypto.secrets import deserialize_api_key
+from rbac.common.crypto.secrets import deserialize_api_key, generate_api_key
 from rbac.common.logs import get_default_logger
 from rbac.server.api import utils
 from rbac.server.api.errors import ApiNotFound, ApiUnauthorized, ApiBadRequest
@@ -97,7 +96,7 @@ async def authorize(request):
             "ENABLE_AZURE_SYNC"
         ):
             auth_via_azure(user_map)
-        elif not user_map["provider_id"]:
+        elif user_map["provider_id"] == "NEXT-created":
             next_auth = user_map
         if result:
             auth_entry = {

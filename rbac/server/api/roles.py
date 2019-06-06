@@ -16,25 +16,22 @@
 import os
 from uuid import uuid4
 
+from environs import Env
 import rethinkdb as r
 from sanic import Blueprint
 from sanic.response import json
 
 from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
-from rbac.server.api.errors import ApiBadRequest
+from rbac.server.api import utils, proposals
 from rbac.server.api.auth import authorized
-from rbac.server.api import utils
-from rbac.server.api import proposals
+from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.proposals import PROPOSAL_TRANSACTION
-
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db.relationships_query import fetch_relationships
 
-LDAP_DC = os.getenv("LDAP_DC")
 GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
-
 LOGGER = get_default_logger(__name__)
 
 ROLES_BP = Blueprint("roles")
@@ -100,14 +97,21 @@ async def create_new_role(request):
                 "name": role_title,
                 "remote_id": distinguished_name_formatted,
             }
+            env = Env()
+            if env.int("ENABLE_LDAP_SYNC", 0):
+                provider = env("LDAP_DC")
+            elif env.int("ENABLE_AZURE_SYNC", 0):
+                provider = env("TENANT_ID")
+            else:
+                provider = "NEXT-created"
             outbound_entry = {
                 "data": data_formatted,
                 "data_type": "group",
                 "timestamp": r.now(),
-                "provider_id": LDAP_DC,
+                "provider_id": provider,
             }
             # Insert to outbound_queue and close
-            role_outbound_resource = await roles_query.insert_to_outboundqueue(
+            await roles_query.insert_to_outboundqueue(
                 request.app.config.DB_CONN, outbound_entry
             )
         else:

@@ -141,7 +141,7 @@ async def create_new_user(request):
 
     mapping_data = {
         "next_id": next_id,
-        "provider_id": None,
+        "provider_id": "NEXT-created",
         "remote_id": None,
         "public_key": key_pair.public_key,
         "encrypted_key": encrypted_private_key,
