@@ -125,6 +125,9 @@ def setup_db(host, port, name):
         r.db(name).table("packs").index_create("name").run(conn)
         r.db(name).table("packs").index_create("description").run(conn)
 
+        LOGGER.info('Creating table: notifications')
+        r.db(name).table_create('notifications').run(conn)
+
     except ReqlRuntimeError as err:
         LOGGER.info('Rethink exception %s', err)
 
