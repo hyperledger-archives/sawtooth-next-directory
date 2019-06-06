@@ -18,7 +18,7 @@ Issues should be reported to this project's Github Issues page: [https://github.
 
 When reporting an issue, please provide as much detail as possible about how
 to reproduce it. If possible, provide instructions for how to reproduce the
-issue within the vagrant development environment.
+issue within the vagrant development environment. There is a pre-built template for bug ticketing that can be used for reporting.  
 
 Details are key. Please include the following:
 
@@ -57,8 +57,8 @@ following:
 * Please include new or update existing PlantUML sequence/architecture diagrams
   that relate to your PR. See `./docs/diagrams/src/README.md` for details on how
   we maintain our diagrams)
-* Please include unit and integration tests for any new features and updates to
-  existing tests.
+* Please include unit and integration tests for any new features and update any
+  existing tests that are impacted by the change. For more information on how to write tests please refer to [Testing Guidelines](#testing-guidelines) below.
 * Please ensure the unit and integration tests run successfully. Refer to the
   Testing section in `/README.md` on how to run these tests.
 * Please ensure that lint passes by running `./bin/run_lint`. The linter requires
@@ -74,10 +74,56 @@ Please ensure that any contributions comply with the following:
 * Our linter is set to comply with PEP 8, any Python contributions should follow
   the authoritative definitions [here](https://www.python.org/dev/peps/pep-0008/)
   * A friendlier version (though not authoritative) is available [here](https://realpython.com/python-pep8/).  
-* Docstrings should loosely follow Google's python styleguide which extends
-  PEP 257.
+* Docstrings loosely follows Google's python styleguide which extends
+  PEP 257. 
+    * Docstrings should begin and end with triple quotes (""")
+    * Summary and parameter definitions should be separated by a New Line
+    * Args and Returns should be defined 
+    * An example follows:
+    ```
+    def function(next_id):
+    """ The function takes in a next_id and returns the next_id.
+    
+    Args:
+     next_id:
+          str: Id of a user in NEXT
+    Returns:  string of a user's Id
+    """
+    return next_id
+    ```
   * Details on Google's styleguide [here](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
   * Documentation of [PEP 257](https://www.python.org/dev/peps/pep-0257).
+
+### Testing Guidelines
+
+*  Docstrings will be formatted with a summary, a new line, and then args/returns. See the example in the above section.
+* Internal testing folder structure will imitate the app so it is easy to locate tests for a specific file.
+These are the folders below the top level folders. External testing folder (top level folders) structure to be as follows:
+    ```
+    tests
+        | _ e2e
+        | _ integration
+        | _ unit
+        | _ utilities
+    ```
+* Test file names will end in 's' (be plural). Example: role_api_tests.py.
+* Where possible pytest parameterization will be used to be able to generalize the tests and increase unique use cases being tested in the system.
+* Where possible, test cases will be limited to one per test (or test run if utilizing parameterization).
+* There will be no additional annotation outside of doctrings for seperation or explanation purposes.
+* Where possible tests will use pre-loaded data to decrease test run time of testing.
+* Utilities will be split by use case and will have the following structure:
+    ```
+    Utilities
+        | _ creation
+        | _ db_queries
+        | _ deletion
+        | _ fixtures
+        | _ test_data
+        | _ update
+    ```
+* Our goal is to get to and maintain 70% coverage over the project. Each pull request should have tests that test the new feature and gets to/maintains 70% or higher.
+* If data manipulation occurs in a test, a tear down function must be used to reset the data before the start of the next test.
+* __ init__.py files will not contain code
 
 #### Pull Request Guidelines
 
@@ -148,3 +194,4 @@ These checks are:
 
 * The PR must be approved by at least two reviewers and there cannot be
   outstanding changes requested.
+* Travis must pass, meaning tests, formatting, and linting must pass
