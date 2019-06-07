@@ -14,17 +14,16 @@
 # -----------------------------------------------------------------------------
 """Propose Member Helper"""
 # pylint: disable=too-few-public-methods
-
+import time
 import random
 import requests
 
 from rbac.common.logs import get_default_logger
-from tests.rbac.api.base.base_helper import BaseApiHelper
-from tests.rbac.api.user.create_user_helper import CreateUserTestHelper
-from tests.rbac.api.role.create_role_helper import CreateRoleTestHelper
-from tests.rbac.api.proposal.proposal_helper import ProposalTestHelper
 from tests.rbac.api.assertions import assert_api_success
-from tests.rbac.api.config import api_wait
+from tests.rbac.api.base.base_helper import BaseApiHelper
+from tests.rbac.api.proposal.proposal_helper import ProposalTestHelper
+from tests.rbac.api.role.create_role_helper import CreateRoleTestHelper
+from tests.rbac.api.user.create_user_helper import CreateUserTestHelper
 
 LOGGER = get_default_logger(__name__)
 
@@ -69,12 +68,12 @@ class ProposeRoleMemberTestHelper(BaseApiHelper):
         user = helper.user.current2
         url = self.url(role_id=role["id"])
         data = {"id": user["next_id"]}
-        api_wait()  # temporary, see config
+        time.sleep(5)
         response = requests.post(
             url=url, headers={"Authorization": user["token"]}, json=data
         )
         result = assert_api_success(response)
         assert "proposal_id" in result
-        api_wait()  # temporary, see config
+        time.sleep(5)
         proposal = helper.proposal.get(result["proposal_id"], owner)
         return proposal, owner

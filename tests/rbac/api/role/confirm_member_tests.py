@@ -12,34 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-""" Reject Add Member Test """
-
+""" Confirm Add Member Test """
+# pylint: disable=invalid-name
+import time
 import pytest
 
 from rbac.common.logs import get_default_logger
-
 from tests.rbac import helper
-from tests.rbac.api.config import api_wait
 
 LOGGER = get_default_logger(__name__)
 
 
 @pytest.mark.api
 @pytest.mark.api_role
-def test_api_reject_add_role_member():
+def test_api_confirm_add_role_member():
     """ Confirm Add Member Test
     """
     proposal, owner = helper.api.role.member.propose.new()
-    api_wait()  # temporary, see config
+    time.sleep(5)
     reason = helper.api.proposal.reason()
-    result = helper.api.proposal.reject(proposal, owner, reason)
+    result = helper.api.proposal.confirm(proposal, owner, reason)
     assert "proposal_id" in result
-    api_wait()  # temporary, see config
-    rejected = helper.api.proposal.get(result["proposal_id"], owner)
-    assert rejected["id"] == result["proposal_id"]
-    assert rejected["status"] == "REJECTED"
-    assert rejected["type"] == "ADD_ROLE_MEMBER"
-    assert rejected["object"] == proposal["object"]
-    assert rejected["target"] == proposal["target"]
-    assert rejected["closer"] == owner["next_id"]
-    assert rejected["close_reason"] == reason
+    time.sleep(5)
+    confirmed = helper.api.proposal.get(result["proposal_id"], owner)
+    assert confirmed["id"] == result["proposal_id"]
+    assert confirmed["status"] == "CONFIRMED"
+    assert confirmed["type"] == "ADD_ROLE_MEMBER"
+    assert confirmed["object"] == proposal["object"]
+    assert confirmed["target"] == proposal["target"]
+    assert confirmed["closer"] == owner["next_id"]
+    assert confirmed["close_reason"] == reason
