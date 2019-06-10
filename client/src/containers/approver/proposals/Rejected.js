@@ -109,7 +109,7 @@ class Rejected extends Component {
       diff2.map(proposal => proposal.opener) :
       rejectedProposals.map(proposal => proposal.opener);
     diff3 = users ?
-      diff2.map(proposal => proposal.closer) :
+      diff3.map(proposal => proposal.closer) :
       rejectedProposals.map(proposal => proposal.closer);
 
     diff && diff.length > 0 && getRoles(diff);
