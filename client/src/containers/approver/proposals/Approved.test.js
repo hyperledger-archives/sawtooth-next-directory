@@ -44,6 +44,7 @@ describe('Approved component', () => {
       return { email: '' };
     },
     users: [],
+    userId: 'abc',
   };
   const newProps = {
     location: {},

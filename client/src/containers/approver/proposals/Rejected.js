@@ -99,15 +99,22 @@ class Rejected extends Component {
     let diff2 = users && rejectedProposals.filter(
       proposal => !users.find(user => user.id === proposal.opener)
     );
+    let diff3 = users && rejectedProposals.filter(
+      proposal => !users.find(user => user.id === proposal.closer)
+    );
     diff = roles ?
       diff.map(proposal => proposal.object) :
       rejectedProposals.map(proposal => proposal.object);
     diff2 = users ?
       diff2.map(proposal => proposal.opener) :
       rejectedProposals.map(proposal => proposal.opener);
+    diff3 = users ?
+      diff2.map(proposal => proposal.closer) :
+      rejectedProposals.map(proposal => proposal.closer);
 
     diff && diff.length > 0 && getRoles(diff);
     diff2 && diff2.length > 0 && getUsers([...new Set(diff2)], true);
+    diff3 && diff3.length > 0 && getUsers([...new Set(diff3)], true);
   }
 
 
@@ -223,6 +230,11 @@ class Rejected extends Component {
               onClick={this.handleSort('rejected_date')}>
               Rejected On
             </Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={column === 'closer' ? direction : null}
+              onClick={this.handleSort('closer')}>
+              Rejected By
+            </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -234,7 +246,7 @@ class Rejected extends Component {
                 {this.roleName(proposal.object)}
               </Table.Cell>
               <Table.Cell>
-                <Header as='h4' className='next-approver-rejected-table-opener'>
+                <Header as='h4' className='next-approver-rejected-table-user'>
                   <Avatar
                     userId={proposal.opener}
                     size='small'
@@ -250,6 +262,17 @@ class Rejected extends Component {
               </Table.Cell>
               <Table.Cell>
                 {utils.formatDate(proposal.closed_date)}
+              </Table.Cell>
+              <Table.Cell>
+                <Header as='h4' className='next-approver-rejected-table-user'>
+                  <Avatar
+                    userId={proposal.closer}
+                    size='small'
+                    {...this.props}/>
+                  <Header.Content>
+                    {this.userName(proposal.closer)}
+                  </Header.Content>
+                </Header>
               </Table.Cell>
             </Table.Row>
           ))}

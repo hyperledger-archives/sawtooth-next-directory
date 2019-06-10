@@ -44,6 +44,7 @@ describe('Rejected component', () => {
       return { email: '' };
     },
     users: [],
+    userId: 'abc',
   };
   const newProps = {
     location: {},
