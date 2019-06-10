@@ -121,8 +121,16 @@ class RequesterChat extends Component {
 
         // Construct intent message given user is an owner
         // of the current pack or role
-        payload.text = `/${update || 'owner'}${JSON.stringify(
-          {...slots, owner_status: 'OWNER'})}`;
+
+        if (memberOf && memberOf.find(
+          item => item.id === resource.id)
+        ) {
+          payload.text = `/${update || 'owner'}${JSON.stringify(
+            {...slots, owner_status: 'OWNER'})}`;
+        } else {
+          payload.text = `/${update || 'owner'}${JSON.stringify(
+            {...slots, owner_status: 'OWNER', member_status: 'NOT_MEMBER'})}`;
+        }
 
       } else if (me && me.proposals.find(
         proposal => proposal.object_id === resource.id &&

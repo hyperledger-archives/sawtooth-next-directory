@@ -116,6 +116,7 @@ actions:
   - utter_noop
   - utter_offer
   - utter_owner
+  - utter_owner_not_member
   - utter_passive
   - utter_pending_pack
   - utter_pending_role
@@ -166,6 +167,16 @@ templates:
     - text: You are an owner of this resource.
     - text: You own this! In other words, this belongs to you.
     - text: Congratulations, you are an owner of this resource.
+
+  utter_owner_not_member:
+    - text: >-
+        You own this resource. However, you are not yet a member.
+        Would you also like to become a member of your resource?
+      buttons:
+      - title: Yes, please
+        payload: Yes, please.
+      - title: No, thanks
+        payload: No, thanks.
 
   utter_access_member:
     - text: You already have access to this resource, silly.

@@ -332,6 +332,9 @@ async def add_role_member(request, role_id):
         request.json["status"] = "APPROVED"
         request.json["reason"] = "I am the owner of this role"
         await proposals.update_proposal(request, proposal_id)
+        if request.json.get("tracker"):
+            events = {"batch_status": batch_status, "member_status": "MEMBER"}
+            return utils.create_tracker_response(events)
         return json(
             {
                 "message": "Owner is the requester. Proposal is autoapproved",

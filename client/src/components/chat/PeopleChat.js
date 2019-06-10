@@ -163,7 +163,6 @@ class PeopleChat extends Component {
       activeIndex,
       activeUser,
       fetchingOrganization,
-      organization,
       setFlow } = this.props;
     if (activeIndex === 1) return null;
 
@@ -181,17 +180,6 @@ class PeopleChat extends Component {
       content: {
         content: (
           <div className='next-people-organization-panel'>
-            { organization &&
-              !fetchingOrganization &&
-              organization.managers.length === 0 &&
-              organization.direct_reports.length === 0 &&
-              organization.peers.length === 0 &&
-              <div className='next-people-organization-no-items'>
-                <span>
-                  No organization info
-                </span>
-              </div>
-            }
             <Organization
               compact
               activeUser={activeUser}

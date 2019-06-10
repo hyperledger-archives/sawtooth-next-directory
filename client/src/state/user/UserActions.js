@@ -33,6 +33,7 @@ const { Types, Creators } = createActions({
   peopleFailure:   ['error'],
 
   resetAll:        null,
+  feedReceive:     ['payload'],
 });
 
 

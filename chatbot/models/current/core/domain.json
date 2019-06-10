@@ -71,6 +71,7 @@
     "prev_utter_noop",
     "prev_utter_offer",
     "prev_utter_owner",
+    "prev_utter_owner_not_member",
     "prev_utter_passive",
     "prev_utter_pending_pack",
     "prev_utter_pending_role",
