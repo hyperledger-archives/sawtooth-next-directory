@@ -216,6 +216,7 @@ class PeopleChat extends Component {
    * @returns {object}
    */
   rolesPanel = (user) => {
+    const { setFlow } = this.props;
     const { currentRolesMaxCount } = this.state;
     return {
       key: 'roles-panel',
@@ -253,11 +254,10 @@ class PeopleChat extends Component {
                 <Button
                   basic
                   animated
-                  as={Link}
-                  to={'/'}
+                  onClick={() => setFlow(2)}
                   size='mini'>
                   <Button.Content visible>
-                  VIEW ALL
+                  VIEW ALL ROLES
                   </Button.Content>
                   <Button.Content hidden>
                     <Icon name='arrow right'/>
