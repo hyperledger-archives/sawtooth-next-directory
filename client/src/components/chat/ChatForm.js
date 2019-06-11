@@ -182,6 +182,9 @@ class ChatForm extends Component {
       payload.substring(demarcation, payload.length)
     );
 
+    // Clear chatbot error state
+    parsed.batch_status = '1';
+
     if (parsed.resource_id) {
       parsed.resource_id = (activePack && activePack.id) ||
         (activeRole && activeRole.id);
