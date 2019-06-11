@@ -57,8 +57,8 @@ class PeopleNav extends Component {
     return (
       <div
         id='next-people-nav'
-        className={activeIndex === 1 ? 'next-people-nav-less-padding' : ''}>
-        { activeIndex === 1 &&
+        className={activeIndex > 0 ? 'next-people-nav-less-padding' : ''}>
+        { activeIndex > 0 &&
           <Button
             icon
             className='next-people-nav-back-button'
