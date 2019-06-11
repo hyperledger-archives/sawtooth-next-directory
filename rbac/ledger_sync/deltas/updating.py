@@ -226,6 +226,7 @@ def _update_provider(conn, address_type, resource):
     }
     if address_type in outbound_types:
         # Get the object & format it.
+        env = Env()
         if outbound_types[address_type] == "user":
             user = get_user(conn, resource["next_id"])
             if user:
@@ -233,6 +234,7 @@ def _update_provider(conn, address_type, resource):
             else:
                 LOGGER.warning("User not found: %s", resource["next_id"])
                 return
+            admin_identifier = formatted_resource["username"]
             data_type = "user"
         if outbound_types[address_type] == "role":
             role = get_role(conn, resource["role_id"])
@@ -241,17 +243,22 @@ def _update_provider(conn, address_type, resource):
             else:
                 LOGGER.warning("Role not found: %s", resource["role_id"])
                 return
+            admin_identifier = formatted_resource["name"]
             data_type = "group"
         # Insert to outbound queue.
         direction = formatted_resource["metadata"].get("sync_direction", "")
         if direction == "OUTBOUND":
-            env = Env()
-            if env.int("ENABLE_LDAP_SYNC", 0):
+            if admin_identifier == "NextAdmins" or admin_identifier == env(
+                "NEXT_ADMIN_USER"
+            ):
+                provider = "NEXT-created"
+            elif env.int("ENABLE_LDAP_SYNC", 0):
                 provider = env("LDAP_DC")
             elif env.int("ENABLE_AZURE_SYNC", 0):
                 provider = env("TENANT_ID")
             else:
                 provider = "NEXT-created"
+
             outbound_entry = {
                 "data": formatted_resource,
                 "data_type": data_type,

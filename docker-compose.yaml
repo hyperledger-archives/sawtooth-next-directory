@@ -198,9 +198,15 @@ services:
       - validator
     environment:
       - AES_KEY=${AES_KEY}
+      - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-0}
+      - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-0}
+      - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
       - HOST=${HOST:-localhost}
+      - LDAP_DC=${LDAP_DC}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER}
       - SECRET_KEY=${SECRET_KEY}
+      - TENANT_ID=${TENANT_ID}
     healthcheck:
       test: ./bin/wait_for_ledger_sync
       interval: 30s

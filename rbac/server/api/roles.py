@@ -126,6 +126,7 @@ async def create_new_role(request):
                 "name": role_title,
                 "remote_id": distinguished_name_formatted,
             }
+
             env = Env()
             if env.int("ENABLE_LDAP_SYNC", 0):
                 provider = env("LDAP_DC")
@@ -133,6 +134,7 @@ async def create_new_role(request):
                 provider = env("TENANT_ID")
             else:
                 provider = "NEXT-created"
+
             outbound_entry = {
                 "data": data_formatted,
                 "data_type": "group",
