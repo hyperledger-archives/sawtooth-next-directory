@@ -21,11 +21,12 @@ limitations under the License.
 #next-chat-organization-heading .ui.container:first-child {
   border-bottom: 1px solid #dadce0;
   flex: 1;
+  max-height: 270px;
 }
 
 #next-chat-organization-user-info {
   -ms-overflow-style: none;
-  flex: 2;
+  flex: 2 100px;
   overflow-x: hidden;
   overflow-y: auto;
   padding-top: 40px;

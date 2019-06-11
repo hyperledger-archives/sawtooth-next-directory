@@ -23,6 +23,7 @@ import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import PeopleNav from './PeopleNav';
 import Organization from './Organization';
+import UserRoles from './UserRoles';
 import OrganizationList from './OrganizationList';
 
 
@@ -61,6 +62,7 @@ class People extends Component {
    * @param {number} activeIndex Current screen index
    */
   setFlow = (activeIndex) => {
+    window.scrollTo(0, 0);
     this.setState({ activeIndex });
   };
 
@@ -151,6 +153,11 @@ class People extends Component {
                   activeUser={activeUser}
                   showPeers
                   handleUserSelect={this.handleUserSelect}
+                  {...this.props}/>
+              }
+              { activeIndex === 2 &&
+                <UserRoles
+                  activeUser={activeUser}
                   {...this.props}/>
               }
             </div>
