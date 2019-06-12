@@ -3912,6 +3912,38 @@ button.ui.link:focus {
   right: 22px;
   top: 30px;
 }
+.toggle.buttons.tiny {
+  height: 24px;
+}
+.toggle.buttons .ui.button {
+  background: #23232f !important;
+  font-weight: 500;
+  padding: 0 0.25em;
+}
+.toggle.buttons .ui.button.active {
+  background: #23232f !important;
+}
+.toggle.buttons .ui.button div {
+  border-radius: 4em;
+  color: #75757c;
+  padding: 0.25em 1.45em;
+}
+.toggle.buttons .ui.button.active div {
+  background: #4c4b5f;
+  -webkit-box-shadow: 0 1em 1.7em #00000070;
+          box-shadow: 0 1em 1.7em #00000070;
+  color: #c8c9cd;
+  -webkit-transition: all 0.35s;
+  transition: all 0.35s;
+}
+.toggle.buttons .ui.button:first-child {
+  border-top-left-radius: 4em;
+  border-bottom-left-radius: 4em;
+}
+.toggle.buttons .ui.button:nth-child(2) {
+  border-top-right-radius: 4em;
+  border-bottom-right-radius: 4em;
+}
 
 
 /*******************************
