@@ -52,7 +52,7 @@ export const ApproverSelectors = {
   ownedPacks:            (state) => {
     if (!state.user.me) return null;
     return [...new Set([
-      ...(state.approver.createdPacks || []).map(pack => pack.id),
+      ...(state.approver.createdPacks || []).map(pack => pack.pack_id),
       ...state.user.me.ownerOf.packs,
     ])];
   },
