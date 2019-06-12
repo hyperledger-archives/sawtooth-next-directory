@@ -71,7 +71,7 @@ def test_invalid_duplicate_username():
     }
     expected = {
         "message": "Username already exists. Please give a different Username.",
-        "code": 400,
+        "code": 409,
     }
     insert_user(user_input)
     with requests.Session() as session:

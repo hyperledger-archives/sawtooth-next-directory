@@ -26,7 +26,12 @@ from rbac.common.crypto.secrets import encrypt_private_key, generate_api_key
 from rbac.common.user import User
 from rbac.server.api import utils
 from rbac.server.api.auth import authorized
-from rbac.server.api.errors import ApiBadRequest
+from rbac.server.api.errors import (
+    ApiBadRequest,
+    ApiInternalError,
+    ApiTargetConflict,
+    handle_errors,
+)
 from rbac.server.api.proposals import compile_proposal_resource, PROPOSAL_TRANSACTION
 from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
@@ -92,8 +97,11 @@ async def create_new_user(request):
         > 0
     ):
         # Throw Error response to Next_UI
-        raise ApiBadRequest(
-            "Username already exists. Please give a different Username."
+        return await handle_errors(
+            request,
+            ApiTargetConflict(
+                "Username already exists. Please give a different Username."
+            ),
         )
 
     # Generate keys
@@ -122,9 +130,16 @@ async def create_new_user(request):
     )
 
     # Submit transaction and wait for complete
-    await utils.send(
+    sawtooth_response = await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
+
+    if not sawtooth_response:
+        LOGGER.warning("There was an error submitting the sawtooth transaction.")
+        return await handle_errors(
+            request,
+            ApiInternalError("There was an error submitting the sawtooth transaction."),
+        )
 
     # Save new user in auth table
     hashed_password = hashlib.sha256(

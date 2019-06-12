@@ -61,6 +61,7 @@ from tests.utilities import (
     get_pack_owners_by_user,
     is_user_in_db,
     is_group_in_db,
+    wait_for_resource_removal_in_db,
 )
 
 LOGGER = get_default_logger(__name__)
@@ -909,8 +910,8 @@ def test_delete_role(ldap_connection):
         ["CN=sysadmins,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB"],
         "group_deleted",
     )
-    result = is_group_in_db("sysadmins")
-    assert result is False
+    is_role_removed = wait_for_resource_removal_in_db("roles", "name", "sysadmins")
+    assert is_role_removed is True
 
 
 def test_created_date_comparison(ldap_connection):

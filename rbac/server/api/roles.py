@@ -25,7 +25,7 @@ from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.server.api import utils, proposals
 from rbac.server.api.errors import (
-    ApiBadRequest,
+    ApiTargetConflict,
     ApiNotFound,
     ApiForbidden,
     ApiInternalError,
@@ -47,6 +47,7 @@ from rbac.server.blockchain_transactions.role_transaction import (
     create_rjct_ppsls_role_txns,
 )
 from rbac.server.api.utils import check_admin_status, check_role_owner_status
+from rbac.server.db.db_utils import wait_for_resource_in_db
 
 LDAP_DC = os.getenv("LDAP_DC")
 GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
@@ -102,9 +103,19 @@ async def create_new_role(request):
             owners=request.json.get("owners"),
             description=request.json.get("description"),
         )
-        await utils.send(
+        sawtooth_response = await utils.send(
             request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
         )
+
+        if not sawtooth_response:
+            LOGGER.warning("There was an error submitting the sawtooth transaction.")
+            return await handle_errors(
+                request,
+                ApiInternalError(
+                    "There was an error submitting the sawtooth transaction"
+                ),
+            )
+
         if role_title != "NextAdmins":
             distinguished_name_formatted = "CN=" + role_title + "," + GROUP_BASE_DN
             data_formatted = {
@@ -137,8 +148,11 @@ async def create_new_role(request):
                 "The role being created is NextAdmins, which is local to NEXT and will not be inserted into the outbound_queue."
             )
         return create_role_response(request, role_id)
-    raise ApiBadRequest(
-        "Error: Could not create this role because the role name already exists."
+    return await handle_errors(
+        request,
+        ApiTargetConflict(
+            "Error: Could not create this role because the role name already exists."
+        ),
     )
 
 
@@ -329,6 +343,21 @@ async def add_role_member(request, role_id):
     owners = role_resource.get("owners")
     requester_id = request.json.get("id")
     if requester_id in owners:
+        is_proposal_ready = await wait_for_resource_in_db(
+            "proposals", "proposal_id", proposal_id, max_attempts=30
+        )
+        if not is_proposal_ready:
+            LOGGER.warning(
+                "Max attempts exceeded. Proposal %s not found in RethinkDB.",
+                proposal_id,
+            )
+            return await handle_errors(
+                request,
+                ApiInternalError(
+                    "Max attempts exceeded. Proposal %s not found in RethinkDB."
+                    % proposal_id
+                ),
+            )
         request.json["status"] = "APPROVED"
         request.json["reason"] = "I am the owner of this role"
         await proposals.update_proposal(request, proposal_id)

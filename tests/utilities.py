@@ -291,10 +291,10 @@ def wait_for_resource_removal_in_db(
     Returns:
         resource_removed:
             bool:
-                True:   If the role is successfully found within the given
+                True:   If the role was successfully removed within the given
                         number of attempts.
             bool:
-                False:  If the role is not found after the given number of
+                False:  If the role is  found after the given number of
                         attempts.
     """
     resource_removed = False

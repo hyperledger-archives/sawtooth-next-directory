@@ -28,6 +28,7 @@ DEFAULT_MSGS = {
     401: "Unauthorized",
     403: "Forbidden",
     404: "Not Found",
+    409: "Target Conflict",
     501: "Not Implemented",
     503: "Internal Error",
 }
@@ -82,6 +83,13 @@ class ApiForbidden(ApiException):
 @add_status_code(404)
 class ApiNotFound(ApiException):
     """Define ApiNotFound exception."""
+
+    pass
+
+
+@add_status_code(409)
+class ApiTargetConflict(ApiException):
+    """ Define ApiTargetConflict exception."""
 
     pass
 

@@ -90,7 +90,7 @@ services:
       - AES_KEY=${AES_KEY}
     command: |
       bash -c "
-        ./bin/setup_db --host rethink &&
+        ./bin/setup_db &&
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
 

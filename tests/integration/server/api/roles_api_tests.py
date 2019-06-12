@@ -131,7 +131,7 @@ def test_create_duplicate_role():
             response.json()["message"]
             == "Error: Could not create this role because the role name already exists."
         )
-        assert response.json()["code"] == 400
+        assert response.json()["code"] == 409
         delete_user_by_username("susan22")
         delete_role_by_name("Manager0501201901")
 
@@ -165,7 +165,7 @@ def test_duplicate_role_with_spaces():
             response.json()["message"]
             == "Error: Could not create this role because the role name already exists."
         )
-        assert response.json()["code"] == 400
+        assert response.json()["code"] == 409
         delete_user_by_username("susan22")
         delete_role_by_name("Manager0501201901")
 
@@ -923,5 +923,5 @@ def test_delete_role_not_owner():
 
     # clean up
     delete_user_by_username("fred1")
-    delete_user_by_username("maunster1")
+    delete_user_by_username("meunster1")
     delete_role_by_name("Men of Low Moral Fiber")
