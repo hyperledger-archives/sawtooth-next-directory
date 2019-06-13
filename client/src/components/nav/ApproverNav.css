@@ -57,3 +57,8 @@ limitations under the License.
   bottom: 50px;
   position: absolute;
 }
+
+.approver-nav-item-disable > a {
+  color: #778899 !important;
+  pointer-events: none;
+}
