@@ -129,6 +129,7 @@ services:
       \"\""
 
   test-runner:
+    container_name: test-runner
     build:
       context: .
       dockerfile: ./docker/tests.Dockerfile

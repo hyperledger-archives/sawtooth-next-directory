@@ -85,9 +85,7 @@ def main():
     inspect = [
         'docker', 'inspect',
         '-f', "{{.State.ExitCode}}",
-        "{}_{}_1".format(
-            isolation_id,
-            test_service)
+        test_service
     ]
 
     compose_dict = load_compose_file(compose_file)
