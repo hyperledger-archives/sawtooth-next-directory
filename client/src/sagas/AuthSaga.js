@@ -34,7 +34,7 @@ export function * login (api, action) {
     });
 
     res.ok ?
-      yield put(AuthActions.loginSuccess(true, res.data.data)) :
+      yield put(AuthActions.loginSuccess(true, res.data)) :
       yield put(AuthActions.loginFailure(res.data));
   } catch (err) {
     console.error(err);
@@ -60,7 +60,7 @@ export function * signup (api, action) {
     });
 
     res.ok ?
-      yield put(AuthActions.signupSuccess(true, res.data.data)) :
+      yield put(AuthActions.signupSuccess(true, res.data)) :
       yield put(AuthActions.signupFailure(res.data));
   } catch (err) {
     console.error(err);

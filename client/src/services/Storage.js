@@ -14,7 +14,7 @@ limitations under the License.
 ----------------------------------------------------------------------------- */
 
 
-const tokenKey = 'RBAC_AUTH_HEADER_PAYLOAD';
+const tokenKey = 'RBAC_AUTH_TOKEN';
 const viewKey = 'RBAC_APPROVER_VIEW_ENABLED';
 const userIdKey = 'next_id';
 
@@ -35,12 +35,12 @@ export const removeUserId = () => remove(userIdKey);
 
 
 export const get = (key) =>
-  ('; ' + document.cookie).split('; ' + key + '=').pop().split(';').shift();
+  localStorage.getItem(key);
 
 
 export const set = (key, value) =>
-  document.cookie = `${key}=${value}; Path=/;`;
+  localStorage.setItem(key, value);
 
 
 export const remove = (key) =>
-  document.cookie = `${key}=; Path=/; Max-Age=0`;
+  localStorage.removeItem(key);

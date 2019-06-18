@@ -30,6 +30,7 @@ from tests.utilities import (
     delete_user_by_username,
     delete_role_by_name,
     is_group_in_db,
+    log_in,
 )
 
 # ------------------------------------------------------------------------------
@@ -309,9 +310,7 @@ async def test_proposal_approvers_list(test_role_owner, test_requestor, test_rol
             "id": test_role_owner["username"],
             "password": test_role_owner["password"],
         }
-        response = session.post(
-            "http://rbac-server:8000/api/authorization/", json=payload
-        )
+        response = log_in(session, payload)
         assert (
             response.status_code == 200
         ), "Failed to authenticate as role owner. {}".format(response.json())
