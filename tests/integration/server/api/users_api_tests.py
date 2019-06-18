@@ -39,6 +39,7 @@ from tests.utilities import (
     get_user_mapping_entry,
     get_user_metadata_entry,
     insert_user,
+    log_in,
     update_manager,
 )
 
@@ -114,9 +115,7 @@ def test_create_new_user_api():
             "password": "manager_password",
             "email": "manager@email_id",
         }
-        manager_creation_response = session.post(
-            "http://rbac-server:8000/api/users", json=create_manager_payload
-        )
+        manager_creation_response = create_test_user(session, create_manager_payload)
         manager_id = manager_creation_response.json()["data"]["user"]["id"]
         user_create_payload = {
             "name": "user_name",
@@ -455,7 +454,7 @@ def test_update_user_password():
     with requests.Session() as session:
         created_user = create_test_user(session, user)
         login_inputs = {"id": "admin_nadia", "password": "test11"}
-        session.post("http://rbac-server:8000/api/authorization/", json=login_inputs)
+        log_in(session, login_inputs)
 
         payload = {
             "next_id": created_user.json()["data"]["user"]["id"],
@@ -470,9 +469,7 @@ def test_update_user_password():
 
     with requests.Session() as session2:
         login_inputs = {"id": "nadia5", "password": "password1"}
-        response = session2.post(
-            "http://rbac-server:8000/api/authorization/", json=login_inputs
-        )
+        response = log_in(session2, login_inputs)
         assert response.status_code == 200
 
         payload = {
@@ -499,7 +496,7 @@ def test_update_user():
     with requests.Session() as session:
         created_user = create_test_user(session, user)
         login_input = {"id": "admin_nadia", "password": "test11"}
-        session.post("http://rbac-server:8000/api/authorization/", json=login_input)
+        log_in(session, login_input)
 
         update_payload = {
             "next_id": created_user.json()["data"]["user"]["id"],
@@ -519,9 +516,7 @@ def test_update_user():
     time.sleep(3)
     with requests.Session() as session2:
         login_inputs = {"id": "nadia.changed", "password": "test11"}
-        response = session2.post(
-            "http://rbac-server:8000/api/authorization/", json=login_inputs
-        )
+        response = log_in(session2, login_inputs)
         assert response.status_code == 200
 
         update_payload = {

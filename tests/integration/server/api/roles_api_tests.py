@@ -750,9 +750,7 @@ def test_delete_role_with_proposals():
 
         # Auth as role_owner
         payload = {"id": role_owner["username"], "password": role_owner["password"]}
-        auth_response = session.post(
-            "http://rbac-server:8000/api/authorization/", json=payload
-        )
+        auth_response = log_in(session, payload)
         assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
             role_owner["username"],
             auth_response.json(),
@@ -780,9 +778,7 @@ def test_delete_role_with_proposals():
 
         # Auth as new_member
         payload = {"id": new_member["username"], "password": new_member["password"]}
-        auth_response = session.post(
-            "http://rbac-server:8000/api/authorization/", json=payload
-        )
+        auth_response = log_in(session, payload)
         assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
             new_member["username"],
             auth_response.json(),
@@ -804,9 +800,7 @@ def test_delete_role_with_proposals():
 
         # Auth as role_owner
         payload = {"id": role_owner["username"], "password": role_owner["password"]}
-        auth_response = session.post(
-            "http://rbac-server:8000/api/authorization/", json=payload
-        )
+        auth_response = log_in(session, payload)
         assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
             role_owner["username"],
             auth_response.json(),

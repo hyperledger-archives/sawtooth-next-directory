@@ -24,13 +24,17 @@ export const request = (state) =>
 
 
 export const success = (state, { isAuthenticated, payload }) => {
-  payload.user ?
-    storage.setUserId(payload.user.id) :
-    storage.setUserId(payload.next_id);
+  if (payload.token)
+    storage.setToken(payload.token);
+  if (payload.data) {
+    payload.data.user ?
+      storage.setUserId(payload.data.user.id) :
+      storage.setUserId(payload.data.next_id);
+  }
   return state.merge({
     isAuthenticated,
     fetching: false,
-    user: payload.user,
+    user: payload.data && payload.data.user,
   });
 };
 

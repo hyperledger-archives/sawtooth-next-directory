@@ -18,7 +18,7 @@ import time
 import pytest
 import requests
 
-from tests.utilities import create_test_user
+from tests.utilities import create_test_user, log_in
 
 LDAP_SERVER = os.getenv("LDAP_SERVER")
 
@@ -66,11 +66,9 @@ def test_valid_auth_inputs(login_inputs, expected_result, expected_status_code):
 )
 def test_invalid_auth_inputs(login_inputs, expected_result, expected_status_code):
     """ Test authorization API endpoint with invalid inputs """
-    create_test_user(requests.Session(), USER_INPUT)
     with requests.Session() as session:
-        response = session.post(
-            "http://rbac-server:8000/api/authorization/", json=login_inputs
-        )
+        create_test_user(session, USER_INPUT)
+        response = log_in(session, login_inputs)
         assert response.json()["message"] == expected_result
         assert response.json()["code"] == expected_status_code
 
