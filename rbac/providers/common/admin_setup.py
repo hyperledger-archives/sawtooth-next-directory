@@ -67,6 +67,8 @@ def add_admin_accounts():
         }
         response = session.post("http://rbac-server:8000/api/users", json=admin_user)
         user_response_json = response.json()
+        token = "Bearer " + user_response_json["token"]
+        session.headers.update({"Authorization": token})
 
         if response.status_code >= 300:
             LOGGER.error(

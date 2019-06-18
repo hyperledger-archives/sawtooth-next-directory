@@ -54,7 +54,7 @@ test('success path', () => {
   step();
 
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(AuthActions.loginSuccess(true)));
+  expect(stepRes).toEqual(put(AuthActions.loginSuccess(true, res.data)));
 });
 
 
@@ -85,14 +85,14 @@ test('signup API', async () => {
 
   const { username, password, email, name } = payload;
 
-  const response = FixtureAPI.signup(username, password, email, name);
+  const res = FixtureAPI.signup(username, password, email, name);
 
   const step = stepper(signup(FixtureAPI, payload));
 
   step();
   step();
-  const stepRes = step(response);
-  expect(stepRes).toEqual(put(AuthActions.signupSuccess(true)));
+  const stepRes = step(res);
+  expect(stepRes).toEqual(put(AuthActions.signupSuccess(true, res.data)));
 });
 
 test('signup success path', () => {
@@ -113,7 +113,7 @@ test('signup success path', () => {
   step();
 
   const stepRes = step(res);
-  expect(stepRes).toEqual(put(AuthActions.signupSuccess(true)));
+  expect(stepRes).toEqual(put(AuthActions.signupSuccess(true, res.data)));
 });
 
 test('signup failure path', () => {

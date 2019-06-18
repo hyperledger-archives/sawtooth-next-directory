@@ -18,7 +18,6 @@ import json
 
 from sanic import Blueprint
 
-from rbac.server.api.auth import authorized
 from rbac.server.api import utils
 
 from rbac.server.db import users_query
@@ -32,7 +31,6 @@ CHATBOT_BP = Blueprint("chatbot")
 
 
 @CHATBOT_BP.websocket("api/chatbot")
-@authorized()
 async def chatbot(request, web_socket):
     """Chatbot websocket listener."""
     while True:
@@ -64,9 +62,7 @@ async def update_tracker(request, recv):
         )
     if recv.get("resource_id"):
         LOGGER.info("[Chatbot] %s: Updating tracker token", recv.get("next_id"))
-        await create_event(
-            request, recv.get("next_id"), "token", utils.extract_request_token(request)
-        )
+        await create_event(request, recv.get("next_id"), "token", recv.get("token"))
 
 
 async def create_event(request, next_id, name, value):

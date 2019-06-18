@@ -36,9 +36,6 @@ from rbac.server.db.roles_query import (
 
 LOGGER = get_default_logger(__name__)
 
-SIGNATURE_KEY = "RBAC_AUTH_SIGNATURE"
-PAYLOAD_KEY = "RBAC_AUTH_HEADER_PAYLOAD"
-
 
 def validate_fields(required_fields, body):
     """Checks that all required_fields are in body, raises exception if not."""
@@ -51,30 +48,18 @@ def validate_fields(required_fields, body):
 
 
 def create_authorization_response(token, data):
-    """Create destructured token response payload, splitting a
-    token into its signature and payload components"""
+    """Create authentication response payload"""
     response = json({"data": data, "token": token})
-    response.cookies[SIGNATURE_KEY] = ".".join(token.split(".")[0:2])
-    response.cookies[PAYLOAD_KEY] = token.split(".")[2]
-
-    response.cookies[SIGNATURE_KEY]["httponly"] = True
     return response
 
 
 def extract_request_token(request):
     """If a request was initiated by the chatbot engine, retrieve
-    the auth token directly from the slot field, otherwise return
-    the Authorization header value or cookie token values."""
+    the auth token directly from the tracker slot. Otherwise return
+    the 'Authorization' header token."""
 
-    if "Authorization" in request.headers:
-        return request.headers["Authorization"]
-
-    token_signature = request.cookies.get(SIGNATURE_KEY)
-    token_payload = request.cookies.get(PAYLOAD_KEY)
-
-    if token_signature and token_payload:
-        return ".".join([token_signature, token_payload])
-
+    if request.token is not None:
+        return request.token
     try:
         return request.json["tracker"]["slots"]["token"]
     except (KeyError, TypeError):

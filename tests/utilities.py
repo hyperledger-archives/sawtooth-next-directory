@@ -69,6 +69,11 @@ def create_test_task(session, task_payload):
 def create_test_user(session, user_payload):
     """Create a user and authenticate to use api endpoints during testing."""
     response = session.post("http://rbac-server:8000/api/users", json=user_payload)
+
+    # Set Auth header if user was created successfully
+    if "token" in response.json():
+        token = "Bearer " + response.json()["token"]
+        session.headers.update({"Authorization": token})
     sleep(3)
     return response
 
@@ -541,6 +546,11 @@ def log_in(session, credentials_payload):
     response = session.post(
         "http://rbac-server:8000/api/authorization/", json=credentials_payload
     )
+
+    # Set Auth header if user logged in successfully
+    if "token" in response.json():
+        token = "Bearer " + response.json()["token"]
+        session.headers.update({"Authorization": token})
     sleep(3)
     return response
 

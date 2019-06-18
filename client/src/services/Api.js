@@ -53,11 +53,15 @@ const create = (baseURL =
   // Configuration
   const api = apisauce.create({
     baseURL,
-    withCredentials: true,
   });
 
 
   // Transforms
+  api.addRequestTransform(req => {
+    req.headers.Authorization = `Bearer ${storage.getToken()}`;
+  });
+
+
   api.addResponseTransform(res => {
     switch (res.problem) {
       case 'TIMEOUT_ERROR':
