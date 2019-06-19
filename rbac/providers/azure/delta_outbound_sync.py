@@ -34,11 +34,7 @@ from rbac.providers.common.outbound_filters import (
     outbound_group_filter,
 )
 from rbac.providers.common.expected_errors import ExpectedError
-from rbac.providers.common.db_queries import (
-    peek_at_queue,
-    put_entry_changelog,
-    delete_entry_queue,
-)
+from rbac.providers.common.db_queries import peek_at_queue, put_entry_changelog
 
 LOGGER = get_default_logger(__name__)
 
@@ -179,9 +175,7 @@ def create_user_aad(queue_entry):
             "forceChangePasswordNextSignIn": True,
         }
         response = requests.post(url=url, headers=headers, json=aad_user)
-        if response.status_code == 201:
-            delete_entry_queue(queue_entry["id"], "outbound_queue")
-        else:
+        if response.status_code != 201:
             LOGGER.warning("Unable to create user in AAD: %s", queue_entry)
             raise ExpectedError("Unable to create user.")
 
@@ -201,9 +195,7 @@ def create_group_aad(queue_entry):
                 "Unable to create group without display name and email."
             )
         response = requests.post(url=url, headers=headers, json=aad_group)
-        if response.status_code == 201:
-            delete_entry_queue(queue_entry["id"], "outbound_queue")
-        else:
+        if response.status_code != 201:
             LOGGER.warning("Unable to create group in AAD: %s", queue_entry)
             raise ExpectedError("Unable to create group.")
 
@@ -229,9 +221,6 @@ def outbound_sync_listener():
             LOGGER.info("Putting queue entry into changelog...")
             put_entry_changelog(queue_entry, "outbound")
 
-            LOGGER.info("Deleting queue entry from outbound queue...")
-            entry_id = queue_entry["id"]
-            delete_entry_queue(entry_id, "outbound_queue")
         except ExpectedError as err:
             LOGGER.debug(
                 (
