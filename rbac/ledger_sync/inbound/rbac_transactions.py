@@ -152,16 +152,15 @@ def add_transaction(inbound_entry):
             )
             deleted_group = data["remote_id"]
             conn = connect_to_db()
-            group_in_db = (
+            role_in_db = (
                 r.table("roles")
                 .filter({"remote_id": deleted_group})
                 .coerce_to("array")
                 .run(conn)
             )
             conn.close()
-            if group_in_db:
-                role_delete = DeleteRole()
-                role_id = group_in_db[0]["role_id"]
+            if role_in_db:
+                role_id = role_in_db[0]["role_id"]
 
                 conn = connect_to_db()
                 for relationship in ["admins", "members", "owners"]:
@@ -169,19 +168,7 @@ def add_transaction(inbound_entry):
                         fetch_relationship_query(relationship, role_id).run(conn)
                     )
                 conn.close()
-
-                inbound_entry = add_sawtooth_prereqs(
-                    entry_id=role_id, inbound_entry=inbound_entry, data_type="group"
-                )
-                message = role_delete.make(
-                    signer_keypair=key_pair, role_id=role_id, **data
-                )
-                batch = role_delete.batch(
-                    signer_keypair=key_pair,
-                    signer_user_id=key_pair.public_key,
-                    message=message,
-                )
-                inbound_entry["batch"] = batch.SerializeToString()
+                delete_role_transaction(inbound_entry, role_in_db, key_pair)
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
             "Unable to create transaction for inbound data:\n%s", inbound_entry
@@ -250,7 +237,7 @@ def add_sawtooth_prereqs(entry_id, inbound_entry, data_type):
         inbound_entry["object_type"] = addresser.ObjectType.ROLE.value
     else:
         raise ValueError(
-            "Expecting data_type to be 'user' or 'group, found: " + data_type
+            "Expecting data_type to be 'user' or 'group, found: {}".format(data_type)
         )
     inbound_entry["address"] = bytes_from_hex(address)
     inbound_entry["object_id"] = bytes_from_hex(object_id)
@@ -261,6 +248,7 @@ def delete_role_transaction(inbound_entry, role_in_db, key_pair):
     """Composes transactions for deleting a role. This includes rejecting any
     pending proposals concerning the role, deleting role_owner, role_admin, and
     role_member relationships, and the role object.
+
     Args:
         inbound_entry:
             dict: transaction entry from the inbound queue containing one
@@ -273,18 +261,21 @@ def delete_role_transaction(inbound_entry, role_in_db, key_pair):
         key_pair:
             obj: public and private keys for user.
     """
-    next_id = role_in_db[0]["next_id"]
+    role_id = role_in_db[0]["role_id"]
     inbound_entry = add_sawtooth_prereqs(
-        entry_id=next_id, inbound_entry=inbound_entry, data_type="role"
+        entry_id=role_id, inbound_entry=inbound_entry, data_type="group"
     )
 
     txn_list = []
     # Compile role relationship transactions for removal from blockchain
-    txn_list = create_reject_ppsls_role_txns(key_pair, next_id, txn_list)
-    txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
-    txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
-    txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
-    txn_list = create_delete_role_txns(key_pair, next_id, txn_list)
+    txn_list = create_reject_ppsls_role_txns(key_pair, role_id, txn_list)
+    for next_id in inbound_entry["data"]["owners"]:
+        txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
+    for next_id in inbound_entry["data"]["admins"]:
+        txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
+    for next_id in inbound_entry["data"]["members"]:
+        txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_txns(key_pair, role_id, txn_list)
 
     if txn_list:
         batch = batcher.make_batch_from_txns(
@@ -325,13 +316,13 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair):
         inbound_entry["batch"] = batch.SerializeToString()
 
 
-def create_delete_role_txns(key_pair, next_id, txn_list):
+def create_delete_role_txns(key_pair, role_id, txn_list):
     """Create the delete transactions for a role object.
     Args:
         key_pair:
                obj: public and private keys for user
-        next_id: next_
-            str: next_id to search for the roles where user is the admin
+        role_id:
+            str: role_id to search for the roles where user is the admin
         txn_list:
             list: transactions for batch submission
     Returns:
@@ -339,7 +330,7 @@ def create_delete_role_txns(key_pair, next_id, txn_list):
             list: extended list of transactions for batch submission
     """
     role_delete = DeleteRole()
-    message = role_delete.make(signer_keypair=key_pair, next_id=next_id)
+    message = role_delete.make(signer_keypair=key_pair, role_id=role_id)
     payload = role_delete.make_payload(
         message=message, signer_keypair=key_pair, signer_user_id=key_pair.public_key
     )
@@ -432,19 +423,19 @@ def create_delete_role_member_txns(key_pair, next_id, txn_list):
     return txn_list
 
 
-def create_reject_ppsls_role_txns(key_pair, next_id, txn_list):
+def create_reject_ppsls_role_txns(key_pair, role_id, txn_list):
     """Create the reject open proposals transactions for a role that has been
     deleted.
        Args:
            key_pair:
                obj: public and private keys for user
-           next_id: next_
-               str: next_id of the targeted role to close proposals for
+           role_id:
+               str: role_id of the targeted role to close proposals for
            txn_list:
                list: transactions for batch submission
     """
     conn = connect_to_db()
-    proposals = fetch_open_proposals_by_role(conn, next_id)
+    proposals = fetch_open_proposals_by_role(conn, role_id)
     conn.close()
     if proposals:
         for proposal in proposals:
@@ -454,7 +445,7 @@ def create_reject_ppsls_role_txns(key_pair, next_id, txn_list):
             ]
             reject_proposal_msg = reject_proposal.make(
                 signer_keypair=key_pair,
-                signer_user_id=next_id,
+                signer_user_id=key_pair.public_key,
                 proposal_id=proposal["proposal_id"],
                 object_id=proposal["object_id"],
                 related_id=proposal["related_id"],
