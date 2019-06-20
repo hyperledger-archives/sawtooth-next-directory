@@ -14,9 +14,11 @@
 # -----------------------------------------------------------------------------
 """Integration tests for role APIs"""
 import requests
+import pytest
+
+from environs import Env
 
 from rbac.common.logs import get_default_logger
-from rbac.providers.common.db_queries import peek_at_q_unfiltered
 from tests.rbac.api.assertions import assert_api_success
 from tests.utilities import (
     approve_proposal,
@@ -27,37 +29,28 @@ from tests.utilities import (
     get_outbound_queue_depth,
     get_outbound_queue_entry,
     get_proposal_with_retry,
-    get_role,
     log_in,
     add_role_member,
 )
 
+ENV = Env()
+
+ENABLE_LDAP_SYNC = ENV.int("ENABLE_LDAP_SYNC", 0)
+ENABLE_NEXT_BASE_USE = ENV.int("ENABLE_NEXT_BASE_USE", 0)
+
 LOGGER = get_default_logger(__name__)
 
 
-def prepare_outbound_queue_data(entry, data_type):
-    """ Prepares an entry from users or roles table to be used
-    in a filter for outbound_queue table
-
-    Args:
-        entry: (dict) Entry from users/roles table containing keys
-            such as id, created_date, and role_id/next_id
-    Returns:
-        entry: (dict) Same entry from users/roles table, but without
-            created_date field and the next_id/role_id has replaced
-            the id field.
-    """
-    entry.pop("created_date")
-    if data_type == "role":
-        entry["id"] = entry.pop("role_id")
-    elif data_type == "user":
-        entry["id"] = entry.pop("next_id")
-    return entry
-
-
+@pytest.mark.skipif(
+    ENABLE_NEXT_BASE_USE == 0, reason="Skipping test, NEXT base mode is not enabled"
+)
 def test_role_outq_insertion():
-    """ Test the insertion of a new fake role resource which is unique
-        into the outbound_queue table."""
+    """ Test the insertion of a new role created in NEXT-only mode.
+        This test will only run if ENABLE_NEXT_BASE_USE is set to 1.
+        - Create a user
+        - Create a role
+        - Check new entry in outbound_queue
+    """
     user1_payload = {
         "name": "Test Unique User",
         "username": "testuniqueuser0501201901",
@@ -65,7 +58,6 @@ def test_role_outq_insertion():
         "email": "testuniqueuser1@biz.co",
     }
     with requests.Session() as session:
-        expected_result = True
         user_response1 = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user_response1)
         user1_id = user1_result["data"]["user"]["id"]
@@ -78,18 +70,23 @@ def test_role_outq_insertion():
         role_response = create_test_role(session, role_payload)
         assert_api_success(role_response)
 
-        inserted_queue_item = peek_at_q_unfiltered("outbound_queue")
-        LOGGER.info(
-            "Received queue entry %s from outbound queue...", inserted_queue_item["id"]
-        )
-        successful_insert = bool(inserted_queue_item)
-        assert expected_result == successful_insert
+        outbound_queue_data = {
+            "description": "Test Unique Role 1",
+            "members": [],
+            "remote_id": "",
+        }
+        expected_payload = {
+            "data": outbound_queue_data,
+            "data_type": "group",
+            "provider_id": "NEXT-created",
+            "status": "UNCONFIRMED",
+            "action": "",
+        }
 
-        # Check status of new outbound_entry
-        role_entry = get_role("TestUniqueRole0501201903")
-        outbound_queue_data = prepare_outbound_queue_data(role_entry[0], "role")
         outbound_entry = get_outbound_queue_entry(outbound_queue_data)
-        assert outbound_entry[0]["status"] == "UNCONFIRMED"
+        outbound_entry[0].pop("timestamp")
+        outbound_entry[0].pop("id")
+        assert outbound_entry[0] == expected_payload
 
         delete_role_by_name("TestUniqueRole0501201903")
         delete_user_by_username("testuniqueuser0501201901")
@@ -215,8 +212,12 @@ def test_add_role_owner_outqueue():
         assert end_depth > start_depth
 
         # Check status of new outbound_entry
-        role_entry = get_role("TestRole0521201901")
-        outbound_queue_data = prepare_outbound_queue_data(role_entry[0], "role")
+        outbound_queue_data = {
+            "description": "Test Role 1",
+            "members": [],
+            "remote_id": "",
+        }
+
         outbound_entry = get_outbound_queue_entry(outbound_queue_data)
         assert outbound_entry[0]["status"] == "UNCONFIRMED"
 
@@ -283,8 +284,11 @@ def test_add_role_member_outqueue():
         assert end_depth > start_depth
 
         # Check status of new outbound_entry
-        role_entry = get_role("TestRole0521201902")
-        outbound_queue_data = prepare_outbound_queue_data(role_entry[0], "role")
+        outbound_queue_data = {
+            "description": "Test Role 3",
+            "members": [],
+            "remote_id": "",
+        }
         outbound_entry = get_outbound_queue_entry(outbound_queue_data)
         assert outbound_entry[0]["status"] == "UNCONFIRMED"
 

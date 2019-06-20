@@ -86,9 +86,9 @@ services:
       - validator
     environment:
       - AES_KEY=${AES_KEY}
-      - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-1}
-      - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-1}
-      - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
+      - ENABLE_AZURE_SYNC=0
+      - ENABLE_LDAP_SYNC=0
+      - ENABLE_NEXT_BASE_USE=1
       - HOST=${HOST:-localhost}
       - LDAP_DC=DC=AD2012,DC=LAB
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
@@ -144,7 +144,7 @@ services:
       - ".:/project/hyperledger-rbac"
     command: pytest
     environment:
+      - ENABLE_NEXT_BASE_USE=1
+      - LDAP_SERVER=${LDAP_SERVER}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
       - PYTHONPATH=/project/hyperledger-rbac/
-      - HOST=${HOST:-localhost}
-      - LDAP_SERVER=${LDAP_SERVER}
