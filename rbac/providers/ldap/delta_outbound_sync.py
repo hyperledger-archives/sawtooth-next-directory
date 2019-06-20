@@ -12,23 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-""" Delta Outbound Sync for LDAP to get changes from NEXT into LDAP.
-"""
+""" Delta Outbound Sync for LDAP to get changes from NEXT into LDAP."""
 import os
 import time
 
 import ldap3
 from ldap3 import MODIFY_REPLACE
 from ldap3.core.exceptions import LDAPSessionTerminatedByServerError
-from rbac.common.logs import get_default_logger
 
-from rbac.providers.common.db_queries import peek_at_queue, put_entry_changelog
+from rbac.common.logs import get_default_logger
 from rbac.providers.common import ldap_connector
-from rbac.providers.common.provider_errors import ValidationException
+from rbac.providers.common.db_queries import (
+    peek_at_queue,
+    put_entry_changelog,
+    update_outbound_entry_status,
+)
 from rbac.providers.common.outbound_filters import (
     outbound_user_filter,
     outbound_group_filter,
 )
+from rbac.providers.common.provider_errors import ValidationException
 from rbac.providers.ldap.ldap_validator import (
     validate_create_entry,
     validate_update_entry,
@@ -145,16 +148,17 @@ def modify_ad_attributes(distinguished_name, validated_entry, ldap_conn):
         from sawtooth_entry.
     """
     for ad_attribute in validated_entry:
-        if ad_attribute == "member":
+        # TODO: If attribute value is empty due to removal of field (deletion of members)
+        if ad_attribute == "member" and validated_entry["member"]:
             ldap_conn.modify(
                 dn=distinguished_name,
                 changes={ad_attribute: [(MODIFY_REPLACE, [validated_entry["member"]])]},
             )
-        elif ad_attribute != "distinguishedName":
+        elif ad_attribute != "distinguishedName" and validated_entry[ad_attribute]:
             ldap_conn.modify(
                 dn=distinguished_name,
                 changes={
-                    ad_attribute: [(MODIFY_REPLACE, [validated_entry[ad_attribute]])]
+                    ad_attribute: [(MODIFY_REPLACE, validated_entry[ad_attribute])]
                 },
             )
 
@@ -162,8 +166,8 @@ def modify_ad_attributes(distinguished_name, validated_entry, ldap_conn):
 def get_distinguished_name(queue_entry):
     """Returns the distinguished_name of the queue entry."""
     sawtooth_entry = queue_entry["data"]
-    if "distinguished_name" in sawtooth_entry:
-        return sawtooth_entry["distinguished_name"]
+    if "remote_id" in sawtooth_entry:
+        return sawtooth_entry["remote_id"]
     raise ValidationException("Payload does not have a distinguished_name.")
 
 
@@ -197,6 +201,7 @@ def ldap_outbound_listener():
                     update_entry_ldap(queue_entry, ldap_connection)
                 else:
                     create_entry_ldap(queue_entry, ldap_connection)
+                update_outbound_entry_status(queue_entry["id"])
 
             except ValidationException as err:
                 LOGGER.warning("Outbound payload failed validation")
