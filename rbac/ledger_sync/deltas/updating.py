@@ -13,7 +13,6 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """ Syncs the blockchain state to RethinkDB"""
-import os
 import sys
 
 from environs import Env
@@ -24,12 +23,11 @@ from rbac.common.logs import get_default_logger
 from rbac.common.util import bytes_from_hex
 from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
 from rbac.server.db.relationships_query import (
-    fetch_relationships,
     fetch_relationships_by_id,
+    fetch_remote_id_relationships,
 )
 
-
-GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
+ENV = Env()
 LOGGER = get_default_logger(__name__)
 
 
@@ -40,16 +38,12 @@ def get_role(conn, role_id):
         .get_all(role_id, index="role_id")
         .merge(
             {
-                "id": r.row["role_id"],
-                "owners": fetch_relationships("role_owners", "role_id", role_id),
-                "administrators": fetch_relationships(
-                    "role_admins", "role_id", role_id
-                ),
-                "members": fetch_relationships("role_members", "role_id", role_id),
-                "metadata": r.row["metadata"],
+                "members": fetch_remote_id_relationships(
+                    "role_members", "role_id", role_id
+                )
             }
         )
-        .without("role_id")
+        .without("created_date", "end_block_num", "id", "role_id", "start_block_num")
         .coerce_to("array")
         .run(conn)
     )
@@ -206,6 +200,57 @@ def _update_legacy(conn, block_num, address, resource, data_type):
         LOGGER.warning(err)
 
 
+def format_role(role_resource):
+    """ Formats given role_resource into the proper format to be added to the data
+    field of an outbound_queue entry.
+
+    Args:
+        role_resource: (dict) A snapshot of the current state of the role from the
+            roles RethinkDB table. The mandatory keys in the dict are:
+                {
+                    "description": (str)
+                    "members": (array of strings containing members' remote_ids)
+                    "remote_id": (str)
+                }
+    Returns:
+        formatted_resource: (dict) Formatted version of role_resource to be inserted
+            into outbound_queue RethinkDB table. The formatted dict would look like:
+                {
+                    "description": (str)
+                    "members": (array of strings containing members' remote_ids)
+                    "remote_id": (str)
+                }
+    """
+    if role_resource["remote_id"] == "" and ENV.str("GROUP_BASE_DN", ""):
+        remote_id = "CN=" + role_resource["name"] + "," + ENV("GROUP_BASE_DN")
+    else:
+        remote_id = role_resource["remote_id"]
+    return {
+        "description": role_resource["description"],
+        "members": role_resource["members"],
+        "remote_id": remote_id,
+    }
+
+
+def get_provider(admin_identifier):
+    """ Gets the provider field value for a outbound_queue entry.
+
+    Args:
+        admin_identifier: (str) Name of role or username of user
+    Returns:
+        provider: (str) Depending on the current mode enabled, return
+            the proper provider value. The value is either `NEXT-created`,
+            LDAP_DC, or TENANT_ID set in .env file.
+    """
+    if admin_identifier == "NextAdmins" or admin_identifier == ENV("NEXT_ADMIN_USER"):
+        return "NEXT-created"
+    if ENV.int("ENABLE_LDAP_SYNC", 0):
+        return ENV("LDAP_DC")
+    if ENV.int("ENABLE_AZURE_SYNC", 0):
+        return ENV("TENANT_ID")
+    return "NEXT-created"
+
+
 def _update_provider(conn, address_type, resource):
     """Places updated object on the provider outbound queue.
 
@@ -226,7 +271,8 @@ def _update_provider(conn, address_type, resource):
     }
     if address_type in outbound_types:
         # Get the object & format it.
-        env = Env()
+        provider_action = ""
+        direction = ""
         if outbound_types[address_type] == "user":
             user = get_user(conn, resource["next_id"])
             if user:
@@ -236,36 +282,34 @@ def _update_provider(conn, address_type, resource):
                 return
             admin_identifier = formatted_resource["username"]
             data_type = "user"
+            direction = formatted_resource["metadata"].get("sync_direction", "")
         if outbound_types[address_type] == "role":
             role = get_role(conn, resource["role_id"])
             if role:
-                formatted_resource = role[0]
+                formatted_resource = format_role(role[0])
             else:
-                LOGGER.warning("Role not found: %s", resource["role_id"])
+                # If the role has not been detected yet, this is due to the role
+                # relationship being inserted prior to the actual role object the
+                # following debug statement is meant to be outputted.
+                LOGGER.debug(
+                    "Role %s has not been inserted into RethinkDB yet...",
+                    resource["role_id"],
+                )
                 return
-            admin_identifier = formatted_resource["name"]
+            admin_identifier = role[0]["name"]
             data_type = "group"
+            direction = role[0]["metadata"].get("sync_direction", "")
         # Insert to outbound queue.
-        direction = formatted_resource["metadata"].get("sync_direction", "")
         if direction == "OUTBOUND":
-            if admin_identifier == "NextAdmins" or admin_identifier == env(
-                "NEXT_ADMIN_USER"
-            ):
-                provider = "NEXT-created"
-            elif env.int("ENABLE_LDAP_SYNC", 0):
-                provider = env("LDAP_DC")
-            elif env.int("ENABLE_AZURE_SYNC", 0):
-                provider = env("TENANT_ID")
-            else:
-                provider = "NEXT-created"
+            provider = get_provider(admin_identifier)
 
             outbound_entry = {
                 "data": formatted_resource,
                 "data_type": data_type,
-                "sync_type": "delta",
                 "timestamp": r.now(),
                 "provider_id": provider,
                 "status": "UNCONFIRMED",
+                "action": provider_action,
             }
             r.table("outbound_queue").insert(outbound_entry, return_changes=True).run(
                 conn

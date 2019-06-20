@@ -72,7 +72,7 @@ def peek_at_queue(table_name, provider_id=None):
         if provider_id:
             queue_entry = (
                 r.table(table_name)
-                .filter({"provider_id": provider_id})
+                .filter({"provider_id": provider_id, "status": "UNCONFIRMED"})
                 .min("timestamp")
                 .coerce_to("object")
                 .run(conn)
@@ -84,14 +84,6 @@ def peek_at_queue(table_name, provider_id=None):
         return queue_entry
     except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError):
         return None
-
-
-def peek_at_q_unfiltered(table_name):
-    """Returns a single entry from table_name with the oldest timestamp."""
-    conn = connect_to_db()
-    queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run(conn)
-    conn.close()
-    return queue_entry
 
 
 def put_entry_changelog(queue_entry, direction):
@@ -114,3 +106,14 @@ def delete_entry_queue(object_id, table_name):
     result = r.table(table_name).get(object_id).delete(return_changes=True).run(conn)
     conn.close()
     LOGGER.debug(result)
+
+
+def update_outbound_entry_status(entry_id):
+    """ Change outbound_queue entry's status from UNCONFIRMED to CONFIRMED
+
+    Args:
+        entry_id: (str) Id field of outbound_queue entry
+    """
+    conn = connect_to_db()
+    r.table("outbound_queue").get(entry_id).update({"status": "CONFIRMED"}).run(conn)
+    conn.close()

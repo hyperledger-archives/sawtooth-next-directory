@@ -701,21 +701,36 @@ def update_manager(session, next_id, payload):
     return response
 
 
-def get_outbound_queue_entry(data):
+def get_outbound_queue_entry(data, max_attempts=10, delay=0.5):
     """ Gets an entry from outbound_queue table that matches the passed in
     data dictionary.
 
     Args:
         data: (dict) Entry from users/roles table without created_date field.
+        max_attempts:
+            int: The number of times to attempt to find the given outbound_queue
+                 entry.
+                    Default value: 10
+        delay
+            float: The number of seconds to wait between query attempts.
+                Default value: 0.5
     Returns:
         outbound_queue_entry: (dict) The entry that has the data field
             matching the data parameter. This entry would contain the
             following fields: data, data_type, provider_id, sync_type,
             timestamp.
     """
-    conn = connect_to_db()
-    outbound_queue_entry = (
-        r.table("outbound_queue").filter({"data": data}).coerce_to("array").run(conn)
-    )
-    conn.close()
+    query_count = 0
+    outbound_queue_entry = []
+    with connect_to_db() as conn:
+        while not outbound_queue_entry and query_count < max_attempts:
+            outbound_queue_entry = (
+                r.table("outbound_queue")
+                .filter({"data": data})
+                .coerce_to("array")
+                .run(conn)
+            )
+            if not outbound_queue_entry:
+                query_count += 1
+                sleep(delay)
     return outbound_queue_entry

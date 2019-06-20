@@ -32,6 +32,31 @@ def fetch_relationships(table, index, identifier):
     )
 
 
+def fetch_remote_id_relationships(table, index, identifier):
+    """"Returns a query to fetch a role's relationships. The
+    fetched data will return a list of remote_ids.
+
+    Args:
+        table: (str) Name of role relationship table (role_admins,
+            role_owners, or role_members)
+        index: (str) The field on the relationship table to filter by
+            (typically it's the role_id field)
+        identifier: (str) The value used to filter the relationship table
+            to fetch the relationships for a specific role
+    Returns:
+        rethinkdb_query: (str) A RethinkDB query that will fetch a list of
+            remote_ids that have this relationship with the specified role.
+    """
+    return (
+        r.table(table)
+        .get_all(identifier, index=index)
+        .eq_join("related_id", r.table("users"), index="next_id")
+        .zip()
+        .get_field("remote_id")
+        .coerce_to("array")
+    )
+
+
 def fetch_relationships_by_id(table, identifier, key):
     """Query for relationships by identifier."""
     return (

@@ -16,8 +16,6 @@
 import os
 from uuid import uuid4
 
-from environs import Env
-import rethinkdb as r
 from sanic import Blueprint
 from sanic.response import json
 
@@ -85,14 +83,15 @@ async def create_new_role(request):
     response = await roles_query.roles_search_duplicate(
         request.app.config.DB_CONN, role_title
     )
-    if request.json.get("metadata") is None or request.json.get("metadata") == {}:
-        set_metadata = {}
-    else:
-        set_metadata = request.json.get("metadata")
-    set_metadata["sync_direction"] = "OUTBOUND"
     if not response:
         txn_key, txn_user_id = await utils.get_transactor_key(request)
         role_id = str(uuid4())
+
+        if request.json.get("metadata") is None:
+            set_metadata = {}
+        else:
+            set_metadata = request.json.get("metadata")
+        set_metadata["sync_direction"] = "OUTBOUND"
         batch_list = Role().batch_list(
             signer_keypair=txn_key,
             signer_user_id=txn_user_id,
@@ -116,40 +115,6 @@ async def create_new_role(request):
                 ),
             )
 
-        if role_title != "NextAdmins":
-            distinguished_name_formatted = "CN=" + role_title + "," + GROUP_BASE_DN
-            data_formatted = {
-                "created_date": r.now(),
-                "distinguished_name": distinguished_name_formatted,
-                "group_nickname": role_title,
-                "group_types": -2147483646,
-                "name": role_title,
-                "remote_id": distinguished_name_formatted,
-            }
-
-            env = Env()
-            if env.int("ENABLE_LDAP_SYNC", 0):
-                provider = env("LDAP_DC")
-            elif env.int("ENABLE_AZURE_SYNC", 0):
-                provider = env("TENANT_ID")
-            else:
-                provider = "NEXT-created"
-
-            outbound_entry = {
-                "data": data_formatted,
-                "data_type": "group",
-                "timestamp": r.now(),
-                "provider_id": provider,
-                "status": "UNCONFIRMED",
-            }
-            # Insert to outbound_queue and close
-            await roles_query.insert_to_outboundqueue(
-                request.app.config.DB_CONN, outbound_entry
-            )
-        else:
-            LOGGER.info(
-                "The role being created is NextAdmins, which is local to NEXT and will not be inserted into the outbound_queue."
-            )
         return create_role_response(request, role_id)
     return await handle_errors(
         request,
