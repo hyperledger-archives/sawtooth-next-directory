@@ -27,10 +27,11 @@ usage() {
             $0 [-p --persist] [-b --build]
 
         Options:
-                               start from genesis (no data) [default]
-            -c --persist       start with persistent data
-            -b --build         (re)build docker images before starting
-            -p --prod          start NEXT with SSL configuration
+                                Start from genesis (no data). [default]
+            -c --persist        Start with persistent data.
+            -b --build          (re)Build docker images before starting.
+            -p --prod           Start NEXT with SSL configuration.
+            -l --log            Output logs to persistant log files.
 
 EOM
 
@@ -45,7 +46,7 @@ fi
 
 # update version number
 timestamp=$(date +%d-%m-%Y" "%H:%M:%S)
-    version_number=$(cat ./VERSION)
+version_number=$(cat ./VERSION)
 if grep -qn VERSION_NUMBER ./.env; then
     echo "Updating version number and build date..."
     version_line_num=$(grep -n VERSION_NUMBER ./.env | cut -d : -f 1)
@@ -73,6 +74,7 @@ while [[ $# -gt 0 ]]; do
     "-c"|"--persist"    ) PERSIST=1;;
     "-d"|"--dev"        ) DEV=1;;
     "-p"|"--prod"       ) PROD=1;;
+    "-l"|"--log"        ) LOG=1;;
     *                   ) echo "ERROR: Invalid option: \""$opt"\"" >&2
                             usage
                             exit 1;;
@@ -85,6 +87,7 @@ CMD="docker-compose -f docker-compose.yaml"
 if [[ "$PERSIST" == "1" ]]; then
     CMD="$CMD -f docker-persist.yaml"
 fi
+
 if [[ "$PROD" == "1" ]]; then
     CMD="$CMD -f docker-compose.prod.yaml"
     if ! [ -e nginx.conf ] 
@@ -95,10 +98,19 @@ if [[ "$PROD" == "1" ]]; then
 else
     CMD="$CMD -f docker-compose.override.yaml"
 fi
+
 CMD="$CMD up"
+
 if [[ "$BUILD" == "1" ]]; then
     CMD="$CMD --build"
 fi
 
+if [[ "$LOG" == "1" ]]; then
+    CMD="$CMD -d"
+    LOG_CMD="docker-compose logs -f -t | >> NEXT_output.log 2>> NEXT_error.log"
+fi
+
 echo $CMD
 $CMD
+echo $LOG_CMD
+$LOG_CMD
