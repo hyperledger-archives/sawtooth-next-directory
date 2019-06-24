@@ -14,15 +14,16 @@
 # ------------------------------------------------------------------------------
 """Validating Tasks API Endpoint Test"""
 import requests
-from tests.utilities import (
+
+from rbac.common.logs import get_default_logger
+from tests.rbac.api.assertions import assert_api_success
+from tests.utilities.creation_utils import create_next_admin, create_test_user
+from tests.utils import (
     create_test_task,
-    create_test_user,
     delete_user_by_username,
     delete_task_by_name,
     get_proposal_with_retry,
 )
-from tests.rbac.api.assertions import assert_api_success
-from rbac.common.logs import get_default_logger
 
 LOGGER = get_default_logger(__name__)
 
@@ -45,6 +46,7 @@ def test_add_task_admin():
         "email": "testuser9@biz.co",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         user_response1 = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user_response1)
         user1_id = user1_result["data"]["user"]["id"]
@@ -96,6 +98,7 @@ def test_add_task_owner():
         "email": "testuser11@biz.co",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         user1_response = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user1_response)
         user1_id = user1_result["data"]["user"]["id"]

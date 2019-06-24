@@ -52,28 +52,9 @@ def approve_proposal(session, proposal_id):
     return response
 
 
-def create_test_role(session, role_payload):
-    """Create a role and authenticate to use api endpoints during testing."""
-    response = session.post("http://rbac-server:8000/api/roles", json=role_payload)
-    sleep(3)
-    return response
-
-
 def create_test_task(session, task_payload):
     """Create a task and authenticate to use api endpoints during testing."""
     response = session.post("http://rbac-server:8000/api/tasks", json=task_payload)
-    sleep(3)
-    return response
-
-
-def create_test_user(session, user_payload):
-    """Create a user and authenticate to use api endpoints during testing."""
-    response = session.post("http://rbac-server:8000/api/users", json=user_payload)
-
-    # Set Auth header if user was created successfully
-    if "token" in response.json():
-        token = "Bearer " + response.json()["token"]
-        session.headers.update({"Authorization": token})
     sleep(3)
     return response
 
@@ -316,48 +297,6 @@ def wait_for_resource_removal_in_db(
     return resource_removed
 
 
-def wait_for_resource_in_db(table, index, identifier, max_attempts=10, delay=0.5):
-    """Polls rethinkdb for the requested resource until it has been removed.
-    Useful when commiting a delete transaction in sawtooth and waiting for the
-    resource to be removed from rethink for dependent chained transactions.
-
-    Args:
-        table:
-            str:    the name of a table to query for the resource in.
-        index:
-            str:    the name of the index of the identifier to query for.
-        identifier:
-            str:    A id for a given resource to wait for.
-        max_attempts:
-            int:    The number of times to attempt to find the given role before
-                    giving up and returning False.
-                        Default value: 10
-        delay:
-            float:  The number of seconds to wait between query attempts.
-                        Default value: 0.5
-    Returns:
-        resource_removed:
-            bool:
-                True:   If the role is successfully found within the given
-                        number of attempts.
-            bool:
-                False:  If the role is not found after the given number of
-                        attempts.
-    """
-    resource_found = False
-    count = 0
-    with connect_to_db() as conn:
-        while not resource_found and count < max_attempts:
-            resource = (
-                r.table(table).filter({index: identifier}).coerce_to("array").run(conn)
-            )
-            if resource:
-                resource_found = True
-            count += 1
-            sleep(delay)
-    return resource_found
-
-
 def wait_for_role_in_db(role_id, max_attempts=10, delay=0.5):
     """ Polls rethinkdb for the requested role. Useful when commiting a
     transaction in sawtooth and waiting for the resource to be upserted in
@@ -440,23 +379,6 @@ def get_pack_by_pack_id(pack_id):
     return pack
 
 
-def get_role(name):
-    """Returns a role in rethinkDB via name.
-
-    Args:
-        name:
-            str: a name of a role in rethinkDB.
-    """
-    with connect_to_db() as db_connection:
-        role = (
-            r.table("roles")
-            .filter({"name": name})
-            .coerce_to("array")
-            .run(db_connection)
-        )
-    return role
-
-
 def is_group_in_db(name):
     """Returns the number of groups from the roles table in rethinkdb with
     the given name.
@@ -527,32 +449,6 @@ def get_role_members(role_id):
             .run(db_connection)
         )
     return role_members
-
-
-def log_in(session, credentials_payload):
-    """Log in as the user with the given credentials for the given session
-
-    Args:
-        session:
-            object: current session object
-
-        credentials_payload:
-            dictionary: in the format of
-                {
-                    "id": "USERNAME OF USER",
-                    "password": "PASSWORD OF ASSOCIATED USER"
-                }
-    """
-    response = session.post(
-        "http://rbac-server:8000/api/authorization/", json=credentials_payload
-    )
-
-    # Set Auth header if user logged in successfully
-    if "token" in response.json():
-        token = "Bearer " + response.json()["token"]
-        session.headers.update({"Authorization": token})
-    sleep(3)
-    return response
 
 
 def update_proposal(session, proposal_id, proposal_payload):

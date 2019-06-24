@@ -14,7 +14,9 @@
 # -----------------------------------------------------------------------------
 """Authentication API Endpoint Test"""
 import requests
-from tests.utilities import create_test_user, delete_user_by_username
+
+from tests.utilities.creation_utils import create_next_admin, create_test_user
+from tests.utils import delete_user_by_username
 
 
 def test_search_api():
@@ -27,6 +29,7 @@ def test_search_api():
             "password": "123456",
             "email": "susan@biz.co",
         }
+        create_next_admin(session)
         create_test_user(session, create_user_input)
         search_query = {
             "query": {

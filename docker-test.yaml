@@ -41,10 +41,10 @@ services:
       - LDAP_DC=DC=AD2012,DC=LAB
       - LDAP_SERVER=my_fake_server
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
-      - NEXT_ADMIN_NAME=${NEXT_ADMIN_NAME:-Admin}
-      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER:-Admin}
-      - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS:-p@ssw0rd123}
-      - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL:-admin@test.com}
+      - NEXT_ADMIN_NAME=AdministratorTest
+      - NEXT_ADMIN_USER=AdminTest
+      - NEXT_ADMIN_PASS=admin_pass
+      - NEXT_ADMIN_EMAIL=admin@test.com
       - SECRET_KEY=${SECRET_KEY}
       - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
       - SERVER_PORT=${SERVER_PORT:-8000}
@@ -92,7 +92,7 @@ services:
       - HOST=${HOST:-localhost}
       - LDAP_DC=DC=AD2012,DC=LAB
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
-      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER:-Admin}
+      - NEXT_ADMIN_USER=AdminTest
       - TENANT_ID=${TENANT_ID}
     command: |
       bash -c "
@@ -136,6 +136,11 @@ services:
 
   test-runner:
     container_name: test-runner
+    depends_on:
+      - ledger-sync
+      - rethink
+      - validator
+      - rbac-server
     build:
       context: .
       dockerfile: ./docker/tests.Dockerfile
@@ -147,4 +152,8 @@ services:
       - ENABLE_NEXT_BASE_USE=1
       - LDAP_SERVER=${LDAP_SERVER}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_NAME=AdministratorTest
+      - NEXT_ADMIN_USER=AdminTest
+      - NEXT_ADMIN_PASS=admin_pass
+      - NEXT_ADMIN_EMAIL=admin@test.com
       - PYTHONPATH=/project/hyperledger-rbac/
