@@ -57,7 +57,11 @@ async def get_auth_by_next_id(next_id):
 
 
 async def get_user_by_username(request):
-    """Get user information from users table by username."""
+    """Get user information from users table by username.
+
+    Args:
+        request:
+            obj:  a request object"""
     username = request.json.get("id")
     conn = await create_connection()
     user = (

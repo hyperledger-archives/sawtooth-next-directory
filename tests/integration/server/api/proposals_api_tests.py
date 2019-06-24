@@ -13,29 +13,22 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Integration tests for proposals APIs"""
-
 import time
-
-# pylint: disable=redefined-outer-name
-# this rule is typically disabled as pytest is prone to trigger it with fixtures.
 import pytest
 import requests
 import rethinkdb as r
-from rbac.providers.common.db_queries import connect_to_db
 
-# from rbac.server.db.users_query import fetch_manager_chain
-from tests.utilities import (
+from rbac.providers.common.db_queries import connect_to_db
+from tests.utilities.creation_utils import (
+    create_next_admin,
     create_test_role,
     create_test_user,
-    delete_user_by_username,
-    delete_role_by_name,
-    is_group_in_db,
-    log_in,
+    user_login,
 )
+from tests.utils import delete_user_by_username, delete_role_by_name, is_group_in_db
 
-# ------------------------------------------------------------------------------
-# <==== BEGIN TEST PARAMETERS =================================================>
-# ------------------------------------------------------------------------------
+# pylint: disable=redefined-outer-name
+# this rule is typically disabled as pytest is prone to trigger it with fixtures.
 
 TEST_USERS = [
     {
@@ -84,14 +77,6 @@ TEST_USERS = [
 
 TEST_ROLES = [{"name": "Hyrule_Heroes"}]
 
-# ------------------------------------------------------------------------------
-# <==== END TEST PARAMETERS ===================================================>
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-# <==== BEGIN TEST FIXTURES ===================================================>
-# ------------------------------------------------------------------------------
-
 
 @pytest.fixture(autouse=True, scope="module")
 def test_role_owner():
@@ -111,15 +96,6 @@ def test_requestor():
 def test_role():
     """A pytest fixture that yields the role that is used in this module"""
     return TEST_ROLES[0]
-
-
-# ------------------------------------------------------------------------------
-# <==== END TEST PFIXTURES ====================================================>
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-# <==== BEGIN TEST HELPER FUNCTIONS ===========================================>
-# ------------------------------------------------------------------------------
 
 
 def fetch_manager_chain(next_id):
@@ -221,21 +197,13 @@ def wait_for_rethink(table_count=12, attempts=4, delay=10):
         return is_rethink_ready
 
 
-# ------------------------------------------------------------------------------
-# <==== END TEST HELPER FUNCTIONS =============================================>
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-# <==== BEGIN SETUP FUNCTIONS =================================================>
-# ------------------------------------------------------------------------------
-
-
 def setup_module():
     """actions to be performed to configure the database before tests are run.
     """
     wait_for_rethink()
     with requests.Session() as session:
         # create a management chain of users
+        create_next_admin(session)
         user_id = None
         for i, user in enumerate(TEST_USERS):
             # Sixth User should be outside of the management chain
@@ -259,15 +227,6 @@ def setup_module():
             role["next_id"] = role_id
 
 
-# ------------------------------------------------------------------------------
-# <==== END SETUP FUNCTIONS ===================================================>
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-# <==== BEGIN TEARDOWN FUNCTIONS ==============================================>
-# ------------------------------------------------------------------------------
-
-
 def teardown_module():
     """actions to be performed to clear configurations after tests are run.
     """
@@ -277,15 +236,6 @@ def teardown_module():
     # delete the role(s)
     for role in TEST_ROLES:
         delete_role_by_name(role["name"])
-
-
-# ------------------------------------------------------------------------------
-# <==== END TEARDOWN FUNCTIONS ================================================>
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-# <==== BEGIN TEST FUNCTIONS ==================================================>
-# ------------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("test_role", TEST_ROLES)
@@ -306,11 +256,9 @@ async def test_proposal_approvers_list(test_role_owner, test_requestor, test_rol
 
         # authenticate
         assert role_status is True, "Test resources were not put in rethinkDB."
-        payload = {
-            "id": test_role_owner["username"],
-            "password": test_role_owner["password"],
-        }
-        response = log_in(session, payload)
+        response = user_login(
+            session, test_role_owner["username"], test_role_owner["password"]
+        )
         assert (
             response.status_code == 200
         ), "Failed to authenticate as role owner. {}".format(response.json())
@@ -351,8 +299,3 @@ async def test_proposal_approvers_list(test_role_owner, test_requestor, test_rol
         ), "Missing role_owner's managers in proposal approvers list:\n{}\n{}".format(
             manager_chain, approver_list
         )
-
-
-# ------------------------------------------------------------------------------
-# <==== END TEST FUNCTIONS ====================================================>
-# ------------------------------------------------------------------------------
