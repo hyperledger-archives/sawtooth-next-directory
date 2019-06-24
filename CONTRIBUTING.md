@@ -113,7 +113,7 @@ These are the folders below the top level folders. External testing folder (top 
 * Where possible tests will use pre-loaded data to decrease test run time of testing.
 * Utilities will be split by use case and will have the following structure:
     ```
-    Utilities
+    utilities
         | _ creation
         | _ db_queries
         | _ deletion

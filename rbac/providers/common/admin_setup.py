@@ -22,7 +22,7 @@ from environs import Env
 
 from rbac.common.logs import get_default_logger
 from rbac.providers.common.common import wait_for_rethink
-from tests.utilities import wait_for_resource_in_db
+from tests.utilities.db_queries import wait_for_resource_in_db
 
 LOGGER = get_default_logger(__name__)
 

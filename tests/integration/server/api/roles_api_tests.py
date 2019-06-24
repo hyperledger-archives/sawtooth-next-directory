@@ -17,35 +17,42 @@ import time
 import pytest
 import requests
 import rethinkdb as r
+
 from rbac.providers.common.db_queries import connect_to_db
-from tests.utilities import (
-    approve_proposal,
+from tests.rbac.api.assertions import assert_api_success
+from tests.utilities.creation_utils import (
+    add_role_member,
+    create_next_admin,
     create_test_role,
-    create_test_task,
     create_test_user,
+    user_login,
+)
+from tests.utilities.db_queries import wait_for_resource_in_db
+from tests.utils import (
+    approve_proposal,
+    create_test_task,
     delete_user_by_username,
     delete_role_by_name,
     delete_task_by_name,
     get_proposal_with_retry,
-    log_in,
     insert_role,
     wait_for_role_in_db,
-    wait_for_resource_in_db,
     wait_for_resource_removal_in_db,
     wait_for_prpsl_rjctn_in_db,
 )
-from tests.rbac.api.assertions import assert_api_success
 
 
 def setup_module():
     """Create a new fake role resource which is unique"""
     with requests.Session() as session:
+        create_next_admin(session)
         user_payload = {
             "name": "Susan SusansonRandom",
             "username": "susansonrandom20",
             "password": "123456",
             "email": "susan@biz.co",
         }
+
         user_response = create_test_user(session, user_payload)
         user_id = user_response.json()["data"]["user"]["id"]
         role_resource = {
@@ -56,7 +63,7 @@ def setup_module():
         session.post("http://rbac-server:8000/api/roles", json=role_resource)
 
 
-def test_proposals():
+def test_role_owner_and_mem():
     """Create a new fake role and try to add yourself to role you created"""
     with requests.Session() as session:
         # create test user
@@ -66,11 +73,14 @@ def test_proposals():
             "password": "12345678",
             "email": "susans@biz.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         assert user_response.status_code == 200, (
             "Error creating user: %s" % user_response.json()
         )
 
+    with requests.Session() as session:
+        user_login(session, "susans2224", "12345678")
         # create test role
         user_id = user_response.json()["data"]["user"]["id"]
         role_resource = {
@@ -93,12 +103,10 @@ def test_proposals():
         ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
 
         # create a membership proposal to test autoapproval
-        res = session.post(
-            "http://rbac-server:8000/api/roles/" + role_id + "/members",
-            json=user_response.json()["data"]["user"],
-        )
+        response = add_role_member(session, role_id, {"id": user_id})
         assert (
-            res.json()["message"] == "Owner is the requester. Proposal is autoapproved"
+            response.json()["message"]
+            == "Owner is the requester. Proposal is autoapproved"
         )
 
         # clean up
@@ -118,6 +126,7 @@ def test_create_duplicate_role():
             "password": "123456",
             "email": "susan@biz.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         user_id = user_response.json()["data"]["user"]["id"]
         role_resource = {
@@ -152,6 +161,7 @@ def test_duplicate_role_with_spaces():
             "password": "123456",
             "email": "susan@biz.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         user_id = user_response.json()["data"]["user"]["id"]
         role_resource = {
@@ -212,6 +222,7 @@ def test_add_role_admin():
         "email": "testuser2@biz.co",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         user_response1 = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user_response1)
         user1_id = user1_result["data"]["user"]["id"]
@@ -263,6 +274,7 @@ def test_add_role_owner():
         "email": "testuser4@biz.co",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         user_response1 = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user_response1)
         user1_id = user1_result["data"]["user"]["id"]
@@ -283,6 +295,7 @@ def test_add_role_owner():
             "reason": "Integration test of adding role owner.",
             "metadata": "",
         }
+
         response = session.post(
             "http://rbac-server:8000/api/roles/{}/owners".format(role_id),
             json=role_update_payload,
@@ -291,12 +304,9 @@ def test_add_role_owner():
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
+
         # Logging in as role owner
-        credentials_payload = {
-            "id": user1_payload["username"],
-            "password": user1_payload["password"],
-        }
-        log_in(session, credentials_payload)
+        user_login(session, user1_payload["username"], user1_payload["password"])
         # Approve proposal as role owner
         approve_proposal(session, result["proposal_id"])
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
@@ -325,6 +335,7 @@ def test_add_role_member():
         "email": "testmember@biz.co",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         user1_response = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user1_response)
         user1_id = user1_result["data"]["user"]["id"]
@@ -354,11 +365,7 @@ def test_add_role_member():
         proposal = assert_api_success(proposal_response)
         assert proposal["data"]["assigned_approver"][0] == user1_id
         # Logging in as role owner
-        credentials_payload = {
-            "id": user1_payload["username"],
-            "password": user1_payload["password"],
-        }
-        log_in(session, credentials_payload)
+        user_login(session, user1_payload["username"], user1_payload["password"])
         # Approve proposal as role owner
         approve_proposal(session, result["proposal_id"])
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
@@ -381,9 +388,13 @@ def test_add_role_task():
         "email": "testowner@biz.co",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         user1_response = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user1_response)
         user1_id = user1_result["data"]["user"]["id"]
+
+    with requests.Session() as session:
+        user_login(session, "testowner2", "123456")
         task1_payload = {
             "name": "TestTask1",
             "administrators": user1_id,
@@ -436,6 +447,7 @@ def test_delete_role():
             "password": "12345678",
             "email": "guybrush@pirate.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         assert user_response.status_code == 200, (
             "Error creating user: %s" % user_response.json()
@@ -489,6 +501,7 @@ def test_delete_invalid_role():
             "password": "12345678",
             "email": "rapp@pirate.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         assert user_response.status_code == 200, (
             "Error creating user: %s" % user_response.json()
@@ -521,6 +534,7 @@ def test_delete_role_with_owners():
             "password": "12345678",
             "email": "lechuck@pirate.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         assert user_response.status_code == 200, (
             "Error creating user: %s" % user_response.json()
@@ -582,6 +596,7 @@ def test_delete_role_with_admins():
             "password": "12345678",
             "email": "elaine@pirate.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         assert user_response.status_code == 200, (
             "Error creating user: %s" % user_response.json()
@@ -645,13 +660,16 @@ def test_delete_role_with_members():
             "password": "12345678",
             "email": "keydoge@pirate.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, user_payload)
         assert user_response.status_code == 200, (
             "Error creating user: %s" % user_response.json()
         )
-
-        # Create test role
         user_id = user_response.json()["data"]["user"]["id"]
+
+    with requests.Session() as session:
+        user_login(session, "walt1", "12345678")
+        # Create test role
         role_resource = {
             "name": "Phatt Island Jail",
             "owners": user_id,
@@ -729,6 +747,7 @@ def test_delete_role_with_proposals():
             "password": "12345678",
             "email": "fin@pirate.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, role_owner)
         assert user_response.status_code == 200, (
             "Error creating user: %s" % user_response.json()
@@ -749,8 +768,9 @@ def test_delete_role_with_proposals():
         new_member["next_id"] = user_response.json()["data"]["user"]["id"]
 
         # Auth as role_owner
-        payload = {"id": role_owner["username"], "password": role_owner["password"]}
-        auth_response = log_in(session, payload)
+        auth_response = user_login(
+            session, role_owner["username"], role_owner["password"]
+        )
         assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
             role_owner["username"],
             auth_response.json(),
@@ -777,8 +797,9 @@ def test_delete_role_with_proposals():
         ), "Couldn't find role in rethinkdb, maximum attempts exceeded."
 
         # Auth as new_member
-        payload = {"id": new_member["username"], "password": new_member["password"]}
-        auth_response = log_in(session, payload)
+        auth_response = user_login(
+            session, new_member["username"], new_member["password"]
+        )
         assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
             new_member["username"],
             auth_response.json(),
@@ -799,8 +820,9 @@ def test_delete_role_with_proposals():
         )
 
         # Auth as role_owner
-        payload = {"id": role_owner["username"], "password": role_owner["password"]}
-        auth_response = log_in(session, payload)
+        auth_response = user_login(
+            session, role_owner["username"], role_owner["password"]
+        )
         assert auth_response.status_code == 200, "Failed to authenticate as %s. %s" % (
             role_owner["username"],
             auth_response.json(),
@@ -846,6 +868,7 @@ def test_delete_role_not_owner():
             "password": "12345678",
             "email": "fred@pirate.co",
         }
+        create_next_admin(session)
         user_response = create_test_user(session, role_owner)
         assert user_response.status_code == 200, "Error creating user: %s;\n %s" % (
             role_owner["name"],

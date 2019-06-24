@@ -161,7 +161,7 @@ async def auth_via_next(user, password, env):
     if auth_info["hashed_password"] is None:
         raise ApiUnauthorized("No password is set on this account.")
     if auth_info["hashed_password"] != hashed_pwd:
-        raise ApiUnauthorized("The password you entered is incorrect.")
+        raise ApiUnauthorized("Incorrect username or password.")
 
     token = generate_api_key(env("SECRET_KEY"), user["next_id"])
     return utils.create_authorization_response(

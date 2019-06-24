@@ -15,20 +15,28 @@
 """Validating User Account Creation API Endpoint Test"""
 import time
 import requests
-import pytest
 
+# import pytest
+
+from environs import Env
 import rethinkdb as r
 
-from rbac.providers.common.db_queries import connect_to_db
-from rbac.server.api.utils import check_admin_status
 from rbac.common.logs import get_default_logger
+from rbac.providers.common.db_queries import connect_to_db
+
+# from rbac.server.api.utils import check_admin_status
 from tests.rbac.api.assertions import assert_api_success
-from tests.utilities import (
+from tests.utilities.creation_utils import (
+    create_next_admin,
+    create_test_role,
+    create_test_user,
+    user_login,
+)
+from tests.utilities.db_queries import get_role_by_name, wait_for_resource_in_db
+from tests.utils import (
     add_role_member,
     check_user_is_pack_owner,
-    create_test_role,
     create_test_pack,
-    create_test_user,
     delete_role_by_name,
     delete_pack_by_name,
     delete_user_by_username,
@@ -39,27 +47,41 @@ from tests.utilities import (
     get_user_mapping_entry,
     get_user_metadata_entry,
     insert_user,
-    log_in,
     update_manager,
 )
 
 LOGGER = get_default_logger(__name__)
 
 
+def test_admin_creation():
+    """Test user creation of an admin user"""
+    with requests.Session() as session:
+        response = create_next_admin(session)
+    expected = {"message": "Authorization successful", "code": 200}
+    assert response.json()["data"]["message"] == expected["message"]
+
+
+def test_get_users():
+    """Test getting users endpoint"""
+    with requests.Session() as session:
+        create_next_admin(session)
+        users = session.get("http://rbac-server:8000/api/users")
+        assert users.status_code == 200
+        assert users.json()["data"]
+
+
 def test_valid_unique_username():
-    """ Testing the creation of an user
-        with create user API.
-    """
+    """ Testing the creation of an userwith create user API."""
     user_input = {
         "name": "Sri Nuthal",
         "username": "nuthalapatinew",
         "password": "123456",
         "email": "sri@gmail.com",
     }
-    expected = {"message": "Authorization successful", "code": 200}
     with requests.Session() as session:
+        create_next_admin(session)
         response = session.post("http://rbac-server:8000/api/users", json=user_input)
-        assert response.json()["data"]["message"] == expected["message"]
+        assert response.status_code == 200
 
 
 def test_invalid_duplicate_username():
@@ -70,12 +92,10 @@ def test_invalid_duplicate_username():
         "password": "123456",
         "email": "sri@gmail.com",
     }
-    expected = {
-        "message": "Username already exists. Please give a different Username.",
-        "code": 409,
-    }
+    expected = {"message": "Username already exists.", "code": 409}
     insert_user(user_input)
     with requests.Session() as session:
+        create_next_admin(session)
         response = session.post("http://rbac-server:8000/api/users", json=user_input)
         assert response.json()["message"] == expected["message"]
         assert response.json()["code"] == expected["code"]
@@ -105,10 +125,9 @@ def test_syncdirectionflag_username():
 
 
 def test_create_new_user_api():
-    """ Test wether assigned manager id is present
-        in the data of user
-    """
+    """ Test wether assigned manager id is present in the data of user"""
     with requests.Session() as session:
+        create_next_admin(session)
         create_manager_payload = {
             "name": "manager_name",
             "username": "manager_id",
@@ -127,8 +146,8 @@ def test_create_new_user_api():
         user_creation_response = session.post(
             "http://rbac-server:8000/api/users", json=user_create_payload
         )
-        time.sleep(3)
         user_id = user_creation_response.json()["data"]["user"]["id"]
+        wait_for_resource_in_db("users", "name", "user_name")
         user_details_response = session.get(
             "http://rbac-server:8000/api/users/" + user_id
         )
@@ -136,55 +155,43 @@ def test_create_new_user_api():
 
 
 def test_update_manager():
-    """ Creates a user and then updates their manager as nextAdmin
-
-    Manager is the second user created here."""
+    """ Creates a user and then updates their manager as nextAdmin"""
     user1_payload = {
         "name": "Test User 9",
         "username": "testuser9",
         "password": "123456",
         "email": "testuser9@biz.co",
     }
-    user2_payload = {
-        "name": "Test User 10",
-        "username": "testuser10",
-        "password": "123456",
-        "email": "testuser10@biz.co",
-    }
     with requests.Session() as session:
+        next_admin = create_next_admin(session)
+        admin_id = next_admin.json()["data"]["next_id"]
         user1_response = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user1_response)
         user1_id = user1_result["data"]["user"]["id"]
-        user2_response = create_test_user(session, user2_payload)
-        user2_result = assert_api_success(user2_response)
-        user2_id = user2_result["data"]["user"]["id"]
 
-        next_admins = {
-            "name": "NextAdmins",
-            "owners": [user2_id],
-            "administrators": [user2_id],
-        }
+    with requests.Session() as session:
+        user_login(session, "testuser9", "123456")
         manager_payload = {
             "id": user1_id,
             "reason": "Integration test of updating manager.",
             "metadata": "",
         }
-        role_response = create_test_role(session, next_admins)
-        failed_response = update_manager(session, user2_id, manager_payload)
+        next_admin_role = get_role_by_name("NextAdmins")
+        failed_response = update_manager(session, admin_id, manager_payload)
         assert failed_response.json() == {
             "code": 400,
-            "message": "Proposal opener is not an Next Admin.",
+            "message": "Proposal opener is not a Next Admin.",
         }
+        add_role_member(session, next_admin_role[0]["role_id"], {"id": user1_id})
 
-        add_role_member(session, role_response.json()["data"]["id"], {"id": user2_id})
-
-        response = update_manager(session, user2_id, manager_payload)
+    with requests.session() as session:
+        create_next_admin(session)
+        response = update_manager(session, admin_id, manager_payload)
         result = assert_api_success(response)
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
-        proposal = assert_api_success(proposal_response)
+        assert_api_success(proposal_response)
         delete_user_by_username("testuser6")
         delete_user_by_username("testuser7")
-        delete_role_by_name("NextAdmins")
 
 
 def test_user_relationship_api():
@@ -201,6 +208,7 @@ def test_user_relationship_api():
         "email": "kiran36@gmail.com",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         user1_response = create_test_user(session, user1_payload)
         user1_result = assert_api_success(user1_response)
         user1_id = user1_result["data"]["user"]["id"]
@@ -219,14 +227,13 @@ def test_user_delete_api():
         "password": "test11",
         "email": "nadia123@test.com",
     }
-    pack = {
-        "name": "michael pack one",
-        "roles": [],
-        "description": "Michael's test pack",
-    }
     with requests.Session() as session:
+        create_next_admin(session)
         response = create_test_user(session, user)
         next_id = response.json()["data"]["user"]["id"]
+        wait_for_resource_in_db("users", "next_id", next_id)
+    with requests.Session() as session:
+        user_login(session, "nadia1", "test11")
         role_payload = {
             "name": "test_role",
             "owners": [next_id],
@@ -235,7 +242,6 @@ def test_user_delete_api():
         }
         role_resp = create_test_role(session, role_payload)
         role_id = role_resp.json()["data"]["id"]
-
         pack = {
             "name": "michael pack one",
             "owners": [next_id],
@@ -243,7 +249,6 @@ def test_user_delete_api():
             "description": "Michael's test pack",
         }
         pack_response = create_test_pack(session, pack)
-
         add_role_member_payload = {
             "id": next_id,
             "reason": "Integration test of adding a member.",
@@ -252,15 +257,11 @@ def test_user_delete_api():
 
         add_role_member(session, role_id, add_role_member_payload)
 
+        wait_for_resource_in_db("role_members", "role_id", role_id)
         conn = connect_to_db()
         user_exists = (
-            r.db("rbac")
-            .table("users")
-            .filter({"next_id": next_id})
-            .coerce_to("array")
-            .run(conn)
+            r.table("users").filter({"next_id": next_id}).coerce_to("array").run(conn)
         )
-
         role_owner_exists = (
             r.table("role_owners")
             .filter({"identifiers": [next_id], "role_id": role_id})
@@ -353,6 +354,7 @@ def test_reject_users_proposals():
         "email": "nadia3@test.com",
     }
     with requests.Session() as session:
+        create_next_admin(session)
         response1 = create_test_user(session, user_to_delete)
         response2 = create_test_user(session, user)
         role_payload_1 = {
@@ -363,22 +365,22 @@ def test_reject_users_proposals():
         }
 
         role_response1 = create_test_role(session, role_payload_1)
+        print(role_response1)
         proposal_1 = add_role_member(
             session,
             role_response1.json()["data"]["id"],
             {"id": response2.json()["data"]["user"]["id"]},
         )
+        print(proposal_1)
         next_id = response1.json()["data"]["user"]["id"]
         conn = connect_to_db()
         user_exists = (
-            r.db("rbac")
-            .table("users")
-            .filter({"next_id": next_id})
-            .coerce_to("array")
-            .run(conn)
+            r.table("users").filter({"next_id": next_id}).coerce_to("array").run(conn)
         )
         assert user_exists
 
+    with requests.Session() as session:
+        user_login(session, "nadia3", "test11")
         deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
         time.sleep(5)
         assert deletion.json() == {
@@ -386,12 +388,9 @@ def test_reject_users_proposals():
             "deleted": 1,
         }
 
+        conn = connect_to_db()
         user_exists = (
-            r.db("rbac")
-            .table("users")
-            .filter({"next_id": next_id})
-            .coerce_to("array")
-            .run(conn)
+            r.table("users").filter({"next_id": next_id}).coerce_to("array").run(conn)
         )
         assert not user_exists
 
@@ -406,85 +405,6 @@ def test_reject_users_proposals():
         assert proposal_1_result[0]["status"] == "REJECTED"
 
 
-@pytest.mark.asyncio
-async def test_check_admin_status():
-    """Test that checking a users admin status returns the correct boolean."""
-    admin_user = {
-        "name": "admin nadia",
-        "username": "admin_nadia",
-        "password": "test11",
-        "email": "admin_nadia@test.com",
-    }
-
-    user = {
-        "name": "nadia four",
-        "username": "nadia4",
-        "password": "test11",
-        "email": "nadia4@test.com",
-    }
-    with requests.Session() as session:
-        non_admin_response = create_test_user(session, user)
-        admin_response = create_test_user(session, admin_user)
-        admin_id = admin_response.json()["data"]["user"]["id"]
-        non_admin_id = non_admin_response.json()["data"]["user"]["id"]
-
-        next_admins = {
-            "name": "NextAdmins",
-            "owners": admin_id,
-            "administrators": admin_id,
-        }
-        role_response = create_test_role(session, next_admins)
-        add_role_member(session, role_response.json()["data"]["id"], {"id": admin_id})
-
-        admin = await check_admin_status(admin_id)
-        non_admin = await check_admin_status(non_admin_id)
-
-        assert admin
-        assert not non_admin
-
-
-def test_update_user_password():
-    """Test that an admin user can change a user's password."""
-    user = {
-        "name": "nadia five",
-        "username": "nadia5",
-        "password": "test11",
-        "email": "nadia5@test.com",
-    }
-    with requests.Session() as session:
-        created_user = create_test_user(session, user)
-        login_inputs = {"id": "admin_nadia", "password": "test11"}
-        log_in(session, login_inputs)
-
-        payload = {
-            "next_id": created_user.json()["data"]["user"]["id"],
-            "password": "password1",
-        }
-        password_response = session.put(
-            "http://rbac-server:8000/api/users/password", json=payload
-        )
-        assert password_response.status_code == 200
-        assert password_response.json() == {"message": "Password successfully updated"}
-        session.close()
-
-    with requests.Session() as session2:
-        login_inputs = {"id": "nadia5", "password": "password1"}
-        response = log_in(session2, login_inputs)
-        assert response.status_code == 200
-
-        payload = {
-            "next_id": created_user.json()["data"]["user"]["id"],
-            "password": "test3",
-        }
-        password_response = session2.put(
-            "http://rbac-server:8000/api/users/password", json=payload
-        )
-        assert password_response.status_code == 400
-        assert (
-            password_response.json()["message"] == "You are not a NEXT Administrator."
-        )
-
-
 def test_update_user():
     """Test that an admin user can update an existing user's information"""
     user = {
@@ -493,11 +413,10 @@ def test_update_user():
         "password": "test11",
         "email": "nadia6@test.com",
     }
-    with requests.Session() as session:
+    env = Env()
+    with requests.session() as session:
+        user_login(session, env("NEXT_ADMIN_USER"), env("NEXT_ADMIN_PASS"))
         created_user = create_test_user(session, user)
-        login_input = {"id": "admin_nadia", "password": "test11"}
-        log_in(session, login_input)
-
         update_payload = {
             "next_id": created_user.json()["data"]["user"]["id"],
             "name": "nadia changed",
@@ -511,12 +430,10 @@ def test_update_user():
         assert update_response.json() == {
             "message": "User information was successfully updated."
         }
-        session.close()
 
     time.sleep(3)
     with requests.Session() as session2:
-        login_inputs = {"id": "nadia.changed", "password": "test11"}
-        response = log_in(session2, login_inputs)
+        response = user_login(session2, "nadia.changed", "test11")
         assert response.status_code == 200
 
         update_payload = {

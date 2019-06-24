@@ -16,7 +16,8 @@
 
 import requests
 
-from tests.utilities import create_test_user, get_pack_by_pack_id
+from tests.utilities.creation_utils import create_next_admin, create_test_user
+from tests.utils import get_pack_by_pack_id
 
 
 TEST_USERS = [
@@ -137,6 +138,7 @@ def create_fake_role(session, user_id, role_resource):
 def test_create_duplicate_pack():
     """Test duplicate pack creation"""
     with requests.Session() as session:
+        create_next_admin(session)
         user_id = create_test_user(session, TEST_USERS[0]).json()["data"]["user"]["id"]
         role_id = create_fake_role(session, user_id, TEST_ROLES[0]).json()["data"]["id"]
 
@@ -156,6 +158,7 @@ def test_create_duplicate_pack():
 def test_delete_pack():
     """Testing delete pack API"""
     with requests.Session() as session:
+        create_next_admin(session)
         user_id = create_test_user(session, TEST_USERS[1]).json()["data"]["user"]["id"]
         role_id = create_fake_role(session, user_id, TEST_ROLES[1]).json()["data"]["id"]
         pack_id = create_fake_pack(session, user_id, role_id, TEST_PACKS[2]).json()[
@@ -175,7 +178,7 @@ def test_delete_pack():
 def test_delete_nonexistent_pack():
     """Testing delete pack API with nonexistent pack"""
     with requests.Session() as session:
-        user_response = create_test_user(session, TEST_USERS[2])
+        create_next_admin(session)
         pack_id = "123"
         response = session.delete(
             "http://rbac-server:8000/api/packs/{}".format(pack_id)
@@ -190,6 +193,7 @@ def test_delete_nonexistent_pack():
 def test_delete_pack_as_non_admin():
     """Testing delete pack API with as non-admin"""
     with requests.Session() as session:
+        create_next_admin(session)
         user_id_1 = create_test_user(session, TEST_USERS[4]).json()["data"]["user"][
             "id"
         ]
@@ -206,6 +210,7 @@ def test_delete_pack_as_non_admin():
             user_response.json(),
         )
 
+    with requests.Session() as session:
         # auth as a non-admin
         user_payload = {
             "id": TEST_USERS[5]["username"],
@@ -218,12 +223,11 @@ def test_delete_pack_as_non_admin():
             TEST_USERS[5]["username"],
             auth_response.json(),
         )
-
         # try to delete the pack as a non-admin
         response = session.delete(
             "http://rbac-server:8000/api/packs/{}".format(pack_id)
         )
-        assert response.status_code == 503, (
+        assert response.status_code == 401, (
             "Unexpected response when deleting pack: %s" % response.json()
         )
 
@@ -231,6 +235,7 @@ def test_delete_pack_as_non_admin():
 def test_duplicate_pack_with_spaces():
     """Test creating two pack resources with varying spaces in between the name"""
     with requests.Session() as session:
+        create_next_admin(session)
         user_id = create_test_user(session, TEST_USERS[3]).json()["data"]["user"]["id"]
         role_id = create_fake_role(session, user_id, TEST_ROLES[3]).json()["data"]["id"]
         create_fake_pack(session, user_id, role_id, TEST_PACKS[4])

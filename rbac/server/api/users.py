@@ -30,6 +30,7 @@ from rbac.server.api.errors import (
     ApiBadRequest,
     ApiInternalError,
     ApiTargetConflict,
+    ApiUnauthorized,
     handle_errors,
 )
 from rbac.server.api.proposals import compile_proposal_resource, PROPOSAL_TRANSACTION
@@ -75,51 +76,50 @@ async def fetch_all_users(request):
 
 @USERS_BP.post("api/users")
 async def create_new_user(request):
-    """Create a new user."""
+    """Create a new user. Must be and adminsitrator.
+
+    Args:
+        request:
+            obj: incoming request object
+    """
+    # Validate that we have all fields
+    required_fields = ["name", "username", "password", "email"]
+    utils.validate_fields(required_fields, request.json)
+
+    # Check if username already exists
+    conn = await create_connection()
+    username = request.json.get("username")
+    if await users_query.fetch_username_match_count(conn, username) > 0:
+        # Throw Error response to Next_UI
+        return await handle_errors(
+            request, ApiTargetConflict("Username already exists.")
+        )
+    conn.close()
+
+    # Check to see if they are trying to create the NEXT admin
     env = Env()
-    admin_role = {
+    next_admin = {
         "name": env("NEXT_ADMIN_NAME"),
         "username": env("NEXT_ADMIN_USER"),
         "email": env("NEXT_ADMIN_EMAIL"),
         "password": env("NEXT_ADMIN_PASS"),
     }
-    if request.json != admin_role:
+    if request.json != next_admin:
+        # Try to see if they are in NEXT
         if not env.int("ENABLE_NEXT_BASE_USE"):
             raise ApiBadRequest("Not a valid action. Source not enabled")
-    required_fields = ["name", "username", "password", "email"]
-    utils.validate_fields(required_fields, request.json)
-    username_created = request.json.get("username")
-    # Check if username already exists
-    if (
-        await users_query.fetch_username_match_count(
-            request.app.config.DB_CONN, username_created
-        )
-        > 0
-    ):
-        # Throw Error response to Next_UI
-        return await handle_errors(
-            request,
-            ApiTargetConflict(
-                "Username already exists. Please give a different Username."
-            ),
-        )
-
-    # Generate keys
-    key_pair = Key()
-    next_id = str(uuid4())
-    encrypted_private_key = encrypt_private_key(
-        AES_KEY, key_pair.public_key, key_pair.private_key_bytes
-    )
-    if request.json.get("metadata") is None or request.json.get("metadata") == {}:
+        txn_key, txn_user_id, next_id, key_pair = await non_admin_creation(request)
+    else:
+        txn_key, txn_user_id, next_id, key_pair = await next_admin_creation(request)
+    if request.json.get("metadata") is None:
         set_metadata = {}
     else:
         set_metadata = request.json.get("metadata")
     set_metadata["sync_direction"] = "OUTBOUND"
-
     # Build create user transaction
     batch_list = User().batch_list(
-        signer_keypair=key_pair,
-        signer_user_id=next_id,
+        signer_keypair=txn_key,
+        signer_user_id=txn_user_id,
         next_id=next_id,
         name=request.json.get("name"),
         username=request.json.get("username"),
@@ -133,19 +133,18 @@ async def create_new_user(request):
     sawtooth_response = await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
-
     if not sawtooth_response:
-        LOGGER.warning("There was an error submitting the sawtooth transaction.")
         return await handle_errors(
             request,
             ApiInternalError("There was an error submitting the sawtooth transaction."),
         )
-
     # Save new user in auth table
     hashed_password = hashlib.sha256(
         request.json.get("password").encode("utf-8")
     ).hexdigest()
-
+    encrypted_private_key = encrypt_private_key(
+        AES_KEY, key_pair.public_key, key_pair.private_key_bytes
+    )
     auth_entry = {
         "next_id": next_id,
         "hashed_password": hashed_password,
@@ -168,7 +167,45 @@ async def create_new_user(request):
     await users_query.create_user_map_entry(request.app.config.DB_CONN, mapping_data)
 
     # Send back success response
-    return create_user_response(request, next_id)
+    return json({"data": {"user": {"id": next_id}}})
+
+
+async def next_admin_creation(request):
+    """Creating the admin user.  Used exclusively for the creation of the NEXT admin
+
+    Args:
+        request:
+            obj: a request object
+    """
+    try:
+        txn_key, txn_user_id = await utils.get_transactor_key(request)
+        is_admin = await utils.check_admin_status(txn_user_id)
+        if not is_admin:
+            raise ApiBadRequest(
+                "You do not have the authorization to create an account."
+            )
+    except ApiUnauthorized:
+        txn_key = Key()
+        txn_user_id = str(uuid4())
+    key_pair = txn_key
+    next_id = txn_user_id
+    return txn_key, txn_user_id, next_id, key_pair
+
+
+async def non_admin_creation(request):
+    """Creating non-admin users.
+
+    Args:
+        request:
+            obj: a request object
+    """
+    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    is_admin = await utils.check_admin_status(txn_user_id)
+    if not is_admin:
+        raise ApiBadRequest("You do not have the authorization to create an account.")
+    next_id = str(uuid4())
+    key_pair = Key()
+    return txn_key, txn_user_id, next_id, key_pair
 
 
 @USERS_BP.put("api/users/update")
@@ -340,7 +377,7 @@ async def update_manager(request, next_id):
             request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
         )
     else:
-        raise ApiBadRequest("Proposal opener is not an Next Admin.")
+        raise ApiBadRequest("Proposal opener is not a Next Admin.")
     return json({"proposal_id": proposal_id})
 
 
