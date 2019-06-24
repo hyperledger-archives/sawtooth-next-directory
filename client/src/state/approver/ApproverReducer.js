@@ -21,6 +21,7 @@ import * as utils from 'services/Utils';
 
 export const request = {
   organization: (state) => state.merge({ fetchingOrganization: true }),
+  deletePack:   (state) => state.merge({ deletingPack: true }),
   temp:         (state) => state.merge({ fetching: true }),
 };
 
@@ -115,8 +116,18 @@ export const success = {
     state.merge({
       fetching: false,
       createdPacks: utils.merge(
-        state.createdPacks || [], [pack]
+        state.createdPacks || [], [pack], 'pack_id',
       ),
+    }),
+
+
+  deletePack: (state, { packId }) =>
+    state.merge({
+      fetching: false,
+      deletingPack: false,
+      createdPacks: state.createdPacks ?
+        state.createdPacks.filter(pack => pack.id !== packId) :
+        state.createdPacks,
     }),
 
 
@@ -184,6 +195,11 @@ export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.PACK_EXISTS_SUCCESS]:          success.packExists,
   [Types.PACK_EXISTS_FAILURE]:          failure,
   [Types.RESET_PACK_EXISTS]:            resetPackExists,
+
+  // Delete
+  [Types.DELETE_PACK_REQUEST]:          request.deletePack,
+  [Types.DELETE_PACK_SUCCESS]:          success.deletePack,
+  [Types.DELETE_PACK_FAILURE]:          failure,
 
   // People
   [Types.ORGANIZATION_REQUEST]:         request.organization,

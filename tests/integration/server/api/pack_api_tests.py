@@ -167,6 +167,7 @@ def test_delete_pack():
         assert response.json() == {
             "deleted": 1,
             "message": "Pack {} successfully deleted".format(pack_id),
+            "id": pack_id,
         }
         assert get_pack_by_pack_id(pack_id) == []
 

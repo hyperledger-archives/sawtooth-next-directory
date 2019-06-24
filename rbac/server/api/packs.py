@@ -155,7 +155,11 @@ async def delete_pack(request, pack_id):
         )
     await packs_query.delete_pack_by_id(request.app.config.DB_CONN, pack_id)
     return json(
-        {"message": "Pack {} successfully deleted".format(pack_id), "deleted": 1}
+        {
+            "message": "Pack {} successfully deleted".format(pack_id),
+            "deleted": 1,
+            "id": pack_id,
+        }
     )
 
 

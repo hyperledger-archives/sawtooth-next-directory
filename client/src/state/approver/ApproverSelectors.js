@@ -20,6 +20,7 @@ import * as utils from 'services/Utils';
 export const ApproverSelectors = {
   confirmedProposals:    (state) => state.approver.confirmedProposals,
   delegations:           (state) => state.approver.delegations || [],
+  deletingPack:          (state) => state.approver.deletingPack,
   directReports:         (state) => state.approver.directReports,
   packExists:            (state) => state.approver.packExists,
   rejectedProposals:     (state) => state.approver.rejectedProposals,

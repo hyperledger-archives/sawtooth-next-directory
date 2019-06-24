@@ -101,6 +101,7 @@ const create = (baseURL =
   // Definitions
   const createPack = (payload) => api.post('packs', payload);
   const createRole = (payload) => api.post('roles', payload);
+  const deletePack = (id) => api.delete(`packs/${id}`);
   const login = (creds) => api.post('authorization', creds);
   const me = () => api.get(`users/${storage.get('next_id')}`);
   const getProposal = (id) => api.get(`proposals/${id}`);
@@ -138,6 +139,7 @@ const create = (baseURL =
   return {
     createPack,
     createRole,
+    deletePack,
     expire,
     login,
     getConfirmedProposals,

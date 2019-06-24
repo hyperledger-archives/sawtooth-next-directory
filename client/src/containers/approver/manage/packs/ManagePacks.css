@@ -29,6 +29,12 @@ limitations under the License.
   margin-bottom: 50px;
 }
 
+#next-approver-manage-packs-content .ui.card > :first-child {
+  border-radius: inherit !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
 #next-approver-manage-packs-content .ui.placeholder {
   margin: 35px 0;
 }
@@ -42,4 +48,26 @@ limitations under the License.
   position: fixed;
   right: 18px;
   width: 190px;
+}
+
+.next-approver-manage-packs-card-header {
+  background: var(--magenta);
+  display: flex;
+  height: 40px;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.next-approver-manage-packs-card-header .ui.button {
+  padding: .4em 1em;
+}
+
+.next-approver-manage-packs-card-header h3 {
+  padding: .15em !important;
+}
+
+.next-approver-manage-packs-card-body {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
 }

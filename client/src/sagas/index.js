@@ -39,7 +39,8 @@ import {
   createPack,
   createRole,
   checkRoleExists,
-  checkPackExists } from './ApproverSaga';
+  checkPackExists,
+  deletePack } from './ApproverSaga';
 import {
   packAccess,
   roleAccess,
@@ -82,6 +83,7 @@ function * sagas () {
     takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
     takeLatest(ApproverTypes.CREATE_PACK_REQUEST, createPack, api),
     takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
+    takeLatest(ApproverTypes.DELETE_PACK_REQUEST, deletePack, api),
     takeLatest(ApproverTypes.APPROVE_PROPOSALS_REQUEST, approveProposals, api),
     takeLatest(ApproverTypes.REJECT_PROPOSALS_REQUEST, rejectProposals, api),
     takeLatest(ApproverTypes.ROLE_EXISTS_REQUEST, checkRoleExists, api),
