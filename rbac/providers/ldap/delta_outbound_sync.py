@@ -16,13 +16,13 @@
 import os
 import time
 
-import ldap3
-from ldap3 import MODIFY_REPLACE
+from ldap3 import ObjectDef, Reader, Writer
 from ldap3.core.exceptions import LDAPSessionTerminatedByServerError
 
 from rbac.common.logs import get_default_logger
 from rbac.providers.common import ldap_connector
 from rbac.providers.common.db_queries import (
+    delete_entry_queue,
     peek_at_queue,
     put_entry_changelog,
     update_outbound_entry_status,
@@ -32,10 +32,7 @@ from rbac.providers.common.outbound_filters import (
     outbound_group_filter,
 )
 from rbac.providers.common.provider_errors import ValidationException
-from rbac.providers.ldap.ldap_validator import (
-    validate_create_entry,
-    validate_update_entry,
-)
+from rbac.providers.ldap.ldap_validator import validate_update_entry
 
 LOGGER = get_default_logger(__name__)
 
@@ -46,123 +43,6 @@ LDAP_USER = os.getenv("LDAP_USER")
 LDAP_PASS = os.getenv("LDAP_PASS")
 
 
-def is_entry_in_ad(queue_entry, ldap_conn):
-    """
-        Searches AD to see if queue_entry already exists. Returns
-        True if the entry does exist.
-    """
-    data_type = queue_entry["data_type"]
-
-    distinguished_name = get_distinguished_name(queue_entry)
-
-    if data_type == "user":
-        user_filter = "(&(objectClass=person)(distinguishedName={}))"
-        search_filter = user_filter.format(distinguished_name)
-    elif data_type == "group":
-        group_filter = "(&(objectClass=group)(distinguishedName={}))"
-        search_filter = group_filter.format(distinguished_name)
-
-    ldap_conn.search(
-        search_base=LDAP_DC,
-        search_filter=search_filter,
-        attributes=ldap3.ALL_ATTRIBUTES,
-    )
-    return ldap_conn.entries
-
-
-def update_entry_ldap(queue_entry, ldap_conn):
-    """
-        Routes the given queue entry to the proper handler to update the
-        AD (user | group) in Active Directory.
-    """
-    data_type = queue_entry["data_type"]
-    distinguished_name = get_distinguished_name(queue_entry)
-
-    LOGGER.info("Updating information for %s", distinguished_name)
-    if data_type == "user":
-        sawtooth_entry_filtered = outbound_user_filter(queue_entry["data"], "ldap")
-    elif data_type == "group":
-        sawtooth_entry_filtered = outbound_group_filter(queue_entry["data"], "ldap")
-    validated_entry = validate_update_entry(sawtooth_entry_filtered, data_type)
-    modify_ad_attributes(distinguished_name, validated_entry, ldap_conn)
-
-
-def create_entry_ldap(queue_entry, ldap_conn):
-    """
-        Routes the given query entry to the proper handler to create the
-        AD (user | group) in Active Directory.
-    """
-    data_type = queue_entry["data_type"]
-    distinguished_name = get_distinguished_name(queue_entry)
-
-    if data_type == "user":
-        create_user_ldap(
-            distinguished_name=distinguished_name,
-            sawtooth_entry=queue_entry,
-            ldap_conn=ldap_conn,
-        )
-    elif data_type == "group":
-        create_group_ldap(
-            distinguished_name=distinguished_name,
-            sawtooth_entry=queue_entry,
-            ldap_conn=ldap_conn,
-        )
-
-
-def create_user_ldap(distinguished_name, sawtooth_entry, ldap_conn):
-    """Create new AD user using attributes from sawtooth_entry."""
-    LOGGER.info("Creating new AD user: %s", distinguished_name)
-    sawtooth_entry_filtered = outbound_user_filter(sawtooth_entry["data"], "ldap")
-    validated_entry = validate_create_entry(
-        sawtooth_entry_filtered, sawtooth_entry["data_type"]
-    )
-    ldap_conn.add(
-        dn=distinguished_name,
-        object_class={"person", "organizationalPerson", "user"},
-        attributes={
-            "cn": validated_entry["cn"],
-            "userPrincipalName": validated_entry["userPrincipalName"],
-        },
-    )
-    modify_ad_attributes(distinguished_name, validated_entry, ldap_conn)
-
-
-def create_group_ldap(distinguished_name, sawtooth_entry, ldap_conn):
-    """Create new AD group using attributes from sawtooth_entry."""
-    LOGGER.info("Creating new AD group: %s", distinguished_name)
-    sawtooth_entry_filtered = outbound_group_filter(sawtooth_entry["data"], "ldap")
-    validated_entry = validate_create_entry(
-        sawtooth_entry_filtered, sawtooth_entry["data_type"]
-    )
-    ldap_conn.add(
-        dn=distinguished_name,
-        object_class={"group", "top"},
-        attributes={"groupType": validated_entry["groupType"]},
-    )
-    modify_ad_attributes(distinguished_name, validated_entry, ldap_conn)
-
-
-def modify_ad_attributes(distinguished_name, validated_entry, ldap_conn):
-    """
-        Modify the the (user | group) with the filtered attributes
-        from sawtooth_entry.
-    """
-    for ad_attribute in validated_entry:
-        # TODO: If attribute value is empty due to removal of field (deletion of members)
-        if ad_attribute == "member" and validated_entry["member"]:
-            ldap_conn.modify(
-                dn=distinguished_name,
-                changes={ad_attribute: [(MODIFY_REPLACE, [validated_entry["member"]])]},
-            )
-        elif ad_attribute != "distinguishedName" and validated_entry[ad_attribute]:
-            ldap_conn.modify(
-                dn=distinguished_name,
-                changes={
-                    ad_attribute: [(MODIFY_REPLACE, validated_entry[ad_attribute])]
-                },
-            )
-
-
 def get_distinguished_name(queue_entry):
     """Returns the distinguished_name of the queue entry."""
     sawtooth_entry = queue_entry["data"]
@@ -171,9 +51,64 @@ def get_distinguished_name(queue_entry):
     raise ValidationException("Payload does not have a distinguished_name.")
 
 
+def process_outbound_entry(queue_entry, ldap_connection):
+    """ Processes queue_entry and apply changes to the LDAP user/group.
+
+    Args:
+        queue_entry: (dict) A outbound_queue table entry. The mandatory keys in
+            the dict are:
+                {
+                    "data": (dict containing current state of LDAP object)
+                    "data_type": (str)
+                }
+        ldap_connection: (ldap Connection object) A bound ldap connection object.
+    Returns:
+        write_confirmation: (bool) Returns True if a change to LDAP occurred,
+            returns False if no LDAP changes occurred
+    """
+    distinguished_name = get_distinguished_name(queue_entry)
+    data_type = queue_entry["data_type"]
+    if data_type == "group":
+        sawtooth_entry_filtered = outbound_group_filter(queue_entry["data"], "ldap")
+    elif data_type == "user":
+        sawtooth_entry_filtered = outbound_user_filter(queue_entry["data"], "ldap")
+
+    object_def = ObjectDef(data_type, ldap_connection)
+    reader_cursor = Reader(ldap_connection, object_def, distinguished_name)
+    reader_cursor.search()
+    writer_cursor = Writer.from_cursor(reader_cursor)
+
+    if reader_cursor.entries:
+        LOGGER.debug("Updating AD %s: %s", data_type, distinguished_name)
+        validated_entry = validate_update_entry(sawtooth_entry_filtered, data_type)
+
+        # Grab current state of user/group in LDAP
+        ldap_resource = writer_cursor[0]
+
+        # Update AD user/group
+        for ad_attribute in validated_entry:
+            ldap_current_value = ldap_resource[ad_attribute].value
+
+            if ad_attribute != "distinguishedName" and validated_entry[ad_attribute]:
+                # Convert member list to list if value is a string
+                if ad_attribute == "member" and isinstance(ldap_current_value, str):
+                    ldap_current_value = [ldap_current_value]
+
+                # Sort lists for comparison
+                if isinstance(ldap_current_value, list):
+                    ldap_current_value.sort()
+                    validated_entry[ad_attribute].sort()
+                if ldap_current_value != validated_entry[ad_attribute]:
+                    ldap_resource[ad_attribute] = validated_entry[ad_attribute]
+        return ldap_resource.entry_commit_changes()
+
+    LOGGER.debug("AD %s %s was not found.", data_type, distinguished_name)
+    return False
+
+
 def ldap_outbound_listener():
     """Initialize LDAP delta outbound sync with Active Directory."""
-    LOGGER.info("Starting outbound sync listener...")
+    LOGGER.info("Starting LDAP outbound sync listener...")
 
     ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
 
@@ -190,22 +125,34 @@ def ldap_outbound_listener():
                 "Received queue entry %s from outbound queue...", queue_entry["id"]
             )
 
-            LOGGER.debug("Putting queue entry into changelog...")
-            put_entry_changelog(queue_entry, "outbound")
-
             data_type = queue_entry["data_type"]
             LOGGER.debug("Putting %s into ad...", data_type)
 
             try:
-                if is_entry_in_ad(queue_entry, ldap_connection):
-                    update_entry_ldap(queue_entry, ldap_connection)
+                LOGGER.debug(
+                    "Processing LDAP outbound_queue entry: %s", str(queue_entry)
+                )
+                successful_ldap_write = process_outbound_entry(
+                    queue_entry, ldap_connection
+                )
+
+                if successful_ldap_write:
+                    update_outbound_entry_status(queue_entry["id"])
+
+                    LOGGER.debug("Putting queue entry into changelog...")
+                    put_entry_changelog(queue_entry, "outbound")
                 else:
-                    create_entry_ldap(queue_entry, ldap_connection)
-                update_outbound_entry_status(queue_entry["id"])
+                    LOGGER.error(
+                        "No changes were made in AD - deleting entry from outbound queue..."
+                    )
+                    delete_entry_queue(queue_entry["id"], "outbound_queue")
 
             except ValidationException as err:
-                LOGGER.warning("Outbound payload failed validation")
+                LOGGER.warning(
+                    "Outbound payload failed validation, deleting entry from outbound queue..."
+                )
                 LOGGER.warning(err)
+                delete_entry_queue(queue_entry["id"], "outbound_queue")
 
         except LDAPSessionTerminatedByServerError:
             LOGGER.warning(
