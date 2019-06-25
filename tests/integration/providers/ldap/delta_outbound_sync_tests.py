@@ -17,7 +17,9 @@
 # NOTE: disabling for pytest as per:
 # https://stackoverflow.com/questions/46089480/pytest-fixtures-redefining-name-from-outer-scope-pylint
 
+from datetime import datetime as dt
 import pytest
+import pytz
 
 from ldap3 import Connection, MOCK_SYNC, OFFLINE_AD_2012_R2, Server
 import rethinkdb as r
@@ -39,14 +41,11 @@ OUTBOUND_ENTRY_CASES = [
         {
             "data": {
                 "description": "The role that keeps on rolling",
-                "group_types": -2147483646,
-                "name": "Rolling_Role",
                 "members": [],
-                "owners": "CN=christopher,OU=Users,OU=Accounts,DC=AD2012,DC=LAB",
                 "remote_id": "CN=Rolling_Role,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB",
             },
             "data_type": "group",
-            "timestamp": r.epoch_time(1376074395.012).to_iso8601(),
+            "timestamp": r.epoch_time(1376074395.012),
             "provider_id": "test_provider",
             "status": "UNCONFIRMED",
             "action": "",
@@ -54,14 +53,11 @@ OUTBOUND_ENTRY_CASES = [
         {
             "data": {
                 "description": "The role that keeps on rolling",
-                "group_types": -2147483646,
-                "name": "Rolling_Role",
                 "members": [],
-                "owners": "CN=christopher,OU=Users,OU=Accounts,DC=AD2012,DC=LAB",
                 "remote_id": "CN=Rolling_Role,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB",
             },
             "data_type": "group",
-            "timestamp": "2013-08-09T18:53:15.012+00:00",
+            "timestamp": dt.fromtimestamp(1376074395.012, tz=pytz.utc),
             "provider_id": "test_provider",
             "status": "UNCONFIRMED",
             "action": "",
@@ -71,14 +67,11 @@ OUTBOUND_ENTRY_CASES = [
         {
             "data": {
                 "description": "The role that keeps on rolling",
-                "group_types": -2147483646,
-                "name": "Rolling_Role",
                 "members": [],
-                "owners": "CN=christopher,OU=Users,OU=Accounts,DC=AD2012,DC=LAB",
                 "remote_id": "CN=Rolling_Role,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB",
             },
             "data_type": "group",
-            "timestamp": r.epoch_time(1376074395.012).to_iso8601(),
+            "timestamp": r.epoch_time(1376074395.012),
             "provider_id": "test_provider",
             "status": "CONFIRMED",
             "action": "",
@@ -177,6 +170,15 @@ def test_get_unconfirmed_entries(outbound_entry, expected_entry):
         outbound_entry: (dict): Outbound entry to be inserted into outbound_queue.
             Dict should consist of the following keys: data, data_type, timestamp,
             provider_id, status, and action.
+             The mandatory keys in the dict are:
+                {
+                    "data": (dict containing current state of role/user)
+                    "data_type": (str)
+                    "timestamp": (datetime)
+                    "provider_id": (str)
+                    "status": (str)
+                    "action": (str)
+                }
         expected_entry: (dict or None) Result of calling peek_at_queue(). Value could
             either be an entry from outbound_queue entry or None if no entry matches
             the provider_field "test_provider" and has the status of "UNCONFIRMED"
