@@ -61,6 +61,7 @@ def validate_update_entry(payload, data_type):
         prohibited_updated_group_fields.append("cn")
     elif data_type == "group":
         prohibited_updated_group_fields.append("groupType")
+        prohibited_updated_group_fields.append("name")
     else:
         raise ValidationException(
             "Payload does not have the data_type of user or group."
