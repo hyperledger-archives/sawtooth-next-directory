@@ -260,7 +260,9 @@ def insert_updated_entries(data_dict, when_changed, data_type):
 
             sync_source = "ldap-" + data_type
             provider_id = LDAP_DC
-            save_sync_time(provider_id, sync_source, "delta", entry_modified_timestamp)
+            save_sync_time(
+                provider_id, sync_source, "delta", conn, entry_modified_timestamp
+            )
             insertion_counter += 1
     conn.close()
     LOGGER.info("Inserted %s records into inbound_queue.", insertion_counter)

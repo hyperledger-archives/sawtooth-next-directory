@@ -49,7 +49,7 @@ def get_last_sync(source, sync_type):
         raise err
 
 
-def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
+def save_sync_time(provider_id, sync_source, sync_type, conn, timestamp=None):
     """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
     if timestamp:
         last_sync_time = timestamp
@@ -61,9 +61,7 @@ def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
         "source": sync_source,
         "sync_type": sync_type,
     }
-    conn = connect_to_db()
     r.table("sync_tracker").insert(sync_entry).run(conn)
-    conn.close()
 
 
 def peek_at_queue(table_name, provider_id=None):
