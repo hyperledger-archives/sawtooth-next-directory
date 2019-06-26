@@ -45,11 +45,9 @@ LOGGER = get_default_logger(__name__)
     ENABLE_NEXT_BASE_USE == 0, reason="Skipping test, NEXT base mode is not enabled"
 )
 def test_role_outq_insertion():
-    """ Test the insertion of a new role created in NEXT-only mode.
+    """ Test the insertion of a new fake role resource which is unique
+        into the outbound_queue table.
         This test will only run if ENABLE_NEXT_BASE_USE is set to 1.
-        - Create a user
-        - Create a role
-        - Check new entry in outbound_queue
     """
     user1_payload = {
         "name": "Test Unique User",
@@ -154,83 +152,15 @@ def test_update_manager_outqueue():
         delete_role_by_name("NextAdmins")
 
 
-def test_add_role_owner_outqueue():
-    """Test adding an owner to a role.
-
-    Creates two test users and a role with user1 as owner/admin,
-    then adds the second user as role owner."""
-    user1_payload = {
-        "name": "Test User 0521201903",
-        "username": "test0521201903",
-        "password": "123456",
-        "email": "test0521201903@biz.co",
-    }
-    user2_payload = {
-        "name": "Test User 0521201904",
-        "username": "test0521201904",
-        "password": "123456",
-        "email": "test0521201904@biz.co",
-    }
-    with requests.Session() as session:
-        user_response1 = create_test_user(session, user1_payload)
-        user1_result = assert_api_success(user_response1)
-        user1_id = user1_result["data"]["user"]["id"]
-        user2_response = create_test_user(session, user2_payload)
-        user2_result = assert_api_success(user2_response)
-        user2_id = user2_result["data"]["user"]["id"]
-        role_payload = {
-            "name": "TestRole0521201901",
-            "owners": user1_id,
-            "administrators": user1_id,
-            "description": "Test Role 1",
-        }
-        role_response = create_test_role(session, role_payload)
-        role_result = assert_api_success(role_response)
-        role_id = role_result["data"]["id"]
-        start_depth = get_outbound_queue_depth()
-        role_update_payload = {
-            "id": user2_id,
-            "reason": "Integration test of adding role owner.",
-            "metadata": "",
-        }
-        response = session.post(
-            "http://rbac-server:8000/api/roles/{}/owners".format(role_id),
-            json=role_update_payload,
-        )
-        result = assert_api_success(response)
-        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
-        proposal = assert_api_success(proposal_response)
-        # Logging in as role owner
-        credentials_payload = {
-            "id": user1_payload["username"],
-            "password": user1_payload["password"],
-        }
-        log_in(session, credentials_payload)
-        # Approve proposal as role owner
-        approval_response = approve_proposal(session, result["proposal_id"])
-        end_depth = get_outbound_queue_depth()
-        assert end_depth > start_depth
-
-        # Check status of new outbound_entry
-        outbound_queue_data = {
-            "description": "Test Role 1",
-            "members": [],
-            "remote_id": "",
-        }
-
-        outbound_entry = get_outbound_queue_entry(outbound_queue_data)
-        assert outbound_entry[0]["status"] == "UNCONFIRMED"
-
-        delete_role_by_name("TestRole0521201901")
-        delete_user_by_username("test0521201903")
-        delete_user_by_username("test0521201904")
-
-
+@pytest.mark.skipif(
+    ENABLE_NEXT_BASE_USE == 0, reason="Skipping test, NEXT base mode is not enabled"
+)
 def test_add_role_member_outqueue():
-    """Test adding a new member to a role.
-
+    """ Test adding a new member to a role in NEXT-only mode.
     Creates two test users and a role using the first user,
-    then adds the second user as member to role."""
+    then adds the second user as member to role. This test will
+    only run if ENABLE_NEXT_BASE_USE is set to 1.
+    """
     user1_payload = {
         "name": "Test Owner 0521201905",
         "username": "test0521201905",
@@ -259,7 +189,6 @@ def test_add_role_member_outqueue():
         role_response = create_test_role(session, role_payload)
         role_result = assert_api_success(role_response)
         role_id = role_result["data"]["id"]
-        start_depth = get_outbound_queue_depth()
         role_update_payload = {
             "id": user2_id,
             "reason": "Integration test of adding a member.",
@@ -271,7 +200,7 @@ def test_add_role_member_outqueue():
         )
         result = assert_api_success(response)
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
-        proposal = assert_api_success(proposal_response)
+        assert_api_success(proposal_response)
         # Logging in as role owner
         credentials_payload = {
             "id": user1_payload["username"],
@@ -279,19 +208,116 @@ def test_add_role_member_outqueue():
         }
         log_in(session, credentials_payload)
         # Approve proposal as role owner
-        approval_response = approve_proposal(session, result["proposal_id"])
-        end_depth = get_outbound_queue_depth()
-        assert end_depth > start_depth
+        approve_proposal(session, result["proposal_id"])
 
-        # Check status of new outbound_entry
+        # NOTE: members field contains an empty string because in NEXT
+        # mode all user's remote_ids are set to an empty string
         outbound_queue_data = {
             "description": "Test Role 3",
-            "members": [],
+            "members": [""],
             "remote_id": "",
         }
+        expected_payload = {
+            "data": outbound_queue_data,
+            "data_type": "group",
+            "provider_id": "NEXT-created",
+            "status": "UNCONFIRMED",
+            "action": "",
+        }
+
+        # Check outbound_queue entry is formatted correctly
         outbound_entry = get_outbound_queue_entry(outbound_queue_data)
-        assert outbound_entry[0]["status"] == "UNCONFIRMED"
+        outbound_entry[0].pop("timestamp")
+        outbound_entry[0].pop("id")
+        assert outbound_entry[0] == expected_payload
 
         delete_role_by_name("TestRole0521201902")
         delete_user_by_username("test0521201905")
         delete_user_by_username("test0521201906")
+
+
+@pytest.mark.skipif(
+    ENABLE_LDAP_SYNC == 0, reason="Skipping test, LDAP mode is not enabled"
+)
+def test_add_role_member_ldap():
+    """ Test adding a new member to a role in LDAP-only mode.
+    Creates two test users and a role using the first user,
+    then adds the second user as member to role. This test will
+    only run if ENABLE_LDAP_SYNC is set to 1.
+    """
+    user1_payload = {
+        "name": "Michael Scott",
+        "username": "michaels062619",
+        "password": "123456",
+        "email": "michael@paper.co",
+    }
+    user2_payload = {
+        "name": "Jim Halpert",
+        "username": "jimh062619",
+        "password": "123456",
+        "email": "jimhalpert@paper.co",
+    }
+    with requests.Session() as session:
+        user_response1 = create_test_user(session, user1_payload)
+        user1_result = assert_api_success(user_response1)
+        user1_id = user1_result["data"]["user"]["id"]
+        user2_response = create_test_user(session, user2_payload)
+        user2_result = assert_api_success(user2_response)
+        user2_id = user2_result["data"]["user"]["id"]
+        role_payload = {
+            "name": "Michael_Scott_Paper_Company",
+            "owners": user1_id,
+            "administrators": user1_id,
+            "description": "Infinite ideas await....",
+        }
+        role_response = create_test_role(session, role_payload)
+        role_result = assert_api_success(role_response)
+        role_id = role_result["data"]["id"]
+        role_update_payload = {
+            "id": user2_id,
+            "reason": "Integration test of adding a member.",
+            "metadata": "",
+        }
+        response = session.post(
+            "http://rbac-server:8000/api/roles/{}/members".format(role_id),
+            json=role_update_payload,
+        )
+        result = assert_api_success(response)
+        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
+        assert_api_success(proposal_response)
+        # Logging in as role owner
+        credentials_payload = {
+            "id": user1_payload["username"],
+            "password": user1_payload["password"],
+        }
+        log_in(session, credentials_payload)
+        # Approve proposal as role owner
+        approve_proposal(session, result["proposal_id"])
+
+        # NOTE: members field contains an empty string because in NEXT
+        # mode all user's remote_ids are set to an empty string
+        outbound_queue_data = {
+            "description": "Infinite ideas await....",
+            "name": "Michael_Scott_Paper_Company",
+            "group_types": -2147483646,
+            "members": [""],
+            "owners": "",
+            "remote_id": "CN=Michael_Scott_Paper_Company," + ENV("GROUP_BASE_DN"),
+        }
+        expected_payload = {
+            "data": outbound_queue_data,
+            "data_type": "group",
+            "provider_id": ENV("LDAP_DC"),
+            "status": "UNCONFIRMED",
+            "action": "",
+        }
+
+        # Check outbound_queue entry is formatted correctly
+        outbound_entry = get_outbound_queue_entry(outbound_queue_data)
+        outbound_entry[0].pop("timestamp")
+        outbound_entry[0].pop("id")
+        assert outbound_entry[0] == expected_payload
+
+        delete_role_by_name("Michael_Scott_Paper_Company")
+        delete_user_by_username("jimh062619")
+        delete_user_by_username("michaels062619")
