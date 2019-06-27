@@ -18,15 +18,29 @@ limitations under the License.
   word-break: break-word;
 }
 
+#next-chat-organization-heading .ui.container:first-child {
+  border-bottom: 1px solid #dadce0;
+  flex: 1;
+}
+
 #next-chat-organization-user-info {
-  margin-top: 40px;
+  -ms-overflow-style: none;
+  flex: 2;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: 40px;
+  scrollbar-width: none;
+}
+
+#next-chat-organization-user-info::-webkit-scrollbar {
+  display: none;
 }
 
 #next-chat-organization-user-info .ui.column .column {
   padding-bottom: 0;
 }
 
-#next-chat-organization-view-all-button {
+.next-chat-organization-view-all-button {
   margin-top: 34px;
 }
 
@@ -37,5 +51,14 @@ limitations under the License.
 }
 
 #next-people-chat-pending-approvals-button {
-  margin-top: 45px;
+  margin: 35px;
+}
+
+.next-people-organization-panel {
+  min-height: 100px;
+}
+
+#next-people-organization-loader {
+  position: relative;
+  top: 50px;
 }

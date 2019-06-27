@@ -17,26 +17,34 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 
 import SignupForm from './SignupForm';
+import * as customStore from 'customStore';
 
+const store = customStore.create();
 
 describe('SignupForm component', () => {
 
   const props = {
     submit: (username, password) => { },
+    resetUserExists: () => {},
   };
-  const wrapper = shallow(<SignupForm {...props}/>);
+  const wrapper = shallow(
+    <SignupForm.WrappedComponent {...props} store={store}/>
+  );
 
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
     ReactDOM.render(
-      <BrowserRouter>
-        <SignupForm {...props}/>
-      </BrowserRouter>, div
+      <Provider store={store}>
+        <BrowserRouter>
+          <SignupForm/>
+        </BrowserRouter>
+      </Provider>, div
     );
 
     ReactDOM.unmountComponentAtNode(div);

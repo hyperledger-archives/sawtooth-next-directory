@@ -16,7 +16,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import {
-  Checkbox,
+  Button,
   Icon,
   Image,
   Label,
@@ -67,16 +67,18 @@ class Header extends Component {
    * component. Add event listener to handle click outside menu.
    */
   componentDidMount () {
-    const {history} = this.props;
-    if ( history.location.pathname === '/approval/manage'){
-      this.setState({approverViewEnabled: true}
-      );
-    } else {
-      this.setState({
-        approverViewEnabled: !!storage.getViewState(),
-      });
-    }
-    const { id, isSocketOpen, sendSocket } = this.props;
+    const {
+      history,
+      id,
+      isSocketOpen,
+      sendSocket } = this.props;
+
+    if (history.location.pathname.includes('/approval') ||
+        history.location.pathname.includes('/snapshot'))
+      this.setState({ approverViewEnabled: true });
+    else
+      this.setState({ approverViewEnabled: false });
+
     document.addEventListener(
       'mousedown', this.handleClickOutside
     );
@@ -93,18 +95,20 @@ class Header extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const {history} = this.props;
-    if (history.location.pathname.includes('/approval')  &&
-    this.state.approverViewEnabled === false){
-      this.setState({approverViewEnabled: true}
-      );
+    const {
+      history,
+      id,
+      isAuthenticated,
+      isSocketOpen,
+      sendSocket } = this.props;
+
+    if (history.location.pathname !== prevProps.history.location.pathname) {
+      if (history.location.pathname.includes('/approval') ||
+          history.location.pathname.includes('/snapshot'))
+        this.setState({ approverViewEnabled: true });
+      else
+        this.setState({ approverViewEnabled: false });
     }
-    if (!(history.location.pathname.includes('/approval')) &&
-    this.state.approverViewEnabled === true){
-      this.setState({approverViewEnabled: false}
-      );
-    }
-    const { id, isAuthenticated, isSocketOpen, sendSocket } = this.props;
     if (prevProps.isAuthenticated !== isAuthenticated) {
       this.setState({
         globalMenuVisible: false,
@@ -189,17 +193,16 @@ class Header extends Component {
   /**
    * Toggle approver view. When enabled, add setting to
    * browser storage and navigate to view.
-   * @param {object} event Event passed by Semantic UI
-   * @param {object} data  Attributes passed on change
+   * @param {number} index Index of view
    */
-  toggleApproverView = (event, data) => {
+  toggleApproverView = (index) => {
     const {
       history,
       recommendedPacks,
       recommendedRoles,
       startAnimation } = this.props;
 
-    if (data.checked) {
+    if (index === 1) {
       storage.setViewState(1);
       this.setState({ approverViewEnabled: true });
       history.push('/approval/pending/individual');
@@ -247,26 +250,27 @@ class Header extends Component {
    */
   renderApprover = () => {
     const { approverViewEnabled } = this.state;
+
     return (
-      <Menu.Item id='next-header-global-menu-view-toggle'>
-        <MenuHeader as='h5'>
-          <Icon name='window maximize outline' color='red'/>
-          <MenuHeader.Content>
-            <span className= 'next-toggle-state-header'>
-                  Approver View:
-              <span className='next-toggle-state-label'>
-                {approverViewEnabled ? 'ON' : 'OFF'}
-              </span>
-            </span>
-            <Checkbox
-              id='next-approver-checkbox'
-              toggle
-              className='pull-right'
-              checked={approverViewEnabled}
-              onChange={this.toggleApproverView}/>
-          </MenuHeader.Content>
-        </MenuHeader>
-      </Menu.Item>
+      <Button.Group
+        className='toggle'
+        id='next-header-global-menu-view-toggle'
+        size='tiny'>
+        <Button
+          onClick={() => this.toggleApproverView(0)}
+          active={!approverViewEnabled}>
+          <div>
+            Requester View
+          </div>
+        </Button>
+        <Button
+          onClick={() => this.toggleApproverView(1)}
+          active={approverViewEnabled}>
+          <div>
+            Approver View
+          </div>
+        </Button>
+      </Button.Group>
     );
   };
 

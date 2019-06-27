@@ -20,6 +20,7 @@ import * as utils from 'services/Utils';
 export const ApproverSelectors = {
   confirmedProposals:    (state) => state.approver.confirmedProposals,
   delegations:           (state) => state.approver.delegations || [],
+  deletingPack:          (state) => state.approver.deletingPack,
   directReports:         (state) => state.approver.directReports,
   packExists:            (state) => state.approver.packExists,
   rejectedProposals:     (state) => state.approver.rejectedProposals,
@@ -52,7 +53,7 @@ export const ApproverSelectors = {
   ownedPacks:            (state) => {
     if (!state.user.me) return null;
     return [...new Set([
-      ...(state.approver.createdPacks || []).map(pack => pack.id),
+      ...(state.approver.createdPacks || []).map(pack => pack.pack_id),
       ...state.user.me.ownerOf.packs,
     ])];
   },

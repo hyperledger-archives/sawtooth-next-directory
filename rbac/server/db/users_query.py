@@ -362,3 +362,35 @@ def fetch_username_match_count(conn, username):
         .run(conn)
     )
     return resource
+
+
+async def users_search_duplicate(conn, username):
+    """Check if a given username is taken based on a string in the name field."""
+    resource = (
+        await r.table("users")
+        .filter(lambda doc: (doc["username"].match("(?i)^" + username + "$")))
+        .order_by("username")
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resource
+
+
+async def update_user_password(conn, next_id, password):
+    """Update a user's password by next_id
+    Args:
+        conn:
+            obj: database connection object.
+        next_id:
+            str: Id of a user to have password changed
+        password:
+            str: hashed string of password
+    """
+    resource = (
+        await r.table("auth")
+        .filter({"next_id": next_id})
+        .update({"hashed_password": password})
+        .coerce_to("array")
+        .run(conn)
+    )
+    return resource

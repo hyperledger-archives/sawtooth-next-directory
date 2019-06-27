@@ -22,12 +22,12 @@ limitations under the License.
   width: calc(100% - 61px) !important;
 }
 
-.next-approver-rejected-table-opener {
+.next-approver-rejected-table-user {
   align-items: center;
   display: flex;
 }
 
-.next-approver-rejected-table-opener div:first-child {
+.next-approver-rejected-table-user div:first-child {
   margin-right: 10px;
 }
 

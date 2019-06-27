@@ -82,15 +82,32 @@ services:
       - LDAP_USER=${LDAP_USER}
       - LDAP_PASS=${LDAP_PASS}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
-      - NEXT_ADMIN_NAME=${NEXT_ADMIN_NAME}
-      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER}
-      - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS}
-      - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL}
       - USER_BASE_DN=${USER_BASE_DN}
       - GROUP_BASE_DN=${GROUP_BASE_DN}
     depends_on:
       - ledger-sync
     command: ./bin/rbac-providers-ldap
+
+  rbac-bootstrap-worker:
+    build:
+      context: .
+      dockerfile: ./docker/bootstrap.Dockerfile
+    container_name: rbac-bootstrap-worker
+    image: rbac-bootstrap-worker:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_NAME=${NEXT_ADMIN_NAME}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER}
+      - NEXT_ADMIN_PASS=${NEXT_ADMIN_PASS}
+      - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL}
+      - DB_HOST=${DB_HOST:-rethink}
+      - DB_PORT=${DB_PORT:-28015}
+      - DB_NAME=${DB_NAME:-rbac}
+    depends_on:
+      - rbac-server
+    command: ./bin/bootstrap
 
   rbac-server:
     build:
@@ -128,6 +145,23 @@ services:
       - NEXT_ADMIN_EMAIL=${NEXT_ADMIN_EMAIL}
     command: ./bin/rbac-server --db-host rethink --validator-host validator
 
+  rethink-bootstrap-worker:
+    build:
+      context: .
+      dockerfile: ./docker/rethink.bootstrap.Dockerfile
+    container_name: rbac-rethink-bootstrap-worker
+    image: rethink-bootstrap-worker:${ISOLATION_ID-latest}
+    volumes:
+      - ".:/project/hyperledger-rbac"
+    depends_on:
+      - rethink
+    environment:
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - DB_HOST=${DB_HOST:-rethink}
+      - DB_PORT=${DB_PORT:-28015}
+      - DB_NAME=${DB_NAME:-rbac}
+    command: ./bin/setup_db
+
   rethink:
     container_name: rbac-rethink
     image: rethinkdb:2.3
@@ -160,16 +194,26 @@ services:
     volumes:
       - ".:/project/hyperledger-rbac"
     depends_on:
-      - rethink
+      - rethink-bootstrap-worker
       - validator
     environment:
       - AES_KEY=${AES_KEY}
+      - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-0}
+      - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-0}
+      - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
       - HOST=${HOST:-localhost}
+      - LDAP_DC=${LDAP_DC}
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER}
       - SECRET_KEY=${SECRET_KEY}
+      - TENANT_ID=${TENANT_ID}
+    healthcheck:
+      test: ./bin/wait_for_ledger_sync
+      interval: 30s
+      timeout: 10s
+      retries: 5
     command: |
       bash -c "
-        ./bin/setup_db --host rethink &&
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
 

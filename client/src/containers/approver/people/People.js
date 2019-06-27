@@ -27,8 +27,6 @@ import OrganizationList from './OrganizationList';
 
 
 import './People.css';
-import glyph from 'images/glyph-individual.png';
-import * as theme from 'services/Theme';
 
 
 /**
@@ -38,9 +36,6 @@ import * as theme from 'services/Theme';
  *
  */
 class People extends Component {
-
-  themes = ['minimal', 'dark'];
-
 
   state = {
     searchInput:    '',
@@ -53,21 +48,11 @@ class People extends Component {
 
 
   /**
-   * Entry point to perform tasks required to render
-   * component.
-   */
-  componentDidMount () {
-    theme.apply(this.themes);
-  }
-
-
-  /**
   * Component teardown
   */
   componentWillUnmount () {
     const { clearSearchData } = this.props;
     clearSearchData();
-    theme.remove(this.themes);
   }
 
 
@@ -119,7 +104,7 @@ class People extends Component {
    * @returns {JSX}
    */
   render () {
-    const { fetchingSearchResults, id } = this.props;
+    const { fetchingSearchResults } = this.props;
     const {
       activeIndex,
       activeUser,
@@ -135,8 +120,8 @@ class People extends Component {
           width={12}>
           <TrackHeader
             inverted
-            glyph={glyph}
             title='People'
+            subtitle='Browse all of the people within your organization'
             {...this.props}/>
           <div id='next-approver-people-content'>
             <PeopleNav
@@ -163,9 +148,8 @@ class People extends Component {
               }
               { activeIndex === 1 &&
                 <Organization
-                  activeUser={id}
+                  activeUser={activeUser}
                   showPeers
-                  showDirectReports
                   handleUserSelect={this.handleUserSelect}
                   {...this.props}/>
               }
@@ -181,6 +165,8 @@ class People extends Component {
             handleOnBehalfOf={this.handleOnBehalfOf}
             activeUser={activeUser}
             activeIndex={activeIndex}
+            handleUserSelect={this.handleUserSelect}
+            setFlow={this.setFlow}
             {...this.props}/>
         </Grid.Column>
       </Grid>
@@ -192,7 +178,8 @@ class People extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    fetchingPeople: state.user.fetchingPeople,
+    fetchingOrganization:  state.approver.fetchingOrganization,
+    fetchingPeople:        state.user.fetchingPeople,
     fetchingSearchResults: state.search.fetching,
   };
 };

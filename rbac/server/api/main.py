@@ -14,14 +14,10 @@
 # ------------------------------------------------------------------------------
 """RBAC API Server"""
 
-import asyncio
-from signal import signal, SIGINT
-
 import aiohttp
 from sanic import Blueprint
 from sanic import Sanic
 from sanic_cors import CORS
-from zmq.asyncio import ZMQEventLoop
 
 from rbac.common.config import get_config
 from rbac.common.crypto.keys import Key
@@ -49,31 +45,21 @@ LOGGER = get_default_logger(__name__)
 
 async def init(app, loop):
     """Initialize API Server."""
-    LOGGER.warning("Opening database connection")
     app.config.DB_CONN = await create_connection()
     app.config.VAL_CONN = Connection(app.config.VALIDATOR)
-
-    LOGGER.warning("Opening validator connection")
     app.config.VAL_CONN.open()
-
-    LOGGER.warning("Opening async HTTP session")
     conn = aiohttp.TCPConnector(
         limit=app.config.AIOHTTP_CONN_LIMIT, ttl_dns_cache=app.config.AIOHTTP_DNS_TTL
     )
-
     app.config.HTTP_SESSION = aiohttp.ClientSession(connector=conn, loop=loop)
 
 
-def finish(app):
+async def finish(app, loop):
     """Close connections."""
-    LOGGER.warning("Closing database connection")
     app.config.DB_CONN.close()
-
-    LOGGER.warning("Closing validator connection")
-    app.config.VAL_CON.close()
-
-    LOGGER.warning("Closing async HTTP session")
-    app.config.HTTP_SESSION.close()
+    app.config.VAL_CONN.close()
+    LOGGER.info(loop)
+    await app.config.HTTP_SESSION.close()
 
 
 def load_config(app):
@@ -92,9 +78,10 @@ def load_config(app):
     app.config.DEBUG = bool(get_config("DEBUG"))
     app.config.LOGGING_LEVEL = get_config("LOGGING_LEVEL")
     app.config.SECRET_KEY = get_config("SECRET_KEY")
-    app.config.PORT = get_config("SERVER_PORT")
+    app.config.PORT = int(get_config("SERVER_PORT"))
     app.config.TIMEOUT = int(get_config("TIMEOUT"))
     app.config.VALIDATOR = get_config("VALIDATOR")
+    app.config.WORKERS = int(get_config("WORKERS"))
 
 
 def main():
@@ -125,17 +112,12 @@ def main():
         resources={r"/api/*": {"origins": "*"}, r"/webhooks/*": {"origins": "*"}},
     )
 
-    zmq = ZMQEventLoop()
-    asyncio.set_event_loop(zmq)
-    server = app.create_server(
-        host="0.0.0.0", port=app.config.PORT, debug=False, access_log=False
+    app.register_listener(init, "before_server_start")
+    app.register_listener(finish, "after_server_stop")
+    app.run(
+        host="0.0.0.0",
+        port=app.config.PORT,
+        debug=False,
+        access_log=False,
+        workers=app.config.WORKERS,
     )
-    loop = asyncio.get_event_loop()
-    asyncio.ensure_future(server)
-    asyncio.ensure_future(init(app, loop))
-    signal(SIGINT, lambda s, f: loop.close())
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        finish(app)
-        loop.stop()

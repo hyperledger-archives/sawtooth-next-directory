@@ -84,12 +84,6 @@ class ApproverNav extends Component {
             { name: 'About to Expire', slug: 'about-to-expire' },
           ]}
           route='/approval/pending'/>
-        <h4 className={`hover ${this.isItemActive('delegated') ?
-          'active' : ''}`}>
-          <Link to='/approval/delegated'>
-            Delegated
-          </Link>
-        </h4>
         <h4 className={`hover ${this.isItemActive('approved') ?
           'active' : ''}`}>
           <Link to='/approval/approved'>
@@ -102,8 +96,12 @@ class ApproverNav extends Component {
             Rejected
           </Link>
         </h4>
-        <h4 className={`hover ${this.isItemActive('expired') ?
-          'active' : ''}`}>
+        <h4 className='approver-nav-item-disable'>
+          <Link to='/approval/delegated'>
+            Delegated
+          </Link>
+        </h4>
+        <h4 className='approver-nav-item-disable'>
           <Link to='/approval/expired'>
             Expired
           </Link>

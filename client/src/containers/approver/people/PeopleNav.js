@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Menu } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
@@ -55,21 +55,20 @@ class PeopleNav extends Component {
       setSearchStart } = this.props;
 
     return (
-      <div id='next-people-nav'>
-        <Menu compact>
-          <Menu.Item
-            name='organization'
-            active={activeIndex === 0}
+      <div
+        id='next-people-nav'
+        className={activeIndex === 1 ? 'next-people-nav-less-padding' : ''}>
+        { activeIndex === 1 &&
+          <Button
+            icon
+            className='next-people-nav-back-button'
+            labelPosition='left'
             onClick={() => setFlow(0)}>
-            All People
-          </Menu.Item>
-          <Menu.Item
-            name='people'
-            active={activeIndex === 1}
-            onClick={() => setFlow(1)}>
-            Organization
-          </Menu.Item>
-        </Menu>
+            People
+            <Icon name='left arrow'/>
+          </Button>
+        }
+        { activeIndex === 0 &&
         <Search
           fetchingSearchResults={fetchingSearchResults}
           searchInput={searchInput}
@@ -79,6 +78,7 @@ class PeopleNav extends Component {
           setSearchStart={setSearchStart}
           type='people'
           {...this.props}/>
+        }
       </div>
     );
   }

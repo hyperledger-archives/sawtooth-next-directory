@@ -46,7 +46,11 @@ def process(rec, conn):
         batch = batch_pb2.Batch()
         batch.ParseFromString(rec["batch"])
         batch_list = batch_to_list(batch=batch)
-        status = ClientSync().send_batches_get_status(batch_list=batch_list)
+        client = ClientSync()
+        status = client.send_batches_get_status(batch_list=batch_list)
+        while status[0]["status"] == "PENDING":
+            LOGGER.info("Batch status is %s", status)
+            status = client.status_recheck(batch_list)
         if status[0]["status"] == "COMMITTED":
             if rec["data_type"] == "user":
                 insert_to_user_mapping(rec)
@@ -176,6 +180,8 @@ def listener():
             feed = r.table("inbound_queue").order_by(index=r.asc("timestamp")).run(conn)
             count = 0
             for rec in feed:
+                LOGGER.debug("Processing inbound_queue record")
+                LOGGER.debug(rec)
                 process(rec, conn)
                 count = count + 1
             if count == 0:
@@ -185,6 +191,8 @@ def listener():
         feed = r.table("inbound_queue").changes().run(conn)
         for rec in feed:
             if rec["new_val"] and not rec["old_val"]:  # only insertions
+                LOGGER.debug("Processing inbound_queue record")
+                LOGGER.debug(rec["new_val"])
                 process(rec["new_val"], conn)
 
     except Exception as err:  # pylint: disable=broad-except

@@ -26,6 +26,7 @@ RUN pip install \
         watchdog==0.9.0 \
         requests==2.20.0 \
         sawtooth-sdk==1.0.1 \
+        environs==4.1.0 \
         setuptools
 WORKDIR /project/hyperledger-rbac
 CMD ["./bin/rbac-tp"]

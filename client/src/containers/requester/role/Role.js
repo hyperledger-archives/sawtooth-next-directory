@@ -64,8 +64,13 @@ export class Role extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { roleId } = this.props;
+    const { getRole, me, roleId } = this.props;
+
     if (prevProps.roleId !== roleId) this.init();
+
+    if (me && me.memberOf && prevProps.me &&
+        me.memberOf.length > prevProps.me.memberOf.length)
+      getRole(roleId);
   }
 
 
@@ -191,7 +196,6 @@ export class Role extends Component {
           width={4}>
           <Chat
             type='REQUESTER'
-            disabled={this.isOwner()}
             title={this.role.name + ' Conversations'}
             activeRole={this.role} {...this.props}/>
         </Grid.Column>

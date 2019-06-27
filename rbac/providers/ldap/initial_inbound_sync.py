@@ -69,8 +69,9 @@ def fetch_ldap_data(data_type):
     }
 
     entry_count = 0
-    LOGGER.info("Importing users..")
+    LOGGER.info("Importing %ss..", data_type)
 
+    conn = connect_to_db()
     while True:
         start_time = time.clock()
         ldap_connection.search(**search_parameters)
@@ -82,7 +83,7 @@ def fetch_ldap_data(data_type):
         )
         for entry in ldap_connection.entries:
             entry_count = entry_count + 1
-            insert_to_db(entry, data_type=data_type)
+            insert_to_db(entry=entry, data_type=data_type, conn=conn)
 
         # 1.2.840.113556.1.4.319 is the OID/extended control for PagedResults
         cookie = ldap_connection.result["controls"]["1.2.840.113556.1.4.319"]["value"][
@@ -96,10 +97,11 @@ def fetch_ldap_data(data_type):
             break
 
     sync_source = "ldap-" + data_type
-    save_sync_time(LDAP_DC, sync_source, "initial")
+    save_sync_time(LDAP_DC, sync_source, "initial", conn)
+    conn.close()
 
 
-def insert_to_db(entry, data_type):
+def insert_to_db(entry, data_type, conn):
     """Insert user or group individually to RethinkDB from dict of data and begins delta sync timer."""
     if data_type == "user":
         standard_entry = inbound_user_filter(entry, "ldap")
@@ -116,9 +118,12 @@ def insert_to_db(entry, data_type):
         "timestamp": r.now(),
         "provider_id": LDAP_DC,
     }
-    conn = connect_to_db()
+    LOGGER.debug(
+        "Inserting LDAP %s into inbound queue: %s",
+        data_type,
+        standard_entry["remote_id"],
+    )
     r.table("inbound_queue").insert(inbound_entry).run(conn)
-    conn.close()
 
 
 def initiate_delta_sync():

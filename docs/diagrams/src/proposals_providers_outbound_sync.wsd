@@ -1,0 +1,59 @@
+@startuml rbac_proposals_outbound_sync
+autonumber
+    hide stereotype
+    scale 2
+
+    skinparam database {
+        BackgroundColor<< NEXT >> lightblue
+        BorderColor<< NEXT >> darkblue
+        BackgroundColor<< HYPERLEDGER >> lightgrey
+        BorderColor<< HYPERLEDGER >> darkgrey
+    }
+    skinparam entity {
+        BackgroundColor<< NEXT >> lightblue
+        BorderColor<< NEXT >> darkblue
+        BackgroundColor<< HYPERLEDGER >> Lightgrey
+        BorderColor<< HYPERLEDGER >> darkgrey
+    }
+    skinparam boundary {
+        BackgroundColor<<NEXT>> lightblue
+        BorderColor<<NEXT>> darkblue
+        BackgroundColor<<HYPERLEDGER>> Lightgrey
+        BorderColor<<HYPERLEDGER>> darkgrey
+    }
+
+    boundary "Azure AD" as azure
+    boundary "LDAP" as ldap
+    boundary "RBAC provider \n<Azure>" as azure_provider <<NEXT>>
+    boundary "RBAC Provider \n<LDAP>" as ldap_provider <<NEXT>>
+    actor "Approver" as user
+    boundary "RBAC Client" as client <<NEXT>>
+    entity "RBAC \nREST API \nServer" as API <<NEXT>>
+    boundary "Validator" as validator <<HYPERLEDGER>>
+    database "RethinkDB" as rethink <<NEXT>>
+    entity "RBAC \nTransaction \nProcessor" as tp <<NEXT>>
+    entity "LS Inbound" as ls_in <<NEXT>>
+    entity "LS Outbound" as ls_out <<NEXT>>
+
+title RBAC Proposals OutboundSync Sequence
+== Proposal Approval ==
+user -> client: Approves proposal
+client -> API: Hit REST endpoint
+API -> tp: Initialize sawtooth transaction
+API -> validator: Create sawtooth transaction
+API -> client: Return approval confirmation
+== Outbound ==
+validator -> ls_out: Get complete transaction from changefeed
+tp -> rethink: Update relevant tables
+tp -> rethink: set sync_direction "OUTBOUND"
+ls_out -> rethink: Insert to outbound_queue
+rethink -> ldap_provider: Provider gets item from outbound_queue
+ldap_provider -> ldap: Insert into LDAP server
+== TODO ==
+note over azure #lightyellow
+    Need to prevent infinite
+    loops from RBAC providers.
+end note
+rethink --[#grey]> azure: **TODO**: Azure outbound sync
+
+@enduml

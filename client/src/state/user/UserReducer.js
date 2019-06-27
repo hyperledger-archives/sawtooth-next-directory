@@ -49,6 +49,20 @@ export const success = {
 };
 
 
+export const feedReceive = (state, { payload }) => {
+  if (payload.user_proposal &&
+      payload.user_proposal.closer === payload.user_proposal.opener) {
+    const me = {...state.me};
+    me.memberOf = [
+      ...(me.memberOf || []),
+      payload.user_proposal.object,
+    ];
+    return state.merge({ me });
+  }
+  return state.merge({});
+};
+
+
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 };
@@ -61,6 +75,7 @@ export const resetAll = (state) => {
 
 export const UserReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ALL]:          resetAll,
+  [Types.FEED_RECEIVE]:       feedReceive,
 
   [Types.ME_REQUEST]:         request.me,
   [Types.ME_SUCCESS]:         success.me,

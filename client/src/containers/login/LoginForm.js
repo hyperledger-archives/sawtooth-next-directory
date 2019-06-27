@@ -185,7 +185,7 @@ class LoginForm extends Component {
               <Container textAlign='center'>
                 <Form.Button
                   content='Login'
-                  disabled={!validPassword}
+                  disabled={!validPassword || !validUsername}
                   icon='right arrow'
                   labelPosition='right'/>
               </Container>

@@ -19,8 +19,11 @@ import { INITIAL_STATE, ApproverTypes as Types } from './ApproverActions';
 import * as utils from 'services/Utils';
 
 
-export const request = (state) =>
-  state.merge({ fetching: true });
+export const request = {
+  organization: (state) => state.merge({ fetchingOrganization: true }),
+  deletePack:   (state) => state.merge({ deletingPack: true }),
+  temp:         (state) => state.merge({ fetching: true }),
+};
 
 
 export const failure = (state, { error }) =>
@@ -113,15 +116,25 @@ export const success = {
     state.merge({
       fetching: false,
       createdPacks: utils.merge(
-        state.createdPacks || [], [pack]
+        state.createdPacks || [], [pack], 'pack_id',
       ),
+    }),
+
+
+  deletePack: (state, { packId }) =>
+    state.merge({
+      fetching: false,
+      deletingPack: false,
+      createdPacks: state.createdPacks ?
+        state.createdPacks.filter(pack => pack.id !== packId) :
+        state.createdPacks,
     }),
 
 
   organization: (state, { organization, isMe }) => {
     const { created_date, ...filtered } = organization;
     return state.merge({
-      fetching: false,
+      fetchingOrganization: false,
       organization: filtered,
       directReports: isMe ? filtered.direct_reports : state.directReports,
     });
@@ -146,45 +159,50 @@ export const ApproverReducer = createReducer(INITIAL_STATE, {
   [Types.FEED_RECEIVE]:                 feedReceive,
 
   // Delegations
-  [Types.DELEGATIONS_REQUEST]:          request,
-  [Types.DELEGATIONS_SUCCESS]:          request.delegations,
+  [Types.DELEGATIONS_REQUEST]:          request.temp,
+  [Types.DELEGATIONS_SUCCESS]:          success.delegations,
   [Types.DELEGATIONS_FAILURE]:          failure,
 
   // Proposals
-  [Types.CONFIRMED_PROPOSALS_REQUEST]:  request,
+  [Types.CONFIRMED_PROPOSALS_REQUEST]:  request.temp,
   [Types.CONFIRMED_PROPOSALS_SUCCESS]:  success.confirmedProposals,
   [Types.CONFIRMED_PROPOSALS_FAILURE]:  failure,
-  [Types.REJECTED_PROPOSALS_REQUEST]:   request,
+  [Types.REJECTED_PROPOSALS_REQUEST]:   request.temp,
   [Types.REJECTED_PROPOSALS_SUCCESS]:   success.rejectedProposals,
   [Types.REJECTED_PROPOSALS_FAILURE]:   failure,
-  [Types.OPEN_PROPOSALS_REQUEST]:       request,
+  [Types.OPEN_PROPOSALS_REQUEST]:       request.temp,
   [Types.OPEN_PROPOSALS_SUCCESS]:       success.openProposals,
   [Types.OPEN_PROPOSALS_FAILURE]:       failure,
-  [Types.APPROVE_PROPOSALS_REQUEST]:    request,
+  [Types.APPROVE_PROPOSALS_REQUEST]:    request.temp,
   [Types.APPROVE_PROPOSALS_SUCCESS]:    success.approveProposals,
   [Types.APPROVE_PROPOSALS_FAILURE]:    failure,
-  [Types.REJECT_PROPOSALS_REQUEST]:     request,
+  [Types.REJECT_PROPOSALS_REQUEST]:     request.temp,
   [Types.REJECT_PROPOSALS_SUCCESS]:     success.rejectProposals,
   [Types.REJECT_PROPOSALS_FAILURE]:     failure,
 
   // Create
-  [Types.CREATE_ROLE_REQUEST]:          request,
+  [Types.CREATE_ROLE_REQUEST]:          request.temp,
   [Types.CREATE_ROLE_SUCCESS]:          success.createRole,
   [Types.CREATE_ROLE_FAILURE]:          failure,
-  [Types.CREATE_PACK_REQUEST]:          request,
+  [Types.CREATE_PACK_REQUEST]:          request.temp,
   [Types.CREATE_PACK_SUCCESS]:          success.createPack,
   [Types.CREATE_PACK_FAILURE]:          failure,
-  [Types.ROLE_EXISTS_REQUEST]:          request,
+  [Types.ROLE_EXISTS_REQUEST]:          request.temp,
   [Types.ROLE_EXISTS_SUCCESS]:          success.roleExists,
   [Types.ROLE_EXISTS_FAILURE]:          failure,
   [Types.RESET_ROLE_EXISTS]:            resetRoleExists,
-  [Types.PACK_EXISTS_REQUEST]:          request,
+  [Types.PACK_EXISTS_REQUEST]:          request.temp,
   [Types.PACK_EXISTS_SUCCESS]:          success.packExists,
   [Types.PACK_EXISTS_FAILURE]:          failure,
   [Types.RESET_PACK_EXISTS]:            resetPackExists,
 
+  // Delete
+  [Types.DELETE_PACK_REQUEST]:          request.deletePack,
+  [Types.DELETE_PACK_SUCCESS]:          success.deletePack,
+  [Types.DELETE_PACK_FAILURE]:          failure,
+
   // People
-  [Types.ORGANIZATION_REQUEST]:         request,
+  [Types.ORGANIZATION_REQUEST]:         request.organization,
   [Types.ORGANIZATION_SUCCESS]:         success.organization,
   [Types.ORGANIZATION_FAILURE]:         failure,
   [Types.ON_BEHALF_OF_SET]:             success.onBehalfOf,

@@ -15,10 +15,13 @@
 """Validating User Account Creation API Endpoint Test"""
 import time
 import requests
+import pytest
 
 import rethinkdb as r
 
 from rbac.providers.common.db_queries import connect_to_db
+from rbac.server.api.utils import check_admin_status
+from rbac.common.logs import get_default_logger
 from tests.rbac.api.assertions import assert_api_success
 from tests.utilities import (
     add_role_member,
@@ -36,7 +39,10 @@ from tests.utilities import (
     get_user_mapping_entry,
     get_user_metadata_entry,
     insert_user,
+    update_manager,
 )
+
+LOGGER = get_default_logger(__name__)
 
 
 def test_valid_unique_username():
@@ -65,7 +71,7 @@ def test_invalid_duplicate_username():
     }
     expected = {
         "message": "Username already exists. Please give a different Username.",
-        "code": 400,
+        "code": 409,
     }
     insert_user(user_input)
     with requests.Session() as session:
@@ -122,6 +128,7 @@ def test_create_new_user_api():
         user_creation_response = session.post(
             "http://rbac-server:8000/api/users", json=user_create_payload
         )
+        time.sleep(3)
         user_id = user_creation_response.json()["data"]["user"]["id"]
         user_details_response = session.get(
             "http://rbac-server:8000/api/users/" + user_id
@@ -130,20 +137,20 @@ def test_create_new_user_api():
 
 
 def test_update_manager():
-    """ Creates a user and then updates their manager
+    """ Creates a user and then updates their manager as nextAdmin
 
     Manager is the second user created here."""
     user1_payload = {
-        "name": "Test User 6",
-        "username": "testuser6",
+        "name": "Test User 9",
+        "username": "testuser9",
         "password": "123456",
-        "email": "testuser6@biz.co",
+        "email": "testuser9@biz.co",
     }
     user2_payload = {
-        "name": "Test User 7",
-        "username": "testuser7",
+        "name": "Test User 10",
+        "username": "testuser10",
         "password": "123456",
-        "email": "testuser7@biz.co",
+        "email": "testuser10@biz.co",
     }
     with requests.Session() as session:
         user1_response = create_test_user(session, user1_payload)
@@ -152,21 +159,33 @@ def test_update_manager():
         user2_response = create_test_user(session, user2_payload)
         user2_result = assert_api_success(user2_response)
         user2_id = user2_result["data"]["user"]["id"]
+
+        next_admins = {
+            "name": "NextAdmins",
+            "owners": [user2_id],
+            "administrators": [user2_id],
+        }
         manager_payload = {
-            "id": user2_id,
-            "reason": "Integration test of adding role owner.",
+            "id": user1_id,
+            "reason": "Integration test of updating manager.",
             "metadata": "",
         }
-        response = session.put(
-            "http://rbac-server:8000/api/users/{}/manager".format(user1_id),
-            json=manager_payload,
-        )
+        role_response = create_test_role(session, next_admins)
+        failed_response = update_manager(session, user2_id, manager_payload)
+        assert failed_response.json() == {
+            "code": 400,
+            "message": "Proposal opener is not an Next Admin.",
+        }
+
+        add_role_member(session, role_response.json()["data"]["id"], {"id": user2_id})
+
+        response = update_manager(session, user2_id, manager_payload)
         result = assert_api_success(response)
         proposal_response = get_proposal_with_retry(session, result["proposal_id"])
         proposal = assert_api_success(proposal_response)
-        assert proposal["data"]["assigned_approver"][0] == user2_id
         delete_user_by_username("testuser6")
         delete_user_by_username("testuser7")
+        delete_role_by_name("NextAdmins")
 
 
 def test_user_relationship_api():
@@ -216,6 +235,7 @@ def test_user_delete_api():
             "description": "This is a test Role",
         }
         role_resp = create_test_role(session, role_payload)
+        role_id = role_resp.json()["data"]["id"]
 
         pack = {
             "name": "michael pack one",
@@ -224,6 +244,14 @@ def test_user_delete_api():
             "description": "Michael's test pack",
         }
         pack_response = create_test_pack(session, pack)
+
+        add_role_member_payload = {
+            "id": next_id,
+            "reason": "Integration test of adding a member.",
+            "metadata": "",
+        }
+
+        add_role_member(session, role_id, add_role_member_payload)
 
         conn = connect_to_db()
         user_exists = (
@@ -236,20 +264,26 @@ def test_user_delete_api():
 
         role_owner_exists = (
             r.table("role_owners")
-            .filter(
-                {"identifiers": [next_id], "role_id": role_resp.json()["data"]["id"]}
-            )
+            .filter({"identifiers": [next_id], "role_id": role_id})
             .coerce_to("array")
             .run(conn)
         )
 
-        assert role_owner_exists
+        role_member_exists = (
+            r.table("role_members")
+            .filter({"identifiers": [next_id], "role_id": role_id})
+            .coerce_to("array")
+            .run(conn)
+        )
+
         assert user_exists
+        assert role_owner_exists
+        assert role_member_exists
         assert get_user_mapping_entry(next_id)
         assert get_auth_entry(next_id)
         assert get_user_metadata_entry(next_id)
         assert check_user_is_pack_owner(
-            pack_id=pack_response.json()["data"]["id"], next_id=next_id
+            pack_id=pack_response.json()["data"]["pack_id"], next_id=next_id
         )
 
         role_admin_is_user = (
@@ -263,7 +297,7 @@ def test_user_delete_api():
         assert role_admin == next_id
 
         deletion = session.delete("http://rbac-server:8000/api/users/" + next_id)
-        time.sleep(3)
+        time.sleep(5)
         assert deletion.json() == {
             "message": "User {} successfully deleted".format(next_id),
             "deleted": 1,
@@ -284,10 +318,19 @@ def test_user_delete_api():
             .coerce_to("array")
             .run(conn)
         )
+
+        role_members = (
+            r.db("rbac")
+            .table("role_members")
+            .filter(lambda doc: doc["identifiers"].contains(next_id))
+            .coerce_to("array")
+            .run(conn)
+        )
         delete_role_by_name("test_role")
         conn.close()
 
         assert role_admin_user == []
+        assert role_members == []
         assert role_owners == []
         assert get_deleted_user_entries(next_id) == []
         assert get_pack_owners_by_user(next_id) == []
@@ -362,3 +405,135 @@ def test_reject_users_proposals():
         )
         conn.close()
         assert proposal_1_result[0]["status"] == "REJECTED"
+
+
+@pytest.mark.asyncio
+async def test_check_admin_status():
+    """Test that checking a users admin status returns the correct boolean."""
+    admin_user = {
+        "name": "admin nadia",
+        "username": "admin_nadia",
+        "password": "test11",
+        "email": "admin_nadia@test.com",
+    }
+
+    user = {
+        "name": "nadia four",
+        "username": "nadia4",
+        "password": "test11",
+        "email": "nadia4@test.com",
+    }
+    with requests.Session() as session:
+        non_admin_response = create_test_user(session, user)
+        admin_response = create_test_user(session, admin_user)
+        admin_id = admin_response.json()["data"]["user"]["id"]
+        non_admin_id = non_admin_response.json()["data"]["user"]["id"]
+
+        next_admins = {
+            "name": "NextAdmins",
+            "owners": admin_id,
+            "administrators": admin_id,
+        }
+        role_response = create_test_role(session, next_admins)
+        add_role_member(session, role_response.json()["data"]["id"], {"id": admin_id})
+
+        admin = await check_admin_status(admin_id)
+        non_admin = await check_admin_status(non_admin_id)
+
+        assert admin
+        assert not non_admin
+
+
+def test_update_user_password():
+    """Test that an admin user can change a user's password."""
+    user = {
+        "name": "nadia five",
+        "username": "nadia5",
+        "password": "test11",
+        "email": "nadia5@test.com",
+    }
+    with requests.Session() as session:
+        created_user = create_test_user(session, user)
+        login_inputs = {"id": "admin_nadia", "password": "test11"}
+        session.post("http://rbac-server:8000/api/authorization/", json=login_inputs)
+
+        payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "password": "password1",
+        }
+        password_response = session.put(
+            "http://rbac-server:8000/api/users/password", json=payload
+        )
+        assert password_response.status_code == 200
+        assert password_response.json() == {"message": "Password successfully updated"}
+        session.close()
+
+    with requests.Session() as session2:
+        login_inputs = {"id": "nadia5", "password": "password1"}
+        response = session2.post(
+            "http://rbac-server:8000/api/authorization/", json=login_inputs
+        )
+        assert response.status_code == 200
+
+        payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "password": "test3",
+        }
+        password_response = session2.put(
+            "http://rbac-server:8000/api/users/password", json=payload
+        )
+        assert password_response.status_code == 400
+        assert (
+            password_response.json()["message"] == "You are not a NEXT Administrator."
+        )
+
+
+def test_update_user():
+    """Test that an admin user can update an existing user's information"""
+    user = {
+        "name": "nadia six",
+        "username": "nadia6",
+        "password": "test11",
+        "email": "nadia6@test.com",
+    }
+    with requests.Session() as session:
+        created_user = create_test_user(session, user)
+        login_input = {"id": "admin_nadia", "password": "test11"}
+        session.post("http://rbac-server:8000/api/authorization/", json=login_input)
+
+        update_payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "name": "nadia changed",
+            "username": "nadia.changed",
+            "email": "nadiachanged@test.com",
+        }
+        update_response = session.put(
+            "http://rbac-server:8000/api/users/update", json=update_payload
+        )
+        assert update_response.status_code == 200
+        assert update_response.json() == {
+            "message": "User information was successfully updated."
+        }
+        session.close()
+
+    time.sleep(3)
+    with requests.Session() as session2:
+        login_inputs = {"id": "nadia.changed", "password": "test11"}
+        response = session2.post(
+            "http://rbac-server:8000/api/authorization/", json=login_inputs
+        )
+        assert response.status_code == 200
+
+        update_payload = {
+            "next_id": created_user.json()["data"]["user"]["id"],
+            "name": "nadia6",
+            "username": "nadia6",
+            "email": "nadia6@test.com",
+        }
+        password_response = session2.put(
+            "http://rbac-server:8000/api/users/update", json=update_payload
+        )
+        assert password_response.status_code == 400
+        assert (
+            password_response.json()["message"] == "You are not a NEXT Administrator."
+        )

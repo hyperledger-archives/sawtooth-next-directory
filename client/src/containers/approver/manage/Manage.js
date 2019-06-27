@@ -21,7 +21,6 @@ import { Card, Grid } from 'semantic-ui-react';
 
 import './Manage.css';
 import TrackHeader from 'components/layouts/TrackHeader';
-import * as theme from 'services/Theme';
 
 
 /**
@@ -31,26 +30,6 @@ import * as theme from 'services/Theme';
  *
  */
 class Manage extends Component {
-
-  themes = ['minimal', 'contrast', 'magenta'];
-
-
-  /**
-   * Entry point to perform tasks required to render
-   * component.
-   */
-  componentDidMount () {
-    theme.apply(this.themes);
-  }
-
-
-  /**
-   * Component teardown
-   */
-  componentWillUnmount () {
-    theme.remove(this.themes);
-  }
-
 
   /**
    * Render entrypoint
@@ -62,7 +41,11 @@ class Manage extends Component {
         <Grid.Column
           id='next-approver-grid-track-column'
           width={16}>
-          <TrackHeader inverted title='Manage' {...this.props}/>
+          <TrackHeader
+            inverted
+            title='Manage'
+            subtitle='Manage roles, packs, delegations, and other preferences'
+            {...this.props}/>
           <div id='next-approver-manage-content'>
             <Grid stackable>
               <Grid.Row columns={3} stretched>

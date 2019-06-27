@@ -20,7 +20,7 @@ import sys
 
 # NOTE: Some imported libraries have been polluting INFO level logs
 # Set logging level for imported libraries
-LOGGING_LEVEL = os.getenv("LOGGING_LEVEL")
+LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
 
 LIB_LEVELS = {
     "asyncio": logging.WARNING,

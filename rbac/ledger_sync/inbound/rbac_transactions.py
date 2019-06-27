@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-""" LDAP Sawtooth Transaction Creation
+""" Inbound Provider Sawtooth Transaction Creation
 """
 import os
 from uuid import uuid4
@@ -36,8 +36,10 @@ from rbac.providers.common.db_queries import connect_to_db
 from rbac.server.api.proposals import PROPOSAL_TRANSACTION
 from rbac.server.db.proposals_query import (
     fetch_open_proposals_by_opener,
+    fetch_open_proposals_by_role,
     get_open_proposals_by_approver,
 )
+from rbac.server.db.relationships_query import fetch_relationship_query
 
 LOGGER = get_default_logger(__name__)
 
@@ -104,25 +106,25 @@ def add_transaction(inbound_entry):
                 "roles", data["remote_id"], inbound_entry["provider_id"]
             )
             # Generate Ids
+            role_exists = False
             if next_role:
-                next_id = next_role[0]["role_id"]
+                role_id = next_role[0]["role_id"]
+                role_exists = True
             else:
-                next_id = str(uuid4())
+                role_id = str(uuid4())
 
             inbound_entry = add_sawtooth_prereqs(
-                entry_id=next_id, inbound_entry=inbound_entry, data_type="group"
+                entry_id=role_id, inbound_entry=inbound_entry, data_type="group"
             )
 
-            message = Role().imports.make(
-                signer_keypair=key_pair, role_id=next_id, **data
+            # Create ImportsRole and related transactions
+            import_role_transaction(
+                data=data,
+                inbound_entry=inbound_entry,
+                key_pair=key_pair,
+                role_id=role_id,
+                role_exists=role_exists,
             )
-            batch = Role().imports.batch(
-                signer_keypair=key_pair,
-                signer_user_id=key_pair.public_key,
-                message=message,
-            )
-            inbound_entry["batch"] = batch.SerializeToString()
-            add_metadata(inbound_entry, message)
 
         elif inbound_entry["data_type"] == "user_deleted":
             LOGGER.info(
@@ -150,35 +152,23 @@ def add_transaction(inbound_entry):
             )
             deleted_group = data["remote_id"]
             conn = connect_to_db()
-            group_in_db = (
+            role_in_db = (
                 r.table("roles")
                 .filter({"remote_id": deleted_group})
                 .coerce_to("array")
                 .run(conn)
             )
-            if group_in_db:
-                role_delete = DeleteRole()
-                role_id = group_in_db[0]["role_id"]
-
-                role_relationships = fetch_role_relationships(
-                    role_id=role_id, conn=conn
-                )
-                if role_relationships:
-                    data = {**data, **role_relationships}
-
-                inbound_entry = add_sawtooth_prereqs(
-                    entry_id=role_id, inbound_entry=inbound_entry, data_type="group"
-                )
-                message = role_delete.make(
-                    signer_keypair=key_pair, role_id=role_id, **data
-                )
-                batch = role_delete.batch(
-                    signer_keypair=key_pair,
-                    signer_user_id=key_pair.public_key,
-                    message=message,
-                )
-                inbound_entry["batch"] = batch.SerializeToString()
             conn.close()
+            if role_in_db:
+                role_id = role_in_db[0]["role_id"]
+
+                conn = connect_to_db()
+                for relationship in ["admins", "members", "owners"]:
+                    data[relationship] = list(
+                        fetch_relationship_query(relationship, role_id).run(conn)
+                    )
+                conn.close()
+                delete_role_transaction(inbound_entry, role_in_db, key_pair)
     except Exception as err:  # pylint: disable=broad-except
         LOGGER.exception(
             "Unable to create transaction for inbound data:\n%s", inbound_entry
@@ -247,36 +237,51 @@ def add_sawtooth_prereqs(entry_id, inbound_entry, data_type):
         inbound_entry["object_type"] = addresser.ObjectType.ROLE.value
     else:
         raise ValueError(
-            "Expecting data_type to be 'user' or 'group, found: " + data_type
+            "Expecting data_type to be 'user' or 'group, found: {}".format(data_type)
         )
     inbound_entry["address"] = bytes_from_hex(address)
     inbound_entry["object_id"] = bytes_from_hex(object_id)
     return inbound_entry
 
 
-def fetch_role_relationships(role_id, conn):
-    """ Fetches all admins, members, owners of role_id from
-    RethinkDB tables.
+def delete_role_transaction(inbound_entry, role_in_db, key_pair):
+    """Composes transactions for deleting a role. This includes rejecting any
+    pending proposals concerning the role, deleting role_owner, role_admin, and
+    role_member relationships, and the role object.
 
     Args:
-        role_id: UUID4 formatted ID of the role.
-        conn: A RethinkDB connection
-
-    Returns:
-        result: A dict containing a list of all role admins,
-            members, and owners if they do exist in RethinkDB.
+        inbound_entry:
+            dict: transaction entry from the inbound queue containing one
+            user/group data that was fetched from the integrated provider
+            along with additional information like:
+                provider_id, timestamp, and sync_type.
+        role_in_db:
+            dict: an entry in the roles table in rethinkdb.
+                (see /docs/diagrams/out/rethink_db_schemas.svg for table schemas)
+        key_pair:
+            obj: public and private keys for user.
     """
-    result = dict()
-    for relationship in ["admins", "members", "owners"]:
-        table_name = "role_" + relationship
-        relationship_list = list(
-            r.table(table_name)
-            .filter({"role_id": role_id})
-            .get_field("related_id")
-            .run(conn)
+    role_id = role_in_db[0]["role_id"]
+    inbound_entry = add_sawtooth_prereqs(
+        entry_id=role_id, inbound_entry=inbound_entry, data_type="group"
+    )
+
+    txn_list = []
+    # Compile role relationship transactions for removal from blockchain
+    txn_list = create_reject_ppsls_role_txns(key_pair, role_id, txn_list)
+    for next_id in inbound_entry["data"]["owners"]:
+        txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
+    for next_id in inbound_entry["data"]["admins"]:
+        txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
+    for next_id in inbound_entry["data"]["members"]:
+        txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
+    txn_list = create_delete_role_txns(key_pair, role_id, txn_list)
+
+    if txn_list:
+        batch = batcher.make_batch_from_txns(
+            transactions=txn_list, signer_keypair=key_pair
         )
-        result[relationship] = relationship_list
-    return result
+        inbound_entry["batch"] = batch.SerializeToString()
 
 
 def delete_user_transaction(inbound_entry, user_in_db, key_pair):
@@ -291,7 +296,7 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair):
 
     txn_list = []
     # Compile role relationship transactions for removal from blockchain
-    txn_list = create_reject_proposals_txns(key_pair, next_id, txn_list)
+    txn_list = create_reject_ppsls_user_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_owner_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_admin_txns(key_pair, next_id, txn_list)
     txn_list = create_delete_role_member_txns(key_pair, next_id, txn_list)
@@ -309,6 +314,29 @@ def delete_user_transaction(inbound_entry, user_in_db, key_pair):
             transactions=txn_list, signer_keypair=key_pair
         )
         inbound_entry["batch"] = batch.SerializeToString()
+
+
+def create_delete_role_txns(key_pair, role_id, txn_list):
+    """Create the delete transactions for a role object.
+    Args:
+        key_pair:
+               obj: public and private keys for user
+        role_id:
+            str: role_id to search for the roles where user is the admin
+        txn_list:
+            list: transactions for batch submission
+    Returns:
+        txn_list:
+            list: extended list of transactions for batch submission
+    """
+    role_delete = DeleteRole()
+    message = role_delete.make(signer_keypair=key_pair, role_id=role_id)
+    payload = role_delete.make_payload(
+        message=message, signer_keypair=key_pair, signer_user_id=key_pair.public_key
+    )
+    transaction = batcher.make_transaction(payload=payload, signer_keypair=key_pair)
+    txn_list.extend([transaction])
+    return txn_list
 
 
 def create_delete_role_owner_txns(key_pair, next_id, txn_list):
@@ -395,13 +423,53 @@ def create_delete_role_member_txns(key_pair, next_id, txn_list):
     return txn_list
 
 
-def create_reject_proposals_txns(key_pair, next_id, txn_list):
+def create_reject_ppsls_role_txns(key_pair, role_id, txn_list):
+    """Create the reject open proposals transactions for a role that has been
+    deleted.
+       Args:
+           key_pair:
+               obj: public and private keys for user
+           role_id:
+               str: role_id of the targeted role to close proposals for
+           txn_list:
+               list: transactions for batch submission
+    """
+    conn = connect_to_db()
+    proposals = fetch_open_proposals_by_role(conn, role_id)
+    conn.close()
+    if proposals:
+        for proposal in proposals:
+            reason = "Target Role was deleted."
+            reject_proposal = PROPOSAL_TRANSACTION[proposal["proposal_type"]][
+                "REJECTED"
+            ]
+            reject_proposal_msg = reject_proposal.make(
+                signer_keypair=key_pair,
+                signer_user_id=key_pair.public_key,
+                proposal_id=proposal["proposal_id"],
+                object_id=proposal["object_id"],
+                related_id=proposal["related_id"],
+                reason=reason,
+            )
+            payload = reject_proposal.make_payload(
+                message=reject_proposal_msg,
+                signer_keypair=key_pair,
+                signer_user_id=key_pair.public_key,
+            )
+            transaction = batcher.make_transaction(
+                payload=payload, signer_keypair=key_pair
+            )
+            txn_list.extend([transaction])
+    return txn_list
+
+
+def create_reject_ppsls_user_txns(key_pair, next_id, txn_list):
     """Create the reject open proposals transactions for user that has been deleted.
        Args:
            key_pair:
                obj: public and private keys for user
-           next_id: next_
-               str: next_id for proposals to close search
+           next_id:
+               str: next_id for of the targeted user to close proposals for
            txn_list:
                list: transactions for batch submission
 
@@ -442,3 +510,85 @@ def create_reject_proposals_txns(key_pair, next_id, txn_list):
             )
             txn_list.extend([transaction])
     return txn_list
+
+
+def import_role_transaction(data, inbound_entry, key_pair, role_id, role_exists=False):
+    """ Creates ImportRole batch and append to inbound_entry
+    Args:
+        data:
+            dict: A dict containing the contents of the imported role
+            Fields that can be included:
+                members: A list of next_ids for the role members
+                owners: A list of next_ids for the role owners
+        inbound_entry:
+            dict: transaction entry from the inbound queue containing one
+            user/group data that was fetched from the integrated provider
+            along with additional information like:
+                provider_id, timestamp, and sync_type.
+        key_pair:
+            obj: public and private keys for Ledger Sync Inbound processor.
+        role_id:
+            str: UUID4 formatted id of the imported role
+        role_exists:
+            bool: Indicates if the imported provider role already
+            exists within RethinkDB - defaults to False.
+    """
+
+    if role_exists:
+        # Add any deleted members or owners to deleted_members or deleted_owners field
+        data["deleted_members"] = get_deleted_relationships(
+            data=data, relationship="members", role_id=role_id
+        )
+        data["deleted_owners"] = get_deleted_relationships(
+            data=data, relationship="owners", role_id=role_id
+        )
+    message = Role().imports.make(signer_keypair=key_pair, role_id=role_id, **data)
+
+    batch = Role().imports.batch(
+        signer_keypair=key_pair, signer_user_id=key_pair.public_key, message=message
+    )
+
+    inbound_entry["batch"] = batch.SerializeToString()
+    add_metadata(inbound_entry, message)
+
+
+def get_deleted_relationships(data, relationship, role_id):
+    """ Checks if any role (owners | members) have been deleted since last sync
+    and return the list of deleted (owners | members).
+        Args:
+            data:
+                dict: A dict containing the contents of the imported role
+                Fields that can be included:
+                    members: A list of next_ids for the role members
+                    owners: A list of next_ids for the role owners
+            relationship:
+                str: Must be value of "members" or "owners"
+            role_id:
+                str: UUID4 formatted id of the imported role
+        Returns:
+            deleted_relationships:
+                list: A list of next_ids for the members/owners that were
+                deleted
+        Raises:
+            ValueError:
+                Raised when relationship parameter does not equal members
+                or owners
+    """
+    if relationship not in ["members", "owners"]:
+        raise ValueError(
+            "Invalid relationship passed in. Expected "
+            "members or owners, but got {}".format(relationship)
+        )
+    imported_relationships = []
+    if relationship in data:
+        imported_relationships = data[relationship]
+
+    conn = connect_to_db()
+    db_relationships = list(fetch_relationship_query(relationship, role_id).run(conn))
+    conn.close()
+
+    deleted_relationships = []
+    for user in db_relationships:
+        if user not in imported_relationships:
+            deleted_relationships.append(user)
+    return deleted_relationships

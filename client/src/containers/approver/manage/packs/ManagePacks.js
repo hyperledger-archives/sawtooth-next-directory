@@ -16,18 +16,19 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   Button,
   Card,
   Grid,
   Header,
-  Image,
   Placeholder } from 'semantic-ui-react';
 
 
 import './ManagePacks.css';
-import glyph from 'images/glyph-pack.png';
+import { ApproverSelectors } from 'state';
 import TrackHeader from 'components/layouts/TrackHeader';
+import Confirm from 'components/layouts/Confirm';
 import * as theme from 'services/Theme';
 import * as utils from 'services/Utils';
 
@@ -47,6 +48,9 @@ class ManagePacks extends Component {
     start: 0,
     limit: 25,
     packList: [],
+    confirmDeleteModalBody: '',
+    confirmDeleteModalPackId: '',
+    confirmDeleteModalVisible: false,
   };
 
 
@@ -66,8 +70,12 @@ class ManagePacks extends Component {
    * @returns {undefined}
    */
   componentDidUpdate (prevProps) {
-    const { ownedPacks } = this.props;
+    const { deletingPack, ownedPacks } = this.props;
+
     if (!utils.arraysEqual(prevProps.ownedPacks, ownedPacks))
+      this.init();
+
+    else if (deletingPack === false && deletingPack !== prevProps.deletingPack)
       this.init();
   }
 
@@ -93,6 +101,34 @@ class ManagePacks extends Component {
 
   reset = () => {
     this.setState({ packList: [] });
+  }
+
+
+  /**
+   * Toggle confirm modal
+   * @param {string} packId Pack ID
+   */
+  toggleConfirmModal = (packId) => {
+    const { packFromId } = this.props;
+    const { confirmDeleteModalVisible } = this.state;
+
+    const pack = packFromId(packId) || {};
+    this.setState({
+      confirmDeleteModalPackId:   packId,
+      confirmDeleteModalVisible:  !confirmDeleteModalVisible,
+      confirmDeleteModalBody:     `Are you sure want to delete ${pack.name}?`,
+    });
+  }
+
+
+  /**
+   * Delete a pack
+   */
+  handleDeleteModalConfirm = () => {
+    const { deletePack } = this.props;
+    const { confirmDeleteModalPackId } = this.state;
+    deletePack(confirmDeleteModalPackId);
+    this.toggleConfirmModal();
   }
 
 
@@ -125,23 +161,25 @@ class ManagePacks extends Component {
       <Grid.Column key={packId}>
         <Card
           fluid
-          as={Link}
-          to={`/packs/${packId}`}
           className='minimal medium'>
-          <Header as='h3'>
-            <div>
-              <Image size='mini' src={glyph}/>
-            </div>
-            <div>
+          <div className='next-approver-manage-packs-card-header'>
+            <Header as='h3' inverted>
               {pack.name}
-              <Header.Subheader>
-                {pack.description || 'No description available.'}
-              </Header.Subheader>
+            </Header>
+            <div>
+              <Button
+                size='mini'
+                onClick={() => this.toggleConfirmModal(packId)}>
+                Delete
+              </Button>
             </div>
-          </Header>
-          <Card.Content extra>
-            {pack && utils.countLabel(pack.roles.length, 'role')}
-          </Card.Content>
+          </div>
+          <div className='next-approver-manage-packs-card-body'>
+            {pack.description || 'No description available.'}
+            <div>
+              {pack && utils.countLabel(pack.roles.length, 'role')}
+            </div>
+          </div>
         </Card>
       </Grid.Column>
     );
@@ -175,7 +213,10 @@ class ManagePacks extends Component {
    */
   render () {
     const { ownedPacks } = this.props;
-    const { packList } = this.state;
+    const {
+      confirmDeleteModalBody,
+      confirmDeleteModalVisible,
+      packList } = this.state;
 
     return (
       <Grid id='next-approver-grid'>
@@ -200,6 +241,12 @@ class ManagePacks extends Component {
                 to='packs/create'/>}
             {...this.props}/>
           <div id='next-approver-manage-packs-content'>
+            <Confirm
+              showModal={confirmDeleteModalVisible}
+              heading='Are you sure?'
+              body={confirmDeleteModalBody}
+              handleClose={this.toggleConfirmModal}
+              handleConfirm={this.handleDeleteModalConfirm}/>
             { ownedPacks && ownedPacks.length > 0 &&
               <h3>
                 {ownedPacks && utils.countLabel(ownedPacks.length, 'pack')}
@@ -235,4 +282,15 @@ class ManagePacks extends Component {
 }
 
 
-export default ManagePacks;
+const mapStateToProps = (state) => {
+  return {
+    deletingPack: ApproverSelectors.deletingPack(state),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {};
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManagePacks);

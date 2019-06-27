@@ -15,6 +15,7 @@
 """Implements the CONFIRM_ADD_ROLE_MEMBER message
 usage: rbac.role.member.confirm.create()"""
 
+from rbac.common.role.sync_direction import set_sync_direction
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
 from rbac.common.logs import get_default_logger
@@ -107,7 +108,9 @@ class ConfirmAddRoleMember(ProposalConfirm):
     #            )
 
     def apply_update(self, message, payload, object_id, related_id, output_state):
-        """Create admin address"""
+        """Create member address"""
+        # Update the sync_direction so that it will go to provider.
+        set_sync_direction(object_id, "OUTBOUND")
         # set membership expiration 6 months from now
         expiration_date = int(payload.now + 2628000 * 6)
 

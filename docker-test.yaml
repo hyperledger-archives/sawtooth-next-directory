@@ -85,12 +85,18 @@ services:
       - rethink
       - validator
     environment:
-      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
-      - HOST=${HOST:-localhost}
       - AES_KEY=${AES_KEY}
+      - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-1}
+      - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-1}
+      - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
+      - HOST=${HOST:-localhost}
+      - LDAP_DC=DC=AD2012,DC=LAB
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      - NEXT_ADMIN_USER=${NEXT_ADMIN_USER:-Admin}
+      - TENANT_ID=${TENANT_ID}
     command: |
       bash -c "
-        ./bin/setup_db --host rethink &&
+        ./bin/setup_db &&
         ./bin/rbac-ledger-sync --db-host rethink --validator tcp://validator:4004
       \"\""
 
@@ -129,6 +135,7 @@ services:
       \"\""
 
   test-runner:
+    container_name: test-runner
     build:
       context: .
       dockerfile: ./docker/tests.Dockerfile

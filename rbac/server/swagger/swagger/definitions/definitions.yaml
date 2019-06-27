@@ -509,6 +509,66 @@
     description: Id of the user created from a request
     type: string
     example: 0250de681732ca6618b0c84677e06a02da8a1f540e498acad10839dbe279ffc1c7
+  updatePassword:
+    description: json blob with next_id and password
+    type: object
+    required:
+      - next_id
+      - password
+    properties:
+      next_id:
+        type: string
+        description: next_id of the user whose password is to be modified
+        example: "e14c1478-22c7-447e-acbf-8014e3f086ad"
+      password:
+        type: string
+        description: Password to associate with the user's account
+        example: '12345abcde'
+  updatePasswordResponse:
+    description: Response after a password has been updated
+    type: object
+    properties:
+      message:
+        type: string
+        description: Success message response
+        items:
+          type: string
+          example: "Password successfully updated"
+  updateUser:
+    description: json blob with next_id, email, name, username
+    type: object
+    required:
+      - next_id
+      - email
+      - name
+      - username
+    properties:
+      next_id:
+        type: string
+        description: next_id of the user whose password is to be modified
+        example: "e14c1478-22c7-447e-acbf-8014e3f086ad"
+      email:
+        type: string
+        description: Email of the user
+        example: 'steve.rogers@test.com'
+      name:
+        type: string
+        description: Name of the user
+        example: 'Steve Rogers'
+      username:
+        type: string
+        description: username of the user.  Must be unique.
+        example: 's.rogers'
+    updateUserResponse:
+      description: Response after a user has been updated
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message response
+          items:
+            type: string
+            example: "User information was successfully updated."
   proposal:
     description: >-
       A request to change the state of a role, task, or user, which requires
@@ -630,11 +690,11 @@
           - search_input
           - search_object_types
         properties:
-          search_input
+          search_input:
             type: string
             description: The string we search for
             example: Lev
-          search_object_types
+          search_object_types:
             type: array
             description: List of object types across which we search
             items:
@@ -658,19 +718,19 @@
         type: object
         description: Response data
         properties:
-          users
-            type: array
+          users:
+          type: array
             description: List of users
             items:
               type: "object"
             example: []
-          packs
+          packs:
             type: array
             description: List of packs
             items:
               type: "object"
             example: []
-          roles
+          roles:
             type: array
             description: List of roles
             items:

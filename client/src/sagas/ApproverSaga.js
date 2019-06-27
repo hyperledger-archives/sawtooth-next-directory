@@ -17,7 +17,7 @@ limitations under the License.
 import { call, put } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import { showLoading, hideLoading } from 'react-redux-loading-bar';
-import { ApproverActions } from 'state';
+import { ApproverActions, UserActions } from 'state';
 
 
 /**
@@ -90,6 +90,30 @@ export function * createPack (api, action) {
       yield put(ApproverActions.createPackSuccess(res.data.data));
     } else {
       yield put(ApproverActions.createPackFailure(res.data));
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Delete a pack
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * deletePack (api, action) {
+  try {
+    const { id } = action;
+    const res = yield call(api.deletePack, id);
+    if (res.ok) {
+      toast.success('Successfully deleted pack.');
+      yield put(ApproverActions.deletePackSuccess(res.data.pack_id));
+      yield put(UserActions.meRequest());
+    } else {
+      yield put(ApproverActions.deletePackFailure(res.data));
     }
 
   } catch (err) {

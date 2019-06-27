@@ -190,7 +190,7 @@ def load_defaults():
     """
     try:
         with io.open("config.yaml", "r") as file:
-            return yaml.load(file)
+            return yaml.safe_load(file)
     except FileNotFoundError:
         LOGGER.warning("config.yaml was not found")
     except Exception as err:  # pylint: disable=broad-except

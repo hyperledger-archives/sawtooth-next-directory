@@ -101,6 +101,7 @@ const create = (baseURL =
   // Definitions
   const createPack = (payload) => api.post('packs', payload);
   const createRole = (payload) => api.post('roles', payload);
+  const deletePack = (id) => api.delete(`packs/${id}`);
   const login = (creds) => api.post('authorization', creds);
   const me = () => api.get(`users/${storage.get('next_id')}`);
   const getProposal = (id) => api.get(`proposals/${id}`);
@@ -114,6 +115,7 @@ const create = (baseURL =
   const getUsers = (start, limit) => api.get('users', { start, limit });
   const getUserSummary = (id) => api.get(`user/${id}/summary`);
   const packExists = (name) => api.get('packs/check', { name });
+  const userExists = (username) => api.get('users/check', { username });
   const requestPackAccess = (id, body) => api.post(`packs/${id}/members`, body);
   const requestRoleAccess = (id, body) => api.post(`roles/${id}/members`, body);
   const roleExists = (name) => api.get('roles/check', { name });
@@ -137,6 +139,7 @@ const create = (baseURL =
   return {
     createPack,
     createRole,
+    deletePack,
     expire,
     login,
     getConfirmedProposals,
@@ -155,6 +158,7 @@ const create = (baseURL =
     getUserSummary,
     me,
     packExists,
+    userExists,
     requestPackAccess,
     requestRoleAccess,
     roleExists,

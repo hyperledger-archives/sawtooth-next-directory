@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 """ A test helper class that provides API users
 """
-
+import time
 import random
 import requests
 
@@ -22,7 +22,6 @@ import requests
 from tests.rbac.api.base.base_helper import BaseApiHelper
 from tests.rbac.api.user.user_helper import UserTestHelper
 from tests.rbac.api.assertions import assert_api_success
-from tests.rbac.api.config import api_wait
 
 
 # pylint: disable=too-few-public-methods
@@ -81,5 +80,5 @@ class CreateRoleTestHelper(BaseApiHelper):
             owner = helper.user.create.authenticated()
             role = self.new(user=owner)
             self._current = (role, owner)
-            api_wait()  # temporary, see config
+            time.sleep(5)
         return self._current

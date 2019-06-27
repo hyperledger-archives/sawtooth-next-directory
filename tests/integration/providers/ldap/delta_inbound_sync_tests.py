@@ -36,6 +36,7 @@ from environs import Env
 
 from rbac.providers.common.db_queries import connect_to_db
 from rbac.common.crypto.secrets import generate_api_key
+from rbac.common.logs import get_default_logger
 from rbac.providers.ldap.delta_inbound_sync import (
     insert_updated_entries,
     insert_deleted_entries,
@@ -60,7 +61,10 @@ from tests.utilities import (
     get_pack_owners_by_user,
     is_user_in_db,
     is_group_in_db,
+    wait_for_resource_removal_in_db,
 )
+
+LOGGER = get_default_logger(__name__)
 
 SERVER = Server("my_fake_server", get_info=OFFLINE_AD_2012_R2)
 
@@ -170,8 +174,9 @@ def _get_group_attributes(common_name, name, owner=""):
         "objectClass": ["top", "group"],
         "whenChanged": datetime.utcnow().replace(tzinfo=timezone.utc),
         "whenCreated": datetime.utcnow().replace(tzinfo=timezone.utc),
-        "managedBy": owner,
     }
+    if owner:
+        group["managedBy"] = owner
     return group
 
 
@@ -280,7 +285,7 @@ def create_pack_ldap(user, pack_name):
         with requests.Session() as session:
             session.headers.update({"Authorization": token})
             response = create_test_pack(session, pack_data)
-            return response.json()["data"]["id"]
+            return response.json()["data"]["pack_id"]
     raise ValueError("Unsuccessful authentication.")
 
 
@@ -352,7 +357,7 @@ def get_fake_user(ldap_connection, user_common_name):
 
 
 def get_fake_group(ldap_connection, group_common_name):
-    """Gets a fake user from the mock AD server.
+    """Gets a fake group from the mock AD server.
 
     Args:
         ldap_connection:
@@ -363,7 +368,7 @@ def get_fake_group(ldap_connection, group_common_name):
 
     Returns:
         fake_user:
-            arr<obj>: an array containing any users with a matching common name.
+            arr<obj>: an array containing any groups with a matching common name.
     """
     search_parameters = {
         "search_base": "OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB",
@@ -372,8 +377,7 @@ def get_fake_group(ldap_connection, group_common_name):
         "paged_size": len(TEST_GROUPS),
     }
     ldap_connection.search(**search_parameters)
-    fake_user = ldap_connection.entries
-    return fake_user
+    return ldap_connection.entries
 
 
 def put_in_inbound_queue(fake_data, data_type):
@@ -686,7 +690,7 @@ def test_add_group_member(ldap_connection, group, user):
                     str: A username of an AD user object.
 
                 given_name:
-                    str: A given name of an AD suer object.
+                    str: A given name of an AD user object.
     """
     user_distinct_name = [
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user["common_name"]
@@ -731,7 +735,7 @@ def test_remove_group_member(ldap_connection, group, user):
                     str: A username of an AD user object.
 
                 given_name:
-                    str: A given name of an AD suer object.
+                    str: A given name of an AD user object.
     """
     user_distinct_name = [
         "CN=%s,OU=Users,OU=Accounts,DC=AD2012,DC=LAB" % user["common_name"]
@@ -777,7 +781,7 @@ def test_add_replace_group_owner(ldap_connection, group, user):
                     str: A username of an AD user object.
 
                 given_name:
-                    str: A given name of an AD suer object.
+                    str: A given name of an AD user object.
     """
     group_distinct_name = (
         "CN=%s,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB" % group["common_name"]
@@ -893,18 +897,56 @@ def test_delete_user(ldap_connection):
 
 
 def test_delete_role(ldap_connection):
-    """Deletes a AD role in NEXT
+    """Delete a AD role in NEXT and all related tables
 
     Args:
         ldap_connection:
             obj: A bound mock mock_ldap_connection
     """
-    create_fake_group(ldap_connection, "sysadmins", "sysadmins")
+    create_fake_user(ldap_connection, "jchan", "Jackie C", "Jackiec")
+    user_remote_id = "CN=jchan,OU=Users,OU=Accounts,DC=AD2012,DC=LAB"
+    fake_user = get_fake_user(ldap_connection, "jchan")
+    put_in_inbound_queue(fake_user, "user")
+
+    create_fake_group(ldap_connection, "sysadmins", "sysadmins", user_remote_id)
     fake_group = get_fake_group(ldap_connection, "sysadmins")
     put_in_inbound_queue(fake_group, "group")
+    time.sleep(3)
+    group_distinct_name = "CN=sysadmins,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB"
+    addMembersToGroups.ad_add_members_to_groups(
+        ldap_connection, user_remote_id, group_distinct_name, fix=True
+    )
+
+    assert is_user_the_role_owner("sysadmins", "jchan") is True
+    assert is_group_in_db("sysadmins") is True
+
+    role = get_role("sysadmins")
+    role_id = role[0]["role_id"]
     insert_deleted_entries(
         ["CN=sysadmins,OU=Roles,OU=Security,OU=Groups,DC=AD2012,DC=LAB"],
         "group_deleted",
     )
-    result = is_group_in_db("sysadmins")
-    assert result is False
+    time.sleep(3)
+
+    is_role_removed = wait_for_resource_removal_in_db("roles", "name", "sysadmins")
+    assert is_role_removed is True
+    is_owner_removed = wait_for_resource_removal_in_db(
+        "role_owners", "role_id", role_id
+    )
+    assert is_owner_removed is True
+    is_member_removed = wait_for_resource_removal_in_db(
+        "role_members", "role_id", role_id
+    )
+    assert is_member_removed is True
+
+
+def test_created_date_comparison(ldap_connection):
+    """ Tests that imported users/roles have the same created_date
+    value in RethinkDB as the created_date in their source.
+    """
+    create_fake_group(ldap_connection, "pokemons", "pokemons")
+    fake_group = get_fake_group(ldap_connection, "pokemons")
+    put_in_inbound_queue(fake_group, "group")
+    time.sleep(2)
+    ldap_role = get_role("pokemons")
+    assert fake_group[0].whenCreated.value == ldap_role[0]["created_date"]

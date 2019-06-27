@@ -17,6 +17,7 @@ usage: rbac.user.manager.confirm.create()"""
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
 from rbac.common.logs import get_default_logger
+from rbac.common.user.sync_direction import set_sync_direction
 
 LOGGER = get_default_logger(__name__)
 
@@ -96,6 +97,10 @@ class ConfirmUpdateUserManager(ProposalConfirm):
 
     def apply_update(self, message, payload, object_id, related_id, output_state):
         """Stores additional data"""
+
+        # Update the sync_direction so that it will go to provider.
+        set_sync_direction(object_id, "OUTBOUND")
+
         addresser.user.set_output_state_attribute(
             name="manager_id",
             value=message.related_id,

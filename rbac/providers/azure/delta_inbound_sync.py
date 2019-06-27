@@ -123,9 +123,15 @@ def inbound_sync_listener():
                             insert_change_to_db(data, record_timestamp_utc)
                             sync_source = "azure-" + VALID_OPERATIONS[operation_name]
                             provider_id = TENANT_ID
+                            conn = connect_to_db()
                             save_sync_time(
-                                provider_id, sync_source, "delta", record_timestamp_utc
+                                provider_id,
+                                sync_source,
+                                "delta",
+                                conn,
+                                record_timestamp_utc,
                             )
+                            conn.close()
                             previous_sync_datetime = record_timestamp
                     batch = receiver.receive(timeout=50)
                 LOGGER.info("Closing connection to EventHub...")
