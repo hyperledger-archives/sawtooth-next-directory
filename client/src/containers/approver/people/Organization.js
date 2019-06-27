@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Popup } from 'semantic-ui-react';
+import { Loader } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import './Organization.css';
 import Avatar from 'components/layouts/Avatar';
@@ -65,20 +65,35 @@ class Organization extends Component {
   componentDidUpdate (prevProps) {
     const {
       activeUser,
+      compact,
       getOrganization,
+      getUser,
       getUsers,
       organization,
-      users } = this.props;
+      users,
+      userFromId } = this.props;
     if (prevProps.organization !== organization) {
-      const diff = [
-        ...organization.direct_reports,
-        ...organization.managers.slice(0, 5),
-        ...organization.peers.slice(0, 5),
-      ]
-        .filter(userId =>
-          !users.find(user => userId === user.id)
-        );
-      getUsers(diff);
+      let diff = [];
+      if (compact) {
+        diff = [
+          ...organization.direct_reports.slice(0, 5),
+          ...organization.managers.slice(0, 5),
+        ];
+      } else {
+        diff = [
+          ...organization.direct_reports,
+          ...organization.managers,
+          ...organization.peers,
+        ];
+      }
+      diff = diff.filter(userId =>
+        !users.find(user => userId === user.id)
+      );
+      getUsers(diff, true);
+
+      const user = userFromId(activeUser);
+      if ((user && !user.memberOf) || !user)
+        getUser(activeUser);
     }
     if (prevProps.activeUser !== activeUser)
       getOrganization(activeUser);
@@ -121,27 +136,25 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderPeers () {
-    const { compact, handleUserSelect, organization } = this.props;
+    const { handleUserSelect, organization } = this.props;
     return (
-      <div className='pull-right' id='next-organization-peers'>
+      <div className='clear' id='next-organization-peers'>
         { organization.peers &&
-          organization.peers.slice(0, 3).map((userId, index) => (
+          organization.peers.map((userId, index) => (
             <div
               onClick={() => handleUserSelect(userId)}
-              className={`${!compact &&
-                'cursor-pointer'} next-organization-peer-item`}
+              className='cursor-pointer next-organization-peer-item'
               key={index}>
-              <Popup
-                inverted
-                trigger={
-                  <Avatar
-                    userId={userId}
-                    size='medium'
-                    {...this.props}/>
-                }
-                content={this.userName(userId)}
-                position='bottom center'
-                on='hover'/>
+              <Avatar
+                userId={userId}
+                size='medium'
+                {...this.props}/>
+              <div className='next-organization-user-info'>
+                <h4>
+                  {this.userName(userId)}
+                </h4>
+                {this.userEmail(userId)}
+              </div>
             </div>
           ))
         }
@@ -155,11 +168,7 @@ class Organization extends Component {
    * @returns {JSX}
    */
   renderManagers () {
-    const {
-      compact,
-      handleUserSelect,
-      organization,
-      showPeers } = this.props;
+    const { handleUserSelect, organization } = this.props;
     return (
       <div id='next-organization-managers'>
         { organization.managers &&
@@ -168,7 +177,7 @@ class Organization extends Component {
               key={index}
               className='next-organization-manager-item'>
               <div
-                className={`pull-left ${!compact && 'cursor-pointer'}`}
+                className='pull-left cursor-pointer'
                 onClick={() => handleUserSelect(userId)}>
                 <Avatar
                   userId={userId}
@@ -181,7 +190,6 @@ class Organization extends Component {
                   {this.userEmail(userId)}
                 </div>
               </div>
-              { showPeers && index === 0 && this.renderPeers() }
             </div>
           ))}
       </div>
@@ -195,28 +203,33 @@ class Organization extends Component {
    */
   renderDirectReports () {
     const { compact, handleUserSelect, organization } = this.props;
+
+    if (!organization.direct_reports)
+      return null;
+
+    const directReports = compact ?
+      organization.direct_reports.slice(0, 3) :
+      organization.direct_reports;
+
     return (
       <div id='next-organization-direct-reports'>
-        { organization.direct_reports &&
-          organization.direct_reports.map((userId, index) => (
-            <div
-              onClick={() => handleUserSelect(userId)}
-              className={`${!compact &&
-                'cursor-pointer'} next-organization-direct-report-item`}
-              key={index}>
-              <Avatar
-                userId={userId}
-                size='medium'
-                {...this.props}/>
-              <div className='next-organization-user-info'>
-                <h4>
-                  {this.userName(userId)}
-                  {' (Direct Report)'}
-                </h4>
-                {this.userEmail(userId)}
-              </div>
+        { directReports.map((userId, index) => (
+          <div
+            onClick={() => handleUserSelect(userId)}
+            className='cursor-pointer next-organization-direct-report-item'
+            key={index}>
+            <Avatar
+              userId={userId}
+              size='small'
+              {...this.props}/>
+            <div className='next-organization-user-info'>
+              <h4>
+                {this.userName(userId)}
+              </h4>
+              {this.userEmail(userId)}
             </div>
-          ))}
+          </div>
+        ))}
       </div>
     );
   }
@@ -231,8 +244,7 @@ class Organization extends Component {
       compact,
       handleUserSelect,
       id,
-      organization,
-      showDirectReports } = this.props;
+      organization } = this.props;
     return (
       <div id='next-organization-current-person'>
         <div
@@ -252,7 +264,7 @@ class Organization extends Component {
             {this.userEmail(organization.id)}
           </div>
         </div>
-        { showDirectReports && this.renderDirectReports()}
+        {this.renderDirectReports()}
       </div>
     );
   }
@@ -263,11 +275,25 @@ class Organization extends Component {
    * @returns {JSX}
    */
   render () {
-    const { compact, id, organization } = this.props;
+    const {
+      compact,
+      fetchingOrganization,
+      organization,
+      showPeers } = this.props;
+
+    if (fetchingOrganization) {
+      return (
+        <Loader
+          active={fetchingOrganization}
+          id='next-people-organization-loader'
+          size='large'>
+        </Loader>
+      );
+    }
 
     if (organization) {
-      if (organization.managers.length === 0 ||
-          organization.direct_reports === 0 ||
+      if (organization.managers.length === 0 &&
+          organization.direct_reports === 0 &&
           organization.peers === 0) {
         if (!compact) {
           return (
@@ -282,9 +308,6 @@ class Organization extends Component {
       }
     }
 
-    if (!compact && organization && organization.id !== id)
-      return null;
-
     return (
       <div>
         <div
@@ -293,6 +316,7 @@ class Organization extends Component {
             organization.managers.length === 0 && 'next-organization-empty'}`}>
           { organization && this.renderManagers() }
           { organization && this.renderPerson() }
+          { organization && showPeers && this.renderPeers() }
         </div>
       </div>
 

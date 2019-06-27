@@ -14,13 +14,12 @@
 # -----------------------------------------------------------------------------
 """ Create User Test Helper
 """
-
+import time
 import requests
 
-from tests.rbac.api.base.base_helper import BaseApiHelper
 from tests.rbac.api.assertions import assert_api_success
+from tests.rbac.api.base.base_helper import BaseApiHelper
 from tests.rbac.testdata.user import UserTestData
-from tests.rbac.api.config import api_wait
 
 
 class CreateUserTestHelper(BaseApiHelper, UserTestData):
@@ -82,7 +81,7 @@ class CreateUserTestHelper(BaseApiHelper, UserTestData):
         """
         if not user:
             user = self.new()
-            api_wait()  # temporary, see config
+            time.sleep(5)
         data = {
             "id": user["username"],
             "password": user["password"],

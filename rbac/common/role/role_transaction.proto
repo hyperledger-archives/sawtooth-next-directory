@@ -126,6 +126,11 @@ message ImportsRole {
     string remote_id = 8;
 
     int64 created_date = 9;
+
+    repeated string deleted_owners = 10;
+
+    repeated string deleted_members = 11;
+
 }
 
 message UpdateRole {
@@ -141,12 +146,6 @@ message UpdateRole {
 message DeleteRole {
 
     string role_id = 1;
-
-    repeated string owners = 2;
-
-    repeated string admins = 3;
-
-    repeated string members = 4;
 
 }
 

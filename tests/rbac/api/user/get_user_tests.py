@@ -12,19 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-""" Get User Test
-"""
-
+"""Get User Test"""
+import time
 import requests
 import pytest
 
 from rbac.common.logs import get_default_logger
-
 from tests.rbac import helper
 from tests.rbac.api.assertions import assert_api_success
-
-# from tests.rbac.api.assertions import assert_api_get_requires_auth
-from tests.rbac.api.config import api_wait
 
 LOGGER = get_default_logger(__name__)
 
@@ -39,7 +34,7 @@ def test_api_user_get_self():
 
     # assert assert_api_get_requires_auth(url)
 
-    api_wait()  # temporary, see config
+    time.sleep(5)
     response = requests.get(url=url, headers={"Authorization": user["token"]})
     result = assert_api_success(response)
 
@@ -58,7 +53,7 @@ def test_api_user_get_other():
 
     # assert assert_api_get_requires_auth(url)
 
-    api_wait()  # temporary, see config
+    time.sleep(5)
     response = requests.get(url=url, headers={"Authorization": user["token"]})
     result = assert_api_success(response)
 

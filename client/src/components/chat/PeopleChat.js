@@ -68,6 +68,7 @@ class PeopleChat extends Component {
       getRoles,
       userFromId,
       roles } = this.props;
+    const { currentRolesMaxCount } = this.state;
     const user = userFromId(activeUser);
     if (!user) return;
 
@@ -77,7 +78,7 @@ class PeopleChat extends Component {
         roleId => !roles.find(role => role.id === roleId)
       );
     }
-    roleIds && getRoles(roleIds);
+    roleIds && getRoles(roleIds.slice(0, currentRolesMaxCount));
   }
 
 
@@ -87,10 +88,9 @@ class PeopleChat extends Component {
    * @returns {string}
    */
   userName = (userId) => {
-    const { id, userFromId } = this.props;
+    const { userFromId } = this.props;
     const user = userFromId(userId);
-    if (user)
-      return userId === id ? `${user.name} (You)` : user.name;
+    if (user) return utils.toTitleCase(user.name);
     return null;
   };
 
@@ -162,7 +162,8 @@ class PeopleChat extends Component {
     const {
       activeIndex,
       activeUser,
-      organization } = this.props;
+      fetchingOrganization,
+      setFlow } = this.props;
     if (activeIndex === 1) return null;
 
     return {
@@ -170,26 +171,38 @@ class PeopleChat extends Component {
       title: {
         content: (
           <span>
-            Organization
+            <strong>
+              Organization
+            </strong>
           </span>
         ),
       },
       content: {
         content: (
-          <div>
-            { organization &&
-              organization.managers.length === 0 &&
-              <div className='next-people-organization-no-items'>
-                <span>
-                  No organization info
-                </span>
-              </div>
-            }
+          <div className='next-people-organization-panel'>
             <Organization
               compact
               activeUser={activeUser}
               handleUserSelect={() => {}}
               {...this.props}/>
+            { !fetchingOrganization &&
+              <Container
+                className='next-chat-organization-view-all-button'
+                textAlign='center'>
+                <Button
+                  basic
+                  animated
+                  onClick={() => setFlow(1)}
+                  size='mini'>
+                  <Button.Content visible>
+                  VIEW FULL CHART
+                  </Button.Content>
+                  <Button.Content hidden>
+                    <Icon name='arrow right'/>
+                  </Button.Content>
+                </Button>
+              </Container>
+            }
           </div>
         ),
       },
@@ -209,7 +222,9 @@ class PeopleChat extends Component {
       title: {
         content: (
           <span>
-            Current Roles
+            <strong>
+              Current Roles
+            </strong>
           </span>
         ),
       },
@@ -233,12 +248,11 @@ class PeopleChat extends Component {
             { user.memberOf &&
               user.memberOf.length > currentRolesMaxCount &&
               <Container
-                id='next-chat-organization-view-all-button'
+                className='next-chat-organization-view-all-button'
                 textAlign='center'>
                 <Button
                   basic
                   animated
-                  inverted
                   as={Link}
                   to={'/'}
                   size='mini'>
@@ -277,36 +291,37 @@ class PeopleChat extends Component {
         <div id='next-chat-users-selection-container'>
           { activeUser &&
             <div id='next-chat-organization-heading'>
-              <Avatar userId={activeUser} size='large' {...this.props}/>
-              <Header as='h2' inverted>
-                {this.userName(activeUser)}
-                <Header.Subheader>
-                  {this.userEmail(activeUser)}
-                </Header.Subheader>
-              </Header>
-              { directReports &&
-                directReports.includes(activeUser) &&
-                <div>
-                  <Label color='green' horizontal>
-                    Direct Report
-                  </Label>
-                  <div id='next-people-chat-pending-approvals-button'>
-                    <Button
-                      as={Link}
-                      size='large'
-                      to={`people/${activeUser}/pending`}
-                      onClick={handleOnBehalfOf}>
-                      Pending Approvals
-                    </Button>
+              <Container>
+                <Avatar userId={activeUser} size='large' {...this.props}/>
+                <Header as='h2'>
+                  {this.userName(activeUser)}
+                  <Header.Subheader>
+                    {this.userEmail(activeUser)}
+                  </Header.Subheader>
+                </Header>
+                { directReports &&
+                  directReports.includes(activeUser) &&
+                  <div>
+                    <Label color='green' horizontal>
+                      Direct Report
+                    </Label>
+                    <div id='next-people-chat-pending-approvals-button'>
+                      <Button
+                        as={Link}
+                        size='large'
+                        to={`people/${activeUser}/pending`}
+                        onClick={handleOnBehalfOf}>
+                        Pending Approvals
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              }
+                }
+              </Container>
               <Container
                 id='next-chat-organization-user-info'
                 textAlign='left'>
                 <Accordion
                   defaultActiveIndex={[0, 1]}
-                  inverted
                   panels={[
                     this.organizationPanel(),
                     this.rolesPanel(user),

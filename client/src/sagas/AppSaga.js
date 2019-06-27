@@ -22,7 +22,8 @@ import {
   AppActions,
   ApproverActions,
   ChatActions,
-  RequesterActions } from 'state';
+  RequesterActions,
+  UserActions } from 'state';
 import Socket, {
   sockets,
   SOCKET_RECONNECT_TIMEOUT,
@@ -121,6 +122,7 @@ const createChannel = (endpoint, socket) =>
       if (endpoint === 'feed') {
         emit(ApproverActions.feedReceive(payload));
         emit(RequesterActions.feedReceive(payload));
+        emit(UserActions.feedReceive(payload));
       }
       if (endpoint === 'chatbot')
         emit(ChatActions.messageReceive(payload));

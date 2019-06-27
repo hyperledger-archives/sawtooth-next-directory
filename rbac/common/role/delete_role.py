@@ -66,18 +66,6 @@ class DeleteRole(BaseMessage):
         role_address = self.address(object_id=message.role_id)
         inputs.add(role_address)
 
-        for user in message.admins:
-            membership_address = addresser.role.admin.address(message.role_id, user)
-            inputs.add(membership_address)
-
-        for user in message.owners:
-            membership_address = addresser.role.owner.address(message.role_id, user)
-            inputs.add(membership_address)
-
-        for user in message.members:
-            membership_address = addresser.role.member.address(message.role_id, user)
-            inputs.add(membership_address)
-
         outputs = inputs
         return inputs, outputs
 
@@ -106,39 +94,6 @@ class DeleteRole(BaseMessage):
                 )
             )
 
-        for admin in message.admins:
-            if not addresser.role.admin.exists_in_state_inputs(
-                inputs=payload.inputs,
-                input_state=input_state,
-                object_id=message.role_id,
-                related_id=admin,
-            ):
-                raise ValueError(
-                    "User {} is not an admin of role {}".format(admin, message.role_id)
-                )
-
-        for member in message.members:
-            if not addresser.role.member.exists_in_state_inputs(
-                inputs=payload.inputs,
-                input_state=input_state,
-                object_id=message.role_id,
-                related_id=member,
-            ):
-                raise ValueError(
-                    "User {} is not a member of role {}".format(member, message.role_id)
-                )
-
-        for owner in message.owners:
-            if not addresser.role.owner.exists_in_state_inputs(
-                inputs=payload.inputs,
-                input_state=input_state,
-                object_id=message.role_id,
-                related_id=owner,
-            ):
-                raise ValueError(
-                    "User {} is not an owner of role {}".format(owner, message.role_id)
-                )
-
     def apply_update(self, message, payload, object_id, related_id, output_state):
         """ Adds deleted role's address and the addresses of associated relationships
         to the removed field in output_state. This will inform the blockcahin to
@@ -153,27 +108,6 @@ class DeleteRole(BaseMessage):
                 changed on the blockchain or will be removed from
                 the blockchain.
         """
-        for admin in message.admins:
-            addresser.role.admin.remove_relationship(
-                object_id=object_id,
-                related_id=admin,
-                outputs=payload.outputs,
-                output_state=output_state,
-            )
-        for owner in message.owners:
-            addresser.role.owner.remove_relationship(
-                object_id=object_id,
-                related_id=owner,
-                outputs=payload.outputs,
-                output_state=output_state,
-            )
-        for member in message.members:
-            addresser.role.member.remove_relationship(
-                object_id=object_id,
-                related_id=member,
-                outputs=payload.outputs,
-                output_state=output_state,
-            )
         addresser.role.remove_state_object(
             object_id=object_id,
             related_id=None,

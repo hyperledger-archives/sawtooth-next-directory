@@ -15,7 +15,6 @@
 """ LDAP Delta Inbound Sync
 """
 import os
-import json
 import time
 from datetime import datetime, timezone
 import rethinkdb as r
@@ -225,7 +224,9 @@ def insert_deleted_entries(deleted_entries, data_type):
             "timestamp": datetime.now().replace(tzinfo=timezone.utc).isoformat(),
             "provider_id": LDAP_DC,
         }
-
+        LOGGER.debug(
+            "Inserted deleted LDAP %s into inbound queue: %s", data_type, remote_id
+        )
         r.table("inbound_queue").insert(inbound_entry).run(conn)
     conn.close()
 
@@ -235,20 +236,11 @@ def insert_updated_entries(data_dict, when_changed, data_type):
     insertion_counter = 0
     conn = connect_to_db()
     for entry in data_dict:
-        entry_to_insert = {}
-        entry_json = json.loads(entry.entry_to_json())
-        entry_attributes = entry_json["attributes"]
-        for attribute in entry_attributes:
-            if len(entry_attributes[attribute]) > 1:
-                entry_to_insert[attribute] = entry_attributes[attribute]
-            else:
-                entry_to_insert[attribute] = entry_attributes[attribute][0]
-
         if entry.whenChanged.value > when_changed:
             if data_type == "user":
-                standardized_entry = inbound_user_filter(entry_to_insert, "ldap")
+                standardized_entry = inbound_user_filter(entry, "ldap")
             else:
-                standardized_entry = inbound_group_filter(entry_to_insert, "ldap")
+                standardized_entry = inbound_group_filter(entry, "ldap")
             entry_modified_timestamp = entry.whenChanged.value.strftime(
                 "%Y-%m-%dT%H:%M:%S.%f+00:00"
             )
@@ -259,11 +251,18 @@ def insert_updated_entries(data_dict, when_changed, data_type):
                 "timestamp": entry_modified_timestamp,
                 "provider_id": LDAP_DC,
             }
+            LOGGER.debug(
+                "Inserting LDAP %s into inbound queue: %s",
+                data_type,
+                standardized_entry["remote_id"],
+            )
             r.table("inbound_queue").insert(inbound_entry).run(conn)
 
             sync_source = "ldap-" + data_type
             provider_id = LDAP_DC
-            save_sync_time(provider_id, sync_source, "delta", entry_modified_timestamp)
+            save_sync_time(
+                provider_id, sync_source, "delta", conn, entry_modified_timestamp
+            )
             insertion_counter += 1
     conn.close()
     LOGGER.info("Inserted %s records into inbound_queue.", insertion_counter)

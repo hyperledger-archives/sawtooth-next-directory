@@ -15,10 +15,10 @@ limitations under the License.
 
 
 #next-approver-manage-content {
-  height: calc(100% - 164px);
+  height: calc(100% - 211px);
   padding: 0 30px;
   position: relative;
-  top: 145px;
+  top: 192px;
 }
 
 #next-approver-manage-content > .ui.grid {

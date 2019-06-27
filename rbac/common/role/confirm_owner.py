@@ -15,6 +15,7 @@
 """Implements the CONFIRM_ADD_ROLE_OWNER message
 usage: rbac.role.owner.confirm.create()"""
 
+from rbac.common.role.sync_direction import set_sync_direction
 from rbac.common import addresser
 from rbac.common.proposal.proposal_confirm import ProposalConfirm
 from rbac.common.logs import get_default_logger
@@ -108,7 +109,11 @@ class ConfirmAddRoleOwner(ProposalConfirm):
     #            )
 
     def apply_update(self, message, payload, object_id, related_id, output_state):
-        """Create admin address"""
+        """Create owner address"""
+
+        # Update the sync_direction so that it will go to provider.
+        set_sync_direction(object_id, "OUTBOUND")
+
         addresser.role.owner.create_relationship(
             object_id=object_id,
             related_id=related_id,

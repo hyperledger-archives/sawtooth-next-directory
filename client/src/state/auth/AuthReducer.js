@@ -34,11 +34,18 @@ export const success = (state, { isAuthenticated, payload }) => {
   });
 };
 
+export const Usersuccess = {
+  userExists: (state, { exists }) =>
+    state.merge({ userExists: exists }),
+};
 
 export const failure = (state, { error }) => {
   return state.merge({ fetching: false, error });
 };
 
+export const resetUserExists = (state, {error}) => {
+  return state.merge({ userExists: null});
+};
 
 export const resetErrors = (state) =>
   state.merge({ error: null });
@@ -61,6 +68,11 @@ export const AuthReducer = createReducer(INITIAL_STATE, {
   [Types.SIGNUP_REQUEST]:   request,
   [Types.SIGNUP_SUCCESS]:   success,
   [Types.SIGNUP_FAILURE]:   failure,
+
+  [Types.USER_EXISTS_REQUEST]:          request,
+  [Types.USER_EXISTS_SUCCESS]:          Usersuccess.userExists,
+  [Types.USER_EXISTS_FAILURE]:          failure,
+  [Types.RESET_USER_EXISTS]:            resetUserExists,
 
   [Types.LOGOUT_REQUEST]:   request,
   [Types.LOGOUT_SUCCESS]:   logout,

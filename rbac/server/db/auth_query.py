@@ -30,6 +30,20 @@ async def create_auth_entry(auth_entry):
     return insert
 
 
+async def update_auth(next_id, auth_entry):
+    """Update a user's auth entry by using their next_id
+    Args:
+        auth_entry:
+            dict: dictionary containing the fields to be updated
+    """
+    conn = await create_connection()
+    resource = (
+        await r.table("auth").filter({"next_id": next_id}).update(auth_entry).run(conn)
+    )
+    conn.close()
+    return resource
+
+
 async def get_auth_by_next_id(next_id):
     """Get user record from auth table using next_id."""
     conn = await create_connection()

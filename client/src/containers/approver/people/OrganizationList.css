@@ -29,14 +29,13 @@ limitations under the License.
 }
 
 #next-approver-people-list-container .next-member-list-person-role-count {
-  color: white;
+  font-size: .9em;
   height: 54px;
   min-width: 70px;
   text-align: center;
 }
 
 #next-approver-people-list-container .next-member-list-person-role-count h1 {
-  color: var(--magenta);
   margin-bottom: 0;
 }
 
@@ -49,6 +48,10 @@ h3.next-member-list-person-info div:first-child {
   flex: 0 0 66px;
 }
 
+h3.next-member-list-person-info .sub.header {
+  color: #8e8e8e !important;
+}
+
 #next-approver-people-list-loader {
   padding-top: 70px;
 }
@@ -58,9 +61,24 @@ h3.next-member-list-person-info div:first-child {
 }
 
 .next-member-list-placeholder {
-  margin-top: 45px;
+  margin-top: 50px;
 }
 
 .next-approver-people-list-item {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+#next-approver-people-list-me {
+  margin-bottom: 20px;
+}
+
+#next-approver-people-list-me,
+#next-approval-people-list-search-container {
+  margin-top: 30px;
+}
+
+#next-approver-people-list-me .label.small {
+  border-radius: .5em;
+  margin-left: 10px;
+  padding: .35em .5em;
 }

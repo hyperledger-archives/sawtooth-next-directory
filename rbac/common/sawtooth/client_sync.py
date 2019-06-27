@@ -40,6 +40,15 @@ class ClientSync:
         self.send_batches(batch_list)
         return self.get_statuses(batch_ids, wait=10)
 
+    def status_recheck(self, batch_list):
+        """Get the result statuses of a batch that has been sent
+        Args:
+            batch_list:
+                list: a list of batches that has been sent to blockchain
+        """
+        batch_ids = get_batch_ids(batch_list)
+        return self.get_statuses(batch_ids, wait=10)
+
     def get_address(self, address, head=None):
         """Reads an address of the blockchain state"""
         leaf = self._client.get("/state/" + address, head=head)

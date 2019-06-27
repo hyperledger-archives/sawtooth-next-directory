@@ -72,6 +72,46 @@ async def insert_to_outboundqueue(conn, outbound_entry):
     return outbound_result
 
 
+async def does_role_exist(conn, role_id):
+    """Checks if a role exists in rethinkdb.
+
+    Args:
+        conn:
+            obj: Rethinkdb connection object.
+        role_id:
+            str: Next ID for a given role.
+    Returns:
+        bool:
+            True: if the role was found in rethink.
+        bool:
+            False: if the tole was not found in rethink.
+    """
+    role = await r.table("roles").filter({"role_id": role_id}).count().run(conn)
+    return bool(role > 0)
+
+
+async def fetch_role_owners(conn, role_id):
+    """fetches a list of role owners for the given role id.
+    Args:
+        conn:
+            obj: RethinkDB connection object.
+        role_id:
+            str: Next ID for a given role.
+    Returns:
+        role_owners:
+            arr: <str>: a list of Next IDs of users registered as owners of the
+                        given role.
+    """
+    role_owners = (
+        await r.table("role_owners")
+        .filter({"role_id": role_id})
+        .get_field("related_id")
+        .coerce_to("array")
+        .run(conn)
+    )
+    return role_owners
+
+
 async def fetch_role_resource(conn, role_id):
     """Get a role resource by role_id."""
     resource = (
@@ -98,6 +138,35 @@ async def fetch_role_resource(conn, role_id):
         return resource[0]
     except IndexError:
         raise ApiNotFound("Role {} doesn't exist.".format(role_id))
+
+
+async def get_role_by_name(conn, name):
+    """Fetch a role by name
+    Args:
+        conn:
+            obj: database connection object
+        name:
+            str: name of role
+    """
+    return await r.table("roles").filter({"name": name}).coerce_to("array").run(conn)
+
+
+async def get_role_membership(conn, next_id, role_id):
+    """Get the role membership of a specific user for a specific role
+    Args:
+        conn:
+            obj: database connection object
+        next_id:
+            str: id of the user
+        role_id:
+            str: if of the role
+    """
+    return (
+        await r.table("role_members")
+        .filter({"role_id": role_id, "related_id": next_id})
+        .coerce_to("array")
+        .run(conn)
+    )
 
 
 async def expire_role_member(conn, role_id, next_id):

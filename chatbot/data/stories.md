@@ -30,6 +30,10 @@
 * owner{"owner_status": "OWNER", "resource_id": "123", "resource_name": "abc"}
   - utter_owner
 
+## story_owner_not_member
+* owner{"owner_status": "OWNER", "member_status": "NOT_MEMBER", "resource_id": "123", "resource_name": "abc"}
+  - utter_owner_not_member
+
 ## story_pending_role
 * pending{"member_status": "PENDING", "resource_type": "ROLE", "resource_id": "123", "resource_name": "abc"}
   - utter_pending_role

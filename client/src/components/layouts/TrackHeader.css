@@ -74,5 +74,9 @@ limitations under the License.
 }
 
 #next-track-header .ui.header .content {
-  margin: 4px 4px 4px 18px;
+  margin: 4px;
+}
+
+#next-track-header-subheader {
+  max-width: 250px
 }

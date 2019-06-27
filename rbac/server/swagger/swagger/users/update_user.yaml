@@ -1,0 +1,38 @@
+put:
+  description: Update a user's details(email, name, username).
+  parameters:
+    - name: updateUser
+      in: body
+      description: next_id for user, name, email, and username
+      required: true
+      schema:
+        $ref: '../definitions/definitions.yaml#/updateUser'
+  responses:
+    '200':
+      description: Success response with "message" field in object
+      schema:
+        properties:
+          data:
+            properties:
+              message:
+                $ref: '../definitions/definitions.yaml#/updateUserResponse'
+    '400':
+      description: Response for a bad request
+      schema:
+        $ref: '../definitions/definitions.yaml#/400Error'
+    '401':
+      description: Response for an unauthorized request
+      schema:
+        $ref: '../definitions/definitions.yaml#/401Error'
+    '403':
+      description: Response for a forbidden request
+      schema:
+        $ref: '../definitions/definitions.yaml#/403Error'
+    '503':
+      description: Response for an internal unknown error
+      schema:
+        $ref: '../definitions/definitions.yaml#/503Error'
+    default:
+      description: Response for an unexpected error
+      schema:
+        $ref: '../definitions/definitions.yaml#/error'

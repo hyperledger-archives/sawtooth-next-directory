@@ -152,4 +152,12 @@ export const formatDate = (timestamp) =>
   new Date(timestamp * 1e3).toLocaleDateString();
 
 
+export const toTitleCase = (string) => {
+  string = string.toLowerCase().split(' ');
+  for (let i = 0; i < string.length; i++)
+    string[i] = string[i].charAt(0).toUpperCase() + string[i].slice(1);
+  return string.join(' ');
+};
+
+
 export const noop = () => {};

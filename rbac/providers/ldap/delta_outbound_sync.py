@@ -22,11 +22,7 @@ from ldap3 import MODIFY_REPLACE
 from ldap3.core.exceptions import LDAPSessionTerminatedByServerError
 from rbac.common.logs import get_default_logger
 
-from rbac.providers.common.db_queries import (
-    peek_at_queue,
-    put_entry_changelog,
-    delete_entry_queue,
-)
+from rbac.providers.common.db_queries import peek_at_queue, put_entry_changelog
 from rbac.providers.common import ldap_connector
 from rbac.providers.common.provider_errors import ValidationException
 from rbac.providers.common.outbound_filters import (
@@ -205,9 +201,6 @@ def ldap_outbound_listener():
             except ValidationException as err:
                 LOGGER.warning("Outbound payload failed validation")
                 LOGGER.warning(err)
-
-            LOGGER.debug("Deleting queue entry from outbound queue...")
-            delete_entry_queue(queue_entry["id"], "outbound_queue")
 
         except LDAPSessionTerminatedByServerError:
             LOGGER.warning(

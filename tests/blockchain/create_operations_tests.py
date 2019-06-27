@@ -17,7 +17,7 @@
 import unittest
 import pytest
 
-from tests.blockchain.rbac_client import RbacClient
+from tests.blockchain.rbac_client_helper_class import RbacClient
 from tests.blockchain.integration_test_helper import IntegrationTestHelper
 from rbac.common.crypto.keys import Key
 from rbac.common.logs import get_default_logger

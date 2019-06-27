@@ -128,6 +128,7 @@ export const appDispatch = (dispatch) => ({
   getOpenProposals:   (id) => dispatch(Approver.openProposalsRequest(id)),
   createRole:    (payload) => dispatch(Approver.createRoleRequest(payload)),
   createPack:    (payload) => dispatch(Approver.createPackRequest(payload)),
+  deletePack:         (id) => dispatch(Approver.deletePackRequest(id)),
   setOnBehalfOf:      (id) => dispatch(Approver.onBehalfOfSet(id)),
   getOrganization: (id, isMe) =>
     dispatch(Approver.organizationRequest(id, isMe)),

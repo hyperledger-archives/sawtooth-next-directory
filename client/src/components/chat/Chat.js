@@ -146,12 +146,10 @@ class Chat extends Component {
    */
   render () {
     const {
-      activeRole,
       disabled,
       hideButtons,
       hideForm,
       type } = this.props;
-    const noMembers = activeRole && activeRole.owners.length === 0;
 
     return (
       <div id='next-chat-container'>
@@ -169,7 +167,6 @@ class Chat extends Component {
             <ChatForm
               {...this.props}
               disabled={disabled}
-              formDisabled={noMembers}
               hideButtons={hideButtons}
               hideForm={hideForm}
               approve={this.manualApprove}
@@ -188,8 +185,8 @@ class Chat extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    fetching:      state.chat.fetching,
-    socketError:   state.app.socketError,
+    fetching:             state.chat.fetching,
+    socketError:          state.app.socketError,
   };
 };
 

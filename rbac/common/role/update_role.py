@@ -17,9 +17,11 @@
 """
 
 from rbac.common import addresser
-from rbac.common.addresser.address_space import AddressSpace
-from rbac.common.addresser.address_space import ObjectType
-from rbac.common.addresser.address_space import RelationshipType
+from rbac.common.addresser.address_space import (
+    AddressSpace,
+    ObjectType,
+    RelationshipType,
+)
 from rbac.common.base.base_message import BaseMessage
 from rbac.common.logs import get_default_logger
 

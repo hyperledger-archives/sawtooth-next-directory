@@ -20,7 +20,6 @@ from rbac.common.logs import get_default_logger
 from rbac.ledger_sync.deltas.decoding import data_to_dicts
 from rbac.ledger_sync.deltas.updating import get_updater
 from rbac.ledger_sync.deltas.removing import get_remover
-from rbac.ledger_sync.deltas.decoding import TABLE_NAMES
 
 LOGGER = get_default_logger(__name__)
 
@@ -45,9 +44,6 @@ def update_database(conn, state_change):
                 remove(change.address)
             else:
                 resource = data_to_dicts(change.address, change.value)[0]
-                data_type = addresser.get_address_type(change.address)
-                if data_type in TABLE_NAMES and TABLE_NAMES[data_type] == "roles":
-                    clear_role(conn, resource["role_id"], resource["created_date"])
                 update(change.address, resource)
 
 
@@ -122,40 +118,3 @@ def drop_fork(conn, block_num):
     )
 
     return {k: v + resource_results[k] for k, v in block_results.items()}
-
-
-def clear_role(conn, role_id, update_time):
-    """Takes a role ID and update_time and removes all role admins,
-    role owners, role members, and base role objects in rethinkDB that are
-    older than the update_time.
-    """
-    # NOTE: created_date in rethink is being overwritten on ingestion by
-    #   /rbac/ledger_sync/inbound/listener.py and actually tracks the
-    #   time the object was last updated/modified. It is NOT the time the
-    #   object was created.
-
-    update_time = r.epoch_time(int(update_time) - 1)
-    # remove all old entries in role_attributes with role_id
-    (
-        r.table("role_members")
-        .filter({"role_id": role_id})
-        .filter(lambda role_member: role_member["created_date"] < update_time)
-        .delete(durability="hard", return_changes=False)
-        .run(conn)
-    )
-    # remove all old ntries in role_admins with role_id
-    (
-        r.table("role_admins")
-        .filter({"role_id": role_id})
-        .filter(lambda role_admin: role_admin["created_date"] < update_time)
-        .delete(durability="hard", return_changes=False)
-        .run(conn)
-    )
-    # remove all old entries in role_owners with role_id
-    (
-        r.table("role_owners")
-        .filter({"role_id": role_id})
-        .filter(lambda role_owner: role_owner["created_date"] < update_time)
-        .delete(durability="hard", return_changes=False)
-        .run(conn)
-    )

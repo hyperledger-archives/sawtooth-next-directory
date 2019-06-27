@@ -41,7 +41,7 @@ limitations under the License.
   position: fixed;
   top: 40px;
   width: 100%;
-  z-index: 1;
+  z-index: 99;
 }
 
 .dark #next-wave-container {
@@ -70,8 +70,4 @@ limitations under the License.
 @keyframes waves-up {
   0% { transform: scale(1, 0); }
   25%, 100% { transform: scale(1, 1); }
-}
-
-.next-static {
-  display: none;
 }

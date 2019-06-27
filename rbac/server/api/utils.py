@@ -16,18 +16,23 @@
 
 import binascii
 import rethinkdb as r
-from sanic.response import json
 
+from sanic.response import json
 from sawtooth_sdk.protobuf import client_batch_submit_pb2
 from sawtooth_sdk.protobuf import validator_pb2
 
+from rbac.common.crypto.keys import Key
+from rbac.common.crypto.secrets import decrypt_private_key, deserialize_api_key
 from rbac.common.logs import get_default_logger
-from rbac.common.crypto.secrets import decrypt_private_key
-from rbac.common.crypto.secrets import deserialize_api_key
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthorized
 from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
-from rbac.common.crypto.keys import Key
+from rbac.server.db.db_utils import create_connection
+from rbac.server.db.roles_query import (
+    get_role_by_name,
+    get_role_membership,
+    fetch_role_owners,
+)
 
 LOGGER = get_default_logger(__name__)
 
@@ -98,9 +103,12 @@ async def create_response(conn, request_url, data, head_block, start=None, limit
     return json(response)
 
 
-def create_tracker_response(slot_name, value):
+def create_tracker_response(events):
     """Create JSON event payload used to modify the chatbot tracker"""
-    return json({"events": [{"event": "slot", "name": slot_name, "value": value}]})
+    response = {"events": []}
+    for name, value in events.items():
+        response["events"].append({"event": "slot", "name": name, "value": value})
+    return json(response)
 
 
 async def get_response_paging_info(conn, table, url, start, limit, head_block_num):
@@ -250,3 +258,39 @@ async def send(conn, batch_list, timeout, webhook=False):
         elif status == client_batch_submit_pb2.ClientBatchStatus.UNKNOWN:
             raise ApiInternalError("Internal Error: Unspecified error.")
     return status
+
+
+async def check_admin_status(next_id):
+    """Verfiy that a user is a member of NEXT admins.  Return boolean.
+    Args:
+        next_id:
+            str: user's next_id
+    """
+    conn = await create_connection()
+    admin_role = await get_role_by_name(conn, "NextAdmins")
+    if not admin_role:
+        raise ApiInternalError("NEXT administrator group has not been created.")
+    admin_membership = await get_role_membership(
+        conn, next_id, admin_role[0]["role_id"]
+    )
+    conn.close()
+    if admin_membership:
+        return True
+    return False
+
+
+async def check_role_owner_status(next_id, role_id):
+    """Verify that the given user is an owner of the given role.
+    Args:
+        next_id:
+            str: The next_id of a given user to check status of.
+        role_id:
+            str: The next_id of a given role to query against.
+    Returns:
+        owner_status:
+            bool: Returns True if the next_id is in the role's owner list.
+                Returns False if the next_id is NOT in the role's owner list.
+    """
+    with await create_connection() as conn:
+        role_owners = await fetch_role_owners(conn, role_id)
+        return bool(next_id in role_owners)

@@ -49,7 +49,7 @@ def get_last_sync(source, sync_type):
         raise err
 
 
-def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
+def save_sync_time(provider_id, sync_source, sync_type, conn, timestamp=None):
     """Saves sync time for the current data type into the RethinkDB table 'sync_tracker'."""
     if timestamp:
         last_sync_time = timestamp
@@ -61,9 +61,7 @@ def save_sync_time(provider_id, sync_source, sync_type, timestamp=None):
         "source": sync_source,
         "sync_type": sync_type,
     }
-    conn = connect_to_db()
     r.table("sync_tracker").insert(sync_entry).run(conn)
-    conn.close()
 
 
 def peek_at_queue(table_name, provider_id=None):
@@ -86,6 +84,14 @@ def peek_at_queue(table_name, provider_id=None):
         return queue_entry
     except (r.ReqlNonExistenceError, r.ReqlOpFailedError, r.ReqlDriverError):
         return None
+
+
+def peek_at_q_unfiltered(table_name):
+    """Returns a single entry from table_name with the oldest timestamp."""
+    conn = connect_to_db()
+    queue_entry = r.table(table_name).min("timestamp").coerce_to("object").run(conn)
+    conn.close()
+    return queue_entry
 
 
 def put_entry_changelog(queue_entry, direction):

@@ -12,24 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -----------------------------------------------------------------------------
-""" API test configuration settings
-"""
 
-import time
-
-
-# use high wait time for Travis, reduce for development
-# the amount of time waited by the API until it assumes
-# a record ought to have been synced to RethinkDB
-# This is likely temporary until write API calls have been
-# refactored to return desired data and/or a more reliable
-# method of waiting for sync to finish is implemented.
-API_WAIT_TIME = 5
-
-
-def api_wait():
-    """Wait some amount of time for async stuff
-        to occur. (This is temporary
-        pending API refactoring)
-    """
-    time.sleep(API_WAIT_TIME)
+FROM python:3.5-slim-jessie
+RUN pip install \
+        pyyaml==4.2b1 \
+        pyasn1==0.4.4 \
+        pytz==2018.6 \
+        itsdangerous==1.1.0 \
+        rethinkdb==2.3.0.post6 \
+        requests==2.20.0 \
+        environs==4.1.0
+WORKDIR /project/hyperledger-rbac
+CMD [ "./bin/bootstrap" ]

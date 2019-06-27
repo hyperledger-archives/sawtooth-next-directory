@@ -39,7 +39,8 @@ import {
   createPack,
   createRole,
   checkRoleExists,
-  checkPackExists } from './ApproverSaga';
+  checkPackExists,
+  deletePack } from './ApproverSaga';
 import {
   packAccess,
   roleAccess,
@@ -56,7 +57,7 @@ import {
 
 
 import { closeSocket, openSocket, sendSocket } from './AppSaga';
-import { login, signup, logout } from './AuthSaga';
+import { login, signup, logout, checkUserExists } from './AuthSaga';
 import { getConversation } from './ChatSaga';
 import { searchBrowse, searchPeople } from './SearchSaga';
 import { me, getPeople, getUser, getUsers } from './UserSaga';
@@ -82,6 +83,7 @@ function * sagas () {
     takeLatest(ApproverTypes.OPEN_PROPOSALS_REQUEST, getOpenProposals, api),
     takeLatest(ApproverTypes.CREATE_PACK_REQUEST, createPack, api),
     takeLatest(ApproverTypes.CREATE_ROLE_REQUEST, createRole, api),
+    takeLatest(ApproverTypes.DELETE_PACK_REQUEST, deletePack, api),
     takeLatest(ApproverTypes.APPROVE_PROPOSALS_REQUEST, approveProposals, api),
     takeLatest(ApproverTypes.REJECT_PROPOSALS_REQUEST, rejectProposals, api),
     takeLatest(ApproverTypes.ROLE_EXISTS_REQUEST, checkRoleExists, api),
@@ -100,6 +102,7 @@ function * sagas () {
     takeLatest(AuthTypes.LOGIN_REQUEST, login, api),
     takeLatest(AuthTypes.SIGNUP_REQUEST, signup, api),
     takeLatest(AuthTypes.LOGOUT_REQUEST, logout, FixtureAPI),
+    takeLatest(AuthTypes.USER_EXISTS_REQUEST, checkUserExists, api),
 
     // Chat
     takeLatest(ChatTypes.CONVERSATION_REQUEST, getConversation, FixtureAPI),

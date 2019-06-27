@@ -153,7 +153,7 @@ def fetch_proposal_ids_by_opener(opener):
     return (
         r.table("proposals")
         .get_all(opener, index="opener")
-        .pluck("proposal_id", "object_id", "pack_id")
+        .pluck("proposal_id", "object_id", "pack_id", "status")
         .coerce_to("array")
     )
 
@@ -186,6 +186,22 @@ def fetch_open_proposals_by_opener(next_id):
         r.table("proposals")
         .filter({"opener": next_id, "status": "OPEN"})
         .coerce_to("array")
+    )
+
+    return resource
+
+
+def fetch_open_proposals_by_role(conn, role_id):
+    """Fetch all open proposals related to a role.
+        Args:
+            role_id:
+                str: a role's id
+    """
+    resource = (
+        r.table("proposals")
+        .filter({"object_id": role_id, "status": "OPEN"})
+        .coerce_to("array")
+        .run(conn)
     )
 
     return resource

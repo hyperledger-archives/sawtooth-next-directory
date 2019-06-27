@@ -211,7 +211,9 @@ def initialize_aad_sync():
                 users = fetch_next_payload(users["@odata.nextLink"])
                 if users:
                     insert_user_to_db(users)
-            save_sync_time(provider_id, "azure-user", "initial")
+            conn = connect_to_db()
+            save_sync_time(provider_id, "azure-user", "initial", conn)
+            conn.close()
             LOGGER.info("Initial user upload complete :)")
         else:
             LOGGER.info(
@@ -231,7 +233,9 @@ def initialize_aad_sync():
                 groups = fetch_next_payload(groups["@odata.nextLink"])
                 if groups:
                     insert_group_to_db(groups)
-            save_sync_time(provider_id, "azure-group", "initial")
+            conn = connect_to_db()
+            save_sync_time(provider_id, "azure-group", "initial", conn)
+            conn.close()
             LOGGER.info("Initial group upload complete :)")
         else:
             LOGGER.info(

@@ -34,14 +34,6 @@ limitations under the License.
   margin-right: 10px;
 }
 
-#next-header-global-menu-view-toggle .content {
-  width: 100%;
-}
-
-#next-header-global-menu-view-toggle .ui.header > .icon {
-  vertical-align: top;
-}
-
 #next-header-global-menu-profile .ui.header {
   display: flex;
   align-items: center;
@@ -69,14 +61,12 @@ limitations under the License.
   letter-spacing: 1px;
 }
 
-.next-render-approver {
-  margin-right: 4em;
-}
-
 #next-header-actions {
   align-items: center;
   display: flex;
+  flex: 1;
   height: 100%;
+  justify-content: flex-end;
 }
 
 #next-header-global-menu {
@@ -141,10 +131,6 @@ limitations under the License.
 
 #next-header-notification-menu:before {
   width: 42px;
-}
-
-.next-render-approver {
-  margin-top: 2px;
 }
 
 label ::after {

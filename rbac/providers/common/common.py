@@ -17,12 +17,44 @@
 """ Functions that are common to all providers.
 """
 import time
+import rethinkdb as r
 
 from rbac.common.logs import get_default_logger
 from rbac.providers.common.expected_errors import ExpectedError
 from rbac.providers.common.db_queries import get_last_sync
+from rbac.utils import connect_to_db
+
 
 LOGGER = get_default_logger(__name__)
+
+
+def wait_for_rethink(max_attempts=200, delay=0.5):
+    """Polls rethinkDB until all tables report as "ready". This prevents
+    resources from attempting to read/write to rethink before it has
+    initialized.
+
+    Args:
+        max_attempts: int:  The number of attempts before giving up. Waiting
+                            longer is preferable to giving up, and this only
+                            runs during init, so we set a large default val.
+                            default: 200
+        delay: float:   The number of seconds to wait between attempts.
+                        default: 0.5
+    Returns:
+        bool: True: if all rethink tables are reporting as ready.
+        bool: False:    if some rethink tables are not ready after reaching the
+                        max number of attempts.
+    """
+    with connect_to_db() as conn:
+        is_rethink_ready = False
+        attempts = 0
+        while attempts < max_attempts and not is_rethink_ready:
+            db_status = r.db("rbac").wait().coerce_to("object").run(conn)
+            ready_table_count = db_status["ready"]
+            is_rethink_ready = ready_table_count == 25
+            attempts += 1
+            time.sleep(delay)
+    return is_rethink_ready
 
 
 def check_last_sync(sync_source, sync_type):
