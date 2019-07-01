@@ -337,18 +337,6 @@ class TestOrgHierarchy(unittest.TestCase):
 
         self.assertEqual(
             self.client.confirm_update_manager(
-                key=self.key1,
-                proposal_id=self.update_manager_proposal_id,
-                reason=uuid4().hex,
-                next_id=self.key2a.public_key,
-                manager_id=self.key_manager.public_key,
-            )[0]["status"],
-            "INVALID",
-            "The txn signer must be the new manager listed on the proposal",
-        )
-
-        self.assertEqual(
-            self.client.confirm_update_manager(
                 key=self.key_manager,
                 proposal_id=uuid4().hex,
                 reason=uuid4().hex,

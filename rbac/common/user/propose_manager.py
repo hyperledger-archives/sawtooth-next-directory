@@ -89,19 +89,14 @@ class ProposeUpdateUserManager(ProposalPropose):
             object_id=message.new_manager_id,
         ):
             raise ValueError(
-                "Manager with id {} does not exist in state".format(
+                "Manager with next_id {} does not exist in state".format(
                     message.new_manager_id
                 )
             )
-        addresser.user.get_from_input_state(
+
+        if not addresser.user.exists_in_state_inputs(
             inputs=payload.inputs, input_state=input_state, object_id=message.next_id
-        )
-
-
-# TODO: change to verify proposal assignment and hierarchy
-#        if user.manager_id and user.manager_id != payload.signer.next_id:
-#            raise ValueError(
-#                "Existing manager {} is not the transaction signer {}".format(
-#                    user.manager_id, payload.signer.next_id
-#                )
-#            )
+        ):
+            raise ValueError(
+                "User with next_id {} does not exist in state".format(message.next_id)
+            )

@@ -90,7 +90,21 @@ class ProposeAddRoleMember(ProposalPropose):
             related_id=message.next_id,
         ):
             raise ValueError(
-                "User {} is already an admin of role {}".format(
+                "User {} is already a member of role {}".format(
                     message.next_id, message.role_id
                 )
+            )
+
+        if not addresser.user.exists_in_state_inputs(
+            inputs=payload.inputs, input_state=input_state, object_id=message.next_id
+        ):
+            raise ValueError(
+                "User with next_id {} does not exist in state".format(message.next_id)
+            )
+
+        if not addresser.role.exists_in_state_inputs(
+            inputs=payload.inputs, input_state=input_state, object_id=message.role_id
+        ):
+            raise ValueError(
+                "Role with role_id {} does not exist in state".format(message.role_id)
             )

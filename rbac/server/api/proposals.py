@@ -21,7 +21,7 @@ from rbac.common.role import Role
 from rbac.common.task import Task
 from rbac.common.user import User
 from rbac.server.api.auth import authorized
-from rbac.server.api.errors import ApiBadRequest
+from rbac.server.api.errors import ApiBadRequest, ApiUnauthorized
 from rbac.server.api.utils import (
     create_response,
     get_request_block,
@@ -34,7 +34,7 @@ from rbac.server.api.utils import (
 )
 from rbac.server.db import proposals_query
 from rbac.server.db.relationships_query import fetch_relationships
-from rbac.server.db.users_query import fetch_manager_chain, fetch_user_resource
+from rbac.server.db.users_query import fetch_manager_chain, get_next_admins
 
 LOGGER = get_default_logger(__name__)
 
@@ -44,12 +44,12 @@ PROPOSALS_BP = Blueprint("proposals")
 TABLES = {
     "ADD_ROLE_TASK": "task_owners",
     "ADD_ROLE_MEMBER": "role_owners",
-    "ADD_ROLE_OWNER": "role_admins",
-    "ADD_ROLE_ADMIN": "role_admins",
+    "ADD_ROLE_OWNER": "role_owners",
+    "ADD_ROLE_ADMIN": "role_owners",
     "REMOVE_ROLE_TASK": "task_owners",
     "REMOVE_ROLE_MEMBER": "role_owners",
-    "REMOVE_ROLE_OWNER": "role_admins",
-    "REMOVE_ROLE_ADMIN": "role_admins",
+    "REMOVE_ROLE_OWNER": "role_owners",
+    "REMOVE_ROLE_ADMIN": "role_owners",
     "ADD_TASK_OWNER": "task_admins",
     "ADD_TASK_ADMIN": "task_admins",
     "REMOVE_TASK_OWNER": "task_admins",
@@ -163,7 +163,7 @@ async def update_proposal(request, proposal_id):
         request.app.config.DB_CONN, proposal_resource
     )
     if txn_user_id not in approvers_list["approvers"]:
-        raise ApiBadRequest(
+        raise ApiUnauthorized(
             "Bad Request: You don't have the authorization to APPROVE or REJECT the proposal"
         )
     batch_list = PROPOSAL_TRANSACTION[proposal_resource.get("type")][
@@ -195,11 +195,11 @@ async def compile_proposal_resource(conn, proposal_resource):
             table, "task_id", proposal_resource.get("object")
         ).run(conn)
     elif "users" in table:
-        # approvers needs to be new manager in update manager scenario
-        proposal_resource["approvers"] = [proposal_resource.get("target")]
-    else:
-        user_resource = await fetch_user_resource(conn, proposal_resource.get("object"))
-        proposal_resource["approvers"] = [user_resource.get("manager")]
+        proposal_resource["approvers"] = await get_next_admins(conn)
+        return proposal_resource
+
+    # Fetch manager chain for each user in approvers list for proposals
+    # that are not UpdateUserManager proposals
     i = 0
     approvers_count = len(proposal_resource["approvers"])
     final_list_of_manager_ids = []
