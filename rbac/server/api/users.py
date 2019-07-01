@@ -386,6 +386,7 @@ async def update_manager(request, next_id):
     txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     if await check_admin_status(txn_user_id):
+        next_admins_list = await users_query.get_next_admins(request.app.config.DB_CONN)
         batch_list = User().manager.propose.batch_list(
             signer_keypair=txn_key,
             signer_user_id=txn_user_id,
@@ -394,7 +395,7 @@ async def update_manager(request, next_id):
             new_manager_id=request.json.get("id"),
             reason=request.json.get("reason"),
             metadata=request.json.get("metadata"),
-            assigned_approver=[request.json.get("id")],
+            assigned_approver=next_admins_list,
         )
         await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
         await send_notification(request.json.get("id"), proposal_id)

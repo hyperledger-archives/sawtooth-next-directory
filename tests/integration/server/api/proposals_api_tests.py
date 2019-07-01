@@ -1,4 +1,4 @@
-# Copyright 2018 Contributors to Hyperledger Sawtooth
+# Copyright 2019 Contributors to Hyperledger Sawtooth
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
 # -----------------------------------------------------------------------------
 """Integration tests for proposals APIs"""
 import time
+
 import pytest
 import requests
 import rethinkdb as r
 
+from rbac.common.logs import get_default_logger
 from rbac.providers.common.db_queries import connect_to_db
 from tests.utilities.creation_utils import (
     create_next_admin,
@@ -25,10 +27,21 @@ from tests.utilities.creation_utils import (
     create_test_user,
     user_login,
 )
-from tests.utils import delete_user_by_username, delete_role_by_name, is_group_in_db
+from tests.utilities.db_queries import wait_for_resource_in_db
+from tests.utils import (
+    add_role_member,
+    add_role_owner,
+    approve_proposal,
+    delete_role_by_name,
+    delete_user_by_username,
+    is_group_in_db,
+    update_manager,
+)
 
 # pylint: disable=redefined-outer-name
 # this rule is typically disabled as pytest is prone to trigger it with fixtures.
+
+LOGGER = get_default_logger(__name__)
 
 TEST_USERS = [
     {
@@ -76,6 +89,25 @@ TEST_USERS = [
 ]
 
 TEST_ROLES = [{"name": "Hyrule_Heroes"}]
+
+UPDATE_MANAGER_CASES = [
+    (TEST_USERS[1], "next_admin", 200),
+    (TEST_USERS[2], TEST_USERS[4], 401),
+    (TEST_USERS[3], TEST_USERS[2], 401),
+    (TEST_USERS[1], TEST_USERS[5], 401),
+]
+
+ADD_ROLE_MEMBER_CASES = [
+    (TEST_USERS[5], TEST_USERS[6], 200),
+    (TEST_USERS[2], TEST_USERS[0], 401),
+    (TEST_USERS[3], TEST_USERS[5], 200),
+]
+
+ADD_ROLE_OWNER_CASES = [
+    (TEST_USERS[1], TEST_USERS[6], 200),
+    (TEST_USERS[5], TEST_USERS[0], 401),
+    (TEST_USERS[4], TEST_USERS[5], 200),
+]
 
 
 @pytest.fixture(autouse=True, scope="module")
@@ -224,7 +256,10 @@ def setup_module():
             response = create_test_role(session, role)
             assert response.status_code == 200, response.json()
             role_id = response.json()["data"]["id"]
-            role["next_id"] = role_id
+            role["role_id"] = role_id
+
+        add_member_payload = {"id": user_id}
+        add_role_member(session, role_id, add_member_payload)
 
 
 def teardown_module():
@@ -248,7 +283,7 @@ async def test_proposal_approvers_list(test_role_owner, test_requestor, test_rol
         requestor:
             str: the next_id of the user requesting membership in the role.
         role:
-            str: the next_id of the role that a user is requesting to join.
+            str: the role_id of the role that a user is requesting to join.
     """
     with requests.Session() as session:
         # make sure the role is in rethink
@@ -265,7 +300,7 @@ async def test_proposal_approvers_list(test_role_owner, test_requestor, test_rol
 
         # create proposal to add Sixth User to the test_role as a role member`
         user_id = test_requestor["next_id"]
-        role_id = test_role["next_id"]
+        role_id = test_role["role_id"]
         payload = {"id": user_id}
         response = session.post(
             "http://rbac-server:8000/api/roles/{}/members".format(role_id), json=payload
@@ -299,3 +334,145 @@ async def test_proposal_approvers_list(test_role_owner, test_requestor, test_rol
         ), "Missing role_owner's managers in proposal approvers list:\n{}\n{}".format(
             manager_chain, approver_list
         )
+
+
+@pytest.mark.parametrize("user, approver, expected_status_code", UPDATE_MANAGER_CASES)
+def test_approve_update_manager(user, approver, expected_status_code):
+    """ Tests four UpdateUserManager proposal approval scenarios:
+        1. NextAdmin approves the proposal
+        2. A random user tries to approve the proposal
+        3. New manager (related_id of proposal) tries to approve the proposal
+        4. Manager of NextAdmin tries to approve the proposal
+
+    Args:
+        user: (dict) User object that will be added to the role. Dict should
+            contain the following field:
+                {
+                    next_id: str
+                }
+        approver: (dict) User object of the approver. Dict should contain the
+            following fields:
+                {
+                    username: str
+                    password: str
+                }
+        expected_status_code: (int) Expected HTTP response code (either 200 or 401)
+    """
+    user_id = user["next_id"]
+    update_user_payload = {"id": TEST_USERS[2]["next_id"]}
+    with requests.Session() as session:
+
+        # Create UpdateUserManager proposal
+        create_next_admin(session)
+        response = update_manager(session, user_id, update_user_payload)
+        LOGGER.info(response)
+        proposal_id = response.json()["proposal_id"]
+
+        proposal_exists = wait_for_resource_in_db(
+            "proposals", "proposal_id", proposal_id
+        )
+        if proposal_exists:
+
+            # Attempt to approve the UpdateUserManager proposal
+            if approver != "next_admin":
+                log_in_payload = {
+                    "id": approver["username"],
+                    "password": approver["password"],
+                }
+                user_login(session, log_in_payload["id"], log_in_payload["password"])
+            approval_response = approve_proposal(session, proposal_id)
+            assert (
+                approval_response.status_code == expected_status_code
+            ), "An error occurred while approving UpdateUserManager proposal: {}".format(
+                approval_response.json()
+            )
+
+
+@pytest.mark.parametrize("user, approver, expected_status_code", ADD_ROLE_MEMBER_CASES)
+def test_approve_add_member(user, approver, expected_status_code):
+    """ Tests three AddRoleMember proposal approval scenarios:
+        1. Role owner approves the proposal
+        2. A random user tries to approve the proposal
+        3. Role owner's manager approves the proposal
+
+        Args:
+        user: (dict) User object that will be added to the role. Dict should
+            contain the following field:
+                {
+                    next_id: str
+                }
+        approver: (dict) User object of the approver. Dict should contain the
+            following fields:
+                {
+                    username: str
+                    password: str
+                }
+        expected_status_code: (int) Expected HTTP response code (either 200 or 401)
+    """
+    log_in_payload = {"id": approver["username"], "password": approver["password"]}
+    add_role_member_payload = {"id": user["next_id"]}
+    role_id = TEST_ROLES[0]["role_id"]
+    with requests.Session() as session:
+
+        # Create AddRoleMember proposal
+        user_login(session, log_in_payload["id"], log_in_payload["password"])
+        response = add_role_member(session, role_id, add_role_member_payload)
+        proposal_id = response.json()["proposal_id"]
+
+        proposal_exists = wait_for_resource_in_db(
+            "proposals", "proposal_id", proposal_id
+        )
+        if proposal_exists:
+
+            # Attempt to approve the AddRoleMember proposal
+            approval_response = approve_proposal(session, proposal_id)
+            assert (
+                approval_response.status_code == expected_status_code
+            ), "An error occurred while approving AddRoleMember proposal: {}".format(
+                approval_response.json()
+            )
+
+
+@pytest.mark.parametrize("user, approver, expected_status_code", ADD_ROLE_OWNER_CASES)
+def test_add_role_owner(user, approver, expected_status_code):
+    """ Tests three AddRoleOwner proposal approval scenarios:
+        1. Role owner approves the proposal
+        2. A random user tries to approve the proposal
+        3. Role owner's manager approves the proposal
+
+    Args:
+        user: (dict) User object that will be added to the role. Dict should
+            contain the following field:
+                {
+                    next_id: str
+                }
+        approver: (dict) User object of the approver. Dict should contain the
+            following fields:
+                {
+                    username: str
+                    password: str
+                }
+        expected_status_code: (int) Expected HTTP response code (either 200 or 401)
+    """
+    log_in_payload = {"id": approver["username"], "password": approver["password"]}
+    add_role_member_payload = {"id": user["next_id"]}
+    role_id = TEST_ROLES[0]["role_id"]
+    with requests.Session() as session:
+
+        # Create AddRoleOwner proposal
+        user_login(session, log_in_payload["id"], log_in_payload["password"])
+        response = add_role_owner(session, role_id, add_role_member_payload)
+        proposal_id = response.json()["proposal_id"]
+
+        proposal_exists = wait_for_resource_in_db(
+            "proposals", "proposal_id", proposal_id
+        )
+        if proposal_exists:
+
+            # Attempt to approve the AddRoleOwner proposal
+            approval_response = approve_proposal(session, proposal_id)
+            assert (
+                approval_response.status_code == expected_status_code
+            ), "An error occurred while approving AddRoleOwner proposal: {}".format(
+                approval_response.json()
+            )
