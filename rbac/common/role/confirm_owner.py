@@ -81,6 +81,14 @@ class ConfirmAddRoleOwner(ProposalConfirm):
         inputs.add(proposal_address)
         outputs.add(proposal_address)
 
+        owner_address = addresser.user.address(message.related_id)
+        inputs.add(owner_address)
+        outputs.add(owner_address)
+
+        role_address = addresser.role.address(message.object_id)
+        inputs.add(role_address)
+        outputs.add(role_address)
+
         return inputs, outputs
 
     def validate_state(self, context, message, payload, input_state, store):
@@ -93,20 +101,22 @@ class ConfirmAddRoleOwner(ProposalConfirm):
             input_state=input_state,
             store=store,
         )
-        # TODO: change to verify proposal assignment and hierarchy
-        # TODO: should be owners?
 
-    #        if not addresser.role.admin.exists_in_state_inputs(
-    #            inputs=inputs,
-    #            input_state=input_state,
-    #            object_id=message.object_id,
-    #            related_id=payload.signer.next_id,
-    #        ):
-    #            raise ValueError(
-    #                "Signer {} must be an admin of the role {}\n{}".format(
-    #                    payload.signer.next_id, message.object_id, input_state
-    #                )
-    #            )
+        if not addresser.user.exists_in_state_inputs(
+            inputs=payload.inputs, input_state=input_state, object_id=message.related_id
+        ):
+            raise ValueError(
+                "User with next_id {} does not exist in state".format(
+                    message.related_id
+                )
+            )
+
+        if not addresser.role.exists_in_state_inputs(
+            inputs=payload.inputs, input_state=input_state, object_id=message.object_id
+        ):
+            raise ValueError(
+                "Role with role_id {} does not exist in state".format(message.object_id)
+            )
 
     def apply_update(self, message, payload, object_id, related_id, output_state):
         """Create owner address"""

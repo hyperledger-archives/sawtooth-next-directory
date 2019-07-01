@@ -41,6 +41,24 @@ def add_role_member(session, role_id, payload):
     return response
 
 
+def add_role_owner(session, role_id, payload):
+    """Create a proposal for adding a role owner
+    Args:
+        session:
+            object: current session object
+        role_id:
+            str: id of role that is to be added to
+        payload:
+            dictionary: in the format of
+                {
+                    "id": "ID OF USER CURRENTLY BEING ADDED"
+                }
+    """
+    return session.post(
+        "http://rbac-server:8000/api/roles/{}/owners".format(role_id), json=payload
+    )
+
+
 def approve_proposal(session, proposal_id):
     """Create a role and authenticate to use api endpoints during testing."""
     proposal_payload = {"status": "APPROVED", "reason": "Approved by integration test"}
