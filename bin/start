@@ -107,10 +107,14 @@ fi
 
 if [[ "$LOG" == "1" ]]; then
     CMD="$CMD -d"
-    LOG_CMD="docker-compose logs -f -t | >> NEXT_output.log 2>> NEXT_error.log"
 fi
 
-echo $CMD
+echo "$CMD"
 $CMD
-echo $LOG_CMD
-$LOG_CMD
+
+sleep 5
+
+if [[ "$LOG" == "1" ]]; then
+echo "docker-compose logs -f -t >> NEXT_output.log 2>> NEXT_error.log"
+	(docker-compose logs --follow --timestamp) 2>&1 |tee --append NEXT_output.log
+fi
