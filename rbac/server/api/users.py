@@ -376,7 +376,13 @@ async def update_password(request):
 @USERS_BP.get("api/users/<next_id>/proposals/open")
 @authorized()
 async def fetch_open_proposals(request, next_id):
-    """Get open proposals for a user, by their next_id."""
+    """Get open proposals for a user, by their next_id.
+    Args:
+        request:
+            obj: request object to api
+        next_id:
+            str: next_id of user for open proposals as assigned_approval
+    """
     head_block = await utils.get_request_block(request)
     start, limit = utils.get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
@@ -393,7 +399,7 @@ async def fetch_open_proposals(request, next_id):
     for proposal_resource in proposal_resources:
         if (
             proposal_resource["status"] == "OPEN"
-            and next_id in proposal_resource["approvers"]
+            and next_id in proposal_resource["assigned_approver"]
         ):
             open_proposals.append(proposal_resource)
 
