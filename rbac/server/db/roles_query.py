@@ -20,6 +20,7 @@ from rbac.common.logs import get_default_logger
 from rbac.server.api.errors import ApiNotFound
 from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.proposals_query import fetch_proposal_ids_by_opener
+from rbac.server.db.db_utils import sanitize_query
 
 # from rbac.server.db.users_query import users_search_name, users_search_email
 
@@ -237,9 +238,10 @@ async def search_roles_count(conn, search_query):
 
 def roles_search_name(search_query):
     """Search for roles based a string int the name field."""
+    query = sanitize_query(search_query["search_input"])
     resource = (
         r.table("roles")
-        .filter(lambda doc: (doc["name"].match("(?i)" + search_query["search_input"])))
+        .filter(lambda doc: (doc["name"].match("(?i)" + query)))
         .order_by("name")
         .coerce_to("array")
     )
@@ -249,13 +251,10 @@ def roles_search_name(search_query):
 
 def roles_search_description(search_query):
     """Search for roles based a string in the description field."""
+    query = sanitize_query(search_query["search_input"])
     resource = (
         r.table("roles")
-        .filter(
-            lambda doc: (
-                doc["description"].match("(?i)" + search_query["search_input"])
-            )
-        )
+        .filter(lambda doc: (doc["description"].match("(?i)" + query)))
         .order_by("name")
         .coerce_to("array")
     )
@@ -265,9 +264,10 @@ def roles_search_description(search_query):
 
 async def roles_search_duplicate(conn, name):
     """Search for roles based a string int the name field."""
+    query = sanitize_query(name)
     resource = (
         await r.table("roles")
-        .filter(lambda doc: (doc["name"].match("(?i)^" + name + "$")))
+        .filter(lambda doc: (doc["name"].match("(?i)^" + query + "$")))
         .order_by("name")
         .coerce_to("array")
         .run(conn)

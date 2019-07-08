@@ -13,6 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Utility functions for Rethink and Sanic."""
+import re
 import time
 
 from environs import Env
@@ -69,3 +70,15 @@ async def wait_for_resource_in_db(table, index, identifier, max_attempts=10, del
             count += 1
             time.sleep(delay)
     return resource_found
+
+
+def sanitize_query(query):
+    """Remove special characters from a given query.
+
+    Args:
+        query:
+            str: String to sanitize
+    Returns:
+        A sanitized string without special characters.
+    """
+    return re.sub(r"[^a-zA-Z0-9]+", " ", query)
