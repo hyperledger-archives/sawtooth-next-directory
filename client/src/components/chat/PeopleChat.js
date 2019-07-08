@@ -282,6 +282,8 @@ class PeopleChat extends Component {
       directReports,
       handleOnBehalfOf,
       isAdministrator,
+      id,
+      organization,
       userFromId } = this.props;
 
     const user = userFromId(activeUser);
@@ -300,8 +302,9 @@ class PeopleChat extends Component {
                     {this.userEmail(activeUser)}
                   </Header.Subheader>
                 </Header>
-                { directReports &&
-                  directReports.includes(activeUser) &&
+                { organization && directReports && id &&
+                  (organization.managers.includes(id) ||
+                  directReports.includes(activeUser)) &&
                   <div>
                     <Label color='green' horizontal>
                       Direct Report
