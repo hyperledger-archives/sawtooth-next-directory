@@ -279,3 +279,30 @@ async def check_role_owner_status(next_id, role_id):
     with await create_connection() as conn:
         role_owners = await fetch_role_owners(conn, role_id)
         return bool(next_id in role_owners)
+
+
+async def send_notification(next_id, proposal_id, frequency=0):
+    """Send an entry to the notifications table for notification queue
+
+    Args:
+        next_id:
+            str: id for the user that is to be sent a notification
+        proposal_id:
+            str: id of a proposal user is to be notified about
+        frequency:
+            int: number representing time """
+    conn = await create_connection()
+    notification = (
+        r.table("notifications")
+        .insert(
+            {
+                "next_id": next_id,
+                "proposal_id": proposal_id,
+                "frequency": frequency,
+                "timestamp": r.now(),
+            }
+        )
+        .run(conn)
+    )
+    conn.close()
+    return notification
