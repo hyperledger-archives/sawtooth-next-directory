@@ -225,11 +225,7 @@ def format_role(role_resource):
         remote_id = "CN=" + role_resource["name"] + "," + ENV("GROUP_BASE_DN")
     else:
         remote_id = role_resource["remote_id"]
-    return {
-        "description": role_resource["description"],
-        "members": role_resource["members"],
-        "remote_id": remote_id,
-    }
+    return {"members": role_resource["members"], "remote_id": remote_id}
 
 
 def get_provider(admin_identifier):
@@ -264,25 +260,13 @@ def _update_provider(conn, address_type, resource):
         resource: The resource data
     """
     outbound_types = {
-        AddressSpace.USER: "user",
         AddressSpace.ROLES_ATTRIBUTES: "role",
         AddressSpace.ROLES_MEMBERS: "role",
-        AddressSpace.ROLES_OWNERS: "role",
     }
     if address_type in outbound_types:
         # Get the object & format it.
         provider_action = ""
         direction = ""
-        if outbound_types[address_type] == "user":
-            user = get_user(conn, resource["next_id"])
-            if user:
-                formatted_resource = user[0]
-            else:
-                LOGGER.warning("User not found: %s", resource["next_id"])
-                return
-            admin_identifier = formatted_resource["username"]
-            data_type = "user"
-            direction = formatted_resource["metadata"].get("sync_direction", "")
         if outbound_types[address_type] == "role":
             role = get_role(conn, resource["role_id"])
             if role:

@@ -99,3 +99,5 @@ GROUP_CREATION_TRANSFORM = {
     "owners": {"azure": "owners", "ldap": "managedBy"},
     "visibility": {"azure": "visibility", "ldap": None},
 }
+
+GROUP_OUTBOUND_TRANSFORM = ["members", "remote_id"]
