@@ -38,6 +38,7 @@ import Rejected from 'containers/approver/proposals/Rejected';
 
 import Manage from 'containers/approver/manage/Manage';
 import People from 'containers/approver/people/People';
+import EditUser from 'containers/approver/people/EditUser';
 
 
 import CreateRole from 'containers/approver/manage/roles/CreateRole';
@@ -132,6 +133,12 @@ const routes = (props) => [
   {
     path:   '/approval/people',
     main:   (rest) => <People {...props} {...rest}/>,
+    nav:    () => <ApproverNav {...props}/>,
+    exact:  true,
+  },
+  {
+    path:   '/approval/people/:id/edit',
+    main:   (rest) => <EditUser {...props} {...rest}/>,
     nav:    () => <ApproverNav {...props}/>,
     exact:  true,
   },

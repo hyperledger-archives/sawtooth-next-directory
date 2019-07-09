@@ -208,6 +208,7 @@ async def non_admin_creation(request):
     return txn_key, txn_user_id, next_id, key_pair
 
 
+# TODO: Change → api/users/<next_id>
 @USERS_BP.put("api/users/update")
 async def update_user_details(request):
     """Update the details associated with a user.  This is NEXT admin only capability.
