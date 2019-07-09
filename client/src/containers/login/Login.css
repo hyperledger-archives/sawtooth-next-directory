@@ -15,13 +15,30 @@ limitations under the License.
 
 
 #next-login-column {
-  margin-top: 130px;
-  max-width: 450px;
+  background: #151f23c7;
+  border-radius: 3.1em;
+  margin-top: 24%;
+  max-width: 330px;
+  overflow: hidden;
+  padding: 0;
 }
 
-#next-login-column a,
 #next-login-column input {
+  border: 0;
+  border-radius: .5em;
   color: var(--nav-heading-color);
+  font-size: 1.1em;
+  background: #6c4c72b0;
+}
+
+#next-login-column .header {
+  background: #0000003d;
+  margin-bottom: 0;
+}
+
+#next-login-column #next-login-form-submit {
+  font-size: 1.1em;
+  padding: 20px 0;
 }
 
 #next-login-container {
@@ -30,10 +47,8 @@ limitations under the License.
 }
 
 #next-login-logo {
-  height: 100px;
-  margin-bottom: 25px;
-  margin-right: 0;
-  width: 100px;
+  margin: 27px 0 25px 0;
+  width: 110px
 }
 
 #next-login-container h1 {
@@ -41,8 +56,11 @@ limitations under the License.
   margin-top: 48px;
 }
 
+#next-login-form {
+  padding: 55px 55px 35px 55px;
+}
+
 #next-login-form-1 {
-  margin-top: 70px;
   text-align: center;
 }
 
@@ -52,20 +70,12 @@ limitations under the License.
 
 #next-login-new-account-container {
   color: var(--auth-fg-highlight-color);
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 1111;
-  width: 170px;
+  padding: 25px 0 5px 0;
 }
 
 #next-login-new-account-container a {
-  background: #8b8ea916;
   color: var(--nav-heading-color);
-  display: block;
-  height: 33px;
   padding: 6px;
-  text-align: center;
   font-size: .9em;
 }
 
@@ -102,12 +112,12 @@ limitations under the License.
 }
 
 #next-login-form-error {
-  margin: -30px auto 25px auto;
-  width: fit-content;
+  border-radius: 0;
 }
 
 #next-login-form-error .ui.message {
-  background: #ff008d;
+  background: #004dff;
+  border-radius: 0;
   box-shadow: none;
   color: white;
 }
@@ -121,6 +131,7 @@ limitations under the License.
   padding: 0 10px;
 }
 
-#next-login-form-error .ui.message i:nth-child(2) {
-  font-size: 1.7em;
+#next-login-form-error .ui.message i.close,
+#next-login-form-error .ui.message i.exclamation {
+  font-size: 1.3em;
 }

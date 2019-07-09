@@ -15,8 +15,8 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  Button,
   Container,
   Form,
   Label,
@@ -143,10 +143,8 @@ class LoginForm extends Component {
                   error
                   size='tiny'
                   icon='exclamation triangle'
-                  onDismiss={this.handleDismiss}
-                  header='Authentication unsuccessful'
-                  content={error.message}
-                />
+                  // onDismiss={this.handleDismiss}
+                  content={error.message}/>
               </div>
             }
             <Form id='next-login-form'
@@ -172,18 +170,27 @@ class LoginForm extends Component {
                   placeholder='Password'
                   value={password}
                   onChange={this.handleChange}/>
-                <Label>
-                  <Button
+                {/* <Button
                     id='next-login-form-forgot-password'
                     className='link'
                     type='button'
                     onClick={() => this.setFlow(1)}>
-                  Forgot Password?
-                  </Button>
+                  Forgot Password? */}
+                {/* </Button> */}
+                { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
+                <Label>
+                  <div id='next-login-new-account-container'>
+                        Don&apos;t have an account?
+                    <Link to='/signup'>
+                          Sign Up
+                    </Link>
+                  </div>
                 </Label>
+                }
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button
+                  id='next-login-form-submit'
                   content='Login'
                   disabled={!validPassword || !validUsername}
                   icon='right arrow'
