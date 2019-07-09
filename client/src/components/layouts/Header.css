@@ -18,7 +18,7 @@ limitations under the License.
   align-items: center;
   background: var(--header-bg-color);
   display: flex;
-  height: 40px;
+  height: var(--header-height);
   position: fixed;
   width: 100%;
   z-index: 999;
@@ -45,11 +45,6 @@ limitations under the License.
   text-overflow: ellipsis;
 }
 
-#next-header-global-menu {
-  color: coral;
-  margin-left: 7px;
-}
-
 .next-toggle-state-header{
   color: #ffffff;
   letter-spacing: 0.5px;
@@ -70,14 +65,16 @@ limitations under the License.
 }
 
 #next-header-global-menu {
+  color: coral;
+  margin-left: 7px;
   position: absolute;
-  top: 39px;
+  top: var(--header-height);
   right: 5px;
 }
 
 #next-header-notification-menu {
   position: absolute;
-  top: 39px;
+  top: var(--header-height);
   right: 65px;
 }
 
@@ -99,7 +96,7 @@ limitations under the License.
 #next-header-actions-bell {
   display: flex;
   height: 100%;
-  padding: 10px;
+  padding: 7px 10px;
   position: relative;
 }
 

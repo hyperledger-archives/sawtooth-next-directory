@@ -33,7 +33,6 @@ import MemberList from '../role/MemberList';
 
 import './Pack.css';
 import glyph from 'images/glyph-pack.png';
-import * as utils from 'services/Utils';
 
 
 /**
@@ -134,9 +133,9 @@ export class Pack extends Component {
             inverted
             glyph={glyph}
             waves
-            subtitle={this.pack && utils.countLabel(
-              this.pack.roles.length, 'role')
-            }
+            // subtitle={this.pack && utils.countLabel(
+            //   this.pack.roles.length, 'role')
+            // }
             title={this.pack.name}
             {...this.props}/>
           <div id='next-requester-packs-content'>

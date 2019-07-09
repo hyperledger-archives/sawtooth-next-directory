@@ -138,21 +138,21 @@ class RequesterNav extends Component {
   render () {
     return (
       <Container>
+        <Search
+          input={() => <Input
+            icon='search'
+            placeholder='Search roles and packs...'/>}
+          className='next-requester-nav-search'
+          category
+          loading={false}/>
         <Link to='/browse' id='next-requester-nav-browse'>
-          <Button animated primary fluid>
+          <Button primary fluid>
             <Button.Content visible>
               BROWSE
-            </Button.Content>
-            <Button.Content hidden>
               <Icon name='arrow right'/>
             </Button.Content>
           </Button>
         </Link>
-        <Search
-          input={() => <Input icon='search' placeholder='Search...'/>}
-          className='next-requester-nav-search'
-          category
-          loading={false}/>
         { this.renderLists() }
       </Container>
     );

@@ -28,11 +28,10 @@ import './Rejected.css';
 import Chat from 'components/chat/Chat';
 import TrackHeader from 'components/layouts/TrackHeader';
 import ApprovedNav from 'components/nav/ApprovedNav';
-import glyph from 'images/glyph-individual-inverted.png';
+import glyph from 'images/glyph-individual.png';
 import Avatar from 'components/layouts/Avatar';
 
 
-import * as theme from 'services/Theme';
 import * as utils from 'services/Utils';
 
 
@@ -44,7 +43,6 @@ import * as utils from 'services/Utils';
  */
 class Rejected extends Component {
 
-  themes = ['minimal'];
   state = { column: null, direction: null, selectedProposal: {} };
 
 
@@ -54,7 +52,6 @@ class Rejected extends Component {
    */
   componentDidMount () {
     const { getRejectedProposals } = this.props;
-    theme.apply(this.themes);
     getRejectedProposals();
     this.init();
   }
@@ -68,14 +65,6 @@ class Rejected extends Component {
   componentDidUpdate (prevProps) {
     const { rejectedProposals } = this.props;
     if (prevProps.rejectedProposals !== rejectedProposals) this.init();
-  }
-
-
-  /**
-   * Component teardown
-   */
-  componentWillUnmount () {
-    theme.remove(this.themes);
   }
 
 
@@ -296,6 +285,7 @@ class Rejected extends Component {
           id='next-approver-grid-track-column'
           width={12}>
           <TrackHeader
+            inverted
             glyph={glyph}
             title='Rejected Requests'
             {...this.props}/>

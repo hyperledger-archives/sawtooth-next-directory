@@ -788,9 +788,9 @@ body,
 
 .flux {
   background: #273544;
-  background: -webkit-gradient(linear, left top, left bottom, from(#6b00ff), to(#f7007d));
-  background: -webkit-linear-gradient(top, #6b00ff, #f7007d);
-  background: linear-gradient(180deg, #6b00ff, #f7007d);
+  background: -webkit-gradient(linear, left top, left bottom, from(#db22a1), to(#bf3de9));
+  background: -webkit-linear-gradient(top, #db22a1, #bf3de9);
+  background: linear-gradient(180deg, #db22a1, #bf3de9);
 }
 
 .flux:before {

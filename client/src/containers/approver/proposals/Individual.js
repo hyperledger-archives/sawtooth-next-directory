@@ -30,8 +30,7 @@ import { syncAll } from './IndividualHelper';
 
 
 import './Individual.css';
-import glyph from 'images/glyph-individual-inverted.png';
-import * as theme from 'services/Theme';
+import glyph from 'images/glyph-individual.png';
 
 
 /**
@@ -45,9 +44,6 @@ class Individual extends Component {
   static propTypes = {
     getOpenProposals: PropTypes.func,
   };
-
-
-  themes = ['minimal'];
 
 
   state = {
@@ -66,15 +62,6 @@ class Individual extends Component {
   componentDidMount () {
     const { getOpenProposals } = this.props;
     getOpenProposals();
-    theme.apply(this.themes);
-  }
-
-
-  /**
-   * Component teardown
-   */
-  componentWillUnmount () {
-    theme.remove(this.themes);
   }
 
 
@@ -182,6 +169,7 @@ class Individual extends Component {
       <Grid id='next-approver-grid'>
         <Grid.Column id='next-approver-grid-track-column' width={12}>
           <TrackHeader
+            inverted
             glyph={glyph}
             title='Individual Requests'
             {...this.props}/>
