@@ -377,6 +377,7 @@ async def update_manager(request, next_id):
         await utils.send(
             request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
         )
+        await utils.send_notification(request.json.get("id"), proposal_id)
     else:
         raise ApiBadRequest("Proposal opener is not a Next Admin.")
     return json({"proposal_id": proposal_id})
