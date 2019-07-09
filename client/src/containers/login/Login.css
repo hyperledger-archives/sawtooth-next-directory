@@ -60,12 +60,13 @@ limitations under the License.
 }
 
 #next-login-new-account-container a {
-  color: var(--nav-heading-color);
   background: #8b8ea916;
+  color: var(--nav-heading-color);
   display: block;
-  height: 40px;
-  padding: 10px;
+  height: 33px;
+  padding: 6px;
   text-align: center;
+  font-size: .9em;
 }
 
 #next-login-new-account-container a:hover {

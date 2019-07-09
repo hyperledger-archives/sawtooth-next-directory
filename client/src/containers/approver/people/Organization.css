@@ -26,7 +26,7 @@ limitations under the License.
   position: fixed;
   top: 227px;
   z-index: 999;
-  width: calc(75% - 245px);
+  width: calc(75% - var(--sidebar-width));
 }
 
 #next-organization-toggle-manager-button-container button {

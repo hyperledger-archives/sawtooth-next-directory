@@ -31,7 +31,6 @@ import MemberList from './MemberList';
 
 import './Role.css';
 import glyph from 'images/glyph-role.png';
-import * as utils from 'services/Utils';
 
 
 /**
@@ -141,11 +140,11 @@ export class Role extends Component {
             glyph={glyph}
             waves
             title={this.role.name}
-            subtitle={
-              this.role && utils.countLabel(
-                this.role.members.length, 'member'
-              )
-            }
+            // subtitle={
+            //   this.role && utils.countLabel(
+            //     this.role.members.length, 'member'
+            //   )
+            // }
             {...this.props}/>
           <div id='next-requester-roles-content'>
             { this.proposal &&

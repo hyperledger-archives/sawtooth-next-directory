@@ -30,14 +30,14 @@ limitations under the License.
   background: var(--nav-bg-color);
   height: 100%;
   overflow: auto;
-  padding: 43px 0 15px 0;
+  padding: var(--header-height) 0 15px 0;
   position: fixed;
-  width: 245px;
+  width: var(--sidebar-width);
 }
 
 #next-inner-grid-main {
   flex: 1;
-  margin-left: 245px;
+  margin-left: var(--sidebar-width);
   min-width: 0;
   padding: 0;
 }

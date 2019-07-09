@@ -45,7 +45,7 @@ class CreatePack extends Component {
   };
 
 
-  themes = ['minimal', 'contrast', 'magenta'];
+  themes = ['contrast', 'magenta'];
 
 
   /**

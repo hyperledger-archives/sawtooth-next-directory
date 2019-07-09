@@ -20,7 +20,7 @@ limitations under the License.
   padding: var(--page-content-padding) 2.5%;
   position: fixed;
   top: 130px;
-  width: calc(100% - 245px);
+  width: calc(100% - var(--sidebar-width));
   z-index: 3;
 }
 

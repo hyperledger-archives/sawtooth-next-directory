@@ -42,7 +42,7 @@ import * as theme from 'services/Theme';
  */
 class EditUser extends Component {
 
-  themes = ['minimal', 'contrast', 'magenta'];
+  themes = ['contrast', 'magenta'];
 
 
   static propTypes = {
@@ -192,11 +192,11 @@ class EditUser extends Component {
           <TrackHeader
             inverted
             title='Edit User'
-            // subtitle={`Edit info for ${user.name}`}
+            subtitle="Modify a user's information"
             button={() =>
               <Button
                 disabled={fetchingEditUser || !this.enableSave()}
-                id='next-approver-manage-roles-create-button'
+                id='next-people-edit-user-save-button'
                 onClick={() => this.editUser()}
                 size='huge'
                 content='Save'/>}
@@ -215,36 +215,39 @@ class EditUser extends Component {
                 </Header.Content>
               </Header>
               <Form id='next-edit-user-form' onSubmit={() => this.editUser()}>
-                <span className='next-edit-user-form-hr'>
+                <span className='next-edit-user-form-label'>
                   Basic Info
                 </span>
-                <Form.Field>
-                  <Input
-                    id='next-name-signup-input'
-                    autoFocus
-                    // placeholder={user.name}
-                    error={validName === false}
-                    name='name'
-                    type='text'
-                    onChange={this.handleChange}
-                    value={name}/>
-                </Form.Field>
-                <Form.Field>
-                  <Input
-                    id='next-name-signup-input'
-                    autoFocus
-                    // placeholder={user.email}
-                    error={validEmail === false}
-                    name='email'
-                    type='text'
-                    onChange={this.handleChange}
-                    value={email}/>
-                  { !validEmail &&
-                    <Label className='next-username-signup-hint'>
-                      Please enter a valid email.
-                    </Label>
-                  }
-                </Form.Field>
+                <hr className='next-edit-user-form-hr'/>
+                <Form.Group widths='equal'>
+                  <Form.Field>
+                    <Input
+                      id='next-edit-user-input'
+                      autoFocus
+                      // placeholder={user.name}
+                      error={validName === false}
+                      name='name'
+                      type='text'
+                      onChange={this.handleChange}
+                      value={name}/>
+                  </Form.Field>
+                  <Form.Field>
+                    <Input
+                      id='next-edit-user-input'
+                      autoFocus
+                      // placeholder={user.email}
+                      error={validEmail === false}
+                      name='email'
+                      type='text'
+                      onChange={this.handleChange}
+                      value={email}/>
+                    { !validEmail &&
+                      <Label className='next-username-signup-hint'>
+                        Please enter a valid email.
+                      </Label>
+                    }
+                  </Form.Field>
+                </Form.Group>
               </Form>
             </div>
           </div>

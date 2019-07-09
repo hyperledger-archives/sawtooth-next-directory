@@ -58,7 +58,7 @@ limitations under the License.
 }
 
 #next-not-found-role-container {
-  margin-top: 245px;
+  margin-top: var(--sidebar-width);
   text-align: center;
 }
 

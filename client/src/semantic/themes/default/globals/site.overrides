@@ -43,7 +43,7 @@ body,
 
 .flux {
   background: @darkBackground;
-  background: linear-gradient(180deg, #6b00ff, #f7007d);
+  background: linear-gradient(180deg, #db22a1, #bf3de9);
 }
 
 .flux:before {
