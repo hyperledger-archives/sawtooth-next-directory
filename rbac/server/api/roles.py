@@ -348,7 +348,11 @@ async def add_role_member(request, role_id):
         request.json.get("id"),
         proposal_id,
     )
-    await send_notification(approver, proposal_id)
+    if isinstance(approver, list):
+        for user in approver:
+            await send_notification(user, proposal_id)
+    else:
+        await send_notification(approver, proposal_id)
     if request.json.get("tracker"):
         events = {"batch_status": batch_status}
         if batch_status == 1:
