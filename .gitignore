@@ -4,6 +4,9 @@
 # OS
 .DS_Store
 
+# maintainers file
+MAINTAINERS.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
