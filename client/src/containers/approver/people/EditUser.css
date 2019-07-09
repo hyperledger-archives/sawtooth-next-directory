@@ -30,10 +30,42 @@ limitations under the License.
   margin-left: 10px;
 }
 
-#next-people-edit-user-content .next-edit-user-form-hr {
+#next-people-edit-user-content .next-edit-user-form-label {
   background: #e2e2e2;
   border-radius: 2em;
   display: inline-block;
   padding: 5px 10px;
   margin-bottom: 20px;
+}
+
+#next-people-edit-user-content #next-edit-user-input {
+  background: #f4f6f7;
+  border: 0;
+  border-radius: 2em;
+  font-size: 1.4em;
+}
+
+#next-people-edit-user-content .next-edit-user-form-hr {
+  background: #e2e2e2;
+  border: 0;
+  height: 1px;
+  position: relative;
+  top: -42px;
+  z-index: -99;
+}
+
+#next-people-edit-user-save-button {
+  background: #ffffff;
+  box-shadow: 0 3px 13px #98989814;
+  color: #e20074;
+  font-size: .95em;
+  padding: 15px;
+  position: fixed;
+  right: var(--nav-list-padding);
+  top: 69px;
+  width: 110px;
+}
+
+#next-people-edit-user-content h1 .next-avatar-container {
+  font-size: .7em;
 }

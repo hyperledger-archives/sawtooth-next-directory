@@ -40,6 +40,7 @@ limitations under the License.
   font-size: .95em;
   padding: 15px;
   position: fixed;
-  right: 18px;
-  width: 190px;
+  right: var(--nav-list-padding);
+  top: 69px;
+  width: 180px;
 }

@@ -21,7 +21,7 @@ limitations under the License.
 }
 
 .next-approver-nav-search {
-  padding: 14px var(--nav-list-padding);
+  /* padding: 14px var(--nav-list-padding); */
 }
 
 #next-approver-nav-lists-container h4 a {
@@ -30,15 +30,35 @@ limitations under the License.
 
 #next-approver-nav-snapshot {
   display: block;
-  padding: var(--nav-list-padding);
+  /* padding: var(--nav-list-padding); */
   padding-bottom: 0;
 }
 
+#next-approver-nav-snapshot button {
+  background: #353547;
+  border-radius: 0;
+  padding: 33px;
+}
+
+#next-approver-nav-snapshot button:hover {
+  background: var(--magenta);
+}
+
+#next-approver-nav-snapshot i {
+  margin-left: 10px;
+}
+
 .next-approver-nav-search .ui.input input {
-  background: #ffffff24;
+  background: #2b2b3a;
   border: none;
-  font-size: 1.15em;
-  height: 44px;
+  border-radius: 0;
+  font-size: 1em;
+  height: 36px;
+  padding-left: var(--nav-list-padding);
+}
+
+.next-approver-nav-search .ui.input input::placeholder {
+  color: #62626d;
 }
 
 #next-approver-switch-container {

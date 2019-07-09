@@ -15,7 +15,7 @@ limitations under the License.
 
 
 import React, { Component } from 'react';
-import { Header, Icon } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 
 
 import './RequesterChat.css';
@@ -184,7 +184,7 @@ class RequesterChat extends Component {
         { title &&
           <Header id='next-chat-header' size='small' inverted>
             {title}
-            <Icon link name='pin' size='mini' className='pull-right'/>
+            {/* <Icon link name='pin' size='mini' className='pull-right'/> */}
           </Header>
         }
         <div id='next-requester-chat-transcript-container'>

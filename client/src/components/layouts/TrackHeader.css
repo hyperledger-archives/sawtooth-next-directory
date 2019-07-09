@@ -35,7 +35,7 @@ limitations under the License.
   display: flex;
   left: 13px;
   position: relative;
-  top: 76px;
+  top: 86px;
 }
 
 #next-track-header .ui.breadcrumb .active {
@@ -49,7 +49,7 @@ limitations under the License.
 .dark.minimal #next-track-header {
   background: #273544;
   border-bottom: 1px solid #1f2830;
-  width: calc(75% - 245px);
+  width: calc(75% - var(--sidebar-width));
 }
 
 .minimal #next-track-header {
@@ -68,15 +68,9 @@ limitations under the License.
 
 #next-track-header .ui.header {
   align-items: end;
+  color: #ffffffba;
   display: flex;
   position: absolute;
   top: 25px;
-}
-
-#next-track-header .ui.header .content {
-  margin: 4px;
-}
-
-#next-track-header-subheader {
-  max-width: 250px
+  width: 500px;
 }

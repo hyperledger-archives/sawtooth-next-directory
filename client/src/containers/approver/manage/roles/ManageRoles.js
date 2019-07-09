@@ -41,7 +41,7 @@ import * as utils from 'services/Utils';
  */
 class ManageRoles extends Component {
 
-  themes = ['minimal', 'contrast', 'magenta'];
+  themes = ['contrast', 'magenta'];
 
 
   state = {

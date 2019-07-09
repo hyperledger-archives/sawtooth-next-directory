@@ -106,20 +106,22 @@ class ApproverNav extends Component {
             Expired
           </Link>
         </h4>
-        <h4 className={`hover ${this.isItemActive('people') ?
-          'active' : ''}`}>
-          <NavList
-            titleIsLink
-            listTitle='People'
-            // list={bar}
-            route='/approval/people'/>
-        </h4>
-        <h4 className={`hover ${this.isItemActive('manage') ?
-          'active' : ''}`}>
-          <Link to='/approval/manage'>
-            Manage
-          </Link>
-        </h4>
+        <div>
+          <h4 className={`hover ${this.isItemActive('people') ?
+            'active' : ''}`}>
+            <NavList
+              titleIsLink
+              listTitle='People'
+              // list={bar}
+              route='/approval/people'/>
+          </h4>
+          <h4 className={`hover ${this.isItemActive('manage') ?
+            'active' : ''}`}>
+            <Link to='/approval/manage'>
+              Manage
+            </Link>
+          </h4>
+        </div>
       </div>
     );
   }
@@ -132,21 +134,21 @@ class ApproverNav extends Component {
   render () {
     return (
       <Container>
+        <Search
+          input={() => <Input
+            icon='search'
+            placeholder='Search roles and packs...'/>}
+          className='next-approver-nav-search'
+          category
+          loading={false}/>
         <Link to='/snapshot' id='next-approver-nav-snapshot'>
-          <Button animated primary fluid>
+          <Button primary fluid>
             <Button.Content visible>
               SNAPSHOT
-            </Button.Content>
-            <Button.Content hidden>
               <Icon name='arrow right'/>
             </Button.Content>
           </Button>
         </Link>
-        <Search
-          input={() => <Input icon='search' placeholder='Search...'/>}
-          className='next-approver-nav-search'
-          category
-          loading={false}/>
         { this.renderLists() }
       </Container>
     );

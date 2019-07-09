@@ -32,10 +32,10 @@ limitations under the License.
   box-shadow: 0 -4px 31px #9898981f;
   display: flex;
   height: 60px;
-  left: 245px;
+  left: var(--sidebar-width);
   padding: 30px;
   position: fixed;
-  width: calc(100% - 245px);
+  width: calc(100% - var(--sidebar-width));
 }
 
 #next-approver-manage-create-role-done-button {

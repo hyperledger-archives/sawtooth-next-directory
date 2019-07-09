@@ -35,7 +35,7 @@ import * as utils from 'services/Utils';
  */
 class CreateRole extends Component {
 
-  themes = ['minimal', 'contrast', 'magenta'];
+  themes = ['contrast', 'magenta'];
 
 
   state = {
