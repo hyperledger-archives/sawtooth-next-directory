@@ -44,7 +44,11 @@ from rbac.server.blockchain_transactions.role_transaction import (
     create_del_mmbr_by_role_txns,
     create_rjct_ppsls_role_txns,
 )
-from rbac.server.api.utils import check_admin_status, check_role_owner_status
+from rbac.server.api.utils import (
+    check_admin_status,
+    check_role_owner_status,
+    send_notification,
+)
 from rbac.server.db.db_utils import wait_for_resource_in_db
 
 LDAP_DC = os.getenv("LDAP_DC")
@@ -338,6 +342,13 @@ async def add_role_member(request, role_id):
                 "proposal_id": proposal_id,
             }
         )
+
+    LOGGER.info(
+        "Sending notification to queue for user %s for proposal %s",
+        request.json.get("id"),
+        proposal_id,
+    )
+    await send_notification(approver, proposal_id)
     if request.json.get("tracker"):
         events = {"batch_status": batch_status}
         if batch_status == 1:
