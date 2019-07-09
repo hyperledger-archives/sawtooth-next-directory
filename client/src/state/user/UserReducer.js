@@ -20,6 +20,7 @@ import * as utils from 'services/Utils';
 
 
 export const request = {
+  edit:       (state) => state.merge({ fetchingEditUser: true }),
   me:         (state) => state.merge({ fetchingMe: true }),
   people:     (state) => state.merge({ fetchingPeople: true }),
   user:       (state) => state.merge({ fetchingUser: true }),
@@ -28,6 +29,7 @@ export const request = {
 
 
 export const success = {
+  edit: (state) => state.merge({ fetchingEditUser: false }),
   me: (state, { me }) =>
     state.merge({
       fetching: false, me, users: utils.merge(state.users || [], [me]),
@@ -80,6 +82,10 @@ export const UserReducer = createReducer(INITIAL_STATE, {
   [Types.ME_REQUEST]:         request.me,
   [Types.ME_SUCCESS]:         success.me,
   [Types.ME_FAILURE]:         failure,
+
+  [Types.EDIT_USER_REQUEST]:  request.edit,
+  [Types.EDIT_USER_SUCCESS]:  success.edit,
+  [Types.EDIT_USER_FAILURE]:  failure,
 
   [Types.USERS_REQUEST]:      request.users,
   [Types.USER_REQUEST]:       request.user,

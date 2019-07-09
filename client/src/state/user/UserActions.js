@@ -23,6 +23,10 @@ const { Types, Creators } = createActions({
   meSuccess:       ['me'],
   meFailure:       ['error'],
 
+  editUserRequest: ['payload'],
+  editUserSuccess: ['payload'],
+  editUserFailure: ['error'],
+
   usersRequest:    ['ids', 'summary'],
   userRequest:     ['id', 'summary'],
   userSuccess:     ['user'],

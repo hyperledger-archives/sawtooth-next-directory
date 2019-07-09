@@ -60,7 +60,7 @@ import { closeSocket, openSocket, sendSocket } from './AppSaga';
 import { login, signup, logout, checkUserExists } from './AuthSaga';
 import { getConversation } from './ChatSaga';
 import { searchBrowse, searchPeople } from './SearchSaga';
-import { me, getPeople, getUser, getUsers } from './UserSaga';
+import { editUser, me, getPeople, getUser, getUsers } from './UserSaga';
 
 
 const api = API.create();
@@ -126,6 +126,7 @@ function * sagas () {
     takeLatest(SearchTypes.SEARCH_PEOPLE_REQUEST, searchPeople, api),
 
     // User
+    takeLatest(UserTypes.EDIT_USER_REQUEST, editUser, api),
     takeLatest(UserTypes.ME_REQUEST, me, api),
     takeLatest(UserTypes.USER_REQUEST, getUser, api),
     takeLatest(UserTypes.USERS_REQUEST, getUsers, api),

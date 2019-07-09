@@ -21,7 +21,6 @@ limitations under the License.
 #next-chat-organization-heading .ui.container:first-child {
   border-bottom: 1px solid #dadce0;
   flex: 1;
-  max-height: 270px;
 }
 
 #next-chat-organization-user-info {

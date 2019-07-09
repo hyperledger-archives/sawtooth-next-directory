@@ -15,6 +15,7 @@ limitations under the License.
 
 
 import { all, call, put, spawn } from 'redux-saga/effects';
+import { toast } from 'react-toastify';
 import { UserActions } from 'state';
 
 
@@ -91,6 +92,29 @@ export function * getPeople (api, action) {
         res.data.paging.total)
       ) :
       yield put(UserActions.peopleFailure(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+/**
+ * Edit info for a specific user
+ * @param {object} api    API service
+ * @param {object} action Redux action
+ * @generator
+ */
+export function * editUser (api, action) {
+  try {
+    const { payload } = action;
+    const res = yield call(api.editUser, payload);
+    if (res.ok) {
+      toast.success('User successfully updated.');
+      yield put(UserActions.editUserSuccess(res.data.data));
+      yield put(UserActions.userRequest(payload.next_id, true));
+    } else {
+      yield put(UserActions.editUserFailure(res.data));
+    }
   } catch (err) {
     console.error(err);
   }

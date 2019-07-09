@@ -281,6 +281,7 @@ class PeopleChat extends Component {
       activeUser,
       directReports,
       handleOnBehalfOf,
+      isAdministrator,
       userFromId } = this.props;
 
     const user = userFromId(activeUser);
@@ -312,6 +313,19 @@ class PeopleChat extends Component {
                         to={`people/${activeUser}/pending`}
                         onClick={handleOnBehalfOf}>
                         Pending Approvals
+                      </Button>
+                    </div>
+                  </div>
+                }
+                { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
+                  isAdministrator &&
+                  <div>
+                    <div id='next-people-chat-pending-approvals-button'>
+                      <Button
+                        as={Link}
+                        size='large'
+                        to={`people/${activeUser}/edit`}>
+                        Edit
                       </Button>
                     </div>
                   </div>
