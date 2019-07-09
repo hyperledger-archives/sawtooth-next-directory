@@ -168,6 +168,7 @@ async def update_proposal(request, proposal_id):
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
+    await utils.send_notification(proposal_resource.get("target"), proposal_id)
     return json({"proposal_id": proposal_id})
 
 
