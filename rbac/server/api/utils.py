@@ -293,7 +293,7 @@ async def send_notification(next_id, proposal_id, frequency=0):
             int: number representing time """
     conn = await create_connection()
     notification = (
-        r.table("notifications")
+        await r.table("notifications")
         .insert(
             {
                 "next_id": next_id,
