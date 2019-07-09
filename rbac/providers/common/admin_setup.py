@@ -67,9 +67,6 @@ def add_admin_accounts():
         }
         response = session.post("http://rbac-server:8000/api/users", json=admin_user)
         user_response_json = response.json()
-        token = "Bearer " + user_response_json["token"]
-        session.headers.update({"Authorization": token})
-
         if response.status_code >= 300:
             LOGGER.error(
                 "There was an issue with creating Admin user: %s", user_response_json
@@ -87,6 +84,13 @@ def add_admin_accounts():
                 admin_user["name"],
             )
             exit(1)
+
+        login = {"id": env("NEXT_ADMIN_USER"), "password": env("NEXT_ADMIN_PASS")}
+        response = session.post(
+            "http://rbac-server:8000/api/authorization/", json=login
+        )
+        token = "Bearer " + response.json()["token"]
+        session.headers.update({"Authorization": token})
 
         LOGGER.info("Creating NextAdmin role...")
         admin_role = {
