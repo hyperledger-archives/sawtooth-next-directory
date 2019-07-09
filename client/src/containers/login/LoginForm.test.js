@@ -59,8 +59,8 @@ describe('LoginForm component', () => {
   });
 
 
-  test('forgot password button click', () => {
-    wrapper.find('#next-login-form-forgot-password').simulate('click');
-  });
+  // test('forgot password button click', () => {
+  //   wrapper.find('#next-login-form-forgot-password').simulate('click');
+  // });
 
 });

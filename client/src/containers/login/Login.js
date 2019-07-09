@@ -16,13 +16,12 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import './Login.css';
-import logo from 'images/next-logo-billboard.png';
+import logo from 'images/next-logo-primary.png';
 import { AuthActions, AuthSelectors } from 'state';
 import LoginForm from './LoginForm';
 
@@ -118,13 +117,13 @@ class Login extends Component {
               {...this.props}/>
           </Grid.Column>
         </Grid>
-        { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
+        {/* { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
           <div id='next-login-new-account-container'>
             <Link to='/signup'>
               Create an account
             </Link>
           </div>
-        }
+        } */}
       </div>
     );
   }
