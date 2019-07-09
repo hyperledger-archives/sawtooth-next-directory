@@ -382,6 +382,11 @@ async def add_role_owner(request, role_id):
     await utils.send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
+    if isinstance(approver, list):
+        for user in approver:
+            await send_notification(user, proposal_id)
+    else:
+        await send_notification(approver, proposal_id)
     return json({"proposal_id": proposal_id})
 
 
