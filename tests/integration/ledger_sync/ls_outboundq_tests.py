@@ -26,7 +26,6 @@ from tests.utilities.creation_utils import (
     create_test_user,
     user_login,
 )
-from tests.utilities.db_queries import get_role_by_name
 from tests.utils import (
     approve_proposal,
     delete_role_by_name,
@@ -34,7 +33,6 @@ from tests.utils import (
     get_outbound_queue_depth,
     get_outbound_queue_entry,
     get_proposal_with_retry,
-    add_role_member,
 )
 
 ENV = Env()
@@ -73,11 +71,7 @@ def test_role_outq_insertion():
         role_response = create_test_role(session, role_payload)
         assert_api_success(role_response)
 
-        outbound_queue_data = {
-            "description": "Test Unique Role 1",
-            "members": [],
-            "remote_id": "",
-        }
+        outbound_queue_data = {"members": [], "remote_id": ""}
         expected_payload = {
             "data": outbound_queue_data,
             "data_type": "group",
@@ -93,55 +87,6 @@ def test_role_outq_insertion():
 
         delete_role_by_name("TestUniqueRole0501201903")
         delete_user_by_username("testuniqueuser0501201901")
-
-
-def test_update_manager_outqueue():
-    """ Creates a user and then updates their manager
-
-    Manager is the second user created here."""
-    # TODO: Rewrite this test after data gets sent to outbound_queue
-    # after a user has their manager updated.
-    user1_payload = {
-        "name": "Test User 0521201901",
-        "username": "test0521201901",
-        "password": "123456",
-        "email": "test0521201901@biz.co",
-    }
-    with requests.Session() as session:
-        user2_response = create_next_admin(session)
-        user2_result = assert_api_success(user2_response)
-        user2_id = user2_result["data"]["next_id"]
-        user1_response = create_test_user(session, user1_payload)
-        user1_result = assert_api_success(user1_response)
-        user1_id = user1_result["data"]["user"]["id"]
-        start_depth = get_outbound_queue_depth()
-
-        role_response = get_role_by_name("NextAdmins")
-        add_role_member(session, role_response[0]["role_id"], {"id": user2_id})
-        manager_payload = {
-            "id": user2_id,
-            "reason": "Integration test of adding role owner.",
-            "metadata": "",
-        }
-        response = session.put(
-            "http://rbac-server:8000/api/users/{}/manager".format(user1_id),
-            json=manager_payload,
-        )
-        result = assert_api_success(response)
-        proposal_response = get_proposal_with_retry(session, result["proposal_id"])
-        assert_api_success(proposal_response)
-        # Logging in as role owner
-        env = Env()
-        user_login(session, env("NEXT_ADMIN_USER"), env("NEXT_ADMIN_PASS"))
-        # Approve proposal as role owner
-        approve_proposal(session, result["proposal_id"])
-        end_depth = get_outbound_queue_depth()
-        assert end_depth > start_depth
-        # TODO: Add tests to check for UNCONFIRMED outbound_queue entry status
-        # when a user's manager gets updated.
-        delete_user_by_username("test0521201901")
-        delete_user_by_username("test0521201902")
-        delete_role_by_name("NextAdmins")
 
 
 @pytest.mark.skipif(
@@ -204,11 +149,7 @@ def test_add_role_member_outqueue():
 
         # NOTE: members field contains an empty string because in NEXT
         # mode all user's remote_ids are set to an empty string
-        outbound_queue_data = {
-            "description": "Test Role 3",
-            "members": [""],
-            "remote_id": "",
-        }
+        outbound_queue_data = {"members": [""], "remote_id": ""}
         expected_payload = {
             "data": outbound_queue_data,
             "data_type": "group",

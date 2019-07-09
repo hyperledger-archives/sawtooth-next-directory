@@ -27,10 +27,7 @@ from rbac.providers.common.db_queries import (
     put_entry_changelog,
     update_outbound_entry_status,
 )
-from rbac.providers.common.outbound_filters import (
-    outbound_user_filter,
-    outbound_group_filter,
-)
+from rbac.providers.common.outbound_filters import outbound_group_filter
 from rbac.providers.common.provider_errors import ValidationException
 from rbac.providers.ldap.ldap_validator import validate_update_entry
 
@@ -71,7 +68,8 @@ def process_outbound_entry(queue_entry, ldap_connection):
     if data_type == "group":
         sawtooth_entry_filtered = outbound_group_filter(queue_entry["data"], "ldap")
     elif data_type == "user":
-        sawtooth_entry_filtered = outbound_user_filter(queue_entry["data"], "ldap")
+        # Outbound AD user changes is currently not supported
+        return False
 
     object_def = ObjectDef(data_type, ldap_connection)
     reader_cursor = Reader(ldap_connection, object_def, distinguished_name)

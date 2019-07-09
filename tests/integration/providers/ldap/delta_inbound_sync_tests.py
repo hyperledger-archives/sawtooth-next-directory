@@ -40,6 +40,7 @@ from rbac.providers.common.db_queries import connect_to_db
 from rbac.providers.ldap.delta_inbound_sync import (
     insert_updated_entries,
     insert_deleted_entries,
+    remove_outbound_duplicates,
 )
 from tests.utilities.creation_utils import create_next_admin, create_test_role
 from tests.utilities.db_queries import get_role_by_name
@@ -82,6 +83,20 @@ TEST_USERS = [
 
 TEST_GROUPS = [{"common_name": "test_group", "name": "test_group"}]
 
+# entry_data, outbound_status, expected_result.
+TEST_CHECK_OUTBOUND_QUEUE = [
+    (
+        {"data": {"members": ["test_user_1"], "remote_id": "role_1"}},
+        "UNCONFIRMED",
+        True,
+    ),
+    (
+        {"data": {"members": ["test_user_1, test_user_2"], "remote_id": "role_2"}},
+        "CONFIRMED",
+        True,
+    ),
+    ({"data": {"members": ["test_user_3"], "remote_id": "role_3"}}, None, False),
+]
 
 # ------------------------------------------------------------------------------
 # <==== END TEST PARAMETERS ===================================================>
@@ -952,3 +967,42 @@ def test_created_date_comparison(ldap_connection):
     time.sleep(2)
     ldap_role = get_role_by_name("pokemons")
     assert fake_group[0].whenCreated.value == ldap_role[0]["created_date"]
+
+
+@pytest.mark.parametrize(
+    "entry_data, outbound_status, expected_result", TEST_CHECK_OUTBOUND_QUEUE
+)
+def test_outbound_queue_check(entry_data, outbound_status, expected_result):
+    """ Tests that any inbound queue entries are checked against the outbound
+    queue before insertion. If a duplicate entry exists in the outbound queue
+    the function should return `True`, indicating the entry has already been
+    written to sawtooth and that both entries should be deleted. Otherwise,
+    the function should return `False`, indicating that the entry should be
+    inserted.
+
+    Args:
+        entry_data:
+            obj:    A dict containing a valid NEXT role object. Only
+                    the `whenChanged` key is directly called in this obj, so
+                    the rest may be arbitrary for this test (update if needed).
+        outbound_status:
+            str:    A string containing a valid NEXT `status` (
+                    `CONFIRMED` or `UNCONFIRMED`). May be an empty string.
+        expected_result:
+            bool:   The boolean value that is expected to be returned by
+                    put_in_outbound_queue().
+    """
+    with connect_to_db() as conn:
+        if expected_result:
+            outbound_entry = {**entry_data}
+            if outbound_status:
+                outbound_entry["status"] = outbound_status
+                result = (
+                    r.table("outbound_queue")
+                    .insert(outbound_entry)
+                    .coerce_to("object")
+                    .run(conn)
+                )
+                assert result["inserted"] > 0
+        result = remove_outbound_duplicates(entry_data["data"], conn)
+        assert result == expected_result
