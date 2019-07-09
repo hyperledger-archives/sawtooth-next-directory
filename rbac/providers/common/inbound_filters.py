@@ -14,7 +14,11 @@
 # ------------------------------------------------------------------------------
 """Filters for stadardization of inbound json data to NEXT fields"""
 import datetime
-from rbac.providers.common.provider_transforms import GROUP_TRANSFORM, USER_TRANSFORM
+from rbac.providers.common.provider_transforms import (
+    GROUP_OUTBOUND_TRANSFORM,
+    GROUP_TRANSFORM,
+    USER_TRANSFORM,
+)
 
 
 def inbound_user_filter(user, provider):
@@ -71,3 +75,30 @@ def inbound_value_filter(inbound_value, field_name):
             epoch_zero = datetime.datetime(1970, 1, 1, tzinfo=value.tzinfo)
             value = int((value - epoch_zero).total_seconds())
     return value
+
+
+def outbound_queue_filter(entry_data):
+    """ Filters inbound_queue 'data' field to match outbound_queue's
+    'data' field. If an attribute is missing from entry_data, the
+    attribute will be set to either an empty list or empty string.
+    This function currently only supports comparing AD group changes.
+
+    Args:
+        entry_data:
+            obj:    A dict containing a RethinkDB role entry.
+    Returns:
+        result: (dict) Returns the filtered inbound_queue data with the
+            proper fields to compare against outbound_queue's data field.
+    Throws:
+        TypeError: Throws when provider is not of value 'azure' or 'ldap'
+    """
+    group = {}
+    for attribute in GROUP_OUTBOUND_TRANSFORM:
+        if attribute in entry_data:
+            group[attribute] = entry_data[attribute]
+        else:
+            if attribute == "members":
+                group[attribute] = []
+            else:
+                group[attribute] = ""
+    return group
