@@ -97,6 +97,7 @@ export const appState = (state) => ({
   expired:             UserSelectors.expired(state),
   expiredCount:        UserSelectors.expiredCount(state),
   id:                  UserSelectors.id(state),
+  isAdministrator:     UserSelectors.isAdministrator(state),
   me:                  UserSelectors.me(state),
   people:              UserSelectors.people(state),
   peopleTotalCount:    UserSelectors.peopleTotalCount(state),
@@ -171,6 +172,7 @@ export const appDispatch = (dispatch) => ({
   },
 
   // User
+  editUser:    (payload) => dispatch(User.editUserRequest(payload)),
   getMe:              () => dispatch(User.meRequest()),
   logout:             () => logout(dispatch),
   getUser:      (id, summary) =>

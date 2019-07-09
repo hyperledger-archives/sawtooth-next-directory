@@ -24,6 +24,14 @@ export const UserSelectors = {
     (state.user.me && state.user.me.expired.length) || null,
   id:           (state) =>
     (state.user.me && state.user.me.id) || storage.getUserId(),
+  isAdministrator: (state) => {
+    if (state.user.me && state.requester.roles) {
+      const adminRole = state.requester.roles
+        .find(role => role.name === 'NextAdmins');
+      return adminRole && state.user.me.memberOf.includes(adminRole.id);
+    }
+    return false;
+  },
   people:       (state) => state.user.people,
   peopleTotalCount: (state) => state.user.peopleTotalCount,
   users:        (state) => state.user.users,
