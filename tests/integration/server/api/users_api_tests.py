@@ -16,15 +16,11 @@
 import time
 import requests
 
-# import pytest
-
 from environs import Env
 import rethinkdb as r
 
 from rbac.common.logs import get_default_logger
 from rbac.providers.common.db_queries import connect_to_db
-
-# from rbac.server.api.utils import check_admin_status
 from tests.rbac.api.assertions import assert_api_success
 from tests.utilities.creation_utils import (
     create_next_admin,
@@ -53,12 +49,54 @@ from tests.utils import (
 LOGGER = get_default_logger(__name__)
 
 
-def test_admin_creation():
+def test_admin_user_creation():
     """Test user creation of an admin user"""
     with requests.Session() as session:
         response = create_next_admin(session)
     expected = {"message": "Authorization successful", "code": 200}
     assert response.json()["data"]["message"] == expected["message"]
+
+
+def test_user_creation():
+    """Test user creation by admin user"""
+    with requests.Session() as session:
+        response = create_next_admin(session)
+        user = {
+            "name": "new user",
+            "username": "newuser",
+            "password": "123456",
+            "email": "new_user@test.com",
+        }
+        response2 = create_test_user(session, user)
+    assert response2.status_code == 200
+    assert response.json()["data"]["message"] == "Authorization successful"
+
+
+def test_non_admin_user_creation():
+    """Test user creation by a non-admin user"""
+    with requests.Session() as session:
+        create_next_admin(session)
+        user = {
+            "name": "new user",
+            "username": "newuser",
+            "password": "123456",
+            "email": "new_user@test.com",
+        }
+        create_test_user(session, user)
+
+    with requests.session() as session2:
+        user_login(session2, "new_user", "123456")
+        user = {
+            "name": "next user",
+            "username": "nextuser",
+            "password": "123456",
+            "email": "next_user@test.com",
+        }
+        response = create_test_user(session2, user)
+    assert response.json() == {
+        "code": 401,
+        "message": "Unauthorized: No authentication token provided",
+    }
 
 
 def test_get_users():
@@ -125,7 +163,7 @@ def test_syncdirectionflag_username():
 
 
 def test_create_new_user_api():
-    """ Test wether assigned manager id is present in the data of user"""
+    """Test whether assigned manager id is present in the data of user"""
     with requests.Session() as session:
         create_next_admin(session)
         create_manager_payload = {
