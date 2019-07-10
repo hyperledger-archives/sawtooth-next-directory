@@ -26,6 +26,7 @@ from rbac.common.crypto.secrets import deserialize_api_key, generate_api_key
 from rbac.common.logs import get_default_logger
 from rbac.server.api import utils
 from rbac.server.api.errors import ApiNotFound, ApiUnauthorized, ApiBadRequest
+from rbac.server.api.utils import log_request
 from rbac.server.db.auth_query import (
     create_auth_entry,
     get_auth_by_next_id,
@@ -59,7 +60,6 @@ def authorized():
                     request.app.config.SECRET_KEY, utils.extract_request_token(request)
                 )
                 await get_auth_by_next_id(id_dict.get("id"))
-
             except (ApiNotFound, BadSignature):
                 raise ApiUnauthorized("Unauthorized: Invalid bearer token")
             response = await func(request, *args, **kwargs)
@@ -75,6 +75,7 @@ async def authorize(request):
     """ API Endpoint to authenticate and login to the NEXT platform. """
     required_fields = ["id", "password"]
     utils.validate_fields(required_fields, request.json)
+    log_request(request, True)
     username = request.json.get("id")
     password = request.json.get("password")
     env = Env()

@@ -13,7 +13,6 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Tasks APIs."""
-
 from uuid import uuid4
 
 from sanic import Blueprint
@@ -21,7 +20,15 @@ from sanic.response import json
 
 from rbac.common.task import Task
 from rbac.server.api.auth import authorized
-from rbac.server.api import utils
+from rbac.server.api.utils import (
+    create_response,
+    get_request_block,
+    get_request_paging_info,
+    get_transactor_key,
+    log_request,
+    send,
+    validate_fields,
+)
 from rbac.server.db import tasks_query
 from rbac.server.db.relationships_query import fetch_relationships
 
@@ -32,12 +39,13 @@ TASKS_BP = Blueprint("tasks")
 @authorized()
 async def get_all_tasks(request):
     """Get all tasks."""
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     task_resources = await tasks_query.fetch_all_task_resources(
         request.app.config.DB_CONN, start, limit
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         task_resources,
@@ -51,10 +59,11 @@ async def get_all_tasks(request):
 @authorized()
 async def create_new_task(request):
     """Create a new task."""
+    log_request(request)
     required_fields = ["name", "administrators", "owners"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
 
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await get_transactor_key(request)
     task_id = str(uuid4())
     batch_list = Task().batch_list(
         signer_keypair=txn_key,
@@ -65,9 +74,7 @@ async def create_new_task(request):
         owners=request.json.get("owners"),
         metdata=request.json.get("metadata"),
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     return create_task_response(request, task_id)
 
 
@@ -75,11 +82,12 @@ async def create_new_task(request):
 @authorized()
 async def get_task(request, task_id):
     """Get a specific task by task_id."""
-    head_block = await utils.get_request_block(request)
+    log_request(request)
+    head_block = await get_request_block(request)
     task_resource = await tasks_query.fetch_task_resource(
         request.app.config.DB_CONN, task_id
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN, request.url, task_resource, head_block
     )
 
@@ -88,10 +96,11 @@ async def get_task(request, task_id):
 @authorized()
 async def add_task_admin(request, task_id):
     """Propose add a task admin."""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
 
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     approver = await fetch_relationships("task_admins", "task_id", task_id).run(
         request.app.config.DB_CONN
@@ -106,9 +115,7 @@ async def add_task_admin(request, task_id):
         metadata=request.json.get("metadata"),
         assigned_approver=approver,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     return json({"proposal_id": proposal_id})
 
 
@@ -116,10 +123,11 @@ async def add_task_admin(request, task_id):
 @authorized()
 async def add_task_owner(request, task_id):
     """Propose add a task owner."""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
 
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     approver = await fetch_relationships("task_admins", "task_id", task_id).run(
         request.app.config.DB_CONN
@@ -134,9 +142,7 @@ async def add_task_owner(request, task_id):
         metadata=request.json.get("metadata"),
         assigned_approver=approver,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     return json({"proposal_id": proposal_id})
 
 

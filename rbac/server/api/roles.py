@@ -21,7 +21,7 @@ from sanic.response import json
 
 from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
-from rbac.server.api import utils, proposals
+from rbac.common.sawtooth import batcher
 from rbac.server.api.errors import (
     ApiTargetConflict,
     ApiNotFound,
@@ -31,12 +31,6 @@ from rbac.server.api.errors import (
     handle_errors,
 )
 from rbac.server.api.auth import authorized
-from rbac.server.api.proposals import PROPOSAL_TRANSACTION
-from rbac.server.db import proposals_query
-from rbac.server.db import roles_query
-from rbac.server.db.relationships_query import fetch_relationships
-
-from rbac.common.sawtooth import batcher
 from rbac.server.blockchain_transactions.role_transaction import (
     create_del_role_txns,
     create_del_ownr_by_role_txns,
@@ -44,17 +38,28 @@ from rbac.server.blockchain_transactions.role_transaction import (
     create_del_mmbr_by_role_txns,
     create_rjct_ppsls_role_txns,
 )
+from rbac.server.api.proposals import PROPOSAL_TRANSACTION, update_proposal
 from rbac.server.api.utils import (
     check_admin_status,
     check_role_owner_status,
+    create_response,
+    create_tracker_response,
+    get_request_block,
+    get_request_paging_info,
+    get_transactor_key,
+    log_request,
+    send,
     send_notification,
+    validate_fields,
 )
+from rbac.server.db import proposals_query
+from rbac.server.db import roles_query
+from rbac.server.db.relationships_query import fetch_relationships
 from rbac.server.db.db_utils import wait_for_resource_in_db
 
-LDAP_DC = os.getenv("LDAP_DC")
 GROUP_BASE_DN = os.getenv("GROUP_BASE_DN")
+LDAP_DC = os.getenv("LDAP_DC")
 LOGGER = get_default_logger(__name__)
-
 ROLES_BP = Blueprint("roles")
 
 
@@ -62,12 +67,13 @@ ROLES_BP = Blueprint("roles")
 @authorized()
 async def get_all_roles(request):
     """Get all roles."""
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     role_resources = await roles_query.fetch_all_role_resources(
         request.app.config.DB_CONN, start, limit
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         role_resources,
@@ -81,14 +87,15 @@ async def get_all_roles(request):
 @authorized()
 async def create_new_role(request):
     """Create a new role."""
+    log_request(request)
     required_fields = ["name", "administrators", "owners"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
     role_title = " ".join(request.json.get("name").split())
     response = await roles_query.roles_search_duplicate(
         request.app.config.DB_CONN, role_title
     )
     if not response:
-        txn_key, txn_user_id = await utils.get_transactor_key(request)
+        txn_key, txn_user_id = await get_transactor_key(request)
         role_id = str(uuid4())
 
         if request.json.get("metadata") is None:
@@ -106,7 +113,7 @@ async def create_new_role(request):
             owners=request.json.get("owners"),
             description=request.json.get("description"),
         )
-        sawtooth_response = await utils.send(
+        sawtooth_response = await send(
             request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
         )
 
@@ -132,11 +139,12 @@ async def create_new_role(request):
 @authorized()
 async def get_role(request, role_id):
     """Get a specific role by role_id."""
-    head_block = await utils.get_request_block(request)
+    log_request(request)
+    head_block = await get_request_block(request)
     role_resource = await roles_query.fetch_role_resource(
         request.app.config.DB_CONN, role_id
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN, request.url, role_resource, head_block
     )
 
@@ -145,6 +153,7 @@ async def get_role(request, role_id):
 @authorized()
 async def check_role_name(request):
     """Check if a role exists with provided name."""
+    log_request(request)
     response = await roles_query.roles_search_duplicate(
         request.app.config.DB_CONN, request.args.get("name")
     )
@@ -155,9 +164,10 @@ async def check_role_name(request):
 @authorized()
 async def update_role(request, role_id):
     """Update a role."""
+    log_request(request)
     required_fields = ["description"]
-    utils.validate_fields(required_fields, request.json)
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await get_transactor_key(request)
     role_description = request.json.get("description")
     batch_list = Role().update.batch_list(
         signer_keypair=txn_key,
@@ -165,9 +175,7 @@ async def update_role(request, role_id):
         role_id=role_id,
         description=role_description,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     return json({"id": role_id, "description": role_description})
 
 
@@ -195,7 +203,8 @@ async def delete_role(request, role_id):
         ApiInternalError:
             There was an error compiling blockchain transactions.
     """
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    log_request(request)
+    txn_key, txn_user_id = await get_transactor_key(request)
 
     # does the role exist?
     if not await roles_query.does_role_exist(request.app.config.DB_CONN, role_id):
@@ -245,9 +254,7 @@ async def delete_role(request, role_id):
 
     batch = batcher.make_batch_from_txns(transactions=txn_list, signer_keypair=txn_key)
     batch_list = batcher.batch_to_list(batch=batch)
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     return json(
         {"message": "Role {} successfully deleted".format(role_id), "deleted": 1}
     )
@@ -257,10 +264,11 @@ async def delete_role(request, role_id):
 @authorized()
 async def add_role_admin(request, role_id):
     """Add an admin to role."""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
 
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     approver = await fetch_relationships("role_admins", "role_id", role_id).run(
         request.app.config.DB_CONN
@@ -275,9 +283,7 @@ async def add_role_admin(request, role_id):
         metadata=request.json.get("metadata"),
         assigned_approver=approver,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     return json({"proposal_id": proposal_id})
 
 
@@ -285,9 +291,10 @@ async def add_role_admin(request, role_id):
 @authorized()
 async def add_role_member(request, role_id):
     """Add a member to a role."""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     approver = await fetch_relationships("role_owners", "role_id", role_id).run(
         request.app.config.DB_CONN
@@ -303,7 +310,7 @@ async def add_role_member(request, role_id):
         metadata=request.json.get("metadata"),
         assigned_approver=approver,
     )
-    batch_status = await utils.send(
+    batch_status = await send(
         request.app.config.VAL_CONN,
         batch_list,
         request.app.config.TIMEOUT,
@@ -332,10 +339,10 @@ async def add_role_member(request, role_id):
             )
         request.json["status"] = "APPROVED"
         request.json["reason"] = "I am the owner of this role"
-        await proposals.update_proposal(request, proposal_id)
+        await update_proposal(request, proposal_id)
         if request.json.get("tracker"):
             events = {"batch_status": batch_status, "member_status": "MEMBER"}
-            return utils.create_tracker_response(events)
+            return create_tracker_response(events)
         return json(
             {
                 "message": "Owner is the requester. Proposal is autoapproved",
@@ -357,7 +364,7 @@ async def add_role_member(request, role_id):
         events = {"batch_status": batch_status}
         if batch_status == 1:
             events["member_status"] = "PENDING"
-        return utils.create_tracker_response(events)
+        return create_tracker_response(events)
     return json({"proposal_id": proposal_id})
 
 
@@ -365,10 +372,11 @@ async def add_role_member(request, role_id):
 @authorized()
 async def add_role_owner(request, role_id):
     """Add an owner to a role."""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
 
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     approver = await fetch_relationships("role_admins", "role_id", role_id).run(
         request.app.config.DB_CONN
@@ -383,9 +391,7 @@ async def add_role_owner(request, role_id):
         metadata=request.json.get("metadata"),
         assigned_approver=approver,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     if isinstance(approver, list):
         for user in approver:
             await send_notification(user, proposal_id)
@@ -398,9 +404,10 @@ async def add_role_owner(request, role_id):
 @authorized()
 async def add_role_task(request, role_id):
     """Add a task to a role."""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     approver = await fetch_relationships(
         "task_owners", "task_id", request.json.get("id")
@@ -415,9 +422,7 @@ async def add_role_task(request, role_id):
         metadata=request.json.get("metadata"),
         assigned_approver=approver,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
     return json({"proposal_id": proposal_id})
 
 
@@ -435,7 +440,7 @@ async def reject_roles_proposals(role_id, request):
     )
 
     # Update to rejected:
-    txn_key, txn_user_id = await utils.get_transactor_key(request=request)
+    txn_key, txn_user_id = await get_transactor_key(request=request)
     for proposal in role_proposals:
         if proposal["object_id"] == role_id:
             reason = "Role was deleted"
@@ -451,9 +456,7 @@ async def reject_roles_proposals(role_id, request):
             related_id=proposal["related_id"],
             reason=reason,
         )
-        await utils.send(
-            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-        )
+        await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
 
 
 def create_role_response(request, role_id):

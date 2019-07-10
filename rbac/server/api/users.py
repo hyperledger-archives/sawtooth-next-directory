@@ -24,8 +24,9 @@ from sanic.response import json
 
 from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import encrypt_private_key, generate_api_key
+from rbac.common.logs import get_default_logger
+from rbac.common.sawtooth import batcher
 from rbac.common.user import User
-from rbac.server.api import utils
 from rbac.server.api.auth import authorized
 from rbac.server.api.errors import (
     ApiBadRequest,
@@ -35,14 +36,23 @@ from rbac.server.api.errors import (
     handle_errors,
 )
 from rbac.server.api.proposals import compile_proposal_resource, PROPOSAL_TRANSACTION
+from rbac.server.api.utils import (
+    check_admin_status,
+    create_authorization_response,
+    create_response,
+    get_request_block,
+    get_request_paging_info,
+    get_transactor_key,
+    log_request,
+    send,
+    send_notification,
+    validate_fields,
+)
 from rbac.server.db import auth_query
 from rbac.server.db import proposals_query
 from rbac.server.db import roles_query
 from rbac.server.db import users_query
 from rbac.server.db.db_utils import create_connection
-
-from rbac.common.logs import get_default_logger
-from rbac.common.sawtooth import batcher
 from rbac.server.blockchain_transactions.user_transaction import create_delete_user_txns
 from rbac.server.blockchain_transactions.role_transaction import (
     create_del_ownr_by_user_txns,
@@ -60,12 +70,13 @@ USERS_BP = Blueprint("users")
 @authorized()
 async def fetch_all_users(request):
     """Returns all users."""
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     user_resources = await users_query.fetch_all_user_resources(
         request.app.config.DB_CONN, start, limit
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         user_resources,
@@ -83,10 +94,10 @@ async def create_new_user(request):
         request:
             obj: incoming request object
     """
+    log_request(request, True)
     # Validate that we have all fields
     required_fields = ["name", "username", "password", "email"]
-    utils.validate_fields(required_fields, request.json)
-
+    validate_fields(required_fields, request.json)
     # Check if username already exists
     conn = await create_connection()
     username = request.json.get("username")
@@ -131,7 +142,7 @@ async def create_new_user(request):
     )
 
     # Submit transaction and wait for complete
-    sawtooth_response = await utils.send(
+    sawtooth_response = await send(
         request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
     )
     if not sawtooth_response:
@@ -179,8 +190,8 @@ async def next_admin_creation(request):
             obj: a request object
     """
     try:
-        txn_key, txn_user_id = await utils.get_transactor_key(request)
-        is_admin = await utils.check_admin_status(txn_user_id)
+        txn_key, txn_user_id = await get_transactor_key(request)
+        is_admin = await check_admin_status(txn_user_id)
         if not is_admin:
             raise ApiBadRequest(
                 "You do not have the authorization to create an account."
@@ -201,8 +212,8 @@ async def non_admin_creation(request):
             obj: a request object
     """
     try:
-        txn_key, txn_user_id = await utils.get_transactor_key(request)
-        is_admin = await utils.check_admin_status(txn_user_id)
+        txn_key, txn_user_id = await get_transactor_key(request)
+        is_admin = await check_admin_status(txn_user_id)
         if not is_admin:
             raise ApiBadRequest(
                 "You do not have the authorization to create an account."
@@ -218,17 +229,20 @@ async def non_admin_creation(request):
 @USERS_BP.put("api/users/update")
 async def update_user_details(request):
     """Update the details associated with a user.  This is NEXT admin only capability.
+
     Args:
         request:
-            obj: request object from inbound request"""
+            obj: request object from inbound request
+    """
+    log_request(request)
     # Checks for action viability
     env = Env()
     if not env.int("ENABLE_NEXT_BASE_USE", 0):
         raise ApiBadRequest("This action is not enabled in this mode.")
     required_fields = ["next_id", "name", "username", "email"]
-    utils.validate_fields(required_fields, request.json)
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
-    is_admin = await utils.check_admin_status(txn_user_id)
+    validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await get_transactor_key(request)
+    is_admin = await check_admin_status(txn_user_id)
     if not is_admin:
         raise ApiBadRequest("You are not a NEXT Administrator.")
     conn = await create_connection()
@@ -263,9 +277,7 @@ async def update_user_details(request):
         metadata=set_metadata,
         manager_id=manager,
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
 
     # Update_auth_table
     auth_updates = {
@@ -282,13 +294,14 @@ async def update_user_details(request):
 @authorized()
 async def get_user(request, next_id):
     """Get a specific user by next_id."""
-    head_block = await utils.get_request_block(request)
+    log_request(request)
+    head_block = await get_request_block(request)
     # this takes 4 seconds
     user_resource = await users_query.fetch_user_resource(
         request.app.config.DB_CONN, next_id
     )
 
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN, request.url, user_resource, head_block
     )
 
@@ -297,8 +310,9 @@ async def get_user(request, next_id):
 @authorized()
 async def delete_user(request, next_id):
     """Delete a specific user by next_id."""
+    log_request(request)
     txn_list = []
-    txn_key, _ = await utils.get_transactor_key(request)
+    txn_key, _ = await get_transactor_key(request)
     txn_list = await create_del_ownr_by_user_txns(txn_key, next_id, txn_list)
     txn_list = await create_del_admin_by_user_txns(txn_key, next_id, txn_list)
     txn_list = await create_del_mmbr_by_user_txns(txn_key, next_id, txn_list)
@@ -309,9 +323,7 @@ async def delete_user(request, next_id):
             transactions=txn_list, signer_keypair=txn_key
         )
     batch_list = batcher.batch_to_list(batch=batch)
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
 
     await reject_users_proposals(next_id, request)
 
@@ -324,12 +336,13 @@ async def delete_user(request, next_id):
 @authorized()
 async def get_user_summary(request, next_id):
     """This endpoint is for returning summary data for a user, just it's next_id,name, email."""
-    head_block = await utils.get_request_block(request)
+    log_request(request)
+    head_block = await get_request_block(request)
     user_resource = await users_query.fetch_user_resource_summary(
         request.app.config.DB_CONN, next_id
     )
 
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN, request.url, user_resource, head_block
     )
 
@@ -338,12 +351,13 @@ async def get_user_summary(request, next_id):
 @authorized()
 async def get_users_summary(request, next_id):
     """This endpoint is for returning summary data for a user, just their next_id, name, email."""
-    head_block = await utils.get_request_block(request)
+    log_request(request)
+    head_block = await get_request_block(request)
     user_resource = await users_query.fetch_user_resource_summary(
         request.app.config.DB_CONN, next_id
     )
 
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN, request.url, user_resource, head_block
     )
 
@@ -352,11 +366,12 @@ async def get_users_summary(request, next_id):
 @authorized()
 async def get_user_relationships(request, next_id):
     """Get relationships for a specific user, by next_id."""
-    head_block = await utils.get_request_block(request)
+    log_request(request)
+    head_block = await get_request_block(request)
     user_resource = await users_query.fetch_user_relationships(
         request.app.config.DB_CONN, next_id
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN, request.url, user_resource, head_block
     )
 
@@ -365,11 +380,12 @@ async def get_user_relationships(request, next_id):
 @authorized()
 async def update_manager(request, next_id):
     """Update a user's manager."""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
+    validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
-    if await utils.check_admin_status(txn_user_id):
+    if await check_admin_status(txn_user_id):
         batch_list = User().manager.propose.batch_list(
             signer_keypair=txn_key,
             signer_user_id=txn_user_id,
@@ -380,10 +396,8 @@ async def update_manager(request, next_id):
             metadata=request.json.get("metadata"),
             assigned_approver=[request.json.get("id")],
         )
-        await utils.send(
-            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-        )
-        await utils.send_notification(request.json.get("id"), proposal_id)
+        await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
+        await send_notification(request.json.get("id"), proposal_id)
     else:
         raise ApiBadRequest("Proposal opener is not a Next Admin.")
     return json({"proposal_id": proposal_id})
@@ -397,14 +411,15 @@ async def update_password(request):
         request:
             obj: a request object
     """
+    log_request(request)
     env = Env()
     next_enabled = env.int("ENABLE_NEXT_BASE_USE", 0)
     if not next_enabled:
         raise ApiBadRequest("This capability is not enabled for this mode.")
     required_fields = ["next_id", "password"]
-    utils.validate_fields(required_fields, request.json)
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
-    is_admin = await utils.check_admin_status(txn_user_id)
+    validate_fields(required_fields, request.json)
+    txn_key, txn_user_id = await get_transactor_key(request)
+    is_admin = await check_admin_status(txn_user_id)
     if not is_admin:
         raise ApiBadRequest("You are not a NEXT Administrator.")
     hashed_pwd = hashlib.sha256(
@@ -428,8 +443,9 @@ async def fetch_open_proposals(request, next_id):
         next_id:
             str: next_id of user for open proposals as assigned_approval
     """
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
         request.app.config.DB_CONN, start, limit
     )
@@ -448,7 +464,7 @@ async def fetch_open_proposals(request, next_id):
         ):
             open_proposals.append(proposal_resource)
 
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         open_proposals,
@@ -462,8 +478,9 @@ async def fetch_open_proposals(request, next_id):
 @authorized()
 async def fetch_confirmed_proposals(request, next_id):
     """Get confirmed proposals for a user, by their next_id."""
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
         request.app.config.DB_CONN, start, limit
     )
@@ -482,7 +499,7 @@ async def fetch_confirmed_proposals(request, next_id):
         ):
             confirmed_proposals.append(proposal_resource)
 
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         confirmed_proposals,
@@ -496,8 +513,9 @@ async def fetch_confirmed_proposals(request, next_id):
 @authorized()
 async def fetch_rejected_proposals(request, next_id):
     """Get confirmed proposals for a user, by their next_id."""
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
         request.app.config.DB_CONN, start, limit
     )
@@ -516,7 +534,7 @@ async def fetch_rejected_proposals(request, next_id):
         ):
             rejected_proposals.append(proposal_resource)
 
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         rejected_proposals,
@@ -530,8 +548,9 @@ async def fetch_rejected_proposals(request, next_id):
 @authorized()
 async def update_expired_roles(request, next_id):
     """Manually expire user role membership"""
+    log_request(request)
     required_fields = ["id"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
 
     await roles_query.expire_role_member(
         request.app.config.DB_CONN, request.json.get("id"), next_id
@@ -553,7 +572,7 @@ async def reject_users_proposals(next_id, request):
     )
 
     # Update to rejected:
-    txn_key, txn_user_id = await utils.get_transactor_key(request=request)
+    txn_key, txn_user_id = await get_transactor_key(request=request)
     for proposal in proposals:
         if proposal["opener"] == next_id:
             reason = "Opener was deleted"
@@ -570,9 +589,7 @@ async def reject_users_proposals(next_id, request):
             related_id=proposal["related_id"],
             reason=reason,
         )
-        await utils.send(
-            request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-        )
+        await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
 
 
 def create_user_response(request, next_id):
@@ -592,7 +609,7 @@ def create_user_response(request, next_id):
         user_resource["manager"] = request.json.get("manager")
     if request.json.get("metadata"):
         user_resource["metadata"] = request.json.get("metadata")
-    return utils.create_authorization_response(
+    return create_authorization_response(
         token, {"message": "Authorization successful", "user": user_resource}
     )
 
@@ -600,6 +617,7 @@ def create_user_response(request, next_id):
 @USERS_BP.get("api/users/check")
 async def check_user_name(request):
     """Check if a user exists with provided username."""
+    log_request(request)
     response = await users_query.users_search_duplicate(
         request.app.config.DB_CONN, request.args.get("username")
     )
