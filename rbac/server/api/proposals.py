@@ -13,21 +13,28 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """Proposals APIs."""
-
 from sanic import Blueprint
 from sanic.response import json
 
-from rbac.common.user import User
+from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.common.task import Task
-from rbac.common.logs import get_default_logger
-from rbac.server.api.errors import ApiBadRequest
+from rbac.common.user import User
 from rbac.server.api.auth import authorized
-from rbac.server.api import utils
+from rbac.server.api.errors import ApiBadRequest
+from rbac.server.api.utils import (
+    create_response,
+    get_request_block,
+    get_request_paging_info,
+    get_transactor_key,
+    log_request,
+    send,
+    send_notification,
+    validate_fields,
+)
 from rbac.server.db import proposals_query
-from rbac.server.db import users_query
 from rbac.server.db.relationships_query import fetch_relationships
-from rbac.server.db.users_query import fetch_user_resource
+from rbac.server.db.users_query import fetch_manager_chain, fetch_user_resource
 
 LOGGER = get_default_logger(__name__)
 
@@ -84,8 +91,9 @@ PROPOSAL_TRANSACTION = {
 @authorized()
 async def get_all_proposals(request):
     """Get all proposals"""
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     proposals = await proposals_query.fetch_all_proposal_resources(
         request.app.config.DB_CONN, start, limit
     )
@@ -95,7 +103,7 @@ async def get_all_proposals(request):
             request.app.config.DB_CONN, proposal
         )
         proposal_resources.append(proposal_resource)
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         proposal_resources,
@@ -109,14 +117,15 @@ async def get_all_proposals(request):
 @authorized()
 async def get_proposal(request, proposal_id):
     """Get specific proposal by proposal_id."""
-    head_block = await utils.get_request_block(request)
+    log_request(request)
+    head_block = await get_request_block(request)
     proposal = await proposals_query.fetch_proposal_resource(
         request.app.config.DB_CONN, proposal_id
     )
     proposal_resource = await compile_proposal_resource(
         request.app.config.DB_CONN, proposal
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN, request.url, proposal_resource, head_block
     )
 
@@ -125,8 +134,9 @@ async def get_proposal(request, proposal_id):
 @authorized()
 async def batch_update_proposals(request):
     """Update multiple proposals"""
+    log_request(request)
     required_fields = ["ids"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
     for proposal_id in request.json["ids"]:
         await update_proposal(request, proposal_id)
     return json({"proposal_ids": request.json["ids"]})
@@ -136,14 +146,15 @@ async def batch_update_proposals(request):
 @authorized()
 async def update_proposal(request, proposal_id):
     """Update proposal."""
+    log_request(request)
     LOGGER.debug("update proposal %s\n%s", proposal_id, request.json)
     required_fields = ["reason", "status"]
-    utils.validate_fields(required_fields, request.json)
+    validate_fields(required_fields, request.json)
     if request.json["status"] not in ("REJECTED", "APPROVED"):
         raise ApiBadRequest(
             "Bad Request: status must be either 'REJECTED' or 'APPROVED'"
         )
-    txn_key, txn_user_id = await utils.get_transactor_key(request=request)
+    txn_key, txn_user_id = await get_transactor_key(request=request)
 
     proposal_resource = await proposals_query.fetch_proposal_resource(
         request.app.config.DB_CONN, proposal_id=proposal_id
@@ -165,10 +176,8 @@ async def update_proposal(request, proposal_id):
         related_id=proposal_resource.get("target"),
         reason=request.json.get("reason"),
     )
-    await utils.send(
-        request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT
-    )
-    await utils.send_notification(proposal_resource.get("target"), proposal_id)
+    await send(request.app.config.VAL_CONN, batch_list, request.app.config.TIMEOUT)
+    await send_notification(proposal_resource.get("target"), proposal_id)
     return json({"proposal_id": proposal_id})
 
 
@@ -195,7 +204,7 @@ async def compile_proposal_resource(conn, proposal_resource):
     approvers_count = len(proposal_resource["approvers"])
     final_list_of_manager_ids = []
     while i < approvers_count:
-        list_of_manager_ids = await users_query.fetch_manager_chain(
+        list_of_manager_ids = await fetch_manager_chain(
             conn, proposal_resource["approvers"][i]
         )
         final_list_of_manager_ids = final_list_of_manager_ids + list_of_manager_ids

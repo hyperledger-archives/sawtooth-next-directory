@@ -19,7 +19,12 @@ from sanic.response import json
 
 from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
-from rbac.server.api import utils
+from rbac.server.api.utils import (
+    create_response,
+    get_request_block,
+    get_request_paging_info,
+    log_request,
+)
 from rbac.server.db import blocks_query
 
 BLOCKS_BP = Blueprint("blocks")
@@ -29,12 +34,13 @@ BLOCKS_BP = Blueprint("blocks")
 @authorized()
 async def get_all_blocks(request):
     """Get all blocks."""
-    head_block = await utils.get_request_block(request)
-    start, limit = utils.get_request_paging_info(request)
+    log_request(request)
+    head_block = await get_request_block(request)
+    start, limit = get_request_paging_info(request)
     block_resources = await blocks_query.fetch_all_blocks(
         request.app.config.DB_CONN, head_block.get("num"), start, limit
     )
-    return await utils.create_response(
+    return await create_response(
         request.app.config.DB_CONN,
         request.url,
         block_resources,
@@ -48,6 +54,7 @@ async def get_all_blocks(request):
 @authorized()
 async def get_latest_block(request):
     """Get the newest block on blockchain."""
+    log_request(request)
     if "?head=" in request.url:
         raise ApiBadRequest("Bad Request: 'head' parameter should not be specified")
 
