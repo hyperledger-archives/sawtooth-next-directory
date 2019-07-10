@@ -110,8 +110,6 @@ def ldap_outbound_listener():
     """Initialize LDAP delta outbound sync with Active Directory."""
     LOGGER.info("Starting LDAP outbound sync listener...")
 
-    ldap_connection = ldap_connector.await_connection(LDAP_SERVER, LDAP_USER, LDAP_PASS)
-
     while True:
 
         try:
@@ -132,9 +130,13 @@ def ldap_outbound_listener():
                 LOGGER.debug(
                     "Processing LDAP outbound_queue entry: %s", str(queue_entry)
                 )
+                ldap_connection = ldap_connector.await_connection(
+                    LDAP_SERVER, LDAP_USER, LDAP_PASS
+                )
                 successful_ldap_write = process_outbound_entry(
                     queue_entry, ldap_connection
                 )
+                ldap_connection.unbind()
 
                 if successful_ldap_write:
                     update_outbound_entry_status(queue_entry["id"])
