@@ -137,6 +137,7 @@ def user_login(session, username, password):
     """
     login = {"id": username, "password": password}
     response = session.post("http://rbac-server:8000/api/authorization/", json=login)
-    token = "Bearer " + response.json()["token"]
-    session.headers.update({"Authorization": token})
+    if "token" in response.json():
+        token = "Bearer " + response.json()["token"]
+        session.headers.update({"Authorization": token})
     return response

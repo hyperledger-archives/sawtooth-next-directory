@@ -18,6 +18,7 @@ from uuid import uuid4
 import hashlib
 
 from environs import Env
+from itsdangerous import BadSignature
 from sanic import Blueprint
 from sanic.response import json
 
@@ -199,13 +200,18 @@ async def non_admin_creation(request):
         request:
             obj: a request object
     """
-    txn_key, txn_user_id = await utils.get_transactor_key(request)
-    is_admin = await utils.check_admin_status(txn_user_id)
-    if not is_admin:
+    try:
+        txn_key, txn_user_id = await utils.get_transactor_key(request)
+        is_admin = await utils.check_admin_status(txn_user_id)
+        if not is_admin:
+            raise ApiBadRequest(
+                "You do not have the authorization to create an account."
+            )
+        next_id = str(uuid4())
+        key_pair = Key()
+        return txn_key, txn_user_id, next_id, key_pair
+    except BadSignature:
         raise ApiBadRequest("You do not have the authorization to create an account.")
-    next_id = str(uuid4())
-    key_pair = Key()
-    return txn_key, txn_user_id, next_id, key_pair
 
 
 # TODO: Change → api/users/<next_id>
