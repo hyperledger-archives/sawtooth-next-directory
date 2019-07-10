@@ -13,8 +13,8 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 """Utility functions to support APIs."""
-
 import binascii
+import datetime as dt
 import rethinkdb as r
 
 from sanic.response import json
@@ -25,14 +25,15 @@ from rbac.common.crypto.keys import Key
 from rbac.common.crypto.secrets import decrypt_private_key, deserialize_api_key
 from rbac.common.logs import get_default_logger
 from rbac.server.api.errors import ApiBadRequest, ApiInternalError, ApiUnauthorized
-from rbac.server.db import auth_query
 from rbac.server.db import blocks_query
+from rbac.server.db.auth_query import get_auth_by_next_id
 from rbac.server.db.db_utils import create_connection
 from rbac.server.db.roles_query import (
     get_role_by_name,
     get_role_membership,
     fetch_role_owners,
 )
+
 
 LOGGER = get_default_logger(__name__)
 
@@ -177,7 +178,7 @@ async def get_transactor_key(request):
     )
     next_id = id_dict.get("id")
 
-    auth_data = await auth_query.get_auth_by_next_id(next_id)
+    auth_data = await get_auth_by_next_id(next_id)
     encrypted_private_key = auth_data.get("encrypted_private_key")
     private_key = decrypt_private_key(
         request.app.config.AES_KEY, next_id, encrypted_private_key
@@ -306,3 +307,23 @@ async def send_notification(next_id, proposal_id, frequency=0):
     )
     conn.close()
     return notification
+
+
+def log_request(request, sensitive=False):
+    """Utility logger for all requests to be logged to file.
+
+    Args:
+        request:
+            obj: incoming request object
+        sensitive:
+            bool: contains info that should not be logged
+    """
+    if sensitive:
+        LOGGER.info("A request was made at %s to %s", dt.datetime.now(), request.url)
+        return
+    LOGGER.info(
+        "The following request (%s) was made at %s with a payload of: %s",
+        request,
+        dt.datetime.now(),
+        request.json,
+    )

@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-"""Search APIs."""
-
+"""APIs and functions utilized to search."""
 import math
 
 from sanic import Blueprint
@@ -21,6 +20,7 @@ from sanic.response import json
 
 from rbac.common.logs import get_default_logger
 from rbac.server.api.auth import authorized
+from rbac.server.api.utils import log_request
 from rbac.server.db.packs_query import search_packs, search_packs_count
 from rbac.server.db.roles_query import search_roles, search_roles_count
 from rbac.server.db.users_query import search_users, search_users_count
@@ -33,6 +33,7 @@ SEARCH_BP = Blueprint("search")
 @authorized()
 async def search_all(request):
     """API Endpoint to get all roles, packs, or users containing a string."""
+    log_request(request)
     search_query = request.json.get("query")
 
     # Check for valid payload containing query and search object types

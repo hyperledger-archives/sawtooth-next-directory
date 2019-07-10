@@ -18,6 +18,7 @@ from sanic import Blueprint
 from sanic import response
 
 from rbac.common.logs import get_default_logger
+from rbac.server.api.utils import log_request
 
 LOGGER = get_default_logger(__name__)
 
@@ -27,6 +28,7 @@ SWAGGER_BP = Blueprint("swagger")
 @SWAGGER_BP.get("api/swagger")
 async def get_swagger(request):
     """Returns pretty swagger file for our API."""
+    log_request(request)
     if not request:
         LOGGER.debug(str(request))
     return await response.file(
