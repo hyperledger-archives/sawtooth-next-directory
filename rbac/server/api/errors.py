@@ -87,6 +87,13 @@ class ApiNotFound(ApiException):
     pass
 
 
+@add_status_code(405)
+class ApiDisabled(ApiException):
+    """API is disabled due to incorrect mode."""
+
+    pass
+
+
 @add_status_code(409)
 class ApiTargetConflict(ApiException):
     """ Define ApiTargetConflict exception."""

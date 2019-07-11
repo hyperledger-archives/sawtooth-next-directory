@@ -30,6 +30,7 @@ from rbac.common.user import User
 from rbac.server.api.auth import authorized
 from rbac.server.api.errors import (
     ApiBadRequest,
+    ApiDisabled,
     ApiInternalError,
     ApiTargetConflict,
     ApiUnauthorized,
@@ -119,7 +120,7 @@ async def create_new_user(request):
     if request.json != next_admin:
         # Try to see if they are in NEXT
         if not env.int("ENABLE_NEXT_BASE_USE"):
-            raise ApiBadRequest("Not a valid action. Source not enabled")
+            raise ApiDisabled("Not a valid action. Source not enabled")
         txn_key, txn_user_id, next_id, key_pair = await non_admin_creation(request)
     else:
         txn_key, txn_user_id, next_id, key_pair = await next_admin_creation(request)
@@ -238,7 +239,7 @@ async def update_user_details(request):
     # Checks for action viability
     env = Env()
     if not env.int("ENABLE_NEXT_BASE_USE", 0):
-        raise ApiBadRequest("This action is not enabled in this mode.")
+        raise ApiDisabled("This action is not enabled in this mode.")
     required_fields = ["next_id", "name", "username", "email"]
     validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await get_transactor_key(request)
@@ -311,6 +312,9 @@ async def get_user(request, next_id):
 async def delete_user(request, next_id):
     """Delete a specific user by next_id."""
     log_request(request)
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     txn_list = []
     txn_key, _ = await get_transactor_key(request)
     txn_list = await create_del_ownr_by_user_txns(txn_key, next_id, txn_list)
@@ -381,6 +385,9 @@ async def get_user_relationships(request, next_id):
 async def update_manager(request, next_id):
     """Update a user's manager."""
     log_request(request)
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     required_fields = ["id"]
     validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await get_transactor_key(request)
@@ -414,9 +421,8 @@ async def update_password(request):
     """
     log_request(request)
     env = Env()
-    next_enabled = env.int("ENABLE_NEXT_BASE_USE", 0)
-    if not next_enabled:
-        raise ApiBadRequest("This capability is not enabled for this mode.")
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     required_fields = ["next_id", "password"]
     validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await get_transactor_key(request)
