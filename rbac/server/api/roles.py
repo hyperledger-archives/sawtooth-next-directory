@@ -16,6 +16,7 @@
 import os
 from uuid import uuid4
 
+from environs import Env
 from sanic import Blueprint
 from sanic.response import json
 
@@ -23,10 +24,11 @@ from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
 from rbac.common.sawtooth import batcher
 from rbac.server.api.errors import (
-    ApiTargetConflict,
-    ApiNotFound,
+    ApiDisabled,
     ApiForbidden,
     ApiInternalError,
+    ApiNotFound,
+    ApiTargetConflict,
     handle_not_found,
     handle_errors,
 )
@@ -88,6 +90,9 @@ async def get_all_roles(request):
 async def create_new_role(request):
     """Create a new role."""
     log_request(request)
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     required_fields = ["name", "administrators", "owners"]
     validate_fields(required_fields, request.json)
     role_title = " ".join(request.json.get("name").split())
@@ -165,6 +170,9 @@ async def check_role_name(request):
 async def update_role(request, role_id):
     """Update a role."""
     log_request(request)
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     required_fields = ["description"]
     validate_fields(required_fields, request.json)
     txn_key, txn_user_id = await get_transactor_key(request)
@@ -204,6 +212,9 @@ async def delete_role(request, role_id):
             There was an error compiling blockchain transactions.
     """
     log_request(request)
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     txn_key, txn_user_id = await get_transactor_key(request)
 
     # does the role exist?
@@ -265,6 +276,9 @@ async def delete_role(request, role_id):
 async def add_role_admin(request, role_id):
     """Add an admin to role."""
     log_request(request)
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     required_fields = ["id"]
     validate_fields(required_fields, request.json)
 
@@ -373,6 +387,9 @@ async def add_role_member(request, role_id):
 async def add_role_owner(request, role_id):
     """Add an owner to a role."""
     log_request(request)
+    env = Env()
+    if not env.int("ENABLE_NEXT_BASE_USE"):
+        raise ApiDisabled("Not a valid action. Source not enabled")
     required_fields = ["id"]
     validate_fields(required_fields, request.json)
 
