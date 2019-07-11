@@ -37,8 +37,7 @@ http {
     }
 
     server {
-        listen 443;
-        ssl on;
+        listen 443 ssl;
         ssl_certificate /etc/nginx/certs/localhost.crt;
         ssl_certificate_key /etc/nginx/certs/localhost.key;
         server_name localhost;
@@ -52,8 +51,7 @@ http {
     }
 
     server {
-        listen 8000;
-        ssl on;
+        listen 8000 ssl;
         server_name localhost;
         ssl_certificate /etc/nginx/certs/localhost.crt;
         ssl_certificate_key /etc/nginx/certs/localhost.key;
