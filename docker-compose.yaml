@@ -165,8 +165,6 @@ services:
   rethink:
     container_name: rbac-rethink
     image: rethinkdb:2.3
-    ports:
-      - "9090:8080"
     expose:
       - "28015"
 
