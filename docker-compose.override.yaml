@@ -31,3 +31,7 @@ services:
   chatbot:
     ports:
       - "5005:5005"
+
+  rethink:
+    ports:
+      - "9090:8080"
