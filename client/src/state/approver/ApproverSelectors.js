@@ -39,7 +39,10 @@ export const ApproverSelectors = {
       state.user.me &&
       state.approver.openProposals &&
       state.approver.openProposals
-        .filter(proposal =>  proposal.opener !== state.user.me.id ).length
+        .filter(proposal =>  proposal.opener !== state.user.me.id &&
+          proposal.assigned_approver.includes(
+            state.user.me.id
+          )).length
     ) || null;
   },
   openProposalsByRoleCount: (state) =>
