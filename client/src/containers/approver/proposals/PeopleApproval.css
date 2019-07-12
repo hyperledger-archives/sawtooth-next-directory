@@ -28,3 +28,21 @@ limitations under the License.
 #next-approver-people-approval-content #next-individual-nav {
   padding-top: 70px;
 }
+
+#next-permissions-container {
+  margin-top: var(--sidebar-width);
+  text-align: center;
+}
+
+#next-permissions-container h1 {
+  font-size: 5em;
+  font-weight: lighter;
+}
+
+#next-permissions-container h1 .sub.header {
+  color: white;
+  font-size: .24em;
+  margin: 24px auto 0 auto;
+  max-width: 500px;
+  word-break: break-word;
+}
