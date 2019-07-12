@@ -32,6 +32,7 @@ from rbac.server.api.utils import (
     validate_fields,
 )
 from rbac.server.db import packs_query
+from rbac.server.db.db_utils import create_connection
 
 
 PACKS_BP = Blueprint("packs")
@@ -46,16 +47,11 @@ async def get_all_packs(request):
     head_block = await get_request_block(request)
     start, limit = get_request_paging_info(request)
 
-    pack_resources = await packs_query.fetch_all_pack_resources(
-        request.app.config.DB_CONN, start, limit
-    )
+    conn = await create_connection()
+    pack_resources = await packs_query.fetch_all_pack_resources(conn, start, limit)
+    conn.close()
     return await create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        pack_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, pack_resources, head_block, start=start, limit=limit
     )
 
 
@@ -67,22 +63,21 @@ async def create_new_pack(request):
     required_fields = ["owners", "name", "roles"]
     validate_fields(required_fields, request.json)
     pack_title = " ".join(request.json.get("name").split())
-    response = await packs_query.packs_search_duplicate(
-        request.app.config.DB_CONN, pack_title
-    )
+    conn = await create_connection()
+    response = await packs_query.packs_search_duplicate(conn, pack_title)
     if not response:
         pack_id = str(uuid4())
         await packs_query.create_pack_resource(
-            request.app.config.DB_CONN,
+            conn,
             pack_id,
             request.json.get("owners"),
             pack_title,
             request.json.get("description"),
         )
-        await packs_query.add_roles(
-            request.app.config.DB_CONN, pack_id, request.json.get("roles")
-        )
+        await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
+        conn.close()
         return create_pack_response(request, pack_id)
+    conn.close()
     raise ApiBadRequest(
         "Error: Could not create this pack because the pack name already exists."
     )
@@ -94,12 +89,11 @@ async def get_pack(request, pack_id):
     """Get a single pack"""
     log_request(request)
     head_block = await get_request_block(request)
-    pack_resource = await packs_query.fetch_pack_resource(
-        request.app.config.DB_CONN, pack_id
-    )
-    return await create_response(
-        request.app.config.DB_CONN, request.url, pack_resource, head_block
-    )
+    conn = await create_connection()
+    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
+    conn.close()
+
+    return await create_response(conn, request.url, pack_resource, head_block)
 
 
 @PACKS_BP.get("api/packs/check")
@@ -107,9 +101,10 @@ async def get_pack(request, pack_id):
 async def check_pack_name(request):
     """Check if a pack exists with provided name"""
     log_request(request)
-    response = await packs_query.packs_search_duplicate(
-        request.app.config.DB_CONN, request.args.get("name")
-    )
+    conn = await create_connection()
+    response = await packs_query.packs_search_duplicate(conn, request.args.get("name"))
+    conn.close()
+
     return json({"exists": bool(response)})
 
 
@@ -121,9 +116,9 @@ async def add_pack_member(request, pack_id):
     required_fields = ["id"]
     validate_fields(required_fields, request.json)
 
-    pack_resource = await packs_query.fetch_pack_resource(
-        request.app.config.DB_CONN, pack_id
-    )
+    conn = await create_connection()
+    pack_resource = await packs_query.fetch_pack_resource(conn, pack_id)
+    conn.close()
     request.json["metadata"] = ""
     request.json["pack_id"] = pack_id
     for role_id in pack_resource.get("roles"):
@@ -138,9 +133,9 @@ async def add_pack_role(request, pack_id):
     log_request(request)
     required_fields = ["roles"]
     validate_fields(required_fields, request.json)
-    await packs_query.add_roles(
-        request.app.config.DB_CONN, pack_id, request.json.get("roles")
-    )
+    conn = await create_connection()
+    await packs_query.add_roles(conn, pack_id, request.json.get("roles"))
+    conn.close()
     return json({"roles": request.json.get("roles")})
 
 
@@ -157,19 +152,19 @@ async def delete_pack(request, pack_id):
     log_request(request)
     txn_key, txn_user_id = await get_transactor_key(request)
 
-    pack = await packs_query.get_pack_by_pack_id(request.app.config.DB_CONN, pack_id)
+    conn = await create_connection()
+    pack = await packs_query.get_pack_by_pack_id(conn, pack_id)
     if not pack:
         raise ApiBadRequest(
             "Error: Pack does not currently exist or has already been deleted."
         )
-    owners = await packs_query.get_pack_owners_by_id(
-        request.app.config.DB_CONN, pack_id
-    )
+    owners = await packs_query.get_pack_owners_by_id(conn, pack_id)
     if txn_user_id not in owners and not await check_admin_status(txn_user_id):
         raise ApiBadRequest(
             "Error: You do not have the authorization to delete this pack."
         )
-    await packs_query.delete_pack_by_id(request.app.config.DB_CONN, pack_id)
+    await packs_query.delete_pack_by_id(conn, pack_id)
+    conn.close()
     return json(
         {
             "message": "Pack {} successfully deleted".format(pack_id),
