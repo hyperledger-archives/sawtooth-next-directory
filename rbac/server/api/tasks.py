@@ -30,6 +30,7 @@ from rbac.server.api.utils import (
     validate_fields,
 )
 from rbac.server.db import tasks_query
+from rbac.server.db.db_utils import create_connection
 from rbac.server.db.relationships_query import fetch_relationships
 
 TASKS_BP = Blueprint("tasks")
@@ -42,16 +43,12 @@ async def get_all_tasks(request):
     log_request(request)
     head_block = await get_request_block(request)
     start, limit = get_request_paging_info(request)
-    task_resources = await tasks_query.fetch_all_task_resources(
-        request.app.config.DB_CONN, start, limit
-    )
+    conn = await create_connection()
+    task_resources = await tasks_query.fetch_all_task_resources(conn, start, limit)
+    conn.close()
+
     return await create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        task_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, task_resources, head_block, start=start, limit=limit
     )
 
 
@@ -84,12 +81,10 @@ async def get_task(request, task_id):
     """Get a specific task by task_id."""
     log_request(request)
     head_block = await get_request_block(request)
-    task_resource = await tasks_query.fetch_task_resource(
-        request.app.config.DB_CONN, task_id
-    )
-    return await create_response(
-        request.app.config.DB_CONN, request.url, task_resource, head_block
-    )
+    conn = await create_connection()
+    task_resource = await tasks_query.fetch_task_resource(conn, task_id)
+    conn.close()
+    return await create_response(conn, request.url, task_resource, head_block)
 
 
 @TASKS_BP.post("api/tasks/<task_id>/admins")
@@ -102,9 +97,9 @@ async def add_task_admin(request, task_id):
 
     txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
-    approver = await fetch_relationships("task_admins", "task_id", task_id).run(
-        request.app.config.DB_CONN
-    )
+    conn = await create_connection()
+    approver = await fetch_relationships("task_admins", "task_id", task_id).run(conn)
+    conn.close()
     batch_list = Task().admin.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
@@ -129,9 +124,9 @@ async def add_task_owner(request, task_id):
 
     txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
-    approver = await fetch_relationships("task_admins", "task_id", task_id).run(
-        request.app.config.DB_CONN
-    )
+    conn = await create_connection()
+    approver = await fetch_relationships("task_admins", "task_id", task_id).run(conn)
+    conn.close()
     batch_list = Task().owner.propose.batch_list(
         signer_keypair=txn_key,
         signer_user_id=txn_user_id,
