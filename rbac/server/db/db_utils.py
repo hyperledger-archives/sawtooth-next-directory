@@ -81,4 +81,4 @@ def sanitize_query(query):
     Returns:
         A sanitized string without special characters.
     """
-    return re.sub(r"[^a-zA-Z0-9]+", " ", query)
+    return re.sub(r"[^a-zA-Z0-9_]+", " ", query)
