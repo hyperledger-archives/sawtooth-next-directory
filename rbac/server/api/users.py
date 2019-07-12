@@ -74,16 +74,12 @@ async def fetch_all_users(request):
     log_request(request)
     head_block = await get_request_block(request)
     start, limit = get_request_paging_info(request)
-    user_resources = await users_query.fetch_all_user_resources(
-        request.app.config.DB_CONN, start, limit
-    )
+    conn = await create_connection()
+    user_resources = await users_query.fetch_all_user_resources(conn, start, limit)
+    conn.close()
+
     return await create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        user_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, user_resources, head_block, start=start, limit=limit
     )
 
 
@@ -177,7 +173,9 @@ async def create_new_user(request):
 
     # Insert to user_mapping and close
     await auth_query.create_auth_entry(auth_entry)
-    await users_query.create_user_map_entry(request.app.config.DB_CONN, mapping_data)
+    conn = await create_connection()
+    await users_query.create_user_map_entry(conn, mapping_data)
+    conn.close()
 
     # Send back success response
     return json({"data": {"user": {"id": next_id}}})
@@ -297,14 +295,11 @@ async def get_user(request, next_id):
     """Get a specific user by next_id."""
     log_request(request)
     head_block = await get_request_block(request)
-    # this takes 4 seconds
-    user_resource = await users_query.fetch_user_resource(
-        request.app.config.DB_CONN, next_id
-    )
+    conn = await create_connection()
+    user_resource = await users_query.fetch_user_resource(conn, next_id)
+    conn.close()
 
-    return await create_response(
-        request.app.config.DB_CONN, request.url, user_resource, head_block
-    )
+    return await create_response(conn, request.url, user_resource, head_block)
 
 
 @USERS_BP.delete("api/users/<next_id>")
@@ -342,13 +337,11 @@ async def get_user_summary(request, next_id):
     """This endpoint is for returning summary data for a user, just it's next_id,name, email."""
     log_request(request)
     head_block = await get_request_block(request)
-    user_resource = await users_query.fetch_user_resource_summary(
-        request.app.config.DB_CONN, next_id
-    )
+    conn = await create_connection()
+    user_resource = await users_query.fetch_user_resource_summary(conn, next_id)
+    conn.close()
 
-    return await create_response(
-        request.app.config.DB_CONN, request.url, user_resource, head_block
-    )
+    return await create_response(conn, request.url, user_resource, head_block)
 
 
 @USERS_BP.get("api/users/<next_id>/summary")
@@ -357,13 +350,11 @@ async def get_users_summary(request, next_id):
     """This endpoint is for returning summary data for a user, just their next_id, name, email."""
     log_request(request)
     head_block = await get_request_block(request)
-    user_resource = await users_query.fetch_user_resource_summary(
-        request.app.config.DB_CONN, next_id
-    )
+    conn = await create_connection()
+    user_resource = await users_query.fetch_user_resource_summary(conn, next_id)
+    conn.close()
 
-    return await create_response(
-        request.app.config.DB_CONN, request.url, user_resource, head_block
-    )
+    return await create_response(conn, request.url, user_resource, head_block)
 
 
 @USERS_BP.get("api/users/<next_id>/relationships")
@@ -372,12 +363,11 @@ async def get_user_relationships(request, next_id):
     """Get relationships for a specific user, by next_id."""
     log_request(request)
     head_block = await get_request_block(request)
-    user_resource = await users_query.fetch_user_relationships(
-        request.app.config.DB_CONN, next_id
-    )
-    return await create_response(
-        request.app.config.DB_CONN, request.url, user_resource, head_block
-    )
+    conn = await create_connection()
+    user_resource = await users_query.fetch_user_relationships(conn, next_id)
+    conn.close()
+
+    return await create_response(conn, request.url, user_resource, head_block)
 
 
 @USERS_BP.put("api/users/<next_id>/manager")
@@ -393,7 +383,9 @@ async def update_manager(request, next_id):
     txn_key, txn_user_id = await get_transactor_key(request)
     proposal_id = str(uuid4())
     if await check_admin_status(txn_user_id):
-        next_admins_list = await users_query.get_next_admins(request.app.config.DB_CONN)
+        conn = await create_connection()
+        next_admins_list = await users_query.get_next_admins(conn)
+        conn.close()
         batch_list = User().manager.propose.batch_list(
             signer_keypair=txn_key,
             signer_user_id=txn_user_id,
@@ -453,16 +445,13 @@ async def fetch_open_proposals(request, next_id):
     log_request(request)
     head_block = await get_request_block(request)
     start, limit = get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, start, limit
-    )
+    conn = await create_connection()
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
-
+    conn.close()
     open_proposals = []
     for proposal_resource in proposal_resources:
         if (
@@ -472,12 +461,7 @@ async def fetch_open_proposals(request, next_id):
             open_proposals.append(proposal_resource)
 
     return await create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        open_proposals,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, open_proposals, head_block, start=start, limit=limit
     )
 
 
@@ -488,15 +472,13 @@ async def fetch_confirmed_proposals(request, next_id):
     log_request(request)
     head_block = await get_request_block(request)
     start, limit = get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, start, limit
-    )
+    conn = await create_connection()
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
+    conn.close()
 
     confirmed_proposals = []
     for proposal_resource in proposal_resources:
@@ -507,12 +489,7 @@ async def fetch_confirmed_proposals(request, next_id):
             confirmed_proposals.append(proposal_resource)
 
     return await create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        confirmed_proposals,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, confirmed_proposals, head_block, start=start, limit=limit
     )
 
 
@@ -523,15 +500,13 @@ async def fetch_rejected_proposals(request, next_id):
     log_request(request)
     head_block = await get_request_block(request)
     start, limit = get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, start, limit
-    )
+    conn = await create_connection()
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
+    conn.close()
 
     rejected_proposals = []
     for proposal_resource in proposal_resources:
@@ -542,12 +517,7 @@ async def fetch_rejected_proposals(request, next_id):
             rejected_proposals.append(proposal_resource)
 
     return await create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        rejected_proposals,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, rejected_proposals, head_block, start=start, limit=limit
     )
 
 
@@ -559,9 +529,9 @@ async def update_expired_roles(request, next_id):
     required_fields = ["id"]
     validate_fields(required_fields, request.json)
 
-    await roles_query.expire_role_member(
-        request.app.config.DB_CONN, request.json.get("id"), next_id
-    )
+    conn = await create_connection()
+    await roles_query.expire_role_member(conn, request.json.get("id"), next_id)
+    conn.close()
     return json({"role_id": request.json.get("id")})
 
 
@@ -574,9 +544,9 @@ async def reject_users_proposals(next_id, request):
             obj: a request object
     """
     # Get all open proposals associated with the user
-    proposals = await proposals_query.fetch_open_proposals_by_user(
-        request.app.config.DB_CONN, next_id
-    )
+    conn = await create_connection()
+    proposals = await proposals_query.fetch_open_proposals_by_user(conn, next_id)
+    conn.close()
 
     # Update to rejected:
     txn_key, txn_user_id = await get_transactor_key(request=request)
@@ -625,7 +595,9 @@ def create_user_response(request, next_id):
 async def check_user_name(request):
     """Check if a user exists with provided username."""
     log_request(request)
+    conn = await create_connection()
     response = await users_query.users_search_duplicate(
-        request.app.config.DB_CONN, request.args.get("username")
+        conn, request.args.get("username")
     )
+    conn.close()
     return json({"exists": bool(response)})

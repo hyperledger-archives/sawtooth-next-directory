@@ -34,6 +34,7 @@ from rbac.server.api.utils import (
 )
 from rbac.server.db import proposals_query
 from rbac.server.db.relationships_query import fetch_relationships
+from rbac.server.db.db_utils import create_connection
 from rbac.server.db.users_query import fetch_manager_chain, get_next_admins
 
 LOGGER = get_default_logger(__name__)
@@ -94,22 +95,15 @@ async def get_all_proposals(request):
     log_request(request)
     head_block = await get_request_block(request)
     start, limit = get_request_paging_info(request)
-    proposals = await proposals_query.fetch_all_proposal_resources(
-        request.app.config.DB_CONN, start, limit
-    )
+    conn = await create_connection()
+    proposals = await proposals_query.fetch_all_proposal_resources(conn, start, limit)
     proposal_resources = []
     for proposal in proposals:
-        proposal_resource = await compile_proposal_resource(
-            request.app.config.DB_CONN, proposal
-        )
+        proposal_resource = await compile_proposal_resource(conn, proposal)
         proposal_resources.append(proposal_resource)
+    conn.close()
     return await create_response(
-        request.app.config.DB_CONN,
-        request.url,
-        proposal_resources,
-        head_block,
-        start=start,
-        limit=limit,
+        conn, request.url, proposal_resources, head_block, start=start, limit=limit
     )
 
 
@@ -119,15 +113,11 @@ async def get_proposal(request, proposal_id):
     """Get specific proposal by proposal_id."""
     log_request(request)
     head_block = await get_request_block(request)
-    proposal = await proposals_query.fetch_proposal_resource(
-        request.app.config.DB_CONN, proposal_id
-    )
-    proposal_resource = await compile_proposal_resource(
-        request.app.config.DB_CONN, proposal
-    )
-    return await create_response(
-        request.app.config.DB_CONN, request.url, proposal_resource, head_block
-    )
+    conn = await create_connection()
+    proposal = await proposals_query.fetch_proposal_resource(conn, proposal_id)
+    proposal_resource = await compile_proposal_resource(conn, proposal)
+    conn.close()
+    return await create_response(conn, request.url, proposal_resource, head_block)
 
 
 @PROPOSALS_BP.patch("api/proposals")
@@ -156,12 +146,12 @@ async def update_proposal(request, proposal_id):
         )
     txn_key, txn_user_id = await get_transactor_key(request=request)
 
+    conn = await create_connection()
     proposal_resource = await proposals_query.fetch_proposal_resource(
-        request.app.config.DB_CONN, proposal_id=proposal_id
+        conn, proposal_id=proposal_id
     )
-    approvers_list = await compile_proposal_resource(
-        request.app.config.DB_CONN, proposal_resource
-    )
+    approvers_list = await compile_proposal_resource(conn, proposal_resource)
+    conn.close()
     if txn_user_id not in approvers_list["approvers"]:
         raise ApiUnauthorized(
             "Bad Request: You don't have the authorization to APPROVE or REJECT the proposal"
