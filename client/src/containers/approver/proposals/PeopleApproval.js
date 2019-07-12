@@ -62,9 +62,15 @@ class PeopleApproval extends Component {
    * component. On load, get open proposals.
    */
   componentDidMount () {
-    const { getOpenProposals, getUser, onBehalfOf } = this.props;
+    const {
+      getOpenProposals,
+      getOrganization,
+      getUser,
+      organization,
+      onBehalfOf } = this.props;
     getOpenProposals(onBehalfOf);
     getUser(onBehalfOf);
+    !organization && getOrganization(onBehalfOf);
     theme.apply(this.themes);
   }
 
@@ -128,12 +134,21 @@ class PeopleApproval extends Component {
    * @returns {JSX}
    */
   render () {
-    const { openProposals, onBehalfOf, users, userFromId } = this.props;
+    const {
+      id,
+      openProposals,
+      onBehalfOf,
+      organization,
+      users,
+      userFromId } = this.props;
     const {
       activeIndex,
       selectedProposals,
       selectedRoles,
       selectedUsers } = this.state;
+
+    if (!organization || !id)
+      return null;
 
     const user = selectedUsers && userFromId(selectedUsers[0]);
     const title = user && user.name;
@@ -144,6 +159,21 @@ class PeopleApproval extends Component {
     const foo = users && users.find(user => user.id === onBehalfOf);
     const bar = `Pending Approvals (${foo && foo.name})`;
 
+    if (!organization.managers.includes(id)) {
+      return (
+        <div id='next-permissions-container'>
+          <Header as='h1'>
+            <span role='img' aria-label=''>
+              😵
+            </span>
+            <Header.Subheader>
+              Oops! You don&apos;t have permission to view this page.
+            </Header.Subheader>
+          </Header>
+        </div>
+      );
+    }
+
     return (
       <Grid id='next-approver-grid'>
 
@@ -153,7 +183,7 @@ class PeopleApproval extends Component {
             breadcrumb={[
               {name: 'People', slug: '/approval/people'},
               {
-                name: 'Direct Report Approvals',
+                name: foo && foo.name,
                 slug: `/approval/people/${onBehalfOf}/pending`,
               },
             ]}
@@ -188,7 +218,7 @@ class PeopleApproval extends Component {
             { openProposals && openProposals.length === 0 &&
               <Header as='h3' textAlign='center' color='grey'>
                 <Header.Content>
-                  Your direct report has no pending approvals
+                  This user has no pending approvals
                 </Header.Content>
               </Header>
             }
