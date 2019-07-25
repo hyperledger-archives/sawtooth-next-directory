@@ -53,23 +53,22 @@ class Manage extends Component {
                   <Card
                     fluid
                     as={Link}
-                    to='manage/roles'
-                    header='Roles'
-                    className='minimal huge'
-                    description={`
-                      Create a new role, modify an existing one,
-                      or delete one.
-                    `}/>
-                </Grid.Column>
-                <Grid.Column>
-                  <Card
-                    fluid
-                    as={Link}
                     to='manage/packs'
                     header='Packs'
                     className='minimal huge'
                     description={`
                       Create, modify, or delete an existing pack.
+                    `}/>
+                </Grid.Column>
+                <Grid.Column>
+                  <Card
+                    fluid
+                    to='manage/roles'
+                    header='Roles'
+                    className='minimal huge disabled'
+                    description={`
+                      Create a new role, modify an existing one,
+                      or delete one.
                     `}/>
                 </Grid.Column>
                 <Grid.Column>
