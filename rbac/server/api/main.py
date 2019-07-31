@@ -78,6 +78,15 @@ def load_config(app):
     app.config.API_PRODUCES_CONTENT_TYPES = ["application/json"]
     app.config.API_SCHEMES = ["http", "https"]
     app.config.API_TITLE = "Sawtooth Next Directory API"
+    app.config.API_SECURITY = [{"authToken": []}]
+    app.config.API_SECURITY_DEFINITIONS = {
+        "authToken": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Paste your auth token.",
+        }
+    }
     app.config.BATCHER_KEY_PAIR = Key()
     app.config.CHATBOT_HOST = get_config("CHATBOT_HOST")
     app.config.CHATBOT_PORT = get_config("CHATBOT_PORT")
