@@ -28,3 +28,4 @@ rasa_core==0.12.2
 rasa_nlu==0.13.8
 azure-eventhub==1.1.1
 pytz==2018.7
+sanic-openapi==0.5.3
