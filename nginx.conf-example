@@ -25,6 +25,8 @@ http {
     access_log off;
     error_log /dev/null;
 
+    ssl_protocols TLSv1.2 TLSv1.3;
+
     map $http_upgrade $connection_upgrade {
         default upgrade;
         '' close;
