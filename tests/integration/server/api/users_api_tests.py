@@ -483,7 +483,7 @@ def test_update_user():
         password_response = session2.put(
             "http://rbac-server:8000/api/users/update", json=update_payload
         )
-        assert password_response.status_code == 400
+        assert password_response.status_code == 403
         assert (
             password_response.json()["message"] == "You are not a NEXT Administrator."
         )
