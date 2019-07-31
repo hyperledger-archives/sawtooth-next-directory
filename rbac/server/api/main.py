@@ -18,6 +18,7 @@ import aiohttp
 from sanic import Blueprint
 from sanic import Sanic
 from sanic_cors import CORS
+from sanic_openapi import swagger_blueprint
 
 from rbac.common.config import get_config
 from rbac.common.crypto.keys import Key
@@ -32,7 +33,6 @@ from rbac.server.api.packs import PACKS_BP
 from rbac.server.api.proposals import PROPOSALS_BP
 from rbac.server.api.roles import ROLES_BP
 from rbac.server.api.search import SEARCH_BP
-from rbac.server.api.swagger import SWAGGER_BP
 from rbac.server.api.tasks import TASKS_BP
 from rbac.server.api.users import USERS_BP
 from rbac.server.api.webhooks import WEBHOOKS_BP
@@ -88,6 +88,7 @@ def main():
     """RBAC API server main event loop"""
 
     app = Sanic(__name__)
+    app.blueprint(APP_BP)
     app.blueprint(AUTH_BP)
     app.blueprint(BLOCKS_BP)
     app.blueprint(CHATBOT_BP)
@@ -97,11 +98,10 @@ def main():
     app.blueprint(PROPOSALS_BP)
     app.blueprint(ROLES_BP)
     app.blueprint(SEARCH_BP)
-    app.blueprint(SWAGGER_BP)
+    app.blueprint(swagger_blueprint)
     app.blueprint(TASKS_BP)
     app.blueprint(USERS_BP)
     app.blueprint(WEBHOOKS_BP)
-    app.blueprint(APP_BP)
 
     load_config(app)
 
