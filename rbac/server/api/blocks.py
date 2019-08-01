@@ -16,6 +16,7 @@
 
 from sanic import Blueprint
 from sanic.response import json
+from sanic_openapi import doc
 
 from rbac.server.api.errors import ApiBadRequest
 from rbac.server.api.auth import authorized
@@ -32,6 +33,37 @@ BLOCKS_BP = Blueprint("blocks")
 
 
 @BLOCKS_BP.get("api/blocks")
+@doc.summary("API Endpoint to get all blocks")
+@doc.description("API Endpoint to get all blocks.")
+@doc.produces(
+    {
+        "data": {
+            "block_datetime": int,
+            "id": str,
+            "num": int,
+            "previous_block_id": str,
+            "state_root_hash": str,
+        },
+        "head": str,
+        "link": str,
+        "paging": {
+            "first": str,
+            "last": str,
+            "limit": int,
+            "next": str,
+            "prev": str,
+            "start": int,
+            "total": int,
+        },
+    },
+    description="Successfully gets all blocks",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: Auth token was not provided",
+)
 @authorized()
 async def get_all_blocks(request):
     """Get all blocks."""
@@ -50,6 +82,27 @@ async def get_all_blocks(request):
 
 
 @BLOCKS_BP.get("api/blocks/latest")
+@doc.summary("API Endpoint to get the latest block")
+@doc.description("API Endpoint to get the latest block.")
+@doc.produces(
+    {
+        "data": {
+            "block_datetime": int,
+            "id": str,
+            "num": int,
+            "previous_block_id": str,
+            "state_root_hash": str,
+        },
+        "link": str,
+    },
+    description="Successfully gets the latest block",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: Auth token was not provided",
+)
 @authorized()
 async def get_latest_block(request):
     """Get the newest block on blockchain."""
@@ -66,6 +119,27 @@ async def get_latest_block(request):
 
 
 @BLOCKS_BP.get("api/blocks/<block_id>")
+@doc.summary("API Endpoint to get a specific block")
+@doc.description("API Endpoint to get a block by its block_id.")
+@doc.produces(
+    {
+        "data": {
+            "block_datetime": int,
+            "id": str,
+            "num": int,
+            "previous_block_id": str,
+            "state_root_hash": str,
+        },
+        "link": str,
+    },
+    description="Successfully gets specified block",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: Auth token was not provided",
+)
 @authorized()
 async def get_block(request, block_id):
     """Get a specific block, by block_id"""
