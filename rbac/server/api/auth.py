@@ -21,6 +21,7 @@ from environs import Env
 from itsdangerous import BadSignature
 from ldap3 import Server, Connection
 from sanic import Blueprint
+from sanic_openapi import doc
 
 from rbac.common.crypto.secrets import deserialize_api_key, generate_api_key
 from rbac.common.logs import get_default_logger
@@ -71,6 +72,35 @@ def authorized():
 
 
 @AUTH_BP.post("api/authorization")
+@doc.summary("API Endpoint to authenticate and login to the NEXT platform.")
+@doc.description("API Endpoint to authenticate and login to the NEXT platform.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "password": str}, description="Username and password of user"
+    ),
+    content_type="application/json",
+    location="body",
+    required=True,
+)
+@doc.produces(
+    {"data": {"message": str, "next_id": str}, "token": str},
+    description="When user successfully authenticates into NEXT",
+)
+@doc.response(
+    400,
+    {"code": int, "message": str},
+    description="Bad Request: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Forbidden: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    404,
+    {"code": int, "message": str},
+    description="Not found: When user attempts to login with invalid auth source",
+)
 async def authorize(request):
     """ API Endpoint to authenticate and login to the NEXT platform. """
     required_fields = ["id", "password"]
