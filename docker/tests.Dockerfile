@@ -43,5 +43,7 @@ RUN pip install \
         pytest==4.0.1 \
         dredd_hooks==0.2. \
         pytest-cov==2.6.0 \
-        pytest-env==0.6.2
+        pytest-env==0.6.2 \
+        environs==4.1.0 \
+        sanic-openapi==0.5.3
 WORKDIR /project/hyperledger-rbac
