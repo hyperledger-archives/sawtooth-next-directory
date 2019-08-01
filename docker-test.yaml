@@ -38,6 +38,7 @@ services:
       - ENABLE_AZURE_SYNC=${ENABLE_AZURE_SYNC:-1}
       - ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC:-1}
       - ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE:-1}
+      - HOST=${HOST:-localhost}
       - LDAP_DC=DC=AD2012,DC=LAB
       - LDAP_SERVER=my_fake_server
       - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
