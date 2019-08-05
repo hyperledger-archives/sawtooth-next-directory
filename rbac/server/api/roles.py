@@ -19,6 +19,7 @@ from uuid import uuid4
 from environs import Env
 from sanic import Blueprint
 from sanic.response import json
+from sanic_openapi import doc
 
 from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
@@ -66,6 +67,50 @@ ROLES_BP = Blueprint("roles")
 
 
 @ROLES_BP.get("api/roles")
+@doc.summary("Return a list containing all roles.")
+@doc.description("Return a list containing all roles.")
+@doc.consumes({"head": str}, location="query")
+@doc.consumes({"start": int}, location="query")
+@doc.consumes({"limit": int}, location="query")
+@doc.produces(
+    {
+        "data": [
+            {
+                "remote_id": str,
+                "members": [str],
+                "description": str,
+                "id": str,
+                "created_date": int,
+                "start_block_num": int,
+                "metadata": {"sync_direction": str},
+                "tasks": [str],
+                "name": str,
+                "administrators": [str],
+                "owners": [str],
+                "proposals": [str],
+                "end_block_num": int,
+                "packs": [str],
+            }
+        ],
+        "head": str,
+        "link": str,
+        "paging": {
+            "first": str,
+            "last": str,
+            "limit": int,
+            "next": str,
+            "prev": str,
+            "start": int,
+            "total": int,
+        },
+    },
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
 @authorized()
 async def get_all_roles(request):
     """Get all roles."""
@@ -81,13 +126,69 @@ async def get_all_roles(request):
 
 
 @ROLES_BP.post("api/roles")
+@doc.summary("Create a new role.")
+@doc.description("Create a new role.")
+@doc.consumes(
+    doc.JsonBody(
+        {
+            "name": str,
+            "administrators": str,
+            "owners": str,
+            "metadata": {},
+            "description": str,
+        }
+    ),
+    location="body",
+    required=True,
+    content_type="application/json",
+)
+@doc.produces(
+    {
+        "data": {
+            "id": str,
+            "name": str,
+            "owners": [str],
+            "administrators": [str],
+            "members": [str],
+            "tasks": [str],
+            "proposals": [str],
+            "description": str,
+            "metadata": {},
+        }
+    },
+    description="On successful role creation returns the newly created role.",
+    content_type="application/json",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT.",
+)
+@doc.response(
+    405,
+    {"message": str, "code": int},
+    description="Not a valid action. Source not enabled.",
+)
+@doc.response(
+    409,
+    {"message": str, "code": int},
+    description="Error: Could not create this role because the role name already exists.",
+)
+@doc.response(
+    503,
+    {"message": str, "code": int},
+    description="There was an error submitting the sawtooth transaction.",
+)
 @authorized()
 async def create_new_role(request):
     """Create a new role."""
     log_request(request)
     env = Env()
     if not env.int("ENABLE_NEXT_BASE_USE"):
-        raise ApiDisabled("Not a valid action. Source not enabled")
+        raise ApiDisabled("Not a valid action. Source not enabled.")
     required_fields = ["name", "administrators", "owners"]
     validate_fields(required_fields, request.json)
     role_title = " ".join(request.json.get("name").split())
@@ -122,7 +223,7 @@ async def create_new_role(request):
             return await handle_errors(
                 request,
                 ApiInternalError(
-                    "There was an error submitting the sawtooth transaction"
+                    "There was an error submitting the sawtooth transaction."
                 ),
             )
 
@@ -136,6 +237,41 @@ async def create_new_role(request):
 
 
 @ROLES_BP.get("api/roles/<role_id>")
+@doc.summary("Get a role by its role id.")
+@doc.description("Get a role by its role id.")
+@doc.consumes({"head": str}, location="query", content_type="application/json")
+@doc.produces(
+    {
+        "data": {
+            "remote_id": str,
+            "members": [str],
+            "description": str,
+            "id": str,
+            "created_date": int,
+            "start_block_num": int,
+            "metadata": {"sync_direction": str},
+            "tasks": [str],
+            "name": str,
+            "administrators": [str],
+            "owners": [str],
+            "proposals": [str],
+            "end_block_num": int,
+            "packs": [str],
+        },
+        "head": str,
+        "link": str,
+    },
+    description="The returned role object.",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    404, {"message": str, "code": int}, description="Role <role_id> doesn't exist."
+)
 @authorized()
 async def get_role(request, role_id):
     """Get a specific role by role_id."""
@@ -148,6 +284,19 @@ async def get_role(request, role_id):
 
 
 @ROLES_BP.get("api/roles/check")
+@doc.summary("Check if a role exists with the provided name.")
+@doc.description("Check if a role exists with the provided name.")
+@doc.consumes({"name": str}, location="query")
+@doc.produces(
+    {"exists": bool},
+    description="Returns a boolean describing whether the role exists.",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
 @authorized()
 async def check_role_name(request):
     """Check if a role exists with provided name."""
@@ -159,6 +308,29 @@ async def check_role_name(request):
 
 
 @ROLES_BP.patch("api/roles/<role_id>")
+@doc.summary("Update a role.")
+@doc.description("Update a role.")
+@doc.consumes(
+    doc.JsonBody({"description": str}), location="body", content_type="application/json"
+)
+@doc.produces(
+    {"id": str, "description": str},
+    description="Returns the truncated updated role object.",
+    content_type="application/json",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    405,
+    {"message": str, "code": int},
+    description="Not a valid action. Source not enabled.",
+)
 @authorized()
 async def update_role(request, role_id):
     """Update a role."""
@@ -181,6 +353,38 @@ async def update_role(request, role_id):
 
 
 @ROLES_BP.delete("api/roles/<role_id>")
+@doc.summary("Delete a role by its next_id.")
+@doc.description(
+    "Delete a role by its next_id. Restricted to administrator and role owner use."
+)
+@doc.produces(
+    {"message": str, "deleted": int},
+    description="Returns a status message and count of deleted roles.",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    403,
+    {"message": str, "code": int},
+    description="Forbidden: The provided credentials are not authorized to perform the requested action.",
+)
+@doc.response(
+    404, {"message": str, "code": int}, description="The targeted role does not exist."
+)
+@doc.response(
+    405,
+    {"message": str, "code": int},
+    description="Not a valid action. Source not enabled.",
+)
+@doc.response(
+    503,
+    {"message": str, "code": int},
+    description="An error occurred while creating the blockchain transactions to delete the role.",
+)
 @authorized()
 async def delete_role(request, role_id):
     """Delete a role by it's next_id.
@@ -266,6 +470,41 @@ async def delete_role(request, role_id):
 
 
 @ROLES_BP.post("api/roles/<role_id>/admins")
+@doc.summary("Creates a proposal to add an admin to the role.")
+@doc.description("Creates a proposal to add an admin to the role.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "reason": str, "metadata": {}},
+        description="The id field is required, the rest are optional.",
+    ),
+    location="body",
+    required=True,
+    content_type="application/json",
+)
+@doc.consumes(
+    doc.JsonBody({"reason": str, "metadata": {}}),
+    location="body",
+    required=False,
+    content_type="application/json",
+)
+@doc.produces(
+    {"proposal_id": str},
+    description="ID for the newly created role admin proposal.",
+    content_type="application/json",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    405,
+    {"message": str, "code": int},
+    description="Not a valid action. Source not enabled.",
+)
 @authorized()
 async def add_role_admin(request, role_id):
     """Add an admin to role."""
@@ -296,6 +535,41 @@ async def add_role_admin(request, role_id):
 
 
 @ROLES_BP.post("api/roles/<role_id>/members")
+@doc.summary("Creates a proposal to add a member to a role.")
+@doc.description("Creates a proposal to add a member to a role.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "reason": str, "metadata": {}},
+        description="The id field is required, the rest are optional.",
+    ),
+    location="body",
+    required=True,
+    content_type="application/json",
+)
+@doc.consumes(
+    doc.JsonBody({"pack_id": str, "reason": str, "metadata": {}}),
+    location="body",
+    required=False,
+    content_type="application/json",
+)
+@doc.produces(
+    {"proposal_id": str},
+    description="ID for the newly created role member proposal.",
+    content_type="application/json",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    503,
+    {"message": str, "code": int},
+    description="Max attempts exceeded. Proposal <proposal_id> not found in RethinkDB.",
+)
 @authorized()
 async def add_role_member(request, role_id):
     """Add a member to a role."""
@@ -351,7 +625,7 @@ async def add_role_member(request, role_id):
             return create_tracker_response(events)
         return json(
             {
-                "message": "Owner is the requester. Proposal is autoapproved",
+                "message": "Owner is the requester. Proposal is autoapproved.",
                 "proposal_id": proposal_id,
             }
         )
@@ -375,6 +649,41 @@ async def add_role_member(request, role_id):
 
 
 @ROLES_BP.post("api/roles/<role_id>/owners")
+@doc.summary("Creates a proposal to add an owner to a role.")
+@doc.description("Creates a proposal to add an owner to a role.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "reason": str, "metadata": {}},
+        description="The id field is required, the rest are optional.",
+    ),
+    location="body",
+    required=True,
+    content_type="application/json",
+)
+@doc.consumes(
+    doc.JsonBody({"reason": str, "metadata": {}}),
+    location="body",
+    required=False,
+    content_type="application/json",
+)
+@doc.produces(
+    {"proposal_id": str},
+    description="ID for the newly created role owner proposal",
+    content_type="application/json",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
+@doc.response(
+    405,
+    {"message": str, "code": int},
+    description="Not a valid action. Source not enabled.",
+)
 @authorized()
 async def add_role_owner(request, role_id):
     """Add an owner to a role."""
@@ -410,6 +719,36 @@ async def add_role_owner(request, role_id):
 
 
 @ROLES_BP.post("api/roles/<role_id>/tasks")
+@doc.summary("Creates a proposal to add a task to a role.")
+@doc.description("Creates a proposal to add a task to a role.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "reason": str, "metadata": {}},
+        description="The id field is required, the rest are optional.",
+    ),
+    location="body",
+    required=True,
+    content_type="application/json",
+)
+@doc.consumes(
+    doc.JsonBody({"reason": str, "metadata": {}}),
+    location="body",
+    required=False,
+    content_type="application/json",
+)
+@doc.produces(
+    {"proposal_id": str},
+    description="ID for the newly created role task proposal",
+    content_type="application/json",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
 @authorized()
 async def add_role_task(request, role_id):
     """Add a task to a role."""
