@@ -106,7 +106,7 @@ def test_role_owner_and_mem():
         response = add_role_member(session, role_id, {"id": user_id})
         assert (
             response.json()["message"]
-            == "Owner is the requester. Proposal is autoapproved"
+            == "Owner is the requester. Proposal is autoapproved."
         )
 
         # clean up
