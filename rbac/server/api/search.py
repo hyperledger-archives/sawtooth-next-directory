@@ -17,6 +17,7 @@ import math
 
 from sanic import Blueprint
 from sanic.response import json
+from sanic_openapi import doc
 
 from rbac.common.logs import get_default_logger
 from rbac.server.api.auth import authorized
@@ -31,6 +32,33 @@ SEARCH_BP = Blueprint("search")
 
 
 @SEARCH_BP.post("api/search")
+@doc.summary("API Endpoint to get all roles, packs, or users containing a string.")
+@doc.description("API Endpoint to get all roles, packs, or users containing a string.")
+@doc.consumes(
+    doc.JsonBody(
+        {
+            "query": {
+                "page_size": int,
+                "page": int,
+                "search_object_types": [str],
+                "search_input": str,
+            }
+        },
+        description="For search_object_types, you may include: role, pack, and/or user.",
+    ),
+    location="body",
+    content_type="application/json",
+)
+@doc.produces(
+    {"data": {"roles": {}, "packs": {}, "users": {}}, "page": int, "total_pages": int},
+    description="Success response with search results",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
 @authorized()
 async def search_all(request):
     """API Endpoint to get all roles, packs, or users containing a string."""
