@@ -17,6 +17,7 @@ from uuid import uuid4
 
 from sanic import Blueprint
 from sanic.response import json
+from sanic_openapi import doc
 
 from rbac.common.task import Task
 from rbac.server.api.auth import authorized
@@ -37,6 +38,42 @@ TASKS_BP = Blueprint("tasks")
 
 
 @TASKS_BP.get("api/tasks")
+@doc.summary("Get all tasks.")
+@doc.description("Get a list of all tasks.")
+@doc.consumes({"head": str}, location="query", required=False)
+@doc.consumes({"start": int}, location="query", required=False)
+@doc.consumes({"limit": int}, location="query", required=False)
+@doc.produces(
+    {
+        "data": [
+            {
+                "id": str,
+                "owners": [str],
+                "administrators": [str],
+                "roles": [str],
+                "proposals": [str],
+            }
+        ],
+        "paging": {
+            "limit": int,
+            "prev": str,
+            "start": int,
+            "next": str,
+            "total": int,
+            "first": str,
+            "last": str,
+        },
+        "link": str,
+        "head": str,
+    },
+    content_type="application/json",
+    description="Returns a list of all tasks with paging data.",
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
 @authorized()
 async def get_all_tasks(request):
     """Get all tasks."""
@@ -53,6 +90,40 @@ async def get_all_tasks(request):
 
 
 @TASKS_BP.post("api/tasks")
+@doc.summary("Create a new task.")
+@doc.description("Create a new task.")
+@doc.consumes(
+    doc.JsonBody(
+        {"name": str, "administrators": [str], "owners": [str], "metadata": {}},
+        description="name, administrator, and owners are required fields. Metadata is optional.",
+    ),
+    required=True,
+    content_type="application/json",
+    location="body",
+)
+@doc.produces(
+    {
+        "data": {
+            "id": str,
+            "name": str,
+            "owners": [str],
+            "administrators": [str],
+            "roles": [str],
+            "proposals": [str],
+            "metadata": {},
+        }
+    },
+    content_type="application/json",
+    description="Returns the newly created task object.",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
 @authorized()
 async def create_new_task(request):
     """Create a new task."""
@@ -76,6 +147,39 @@ async def create_new_task(request):
 
 
 @TASKS_BP.get("api/tasks/<task_id>")
+@doc.summary("Retrieve a task.")
+@doc.description("Retrieve a task by its ID.")
+@doc.consumes({"head": str}, location="query", required=False)
+@doc.produces(
+    {
+        "head": str,
+        "data": {
+            "id": str,
+            "name": str,
+            "owners": [str],
+            "administrators": [str],
+            "roles": [str],
+            "proposals": [str],
+            "metadata": {},
+        },
+        "link": str,
+    },
+    content_type="application/json",
+    description="Returns the matching task object.",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
+@doc.response(
+    404,
+    {"message": str, "code": int},
+    description="Not Found: No task with the id <task_id> exists.",
+)
 @authorized()
 async def get_task(request, task_id):
     """Get a specific task by task_id."""
@@ -88,6 +192,35 @@ async def get_task(request, task_id):
 
 
 @TASKS_BP.post("api/tasks/<task_id>/admins")
+@doc.summary("Propose new task admin.")
+@doc.description("Create a proposal to add a user as a new task administrator.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "reason": str, "metadata": {}},
+        description="Id is required. Reason and metadata are optional fields.",
+    ),
+    required=True,
+    content_type="application/json",
+    location="body",
+)
+@doc.produces(
+    {"proposal_id": str},
+    content_type="application/json",
+    description="Returns the ID of the newly created task admin proposal.",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
+@doc.response(
+    404,
+    {"message": str, "code": int},
+    description="Not Found: No task with the id <task_id> exists.",
+)
 @authorized()
 async def add_task_admin(request, task_id):
     """Propose add a task admin."""
@@ -115,6 +248,35 @@ async def add_task_admin(request, task_id):
 
 
 @TASKS_BP.post("api/tasks/<task_id>/owners")
+@doc.summary("Propose new task owner.")
+@doc.description("Create a proposal to add a user as a new task owner.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "reason": str, "metadata": {}},
+        description="Id is required. Reason and metadata are optional fields.",
+    ),
+    required=True,
+    content_type="application/json",
+    location="body",
+)
+@doc.produces(
+    {"proposal_id": str},
+    content_type="application/json",
+    description="Returns the ID of the newly created task owner proposal.",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
+@doc.response(
+    404,
+    {"message": str, "code": int},
+    description="Not Found: No task with the id <task_id> exists.",
+)
 @authorized()
 async def add_task_owner(request, task_id):
     """Propose add a task owner."""
