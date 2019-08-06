@@ -15,6 +15,7 @@
 """Proposals APIs."""
 from sanic import Blueprint
 from sanic.response import json
+from sanic_openapi import doc
 
 from rbac.common.logs import get_default_logger
 from rbac.common.role import Role
@@ -89,6 +90,52 @@ PROPOSAL_TRANSACTION = {
 
 
 @PROPOSALS_BP.get("api/proposals")
+@doc.summary("API Endpoint to get all proposals")
+@doc.description("API Endpoint to get all proposals.")
+@doc.consumes({"head": str}, location="query")
+@doc.consumes({"limit": int}, location="query")
+@doc.consumes({"start": int}, location="query")
+@doc.produces(
+    {
+        "data": [
+            {
+                "assigned_approvers": [str],
+                "approvers": [str],
+                "closed_date": int,
+                "closed_reason": str,
+                "closer": str,
+                "created_date": int,
+                "id": str,
+                "metadata": {},
+                "object": str,
+                "open_reason": str,
+                "opener": str,
+                "pack_id": str,
+                "status": str,
+                "target": str,
+                "type": str,
+            }
+        ],
+        "head": str,
+        "link": str,
+        "paging": {
+            "start": int,
+            "limit": int,
+            "first": str,
+            "prev": str,
+            "total": int,
+            "last": str,
+            "next": str,
+        },
+    },
+    description="Success response with all NEXT proposals",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
 @authorized()
 async def get_all_proposals(request):
     """Get all proposals"""
@@ -108,6 +155,39 @@ async def get_all_proposals(request):
 
 
 @PROPOSALS_BP.get("api/proposals/<proposal_id>")
+@doc.summary("API Endpoint to get a specific proposal, by proposal_id")
+@doc.description("API Endpoint to get a specific proposal, by proposal_id")
+@doc.consumes({"head": str}, location="query")
+@doc.produces(
+    {
+        "data": {
+            "assigned_approvers": [str],
+            "ap,provers": [str],
+            "closed_date": int,
+            "closed_reason": str,
+            "closer": str,
+            "created_date": int,
+            "id": str,
+            "metadata": {},
+            "object": str,
+            "open_reason": str,
+            "opener": str,
+            "pack_id": str,
+            "status": str,
+            "target": str,
+            "type": str,
+        },
+        "head": str,
+        "link": str,
+    },
+    description="Successfully gets specific proposal",
+    content_type="application/json",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: The request lacks valid authentication credentials.",
+)
 @authorized()
 async def get_proposal(request, proposal_id):
     """Get specific proposal by proposal_id."""
@@ -121,6 +201,33 @@ async def get_proposal(request, proposal_id):
 
 
 @PROPOSALS_BP.patch("api/proposals")
+@doc.summary("API Endpoint to get update multiple proposals")
+@doc.description("API Endpoint to update multiple proposals.")
+@doc.consumes(
+    doc.JsonBody(
+        {"ids": [str], "reason": str, "status": str},
+        description="List of IDs are required for this endpoint.",
+    ),
+    location="body",
+    required=True,
+    content_type="application/json",
+)
+@doc.produces(
+    {"proposal_ids": [str]},
+    description="List of proposals that were successfully updated",
+    content_type="application/json",
+)
+@doc.response(
+    400,
+    {"code": int, "message": str},
+    description="Bad request: status must be either REJECTED or APPROVED.",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: The request lacks valid authentication credentials "
+    "or user does not have the authorization to APPROVE/REJECT proposal.",
+)
 @authorized()
 async def batch_update_proposals(request):
     """Update multiple proposals"""
@@ -133,6 +240,30 @@ async def batch_update_proposals(request):
 
 
 @PROPOSALS_BP.patch("api/proposals/<proposal_id>")
+@doc.summary("API Endpoint to get update a specific proposal, by proposal_id")
+@doc.description("API Endpoint to update a specific proposal, by proposal_id.")
+@doc.consumes(
+    doc.JsonBody({"reason": str, "status": str}),
+    required=True,
+    location="body",
+    content_type="application/json",
+)
+@doc.produces(
+    {"proposal_id": str},
+    description="Returns proposal_id that was successfully updated",
+    content_type="application/json",
+)
+@doc.response(
+    400,
+    {"code": int, "message": str},
+    description="Bad request: status must be either REJECTED or APPROVED.",
+)
+@doc.response(
+    401,
+    {"code": int, "message": str},
+    description="Unauthorized: The request lacks valid authentication credentials "
+    "or user does not have the authorization to APPROVE/REJECT proposal.",
+)
 @authorized()
 async def update_proposal(request, proposal_id):
     """Update proposal."""
