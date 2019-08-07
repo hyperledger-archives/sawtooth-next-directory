@@ -15,6 +15,7 @@
 """Webhooks for chatbot."""
 
 from sanic import Blueprint
+from sanic_openapi import doc
 
 from rbac.server.api.auth import authorized
 from rbac.server.api import packs, roles
@@ -26,6 +27,34 @@ WEBHOOKS_BP = Blueprint("webhooks")
 
 
 @WEBHOOKS_BP.post("webhooks/chatbot")
+@doc.summary("Webhook that enables chatbot to execute RBAC actions")
+@doc.description("Webhook that enables chatbot to execute RBAC actions.")
+@doc.consumes(
+    doc.JsonBody(
+        {
+            "tracker": {
+                "slots": {"resource_id": str, "reason": str, "resource_type": str}
+            },
+            "sender_id": str,
+        }
+    ),
+    location="body",
+    content_type="application/json",
+    required=True,
+)
+@doc.produces(
+    {"events": [{"event": str, "name": str, "value": int}]},
+    description="Successful execution of RBAC action returns an event payload",
+    content_type="application/json",
+)
+@doc.response(
+    400, {"message": str, "code": int}, description="Bad Request: Improper JSON format."
+)
+@doc.response(
+    401,
+    {"message": str, "code": int},
+    description="Unauthorized: When user unsuccessfully authenticates into NEXT",
+)
 @authorized()
 async def chatbot_webhook(request):
     """Webhook enabling the chatbot engine to execute RBAC actions

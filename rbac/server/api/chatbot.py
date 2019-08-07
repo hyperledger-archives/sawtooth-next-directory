@@ -28,6 +28,10 @@ LOGGER = get_default_logger(__name__)
 
 CHATBOT_BP = Blueprint("chatbot")
 
+# TODO: FIXME: sanic-openapi @doc.exclude(True) decorator does not currently work on
+#  non-HTTP method or static routes. When a viable option becomes available apply it
+# to this route so that it is excluded from swagger.
+
 
 @CHATBOT_BP.websocket("api/chatbot")
 async def chatbot(request, web_socket):
