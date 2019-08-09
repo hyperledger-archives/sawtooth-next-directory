@@ -17,6 +17,7 @@ from functools import wraps
 import hashlib
 import re
 
+from hmac import compare_digest as compare_hash
 from environs import Env
 from itsdangerous import BadSignature
 from ldap3 import Server, Connection
@@ -187,11 +188,22 @@ def auth_via_azure(user_map):
 
 async def auth_via_next(user, password, env):
     """Authorization via NEXT stored credentials to access NEXT"""
-    hashed_pwd = hashlib.sha256(password.encode("utf-8")).hexdigest()
     auth_info = await get_auth_by_next_id(user["next_id"])
+
+    # check if a password is set on the account.
     if auth_info["hashed_password"] is None:
         raise ApiUnauthorized("No password is set on this account.")
-    if auth_info["hashed_password"] != hashed_pwd:
+
+    salt = auth_info.get("salt")
+    hashed_password = auth_info.get("hashed_password")
+
+    # compare the hashes.
+    check_password = compare_hash(
+        hashed_password,
+        hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 100000).hex(),
+    )
+
+    if not check_password:
         raise ApiUnauthorized("Incorrect username or password.")
 
     token = generate_api_key(env("SECRET_KEY"), user["next_id"])
