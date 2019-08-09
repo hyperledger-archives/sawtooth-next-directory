@@ -378,7 +378,7 @@ async def users_search_duplicate(conn, username):
     return resource
 
 
-async def update_user_password(conn, next_id, password):
+async def update_user_password(conn, next_id, hashed_password, salt):
     """Update a user's password by next_id
     Args:
         conn:
@@ -391,7 +391,7 @@ async def update_user_password(conn, next_id, password):
     resource = (
         await r.table("auth")
         .filter({"next_id": next_id})
-        .update({"hashed_password": password})
+        .update({"hashed_password": hashed_password, "salt": salt})
         .coerce_to("array")
         .run(conn)
     )

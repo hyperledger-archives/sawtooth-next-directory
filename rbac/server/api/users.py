@@ -238,15 +238,18 @@ async def create_new_user(request):
             request,
             ApiInternalError("There was an error submitting the sawtooth transaction."),
         )
+
     # Save new user in auth table
-    hashed_password = hashlib.sha256(
-        request.json.get("password").encode("utf-8")
-    ).hexdigest()
+    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode("utf-8")
+    password = request.json.get("password").encode("utf-8")
+    hashed_password = hashlib.pbkdf2_hmac("sha256", password, salt, 100000).hex()
+
     encrypted_private_key = encrypt_private_key(
         AES_KEY, key_pair.public_key, key_pair.private_key_bytes
     )
     auth_entry = {
         "next_id": next_id,
+        "salt": salt,
         "hashed_password": hashed_password,
         "encrypted_private_key": encrypted_private_key,
         "username": request.json.get("username"),
@@ -711,13 +714,15 @@ async def update_password(request):
     txn_key, txn_user_id = await get_transactor_key(request)
     is_admin = await check_admin_status(txn_user_id)
     if not is_admin:
-        raise ApiForbidden("You are not a NEXT Administrator.")
-    hashed_pwd = hashlib.sha256(
-        request.json.get("password").encode("utf-8")
-    ).hexdigest()
+        raise ApiBadRequest("You are not a NEXT Administrator.")
+
+    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode("utf-8")
+    password = request.json.get("password").encode("utf-8")
+    hashed_password = hashlib.pbkdf2_hmac("sha256", password, salt, 100000).hex()
+
     conn = await create_connection()
     await users_query.update_user_password(
-        conn, request.json.get("next_id"), hashed_pwd
+        conn, request.json.get("next_id"), hashed_password=hashed_password, salt=salt
     )
     conn.close()
     return json({"message": "Password successfully updated"})

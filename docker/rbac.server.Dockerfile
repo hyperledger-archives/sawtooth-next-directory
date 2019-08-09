@@ -19,6 +19,7 @@ RUN apt-get update -y && \
         apt-file update && \
         apt-get install -y gcc
 RUN pip install \
+        bcrypt==3.1.7 \
         grpcio-tools==1.16.1 \
         itsdangerous==1.1.0 \
         rethinkdb==2.3.0.post6 \
