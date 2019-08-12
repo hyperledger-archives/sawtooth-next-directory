@@ -58,7 +58,9 @@ describe('signup component', () => {
     };
     ReactDOM.render(
       <Provider store={store}>
-        <Signup {...props}/>
+        <BrowserRouter>
+          <Signup {...props}/>
+        </BrowserRouter>
       </Provider>, div
     );
     ReactDOM.unmountComponentAtNode(div);

@@ -16,14 +16,16 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid, Header, Image } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Button, Container, Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import './Signup.css';
 import { AuthActions, AuthSelectors } from 'state';
 import SignupForm from './SignupForm';
-import logo from 'images/next-logo-billboard.png';
+import logo from 'images/next-logo-primary.png';
+import cloud from 'images/cloud.svg';
 
 
 import * as storage from 'services/Storage';
@@ -44,6 +46,7 @@ class Signup extends Component {
     isAuthenticated:        PropTypes.bool,
     recommendedPacks:       PropTypes.array,
     recommendedRoles:       PropTypes.array,
+    resetErrors:            PropTypes.func,
     signup:                 PropTypes.func.isRequired,
   };
 
@@ -56,7 +59,9 @@ class Signup extends Component {
    * component
    */
   componentDidMount () {
+    const { resetErrors } = this.props;
     theme.apply(this.themes);
+    resetErrors();
     this.init();
   }
 
@@ -108,17 +113,33 @@ class Signup extends Component {
 
     return (
       <div id='next-signup-container'>
-        <Grid container centered columns={2}>
-          <Grid.Column id='next-signup-column'>
-            <Header inverted textAlign='center'>
-              <Image centered src={logo} id='next-signup-logo'/>
-              <h1>
-                Create a NEXT account
-              </h1>
-            </Header>
-            <SignupForm submit={signup}/>
-          </Grid.Column>
-        </Grid>
+        <div id='next-signup-panel'>
+          <Grid container centered columns={2}>
+            <Grid.Column id='next-signup-column'>
+              <Header textAlign='center'>
+                <Image centered src={logo} id='next-signup-logo'/>
+                <h1>
+                  SIGN UP
+                </h1>
+              </Header>
+              <Button
+                as={Link}
+                to='/login'
+                id='next-signup-back-button'
+                content='Back to login'
+                type='button'
+                icon='chevron left'
+                labelPosition='left'/>
+              <Header as='h3' textAlign='center'>
+                Request a CORP Account
+              </Header>
+              <SignupForm submit={signup}/>
+            </Grid.Column>
+          </Grid>
+        </div>
+        <Container id='next-signup-watermark' fluid textAlign='left'>
+          <Image src={cloud}/>
+        </Container>
       </div>
     );
   }
@@ -128,15 +149,15 @@ class Signup extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    error: state.auth.error,
     isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signup: (name, username, password, email) =>
-      dispatch(AuthActions.signupRequest(name, username, password, email)),
+    resetErrors: () => dispatch(AuthActions.resetErrors()),
+    signup: (username, password) =>
+      dispatch(AuthActions.signupRequest(username, password)),
   };
 };
 

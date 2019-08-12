@@ -260,7 +260,7 @@
 .ui.form .field .prompt.label {
   white-space: normal;
   background: #FFFFFF !important;
-  border: 1px solid #E0B4B4 !important;
+  border: 1px solid red !important;
   color: #9F3A38 !important;
 }
 .ui.form .inline.fields .field .prompt,
@@ -369,7 +369,7 @@
 .ui.form input[type="file"]:focus,
 .ui.form input[type="url"]:focus {
   color: rgba(0, 0, 0, 0.95);
-  border-color: #85B7D9;
+  border-color: #0069ff;
   border-radius: 0.4em;
   background: #FFFFFF;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
@@ -377,7 +377,7 @@
 }
 .ui.form textarea:focus {
   color: rgba(0, 0, 0, 0.95);
-  border-color: #85B7D9;
+  border-color: #0069ff;
   border-radius: 0.4em;
   background: #FFFFFF;
   -webkit-box-shadow: 0px 0em 0em 0em rgba(34, 36, 38, 0.35) inset;
@@ -480,7 +480,7 @@
 .ui.form .field.error input[type="file"],
 .ui.form .field.error input[type="url"] {
   background: none;
-  border-color: #E0B4B4;
+  border-color: red;
   color: #9F3A38;
   border-radius: '';
   -webkit-box-shadow: none;
@@ -527,15 +527,15 @@
 }
 .ui.form .fields.error .field .ui.dropdown,
 .ui.form .field.error .ui.dropdown {
-  border-color: #E0B4B4 !important;
+  border-color: red !important;
 }
 .ui.form .fields.error .field .ui.dropdown:hover,
 .ui.form .field.error .ui.dropdown:hover {
-  border-color: #E0B4B4 !important;
+  border-color: red !important;
 }
 .ui.form .fields.error .field .ui.dropdown:hover .menu,
 .ui.form .field.error .ui.dropdown:hover .menu {
-  border-color: #E0B4B4;
+  border-color: red;
 }
 .ui.form .fields.error .field .ui.multiple.selection.dropdown > .label,
 .ui.form .field.error .ui.multiple.selection.dropdown > .label {
@@ -576,7 +576,7 @@
 .ui.form .fields.error .field .checkbox:not(.toggle):not(.slider) .box:before,
 .ui.form .field.error .checkbox:not(.toggle):not(.slider) .box:before {
   background: none;
-  border-color: #E0B4B4;
+  border-color: red;
 }
 .ui.form .fields.error .field .checkbox label:after,
 .ui.form .field.error .checkbox label:after,
@@ -1072,13 +1072,14 @@
          Theme Overrides
 *******************************/
 
-.form-inverted .ui.form .field input[type="email"],
-.form-inverted .ui.form .field input[type="password"],
-.form-inverted .ui.form .field input[type="text"] {
+.form-default .ui.form .field input[type="email"],
+.form-default .ui.form .field input[type="password"],
+.form-default .ui.form .field input[type="text"] {
   background: transparent;
   border: 0;
-  border-bottom: 1px solid #FFFFFF;
+  border-bottom: 1px solid #1B1C1D;
   border-radius: 0;
+  padding-left: 0;
 }
 .form-inverted .ui.form .field input::-webkit-input-placeholder,
 .form-inverted .ui.form .field input:focus::-webkit-input-placeholder {
@@ -1096,18 +1097,42 @@
 .form-inverted .ui.form .field input:focus::placeholder {
   color: #ffffffa6;
 }
-.form-inverted .ui.form .field > .ui.label {
+.form-default .ui.form .field > .ui.label {
   background: none;
+  color: #363c61;
   font-weight: normal;
-  margin: 8px 0 0 11px;
+  line-height: 1.2em;
+  margin: 16px 0;
+  opacity: 0.4;
+  padding: 0;
+  text-align: justify;
 }
-.form-inverted .ui.form .field input:-webkit-autofill {
+.form-default .field > .ui.label:first-child {
+  font-weight: 500 !important;
+  margin: 0 !important;
+}
+.form-default .ui.form .ui.button {
+  background: #E40073 !important;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ff4ca7), to(#f40086)) !important;
+  background: -webkit-linear-gradient(top, #ff4ca7 0%, #f40086 100%) !important;
+  background: linear-gradient(to bottom, #ff4ca7 0%, #f40086 100%) !important;
+  border-radius: 1.4em;
+  color: white;
+  font-size: 1.1em;
+  line-height: 1.1em;
+  margin: 30px 0;
+  padding: 1.2em;
+}
+.form-default .ui.form .field input:focus {
+  border-color: #0069ff;
+}
+.form-default .ui.form .field input:-webkit-autofill {
   -webkit-text-fill-color: #817c48;
 }
-.form-inverted .ui.form .field .error input[type="password"],
-.form-inverted .ui.form .field .error input[type="text"],
-.form-inverted .ui.form .field .error input[type="email"] {
-  border-color: #E0B4B4;
+.form-default .ui.form .field .error input[type="password"],
+.form-default .ui.form .field .error input[type="text"],
+.form-default .ui.form .field .error input[type="email"] {
+  border-color: red;
 }
 .ui.form input::-webkit-input-placeholder,
 .ui.form textarea::-webkit-input-placeholder {

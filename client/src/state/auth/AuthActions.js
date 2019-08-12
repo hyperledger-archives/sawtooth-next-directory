@@ -23,14 +23,9 @@ const { Types, Creators } = createActions({
   loginSuccess:     ['isAuthenticated', 'payload'],
   loginFailure:     ['error'],
 
-  signupRequest:    ['name', 'username', 'password', 'email'],
-  signupSuccess:    ['isAuthenticated', 'payload'],
+  signupRequest:    ['username', 'password'],
+  signupSuccess:    ['payload'],
   signupFailure:    ['error'],
-
-  userExistsRequest:          ['username'],
-  userExistsSuccess:          ['exists'],
-  userExistsFailure:          null,
-  resetUserExists:            null,
 
   logoutRequest:    null,
   logoutSuccess:    null,
@@ -46,8 +41,8 @@ export default Creators;
 
 export const INITIAL_STATE = Immutable({
   isAuthenticated:  null,
-  fetching:         null,
+  pendingLogin:     null,
+  pendingSignup:    null,
   error:            null,
-  userExists:       null,
   user:             null,
 });

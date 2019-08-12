@@ -122,6 +122,10 @@ services:
       - rethink
       - validator
     environment:
+      - ADAPI_HOST=${ADAPI_HOST}
+      - ADAPI_PORT=${ADAPI_PORT}
+      - ADAPI_USERNAME=${ADAPI_USERNAME}
+      - ADAPI_PASSWORD=${ADAPI_PASSWORD}
       - AES_KEY=${AES_KEY}
       - CLIENT_HOST=${CLIENT_HOST}
       - CLIENT_PORT=${CLIENT_PORT}
@@ -232,6 +236,7 @@ services:
       - REACT_APP_WS_PROTOCOL=${REACT_APP_WS_PROTOCOL}
       - REACT_APP_VERSION_NUMBER=${VERSION_NUMBER}
       - REACT_APP_ENABLE_NEXT_BASE_USE=${ENABLE_NEXT_BASE_USE}
+      - REACT_APP_ENABLE_LDAP_SYNC=${ENABLE_LDAP_SYNC}
     image: rbac-client:${ISOLATION_ID-latest}
     volumes:
       - ./client:/client

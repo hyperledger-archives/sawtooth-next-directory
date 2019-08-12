@@ -13,17 +13,22 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """API to authenticate and login to the NEXT platform."""
+
+import json
 from functools import wraps
 import hashlib
 import re
-
 from hmac import compare_digest as compare_hash
+import aiohttp
+
 from environs import Env
 from itsdangerous import BadSignature
 from ldap3 import Server, Connection
 from sanic import Blueprint
+from sanic.response import json as sanic_json
 from sanic_openapi import doc
 
+from rbac.app.config import ADAPI_REST_ENDPOINT
 from rbac.common.crypto.secrets import deserialize_api_key, generate_api_key
 from rbac.common.logs import get_default_logger
 from rbac.server.api import utils
@@ -70,6 +75,56 @@ def authorized():
         return decorated_function
 
     return decorator
+
+
+@AUTH_BP.post("api/corpuser")
+@doc.summary("Create a new CORP user.")
+@doc.description("Create a CORP account using provided GSM1900 ID and password.")
+@doc.consumes(
+    doc.JsonBody(
+        {"id": str, "password": str}, description="Username and password of CORP user"
+    ),
+    content_type="application/json",
+    location="body",
+    required=True,
+)
+@doc.produces(
+    {"data": {"message": str}}, description="CORP account request successful."
+)
+@doc.response(
+    400,
+    {"code": int, "message": str},
+    description="Bad Request: CORP account request unsuccessful.",
+)
+async def create_corpuser(request):
+    """Create a new CORP user."""
+    required_fields = ["id", "password"]
+    utils.validate_fields(required_fields, request.json)
+    log_request(request, True)
+
+    env = Env()
+    username = env("ADAPI_USERNAME")
+    password = env("ADAPI_PASSWORD")
+
+    auth = aiohttp.BasicAuth(login=username, password=password)
+    url = ADAPI_REST_ENDPOINT + "?command=new-corpuser"
+    data = {
+        "ntid": request.json.get("id"),
+        "userName": request.json.get("id"),
+        "password": request.json.get("password"),
+    }
+    conn = aiohttp.TCPConnector(
+        limit=request.app.config.AIOHTTP_CONN_LIMIT,
+        ttl_dns_cache=request.app.config.AIOHTTP_DNS_TTL,
+        verify_ssl=False,
+    )
+    async with aiohttp.ClientSession(connector=conn, auth=auth) as session:
+        async with session.post(url=url, json=data) as response:
+            data = await response.read()
+            res = json.loads(data.decode("utf-8"))
+            if res.get("success") == "false":
+                raise ApiBadRequest("Invalid CORP account request.")
+            return sanic_json({"data": {"message": "CORP account request successful."}})
 
 
 @AUTH_BP.post("api/authorization")

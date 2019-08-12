@@ -34,7 +34,7 @@
 @inputFontSize: 1.6em;
 @inputPadding: (@inputVerticalPadding + ((1em - @inputLineHeight) / 2)) @inputHorizontalPadding;
 @inputBorder: 0;
-@inputBorderColor: @white;
+@inputBorderColor: @black;
 @inputBorderRadius: .4em;
 @inputColor: @inputTextColor;
 @inputTransition:
@@ -103,7 +103,7 @@
 
 /* Errored Input */
 @formErrorColor: @negativeTextColor;
-@formErrorBorder: @negativeBorderColor;
+@formErrorBorder: red;
 @formErrorBackground: none;
 
 /* AutoFill */
