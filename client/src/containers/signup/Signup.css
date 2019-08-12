@@ -15,28 +15,57 @@ limitations under the License.
 
 
 #next-signup-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   overflow: auto;
 }
 
 #next-signup-container h1 {
+  color: #404150;
   font-size: 1.2em;
-  margin-top: 48px;
+  font-weight: 500;
+  margin: 0;
+}
+
+#next-signup-container h3 {
+  color: var(--magenta);
+  font-size: 1.1em;
+  margin: 0;
+}
+
+#next-signup-panel {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  margin-top: var(--header-height);
 }
 
 #next-signup-column {
-  margin-top: 130px;
-  max-width: 450px;
+  background: white;
+  border-radius: 2.1em;
+  max-width: 570px;
+  padding: 4em 7em;
   width: 100%;
 }
 
-#next-signup-column a,
-#next-signup-column input {
-  color: var(--nav-heading-color);
+#next-signup-back-button {
+  -webkit-appearance: none;
+  color: var(--magenta);
+  font-size: 1em;
+  font-weight: 500;
+  left: 1em;
+  position: absolute;
+  top: 1em;
 }
 
-#next-signup-form-password .ui.label {
-  color: var(--auth-fg-color);
+#next-signup-back-button i {
+  width: 60px;
+}
+
+#next-signup-column .ui.center.header {
+  margin-bottom: 0;
 }
 
 #next-signup-form-1 {
@@ -44,15 +73,8 @@ limitations under the License.
 }
 
 #next-signup-logo {
-  height: 100px;
-  margin-bottom: 25px;
-  margin-right: 0;
-  width: 100px;
-}
-
-.next-username-signup-hint,
-.next-name-signup-hint {
-  color: var(--text-light) !important;
+  margin: 27px 0 25px 0;
+  width: 110px;
 }
 
 #next-signup-username-error {
@@ -61,4 +83,111 @@ limitations under the License.
   position: absolute;
   width: 300px;
   bottom: 64px;
+}
+
+#next-username-signup-input {
+  text-indent: 100px;
+  text-overflow: ellipsis;
+}
+
+#next-password-signup-input {
+  text-overflow: ellipsis;
+}
+
+#next-username-prefix {
+  background: white;
+  color: var(--magenta);
+  font-size: 1.4em;
+  font-weight: 500;
+  padding: .83em .5em .8em 0;
+  position: absolute;
+  z-index: 99;
+}
+
+#next-signup-form-error {
+  border-radius: .6em;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+#next-signup-form-error .ui.message {
+  background: #004dff;
+  border-radius: 0;
+  box-shadow: none;
+  color: white;
+}
+
+#next-signup-form-error .ui.message .header {
+  color: white;
+  font-weight: normal;
+}
+
+#next-signup-form-error .ui.message .content {
+  padding: 0 10px;
+}
+
+#next-signup-form-error .ui.message i.close,
+#next-signup-form-error .ui.message i.exclamation {
+  font-size: 1.3em;
+}
+
+#next-signup-success-container {
+  color: #2ec700;
+}
+
+#next-signup-success-container > div:first-child {
+  font-size: 5em;
+  line-height: 1.4em;
+}
+
+#next-signup-success-container > div:nth-child(2) {
+  font-size: .5em;
+}
+
+#next-signup-watermark {
+  bottom: 30px;
+  left: 30px;
+  margin: 0 !important;
+  position: fixed;
+}
+
+.next-signup-input-tooltip {
+  display: none !important;
+}
+
+@media only screen and (max-height: 870px) {
+  #next-signup-column {
+    height: 85%;
+    max-height: 660px;
+    min-height: 650px;
+  }
+
+  #next-signup-form-1 {
+    margin-top: 50px;
+  }
+
+  #next-signup-panel > .ui.grid {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .next-signup-username-hint {
+    display: none !important;
+  }
+
+  .next-signup-input-tooltip {
+    bottom: 0;
+    display: block !important;
+    margin: 1.85em 0 !important;
+    position: absolute;
+    right: 0;
+  }
+}
+
+@media only screen and (max-height: 815px) and (max-width: 720px) {
+  #next-signup-watermark {
+    display: none;
+  }
 }

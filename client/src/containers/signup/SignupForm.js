@@ -16,16 +16,19 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import {
+  Button,
   Container,
   Form,
-  Label,
+  Header,
   Icon,
   Input,
+  Label,
+  Message,
+  Popup,
   Transition } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { AuthActions, AuthSelectors } from 'state';
-import * as utils from 'services/Utils';
+
 
 /**
  *
@@ -36,24 +39,18 @@ import * as utils from 'services/Utils';
 class SignupForm extends Component {
 
   static propTypes = {
-    checkUserExists: PropTypes.func,
-    resetUserExists: PropTypes.func,
-    submit: PropTypes.func,
-    userExists: PropTypes.bool,
+    error:            PropTypes.object,
+    pendingSignup:    PropTypes.bool,
+    submit:           PropTypes.func,
   };
 
 
   state = {
     activeIndex:    0,
-    name:           '',
-    email:          '',
     username:       '',
     password:       '',
-    validName:      null,
-    validEmail:     null,
     validUsername:  null,
     validPassword:  null,
-    errorDisplay: true,
   };
 
 
@@ -64,8 +61,7 @@ class SignupForm extends Component {
    * @param {object} prevState State before update
    */
   componentDidMount () {
-    const { resetUserExists } = this.props;
-    resetUserExists();
+    setTimeout(() => this.usernameRef.focus(), 300);
   }
 
   /**
@@ -74,10 +70,10 @@ class SignupForm extends Component {
    * @param {object} prevProps Props before update
    * @param {object} prevState State before update
    */
-  componentDidUpdate (prevProps, prevState) {
-    const { activeIndex } = this.state;
-    if (prevState.activeIndex === 0 && activeIndex === 1)
-      setTimeout(() => this.passwordRef.focus(), 300);
+  componentDidUpdate (prevProps) {
+    const { error, pendingSignup } = this.props;
+    if (prevProps.pendingSignup && !pendingSignup && !error)
+      this.setFlow(1);
   }
 
   /**
@@ -92,19 +88,6 @@ class SignupForm extends Component {
     this.validate(name, value);
   }
 
-  /**
-   * Handle form change event
-   * @param {object} event Event passed by Semantic UI
-   * @param {string} name  Name of form element derived from
-   *                       HTML attribute 'name'
-   * @param {string} value Value of form field
-   */
-  usernameChange = (event, { name, value }) => {
-    this.setState({ [name]: value });
-    this.validate(name, value);
-    this.setState({ errorDisplay: false});
-  }
-
 
   /**
    * Set current view based on index
@@ -112,15 +95,6 @@ class SignupForm extends Component {
    */
   setFlow = (index) => {
     this.setState({ activeIndex: index });
-  }
-
-  handleBlur = () => {
-    const { checkUserExists } = this.props;
-    const { username } = this.state;
-    !utils.isWhitespace(username) && checkUserExists(username);
-    setTimeout(() => {
-      this.setState({ errorDisplay: true});
-    }, 100);
   }
 
 
@@ -131,10 +105,6 @@ class SignupForm extends Component {
    * @param {string} value Value of form field
    */
   validate = (name, value) => {
-    name === 'name' &&
-      this.setState({ validName: value.length > 4 });
-    name === 'email' &&
-      this.setState({ validEmail: /\S+@\S+\.\S+/.test(value) });
     name === 'username' &&
       this.setState({ validUsername: value.length > 4 });
     name === 'password' &&
@@ -147,127 +117,138 @@ class SignupForm extends Component {
    * @returns {JSX}
    */
   render () {
-    const { submit, userExists} = this.props;
+    const { error, pendingSignup, submit } = this.props;
     const {
       activeIndex,
-      name,
-      email,
       username,
       password,
-      validName,
-      validEmail,
       validUsername,
-      errorDisplay,
       validPassword } = this.state;
 
     const hide = 0;
-    const show = 300;
+    const show = 1000;
+
+    const usernameHint1 = `Your Cloud Account will be created
+      based on your T-Mobile GSM1900 account. All of the
+      information from your existing GSM1900 profile will be
+      copied to create your new Cloud Account.`;
+    const usernameHint2 = `To simplify things, your Cloud Account
+      ID will be the same as your GSM1900 ID.`;
+    const passwordHint = `Please note that the password for your
+      Cloud Account will differ from your GSM1900 password and will
+      be emailed to you after successful sign up. You need to provide
+      your correct Cloud Account credentials to access all the servers
+      and services hosted within the T-Mobile public cloud. Therefore,
+      please make sure you enter the correct Cloud Account password.`;
 
     return (
-      <div className='form-inverted'>
+      <div className='form-default'>
         <Transition
           visible={activeIndex === 0}
           animation='fade up'
           duration={{ hide, show }}>
-          <div>
-            <Form id='next-signup-form-1' onSubmit={() => this.setFlow(1)}>
+          <div id='next-signup-form-1'>
+            { error &&
+              <div id='next-signup-form-error'>
+                <Message
+                  error
+                  size='small'
+                  icon='exclamation triangle'
+                  content={error.message}/>
+              </div>
+            }
+            <Form onSubmit={() => submit(username, password)}>
               <Form.Field>
+                <span id='next-username-prefix'>
+                  GSM1900\
+                </span>
                 <Input
-                  id='next-name-signup-input'
-                  autoFocus
-                  placeholder='Name'
-                  error={validName === false}
-                  name='name'
-                  type='text'
-                  onChange={this.handleChange}
-                  value={name}/>
-                {!validName &&
-                <Label className='next-name-signup-hint'>
-                  Name must be at least 5 characters.
-                </Label>}
-
-              </Form.Field>
-              <Form.Field>
-                <Input
-                  id='next-email-signup-input'
-                  placeholder='Email'
-                  error={validEmail === false}
-                  name='email'
-                  type='email'
-                  value={email}
-                  onChange={this.handleChange}/>
-              </Form.Field>
-              <Form.Field>
-                <Input
+                  ref={ref => this.usernameRef = ref}
                   id='next-username-signup-input'
-                  placeholder='User ID'
+                  autoFocus
+                  placeholder='JSmith'
                   error={validUsername === false}
                   name='username'
                   type='text'
                   value={username}
-                  onBlur={this.handleBlur}
-                  onChange={this.usernameChange}/>
-                { userExists && errorDisplay &&
-                  <Label
-                    id='next-signup-username-error'>
-                    <Icon name='exclamation circle'/>
-                      This username already exists.
-                  </Label>
-                }
-
-                {!validUsername &&
-                <Label className='next-username-signup-hint'>
-                  Username must be at least 5 characters.
-                </Label>}
-
+                  onChange={this.handleChange}>
+                  <input/>
+                  <Popup
+                    wide
+                    basic
+                    size='mini'
+                    position='top right'
+                    trigger={
+                      <Icon
+                        className='next-signup-input-tooltip'
+                        circular
+                        size='small'
+                        name='info'/>
+                    }>
+                    {usernameHint1}
+                    &nbsp;
+                    <strong>
+                      {usernameHint2}
+                    </strong>
+                  </Popup>
+                </Input>
+                <Label className='next-signup-username-hint'>
+                  {usernameHint1}
+                  &nbsp;
+                  <strong>
+                    {usernameHint2}
+                  </strong>
+                </Label>
+              </Form.Field>
+              <Form.Field id='next-signup-form-password'>
+                <Input
+                  id='next-password-signup-input'
+                  error={validPassword === false}
+                  name='password'
+                  type='password'
+                  placeholder='Enter your GSM1900 password'
+                  value={password}
+                  onChange={this.handleChange}/>
+                <Label>
+                  {passwordHint}
+                </Label>
               </Form.Field>
               <Container textAlign='center'>
                 <Form.Button
-                  content='Next'
-                  disabled={!validName || !validEmail || !validUsername
-                    || userExists}
-                  icon='right arrow'
-                  labelPosition='right'/>
+                  loading={pendingSignup}
+                  animated
+                  fluid
+                  disabled={pendingSignup || !validUsername || !validPassword}>
+                  <Button.Content visible>
+                    Sign Up
+                  </Button.Content>
+                  <Button.Content hidden>
+                    <Icon name='arrow right'/>
+                  </Button.Content>
+                </Form.Button>
               </Container>
             </Form>
           </div>
         </Transition>
         <Transition
           visible={activeIndex === 1}
-          animation='fade down'
+          animation='fade right'
           duration={{ hide, show }}>
           <div>
-            <Form id='next-password-signup-form'
-              onSubmit={() => submit(name, username, password, email)}>
-              <Form.Button
-                id='next-signup-form-back-button'
-                content='Back'
-                type='button'
-                icon='left arrow'
-                labelPosition='left'
-                onClick={() => this.setFlow(0)}/>
-              <Form.Field id='next-signup-form-password'>
-                <Input
-                  ref={ref => this.passwordRef = ref}
-                  id='next-password-signup-input'
-                  error={validPassword === false}
-                  name='password'
-                  type='password'
-                  placeholder='Password'
-                  value={password}
-                  onChange={this.handleChange}/>
-                <Label>
-                  Password must be at least 6 characters
-                </Label>
-              </Form.Field>
-              <Container textAlign='center'>
-                <Form.Button
-                  content='Sign Up'
-                  disabled={!validPassword}
-                  icon='right arrow'
-                  labelPosition='right'/>
-              </Container>
-            </Form>
+            <Header as='h2' icon id='next-signup-success-container'>
+              <div>
+                <span role='img' aria-label=''>
+                  🛫
+                </span>
+              </div>
+              Request for CORP account sent!
+              <Header.Subheader>
+                You will receive an email shortly containing credentials for
+                your new CORP account. You can then use those credentials to
+                sign into NEXT Directory. If you do not receive an email,
+                please contact your administrator.
+              </Header.Subheader>
+            </Header>
           </div>
         </Transition>
       </div>
@@ -279,16 +260,13 @@ class SignupForm extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userExists: AuthSelectors.userExists(state),
+    error: state.auth.error,
+    pendingSignup: state.auth.pendingSignup,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    checkUserExists: (username) =>
-      dispatch(AuthActions.userExistsRequest(username)),
-    resetUserExists: (username) => dispatch(AuthActions.resetUserExists()),
-  };
+  return {};
 };
 
 

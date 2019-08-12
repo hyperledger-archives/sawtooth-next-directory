@@ -226,7 +226,7 @@ class App extends Component {
           <Header {...this.props}/>
           <Switch>
             <Route exact path='/login' component={Login}/>
-            { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
+            { process.env.REACT_APP_ENABLE_LDAP_SYNC === '1' &&
               <Route exact path='/signup' component={Signup}/>
             }
             { !isAuthenticated && <Redirect to='/login'/> }
