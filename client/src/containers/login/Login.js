@@ -16,12 +16,14 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid, Header, Image } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Button, Container, Grid, Header, Image } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 
 import './Login.css';
 import logo from 'images/next-logo-primary.png';
+import cloud from 'images/cloud.svg';
 import { AuthActions, AuthSelectors } from 'state';
 import LoginForm from './LoginForm';
 
@@ -57,7 +59,9 @@ class Login extends Component {
    * component
    */
   componentDidMount () {
+    const { resetErrors } = this.props;
     theme.apply(this.themes);
+    resetErrors();
     this.init();
   }
 
@@ -107,23 +111,43 @@ class Login extends Component {
 
     return (
       <div id='next-login-container'>
-        <Grid container centered columns={1}>
-          <Grid.Column id='next-login-column'>
-            <Header inverted textAlign='center'>
-              <Image centered src={logo} id='next-login-logo'/>
-            </Header>
-            <LoginForm
-              submit={login}
-              {...this.props}/>
-          </Grid.Column>
-        </Grid>
-        {/* { process.env.REACT_APP_ENABLE_NEXT_BASE_USE === '1' &&
-          <div id='next-login-new-account-container'>
-            <Link to='/signup'>
-              Create an account
-            </Link>
-          </div>
-        } */}
+        <div id='next-login-panel'>
+          <Grid container centered columns={1}>
+            <Grid.Column id='next-login-column'>
+              <Header textAlign='center'>
+                <Image centered src={logo} id='next-login-logo'/>
+                <h1>
+                  SIGN IN
+                </h1>
+              </Header>
+              <LoginForm
+                submit={login}
+                {...this.props}/>
+              { process.env.REACT_APP_ENABLE_LDAP_SYNC === '1' &&
+                <Container
+                  id='next-login-new-account-container'
+                  textAlign='center'>
+                  <div>
+                    Don&apos;t have a CORP ID?
+                    <div>
+                      <Button
+                        as={Link}
+                        to='/signup'
+                        id='next-login-signup-link'
+                        content='Sign up'
+                        type='button'
+                        icon='chevron right'
+                        labelPosition='right'/>
+                    </div>
+                  </div>
+                </Container>
+              }
+            </Grid.Column>
+          </Grid>
+        </div>
+        <Container id='next-login-watermark' fluid textAlign='left'>
+          <Image src={cloud}/>
+        </Container>
       </div>
     );
   }

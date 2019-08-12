@@ -51,12 +51,10 @@ export function * login (api, action) {
 export function * signup (api, action) {
   try {
     yield put(showLoading());
-    const { username, password, name, email } = action;
+    const { username, password } = action;
     const res = yield call(api.signup, {
-      username,
+      id: username,
       password,
-      email,
-      name,
     });
 
     res.ok ?

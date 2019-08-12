@@ -24,7 +24,7 @@ test('loginRequest', () => {
   const state = reducer(INITIAL_STATE,
     Actions.loginRequest(username, password));
 
-  expect(state.fetching).toBe(true);
+  expect(state.pendingLogin).toBe(true);
 });
 
 
@@ -37,7 +37,7 @@ test('loginSuccess', () => {
   const state = reducer(INITIAL_STATE,
     Actions.loginSuccess(isAuthenticated, authData));
 
-  expect(state.fetching).toBe(false);
+  expect(state.pendingLogin).toBe(false);
   expect(state.isAuthenticated).toBe(true);
   expect(state.error).toBeNull();
 });
@@ -49,7 +49,7 @@ test('loginFailure', () => {
     INITIAL_STATE,
     Actions.loginFailure(error)
   );
-  expect(state.fetching).toBe(false);
+  expect(state.pendingLogin).toBe(false);
   expect(state.error).toBe('');
 });
 

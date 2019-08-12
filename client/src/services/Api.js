@@ -85,6 +85,8 @@ const create = (baseURL =
     switch (res.status) {
       case 200:
         break;
+      case 400:
+        break;
       case 401:
         if (!res.config.url.includes('authorization')) {
           toast.warn('For security reasons, your session has expired.', {
@@ -94,6 +96,12 @@ const create = (baseURL =
         }
         break;
       case 404:
+        break;
+      case 503:
+        if (res.data && res.data.message < 0)
+          res.data.message = 'Whoa! The server is unavailable.';
+        else
+          toast(res.data.message);
         break;
       default:
         toast(res.data.message);
@@ -126,7 +134,7 @@ const create = (baseURL =
   const roleExists = (name) => api.get('roles/check', { name });
   const updateProposals = (payload) => api.patch('proposals', payload);
   const search = (query) => api.post('search', query);
-  const signup = (creds) => api.post('users', creds);
+  const signup = (creds) => api.post('corpuser', creds);
 
 
   const getConfirmedProposals = (id = storage.get('next_id')) =>

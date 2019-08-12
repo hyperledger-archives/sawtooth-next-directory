@@ -24,5 +24,4 @@ export const AuthSelectors = {
   user: (state) => {
     return state.auth.user || { id: storage.getUserId() };
   },
-  userExists:            (state) => state.auth.userExists,
 };

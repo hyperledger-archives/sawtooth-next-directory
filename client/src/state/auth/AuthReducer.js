@@ -19,37 +19,45 @@ import { INITIAL_STATE, AuthTypes as Types } from './AuthActions';
 import * as storage from 'services/Storage';
 
 
-export const request = (state) =>
-  state.merge({ fetching: true, error: null });
+export const request = {
+  signup:    (state) => state.merge({ pendingSignup: true }),
+  login:     (state) => state.merge({ pendingLogin: true }),
+  logout:    (state) => state.merge({}),
+};
 
 
-export const success = (state, { isAuthenticated, payload }) => {
-  if (payload.token)
-    storage.setToken(payload.token);
-  if (payload.data) {
-    payload.data.user ?
-      storage.setUserId(payload.data.user.id) :
-      storage.setUserId(payload.data.next_id);
-  }
+export const success = {
+  login: (state, { isAuthenticated, payload }) => {
+    if (payload.token)
+      storage.setToken(payload.token);
+    if (payload.data) {
+      payload.data.user ?
+        storage.setUserId(payload.data.user.id) :
+        storage.setUserId(payload.data.next_id);
+    }
+    return state.merge({
+      isAuthenticated,
+      pendingLogin: false,
+      user: payload.data && payload.data.user,
+    });
+  },
+
+
+  signup: (state, { base }) =>
+    state.merge({
+      pendingSignup: false,
+    }),
+};
+
+
+export const failure = (state, { error }) => {
   return state.merge({
-    isAuthenticated,
-    fetching: false,
-    user: payload.data && payload.data.user,
+    pendingLogin: false,
+    pendingSignup: false,
+    error,
   });
 };
 
-export const Usersuccess = {
-  userExists: (state, { exists }) =>
-    state.merge({ userExists: exists }),
-};
-
-export const failure = (state, { error }) => {
-  return state.merge({ fetching: false, error });
-};
-
-export const resetUserExists = (state, {error}) => {
-  return state.merge({ userExists: null});
-};
 
 export const resetErrors = (state) =>
   state.merge({ error: null });
@@ -65,20 +73,15 @@ export const logout = (state) => {
 export const AuthReducer = createReducer(INITIAL_STATE, {
   [Types.RESET_ERRORS]:     resetErrors,
 
-  [Types.LOGIN_REQUEST]:    request,
-  [Types.LOGIN_SUCCESS]:    success,
+  [Types.LOGIN_REQUEST]:    request.login,
+  [Types.LOGIN_SUCCESS]:    success.login,
   [Types.LOGIN_FAILURE]:    failure,
 
-  [Types.SIGNUP_REQUEST]:   request,
-  [Types.SIGNUP_SUCCESS]:   success,
+  [Types.SIGNUP_REQUEST]:   request.signup,
+  [Types.SIGNUP_SUCCESS]:   success.signup,
   [Types.SIGNUP_FAILURE]:   failure,
 
-  [Types.USER_EXISTS_REQUEST]:          request,
-  [Types.USER_EXISTS_SUCCESS]:          Usersuccess.userExists,
-  [Types.USER_EXISTS_FAILURE]:          failure,
-  [Types.RESET_USER_EXISTS]:            resetUserExists,
-
-  [Types.LOGOUT_REQUEST]:   request,
+  [Types.LOGOUT_REQUEST]:   request.logout,
   [Types.LOGOUT_SUCCESS]:   logout,
   [Types.LOGOUT_FAILURE]:   failure,
 });

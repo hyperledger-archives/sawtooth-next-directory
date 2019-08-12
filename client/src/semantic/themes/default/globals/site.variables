@@ -15,7 +15,7 @@
 
 @googleFontName    : @fontName;
 @importGoogleFonts : true;
-@googleFontSizes   : '300,400';
+@googleFontSizes   : '300,400,500';
 @googleSubset      : 'latin';
 
 @googleProtocol    : 'https://';
@@ -97,7 +97,7 @@
 --------------------*/
 
 /* Used on inputs, textarea etc */
-@focusedFormBorderColor: #85B7D9;
+@focusedFormBorderColor: #0069ff;
 
 /* Used on dropdowns, other larger blocks */
 @focusedFormMutedBorderColor: #96C8DA;
